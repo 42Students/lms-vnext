@@ -152,8 +152,8 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
     <Button variant="secondary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));resetBulkFeedback();}} >Select first 20 waiting</Button>
     {selectedRows.length>0&&<Button variant="secondary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={bulkBusy} onClick={()=>{setSelection(new Set());resetBulkFeedback();}} >Clear selection</Button>}
-    {selectedRows.length>0&&<Button variant="primary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("VERIFY");}} >Preview verify</Button>}
-    {selectedRows.length>0&&<Button variant="secondary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("SEND_BACK");}} >Preview send back</Button>}
+    {selectedRows.length>0&&<Button variant="primary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setAcknowledged(false);setBulkReason("");setBulkAction("VERIFY");}} >Preview verify</Button>}
+    {selectedRows.length>0&&<Button variant="secondary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setAcknowledged(false);setBulkReason("");setBulkAction("SEND_BACK");}} >Preview send back</Button>}
    </div>
    {bulkAction&&<div className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-3">
     <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
@@ -194,7 +194,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
       onClick={()=>void executeBulk("VERIFY")}
       >{bulkBusy?"Saving reviews…":"Verify "+(preview?.eligible.length??0)+" without opening each"}</Button>
     </>}
-    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>setBulkAction(null)} >Cancel preview</Button>
+    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setAcknowledged(false);setBulkAction(null);}} >Cancel preview</Button>
    </div>}
   </section>}
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy
