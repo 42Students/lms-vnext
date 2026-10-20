@@ -15,10 +15,12 @@ export default async function CollegeNewPlacementPage() {
     redirect("/dashboard");
   }
   return (
+    <div className="min-w-0">
     <PlacementJobCreateWorkspace
       context={context}
       collegeId={context.membership.collegeId}
       basePath="/college/placements"
     />
+    </div>
   );
 }

@@ -682,15 +682,15 @@ export function PlacementJobCreateForm({
           ||fields.get("requireVerifiedEvidence")==="on"
           ||fields.get("missingEvidencePolicy")==="REQUIRE_COMPLETE");
       }}
-      className="min-w-0 space-y-6"
+      className="min-w-0 space-y-[var(--lms-space-4)]"
     >
-      <p role="status" aria-live="polite" className="text-xs text-body">
+      <p role="status" aria-live="polite" className="max-w-[75ch] break-words text-xs leading-5 text-body">
         {pending?"Saving changes…":lastLocalSaveAt?
           "Local draft saved at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST — not yet submitted to the server.":
           "Draft form changes are saved locally on this device. Create draft to save them to the server."}
       </p>
-      <details className="border-b border-border pb-4">
-        <summary className="min-h-11 cursor-pointer text-base font-semibold text-foreground md:min-h-9">Setup review</summary>
+      <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
         <nav aria-label="Drive setup review" className="min-w-0 pt-3">
         <ol className="grid gap-3 border-y border-border sm:grid-cols-2 lg:grid-cols-4">
           {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
@@ -750,9 +750,8 @@ export function PlacementJobCreateForm({
         </div>
         <div className="grid min-w-0 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)]">
           {companies.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              <Button
-                size="sm"
+            <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] sm:flex sm:flex-wrap [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
+              <Button size="sm"
                 type="button"
                 variant={
                   companyMode ===
@@ -911,7 +910,7 @@ export function PlacementJobCreateForm({
           </p>
         </div>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2">
-          <label className="lg:col-span-2">
+          <label className="sm:col-span-2">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job title
             </span>
@@ -926,7 +925,7 @@ export function PlacementJobCreateForm({
               placeholder="Software Development Engineer"
             />
           </label>
-          <label className="lg:col-span-2">
+          <label className="sm:col-span-2">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Description
             </span>
@@ -1144,7 +1143,7 @@ export function PlacementJobCreateForm({
           </fieldset>
           <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Separate employer registration</legend>
-            <label className="flex items-center gap-2 text-sm">
+            <label className="flex min-h-11 min-w-0 items-center gap-2 break-words py-2 text-sm">
               <Checkbox name="studentsRegisterSeparately" /> Students also register on the company's portal
             </label>
             <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Portal name
@@ -1233,9 +1232,7 @@ export function PlacementJobCreateForm({
                 <div className="grid gap-2">
                   {visiblePrograms.map(
                     (program) => (
-                      <label
-                        key={program.id}
-                        className="flex items-start gap-2 text-sm text-body"
+                      <label key={program.id} className="flex min-h-11 min-w-0 items-start gap-2 break-words py-2 text-sm text-body"
                       >
                         <Checkbox
                           checked={selectedProgramIds.includes(
@@ -1280,9 +1277,7 @@ export function PlacementJobCreateForm({
                 <div className="grid gap-2">
                   {visibleCohorts.map(
                     (cohort) => (
-                      <label
-                        key={cohort.id}
-                        className="flex items-start gap-2 text-sm text-body"
+                      <label key={cohort.id} className="flex min-h-11 min-w-0 items-start gap-2 break-words py-2 text-sm text-body"
                       >
                         <Checkbox
                           checked={selectedCohortIds.includes(
@@ -1322,7 +1317,7 @@ export function PlacementJobCreateForm({
             </p>
             <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:grid-cols-2">
               {visibleSections.slice(0,500).map(section=><label key={section.id}
-                className="flex items-center gap-2 text-sm">
+                className="flex min-h-11 min-w-0 items-center gap-2 break-words py-2 text-sm">
                 <Checkbox checked={selectedSectionIds.includes(section.id)}
                  disabled={!selectedSectionIds.includes(section.id)&&selectedSectionIds.length>=100}
                  onChange={()=>toggleId(section.id,selectedSectionIds,setSelectedSectionIds)}/>
@@ -1470,7 +1465,7 @@ export function PlacementJobCreateForm({
       </section>
       {uncertainCreate?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
         The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline">Review Drives</Link> before retrying.
-        <Button variant="secondary" type="button" className="ml-3 font-semibold text-primary-text underline"
+        <Button variant="secondary" type="button" className="mt-[var(--lms-space-2)] min-h-11 w-full font-semibold text-primary-text underline sm:ml-[var(--lms-space-3)] sm:mt-0 sm:w-auto md:min-h-9"
           onClick={()=>{try{localStorage.removeItem(uncertainKey);}catch{}setUncertainCreate(false);}}>
           I checked Drives — allow another attempt
         </Button>
