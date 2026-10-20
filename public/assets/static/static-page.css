@@ -11,9 +11,6 @@ body {
   font-size: 14px;
   line-height: 1.75;
   overflow-wrap: anywhere;
-  background-image: linear-gradient(to right,rgba(169,181,204,.12) 1px,transparent 1px),
-    linear-gradient(to bottom,rgba(169,181,204,.12) 1px,transparent 1px);
-  background-size: 28px 28px;
 }
 .page-layout {
   width: min(100% - 32px, 920px);
@@ -21,9 +18,9 @@ body {
   margin: 56px auto;
   padding: 40px clamp(20px, 4vw, 52px);
   border: 1px solid #e5e9f0;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #fff;
-  box-shadow: 0 18px 48px rgba(23,32,51,.07),0 3px 10px rgba(23,32,51,.025);
+  box-shadow: none;
 }
 .page-layout > .header {
   padding: 0 0 24px;
@@ -54,6 +51,12 @@ body {
 .page-layout th, .page-layout td { border: 1px solid #e5e9f0; padding: 8px; text-align: left; }
 .text-terms-size p { font-size: 14px; line-height: 1.75; }
 .text-600 { font-weight: 650; font-size: 18px; color: #172033; padding-top: 24px; }
+.policy-quick-links { margin: 0 0 16px; border-bottom: 1px solid #e5e9f0; padding-bottom: 12px; }
+.policy-quick-links > summary { cursor: pointer; min-height: 44px; padding-top: 12px; }
+.policy-quick-links > summary:focus-visible { outline: 2px solid #0a7c88; outline-offset: 2px; }
+.policy-quick-links[open] > ul { margin: 8px 0 12px; columns: 2; column-gap: 28px; }
+.policy-quick-links li { break-inside: avoid; }
+@media (max-width:640px) { .policy-quick-links[open] > ul { columns: 1; } }
 @media (max-width:640px) { .page-layout { width: calc(100% - 20px); margin: 18px auto; padding: 24px 18px; border-radius: 12px; } .page-layout > .header::before { margin-bottom: 20px; } }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } }
 @media print { body { background: #fff; } .page-layout { margin: 0; width: 100%; border: none; border-radius: 0; box-shadow: none; } }
