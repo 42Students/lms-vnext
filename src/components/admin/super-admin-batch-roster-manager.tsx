@@ -43,11 +43,11 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
  }
  return <section className="space-y-4 border-b border-border pb-5" aria-label="Batch student roster">
   <div className="grid gap-3 md:grid-cols-2 print:hidden">
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Search name, roll no. or email
+   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Search name, roll no. or email
     <Input type="search" maxLength={120} value={search} onChange={e=>setSearch(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Class
+   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Class
     <Select value={source} onChange={e=>setSource(e.target.value)}
      className="min-h-11 w-full md:min-h-9">
       <option value="ALL">All classes</option><option value="UNASSIGNED">Not in a class</option>
