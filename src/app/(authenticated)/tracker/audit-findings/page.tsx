@@ -52,7 +52,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  const findingColumns:DataTableColumn<(typeof data.items)[number]>[]=[
   {key:"finding",header:"Finding",mobilePriority:"primary",cell:item=><div className="min-w-0">
     <Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
-      className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.externalId}</Link>
+      className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">{item.externalId}</Link>
     <p className="mt-1 max-w-md break-words text-body">{item.title}</p>
    </div>},
   {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
@@ -96,7 +96,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     count:data.statusCounts[status]??0,
     href:independentFindingHref({...parsed,statuses:[status],page:1}),
    }))}/>
-  <form method="get" className="grid min-w-0 gap-2 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
+  <form role="search" aria-label="tracker audit findings filters" method="get" className="grid min-w-0 gap-2 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
    <Input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
