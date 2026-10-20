@@ -1,6 +1,7 @@
 "use client";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -53,8 +54,8 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
     <Button type="button" variant="secondary" className="min-h-11 sm:min-h-9" disabled={busy}
      onClick={()=>setOpen(false)}>Cancel</Button></div>
   </div>}
-  {error&&<p role="alert" className="mt-2 text-error">{error}</p>}
-  {success&&<p role="status" className="mt-2">{success}</p>}
+  {error&&<Banner tone="error">{error}</Banner>}
+  {success&&<Banner tone="success">{success}</Banner>}
    {dialog}
  </section>;
 }
