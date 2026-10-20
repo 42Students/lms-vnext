@@ -345,7 +345,7 @@ export default async function HrPlacementJobPage({
         </div>
       </section>
 
-      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={filters.tab}
+      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={requestsTab ? "requests" : discussionTab ? "discussion" : filters.tab}
         items={[{value:"overview",label:"Overview",href:`/recruiter/drives/${workspace.job.id}?tab=overview${returnQuery}`},
           {value:"applicants",label:"Applicants",count:applicants.counts.all,
            href:`/recruiter/drives/${workspace.job.id}?tab=applicants${returnQuery}`},
