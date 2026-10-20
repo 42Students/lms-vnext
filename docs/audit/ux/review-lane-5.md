@@ -1,0 +1,7 @@
+# Cross-review proof — chat-5
+
+Source: docs/design/old-lms-shell.css; old-lms-shell-spec.md; ui-clone-checklist.md; legacy-styles/ (especially listing-page-header.scss, form.scss). Static source review at target widths 1280/768/375; no screenshot or runtime claims.
+
+- `src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx` | legacy↔code: shell bg #f1f4f9=#f1f4f9 (shell); canvas white #ffffff=#ffffff; canvas border 1px #e5e9f0=shared canvas; canvas radius 12px=12px; canvas padding 24px=24px; header 30px/600=#172033 30px/600 via PageHeader; forms 13px/600=shared Input/Select labels; tablet 768px desktop head=md; phone 375px compact title=20px; fixes 1 (removed redundant eyebrow).
+- `src/app/(authenticated)/admin/companies/page.tsx` | legacy↔code: canvas #ffffff=#ffffff; border 1px #e5e9f0=shared canvas; padding 24px=24px; title 30px/600=PageHeader; tabs teal underline=shared Tabs; alerts pale strip=shared Alert; rows hairline separators=divide-y --lms-canvas-border; buttons height36/radius9=shared Button; phone touch44=md:min-h-9; fixes 10 (legacy tabs, banners, flat rows, removed eyebrow).
+- `src/app/(authenticated)/admin/lessons/page.tsx` | legacy↔code: canvas #ffffff=#ffffff; canvas radius 12px=12px; border #e5e9f0=#e5e9f0; padding 24px=24px; title 30px/600=PageHeader; field label 13px/600=13px/600; row hairline=divide-y border-border; form gap 12px=--lms-space-3; export button radius9=--lms-control-radius; phone target44=md:min-h-9; fixes 7 (including lesson-create labels).

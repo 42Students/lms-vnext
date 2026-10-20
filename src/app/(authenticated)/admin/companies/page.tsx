@@ -11,6 +11,8 @@ import {SuperAdminCollegeCompanyCreate,SuperAdminCollegeCompanyRelationshipActio
   from "@/components/admin/super-admin-college-company-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
+import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { parseAdminCompanyDirectoryParams } from "@/modules/placements/admin-company-directory-model";
@@ -25,7 +27,7 @@ export default async function SuperAdminCompaniesPage({
   const params = await searchParams;
   const parsed = parseAdminCompanyDirectoryParams(params);
   if (!parsed.success) return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
+    <PageHeader title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
       action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>} />
   </div>;
@@ -37,27 +39,22 @@ export default async function SuperAdminCompaniesPage({
   const candidates = findPossibleCompanyDuplicates(data.rows);
   const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
   return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin · Placements" title="Companies"
+    <PageHeader title="Companies"
       description="Read-only employer relationships within the selected Super Admin organization or college scope. Sensitive CRM contacts and sharing defaults are not displayed." />
-    <nav aria-label="Company directory tabs" className="flex flex-wrap gap-3">
-      <Link href="/admin/companies?view=GLOBAL"
-       aria-current={view==="GLOBAL"?"page":undefined}
-       className="inline-flex min-h-11 items-center border-b-2 border-transparent aria-[current=page]:border-primary px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-       42&apos;s company list
-      </Link>
-      {context.adminScope?.collegeId?<Link href="/admin/companies?view=COLLEGE"
-       aria-current={view==="COLLEGE"?"page":undefined}
-       className="inline-flex min-h-11 items-center border-b-2 border-transparent aria-[current=page]:border-primary px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-       This college&apos;s companies
-      </Link>:null}
-    </nav>
-    {view==="GLOBAL"&&context.adminScope?.collegeId?<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-warning">
+    <Tabs ariaLabel="Company directory tabs" renderPanel={false} value={view}
+      items={[
+        {value:"GLOBAL",label:"42's company list",href:"/admin/companies?view=GLOBAL"},
+        ...(context.adminScope?.collegeId
+          ? [{value:"COLLEGE",label:"This college's companies",href:"/admin/companies?view=COLLEGE"}]
+          : []),
+      ]} />
+    {view==="GLOBAL"&&context.adminScope?.collegeId?<Alert tone="warning">
       A college is currently selected. The results below remain restricted to that college. Clear the college scope in the header to view 42&apos;s global company catalogue.
-    </p>:null}
-    {data.query.companyId ? <section role="status" className="border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm text-body">
+    </Alert>:null}
+    {data.query.companyId ? <Alert tone="info">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
       <Link href="/admin/companies" className="font-semibold text-primary-text underline">Show all employers</Link>
-    </section> : null}
+    </Alert> : null}
     <div className="flex flex-wrap gap-3 text-sm">
       <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show deleted (archived) companies →</Link>
       <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Active companies →</Link>
@@ -167,8 +164,8 @@ export default async function SuperAdminCompaniesPage({
        </li>)}</ul>}
       {data.truncated?<p className="text-xs text-muted-foreground">Only this page of scoped relationships was reviewed.</p>:null}
     </section>
-    {data.rows.length ? <div className="grid gap-3 md:grid-cols-2">
-      {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    {data.rows.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+      {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 bg-transparent py-[var(--lms-space-4)]">
         <h2 className="m-0 break-words text-base font-semibold text-foreground">{row.name}</h2>
         {row.companyStatus==="ARCHIVED"&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
          <SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:null}

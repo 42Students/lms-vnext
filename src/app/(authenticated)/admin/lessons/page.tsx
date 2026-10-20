@@ -58,15 +58,15 @@ export default async function SuperAdminLessonsPage({
     <PageHeader title="Lessons"
       description="Authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion."
       actions={<a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export lessons.csv</a>}
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export lessons.csv</a>}
     />
     
-    <form className="grid gap-3 py-1 md:grid-cols-2 xl:grid-cols-5">
-      <label className="grid gap-1 text-xs font-semibold leading-4 text-body">Search
+    <form className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-5">
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-xs font-semibold leading-4 text-body">Status
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
