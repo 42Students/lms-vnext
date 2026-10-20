@@ -181,6 +181,7 @@ export function FacultyAttendanceWorkspace({
   const [discardOpen,setDiscardOpen]=useState(false);
   const nextAfterDiscard=useRef<(()=>void)|null>(null);
   const submitLock = useRef(false);
+  const scheduleLock=useRef(false);
   const [error, setError] =
     useState<string | null>(null);
   const [savedNotice,setSavedNotice]=useState<string|null>(null);
@@ -340,6 +341,7 @@ export function FacultyAttendanceWorkspace({
     membershipId: string,
     isAbsent: boolean,
   ) {
+    if (markingWindow !== "OPEN" || submitting || submitLock.current) return;
     setAbsent((current) => {
       const next = new Set(current);
       if (isAbsent) next.add(membershipId);
@@ -442,12 +444,13 @@ export function FacultyAttendanceWorkspace({
     confirmed=false,
   ) {
     event?.preventDefault();
-    if (scheduling) return;
+    if (scheduling || scheduleLock.current) return;
 
     setScheduleError(null);
     try {
       const timing = facultyScheduleInstants(startsAt, endsAt);
       if(!confirmed){setConfirmScheduleOpen(true);return;}
+      scheduleLock.current=true;
       setScheduling(true);
       const response = await fetch(
         "/api/attendance/faculty",
@@ -484,7 +487,7 @@ export function FacultyAttendanceWorkspace({
       setScheduleError(caught instanceof Error ? caught.message :
         "Failed to schedule class. Check your connection and try again.");
     } finally {
-      if(confirmed){setScheduling(false);setConfirmScheduleOpen(false);}
+      if(confirmed){scheduleLock.current=false;setScheduling(false);setConfirmScheduleOpen(false);}
     }
   }
 
@@ -548,7 +551,7 @@ export function FacultyAttendanceWorkspace({
                 >
                   ←
                 </Button>
-                <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-body">
+                <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-body">
                   Jump to month
                   <Input
                     className="w-full"
@@ -881,7 +884,7 @@ export function FacultyAttendanceWorkspace({
                     size="md"
                     variant="secondary"
                     disabled={
-                      workspace.roster.length === 0
+                      workspace.roster.length === 0 || markingWindow !== "OPEN" || submitting
                     }
                     onClick={() =>
                       setAbsent(new Set())
@@ -893,7 +896,7 @@ export function FacultyAttendanceWorkspace({
                     size="md"
                     variant="secondary"
                     disabled={
-                      workspace.roster.length === 0
+                      workspace.roster.length === 0 || markingWindow !== "OPEN" || submitting
                     }
                     onClick={() =>
                       setAbsent(
@@ -957,6 +960,7 @@ export function FacultyAttendanceWorkspace({
                                     ? "primary"
                                     : "secondary"
                                 }
+                                disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={!isAbsent}
                                 aria-label={`Mark ${learnerName(
                                   learner,
@@ -978,6 +982,7 @@ export function FacultyAttendanceWorkspace({
                                     ? "danger"
                                     : "secondary"
                                 }
+                                disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={isAbsent}
                                 aria-label={`Mark ${learnerName(
                                   learner,
@@ -1147,9 +1152,12 @@ export function FacultyAttendanceWorkspace({
                           size="md"
                           variant="secondary"
                           onClick={() => {
-                            chooseSession(session.id);
-                            setMode("MARK");
-                            setSelectedLearnerId(null);
+                            confirmDiscardMarks(() => {
+                              setSelectedSessionId(session.id);
+                              setAbsent(initialAbsencesForSession(workspace.roster,workspace.records,session.id));
+                              setSearch("");setError(null);setCorrectionReason("");setSavedNotice(null);
+                              setMode("MARK");setSelectedLearnerId(null);
+                            });
                           }}
                         >
                           {session.code === "—" ? "Mark this session" : "Review / correct session"}
@@ -1171,7 +1179,8 @@ export function FacultyAttendanceWorkspace({
 
       <Drawer
         open={scheduleOpen}
-        onOpenChange={setScheduleOpen}
+        dismissible={!scheduling}
+        onOpenChange={value=>{if(!scheduling)setScheduleOpen(value);}}
         title="Schedule Class"
         description="Create a class session for this exact Course and Section. It will appear in learner and Faculty calendars."
         footer={
@@ -1202,7 +1211,7 @@ export function FacultyAttendanceWorkspace({
           onSubmit={createSession}
           className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2"
         >
-          <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body md:col-span-2">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body md:col-span-2">
             Class title
             <Input
               className="w-full"
@@ -1217,7 +1226,7 @@ export function FacultyAttendanceWorkspace({
               placeholder="Lecture, Lab, Tutorial…"
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
             Starts at (IST)
             <Input
               className="w-full"
@@ -1229,7 +1238,7 @@ export function FacultyAttendanceWorkspace({
               required
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
             Ends at (IST)
             <Input
               className="w-full"
@@ -1241,7 +1250,7 @@ export function FacultyAttendanceWorkspace({
               required
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body md:col-span-2">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body md:col-span-2">
             Location
             <Input
               className="w-full"
