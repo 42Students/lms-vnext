@@ -9,8 +9,8 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-5.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-5-b with [chat-5] after every 2 surfaces.
 
-- [ ] `src/app/(authenticated)/recruiter/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/colleges/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/calendar/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/colleges/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/company/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/interview-slots/page.tsx`
