@@ -574,7 +574,8 @@ export function RecruiterLeadsWorkspace({
 
   function closeAddDialog(confirmed=false) {
     if(saving)return;
-    const dirty=Object.values(form).some(value=>value.trim());
+    const dirty=Object.entries(form).some(([key,value])=>value.trim()!==
+      (key==="companyName"?initialCompany.trim():""));
     if(dirty&&!confirmed){setConfirmation({kind:"DISCARD"});return;}
     contactCheckSeq.current++;
     setChecking(false);
@@ -1123,7 +1124,7 @@ export function RecruiterLeadsWorkspace({
       )}
 
       {adding && (
-        <Dialog open={adding} onOpenChange={next=>{if(!next)closeAddDialog();}}
+        <Dialog open={adding && confirmation?.kind!=="DISCARD"} onOpenChange={next=>{if(!next)closeAddDialog();}}
           dismissible={!saving} title="Add recruiter lead">
           <form ref={createDialogRef} onSubmit={e=>void create(e)}
             className="min-w-0 space-y-4">
