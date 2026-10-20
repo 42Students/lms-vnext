@@ -24,6 +24,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  const [detail,setDetail]=useState<Detail|null>(null);
  const [loading,setLoading]=useState(false);
  const [message,setMessage]=useState("");
+ const [completedSearch,setCompletedSearch]=useState("");
  const seq=useRef(0),timeout=useRef<ReturnType<typeof setTimeout>|null>(null);
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/trace";
  useEffect(()=>()=>{seq.current++;if(timeout.current)clearTimeout(timeout.current);},[]);
@@ -37,29 +38,29 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    const result=await response.json() as {learners:Learner[];selected:Detail|null};
    if(requestId!==seq.current)return;
    if(memberId){setDetail(result.selected);setSuggestions([]);}
-   else setSuggestions(result.learners);
+   else {setSuggestions(result.learners);setCompletedSearch(query.trim());}
   }catch{
    if(requestId===seq.current)setMessage("The learner lookup failed. Check your connection and try again.");
   }finally{if(requestId===seq.current)setLoading(false);}
  }
  function change(value:string){
-  setSearch(value);setSuggestions([]);setMessage("");
+  setSearch(value);setSuggestions([]);setCompletedSearch("");setMessage("");
   if(timeout.current)clearTimeout(timeout.current);
   seq.current++;
   if(value.trim().length>=2)
    timeout.current=setTimeout(()=>{void lookup(value.trim());},260);
  }
  function close(){seq.current++;setDetail(null);setMessage("");}
- return <section aria-label="Why a learner sees a module" className="border-b border-border pb-5">
+ return <section aria-label="Why a learner sees a module" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="font-semibold text-foreground">Why can&apos;t a student see a module?</h2>
-  <label className="mt-3 grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+  <label className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
    Why can&apos;t a student see a module? Search…
    <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Name or roll number" autoComplete="off"
     className="min-h-11 w-full min-[768px]:min-h-9"/>
   </label>
   {loading?<p role="status" className="mt-2 text-sm text-body">Searching learners…</p>:null}
-  {search.trim().length>1&&!loading&&!suggestions.length&&!message?
+  {search.trim().length>1&&completedSearch===search.trim()&&!loading&&!suggestions.length&&!message?
    <p className="mt-2 text-xs text-body">No matching learners in this college.</p>:null}
   {suggestions.length>0?<ul aria-label="Matching learners" className="mt-2 max-h-60 overflow-auto rounded-[var(--lms-control-radius)] border border-border">
    {suggestions.map(student=><li key={student.membershipId} className="border-b border-border last:border-0">
@@ -69,9 +70,10 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
     </Button>
    </li>)}
   </ul>:null}
-  {message?<p role="alert" className="mt-2 text-sm text-error">{message}</p>:null}
+  {message?<p role="alert" className="mt-2 max-w-prose break-words text-sm text-error">{message}</p>:null}
   <Drawer open={detail!==null} onOpenChange={open=>{if(!open)close();}} title="Student module access explanation">
-   {detail?<div className="space-y-4">
+   {detail?<div className="min-w-0 space-y-[var(--lms-space-4)]">
+    {message?<p role="alert" className="max-w-prose break-words text-sm text-error">{message}</p>:null}
     <div className="min-w-0"><h3 className="text-lg font-semibold text-foreground">{detail.displayName||"Unnamed learner"}</h3>
       <p className="text-sm text-body">{detail.rollNumber||"No roll number"}</p>
     </div>

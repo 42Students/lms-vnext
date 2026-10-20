@@ -15,10 +15,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regres
 - [x] `src/components/academics/college-semester-management.tsx`
 - [x] `src/components/activity/learner-notifications-inbox.tsx`
 - [x] `src/components/admin/college-archive-button.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/inbound-mail-list.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/department-actions.tsx`
+- [x] `src/components/admin/inbound-mail-list.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
 - [ ] `src/components/admin/lecture-hall-manager.tsx`
 - [ ] `src/components/admin/organization-actions.tsx`
 - [ ] `src/components/admin/person-membership-actions.tsx`

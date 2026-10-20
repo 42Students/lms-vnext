@@ -19,10 +19,11 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
  const [busy,setBusy]=useState(false);
  const triageGate=useRef(createInboundMailTriageGate());
  const [message,setMessage]=useState("");
+ const [messageError,setMessageError]=useState(false);
  async function change(row:InboundMailRow,status:InboundMailStatus){
   if(!triageGate.current.tryBegin())return;
   const current=overrides[row.id]??row;
-  setBusy(true);setMessage("");
+  setBusy(true);setMessage("");setMessageError(false);
   const controller=new AbortController();
   const timeout=window.setTimeout(()=>controller.abort(),15000);
   try{
@@ -35,7 +36,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
    setOverrides(previous=>({...previous,[row.id]:{status:saved.status,version:saved.version}}));
    setMessage(status==="RESOLVED"?"Message marked done.":status==="TRIAGED"?"Message marked being handled.":"Message moved back to To read.");
    router.refresh();
-  }catch(error){setMessage(error instanceof Error&&error.name==="AbortError"?"Request timed out. Refresh the inbox before trying again.":error instanceof Error?error.message:"Could not update message status.");}
+  }catch(error){setMessageError(true);setMessage(error instanceof Error&&error.name==="AbortError"?"Request timed out. Refresh the inbox before trying again.":error instanceof Error?error.message:"Could not update message status.");}
   finally{window.clearTimeout(timeout);triageGate.current.end();setBusy(false);}
  }
 
@@ -58,16 +59,16 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
         <p className="line-clamp-2 max-w-prose break-words text-sm text-muted-foreground print:line-clamp-none">{safeInboundPreview(row.bodyPlain)}</p>
         <p className="text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
        </div>
-       <Button type="button" variant="secondary" className="w-full min-h-11 shrink-0 min-[768px]:w-auto min-[768px]:min-h-9 print:hidden" onClick={()=>{setMessage("");setSelected(row);}}>Read message</Button>
+       <Button type="button" variant="secondary" className="w-full min-h-11 shrink-0 min-[768px]:w-auto min-[768px]:min-h-9 print:hidden" onClick={()=>{setMessage("");setMessageError(false);setSelected(row);}}>Read message</Button>
       </div>
      </article>)}
     </div>
     <p className="text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
    </>}
-  {selected?<Drawer open onOpenChange={open=>{if(!open)setSelected(null)}} title={selected.subject||"(No subject)"}
+  {selected?<Drawer open onOpenChange={open=>{if(!open&&!busy)setSelected(null)}} title={selected.subject||"(No subject)"}
     description="Private inbound message"
     footer={<div className="flex w-full min-w-0 flex-col gap-[var(--lms-space-3)]">
-     {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+     {message?<p role={messageError?"alert":"status"} aria-live="polite" className={"max-w-prose break-words text-sm "+(messageError?"text-error":"text-body")}>{message}</p>:null}
      <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:justify-end">
       {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
        <Button key={action.status} type="button" className="w-full min-h-11 min-[768px]:w-auto min-[768px]:min-h-9" variant={action.status==="RESOLVED"?"primary":"secondary"} disabled={busy} onClick={()=>void change(selected,action.status)}>
