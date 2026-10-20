@@ -14,7 +14,7 @@ export default async function CollegeStudentsImportPage() {
     !can(context, "people.manage", { collegeId: membership.collegeId,
       organizationId: membership.organizationId })) redirect("/dashboard");
   const choices = await listCollegeStudentImportOptions(context);
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 max-w-full space-y-[16px]">
     <PageHeader
       title="Import students"
       description="Dry-run validation followed by explicit per-row learner onboarding and enrollment."

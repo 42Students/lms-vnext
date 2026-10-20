@@ -62,7 +62,7 @@ export function CollegeGroupDetailWrites({
   const ordered=[...waitlisted].sort((a,b)=>(a.waitlistPosition??Number.MAX_SAFE_INTEGER)-
     (b.waitlistPosition??Number.MAX_SAFE_INTEGER)||a.membershipId.localeCompare(b.membershipId));
   const front=ordered[0];
-  return <section aria-label="Group rule and waitlist actions" className="space-y-5">
+  return <section aria-label="Group rule and waitlist actions" className="min-w-0 space-y-[16px]">
     <div className="space-y-3 border-b border-border pb-4">
       <h2 className="text-lg font-semibold text-foreground">Waitlist review</h2>
       <p className="mt-1 text-sm text-body">Only the first waitlisted learner can be promoted. Locked members and full groups cannot be overridden.</p>

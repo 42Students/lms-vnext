@@ -57,7 +57,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
   const csvDownload = report ? "data:text/csv;charset=utf-8," +
     encodeURIComponent("\uFEFF" + studentImportReportCsv(report.results)) : null;
 
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-[16px]">
     <section className="border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">Upload or paste CSV</h2>
       <p className="mt-2 text-sm text-body">
@@ -72,7 +72,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download CSV template
       </a>
-      <div className="mt-3 grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3 print:hidden">
+      <div className="mt-[8px] grid min-w-0 grid-cols-1 gap-[8px] md:grid-cols-2 min-[992px]:grid-cols-3 print:hidden">
         <label className="grid gap-1 text-sm font-semibold">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}

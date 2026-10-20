@@ -123,7 +123,7 @@ export default async function LearnerCoursesPage() {
     listLearnerProgramSemesters(context),
   ]);
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-[16px]">
       <PageHeader
         title="Courses"
       />

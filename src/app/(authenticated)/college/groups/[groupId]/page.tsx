@@ -79,7 +79,7 @@ export default async function CollegeGroupDetailPage({
   })) ?? [];
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-6">
+    <div className="min-w-0 max-w-full overflow-x-clip space-y-[16px]">
       <PageHeader
         title={group.name}
         description={group.description ?? `${label(group.kind)} in ${detail.collegeName}`}
@@ -93,7 +93,7 @@ export default async function CollegeGroupDetailPage({
         }
       />
 
-      <section className="grid min-w-0 gap-4 pt-5 md:grid-cols-2 lg:grid-cols-5">
+      <section className="grid min-w-0 gap-[16px] pt-[16px] md:grid-cols-2 lg:grid-cols-5">
         <Stat title="Type" value={label(group.kind)} />
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -118,7 +118,7 @@ export default async function CollegeGroupDetailPage({
       </section>
 
       {group.selfJoinOpenFrom || rule ? (
-        <section className="grid min-w-0 gap-4 border-t border-border pt-5 md:grid-cols-3">
+        <section className="grid min-w-0 gap-[16px] border-t border-border pt-[16px] md:grid-cols-3">
           <Stat
             title="Self-join window"
             value={
