@@ -97,68 +97,109 @@ export function FacultyLiveClassEditor({
     }catch(e){setError(e instanceof Error?e.message:"Unable to save live class.");}
     finally{setPending(false);setConfirmOpen(false);}
   }
-  return <section aria-label="Manage Faculty live classes"
-    className="space-y-3">
-    <h2 className="font-semibold text-foreground">Schedule or manage a live class</h2>
-    <p className="text-xs text-muted-foreground">
-      Enter meeting times in IST (Asia/Kolkata), regardless of your device time zone.
-      Each confirmed write is scoped to your assigned Section. HTTPS links only.
-    </p>
-    <div className="grid gap-3 md:grid-cols-2">
-      <label className="grid gap-1 text-[13px] font-semibold">Action
-        <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
-          className="text-base md:text-sm">
-          <option value="CREATE">Schedule</option><option value="EDIT">Reschedule / edit</option>
-          <option value="CANCEL">Cancel</option>
-        </Select>
-      </label>
-      {action==="CREATE"?
-        <label className="grid gap-1 text-[13px] font-semibold">Lesson
-          <Select value={lessonId} onChange={e=>setLessonId(e.target.value)}
-            className="text-base md:text-sm">
-            {choices.map(x=><option key={x.id} value={x.id}>
-              {x.title} · Section {x.deliveryId.slice(0,8)}
-            </option>)}
+  return (
+    <section aria-label="Manage Faculty live classes" aria-busy={pending}
+      className="min-w-0 max-w-4xl space-y-[var(--lms-space-4)]">
+      <div className="min-w-0">
+        <h2 className="m-0 text-base font-semibold text-foreground">
+          Schedule or manage a live class
+        </h2>
+        <p className="mt-1 max-w-prose text-xs leading-5 text-muted-foreground">
+          Enter meeting times in IST (Asia/Kolkata), regardless of your device time zone.
+          Each confirmed write is scoped to your assigned Section. HTTPS links only.
+        </p>
+      </div>
+      <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+          Action
+          <Select value={action} disabled={pending}
+            onChange={event => changeAction(event.target.value as typeof action)}>
+            <option value="CREATE">Schedule</option>
+            <option value="EDIT">Reschedule / edit</option>
+            <option value="CANCEL">Cancel</option>
           </Select>
-        </label> :
-        <label className="grid gap-1 text-[13px] font-semibold">Published session
-          <Select value={selectedId} onChange={e=>preloadSession(e.target.value)}
-            className="text-base md:text-sm">
-            {sessions.map(x=><option key={x.id} value={x.id}>{facultyLiveSessionOption(x)}</option>)}
-          </Select>
-        </label>}
-      {action!=="CANCEL"&&<>
-        <label className="grid gap-1 text-[13px] font-semibold">Title
-          <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
-            required className="text-base md:text-sm" />
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold">HTTPS meeting link
-          <Input type="url" value={meetingUrl} onChange={e=>setMeetingUrl(e.target.value)}
-            placeholder="https://..." required
-            className="text-base md:text-sm" />
-        </label>
-        <FacultyIstQuarterHourPicker label="Start" value={startsAt} onChange={setStartsAt}/>
-        <FacultyIstQuarterHourPicker label="End" value={endsAt} onChange={setEndsAt}/>
-      </>}
-    </div>
-    {action!=="CANCEL"?<p className="text-xs text-body">
-      {FACULTY_IST_NOTE} Choose 15-minute steps using the 12-hour AM/PM clock.
-    </p>:null}
-    {action!=="CANCEL"&&(startsAt&&facultyIstQuarterHourIssue(startsAt)||
-      endsAt&&facultyIstQuarterHourIssue(endsAt))?
-      <Alert tone="warning">Select quarter-hour start and end times before saving.</Alert>:null}
-    {!ready?<p className="text-sm text-muted-foreground">
-      {action==="CREATE"?"No registered lessons are available to schedule.":"No editable published session is available on this page."}
-    </p>:null}
-    <Button type="button" loading={pending} disabled={!ready||pending} onClick={()=>void save()} variant={action==="CANCEL"?"danger":"primary"}>
-      {pending?"Saving…":"Confirm "+(action==="CREATE"?"schedule":action==="EDIT"?"edit":"cancel")}
-    </Button>
-    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
-      title={facultyLiveConfirmText(action,chosen,choice?.title??"selected lesson")}
-      confirmLabel={"Confirm "+(action==="CREATE"?"schedule":action==="EDIT"?"edit":"cancel")}
-      confirmVariant={action==="CANCEL"?"danger":"primary"} pending={pending}
-      onConfirm={()=>void save(true)} />
-    {error?<Alert tone="error">{error}</Alert>:null}
-    {success?<Alert tone="success">{success}</Alert>:null}
-  </section>;
+        {action === "CREATE" ? (
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+            Lesson
+            <Select value={lessonId} disabled={pending || !choices.length}
+              onChange={event => { setLessonId(event.target.value); setError(null); }}>
+              {!choices.length ? <option value="">No lessons available</option> : null}
+              {choices.map(item => <option key={item.id} value={item.id}>
+                {item.title} · Section {item.deliveryId.slice(0, 8)}
+              </option>)}
+            </Select>
+          </label>
+        ) : (
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+            Published session
+            <Select value={selectedId} disabled={pending || !sessions.length}
+              onChange={event => preloadSession(event.target.value)}>
+              {!sessions.length ? <option value="">No published sessions</option> : null}
+              {sessions.map(item => <option key={item.id} value={item.id}>
+                {facultyLiveSessionOption(item)}
+              </option>)}
+            </Select>
+          </label>
+        )}
+        {action !== "CANCEL" ? (
+          <>
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+              Title
+              <Input value={title} maxLength={160} required disabled={pending}
+                onChange={event => { setTitle(event.target.value); setError(null); }} />
+            </label>
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+              HTTPS meeting link
+              <Input type="url" value={meetingUrl} required disabled={pending}
+                placeholder="https://..."
+                error={Boolean(meetingUrl && !/^https:\/\//i.test(meetingUrl.trim()))}
+                onChange={event => { setMeetingUrl(event.target.value); setError(null); }} />
+            </label>
+            <div className="min-w-0 md:col-span-2">
+              <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+                <FacultyIstQuarterHourPicker label="Start" value={startsAt}
+                  disabled={pending} onChange={value => { setStartsAt(value); setError(null); }} />
+                <FacultyIstQuarterHourPicker label="End" value={endsAt}
+                  disabled={pending} onChange={value => { setEndsAt(value); setError(null); }} />
+              </div>
+              <p className="mt-2 max-w-prose text-xs leading-5 text-body">
+                {FACULTY_IST_NOTE} Choose 15-minute steps using the 12-hour AM/PM clock.
+              </p>
+            </div>
+          </>
+        ) : null}
+      </div>
+      {action !== "CANCEL" &&
+        ((startsAt && facultyIstQuarterHourIssue(startsAt)) ||
+          (endsAt && facultyIstQuarterHourIssue(endsAt))) ? (
+        <Alert tone="warning">Select quarter-hour start and end times before saving.</Alert>
+      ) : null}
+      {!ready ? (
+        <Alert tone="warning">
+          {action === "CREATE"
+            ? "No registered lessons are available to schedule."
+            : "No editable published session is available on this page."}
+        </Alert>
+      ) : null}
+      {error ? <div role="alert"><Alert tone="error">{error}</Alert></div> : null}
+      {success ? <div role="status"><Alert tone="success">{success}</Alert></div> : null}
+      <div className="flex min-w-0 flex-col border-t border-border pt-[var(--lms-space-4)] sm:flex-row sm:justify-end">
+        <Button type="button" loading={pending} disabled={!ready || pending}
+          className="w-full sm:w-auto"
+          onClick={() => void save()}
+          variant={action === "CANCEL" ? "danger" : "primary"}>
+          {pending ? "Saving…" : "Confirm " + (action === "CREATE" ? "schedule" : action === "EDIT" ? "edit" : "cancel")}
+        </Button>
+      </div>
+      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+        title={facultyLiveConfirmText(action, chosen, choice?.title ?? "selected lesson")}
+        description={action === "CANCEL"
+          ? "This will cancel the selected published session."
+          : (title.trim() || "Live class") + " · " + startsAt + " – " + endsAt + " IST"}
+        confirmLabel={"Confirm " + (action === "CREATE" ? "schedule" : action === "EDIT" ? "edit" : "cancel")}
+        confirmVariant={action === "CANCEL" ? "danger" : "primary"} pending={pending}
+        onConfirm={() => void save(true)} />
+    </section>
+  );
 }
