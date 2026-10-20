@@ -31,7 +31,7 @@ export default async function AdminNewPlacementPage() {
       actions={<PageBackLink href="/admin/placements" label="Back to drives" />}/>
     <ErrorState title="Drive setup unavailable"
       description="Company, season, or student eligibility choices could not be loaded. No draft was created."
-      action={<Link href="/admin/placements/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry creating drive</Link>}/>
+      action={<Link href="/admin/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry creating drive</Link>}/>
   </div>;
   return loaded.view;
 }
