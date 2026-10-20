@@ -77,8 +77,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         {result.status==="NO_ACCESS"?<EmptyState
           title="No active college access"
           description="Your recruiter account has no active college access. Contact the placement cell that invited you."/>:
-          <section className="space-y-3 border-b border-border pb-5">
-            <h2 className="text-base font-semibold text-foreground">Choose a college</h2>
+          <section className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
+            <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Choose a college</h2>
             <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
               key:grant.collegeId,label:grant.collegeName,
               href:"/hr/company?collegeId="+encodeURIComponent(grant.collegeId),
@@ -100,7 +100,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         title="Company & Team"
         description={"Your work with "+result.grant.collegeName}
         actions={<Link href="/hr/profile"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Your profile
         </Link>}/>
 
@@ -117,28 +117,28 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           {value:"reports",label:"Reports",href:"/hr/company/reports?collegeId="+encodeURIComponent(result.grant.collegeId)}]}/>
 
       {tab === "company" ? (
-        <section className="border-b border-border pb-5">
+        <section className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
                 <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted font-bold text-foreground">
                   {result.company.name.trim().charAt(0).toUpperCase()}
                 </span>
-                <h2 className="text-lg font-semibold text-foreground">{result.company.name}</h2>
+                <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{result.company.name}</h2>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{result.grant.collegeName}</p>
             </div>
             <Badge  tone="neutral">Linked by the placement cell</Badge>
           </div>
-          <dl className="mt-5 grid gap-4 md:grid-cols-2">
+          <dl className="mt-5 grid gap-4 min-[768px]:grid-cols-2">
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
+              <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Website</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
                 ? <a href={result.company.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-link underline">{result.company.websiteUrl}</a>
                 : "Not provided"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Primary domain</dt>
+              <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Primary domain</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.primaryDomain ? "@"+result.company.primaryDomain.replace(/^@/,"") : "Not provided"}</dd>
             </div>
           </dl>
@@ -156,7 +156,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
               <div className="divide-y divide-border border-y border-border">
               {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
-                className="flex min-h-11 flex-wrap items-center justify-between gap-2 px-1 py-3 text-sm transition-colors hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+                className="flex min-h-11 flex-wrap items-center justify-between gap-2 px-1 py-3 text-sm transition-colors hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">
                 <span className="font-medium text-primary-text">{job.title}</span>
                 <StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge>
               </Link>)}
@@ -165,11 +165,11 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           </section>
         </section>
       ) : (
-        <section className="border-b border-border pb-5">
+        <section className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-base font-semibold text-foreground">Recruiter team</h2>
+            <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Recruiter team</h2>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Export authorized team CSV
             </Link>
           </div>
@@ -182,8 +182,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
-              className="min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"/>
-            <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
+              className="min-h-11 min-w-0 w-full basis-full min-[768px]:w-55 min-[768px]:basis-auto min-[768px]:flex-none"/>
+            <Button type="submit" variant="secondary" className="min-h-11 w-full min-[768px]:min-h-9 md:w-auto">Search</Button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}
