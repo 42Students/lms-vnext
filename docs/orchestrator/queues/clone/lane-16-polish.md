@@ -10,6 +10,8 @@ Polish checklist (apply every point to the surface and to every component it ren
 5. Mobile 375 and tablet 768: real layouts (stack, reorder, full-width primary action, 44px tap targets), nothing cramped or overflowing; overlays become full-width sheets on mobile.
 6. Keep exactly: legacy colours, radii, control sizes, fonts and wording (docs/design); keep ids, data-testid, aria labels, routes and behaviour; no new packages; valid TSX.
 
+Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, error.tsx, not-found.tsx and template.tsx in the same route folder, and check the nearest parent layout.tsx, as part of that same surface (they are the loading, error and missing states of that page). Tick the page only when its route files are done too.
+
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-16-b with [chat-16], ticking [x] in this queue in the same push.
 
 - [ ] `src/components/academics/academics-actions.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
@@ -49,3 +51,16 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | probl
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/verification/SuperAdminVerificationPanel.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/auth/portal-access-notice.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/hr/recruiter-designation-editor.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/projects/college-project-summary-editor.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/public/graceful-error-boundary.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/tpo/tpo-header-indicators.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/ui/form-grid.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/ui/otp-input.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/ui/search-field.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/app/(authenticated)/hr/loading.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [ ] `src/app/(authenticated)/college-admin/layout.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [ ] `src/app/(authenticated)/hr/not-found.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [ ] `src/app/(authenticated)/teacher/layout.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
