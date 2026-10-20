@@ -8,20 +8,20 @@ const legacy = () => readFileSync("docs/design/old-lms-shell.css", "utf8");
 
 /** Source-only guardrails; builder does not run tests/CI. */
 describe("chat-19 route progress and shell ownership", () => {
-  it("reuses exactly the old sidebar active-teal source and remains nonblocking", () => {
-    expect(legacy()).toContain("rgb(38, 186, 199)");
-    expect(css()).toContain("background:#26bac7");
-    expect(css()).toContain("pointer-events:none");
+  it("omits a top route strip absent from the original LMS", () => {
+    expect(legacy()).toContain("fl-d-panel-l");
+    expect(css()).not.toContain(".lms-route-progress");
+    expect(progress()).not.toContain('role="progressbar"');
+    expect(progress()).toContain("if (!pending || !slow) return null");
+    expect(progress()).toContain('data-slot="legacy-page-loader"');
     expect(css()).toContain("background:rgba(255,255,255,.99)");
     expect(css()).toContain("z-index:999");
-    expect(css()).toContain("z-index:998");
   });
-  it("has reduced-motion treatment for an indeterminate indicator", () => {
+  it("keeps reduced-motion treatment for the original four-dot loader", () => {
     expect(css()).toContain("@media (prefers-reduced-motion:reduce)");
     expect(css()).toContain("animation:none");
-    expect(progress()).toContain('role="progressbar"');
-    expect(progress()).toContain('aria-label="Opening page"');
-    expect(progress()).not.toContain("aria-valuenow");
+    expect(progress()).toContain('role="status"');
+    expect(progress()).toContain('aria-label="Loading page"');
   });
   it("rejects external, modified, download, disabled and same-page links", () => {
     for (const guard of ["event.defaultPrevented", "event.metaKey", "event.ctrlKey",

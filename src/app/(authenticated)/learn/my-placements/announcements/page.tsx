@@ -80,7 +80,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   return (
     <div className="min-w-0 space-y-6">
       <div>
-        <Link href="/learn/my-placements" className="text-sm text-primary-text underline">Back to My Placements</Link>
+        <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to My Placements</Link>
         <PageHeader title={LEARNER_LEGACY_NOTICES_TITLE}
           description="Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown." />
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
@@ -163,7 +163,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </div>
       ) : null}
       {!ready ? (
-        <div role="status" className="flex min-h-[180px] min-w-0 flex-col justify-center border-b border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-sm leading-[1.5] text-body">
+        <div role="status" className="flex min-h-[180px] min-w-0 flex-col items-center justify-center border-b border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
           College announcements are not available until the announcements database is enabled.
         </div>
       ) : !collegeNoticesRead.available ? (
@@ -175,7 +175,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           </Link>
         </div>
       ) : notices.length === 0 ? (
-        <p role="status" className="flex min-h-[180px] min-w-0 flex-col justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-sm leading-[1.5] text-body">
+        <p role="status" className="flex min-h-[180px] min-w-0 flex-col items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
           {learnerNoticeEmptyLabel(allNotices.length,pinnedOnly,source,{
              search:queryText,recent:recentOnly,matchingTotal:notices.length,
            })}

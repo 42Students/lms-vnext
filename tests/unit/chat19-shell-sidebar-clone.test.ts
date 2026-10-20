@@ -32,6 +32,21 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(css()).toContain("box-shadow:inset 3px 0 #26bac7");
   });
 
+  it("uses legacy learner rail inset and admin row padding only for the matching visible role", () => {
+    const nav = read("src/components/shell/sidebar-nav.tsx");
+    const old = read("docs/design/old-lms-shell.css");
+    const learner = read("docs/design/legacy-styles/components___learn-layout.scss");
+    expect(old).toContain("padding-top: 12px; padding-bottom: 12px");
+    expect(learner).toContain("padding-right: $learn-s2;");
+    expect(nav).toContain("data-sidebar-skin={sidebarSkin}");
+    expect(nav).toContain('visibleItems.some(item=>item.href.startsWith("/admin/"))?"admin":');
+    expect(nav).toContain('visibleItems.some(item=>item.href.startsWith("/learn/"))?"learner":"other"');
+    expect(css()).toContain('.lms-desktop-sidebar:has(.lms-sidebar-nav[data-sidebar-skin="learner"]) {padding-right:16px;}');
+    expect(css()).toContain('.lms-desktop-sidebar .lms-sidebar-nav[data-sidebar-skin="admin"] .lms-sidebar-item');
+    expect(css()).toContain("padding-top:12px;");
+    expect(css()).toContain("padding-bottom:12px;");
+  });
+
   it("keeps mobile drawer controls accessible and its scroll surface padded", () => {
     const mobile = read("src/components/shell/mobile-navigation.tsx");
     expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');

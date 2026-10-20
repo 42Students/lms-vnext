@@ -1,5 +1,6 @@
 "use client";
 import {FilterChip} from "@/components/ui/filter-chip";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -27,6 +28,6 @@ export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
    className="min-h-11 md:min-h-8">
    {busy?"Saving…":marked?"Unmark decision":"Mark as decision"}
   </FilterChip>
-  {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </span>;
 }

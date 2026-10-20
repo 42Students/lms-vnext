@@ -626,3 +626,25 @@ grep -nE 'justify-center gap-1|leading-\[42px\]|border-\[var\(--lms-primary\)\]|
 - [ ] E8 documented separately in clone-sheets.md: selection model fixed but native runtime blocked by undeclared AG Grid dependencies and inaccessible legacy source.
 
 **Next exact file:** `src/components/tpo/grid/view-memory.ts` (finish saved per-column width/pin/hidden state parity while respecting URL visibility and server authorization).
+
+
+### 2026-10-20 [chat-14] needs-doing chips 768px touch threshold
+
+Completed file: `src/components/ui/needs-doing-chips.tsx` (E4). **Value/state source table:**
+
+| Property | Legacy exact source value | Authored component value / behavior |
+|---|---|---|
+| Phone tap target | `docs/design/legacy-styles/components___antddesign.scss:1092-1100` clickable `.ant-tag` **44px** minimum height; `old-lms-shell.css:23,73` phone <=767px | `needs-doing-chips.tsx:42`: interactive links and callback chips `min-h-11` = **44px** until 767px |
+| Tablet/desktop density | Old shell desktop starts >=768px, compact quick-filter chips are not phone-sized | Replaced early `sm:min-h-8` 640px shrink with `md:min-h-8` 768px, min-height **32px** from 768 |
+| State/keyboard | Active quick filter/needs-doing count, true links or callback buttons | Selected uses `aria-current=page` for Link, `aria-pressed` for shared Button; disallow unsafe href; preserve disabled span and callback |
+| Color/outline | `$clrThird=#26bac7` in legacy variables; focus visible | Component uses `--lms-primary`, selected border and subtle tint, 2px focus outline; exact hover computed values pending |
+| Overflow | On phone labels and count may wrap without clipping | `max-w-full`, flex-wrap container and count remain; only breakpoint altered |
+
+**Full file grep evidence:** 59 lines; 0 raw button/input/select/textarea/details/table; one shared Button opening/closing pair and one Link; **one `md:` breakpoint** and **zero `sm:`**; **zero hard-coded 6-digit hex**. Original `NeedDoingChip` href guard, selectedKey, count, click, focus, disabled and immutable data remain. Scan performed from GitHub fetched full source, not a locally executed grep.
+
+Reproducible (not executed):
+```sh
+grep -nE 'min-h-11|md:min-h-8|sm:min-h-8|aria-current|aria-pressed|<Button|</Button>|<Link|<button([[:space:]>])' src/components/ui/needs-doing-chips.tsx
+```
+
+E4 remains [ ] globally until all chips, hover/disabled/count colors, responsive and pointer snapshots are checked against old LMS. No application/CI/TypeScript/browser run. This file has its own value table, JSX grep and phone/tablet source proof.

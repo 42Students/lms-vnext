@@ -1,6 +1,7 @@
 import {notFound} from "next/navigation";
 import Link from "next/link";
 import {EmptyState} from "@/components/ui/empty-state";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {SuperAdminPlacementDetailView} from "@/components/admin/super-admin-placement-detail-view";
 import {getSuperAdminApplicationDetail} from "@/modules/admin-ui/super-admin-application-detail-service";
@@ -21,7 +22,7 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
   <section aria-label="Application stage history" className="space-y-3 border-b border-border pb-5">
    <h2 className="text-lg font-semibold text-foreground">Status history</h2>
    {history?.length?<ol className="divide-y divide-border border-y border-border">{history.map(event=><li key={event.id} className="py-3 text-sm">
-     <p className="font-semibold">{event.fromStage??"New application"} → {event.toStage}</p>
+     <p className="flex min-w-0 flex-wrap items-center gap-2 font-semibold"><span>{event.fromStage??"New application"} →</span><StatusBadge tone="info">{event.toStage}</StatusBadge></p>
      <p className="mt-1 text-body">{event.reason}</p>
      <time className="text-xs text-muted-foreground" dateTime={event.changedAt.toISOString()}>
       {event.changedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</time>

@@ -17,6 +17,7 @@ import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-reque
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -179,13 +180,13 @@ export default async function TpoHome(){
  <PageHeader eyebrow="TPO" title={greeting.title}/>
  {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
  <div aria-label="Placement overview" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-  <StatTile label={rows[1]?.title ?? "Drives"} value={operationsResult?operations.summary.publishedJobs:"—"}
+  <StatTile className={tpoTileStyles.tile} label={rows[1]?.title ?? "Drives"} value={operationsResult?operations.summary.publishedJobs:"—"}
     detail={rows[1]?.status} href={rows[1]?.href}/>
-  <StatTile label={rows[2]?.title ?? "Students"} value={studentStats?.summary.placementPool??"—"}
+  <StatTile className={tpoTileStyles.tile} label={rows[2]?.title ?? "Students"} value={studentStats?.summary.placementPool??"—"}
     detail={rows[2]?.status} href={rows[2]?.href}/>
-  <StatTile label={rows[4]?.title ?? "Inbox"} value={pendingRequestCount!==null&&unreadMessages!==null?pendingRequestCount+unreadMessages:"—"}
+  <StatTile className={tpoTileStyles.tile} label={rows[4]?.title ?? "Inbox"} value={pendingRequestCount!==null&&unreadMessages!==null?pendingRequestCount+unreadMessages:"—"}
     detail={rows[4]?.status} href={rows[4]?.href}/>
-  <StatTile label={rows[5]?.title ?? "Team"} value={teamThreads?.status === "READY"
+  <StatTile className={tpoTileStyles.tile} label={rows[5]?.title ?? "Team"} value={teamThreads?.status === "READY"
       ? teamThreads.items.reduce((total, item) => total + item.unreadCount, 0) : "—"}
     detail={rows[5]?.status} href={rows[5]?.href}/>
  </div>
