@@ -41,7 +41,8 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
     const onLink=(event:MouseEvent)=>{
       const target=event.target;
       const link=target instanceof Element ? target.closest<HTMLAnchorElement>("a[href]") : null;
-      if(!link||link.hasAttribute("download")||allowUnload.current)return;
+      if(!link||link.hasAttribute("download")||allowUnload.current||event.defaultPrevented||
+        event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
       event.preventDefault();event.stopPropagation();
       setLeaveHref(link.href);
     };
