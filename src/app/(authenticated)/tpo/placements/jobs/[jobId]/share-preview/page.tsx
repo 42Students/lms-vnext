@@ -121,6 +121,6 @@ export default async function TpoShortlistSharePreviewPage({
       <Pagination label="Company-share link pages" page={shares.page} pageCount={shares.totalPages}
         hrefForPage={target=>companyShareLinksHref(data.job.id,shareStatus,target,parsed.data.q,data.page)}/>
     </div>
-    <Pagination label="Share preview pagination" page={data.page} pageCount={data.totalPages} hrefForPage={target=>path+"?"+new URLSearchParams({page:String(target),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}/>
+    <Pagination label="Share preview pagination" page={data.page} pageCount={data.totalPages} hrefForPage={target=>path+"?"+new URLSearchParams({page:String(target),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus,sharePage:String(shares.page)})}/>
   </div>;
 }

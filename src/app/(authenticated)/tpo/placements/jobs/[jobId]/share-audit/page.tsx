@@ -63,7 +63,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
    {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold sm:w-auto text-[var(--lms-teal-deep)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
    {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
-    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+    className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] underline sm:w-auto min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
   </nav>:null}
  </div>;
 }

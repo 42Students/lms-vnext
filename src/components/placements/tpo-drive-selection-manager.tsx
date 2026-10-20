@@ -1,6 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -18,7 +18,7 @@ type Result={selectionId:string;applicationId:string;status:string;reason?:strin
 export function TpoDriveSelectionManager({jobId,candidates,selections,roleOptions}:{jobId:string;candidates:Candidate[];selections:Selection[];roleOptions:RoleOption[]}){
  const router=useRouter();const [mode,setMode]=useState<"RECORD"|"VERIFY_AND_RELEASE"|null>(null);
  const [chosen,setChosen]=useState<string[]>([]);const [role,setRole]=useState("");
- const [lpa,setLpa]=useState("");const [pending,setPending]=useState(false);
+ const [lpa,setLpa]=useState("");const [pending,setPending]=useState(false);const submitRef=useRef(false);
  const [search,setSearch]=useState("");
  const [error,setError]=useState("");const [report,setReport]=useState<Result[]>([]);
  const [lastRecorded,setLastRecorded]=useState(0);
@@ -32,7 +32,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  function toggle(id:string){setChosen(previous=>previous.includes(id)?previous.filter(x=>x!==id):
   previous.length<100?[...previous,id]:previous);}
  async function submit(confirmed=false){
-  if(!mode||!chosen.length||pending)return;
+  if(!mode||!chosen.length||pending||submitRef.current)return;
   if(mode==="RECORD"&&(!role.trim()||lpa!==""&&(!Number.isFinite(Number(lpa))||Number(lpa)<0||Number(lpa)>1000))){
    setError("Provide a role and a package between 0 and 1000 LPA, or leave package blank.");return;
   }
@@ -41,7 +41,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
    applicationId,roleTitle:role.trim(),annualCtcInr:lpa===""?null:Math.round(Number(lpa)*100000),
   }))}:{action:"VERIFY_AND_RELEASE",confirmed:true,selectionIds:chosen,
    expectedRecordedAt:Object.fromEntries(selections.filter(s=>chosen.includes(s.id)).map(s=>[s.id,s.recordedAt]))};
-  setPending(true);setError("");
+  submitRef.current=true;setPending(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/selections",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify(body),
@@ -53,7 +53,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
    setReport(payload?.results??[]);setChosen([]);
    if(mode==="RECORD"){setLastRecorded(chosen.length);setMode(null);}
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Unable to save");}finally{setPending(false);setConfirmOpen(false);}
+  }catch(e){setError(e instanceof Error?e.message:"Unable to save");}finally{submitRef.current=false;setPending(false);setConfirmOpen(false);}
  }
  return <section className="min-w-0 space-y-4">
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -133,7 +133,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
 
     </div>
   </Dialog>
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
+  <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!pending)setConfirmOpen(next);}} pending={pending}
     title={"Verify and release "+chosen.length+" selection(s)?"}
     description={selections.filter(item=>chosen.includes(item.id)&&!item.offerReady).length+
       " currently need eligibility review and may be skipped. Official offers and learner notifications are issued immediately for successful rows. This cannot be undone from this dialog."}

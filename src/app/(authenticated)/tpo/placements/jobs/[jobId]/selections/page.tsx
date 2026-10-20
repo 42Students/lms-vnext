@@ -20,7 +20,8 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Selections"}
-   description="Record the company's selections, verify placement rules, and release the offers."/>
+   description="Record the company's selections, verify placement rules, and release the offers."
+   actions={<Link href={root+"/offers"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Offer register</Link>}/>
   <nav aria-label="Selection related pages" className="flex min-w-0 flex-wrap items-center gap-3 text-sm font-semibold leading-5">
    <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
 
