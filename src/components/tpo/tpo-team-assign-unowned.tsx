@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -55,7 +56,7 @@ export function TpoTeamAssignUnowned({drives,companies,members}:{
    confirmLabel="Assign work"
    onCancel={()=>setConfirmOpen(false)}
    onConfirm={()=>{setConfirmOpen(false);void assign();}}/>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;
 }
