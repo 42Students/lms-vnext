@@ -1,5 +1,5 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function Loading() {
-  return <GracefulPageLoading label="Loading recruiter drive draft" shape="directory" />;
+  return <div className="min-w-0 max-w-full"><GracefulPageLoading label="Loading recruiter drive draft" shape="directory" /></div>;
 }
