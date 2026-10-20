@@ -19,12 +19,12 @@ export default async function TpoCompanyPeoplePage({
   const company = await listTpoCompanyPeople(context, companyId);
   if (!company) notFound();
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </Link>
-      <PageHeader eyebrow="TPO · Companies" title={company.name+" · Contact people"} description="Persisted linked recruiter leads only, not an independent contacts directory."/>
+      <PageHeader  title={company.name+" · Contact people"} description="Persisted linked recruiter leads only, not an independent contacts directory."/>
       {process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? (
         <TpoCompanyPersonEditor companyId={companyId} contacts={company.contacts}/>
       ) : <Alert tone="warning">DB09 contact writes are unavailable.</Alert>}

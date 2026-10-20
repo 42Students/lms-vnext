@@ -39,13 +39,13 @@ export default async function TpoCompanyFeedbackPage({
 
   const base = "/tpo/companies/" + encodeURIComponent(companyId) + "/feedback";
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-5">
       <Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
         className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Company details
       </Link>
       <PageHeader
-        eyebrow="TPO · Recruiter relationships"
+        
         title={data.companyName + " · Internal feedback"}
         description="Recorded TPO recruiter notes for contacts explicitly linked to this college-company relationship."
       />
@@ -70,7 +70,7 @@ export default async function TpoCompanyFeedbackPage({
             <TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} />
           )}
           <section className="min-w-0 border-y border-border">
-            <h2 className="border-b border-border px-5 py-4 text-lg font-semibold text-foreground">
+            <h2 className="border-b border-border py-4 text-lg font-semibold text-foreground">
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
             {data.notes.length === 0 ? (
@@ -78,7 +78,7 @@ export default async function TpoCompanyFeedbackPage({
             ) : (
               <ul className="divide-y divide-border">
                 {data.notes.map((item) => (
-                  <li key={item.id} className="space-y-2 px-5 py-4">
+                  <li key={item.id} className="space-y-2 py-4">
                     <div className="flex flex-wrap justify-between gap-2">
                       <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
                         className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
