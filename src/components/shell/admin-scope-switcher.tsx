@@ -72,20 +72,23 @@ export function AdminScopeSwitcher({
   }
 
   return (
-    <div className="w-48 min-w-0 sm:w-64">
+    <div className="grid w-full min-w-0 max-w-64 gap-[var(--lms-space-2)]">
       <label className="sr-only" htmlFor="admin-scope-switcher">
         Super Admin scope
       </label>
-      <label htmlFor="admin-college-search" className="sr-only">Search colleges</label>
-      <Input id="admin-college-search" type="search" value={search} onChange={event=>setSearch(event.target.value)}
-       placeholder="Search colleges" aria-label="Search colleges" className="mb-1 min-h-9 w-full text-sm"/>
+      <details className="group min-w-0">
+        <summary className="flex min-h-9 cursor-pointer items-center text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Search colleges</summary>
+        <label htmlFor="admin-college-search" className="sr-only">Search colleges</label>
+        <Input id="admin-college-search" type="search" value={search} onChange={event=>setSearch(event.target.value)}
+          placeholder="Search colleges" aria-label="Search colleges" className="mt-[var(--lms-space-2)] w-full"/>
+      </details>
       <Select
         id="admin-scope-switcher"
         value={selectedValue(scope)}
         disabled={pending}
         aria-busy={pending}
         onChange={(event) => switchScope(event.target.value)}
-        className="min-h-10 py-0"
+        className="w-full min-w-0"
       >
         <option value="">All colleges</option>
         {choices.organizations.length > 0 ? (
@@ -113,11 +116,11 @@ export function AdminScopeSwitcher({
           </optgroup>
         ) : null}
       </Select>
-      {pending ? <p role="status" className="mt-1 text-xs text-muted-foreground">Switching workspace…</p> : null}
+      {pending ? <p role="status" className="min-w-0 break-words text-xs text-muted-foreground">Switching workspace…</p> : null}
       {!scope?.collegeId && !scope?.organizationId ? <p className="mt-1 text-xs text-muted-foreground">Showing all colleges — data may be large.</p> : null}
       {search.trim() && visibleColleges.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">No matching colleges.</p>:null}
       {error ? (
-        <p role="alert" className="mt-1 text-xs font-medium text-error">
+        <p role="alert" className="min-w-0 break-words text-xs font-medium text-error">
           {error}
         </p>
       ) : null}

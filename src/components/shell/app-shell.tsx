@@ -86,14 +86,14 @@ export async function AppShell({
         <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4">
           <ShellWidgetBoundary name="Sidebar navigation" fallbackHref={homeHref}><SidebarNav items={navigation} /></ShellWidgetBoundary>
         </div>
-        <div className="lms-sidebar-role-details border-t border-[var(--lms-sidebar-border)]">
-          <p className="m-0 text-xs font-semibold text-muted-foreground">
+        <div className="lms-sidebar-role-details min-w-0 border-t border-[var(--lms-sidebar-border)]">
+          <p className="m-0 min-w-0 truncate text-xs font-semibold text-muted-foreground">
             {getShellRoleLabel(context)}
           </p>
           {currentMembership ||
           selectedScopeLabel ||
           context.recruiter ? (
-            <p className="mt-1 truncate text-sm font-semibold text-body">
+            <p className="mt-1 min-w-0 truncate text-sm font-semibold text-body">
               {currentMembership?.collegeName ??
                 selectedScopeLabel ??
                 context.recruiter?.companyName}
@@ -102,7 +102,7 @@ export async function AppShell({
         </div>
       </aside>
 
-      <div className="lms-shell-page min-h-dvh min-w-0 flex-1">
+      <div className="lms-shell-page min-h-dvh min-w-0 flex-1 overflow-x-clip">
         <LegacyTopbar
           navigation={navigation}
           roleLabel={getShellRoleLabel(context)}
@@ -122,7 +122,7 @@ export async function AppShell({
         <RouteProgress />
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
-        <main id="lms-main-content" tabIndex={-1} className={"lms-shell-page-main mx-auto min-w-0 w-full px-4 py-6 sm:pl-6 sm:pr-4 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
+        <main id="lms-main-content" tabIndex={-1} className={"lms-shell-page-main mx-auto min-w-0 w-full px-[var(--lms-space-3)] py-[var(--lms-space-4)] min-[768px]:px-[var(--lms-space-4)] min-[768px]:py-[var(--lms-space-6)] min-[992px]:px-[var(--lms-space-6)] "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           <RouteTransition>{children}</RouteTransition>
         </main>
         <LearnerFacultyMobileFooter items={navigation} />
