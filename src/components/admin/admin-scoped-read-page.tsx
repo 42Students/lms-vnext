@@ -15,8 +15,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page",backHref,headerActions,intro}:{
- title:string;path:string;description:string;headingMode?:"page"|"section";backHref?:string;headerActions?:ReactNode;intro?:ReactNode;
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page",backHref,headerActions,intro,compactReadLayout=false}:{
+ title:string;path:string;description:string;headingMode?:"page"|"section";backHref?:string;headerActions?:ReactNode;intro?:ReactNode;compactReadLayout?:boolean;
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
@@ -31,8 +31,14 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  const heading=(eyebrow:string,detail?:string,exportAction?:ReactNode)=>headingMode==="section"
   ? <div><h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
      {detail?<p className="mt-1 text-sm text-body">{detail}</p>:null}</div>
-  : <PageHeader title={title} description={detail ?? eyebrow}
-     actions={backHref||exportAction||headerActions?<>{headerActions}{backHref?<PageBackLink href={backHref} label="Placement overview" />:null}{exportAction}</>:undefined}/>;
+  : compactReadLayout
+    ? <div className="min-w-0 space-y-2">
+       {backHref?<PageBackLink href={backHref} label="Placement overview" />:null}
+       <PageHeader title={title}/>
+       <p className="max-w-3xl text-sm leading-5 text-body">{detail ?? eyebrow}</p>
+      </div>
+    : <PageHeader title={title} description={detail ?? eyebrow}
+       actions={backHref||exportAction||headerActions?<>{headerActions}{backHref?<PageBackLink href={backHref} label="Placement overview" />:null}{exportAction}</>:undefined}/>;
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
  return <div className="space-y-5">{heading("Super Admin")}
@@ -104,12 +110,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   {headingMode==="section"?refreshAction:null}
-  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] py-4 md:grid-cols-2 min-[992px]:grid-cols-4 print:hidden">
+  <form method="get" className={compactReadLayout?"grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] py-4 md:grid-cols-6 md:items-start print:hidden":"grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] py-4 md:grid-cols-2 min-[992px]:grid-cols-4 print:hidden"}>
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
-   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+   <label className={compactReadLayout?"grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-3":"grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"}>Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
    </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+   <label className={compactReadLayout?"grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2":"grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"}>Status
     <Select name="status" defaultValue={data.query.status}
      className="min-h-11 w-full md:min-h-9">
      {statuses.map(status=><option key={status} value={status}>{status}</option>)}
@@ -168,13 +174,21 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       <option value="">All classes</option>
       {classOptions.map(cls=><option key={cls.id} value={cls.id}>{cls.name}</option>)}
      </Select></label>:null}
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+   {compactReadLayout?null:<label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
     <Select name="pageSize" defaultValue={data.query.pageSize}
      className="min-h-11 w-full md:min-h-9">
      {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
     </Select>
-   </label>
-   <Button type="submit" variant="primary" className="min-h-11 w-full self-end md:min-h-9">Filter</Button>
+   </label>}
+   <Button type="submit" variant="primary" className={compactReadLayout?"order-3 min-h-11 w-full md:order-none md:col-span-1 md:self-center md:min-h-9":"min-h-11 w-full self-end md:min-h-9"}>Filter</Button>
+   {compactReadLayout?<details className="order-4 min-w-0 md:col-span-6">
+     <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Rows per page</summary>
+     <div className="max-w-[200px] pb-1">
+       <Select name="pageSize" aria-label="Rows per page" defaultValue={data.query.pageSize} className="min-h-11 w-full md:min-h-9">
+         {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
+       </Select>
+     </div>
+   </details>:null}
   </form>
 
   {applicationFilters?<p role="status" className="text-sm text-body">
@@ -187,7 +201,42 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       ].filter(Boolean).join(" · ")
     : "Showing all application sources and stages for the selected college."}
   </p>:null}
-  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
+  {compactReadLayout?
+    <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
+      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start md:justify-end">
+        {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
+         <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>:null}
+        {refreshAction}
+        {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
+      </div>
+    </div>
+   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>}
+  {compactReadLayout?<>
+  {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
+   {data.items.map(row=><article key={row.id} className="min-w-0 py-4">
+    <div className="grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-6">
+      <div className="min-w-0">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
+          <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{row.title}</h2>
+          <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
+        </div>
+        <p className="mt-1 break-words text-sm text-body">{row.subtitle}</p>
+        <div className="mt-2 flex min-w-0 flex-wrap gap-x-4 gap-y-1">
+          {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
+        </div>
+      </div>
+      <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 md:justify-end">
+        {renderRowActions?<div className="print:hidden">{renderRowActions(row)}</div>:null}
+        {row.href?<Link href={row.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open details →</Link>:null}
+        {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{row.secondaryLabel??"Manage →"}</Link>:null}
+      </div>
+    </div>
+   </article>)}
+  </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."
+    action={<Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>}/>}
+  </> : <>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-2 py-4">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
@@ -203,6 +252,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>
+  </>}
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>superAdminReadHref(path,{...data.query,page})}/>
  </div>;
 }

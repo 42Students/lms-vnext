@@ -87,18 +87,131 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     data.minOffers !== undefined || data.maxOffers !== undefined);
   return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="TPO" title="Drives"
-      description="Review requests, prepare drafts and run every placement drive from one workspace."
-      actions={<nav aria-label="Drive creation paths" className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-        <Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgba(38,186,199,0.35)] sm:w-auto md:min-h-9">Create drive</Link>
-        <Dropdown mobileSheet align="end" label="More drive actions" trigger="More ···">
-          <nav aria-label="Other drive paths" className="min-w-48 space-y-1">
-            <Link href="/tpo/placements/overview" className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle">Operations overview</Link>
-            <Link href="/tpo/placements/recorded-outside" className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle">Recorded outside · history</Link>
-            <Link href={exportHref("PAGE")} className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle">Export shown page (CSV)</Link>
-            <Link href={exportHref("ALL")} className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle">Export all matching drives (CSV)</Link>
-          </nav>
-        </Dropdown>
-      </nav>} />
+      description="Review requests, prepare drafts and run every placement drive from one workspace." />
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <Link href="/tpo/placements/overview" className="text-sm font-semibold text-primary-text hover:underline">Operations overview</Link>
+      <nav aria-label="Drive creation paths" className="flex flex-wrap items-center gap-3">
+        <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Recorded outside · history</Link>
+      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgba(38,186,199,0.35)] md:min-h-9">Create drive</Link>
+      <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Recorded outside (history)</Link>
+      </nav>
+    </div>
+    <form role="search" aria-label="placements lifecycle filters" action="/tpo/placements/lifecycle" method="get"
+      className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
+        <Select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
+          className="mt-2 block w-full">
+          <option value="">All college seasons</option>
+          {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+        </Select>
+      </label>
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+        <Select name="cohortId" defaultValue={data.cohortId??""}
+          className="mt-2 block w-full">
+          <option value="">All batches</option>
+          {data.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.programName} · {batch.name}</option>)}
+        </Select>
+      </label>
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+        <Select name="companyId" defaultValue={data.companyId??""}
+          className="mt-2 block w-full">
+          <option value="">All companies</option>
+          {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
+        </Select>
+      </label>
+      {data.view!=="REQUESTS"?<label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Created by
+        <Select name="ownerUserId" defaultValue={data.ownerUserId??""}
+          className="mt-2 block w-full">
+          <option value="">Any creator</option>
+          {data.owners.map(owner=><option key={owner.id} value={owner.id}>{owner.name??"College staff"}</option>)}
+        </Select>
+      </label>:null}
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lifecycle
+        <Select name="view" defaultValue={data.view}
+          className="mt-2 block w-full">
+          <option value="ALL">All jobs</option><option value="REQUESTS">Requests</option><option value="DRAFT">Drafts</option>
+          <option value="LIVE">Live</option><option value="CLOSED">Closed</option>
+        </Select>
+      </label>
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company or drive
+       <Input type="search" name="search" defaultValue={data.search} maxLength={100}
+        className="mt-2 block w-full"/>
+      </label>
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline state
+        <Select name="deadline" defaultValue={data.deadline} className="mt-2 block w-full">
+          <option value="ALL">All deadlines</option>
+          <option value="TODAY">Today (IST)</option>
+          <option value="DUE_SOON">Live · next 7 days</option>
+          <option value="LATER">Later than 7 days</option>
+          <option value="OVERDUE">Live · passed</option><option value="UNSET">No recorded deadline</option>
+        </Select>
+      </label>
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Card columns
+        <Select name="display" defaultValue={data.display} className="mt-2 block w-full">
+          <option value="DETAILED">Detailed</option><option value="COMPACT">Compact</option>
+        </Select>
+      </label>
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where it is
+        <Select name="journey" defaultValue={data.journey}
+          className="mt-2 block w-full">
+          <option value="ALL">Every stage</option>
+          <option value="TAKING_APPLICATIONS">Taking applications</option>
+          <option value="RUNNING_ROUNDS">Rounds in progress</option>
+          <option value="OFFERS_ISSUED">Offers issued</option>
+          <option value="COMPLETE">Closed or cancelled</option>
+        </Select>
+      </label>
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
+        <Select name="workMode" defaultValue={data.workMode} className="mt-2 block w-full">
+          <option value="ALL">All modes</option><option value="ONSITE">On-site</option>
+          <option value="REMOTE">Remote</option><option value="HYBRID">Hybrid</option>
+        </Select>
+      </label>
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment type
+        <Select name="employmentType" defaultValue={data.employmentType} className="mt-2 block w-full">
+          <option value="ALL">All employment</option><option value="FULL_TIME">Full-time</option>
+          <option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
+        </Select>
+      </label>
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort drives
+        <Select name="sort" defaultValue={data.sort} className="mt-2 block w-full">
+          <option value="COMPANY">Company name</option><option value="DEADLINE_ASC">Earliest recorded deadline</option>
+          <option value="DEADLINE_DESC">Latest recorded deadline</option>
+        </Select>
+      </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. applied
+        <Input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
+          className="mt-2 block w-full"/>
+      </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. applied
+        <Input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
+          className="mt-2 block w-full"/>
+      </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
+        <Input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
+          className="mt-2 block w-full"/>
+      </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. offers
+        <Input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
+          className="mt-2 block w-full"/>
+      </label>
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pay category
+        <Select name="payCategory" defaultValue={data.payCategory}
+          className="mt-2 block w-full">
+          <option value="ALL">All categories</option><option value="REGULAR">Regular</option>
+          <option value="DREAM">Dream</option>
+        </Select>
+      </label>
+      <Button type="submit" >Apply</Button>
+    </form>
+    <div className="flex flex-wrap gap-3 text-sm">
+      <Link href={exportHref("PAGE")} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text md:min-h-9">
+        Export shown page (CSV)
+      </Link>
+      <Link href={exportHref("ALL")} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text md:min-h-9">
+        Export all matching drives (CSV)
+      </Link>
+    </div>
     <nav aria-label="Needs doing" className="flex flex-wrap gap-2">
       <span className="mr-2 self-center text-sm font-semibold">Needs doing:</span>
       {([
