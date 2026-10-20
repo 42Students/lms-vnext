@@ -18,10 +18,10 @@ function ProfileField({
 }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {label}
       </dt>
-      <dd className="mt-2 break-words text-sm font-semibold text-foreground">
+      <dd className="mt-2 break-words text-[14px] font-semibold leading-5 text-foreground">
         {value?.trim() || "Not provided"}
       </dd>
     </div>
@@ -59,7 +59,7 @@ export default async function TpoProfilePage() {
         aria-label="Your TPO profile"
         className="border-t border-border pt-5 min-[768px]:pt-6"
       >
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Account details
         </h2>
 
@@ -82,7 +82,7 @@ export default async function TpoProfilePage() {
           />
 
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Membership status
             </dt>
             <dd className="mt-2">
@@ -99,7 +99,7 @@ export default async function TpoProfilePage() {
           </div>
 
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Roles in this college
             </dt>
             <dd className="mt-2 flex flex-wrap gap-2">
