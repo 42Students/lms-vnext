@@ -231,7 +231,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       <p className="text-xs text-muted-foreground">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
     </section>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 min-[992px]:grid-cols-2" aria-label="Adjustable team preview">
-      {groups.map((team,index)=><section key={index} className="min-w-0 rounded-lg border border-border p-3">
+      {groups.map((team,index)=><section key={index} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
         <h2 className="font-semibold">{team.name} · {team.membershipIds.length}</h2>
         <ul className="mt-2 space-y-2">{team.membershipIds.map(id=>{
           const learner=names.get(id);
@@ -284,7 +284,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
           empty={<EmptyState title="No individual results" description="No individual results recorded." />}
         />
       </div>
-      <Button type="button" variant="secondary" className=""
+      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
         onClick={()=>{
           let url:string|null=null;
           let link:HTMLAnchorElement|null=null;
