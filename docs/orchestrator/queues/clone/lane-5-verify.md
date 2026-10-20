@@ -43,9 +43,9 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-5.md: surface | regres
 - [x] `src/app/e2e/chat17-ui-kit/page.tsx`
 - [x] `src/app/e2e/superadmin-login/page.tsx`
 - [x] `src/app/enterprises/page.tsx`
-- [ ] `src/app/forbidden/page.tsx`
-- [ ] `src/app/home/page.tsx`
-- [ ] `src/app/hr-invite/[token]/page.tsx`
-- [ ] `src/app/login/page.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/tracker/tracker-workflow-panel.tsx`
+- [x] `src/app/forbidden/page.tsx`
+- [x] `src/app/home/page.tsx`
+- [x] `src/app/hr-invite/[token]/page.tsx`
+- [x] `src/app/login/page.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/tracker/tracker-workflow-panel.tsx`
