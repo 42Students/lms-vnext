@@ -6,10 +6,10 @@ export default function CollegeBrandingPreviewLoading() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin · Tenant Setup"
-        title="College branding preview"
+        title="Look and feel"
         description="Retrieving the college's stored public presentation fields."
       />
-      <GracefulPageLoading label="Loading branding preview…" />
+      <GracefulPageLoading label="Loading college branding…" shape="form" />
     </div>
   );
 }
