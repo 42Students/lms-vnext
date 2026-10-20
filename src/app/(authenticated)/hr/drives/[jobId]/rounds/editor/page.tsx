@@ -31,7 +31,7 @@ export default async function HrRoundsEditorPage({params}:{
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title="Edit hiring rounds"
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."
-   actions={<nav className="flex flex-wrap items-center gap-4 text-sm">
+   actions={<nav className="flex flex-wrap items-center gap-2 text-sm">
     <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Back to drive rounds"/>
     <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Back to Drives</Link>
    </nav>} />
@@ -73,10 +73,10 @@ export default async function HrRoundsEditorPage({params}:{
      }))}/>
    </div>:null}
    {rounds.map(round=><article id={"round-edit-"+round.id} key={round.id}
-    className={"min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0 "+
+    className={"min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-5 last:border-b-0 "+
      (round.editable?"":"md:hidden")}>
     <div className="flex flex-wrap justify-between gap-2 md:hidden"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
-     <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge>{round.status}</StatusBadge></span></div>
+     <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone={round.status==="PENDING"?"warning":round.status==="COMPLETED"?"success":"neutral"}>{round.status}</StatusBadge></span></div>
     {round.editable?<form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
       <h3 className="hidden font-semibold text-foreground md:col-span-2 md:block">Change {round.sequence}. {round.name}</h3>
       <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>

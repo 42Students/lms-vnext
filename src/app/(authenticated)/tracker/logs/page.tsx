@@ -53,7 +53,7 @@ export default async function TrackerLogsPage({
 
   if (context.adminScope?.collegeId || context.adminScope?.organizationId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4">
         {header}
         <ErrorState title="Platform log access is scoped" description="Clear the Super Admin organization/college safety scope to view platform-wide log signatures."/>
       </div>
@@ -62,7 +62,7 @@ export default async function TrackerLogsPage({
 
   if (!logAlertsRuntimeEnabled()) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4">
         {header}
         <Alert tone="warning">Known Errors persistence is staged but not enabled. W01 must register and replay the DB10 log-alert tables before this page can read data. This message is not a healthy-log status.</Alert>
       </div>
@@ -71,10 +71,10 @@ export default async function TrackerLogsPage({
 
   if (!parsed.success) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4">
         {header}
         <ErrorState title="Invalid log environment." description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
-          action={<Link href="/tracker/logs" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">
+          action={<Link href="/tracker/logs" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">
             Reset filter
           </Link>}/>
       </div>
@@ -87,7 +87,7 @@ export default async function TrackerLogsPage({
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       {header}
       <Tabs ariaLabel="Log environment" renderPanel={false} value={environment}
         items={(["PRODUCTION","UAT","DEVELOPMENT"] as const).map(value=>({
