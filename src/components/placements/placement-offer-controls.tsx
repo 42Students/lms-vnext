@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -87,7 +88,7 @@ function formatMoney(value: number | null) {
   }).format(value);
 }
 
-const inputClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 w-full max-[767px]:min-h-11";
 
 export function PlacementOfferControls({
   jobId,
@@ -463,7 +464,7 @@ export function PlacementOfferControls({
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Record type
                       </span>
-                      <select
+                      <Select
                         aria-label={"Record type for " + (item.displayName ?? "candidate")}
                         className={inputClass}
                         value={draft.kind}
@@ -479,13 +480,13 @@ export function PlacementOfferControls({
                       >
                         <option value="OFFER">Offer</option>
                         <option value="LOI">Letter of intent</option>
-                      </select>
+                      </Select>
                     </label>
                     <label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Role title
                       </span>
-                      <input
+                      <Input
                         aria-label={
                           "Offer role title for " +
                           (item.displayName ??
@@ -518,7 +519,7 @@ export function PlacementOfferControls({
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Annual CTC (INR)
                       </span>
-                      <input
+                      <Input
                         aria-label={
                           "Offer annual CTC for " +
                           (item.displayName ??
@@ -553,7 +554,7 @@ export function PlacementOfferControls({
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Planned joining
                       </span>
-                      <input
+                      <Input
                         aria-label={
                           "Offer joining date for " +
                           (item.displayName ??
@@ -587,7 +588,7 @@ export function PlacementOfferControls({
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Offer expires
                       </span>
-                      <input
+                      <Input
                         aria-label={
                           "Offer expiry for " +
                           (item.displayName ??
@@ -660,7 +661,7 @@ export function PlacementOfferControls({
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Joining outcome
                       </span>
-                      <select
+                      <Select
                         aria-label={
                           "Joining outcome for " +
                           (item.displayName ??
@@ -697,13 +698,13 @@ export function PlacementOfferControls({
                         <option value="DID_NOT_JOIN">
                           Did not join
                         </option>
-                      </select>
+                      </Select>
                     </label>
                     <label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Actual/new date
                       </span>
-                      <input
+                      <Input
                         aria-label={
                           "Joining outcome date for " +
                           (item.displayName ??
@@ -737,7 +738,7 @@ export function PlacementOfferControls({
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Outcome reason
                       </span>
-                      <input
+                      <Input
                         aria-label={
                           "Joining reason for " +
                           (item.displayName ??
@@ -771,7 +772,7 @@ export function PlacementOfferControls({
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Correction reason
                       </span>
-                      <input
+                      <Input
                         aria-label={
                           "Joining correction reason for " +
                           (item.displayName ??
