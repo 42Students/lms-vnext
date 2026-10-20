@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
@@ -20,10 +20,12 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
  const [field,setField]=useState<(typeof fields)[number][0]>("DEADLINE");
  const [value,setValue]=useState("");const [reason,setReason]=useState("");
  const [notes,setNotes]=useState<Record<string,string>>({});
+ const inFlightRef=useRef(false);
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");
  const [confirmation,setConfirmation]=useState<{action:"ACCEPT"|"DECLINE"|"WITHDRAW";requestId:string;expectedUpdatedAt:string;note:string}|null>(null);
  async function send(body:Record<string,unknown>){
-  if(busy)return;
+  if(inFlightRef.current||busy)return;
+  inFlightRef.current=true;
   setBusy(true);setError("");setSuccess("");
   try{
    const response=await fetch("/api/placements/jobs/"+encodeURIComponent(jobId)+"/change-requests",{
@@ -39,7 +41,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    if(body.action==="CREATE"){setValue("");setReason("");}
    if(typeof body.requestId==="string")setNotes(previous=>({...previous,[body.requestId as string]:""}));
    router.refresh();
-  }catch{setError("Could not save change request.");}finally{setBusy(false);}
+  }catch{setError("Could not save change request.");}finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div className="min-w-0 space-y-5">
   {error?<InlineNotice tone="error" message={error}/>:null}
@@ -77,7 +79,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm">{item.proposedValue}</p>
      <p className="break-words [overflow-wrap:anywhere] text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
      {item.decisionNote?<Alert tone="info">Decision: {item.decisionNote}</Alert>:null}
-     <Disclosure title={"Discussion ("+item.messages.length+")"} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
+     <Disclosure title={"Discussion ("+item.messages.length+")"} defaultOpen={item.status==="OPEN"&&item.targetParty===party} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
       {item.messages.length===0?<p className="text-sm text-body">No discussion yet.</p>:null}
       {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
