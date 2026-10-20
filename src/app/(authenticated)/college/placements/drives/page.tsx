@@ -38,7 +38,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
     {key:"deadline",header:"Deadline",cell:item=>item.applicationDeadline?formatter.format(item.applicationDeadline):"Not specified"},
     {key:"posted",header:"Posted",cell:item=>item.publishedAt?formatter.format(item.publishedAt):"Not posted"},
     {key:"applicants",header:"Applicants",cell:item=>item.applicants},
-    {key:"status",header:"Status",cell:item=>item.status},
+    {key:"status",header:"Status",cell:item=>item.status==="PUBLISHED"?"Live":item.status==="DRAFT"?"Draft":item.status==="CLOSED"?"Closed":item.status==="ARCHIVED"?"Archived":item.status},
     {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
       <Link href={`/college/placements/jobs/${item.id}/applications`}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View applications</Link>
@@ -61,7 +61,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={query.status}>
-          {["PUBLISHED","DRAFT","CLOSED","ARCHIVED","ALL"].map(s=><option key={s} value={s}>{s==="PUBLISHED"?"Active":s}</option>)}
+          {["PUBLISHED","DRAFT","CLOSED","ARCHIVED","ALL"].map(s=><option key={s} value={s}>{s==="PUBLISHED"?"Live":s==="DRAFT"?"Draft":s==="CLOSED"?"Closed":s==="ARCHIVED"?"Archived":s==="ALL"?"All":s}</option>)}
         </Select>
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
