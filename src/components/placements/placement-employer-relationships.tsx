@@ -359,7 +359,7 @@ export function PlacementEmployerRelationships({
         description="This company relationship will be archived for this college. Canonical employer identity remains available to other colleges."
         confirmLabel="Confirm archive" confirmVariant="danger" pending={Boolean(pendingId)}
         onConfirm={()=>{if(archiveConfirmId)void archive(archiveConfirmId);}}/>
-      <ConfirmDialog open={Boolean(restoreConfirmId)} onOpenChange={next=>{if(!next)setRestoreConfirmId(null);}}
+      <ConfirmDialog open={Boolean(restoreConfirmId)} onOpenChange={next=>{if(!next&&!pendingId)setRestoreConfirmId(null);}}
         title="Restore this company?"
         description="The archived company relationship will become available to this college again. Its history is preserved."
         confirmLabel="Restore company" pending={Boolean(pendingId)}
