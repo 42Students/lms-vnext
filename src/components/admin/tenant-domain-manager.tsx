@@ -205,7 +205,8 @@ export function TenantDomainManager({
           </div>
           <Button
             className="min-h-11 md:min-h-9"
-            disabled={creating || !host.trim()}
+            loading={creating}
+             disabled={creating || !host.trim()}
             onClick={createDomain}
           >
             {creating ? "Adding…" : "Add domain"}
@@ -300,7 +301,7 @@ export function TenantDomainManager({
                       </Button>
                     ) : null}
                     <Button
-                      variant="ghost"
+                      variant="danger"
                       size="sm"
                       className="min-h-11 md:min-h-9"
                       disabled={busy}

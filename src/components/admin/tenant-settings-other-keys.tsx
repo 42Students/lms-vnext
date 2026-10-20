@@ -55,7 +55,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
        {documented?<p className="text-xs text-warning-text">Never read here — this key is read at {documented.scope} scope.</p>:null}
        <p className="mt-1 break-all text-body">{entry.value==="[redacted]"?"[redacted]":entry.value}</p>
       </div>
-      <Button variant="secondary" type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
+      <Button variant="danger" type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
        className="min-h-11 md:min-h-9">
        Remove</Button>
      </li>;
@@ -73,7 +73,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
      maxLength={4096} className="min-h-11 md:min-h-9 w-full"/>
    </label>
    <p className="text-xs text-body">Use letters, digits, dots, dashes and underscores. Typos create unused keys. Documented settings must be edited in their section above.</p>
-   <Button variant="primary" type="button" disabled={!ready||busy||!/^[A-Za-z][A-Za-z0-9._-]*$/.test(key)||!value.trim()}
+   <Button variant="primary" type="button" loading={busy} disabled={!ready||busy||!/^[A-Za-z][A-Za-z0-9._-]*$/.test(key)||!value.trim()}
     onClick={()=>void apply("POST")} className="min-h-11 md:min-h-9">
     {busy?"Saving…":"Add setting"}</Button>
   </fieldset>

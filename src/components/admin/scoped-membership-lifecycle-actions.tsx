@@ -44,7 +44,7 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
       className="min-h-11 w-full md:min-h-9"/>
     </label>
     <p className="text-xs text-muted-foreground">Suspends only this college membership. Other college access is unaffected.</p>
-    <Button variant="primary" type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirming("SUSPEND")}
+    <Button variant="danger" type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirming("SUSPEND")}
      className="min-h-11 md:min-h-9">Confirm suspension</Button>
    </div>:null}
   </>:status==="SUSPENDED"?<Button variant="secondary" type="button" disabled={busy} onClick={()=>setConfirming("REACTIVATE")}
