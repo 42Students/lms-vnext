@@ -119,14 +119,14 @@ export function SuperAdminContentActions({item}:{item:Content}){
  if(item.status==="ARCHIVED")return <p className="text-xs text-muted-foreground">Archived content is read-only.</p>;
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">
-   <Button variant="primary" type="button" disabled={busy} onClick={toggleEditor}
+   <Button variant="secondary" type="button" disabled={busy} onClick={toggleEditor}
     className="min-h-11 md:min-h-9">Edit</Button>
    {item.status==="DRAFT"?<Button variant="primary" type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
     className="min-h-11 md:min-h-9">Publish</Button>:null}
-   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
-    className="min-h-11 text-error md:min-h-9">Delete</Button>
+   <Button variant="danger" type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
+    className="min-h-11 md:min-h-9">Delete</Button>
   </div>
-  {editing?<fieldset disabled={busy} className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+  {editing?<fieldset disabled={busy} className="grid gap-2 border-t border-border pt-3">
    <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
     Private files and existing published URLs are not exposed in this form.</p>
    <label className="grid gap-1 text-xs font-semibold">Title
