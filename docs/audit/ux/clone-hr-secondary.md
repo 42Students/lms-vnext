@@ -472,3 +472,57 @@ The owner requires value rows for default, hover, active, focus, disabled, loadi
 `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`: the audit event history now renders `<ol className="mt-3 divide-y divide-border border-y border-border text-sm">` with each event in `<li className="py-3">`, rather than rounded/separately-spaced rows. This follows `docs/design/old-lms-pages.md:6,9-11` (one continuous hairline-bordered list, not a card per row). Dates remain formatted in Asia/Kolkata, descriptions and keys unchanged. Phone/tablet layout is one column without horizontal overflow by declaration. Exact inherited font, line-height, hover/focus, disabled and real viewport parity remain open; no visual tick claimed.
 
 Scope remains: **10/87 strict-complete files, 77/87 open**. The full source scan and repeatable assertions from the preceding section remain valid (this change introduces no native control, custom overlay, `h1` or hex in queued TSX). The CSS module is a supporting file outside the 87-item queue and is not added as an arbitrary extra tick.
+
+
+## Chat-18 continuation — exact page-head action anatomy and calendar responsive cascade (2026-10-20)
+
+**Sync:** At this turn's start, main was `9880c6d5`; the previous chat-18 branch `819bb6a6` was its ancestor (behind 828/ahead 0). Fast-forwarded the lane using an expected-SHA update, preserving earlier work. Later integrated main `3d35195d` by a two-parent tree merge `c177c4d1`; only four non-overlapping latest chat-18 files were replayed over main. No pushes to main.
+
+### Property-by-property source checks
+
+| Surface / state | Original LMS source and target | vNext file and exact declaration | Result / remaining evidence |
+| --- | --- | --- | --- |
+| Page-head anatomy | `old-lms-pages.md:3-5`: one white canvas, one title/subtitle row, actions aligned top-right, no independent action bar | `ui/page-header.tsx:28-57`: title/subtitle in one header, actions on right at `md`; tracker audit detail, reporter detail, My Reports, Report Issue, recruiter Activity, Notifications, Calendar, Messages now pass their page shortcuts/export links through `PageHeader.actions` | Local placement fixed; inherited shell border/radius need browser measurement |
+| Title text | `old-lms-pages.md:3` visually ~30px/600/#172033 desktop; `components___listing-page-header.scss:39-58` source title 28px/600/1.3 | Shared `ui/page-header.tsx:30-39` desktop 30px/600/1.35, phone 20px; no chat-18 local heading overrides | Original live observation and SCSS differ; **not** treated as exact matched typography |
+| Header divider and spacing | `components___listing-page-header.scss:26-35`: gap 24px, margin-bottom 16px, padding-bottom 16px, 1px neutral-200 | `ui/page-header.tsx:25-28`: md gap-6 (24px), md mb-4 (16px), pb-4 (16px), 1px var(--lms-canvas-border) | Declared dimensions match, resolved border colour outstanding |
+| Action desktop min-height | `old-lms-shell-spec.md:23-24`: 36px ordinary outlined control | Actions added in `tracker/audit-findings/[publicId]/page.tsx`, `tracker/mine/page.tsx`, `tracker/mine/[publicId]/page.tsx`, `tracker/page.tsx`, `hr/activity/page.tsx`, `hr/notifications/page.tsx`, `hr/calendar/page.tsx`, `hr/conversations/page.tsx` use `md:min-h-9` (36px) | Declared min-height matched |
+| Action mobile min-height | `old-lms-shell.css:73-85` max-width 767px; `components___notification-drawer.scss:22` touch minimum 44px | Same routes: `min-h-11` (44px); `PageHeader.actions` switches to stacked full-width at width <=767px; new links use `w-full md:w-auto` | Source responsive rule matches |
+| Action border / radius | `old-lms-shell-spec.md:24` outlined icon/action white surface, radius 9px, hairline | Local links use `border border-border bg-surface rounded-[var(--lms-control-radius)]`; the old value remains delegated to shared token | Layout matched by declaration; resolved border/radius needs computed proof |
+| Focus | `docs/design/ui-clone-checklist.md:B,D`: visible keyboard focus, two-pixel outlined controls | Added local action links preserve `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]`; shared Buttons retain disabled/loading/focus styling | Source matched state ownership, not pixel-rendered |
+| Hover | `components___listing-page-header.scss:112-121`: outlined action border primary and tinted surface on hover | Most new local links specify `hover:border-primary` and delegated shared Button hover; some link treatments do **not yet specify** the precise tinted hover background | **Open** until exact hover/background and active state match, no tick |
+| HR Activity action | `old-lms-pages.md:4-5`: Export in title-right action cluster | `hr/activity/page.tsx`: `Export activity CSV` moved from bottom into `PageHeader.actions` **only if READY**, same API URL, collegeId/kind/q | Structure fixed; query/security preserved |
+| HR Activity invalid/result links | `old-lms-shell.css:73-85`: 44px minimum phone tap | `hr/activity/page.tsx`: `Choose again` and job title links have `min-h-11 md:min-h-9` and keyboard focus; same hrefs | Source declarations |
+| HR Notifications action group | `old-lms-pages.md:3-5` head-right action cluster | `hr/notifications/page.tsx`: Conversations shortcut (primary) and conditional scoped CSV export (secondary) are head actions; no separate export bar. Invalid-filter branch also has head action + inline reset | Structure and route behaviour preserved |
+| HR Calendar actions | `old-lms-pages.md:3-5` header-right controls | `hr/calendar/page.tsx`: Drives shortcut and conditional calendar CSV export grouped in `PageHeader.actions`, 44px phone/36px desktop, same date/view/category query | Structure matched by source |
+| HR Messages action | `old-lms-pages.md:3-5` head-right link | `hr/conversations/page.tsx`: Notifications inbox shortcut now a secondary outlined header action, no orphan row under page head | Structure matched by source |
+| Audit finding detail nav | `old-lms-pages.md:4,6`: module tab/navigation strip below page header | `tracker/audit-findings/[publicId]/page.tsx`: adds existing `TrackerAdminNav` immediately after `PageHeader`, same nav as list route | Tab anatomy now consistent |
+| Audit finding event and commit rows | `old-lms-pages.md:6`: continuous hairline rows, no separate cards | `tracker/audit-findings/[publicId]/page.tsx`: `border-y divide-y` event timeline and fix-commit list, `py-3` each; empty list uses a slim `role=status` row rather than an unexplained blank border | Source default/empty structure corrected |
+| Recruiter calendar board seven columns | `lms2-fe@prod-2026/src/styles/components/_recruiter-v2.scss:141-146`: repeat(7,minmax(150px,1fr)), gap 10px, 6px bottom padding | `recruiter-calendar-legacy.module.css:.board[data-slot]`: exact grid-template, gap, padding with more specific selector than shared grid class | Source property match |
+| Calendar hidden at <=860px | `_recruiter-v2.scss:157-164` collapses seven columns at 860px | `hr/calendar/page.tsx:497,521` renders mobile occupied-day list under 861px and desktop grid from 861px; `recruiter-calendar-legacy.module.css` **no longer declares `display:grid` on the board** | Fixed an actual specificity bug: scoped `display:grid` previously overrode Tailwind `.hidden`, displaying both calendars on phones/tablets. Need rendered 375/768/861/1280px comparison |
+| Calendar day active/hover | `_recruiter-v2.scss:143-146`: today border/inset #2f6fed; event hover #f6f8fb; date cards at least 140px high | `recruiter-calendar-legacy.module.css:42-77` matches those literals | Source values match; focus/scroll/computed CSS still unverified |
+
+### Full 87-file source grep-equivalent verification on current branch
+
+Fetched every queued TSX from GitHub after this batch in seven bounded slices (0–13, 14–27, 28–41, 42–55, 56–69, 70–86), applying read-only source regex matches, not a shell invocation:
+
+| Pattern | Found | Exemption |
+| --- | ---: | --- |
+| Native visible `button/input/select/textarea/table` opening tag | 0 | None |
+| Native hidden input | 1 | `tracker/audit-findings/page.tsx`, `type="hidden"` for the view filter (not visible) |
+| Own `<h1` heading | 0 | All authored route headings use shared `PageHeader` |
+| Six-character literal hex colour in queued TSX | 0 | Route-scoped calendar CSS has necessary exact historical hex values |
+| Manual `border-b-2` tab underline | 0 | Shared `Tabs` used |
+| Literal `fixed inset-0` or `role="dialog"` text | 1 | `recruiter-conversation-live-refresh.tsx` checks an existing dialog by selector; no custom overlay authored |
+
+Source verification command for a local maintainer (not executed by this lane):
+
+```bash
+node scripts/codemods/chat18-secondary-parity-check.cjs
+grep -rnE '<(button|input|select|textarea|table)([ >])|#[0-9a-fA-F]{6}|fixed inset-0|role="(dialog|alertdialog)"' 'src/app/(authenticated)/hr' 'src/app/(authenticated)/recruiter' 'src/app/(authenticated)/tracker' src/components/hr src/components/tracker
+```
+
+The parity assertion script gained guarded checks for header actions and the calendar's display-rule ownership. Its CSS guard removes comments before rejecting an accidental local `display` declaration; this prevents CSS specificity from silently breaking phone display again. All changes were submitted through GitHub's branch-scoped updates and read back; **no application, Node script, TypeScript compilation, CI or browser was run.**
+
+**STRICT TICK STATUS: 10/87 ticked, 77/87 open.** Source layout, markup, properties and breakpoint declarations improved, but the exact computed default/hover/active/focus/disabled/loading/error matrices and real legacy-vs-vNext 375px phone, 768px tablet, 861px breakpoint and 1280px desktop captures have not been obtained. No visual file falsely closed.
+
+**Next file:** `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx` — complete inherited link and status-pill computed hover/focus parity, timeline spacing and actual phone/tablet/desktop side-by-side evidence; then `src/app/(authenticated)/hr/company/page.tsx`.

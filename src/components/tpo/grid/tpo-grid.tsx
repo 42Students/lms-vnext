@@ -46,7 +46,7 @@ export const TPO_GRID_ENGINE="ag-grid-quartz" as const;
 const minWidth=100;
 const maxWidth=500;
 const cellValue=(value:string|number|null|undefined):string|number=>displayTpoGridCell(value);
-function compareNumberDate(kind:"number"|"date",a:unknown,b:unknown):number{
+function compareNumberDate(kind:"number"|"date",a:unknown,b:unknown,descending=false):number{
  const convert=(value:unknown)=>{
   if(value===null||value===undefined||value==="")return null;
   if(kind==="number"){
@@ -57,8 +57,10 @@ function compareNumberDate(kind:"number"|"date",a:unknown,b:unknown):number{
   return Number.isFinite(date)?date:null;
  };
  const av=convert(a),bv=convert(b);
- if(av===null)return bv===null?0:1;
- if(bv===null)return -1;
+ // AG Grid reverses comparator output in descending order; compensate for
+ // empty values so blank dates/numbers stay LAST in both directions.
+ if(av===null)return bv===null?0:descending?-1:1;
+ if(bv===null)return descending?1:-1;
  return av-bv;
 }
 type NativeProps<Row>=TpoSpreadsheetGridProps<Row>;
@@ -206,10 +208,11 @@ export function TpoGrid<Row>({
    colId:col.key,headerName:col.label,field:undefined,
    minWidth, maxWidth, width:160,resizable:true,sortable:Boolean(col.sortKind),
    valueGetter:p=>p.data?col.read(p.data):null,
-   comparator:col.sortKind?(a,b,nodeA,nodeB)=>compareNumberDate(
+   comparator:col.sortKind?(a,b,nodeA,nodeB,isDescending)=>compareNumberDate(
     col.sortKind!,
     col.sortValue&&nodeA.data?col.sortValue(nodeA.data):a,
     col.sortValue&&nodeB.data?col.sortValue(nodeB.data):b,
+    isDescending,
    ):undefined,
    tooltipValueGetter:p=>p.data?col.tooltip?.(p.data):undefined,
    cellRenderer:openPrimary?.columnKey===col.key

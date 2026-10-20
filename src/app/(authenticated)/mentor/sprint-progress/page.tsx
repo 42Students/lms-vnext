@@ -49,7 +49,7 @@ export default async function MentorSprintProgressPage({
       Projects access is disabled. Sprint progress was not loaded.
     </section> : <>
       <form action="/mentor/sprint-progress" method="get"
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Search
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             placeholder="Sprint, release or project" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />

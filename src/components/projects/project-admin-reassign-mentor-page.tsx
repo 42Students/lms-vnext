@@ -12,6 +12,7 @@ import { ProjectMentorReassignment } from "@/components/projects/project-mentor-
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {parseProjectAdminReassignMentorQuery,projectAdminReassignMentorHref} from "@/modules/projects/admin-reassign-mentor-query-model";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
@@ -89,7 +90,7 @@ export async function ProjectAdminReassignMentorPage({
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
               {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
-                <span className="text-xs font-semibold text-warning-text">Overloaded</span> : null}
+                <StatusBadge tone="warning">Overloaded</StatusBadge> : null}
             </Link>;
           })}
         </div>

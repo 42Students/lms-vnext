@@ -761,3 +761,16 @@ Phone: <=767px uses 24px/32px h1, 20px/30px h2, 16px/26px h3, 44px raw form/acti
 **STRICT LEDGER: A1–A4, C1–C7 and D remain [ ] (0/12 ticked).** Missing: full tree button/input/select/textarea/hex grep and exemptions, computed style and browser focus comparisons, per-page source/caller migration, the old 36px/44px desktop `.h1` vs measured 30px portal-heading conflict, native picker OS differences, rich-text editor parity, image/upload flow and actual responsive screenshots.
 
 **Next exact file for lane chat-17:** `src/styles/legacy-skin.css` — continue A1/A2 audit of remaining caption/helper/long-form, label/checkbox, form error states and readable contrast without altering other lanes' overlay/table ownership.
+
+
+### C5 / A2 small error-state correction after main reconciliation
+
+`src/styles/legacy-skin.css:723-736` now limits the `#ef4444` / 12px validation styling to the `-error` file input description and the dropzone's real validation error. It no longer repaints `file-upload.tsx:159`'s disabled/unavailable explanation (13px, muted body text) bright red. The actual validation alert remains in `file-upload.tsx:157` (12px) and `file-dropzone.tsx:92` (12px).
+
+| Source behavior | Legacy source:line | vNext source:line | Finding |
+| --- | --- | --- | --- |
+| Invalid size/type file selection | `components___global.scss:66-70` `.ln-form-error`, `--status-error:#ef4444`, 12px | `legacy-skin.css:731-736`, `file-upload.tsx:157`, `file-dropzone.tsx:92` | Error red and 12px source match |
+| Disabled picker explanation | `components___variables.scss:27-32` muted neutral text roles `#54505d/#a9a7ae` | `file-upload.tsx:159` disabled text `--lms-body-text`, excluded by `legacy-skin.css:732`'s `[id$="-error"]` | Correctly distinct from invalid/error red; still needs rendered comparison |
+| Missing picker with alternate | No exact legacy WebView fallback surface established | `file-upload.tsx:126,159` status + optional fallback, unchanged by global error paint | Mismatch cannot be ticked without old WebView reference |
+
+These are static whole-file code comparisons only. The file-owning change is pushed as `[chat-17]`; there is no new layout, no API behavior change, and no fabricated browser evidence. **A1–A4, C1–C7, D remain 0/12 strictly ticked.**

@@ -834,3 +834,49 @@ Direct GitHub branch fetch inspected all of `src/components/tpo/recruiter-leads-
 - [ ] F1/F2 categories: exhaustive checkout grep, render/dismiss/focus runtime, and exact legacy popup exit still missing.
 
 **Next file:** `src/components/placements/placement-drive-workspace.tsx`, to check nested More menu on mobile action-sheet scroll, followed by `src/components/tpo/recruiter-leads-workspace.tsx` check for nested menu focus.
+
+
+## Chat-16 native browser confirmation migration — 2026-10-20
+
+**F1 open item: consumer migration, source stage.** Browser-native `window.confirm` prompts cannot be pixel-cloned from the old LMS. The following owner-lane TPO consumer actions now render the shared accessible legacy-skinned `ConfirmDialog`, preserving their original question copy, server confirmation payloads, disabled/pending behavior, errors and route effects. Each edit is independently committed/pushed to `chatgpt/chat-16-b` with `[chat-16]`.
+
+### Exact legacy modal value table
+
+| Visual/interaction property | Old LMS exact value and source | vNext shared path/value | State conclusion |
+| --- | --- | --- | --- |
+| Confirm content padding | `docs/design/legacy-styles/components___antddesign.scss:899-901`: **15px 15px 5px 15px** | `src/components/ui/confirm-dialog.tsx:15-19` assigns `lms-legacy-confirm-dialog`; `legacy-overlays.css:394-396` content **15px 15px 5px** | Match source declaration |
+| Confirm footer top margin | `components___antddesign.scss:902-904`: **21px** | `legacy-overlays.css:401-405`: **21px** | Match numeric value |
+| Mobile popup width | `components___antddesign.scss:1037-1040`: max `100vw-32px` through **767px** | `src/components/ui/dialog.tsx:39-45`: width `100%-2rem`, same **32px** viewport subtraction | Source match when full viewport container |
+| Mobile popup height/scroll | `components___antddesign.scss:1057-1061`: viewport minus **48px** | `dialog.tsx:43-45`: visualViewport minus3rem/48px, ScrollCue in `:53` | Numeric gap matches; runtime visualViewport handling not tested |
+| Mobile confirm actions | `components___antddesign.scss:1064-1072`: button gap **8px**, min height **44px** | `legacy-overlays.css:407-413` same; Cancel and Confirm through `src/components/ui/confirm-dialog.tsx:17-18` | Numeric match |
+| Confirm focus semantics | Old stylesheet has no prescribed focus return algorithm | `src/components/ui/confirm-dialog.tsx:15-18`: role=alertdialog, Cancel autofocus, pending disables dismiss; `src/components/ui/use-overlay-exit.ts:21-30` connected opener focus guard | Source behavior covered, browser focus not executed |
+| Confirm backdrop | `components___antddesign.scss:143-145`: `rgba(30,54,63,.1)` | `src/components/ui/dialog.tsx:44`: `backdrop:bg-[#1e363f]/10` (=same rgba) | Match |
+| Confirm exit | Bundled legacy SCSS lacks one canonical universal exit duration | Shared `use-overlay-exit.ts`: 180ms exit, reduced-motion immediate; same for all new consumers | **Not proven legacy timing equivalent** |
+
+### Native confirmation removals (direct branch fetch regex counts)
+
+| File | Previous native prompt(s) | Current `window.confirm(...)` instances | Current shared ConfirmDialog(s) | State/side-effect preservation |
+| --- | --- | --- | --- | --- |
+| `src/components/placements/tpo-mark-own-notification-read.tsx` | 1 | **0** | **1** | Server `confirmed:true`, expected unread and refresh, pending/error preserved; min44 phone trigger through767 |
+| `src/components/placements/tpo-round-check-in.tsx` | 1 dynamic | **0** | **1** | Present vs no-show selection captured; status-specific primary/danger actions, attendance expected CAS, busy guard |
+| `src/components/placements/tpo-drive-saved-views.tsx` | 1 clear all | **0** | **1** | LocalStorage deletion only on dialog confirmation, same browser-only persistence/error |
+| `src/components/tpo/tpo-audit-saved-views.tsx` | 1 delete | **0** | **1** | Saved-view revision token and guarded mutation unchanged, pending disables dismissal |
+| `src/components/placements/tpo-season-controls.tsx` | 1 create/edit | **0** | **1** | Original form validation performed before modal; second confirmation commits same version/CAS payload; async failure reported inline |
+| `src/components/placements/tpo-bulk-drive-reminder.tsx` | 1 selected-drive batch | **0** | **1** | 1–10 selected IDs snapshotted before modal; preview tokens, once-daily POST and success/error counters unchanged |
+| `src/components/placements/tpo-round-calendar-control.tsx` | 2 (blocked date + main mutation) | **0** | **1 two-stage** | Blocked date first-stage acknowledgement, second-stage round action confirmation; expectedUpdatedAt and collision payload unchanged |
+| `src/components/placements/tpo-college-rules-control.tsx` | 2 (dirty navigation + save) | **0** | **2** | Link navigation uses confirm before discarding dirty values; save keeps validation/version token; browser `beforeunload` guard retained for actual tab-close |
+| **Total** | **10 prompts** | **0 across these 8 branch-fetched files** | **9 reusable dialog instances** | Verified by exact fetched-source match count; no app execution |
+
+### Source responsive/state proof (not screenshot or browser rendering)
+
+| Viewport | Confirmation UI | Trigger/content states |
+| --- | --- | --- |
+| 280px / 375px phone | viewport minus32 width; shared modal max viewport minus48 height; 8px footer gap and 44px minimum actions; safe-area bottom | TPO read/check-in/season buttons min44; dynamic descriptions wrap in shared Dialog; disabled/pending and aria alertdialog preserved |
+| 640px / 767px | Legacy phone modal styling remains through 767px; no premature `sm:` cutoff in migrated trigger controls | Input controls retain 44px minimum until 767px where explicitly controlled; existing error/status copy unchanged |
+| 768px / 1024px | Shared Dialog max36rem default, rounded12px token, 21px confirm footer top margin | Migrated triggers explicitly use `md:min-h-9` for desktop 36px where a compact variant already existed |
+| Keyboard/assistive | Native dialog Escape/backdrop allowed only when not pending; Cancel autofocus; focus returns to connected trigger | Primary/danger confirmation labels announce requested mutation, no native browser blocking popup |
+| Loading/error/empty | Pending disables Cancel/Confirm and dismiss, live error/status remains in original screens; unavailable/empty states untouched | Re-entrant requests guarded by existing busy/inFlight state, view/round eligibility conditions retained |
+
+**Coverage limitation:** GitHub indexed default-branch search for `window.confirm(` revealed **51 src files** before this batch. It is a bounded search, not a checkout `git grep` and cannot prove the remaining count; these 8 files were directly read from the lane branch, each showing **zero** native confirmation calls after migration. The broader F1 coverage remains open: need owner-orchestrated `git grep -n 'window.confirm' -- src`, replacement of other relevant browser prompts, exact legacy variant table and live focus test.
+
+**Next F1 file:** `src/components/placements/tpo-week-hour-calendar.tsx` (multiple independent blocked-date/dirty-draft confirmations, requiring stateful two-step dialogs), then `src/components/tpo/recruiter-lead-detail-workspace.tsx` (unsaved form/one-time invitation confirmation).

@@ -54,7 +54,7 @@ export default async function MentorTeamHistoryPage({
         </section>
       : <>
         <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
-          className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+          className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
           <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Registered role
             <Select name="role" defaultValue={data.query.role}
