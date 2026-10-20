@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -48,14 +49,11 @@ export default async function LearnerApplicationHistoryPage({
           and round decisions remain in your application details.
         </p>
         {history.events.length === 0 ? (
-          <div role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-5 text-sm text-body">
-            No application-status history records are available yet.
-            Your current application status appears above.
-          </div>
+          <EmptyState title="No application-status history records available" description="Your current application status appears above." />
         ) : (
           <ol className="mt-5 space-y-3">
             {history.events.map((event) => (
-              <li key={event.id} className="rounded-lg border border-border p-4">
+              <li key={event.id} className="border-b border-border py-4">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <p className="m-0 text-sm font-semibold text-foreground">{event.label}</p>
                   <time className="text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>
