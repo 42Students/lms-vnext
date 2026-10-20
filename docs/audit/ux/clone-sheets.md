@@ -1022,3 +1022,50 @@ grep -nE 'value\.trim\(\)|sortKind|sortValue|descending|av===null|bv===null' src
 Legacy context: `docs/design/ui-clone-checklist.md:57` specifies only numeric/date sorts and E8 Quartz parity; `docs/design/old-lms-shell.css:23,73` gives mobile/desktop 767/768 boundary. No source claim of exact old grid comparator when the legacy TpoGrid JSX is unavailable. **E8 stays unticked**; runtime empty/ascending/descending screenshots and AG Grid dependency remain open.
 
 **Next exact file:** `src/components/tpo/grid/grid-selection.ts` — static review of Shift/Ctrl authorization and phone-checkbox consistency, then browser test handoff.
+
+
+## 2026-10-20 [chat-14] fifteen-file parity batch — E8 selection/export
+
+**Method:** All modifications committed only on chatgpt/chat-14-b. Value comparisons use docs/design/old-lms-shell.css:23,73 (phone <=767px, desktop >=768px), legacy-styles/components___antddesign.scss:1081-1100 (phone 44px targets), docs/design/ui-clone-checklist.md:E8 (Quartz grid, 48px pinned selection). File-level grep results are computed from complete GitHub-fetched source, not command execution; no browser/TS/CI test was run.
+
+### `src/components/tpo/grid/grid-selection.ts` — Authorized Shift-range anchor
+
+| Legacy / state | Implemented source comparison |
+|---|---|
+| Exact legacy requirement | Legacy E8 requires filtered selected/visible authorized IDs and Ctrl/Shift multi-select; 48px pinned row checkbox |
+| Updated source | New line 26 rejects a Shift anchor absent from allowedIds; line 58 rejects revoked checkbox anchor; no mutation to row IDs or scope |
+| Phone/tablet/wide | Pure selector shared by phone fallback and desktop Quartz. All rows remain keyed by authorized IDs; no viewport styling added. |
+| Active/disabled/error/empty | Permission change drops stale anchor, keeps still-authorized out-of-filter selections on Ctrl/Meta; checked/unchecked ranges exclude disallowed IDs. |
+
+**Whole-file grep-equivalent:** SHA `3efd7d956bc35b96e9ad2338a69b9c56dcb17127`, 67 lines; 0 inline hex=0; raw HTML controls=0; Button pairs=0/0; FilterChip pairs=0/0; md: tokens=0; sm: tokens=0.
+
+### `src/components/tpo/grid/grid-workspace.tsx` — Off-filter selected rows and TSV/CSV export
+
+| Legacy / state | Implemented source comparison |
+|---|---|
+| Exact legacy requirement | Old LMS toolbar Search / Filters / Views / Columns / Export; E8 exports only selected authorized visible rows |
+| Updated source | New line 93 uses selection?.selected.length to distinguish a hidden selection from no selection. Hidden selections now produce zero data rows, not all visible unrelated rows. |
+| Phone/tablet/wide | Phone action labels already use min-h-11 (44px), desktop md:min-h-9 (36px); this data-scope fix is identical for both viewport branches. |
+| Active/disabled/error/empty | Loading/clipboard blocked notices retained, CSV builder and API export source untouched; no widening when no selected IDs remain in view. |
+
+**Whole-file grep-equivalent:** SHA `30bf4a69cfaf24292bf676b7a2836fd0c2460ada`, 267 lines; 0 inline hex=0; raw HTML controls=0; Button pairs=14/14; FilterChip pairs=1/1; md: tokens=1; sm: tokens=0.
+
+### `src/components/tpo/tpo-spreadsheet-grid.tsx` — Fallback Select all filtered row scope
+
+| Legacy / state | Implemented source comparison |
+|---|---|
+| Exact legacy requirement | Legacy E8 header/phone selection must affect filtered visible authorized rows; checkbox pinned at 48px; old shell mobile <=767px |
+| Updated source | Select-all now derives unique current visibleRowIds filtered against allowedIds; allowed IDs declared before use. Other page/hidden selected IDs remain untouched when checkbox toggles. |
+| Phone/tablet/wide | Below 768px the md:hidden card uses 44px labels and indeterminate checkbox; from 768px the md:block table's sticky 48px selection header reflects the same visible set. |
+| Active/disabled/error/empty | Shift/Ctrl still delegated to shared grid-selection; legacy 100..500px resizing, 44/36px sort controls, null/empty and unauthorized rows unchanged. |
+
+**Whole-file grep-equivalent:** SHA `ad167dbd7b8e5272971e432874ea74467e19d7b6`, 238 lines; 0 inline hex=0; raw HTML controls=0; Button pairs=8/8; FilterChip pairs=1/1; md: tokens=9; sm: tokens=0.
+
+### Source grep reproduction (not executed in this turn)
+```sh
+grep -nE 'allowedIds|anchorIndex|const anchor|gridSelectionClick|gridSelectionCheckbox' src/components/tpo/grid/grid-selection.ts
+grep -nE 'selectedPage|exportedRows|gridClipboardTsv|scroll:false|<Button|<FilterChip' src/components/tpo/grid/grid-workspace.tsx
+grep -nE 'visibleRowIds|allowedIds|selectAllIds|fullySelected|partlySelected|indeterminate|width:48|md:hidden|md:block' src/components/tpo/tpo-spreadsheet-grid.tsx
+```
+
+**STRICT TICK:** E8 remains [ ] because no real old-vNext screenshots at phone/tablet/wide, measured hover/focus/pressed states, or compiled AG Grid (dependencies undeclared in package.json) are available. This closes only the three named source-file fixes. Do not claim pixel-level visual parity.

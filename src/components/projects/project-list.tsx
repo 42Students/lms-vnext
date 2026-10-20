@@ -78,7 +78,7 @@ export function ProjectList({
         <Link
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
-          className="group flex min-h-56 flex-col rounded-xl border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:shadow-[var(--lms-shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -128,7 +128,7 @@ export function ProjectList({
           </p>
 
           {(item.mentorName || item.memberCount !== undefined || item.progressPercent !== undefined) ? (
-            <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border py-3 text-xs min-[425px]:grid-cols-3 min-[425px]:divide-x min-[425px]:divide-y-0 [&>*]:min-w-0 [&>*]:px-2 [&>*]:py-2 min-[425px]:[&>*]:py-0">
+            <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border py-3 text-xs min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0 [&>*]:min-w-0 [&>*]:px-2 [&>*]:py-2 min-[768px]:[&>*]:py-0">
               <div>
                 <p className="m-0 font-semibold text-muted-foreground">Mentor</p>
                 <p className="mt-1 truncate font-semibold text-foreground">
@@ -147,7 +147,7 @@ export function ProjectList({
                   {item.progressPercent === undefined ? "Not tracked" : item.progressPercent + "%"}
                 </p>
                 {item.progressDetail ? (
-                  <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
+                  <p className="mt-1 text-xs leading-4 text-muted-foreground">
                     {item.progressDetail}
                   </p>
                 ) : null}

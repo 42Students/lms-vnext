@@ -129,7 +129,7 @@ export async function CollegeRoleDirectoryWorkspace({
         }
       />
 
-      <section aria-label={title+" directory summary"} className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-1 gap-3 border-y border-border md:grid-cols-2 lg:grid-cols-4">
         {[
           [title,result.metrics.registered],
           ["Active",result.metrics.active],

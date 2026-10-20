@@ -109,7 +109,7 @@ export default async function ActivityDetailPage({
             This event has no structured context.
           </p>
         ) : (
-          <pre className="max-h-[32rem] max-w-full overflow-auto whitespace-pre-wrap break-words rounded-xl border border-border bg-surface p-4 text-xs leading-6 text-body sm:p-6">
+          <pre className="max-h-[32rem] max-w-full overflow-auto whitespace-pre-wrap break-words border-y border-border bg-[var(--lms-neutral-50)] p-4 text-xs leading-6 text-body md:p-6">
             {JSON.stringify(event.metadata, null, 2)}
           </pre>
         )}

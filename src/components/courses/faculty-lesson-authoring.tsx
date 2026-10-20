@@ -62,7 +62,7 @@ function FieldLabel({
   children: React.ReactNode;
 }) {
   return (
-    <span className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
+    <span className="mb-1.5 block text-sm leading-4 font-semibold text-body">
       {children}
     </span>
   );
@@ -597,7 +597,7 @@ export function FacultyLessonAuthoring({
   }
 
   return (
-    <div className="mt-4 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-4 max-[767px]:[&_button]:min-h-11">
+    <div className="mt-4 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-4 max-md:[&_button]:min-h-11">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="m-0 text-sm font-semibold text-foreground">

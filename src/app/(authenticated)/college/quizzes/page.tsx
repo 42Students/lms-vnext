@@ -26,7 +26,7 @@ export default async function CollegeQuizzesPage({
   );
   if (!validation.success) {
     return (
-      <div className="space-y-4">
+      <div className="min-w-0 space-y-4">
         <PageHeader title="Quizzes" />
         <ErrorState title="Invalid assessment filters"
           description="The requested search, status or page is invalid. No records were loaded."
@@ -36,8 +36,8 @@ export default async function CollegeQuizzesPage({
   }
   const data = await listCollegeAssessmentAggregate(context, "QUIZ", validation.data);
   const lessons=await getCollegeQuizAuthoringOptions(context);
-  return <main className="min-w-0 space-y-4">
+  return <div className="min-w-0 space-y-4">
     <CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
     <CollegeAssessmentAggregate data={data}/>
-  </main>;
+  </div>;
 }

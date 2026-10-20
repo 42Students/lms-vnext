@@ -34,8 +34,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          eyebrow="Super Admin"
-          title="Placement Drives"
+            title="Placement Drives"
           description="Placement administration requires a college safety scope."
           actions={<>
             {directoryActions}
@@ -57,7 +56,6 @@ export default async function AdminPlacementsPage({ searchParams }: {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
         title="Placement Drives"
         description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."
         actions={<>

@@ -102,7 +102,7 @@ export default async function TpoTeamPage({searchParams}:{
     {people.length?<ul className="grid gap-3 min-[768px]:grid-cols-2">
       {people.map(member=><li key={member.membershipId} className="min-w-0 border-b border-border py-4">
        <div className="flex items-center gap-3">
-        <Avatar name={member.displayName} size="sm" className="!h-[38px] !w-[38px] !rounded-[10px] [&_img]:!rounded-[10px]"/>
+        <Avatar name={member.displayName} size="md" />
         <h2 className="min-w-0 break-words font-semibold text-foreground">{member.displayName}
          {member.membershipId===context.membership?.id?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs">You</span>:null}
         </h2>

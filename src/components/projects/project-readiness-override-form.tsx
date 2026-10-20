@@ -73,7 +73,7 @@ export function ProjectReadinessOverrideForm({
             Force Unlock/Block will have no effect here while a submission already exists.
           </p>
         ) : null}
-        <label className="block text-[13px] font-semibold text-body" htmlFor="project-readiness-override">{copy.stateLabel}</label>
+        <label className="block text-[var(--lms-font-sm)] font-semibold text-body" htmlFor="project-readiness-override">{copy.stateLabel}</label>
         <Select
           id="project-readiness-override"
           className="w-full"
@@ -91,7 +91,7 @@ export function ProjectReadinessOverrideForm({
         </Select>
         {state !== "CLEAR" ? (
           <>
-            <label className="block text-[13px] font-semibold text-body" htmlFor="project-readiness-note">{copy.note}</label>
+            <label className="block text-[var(--lms-font-sm)] font-semibold text-body" htmlFor="project-readiness-note">{copy.note}</label>
             <Textarea
               id="project-readiness-note"
               value={note}
