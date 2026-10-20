@@ -50,13 +50,13 @@ export default async function TpoBranchSeasonPage({
         ) : undefined}
       />
       {dashboard.seasons.length ? (
-        <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+          <label className="block w-full min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">
             Placement season
             <Select
               name="seasonId"
               defaultValue={dashboard.season?.id ?? ""}
-              className="mt-2 block min-h-11 min-[768px]:min-h-9"
+              className="mt-2 block w-full min-h-11 min-[768px]:w-auto min-[768px]:min-h-9"
             >
               {dashboard.seasons.map((season) => (
                 <option key={season.id} value={season.id}>
@@ -67,7 +67,7 @@ export default async function TpoBranchSeasonPage({
           </label>
           <Button variant="secondary"
             type="submit"
-            className="min-h-11 min-[768px]:min-h-9"
+            className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9"
           >
             View season
           </Button>
