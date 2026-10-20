@@ -32,7 +32,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
  return <form id={facultyProfileAnchor("skills")} className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]"
    aria-label="Skills" onSubmit={submit}>
   <div>
-   <h2 className="font-semibold text-foreground">Skills</h2>
+   <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg">Skills</h2>
    <p className="mt-1 text-sm text-muted-foreground">Add up to 100 professional skills and optional proficiency levels. Changes are saved only when you submit.</p>
   </div>
   {rows.length===0?<p className="text-sm text-muted-foreground">No skills added yet.</p>:null}
