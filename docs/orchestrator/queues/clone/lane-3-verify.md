@@ -48,6 +48,6 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-3.md: surface | regres
 - [x] `src/components/projects/mentor-release-editor.tsx`
 - [x] `src/components/projects/mentor-task-delete-control.tsx`
 - [x] `src/components/projects/project-readiness-override-form.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
