@@ -26,7 +26,7 @@ export default async function ProfileCompleteness({searchParams}:{
     {value:"filled",label:"Filled"},
   ] as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text">
+    <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">
       ← Back to Profile
     </Link>
     <PageHeader title="Profile completion checklist"
@@ -44,14 +44,14 @@ export default async function ProfileCompleteness({searchParams}:{
         National identity details are optional and are not required for this checklist. Sensitive identity storage and verification are not available through this view.
       </p>
     </section>
-    <nav aria-label="Checklist filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
+    <nav aria-label="Checklist filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0">
       {options.map(option=><Link key={option.value}
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
         className={
-          "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border px-4 text-sm font-medium transition-colors duration-150 min-[768px]:min-h-9 " +
-          (readiness.show===option.value ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" :
-            "border-border bg-surface text-body hover:border-primary hover:bg-primary-subtle")
+          "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] px-4 py-2 text-[14px] font-medium leading-[1.3] transition-[color,background,border-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none " +
+          (readiness.show===option.value ? "border-[var(--lms-primary)] bg-[var(--lms-primary)] text-[var(--lms-on-primary)] hover:bg-[var(--lms-primary-hover)]" :
+            "border-[var(--lms-neutral-200)] bg-transparent text-[var(--lms-neutral-500)] hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)]")
         }>
         {option.label}
       </Link>)}
