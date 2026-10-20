@@ -46,9 +46,9 @@ export function MarketingHero({eyebrow,title,description}:{eyebrow:string;title:
 export function MarketingFeatureGrid({title,items}:{title:string;items:readonly {title:string;description:string}[]}) {
  const headingId="marketing-features-"+title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
  return <section aria-labelledby={headingId} className="min-w-0 space-y-6">
-  <h2 id={headingId} className="text-2xl font-semibold">{title}</h2>
-  <div className="grid min-w-0 gap-4 md:grid-cols-2 lg:grid-cols-3">{items.map(item=><article key={item.title}
-   className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
+  <h2 id={headingId} className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{title}</h2>
+  <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">{items.map(item=><article key={item.title}
+   className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)]">
     <h3 className="font-semibold">{item.title}</h3><p className="mt-3 text-sm leading-6 text-body">{item.description}</p>
    </article>)}</div>
  </section>;
