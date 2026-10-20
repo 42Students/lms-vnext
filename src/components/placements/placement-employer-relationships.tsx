@@ -200,7 +200,7 @@ export function PlacementEmployerRelationships({
             return (
               <div
                 key={item.relationshipId}
-                className="grid gap-4 py-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.8fr)_auto]"
+                className="grid min-w-0 gap-4 py-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_auto]"
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -243,7 +243,7 @@ export function PlacementEmployerRelationships({
                   ) : null}
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-1">
                   <label>
                     <span className="mb-1 block text-xs font-semibold text-body">
                       Relationship owner
@@ -314,7 +314,7 @@ export function PlacementEmployerRelationships({
                   </label>
                 </div>
 
-                <div className="flex flex-wrap items-start gap-2 xl:justify-end">
+                <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
                   {item.companyStatus!=null && item.companyStatus!=="ACTIVE" ? (
                     <span role="status" className="text-sm text-muted-foreground">
                       This company is archived on the platform and cannot be restored here.
