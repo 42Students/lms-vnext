@@ -44,7 +44,7 @@ export default async function ProfileCompleteness({searchParams}:{
         National identity details are optional and are not required for this checklist. Sensitive identity storage and verification are not available through this view.
       </p>
     </section>
-    <nav aria-label="Checklist filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0">
+    <nav aria-label="Checklist filters" className="flex min-w-0 max-w-[calc(100vw-48px)] flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0">
       {options.map(option=><Link key={option.value}
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
