@@ -62,15 +62,15 @@ export function CollegeGroupDetailWrites({
   const ordered=[...waitlisted].sort((a,b)=>(a.waitlistPosition??Number.MAX_SAFE_INTEGER)-
     (b.waitlistPosition??Number.MAX_SAFE_INTEGER)||a.membershipId.localeCompare(b.membershipId));
   const front=ordered[0];
-  return <section aria-label="Group rule and waitlist actions" className="min-w-0 space-y-[16px]">
+  return <section aria-label="Group rule and waitlist actions" className="min-w-0 space-y-4">
     <div className="space-y-3 border-b border-border pb-4">
       <h2 className="text-lg font-semibold text-foreground">Waitlist review</h2>
       <p className="mt-1 text-sm text-body">Only the first waitlisted learner can be promoted. Locked members and full groups cannot be overridden.</p>
       {ordered.length===0?<EmptyState title="No waitlisted learners" description="No waitlisted learners recorded."/>:
         <ul className="mt-3 divide-y divide-border">{ordered.map(member=><li key={member.membershipId}
-          className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
-          <span className="text-sm text-body">{member.displayName||"Unnamed learner"} · Position {member.waitlistPosition??"not recorded"}{member.isLocked?" · Locked":""}</span>
-          <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" loading={busy} disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
+          className="flex min-w-0 flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <span className="min-w-0 flex-1 break-words text-sm text-body">{member.displayName||"Unnamed learner"} · Position {member.waitlistPosition??"not recorded"}{member.isLocked?" · Locked":""}</span>
+          {front?.membershipId===member.membershipId?<Button variant="secondary" type="button" className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9" loading={busy} disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
             front?.membershipId!==member.membershipId||member.isLocked}
             
             onClick={()=>{void submit({
@@ -78,7 +78,7 @@ export function CollegeGroupDetailWrites({
               expectedMemberVersion:member.version,expectedGroupVersion:groupVersion,confirm:true,
             },collegeGroupDetailActionLabel("PROMOTE_WAITLIST"));}}>
             Promote
-          </Button>
+          </Button>:null}
         </li>)}</ul>}
       {!hasSpace?<Alert tone="warning">Group capacity is full. No manual promotion is available.</Alert>:null}
     </div>
@@ -86,9 +86,9 @@ export function CollegeGroupDetailWrites({
       <summary className="min-h-11 cursor-pointer py-2 text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Eligibility rule</summary>
       <div className="min-w-0 space-y-3 pt-3">
       <p className="text-sm text-body">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
-      <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Rule criteria
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rule criteria
         <Textarea rows={9} spellCheck={false} value={ruleJson} onChange={e=>setRuleJson(e.target.value)}
-          className="w-full font-mono text-xs" />
+          className="min-w-0 w-full font-mono text-xs" />
       </label>
       <Switch label="Enable rule auto-refresh setting (does not execute a refresh now)"
         checked={autoRefresh} disabled={busy} onChange={e=>setAutoRefresh(e.target.checked)}/>
