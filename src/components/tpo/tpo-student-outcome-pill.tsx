@@ -5,7 +5,7 @@ export function TpoStudentOutcomePill({recorded,placed,registered}:{recorded:Aft
   ?AFTER_COLLEGE_LABELS[recorded]:!registered?"Not in placements":"Not decided yet";
  return <Badge title={placed?"Derived from recorded accepted/external placement evidence.":
    recorded&&recorded!=="NOT_DECIDED"?"Set by you or the student":"No final outcome recorded."}
-    tone="neutral" className="max-w-full">
+    tone="neutral" className="max-w-full whitespace-normal break-words text-left">
    {label}
  </Badge>;
 }
