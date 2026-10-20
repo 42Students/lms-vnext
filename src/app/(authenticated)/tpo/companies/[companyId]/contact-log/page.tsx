@@ -57,7 +57,7 @@ export default async function TpoCompanyContactLogPage({
     <div className="space-y-6">
       <Link
         href={"/tpo/companies/" + encodeURIComponent(companyId)}
-        className="text-sm font-semibold text-link hover:underline"
+        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
       >
         ← Company details
       </Link>
@@ -96,7 +96,7 @@ export default async function TpoCompanyContactLogPage({
               <Select
                 name="type"
                 defaultValue={log.type}
-                className="mt-2 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+                className="mt-2 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
               >
                 {["ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM"].map((type) => (
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
@@ -105,7 +105,7 @@ export default async function TpoCompanyContactLogPage({
             </label>
             <Button
               type="submit"
-              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
             >
               Filter
             </Button>
@@ -130,12 +130,12 @@ export default async function TpoCompanyContactLogPage({
             <span className="text-body">Page {log.page} of {log.pages}</span>
             <div className="flex gap-3">
               {log.page > 1 ? (
-                <Link href={href(log.page - 1)} className="font-semibold text-link hover:underline lms-inline-link">
+                <Link href={href(log.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                   ← Previous
                 </Link>
               ) : null}
               {log.pages !== null && log.page < log.pages ? (
-                <Link href={href(log.page + 1)} className="font-semibold text-link hover:underline lms-inline-link">
+                <Link href={href(log.page + 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                   Next →
                 </Link>
               ) : null}
