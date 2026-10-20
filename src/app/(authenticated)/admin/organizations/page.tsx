@@ -29,11 +29,11 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
   const context = await getCurrentRequestContext();
   requirePermission(context, "admin-scope.select");
   const filters=parseAdminDirectorySearchParams(await searchParams);
-  if (!filters) return <div className="min-w-0 space-y-6">
+  if (!filters) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
+      action={<Link href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
   </div>;
   const organizations = await listOrganizations(context);
   const {q,pageSize}=filters;
@@ -86,47 +86,48 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
   ];
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
         title="Organizations"
         description="Platform organizations are constrained by the selected Super Admin safety scope."
       />
-      {canCreate ? <section aria-label="Create New Organization">
-        <h2 className="mb-3 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create New Organization</h2>
-        <OrganizationCreateForm />
-      </section> : null}
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Existing Organizations</h2>
-      {canCreate?<Disclosure title={`Archived organizations · ${archived.length} shown`} className="border-t border-border pt-4">
-       <p className="mt-2 text-xs text-muted-foreground">Restoring an organization does not restore archived colleges. Only the first 200 records in your safety scope are shown.</p>
-       <ul className="mt-3 divide-y divide-border border-y border-border">
-        {archived.map(organization=><li key={organization.id}
-         className="flex flex-wrap items-center justify-between gap-3 py-3">
-         <span className="break-words text-sm font-semibold text-foreground">{organization.name}</span>
-         <TenantRestoreAction kind="organization" id={organization.id} name={organization.name}/>
-        </li>)}
-       </ul>
-       {!archived.length?<EmptyState title="No archived organizations" description="No archived organizations in this scope."/>:null}
-      </Disclosure>:null}
-      <FilterBar title="Organization filters"><form method="get" role="search" aria-label="Search organizations" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
-       <label className="flex min-w-0 w-full flex-1 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search organizations
+      {canCreate ? <details aria-label="Create New Organization" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Create New Organization</summary>
+        <div className="min-w-0 pt-[var(--lms-space-3)]"><OrganizationCreateForm /></div>
+      </details> : null}
+      <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Existing Organizations</h2>
+      <FilterBar title="Organization filters"><form method="get" role="search" aria-label="Search organizations" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_12rem_auto_auto_auto]">
+       <label className="flex min-w-0 w-full flex-1 flex-col gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search organizations
         <Input type="search" name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="w-full" />
        </label>
-       <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+       <label className="flex flex-col gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)} className="w-full">
          {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
        </label>
-       <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
+       <Button type="submit" className="min-h-11 w-full md:min-h-9">Search</Button>
        <Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>
-       <Link href={href(page)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Refresh</Link>
+       <Link href={href(page)} className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 text-sm text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Refresh</Link>
       </form></FilterBar>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
       <DataTable caption="Existing Organizations" empty={<EmptyState
         title={q?"No organizations match your search":"No organizations in this scope"}
         description={q?"No active organizations match this search in the selected Super Admin safety scope. Clear the search or select another authorized scope.":"There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."}/>}
         columns={columns} rows={visible} getRowKey={organization=>organization.id}/>
-      <Pagination label="Organization pages" page={page} pageCount={totalPages} hrefForPage={href}/>
+      <div className="border-t border-border pt-[var(--lms-space-3)]"><Pagination label="Organization pages" page={page} pageCount={totalPages} hrefForPage={href}/></div>
+      {canCreate?<Disclosure title={`Archived organizations · ${archived.length} shown`} className="border-t border-border pt-[var(--lms-space-4)]">
+       <p className="mt-2 text-xs text-muted-foreground">Restoring an organization does not restore archived colleges. Only the first 200 records in your safety scope are shown.</p>
+       <ul className="mt-[var(--lms-space-3)] min-w-0 divide-y divide-border border-y border-border">
+        {archived.map(organization=><li key={organization.id}
+         className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] py-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
+         <span className="break-words text-sm font-semibold text-foreground">{organization.name}</span>
+         <TenantRestoreAction kind="organization" id={organization.id} name={organization.name}/>
+        </li>)}
+       </ul>
+       {!archived.length?<EmptyState title="No archived organizations" description="No archived organizations in this scope."/>:null}
+      </Disclosure>:null}
+
     </div>
   );
 }
