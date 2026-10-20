@@ -40,7 +40,7 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
       </Select>
     </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Merge duplicate
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Merge duplicate
       <Select className="min-h-11 w-full md:min-h-9"
         value={source} disabled={busy} onChange={e=>{setSource(e.target.value);setError("");setResult("");}}>
         <option value="">Select company</option>
@@ -59,7 +59,7 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
       confirmDisabled={busy||!keep||!source||keep===source} onConfirm={()=>void merge()}>
       {error?<p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{error}</p>:null}
     </ConfirmDialog>
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    {error&&!confirmOpen?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {result?<p role="status" aria-live="polite" className="max-w-prose text-sm text-success-text">{result}</p>:null}
   </div>;
 }
