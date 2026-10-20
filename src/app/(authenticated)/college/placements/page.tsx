@@ -17,22 +17,22 @@ export default async function CollegePlacementsPage() {
   if (!hasMembershipRole(context,"COLLEGE_ADMIN")) redirect("/dashboard");
   const attention=await getCollegeDriveAttention(context);
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-5"
       <PageHeader
         title="Placement Drives"
         description="Placement operations inside your active college membership."
         actions={
           <Link
             href="/college/placements/new"
-            className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold text-on-primary motion-safe:transition-colors hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold text-on-primary motion-safe:transition-colors hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             New drive
           </Link>
         }
       />
       <nav aria-label="Placement workspaces" className="flex min-w-0 flex-wrap gap-3">
-      <Link href="/college/placements/interviews" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Interviews</Link>
-      <Link href="/college/placements/drives" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">All drives</Link>
+      <Link href="/college/placements/interviews" className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Interviews</Link>
+      <Link href="/college/placements/drives" className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">All drives</Link>
       </nav>
       <CollegeDriveAttentionCards data={attention}/>
       <PlacementOperationsWorkspace
