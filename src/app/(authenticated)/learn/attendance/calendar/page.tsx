@@ -71,7 +71,7 @@ export default async function LearnerAttendanceCalendarPage({
     ...(data.query.deliveryId!=="ALL"?{deliveryId:data.query.deliveryId}:{}),
   }).toString();
 
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-5"
     <PageHeader title="Attendance calendar"
       actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">
         Attendance detail
@@ -157,9 +157,9 @@ export default async function LearnerAttendanceCalendarPage({
             description={data.hasAnyRecords
               ?"Try another month, Course or status. Missing records are not assumed absent."
               :"Your authorized Course sessions have no registered attendance records yet. This does not mean you were absent."} />
-        : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+        : <ol className="min-w-0 divide-y divide-border border-y border-border">
           {data.rows.map(row=><li key={row.id}
-            className="min-w-0 py-[var(--lms-space-4)]">
+            className="min-w-0 py-4 transition-colors hover:bg-primary-subtle motion-reduce:transition-none">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <h3 className="font-semibold text-foreground">{row.title}</h3>
               <StatusBadge tone={statusTone[row.status]??"neutral"}>
