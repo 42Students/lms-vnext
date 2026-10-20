@@ -31,7 +31,7 @@ export default async function HrRoundsEditorPage({params}:{
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Edit hiring rounds"
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."
-   actions={<nav className="flex flex-wrap items-center gap-2 text-sm">
+   actions={<nav aria-label="Drive round links" className="flex flex-wrap items-center gap-2 text-sm">
     <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Back to drive rounds"/>
     <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Drives</Link>
    </nav>} />
