@@ -7,6 +7,7 @@ import {useState,type MouseEvent} from "react";
 /** TPO-drives-13/14: only acts on currently selected, visible drives. */
 export function TpoBulkDriveReminder(){
  const [busy,setBusy]=useState(false),[message,setMessage]=useState(""),[error,setError]=useState("");
+ const [hadFailures,setHadFailures]=useState(false);
  const [confirmOpen,setConfirmOpen]=useState(false),[selectedIds,setSelectedIds]=useState<string[]>([]);
  function review(event:MouseEvent<HTMLButtonElement>){
   const form=event.currentTarget.form;
@@ -20,7 +21,7 @@ export function TpoBulkDriveReminder(){
   if(busy||!selectedIds.length)return;
   setConfirmOpen(false);
   const ids=selectedIds;
-  setBusy(true);setError("");setMessage("");
+  setBusy(true);setError("");setMessage("");setHadFailures(false);
   let sent=0,skipped=0,failed=0;
   for(const id of ids){
    try{
@@ -39,25 +40,27 @@ export function TpoBulkDriveReminder(){
     if(outcome.alreadySent)skipped++;
    }catch{failed++;}
   }
+  setHadFailures(failed>0);
   setMessage(sent+" learners reminded; "+skipped+" drives skipped; "+failed+" drives failed.");
   setBusy(false);
  }
- return <div className="flex flex-col gap-1">
-  <div className="flex flex-wrap gap-3 text-xs">
-   <Button variant="secondary" type="button" disabled={busy} className="font-semibold text-primary-text"
+ return <div className="flex min-w-0 flex-col gap-2 border-t border-border pt-3">
+  <p className="text-xs leading-5 text-body">Choose 1 to 10 drives from this page.</p>
+  <div className="flex min-w-0 flex-col gap-2 text-xs sm:flex-row sm:flex-wrap">
+   <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full font-semibold text-primary-text sm:w-auto md:min-h-9"
     onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=true;});}}>
     Select all visible drives
    </Button>
-   <Button variant="secondary" type="button" disabled={busy} className="font-semibold text-primary-text"
+   <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full font-semibold text-primary-text sm:w-auto md:min-h-9"
     onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=false;});}}>
     Clear selection
    </Button>
   </div>
   <Button variant="secondary" type="button" disabled={busy} onClick={review}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Checking selected drives…":"Remind non-applicants in selected drives"}
   </Button>
-  {message?<InlineNotice tone="success" message={message}/>:null}
+  {message?<InlineNotice tone={hadFailures?"warning":"success"} message={message}/>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title="Send eligible non-applicant reminders?"
