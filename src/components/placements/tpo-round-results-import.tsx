@@ -53,7 +53,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    if(!response.ok)throw Error(typeof result.message==="string"&&result.message.length<=300?
     result.message:"Import failed. Review the file and try again.");
    if(action==="PREVIEW"){setPreview(result);setReport(null);setOverrides({});setSkips([]);setConfirmMissingFailure(false);}
-   else {setReport(result);setPreview(null);router.refresh();}
+   else {setReport(result);setPreview(null);setConfirmOpen(false);router.refresh();}
   }catch(e){setError(e instanceof Error?e.message:"Import failed");}
   finally{setBusy(false);}
  }
@@ -130,7 +130,9 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     title="Stage this reviewed result import?"
     description={(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."}
     confirmLabel="Confirm and stage results"
-    onConfirm={()=>{setConfirmOpen(false);void send("STAGE_IMPORT");}}/>
+    confirmVariant="primary" onConfirm={()=>{void send("STAGE_IMPORT");}}>
+    {error?<InlineNotice tone="error" message={error+" Re-preview if the round has changed."}/>:null}
+  </ConfirmDialog>
   {report?<div role="status" className="space-y-2 border-t border-border pt-4 text-sm">
    <p className="font-semibold">{report.staged} results staged · {report.skipped} skipped · {report.unmatched} unmatched.</p>
    <div className="max-h-40 min-w-0 overflow-auto print:max-h-none print:overflow-visible">

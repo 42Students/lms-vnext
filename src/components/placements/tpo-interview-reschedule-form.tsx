@@ -34,6 +34,7 @@ export function TpoInterviewRescheduleForm({round}:{
    });
    if(!response.ok){const body=await response.json().catch(()=>null) as {message?:string}|null;
     throw Error(body?.message??"Interview changed or venue was occupied; refresh before retrying.");}
+   setConfirmOpen(false);
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Interview reschedule failed");}
   finally{setPending(false);}
@@ -62,5 +63,7 @@ export function TpoInterviewRescheduleForm({round}:{
   title="Reschedule this interview?"
   description="Venue occupancy and version will be checked before saving, and the change is audited."
   confirmLabel="Confirm interview reschedule"
-  onConfirm={()=>{setConfirmOpen(false);void submitConfirmed();}}/></>;
+  confirmVariant="primary" onConfirm={()=>{void submitConfirmed();}}>
+  {error?<InlineNotice tone="error" message={error}/>:null}
+ </ConfirmDialog></>;
 }

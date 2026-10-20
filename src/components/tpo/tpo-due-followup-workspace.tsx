@@ -248,12 +248,16 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       <ConfirmDialog open={confirmCreate} onOpenChange={next=>{if(!pending)setConfirmCreate(next);}}
        title="Schedule this follow-up and record an immutable staff audit entry?"
        confirmLabel="Confirm" confirmVariant="primary" pending={pending}
-       onConfirm={()=>void create()}/>
+       onConfirm={()=>void create()}>
+       {error?<InlineNotice tone="error" message={error}/>:null}
+      </ConfirmDialog>
       <ConfirmDialog open={confirmComplete!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmComplete(null);}}
        title={confirmComplete?"Mark the follow-up for "+confirmComplete.leadName+
         " done with outcome "+outcome+"? This action is terminal and audited.":""}
        confirmLabel="Confirm" pending={pending}
-       onConfirm={()=>{if(confirmComplete)void complete(confirmComplete);}}/>
+       onConfirm={()=>{if(confirmComplete)void complete(confirmComplete);}}>
+       {error?<InlineNotice tone="error" message={error}/>:null}
+      </ConfirmDialog>
     </div>
   );
 }
