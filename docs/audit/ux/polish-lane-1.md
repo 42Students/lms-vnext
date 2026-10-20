@@ -151,3 +151,11 @@
 **Problems fixed (11):** invalid filters had no page header; filter controls wrapped arbitrarily at tablet; Apply button lacked a full phone target; detached duplicate export row competed with filters; six metric cards stacked vertically on phone; separator spacing fragmented; empty filtered results had no reset; per-round actions cramped on phones; Open round lacked primary emphasis; five per-round counts formed a five-row phone column; loading/error lacked page context. Moved CSV to header, kept Reset focus, aligned 1/2/4-column search/filter form, made a 2/3/6-column stats strip, added recovery action, prioritized Open round, and contextualized error/loading routes. All model logic, role routing and deep links unchanged.
 
 **Files:** `src/app/(authenticated)/tpo/drive-day/page.tsx`, `src/app/(authenticated)/tpo/drive-day/loading.tsx`, `src/app/(authenticated)/tpo/drive-day/error.tsx`, queue, proof.
+
+## Surface 30 — TPO Find records
+
+**Reviewed:** find route, zero-query/no-fetch path, repeated/invalid query, populated/empty result groups, result navigation, shared header/form/empty/alert primitives, route loading/error and nearest TPO layout. Source-only 375/768 review; no runtime/visual/CI.
+
+**Problems fixed (9):** search button squeezed or detached on phone; input had no 44px minimum; inconsistent invalid length feedback; five empty sections competed with actual matches; oversized subheadings looked like page titles; long result names could spill; empty search had no reset; loading/error lost page heading; failed search had no exit route. 1/2-column mobile-safe search, 44px action, matching minLength, only populated results sections, compact headings, breakable rows and empty recovery. Routes, ID/ARIA, result caps, authorized search gates and API semantics retained.
+
+**Files:** `src/app/(authenticated)/tpo/find/page.tsx`, `src/app/(authenticated)/tpo/find/loading.tsx`, `src/app/(authenticated)/tpo/find/error.tsx`, queue and proof. No CI.
