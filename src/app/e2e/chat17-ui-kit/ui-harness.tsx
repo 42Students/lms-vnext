@@ -39,16 +39,16 @@ function UIKitTestSurface() {
   const [inlineSaved, setInlineSaved] = useState(false);
   const { showToast } = useToast();
 
-  return <main className="mx-auto max-w-4xl min-w-0 space-y-6 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)]">
+  return <main className="mx-auto min-w-0 space-y-5 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 sm:p-[var(--lms-canvas-padding)] [&>section]:min-w-0 [&>section]:border-b [&>section]:border-[var(--lms-canvas-border)] [&>section]:pb-5 max-sm:[&_button]:w-full">
     <PageHeader title="Chat-17 UI kit interaction harness" />
 
     <section aria-label="Modal fixture">
       <Button onClick={() => setDialogOpen(true)}>Open harness dialog</Button>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}
         title="Harness confirmation" description="Keyboard focus and Back button test."
-        footer={<Button onClick={() => setDialogOpen(false)}>Close harness dialog</Button>}>
+        footer={<Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => setDialogOpen(false)}>Close harness dialog</Button>}>
         <p>Dialog body with keyboard focus.</p>
-        <Input aria-label="Dialog input" placeholder="Type here"/>
+        <Input aria-label="Dialog input" className="mt-3 w-full min-w-0" placeholder="Type here"/>
       </Dialog>
     </section>
 
@@ -105,7 +105,7 @@ function UIKitTestSurface() {
       <Button variant="secondary" onClick={() => setWideScroll(value => !value)}>
         {wideScroll ? "Narrow scroll content" : "Widen scroll content"}
       </Button>
-      <div className="mt-2 w-56">
+      <div className="mt-2 w-full max-w-56">
         <ScrollCue axis="x" label="Harness horizontal overflow">
           <div className={wideScroll ? "w-[75rem] whitespace-nowrap p-3" : "w-28 whitespace-nowrap p-3"}>
             <span>Scroll position: first</span>
@@ -115,7 +115,7 @@ function UIKitTestSurface() {
       </div>
     </section>
 
-    <section aria-label="Secondary child scroll fixture" className="w-56 space-y-2">
+    <section aria-label="Secondary child scroll fixture" className="w-full max-w-56 space-y-2">
       <Button variant="secondary" onClick={()=>setSecondWide(value=>!value)}>
         {secondWide ? "Shrink second child" : "Grow second child"}
       </Button>
@@ -214,7 +214,7 @@ function UIKitTestSurface() {
       </Disclosure>
     </section>
 
-    <section aria-label="Toast fixture" className="flex gap-3">
+    <section aria-label="Toast fixture" className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
       <Button onClick={() => showToast({tone:"success",title:"Saved harness result"})}>
         Show success notice
       </Button>
