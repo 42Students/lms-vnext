@@ -7,6 +7,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Pagination } from "@/components/ui/pagination";
 import {
   COLLEGE_LECTURE_HALL_PAGE_SIZE,
   collegeLectureHallHref,
@@ -197,20 +198,8 @@ export default async function CollegeLectureHallsPage({
         <span className="text-muted-foreground">
           Page {query.page} of {totalPages} · {COLLEGE_LECTURE_HALL_PAGE_SIZE} per page
         </span>
-        <div className="flex gap-2">
-          {query.page > 1 ? (
-            <Link href={collegeLectureHallHref({ ...query, page: query.page - 1 })}
-              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">
-              Previous
-            </Link>
-          ) : null}
-          {query.page < totalPages ? (
-            <Link href={collegeLectureHallHref({ ...query, page: query.page + 1 })}
-              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">
-              Next
-            </Link>
-          ) : null}
-        </div>
+<Pagination label="Lecture hall pages" page={query.page} pageCount={totalPages}
+          hrefForPage={page=>collegeLectureHallHref({...query,page})}/>
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">
         Room changes use the existing college-scoped add/edit/archive/restore endpoints.

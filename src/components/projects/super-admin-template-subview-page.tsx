@@ -643,7 +643,7 @@ export async function SuperAdminTemplateSubviewPage({
                       "No change note recorded."}
                   </p>
 
-                  <dl className="mt-4 grid gap-3 md:grid-cols-2 min-[1366px]:grid-cols-4">
+                  <dl className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
                     <DetailField
                       label="Releases"
                       value={counts.releases}

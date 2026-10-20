@@ -5,6 +5,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {useRouter} from "next/navigation";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {useState,useTransition} from "react";
@@ -39,10 +40,10 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
   });
  }
  return <div className="space-y-1">
-  <Button type="button" size="sm" className="min-h-11 md:min-h-9" variant={visible ? "primary" : "secondary"} disabled={pending} onClick={change}
+  <FilterChip type="button" className="min-h-11 md:min-h-9" disabled={pending} onClick={change}
    aria-pressed={visible}>
    {pending?"Saving…":label}
-  </Button>
+  </FilterChip>
   {error?<Alert tone="error">{error}</Alert>:null}
  </div>;
 }

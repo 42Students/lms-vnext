@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -42,7 +44,7 @@ const emptyDraft: RoleDraft = {
   maximumAnnualCtcInr: "",
 };
 
-const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9";
+const inputClass = "min-h-11 w-full max-[767px]:min-h-11";
 
 function humanize(value: string) {
   return value
@@ -384,7 +386,7 @@ export function PlacementRoleOptions({
               <span className="mb-1 block text-xs font-semibold text-body">
                 Role title
               </span>
-              <input
+              <Input
                 className={inputClass}
                 value={draft.title}
                 onChange={(event) =>
@@ -400,7 +402,7 @@ export function PlacementRoleOptions({
               <span className="mb-1 block text-xs font-semibold text-body">
                 Employment
               </span>
-              <select
+              <Select
                 className={inputClass}
                 value={
                   draft.employmentType
@@ -423,13 +425,13 @@ export function PlacementRoleOptions({
                 <option value="CONTRACT">
                   Contract
                 </option>
-              </select>
+              </Select>
             </label>
             <label>
               <span className="mb-1 block text-xs font-semibold text-body">
                 Work mode
               </span>
-              <select
+              <Select
                 className={inputClass}
                 value={draft.workMode}
                 onChange={(event) =>
@@ -450,13 +452,13 @@ export function PlacementRoleOptions({
                 <option value="REMOTE">
                   Remote
                 </option>
-              </select>
+              </Select>
             </label>
             <label className="lg:col-span-2">
               <span className="mb-1 block text-xs font-semibold text-body">
                 Locations
               </span>
-              <input
+              <Input
                 className={inputClass}
                 placeholder="Hyderabad, Bengaluru"
                 value={draft.locations}
@@ -473,7 +475,7 @@ export function PlacementRoleOptions({
               <span className="mb-1 block text-xs font-semibold text-body">
                 Openings
               </span>
-              <input
+              <Input
                 className={inputClass}
                 type="number"
                 min="1"
@@ -491,7 +493,7 @@ export function PlacementRoleOptions({
               <span className="mb-1 block text-xs font-semibold text-body">
                 Minimum CTC (INR)
               </span>
-              <input
+              <Input
                 className={inputClass}
                 type="number"
                 min="0"
@@ -511,7 +513,7 @@ export function PlacementRoleOptions({
               <span className="mb-1 block text-xs font-semibold text-body">
                 Maximum CTC (INR)
               </span>
-              <input
+              <Input
                 className={inputClass}
                 type="number"
                 min="0"

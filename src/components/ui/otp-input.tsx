@@ -29,7 +29,7 @@ export function OtpInput({ digits = 6, error = false, className, ...props }: Otp
       autoComplete="one-time-code"
       autoCapitalize="off"
       spellCheck={false}
-      pattern="[0-9]*"
+      pattern={props.pattern ?? "[0-9]*"}
       minLength={minLength}
       maxLength={count}
       error={error}

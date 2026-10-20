@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { StatTile } from "@/components/ui/stat-tile";
+import collegeStyles from "@/components/admin/legacy-college-stat.module.css";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import {useCallback,useEffect,useState} from "react";
@@ -44,7 +45,7 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
    {ITEMS.map(item=><Skeleton key={item.key} variant="kpi" label={item.label+" loading"}/>)}
   </div>:null}
   <div className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
-   {ITEMS.map(item=><StatTile key={item.key} href={item.href} label={item.label}
+   {ITEMS.map(item=><StatTile className={collegeStyles.tile} key={item.key} href={item.href} label={item.label}
     value={displayedGlanceNumber(counts?.[item.key]??null)}
     detail="Recorded in the selected college"/>)}
   </div>

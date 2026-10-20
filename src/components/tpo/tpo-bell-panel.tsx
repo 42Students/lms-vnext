@@ -120,9 +120,9 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
     {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="list-none">
     <p className="px-3 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.day}</p>
     <ul role="list" aria-label={"Notifications for "+group.day} className="space-y-0">
-    {group.items.map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[8px] text-sm">
+    {group.items.map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[var(--lms-control-radius)] text-sm">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
-      className="w-full min-h-11 flex-col items-start justify-start gap-1 rounded-[8px] border border-border bg-surface px-4 py-3 text-left hover:bg-[var(--lms-neutral-50)]">
+      className="w-full min-h-11 flex-col items-start justify-start gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-left hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
      <span className="block text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-topbar-unread)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
      {item.body?<span className="mt-1 block line-clamp-2 break-words text-sm leading-[1.5] text-muted-foreground">{item.body}</span>:null}
      <time dateTime={item.createdAt} className="mt-1 block text-xs text-[var(--lms-muted-text)]">
@@ -145,7 +145,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
       <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>
     </svg>
     {unread>0?<span aria-hidden="true"
-      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-surface bg-[var(--lms-topbar-unread)] px-0.5 text-[10px] font-bold leading-none text-white">
+      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-[var(--lms-radius-pill)] border-2 border-surface bg-[var(--lms-topbar-unread)] px-0.5 text-[10px] font-bold leading-none text-white">
       {unread>99?"99+":unread}
     </span>:null}
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}

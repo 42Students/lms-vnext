@@ -130,7 +130,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
   </p>
   <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
    <label className="grid min-w-0 flex-[1_1_180px] gap-1 text-xs">View name
-    <Input value={name} maxLength={50} disabled={!ready||busy}
+    <Input value={name} maxLength={50} className="min-h-11 w-full md:min-h-9" disabled={!ready||busy}
      onChange={event=>setName(event.target.value)}
      />
    </label>
@@ -139,7 +139,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
   </div>
   {views.length?<div className="mt-3 flex min-w-0 flex-wrap gap-2">
    <label className="grid min-w-0 flex-[1_1_160px] gap-1 text-xs">Saved view
-    <Select value={selected} onChange={event=>setSelected(event.target.value)}
+    <Select value={selected} className="min-h-11 w-full md:min-h-9" onChange={event=>setSelected(event.target.value)}
      disabled={!ready||busy} >
      <option value="">Select a view</option>
      {views.map(view=><option key={view.id} value={view.id}>

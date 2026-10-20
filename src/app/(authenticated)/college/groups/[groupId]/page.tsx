@@ -31,7 +31,7 @@ function label(value: string) {
 }
 
 function when(value: Date | null) {
-  return value ? value.toLocaleString("en-IN") : "—";
+  return value ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST" : "—";
 }
 
 function Stat({ title, value }: { title: string; value: string | number }) {
@@ -93,7 +93,7 @@ export default async function CollegeGroupDetailPage({
         }
       />
 
-      <section className="grid min-w-0 gap-4 border-t border-border pt-5 md:grid-cols-2 lg:grid-cols-5">
+      <section className="grid min-w-0 gap-4 pt-5 md:grid-cols-2 lg:grid-cols-5">
         <Stat title="Type" value={label(group.kind)} />
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">

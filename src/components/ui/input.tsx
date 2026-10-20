@@ -24,7 +24,7 @@ export function Input({ className, error = false, ...props }: InputProps) {
         "text-[var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",
         "caret-[var(--lms-primary)] outline-none shadow-none",
         "transition-[border-color,box-shadow,background-color] duration-200 ease-[var(--lms-motion-ease)]",
-        "placeholder:text-[var(--lms-placeholder)]",
+        "placeholder:text-[var(--lms-placeholder)] selection:bg-[var(--lms-primary-subtle)] selection:text-[var(--lms-form-ink)]",
         "enabled:not-read-only:hover:border-[var(--lms-field-hover-border)]",
         "read-only:cursor-default read-only:bg-[var(--lms-neutral-50)] read-only:hover:border-[var(--lms-canvas-border)]",
         "focus-visible:border-[var(--lms-primary)] focus-visible:shadow-[var(--lms-control-shadow)]",

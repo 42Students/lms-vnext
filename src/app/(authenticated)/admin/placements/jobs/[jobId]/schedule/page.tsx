@@ -7,6 +7,7 @@ import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-s
 import { ErrorState } from "@/components/ui/error-state";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { driveInterviewsHref, driveInterviewsParams, driveRoundTime } from "@/modules/placements/college-drive-interviews-model";
@@ -47,7 +48,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     {key:"time",header:"Time",mobilePriority:"secondary",cell:item=>driveRoundTime(item.scheduledAt,item.timezone)},
     {key:"venue",header:"Venue",mobilePriority:"secondary",cell:item=>item.venue??"Not recorded"},
     {key:"mode",header:"Mode",mobilePriority:"secondary",cell:item=>item.mode??"Not recorded"},
-    {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+    {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="SCHEDULED"?"info":item.status==="CANCELLED"?"neutral":"warning"}>{item.status}</StatusBadge>},
     {key:"slots",header:"Candidate slots",mobilePriority:"secondary",cell:()=> "See candidate interviews above"},
   ];
   return <div className="min-w-0 space-y-6">

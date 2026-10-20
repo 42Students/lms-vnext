@@ -90,7 +90,7 @@ export function GridWorkspace<Row>({
   const pageIdsNow=new Set(rows.map(rowKey));
   selection.onChange(selection.selected.filter(key=>!pageIdsNow.has(key)));
  };
- const exportedRows=selectedPage.length?selectedPage:rows;
+ const exportedRows=selection?.selected.length?selectedPage:rows;
  const activeFilters=filters.filter(field=>{
   const raw=params.get(field.urlKey??"filter."+field.key);
   return raw!==null&&raw!==""&&raw!==(field.allValue??"");

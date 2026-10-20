@@ -72,20 +72,20 @@ export default async function CollegeOverviewPage() {
         actions={
           <>
             <Link href="/college/contacts"
-              className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
               Contacts
             </Link>
             <Link href="/college/announcements"
-              className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
               Announcements
             </Link>
             <Link href="/college/verification"
-              className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
               Verification
             </Link>
             <Link
               href="/college/branding"
-              className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
             >
               Branding
             </Link>
@@ -96,7 +96,7 @@ export default async function CollegeOverviewPage() {
           </>
         }
       />
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 border-t border-border pt-5">
+      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 border-t border-border pt-5">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Code
@@ -135,13 +135,13 @@ export default async function CollegeOverviewPage() {
       {attendance?<>
       <section aria-label="Today" className="space-y-3">
         <h2 className="text-xl font-semibold text-foreground">Today</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-3">
           {[
             { label: "Classes scheduled today", value: attendance.today.scheduled },
             { label: "Held so far", value: attendance.today.held },
             { label: "With attendance taken", value: attendance.today.marked },
           ].map(item => <div key={item.label}
-            className="rounded-[8px] border border-border bg-surface p-4">
+            className="border-b border-border py-3">
             <p className="text-sm text-muted-foreground">{item.label}</p>
             <p className="mt-2 text-2xl font-semibold tabular-nums text-primary-text">
               {item.value.toLocaleString("en-IN")}
@@ -160,7 +160,7 @@ export default async function CollegeOverviewPage() {
             </p>
           </div>
           <Link href="/college/attendance"
-            className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
             Open attendance
           </Link>
         </div>
@@ -260,7 +260,7 @@ export default async function CollegeOverviewPage() {
       <section aria-label="Setup gaps" className="space-y-3 border-t border-border pt-5">
         <h2 className="text-lg font-semibold text-foreground">Setup gaps</h2>
         <p className="text-sm text-muted-foreground">Records still missing a critical academic relationship.</p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {setupGaps.map(item => <Link key={item.label} href={item.href}
             className="rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary">
             <p className="text-sm text-muted-foreground">{item.label}</p>

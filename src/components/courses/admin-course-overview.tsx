@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import collegeStyles from "@/components/admin/legacy-college-stat.module.css";
 import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import {collegeCourseCatalogueHref,paginateCollegeCourses,type CollegeCourseCatalogueQuery} from "@/modules/courses/college-course-catalogue-model";
@@ -425,21 +426,25 @@ export function AdminCourseOverview({
     <div className="min-w-0 space-y-8">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
+          className={collegeStyles.tile}
           label="Courses"
           value={workspace.summary.courses}
           detail=""
         />
         <StatTile
+          className={collegeStyles.tile}
           label="Offerings"
           value={workspace.summary.offerings}
           detail=""
         />
         <StatTile
+          className={collegeStyles.tile}
           label="Deliveries"
           value={workspace.summary.deliveries}
           detail=""
         />
         <StatTile
+          className={collegeStyles.tile}
           label="Teaching assignments"
           value={
             workspace.summary

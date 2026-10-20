@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ClassTeamWorkspaceCreator } from "@/components/projects/class-team-workspace-creator";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
+import { ErrorState } from "@/components/ui/error-state";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { requireTeamCreationAuthority } from "@/modules/projects/class-team-roster-service";
 
@@ -13,7 +14,16 @@ export default async function CollegeClassProjectWorkspacePage() {
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) return <ProjectAdminMissingCollege/>;
   await requireTeamCreationAuthority(context, collegeId);
-  const templates = await listAssignedProjectTemplates(context, collegeId);
+  const templatesResult = await listAssignedProjectTemplates(context, collegeId)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}));
+  if(!templatesResult.ok)return <div className="min-w-0 space-y-6">
+    <PageHeader title="Create workspaces from a class" description="Split active learners into balanced teams, review assignments, or add the whole class to a single Project workspace."/>
+    <ErrorState title="Project templates unavailable"
+      description="Assigned project templates could not be loaded. No workspace was created."
+      action={<Link href="/college/projects/workspaces/new" className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading templates</Link>}/>
+  </div>;
+  const templates = templatesResult.value;
   return (
     <div className="w-full min-w-0 space-y-6">
       <PageHeader title="Create workspaces from a class" description="Split active learners into balanced teams, review assignments, or add the whole class to a single Project workspace." />

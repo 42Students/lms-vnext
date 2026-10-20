@@ -2,6 +2,7 @@ import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
 import {can} from "@/modules/permissions/policy";
 import {SuperAdminPlacementDetailView} from "@/components/admin/super-admin-placement-detail-view";
@@ -18,10 +19,11 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
    collegeId:selected.collegeId,organizationId:selected.organizationId,
  })){
   return <div className="min-w-0 space-y-5">
-   <PageHeader eyebrow="Super Admin · Placements" title="Shortlisted applicant"/>
+   <PageHeader eyebrow="Super Admin · Placements" title="Shortlisted applicant"
+    actions={<PageBackLink href="/admin/placements/shortlisted" label="Back to shortlisted applicants" />}/>
    <ErrorState title="Select a college to continue"
     description="An active Super Admin with a selected college is required to view shortlisted applicant details."
-    action={<Link href="/admin/placements/shortlisted" className="font-semibold text-primary-text">Back to shortlisted applicants</Link>}/>
+    action={<Link href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to shortlisted applicants</Link>}/>
   </div>;
  }
  let detail:Awaited<ReturnType<typeof getSuperAdminShortlistedDetail>>;
@@ -29,10 +31,11 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
   detail=await getSuperAdminShortlistedDetail(context,id);
  }catch{
   return <div className="min-w-0 space-y-5">
-   <PageHeader eyebrow="Super Admin · Placements" title="Shortlisted applicant"/>
+   <PageHeader eyebrow="Super Admin · Placements" title="Shortlisted applicant"
+    actions={<PageBackLink href="/admin/placements/shortlisted" label="Back to shortlisted applicants" />}/>
    <ErrorState title="Shortlisted applicant unavailable"
     description="This applicant detail could not be loaded. Your selected college has not changed."
-    action={<Link href="/admin/placements/shortlisted" className="font-semibold text-primary-text">Back to shortlisted applicants</Link>}/>
+    action={<Link href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to shortlisted applicants</Link>}/>
   </div>;
  }
  if(!detail)notFound();

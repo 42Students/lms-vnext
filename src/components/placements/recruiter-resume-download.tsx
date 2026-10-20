@@ -31,7 +31,7 @@ export function RecruiterResumeDownload({jobId,applicationId}:{jobId:string;appl
    setMessage("The shared resume is not available right now. Ask the placement cell to verify the file or try again.");
   }
  }
- return <div className="space-y-1">
+ return <div className="space-y-2">
   <Button type="button" variant="secondary" onClick={()=>void openResume()} disabled={pending} loading={pending}>
    {pending?"Preparing resume…":"Open shared resume"}
   </Button>

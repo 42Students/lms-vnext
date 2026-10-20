@@ -92,7 +92,7 @@ export async function PlacementJobCreateWorkspace({
     .limit(1000);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow={eyebrow}
         title="Create drive"
@@ -101,7 +101,7 @@ export async function PlacementJobCreateWorkspace({
       />
       {pastDrives.length>0?<Disclosure title="Clone a past drive" className="border-y border-border py-4">
         <p className="my-2 text-xs text-body">Shows up to 20 recent completed drives. Cloning makes a new draft; dates, learners, rounds, outcomes, offers and external links are never carried over.</p>
-        <ul className="grid gap-2 sm:grid-cols-2">
+        <ul className="grid min-w-0 gap-2 md:grid-cols-2">
           {pastDrives.map(job=><li key={job.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-3">
             <span className="text-sm font-semibold">{job.title} · {job.status==="CANCELLED"?"Cancelled":"Closed"}</span>
             <TpoDriveCloneAction jobId={job.id} label="Clone drive"/>

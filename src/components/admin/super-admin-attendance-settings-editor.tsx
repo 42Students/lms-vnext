@@ -42,13 +42,13 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  return <section aria-label="Attendance policy" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold text-foreground">Attendance policy</h2>
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Late marking allowed for
+   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Late marking allowed for
     <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
      onChange={e=>setHours(e.target.value)} aria-describedby="late-marking-help"
      className="min-h-11 w-full md:min-h-9"/>
     <span id="late-marking-help" className="text-xs font-normal text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
    </label>
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Minimum attendance
+   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Minimum attendance
     <Input type="number" min={1} max={100} step={1} value={threshold}
      onChange={e=>setThreshold(e.target.value)} aria-describedby="minimum-attendance-help"
      className="min-h-11 w-full md:min-h-9"/>

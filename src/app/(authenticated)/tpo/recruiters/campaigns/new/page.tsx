@@ -3,6 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import {TpoCampaignCompose} from "@/components/tpo/tpo-campaign-compose";
 import {tpoCampaignDraftStorageReady} from "@/modules/messaging/tpo-campaign-draft-service";
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
@@ -21,7 +22,7 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
  if(unsafeSelection)return <div className="min-w-0 space-y-4">
   <PageHeader title="Review recipients"/>
-  <p role="alert">Some selected recruiters could not be identified. No campaign draft was created. Return to Engage and select up to 100 recruiters again.</p>
+  <Alert tone="error">Some selected recruiters could not be identified. No campaign draft was created. Return to Engage and select up to 100 recruiters again.</Alert>
   <Link href="/tpo/recruiters" className="text-link underline lms-inline-link">Return to Engage</Link>
  </div>;
  const ready=await tpoCampaignDraftStorageReady();

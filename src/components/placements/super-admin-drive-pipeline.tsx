@@ -11,9 +11,9 @@ export function SuperAdminDrivePipeline({rows}: {rows: Pipeline}) {
         Current application stages. Totals reflect persisted decisions, not estimates of completed rounds.
       </p>
     </div>
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+    <div className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0 xl:grid-cols-6">
       {rows.funnel.map((stage) => <div key={stage.key}
-        className="border-l-2 border-border py-2 pl-3">
+        className="min-w-0 px-3 py-3">
         <p className="text-xs font-semibold text-body">{stage.label}</p>
         <p className="mt-1 text-xl font-semibold tabular-nums text-foreground">{stage.count}</p>
         <p className="mt-1 text-xs text-muted-foreground">

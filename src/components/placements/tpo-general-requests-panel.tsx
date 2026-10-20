@@ -60,7 +60,7 @@ export function TpoGeneralRequestsPanel(){
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
   {!rows.length?<EmptyState title="No other requests to review."/>:
-   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[700px] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[min(70vh,44rem)] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
     <h3 className="font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words">{row.reason}</p>
     <p className="text-xs">{row.status.replaceAll("_"," ")}</p>

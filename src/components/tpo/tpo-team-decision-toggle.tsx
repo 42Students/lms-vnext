@@ -23,11 +23,11 @@ export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
   }catch(reason){setError(reason instanceof Error?reason.message:"Could not update this decision. Try again.");}
   finally{pending.current=false;setBusy(false);}
  }
- return <span className="inline-flex flex-wrap items-center gap-2">
+ return <div className="inline-flex min-w-0 flex-wrap items-center gap-2">
   <FilterChip type="button" aria-pressed={marked} disabled={busy} onClick={()=>void toggle()}
    className="min-h-11 md:min-h-8">
    {busy?"Saving…":marked?"Unmark decision":"Mark as decision"}
   </FilterChip>
   {error?<InlineNotice tone="error" message={error}/>:null}
- </span>;
+ </div>;
 }
