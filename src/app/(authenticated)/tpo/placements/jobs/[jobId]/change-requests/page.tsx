@@ -15,11 +15,11 @@ export default async function TpoChangeRequestsPage({params}:{params:Promise<{jo
  let data:Awaited<ReturnType<typeof getDriveChangeRequests>>;
  try{data=await getDriveChangeRequests(context,jobId);}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e;}
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Change requests"}
-   description="Track requested company changes, review replies and agree or decline with a permanent record."/>
-  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Back to drive</Link>
+   description="Track requested company changes, review replies and agree or decline with a permanent record."
+   actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
+    className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 min-[768px]:w-auto">Back to drive</Link>}/>
   {!data.storageReady?<Alert tone="warning">
    {data.pendingMessage} Changes cannot be recorded until the platform migration is registered.</Alert>
    :<TpoDriveChangeRequests jobId={jobId} party={data.party} userId={context.user.id} requests={data.requests}/>}
