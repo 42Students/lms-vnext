@@ -21,13 +21,13 @@ export default async function SuperAdminRetentionPage(){
   {key:"state",header:"State",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="WITHDRAWN"?"neutral":"warning"}>{row.applicationStatus==="WITHDRAWN"?"Withdrawn":"Rejected"}</StatusBadge>},
   {key:"updated",header:"Last updated",mobilePriority:"secondary",cell:row=>fmt(row.lastUpdated)},
   {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link href={"/admin/placements/applications/"+encodeURIComponent(row.id)}
-   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Review →</Link>},
+   className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Review →</Link>},
  ];
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Data retention report"
    description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."
    actions={<PageBackLink href="/admin/placements" label="Placements" />}/>
-  <p role="status" className="text-sm text-body">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}; cutoff {fmt(new Date(report.cutoff))}.</p>
+  <p role="status" className="text-sm text-body tabular-nums">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}; cutoff {fmt(new Date(report.cutoff))}.</p>
   <Banner tone="warning">
    This is a review-only report, not an automated deletion or proof of legal retention eligibility. Account for offers, disputes and local retention policy before removing anything.
   </Banner>
