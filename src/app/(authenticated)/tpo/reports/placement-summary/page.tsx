@@ -1,4 +1,5 @@
 import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
@@ -96,7 +97,7 @@ export default async function TpoPlacementSummaryPage({
 
       <section
         aria-label="Detailed placement metrics"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
       >
         {[
           { label: "Registered", value: reportNumber(metrics.registered) },
@@ -125,7 +126,7 @@ export default async function TpoPlacementSummaryPage({
       <ReportScopeNote note={workspace.registrationScopeNote} />
       <section aria-label="Offers by current status" className="space-y-3 border-t border-border pt-4">
        <h2 className="text-lg font-semibold">Offers by status</h2>
-       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+       <dl className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         {([
          ["Released (all issued histories)",workspace.details.offers.totals.released],
          ["Waiting for student",workspace.details.offers.totals.outstanding],
@@ -159,33 +160,33 @@ export default async function TpoPlacementSummaryPage({
       ) : (
         <>
           <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4" aria-label="Filter drive rows">
-            {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
-            {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+            {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+            {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
             <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold">Company
-             <Select name="companyId" defaultValue={companyId} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="companyId" defaultValue={companyId} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All companies</option>
               {byCompany.map(row=><option key={row.companyId} value={row.companyId}>{row.companyName}</option>)}
              </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Work mode
-             <Select name="workMode" defaultValue={workMode} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="workMode" defaultValue={workMode} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All modes</option><option value="ONSITE">Onsite</option>
               <option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
              </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Pay evidence
-             <Select name="payCategory" defaultValue={payCategory} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="payCategory" defaultValue={payCategory} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All</option><option value="CTC_RECORDED">CTC recorded</option>
               <option value="STIPEND_RECORDED">Stipend recorded</option>
               <option value="NOT_RECORDED">Not recorded</option>
              </Select>
             </label>
-            <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</Button>
+            <Button type="submit" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</Button>
             {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
-             }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">
+             }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
               Clear drive dimensions
              </a>:null}
 
@@ -199,7 +200,7 @@ export default async function TpoPlacementSummaryPage({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
               ...(companyId?{companyId}:{}),...(workMode?{workMode}:{}),...(payCategory?{payCategory}:{}),
-            }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-link">Retry</Link>
+            }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-link">Retry</Link>
           </Alert>:null}
           {dimensions?<p role="status" className="text-xs text-muted-foreground">
            Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.
