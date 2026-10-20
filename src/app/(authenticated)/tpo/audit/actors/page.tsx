@@ -47,7 +47,7 @@ export default async function TpoActorAuditPage({
   if (!parsed.success) {
     return <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
       <PageHeader title="Invalid audit filters" />
-      <Link className="mt-2 inline-block text-[var(--lms-teal-deep)] underline" href="/tpo/audit/actors">
+      <Link className="mt-2 inline-block text-link underline" href="/tpo/audit/actors">
         Clear filters
       </Link>
     </section>;
@@ -67,10 +67,10 @@ export default async function TpoActorAuditPage({
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
   });
   return <div className="space-y-6">
-    <Link href="/tpo/audit" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+    <Link href="/tpo/audit" className="text-sm font-semibold text-link hover:underline">
       ← All audit sources
     </Link>
-    <PageHeader eyebrow="TPO · Oversight" title="Actor and entity audit"
+    <PageHeader title="Actor and entity audit"
       description="Canonical placement activity events with exact persisted actor, entity and IST date filters."
       actions={<a href={exportHref}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
@@ -82,7 +82,7 @@ export default async function TpoActorAuditPage({
       does not prove no action occurred in a domain without an activity writer.
     </p>
     <form action="/tpo/audit/actors" method="get"
-      className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-3">
+      className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-3">
       {([
         ["actorId", "Actor user UUID", "00000000-0000-4000-8000-000000000000"],
         ["entityType", "Entity type", "placement_offer"],
@@ -115,7 +115,7 @@ export default async function TpoActorAuditPage({
       </label>
       <div className="flex flex-wrap items-end gap-3 sm:col-span-2 lg:col-span-3">
         <Button type="submit">Apply filters</Button>
-        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
+        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center text-sm font-semibold text-link">
           Reset filters
         </Link>
       </div>
@@ -145,7 +145,7 @@ export default async function TpoActorAuditPage({
           {key:"entity",header:"Entity ID",mobileLabel:"Entity ID",mobilePriority:"action",
            cell:(row)=>tpoAuditEntityHref(row.entityType,row.entityId)?
             <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!}
-             className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+             className="inline-flex min-h-11 items-center font-semibold text-link underline">
              Open {row.entityType.replaceAll("_"," ")} →
             </Link>:
             <span title="No safe direct page is registered for this entity type">{row.entityId}</span>},
