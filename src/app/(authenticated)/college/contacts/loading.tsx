@@ -1,5 +1,4 @@
-import { PageLoading } from "@/components/ui/page-loading";
-
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 export default function LoadingCollegeContacts() {
-  return <PageLoading label="Loading college contacts…" variant="row" count={5} />;
+  return <GracefulPageLoading label="Loading college contacts" shape="directory"/>;
 }

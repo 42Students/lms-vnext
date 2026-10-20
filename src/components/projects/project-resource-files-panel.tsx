@@ -193,7 +193,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
         </Select>
       </label>:null}
       <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
-      <input id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
+      <Input id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
         disabled={busy||files.length>=PROJECT_FILE_LIMIT}
         onChange={event=>setSelected(event.target.files?.[0]??null)}
         className="block min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm text-body file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link"/>

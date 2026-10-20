@@ -74,7 +74,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
  return <section className="space-y-3 border-b border-border pb-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h2 className="font-semibold text-foreground">Lessons</h2>
-   <Button type="button" onClick={()=>{setOpen(value=>!value);setError("");}}
+   <Button type="button" aria-expanded={open} onClick={()=>{setOpen(value=>!value);setError("");}}
     disabled={!options.length||busy}
     className="min-h-11 md:min-h-9">
     Create New Lesson

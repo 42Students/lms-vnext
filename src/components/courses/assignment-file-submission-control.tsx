@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MetricBar } from "@/components/ui/metric-bar";
+import uploadStyles from "./legacy-upload-meter.module.css";
 import { Alert } from "@/components/ui/alert";
 import {AssignmentMultipartPartsEditor,type AssignmentLinkPart} from "./assignment-multipart-parts-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -188,7 +189,7 @@ export function AssignmentFileSubmissionControl({
     </Button>:null}
     {busy && activeName ? <div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
-      <MetricBar label="File upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className="w-full" />
+      <MetricBar label="File upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className={uploadStyles.upload} />
       <Button type="button" variant="secondary" onClick={() => active.current?.abort()} className="min-h-11 md:min-h-9">Cancel upload</Button>
       <p className="text-xs text-muted-foreground">Your submission is being sent. Keep this window open until it finishes.</p>
     </div> : null}
