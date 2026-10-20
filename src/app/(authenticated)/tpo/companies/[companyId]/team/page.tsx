@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
 import {readTpoCompanyTeam,TpoCompanyTeamError} from "@/modules/placements/tpo-company-team-service";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
 import {TpoCompanyTeamComposer} from "@/components/tpo/tpo-company-team-composer";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 
@@ -32,9 +33,9 @@ export default async function TpoCompanyTeamPage({params}:{
   <Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
    className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to company</Link>
   {result.status==="NOT_REGISTERED"?
-   <p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+   <Alert tone="warning">
     Company Team discussions require their registered database migration. No messages were inferred from private conversations.
-   </p>:
+   </Alert>:
    <>
     <TpoLiveRefresh intervalMs={30000}/>
     <ol aria-label="Company Team messages" className="space-y-3">
@@ -46,9 +47,9 @@ export default async function TpoCompanyTeamPage({params}:{
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
      </li>)}
     </ol>
-    {result.truncated?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm text-body">
+    {result.truncated?<Alert tone="info">
      Showing the latest 100 company Team messages. Older messages are not loaded here.
-    </p>:null}
+    </Alert>:null}
     {!result.messages.length?<p role="status" className="text-sm text-body">
      No company Team messages yet.</p>:null}
     {result.canPost?<TpoCompanyTeamComposer companyId={companyId} actorUserId={context.user.id}/>:

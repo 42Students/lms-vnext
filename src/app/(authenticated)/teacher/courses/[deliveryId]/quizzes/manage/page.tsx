@@ -14,11 +14,11 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Faculty · Courses" title="Section quizzes"
    description={workspace.course.courseName+" · "+workspace.course.sectionName}
-   actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to course</Link>} />
+   actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to course</Link>} />
   {workspace.lessons.length?<FacultyChoiceQuizBuilder deliveryId={deliveryId}
    lessons={workspace.lessons.map(l=>({id:l.id,name:l.name}))} quizzes={quizzes}/>:
    <section role="status" className="border-y border-[var(--lms-canvas-border)] bg-transparent py-4">No registered lessons are available for this Section. Publish a learning path first.</section>}
   <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
-   className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to course</Link>
+   className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to course</Link>
  </div>;
 }
