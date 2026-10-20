@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { Pagination } from "@/components/ui/pagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -58,7 +59,7 @@ export default async function CollegeCompaniesPage({
           <option value="LAST_ACTIVE">Last active</option><option value="COMPANY">Company</option><option value="DRIVES">Drive count</option>
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
         <Select name="pageSize" defaultValue={query.pageSize}>
           {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
@@ -87,10 +88,7 @@ export default async function CollegeCompaniesPage({
       }))}
       owners={owners}
     />
-    <nav aria-label="Company pages" className="flex flex-wrap items-center gap-2 text-sm">
-      <span>Page {query.page} of {data.totalPages}</span>
-      {query.page>1?<Link href={collegeCompaniesHref({...query,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Previous</Link>:null}
-      {query.page<data.totalPages?<Link href={collegeCompaniesHref({...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Next</Link>:null}
-    </nav>
+    <Pagination label="Company pages" page={query.page} pageCount={data.totalPages}
+      hrefForPage={page=>collegeCompaniesHref({...query,page})}/>
   </div>;
 }

@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -47,11 +48,11 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
       actions={<PageBackLink href="/college/lecture-halls" label="Back to lecture halls"/>} />
     <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
       <label className="grid min-w-40 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">From (IST)
-        <Input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
+        <DateInput mode="date" name="from" required defaultValue={typeof from === "string" ? from : ""}
           />
       </label>
       <label className="grid min-w-40 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">To (IST)
-        <Input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
+        <DateInput mode="date" name="to" required defaultValue={typeof to === "string" ? to : ""}
           />
       </label>
       <Button type="submit">View schedule</Button>
