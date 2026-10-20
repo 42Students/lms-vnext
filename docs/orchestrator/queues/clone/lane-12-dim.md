@@ -103,26 +103,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-12.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/drive-day/page.tsx`
 - [x] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
 - [x] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
+- [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
+- [x] `src/app/(authenticated)/tpo/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
