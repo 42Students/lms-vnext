@@ -120,7 +120,7 @@ export default async function ElectiveRoster({
     <PageHeader 
       title={"Offering roster · " + slot.name}
       description="Student state, source, joining date and confirmed movement between offerings."
-      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Back to Electives</Link>} />
     <div className="flex min-w-0 flex-wrap gap-[8px] border-y border-border py-[12px] text-sm">
       <span>Seats: {offering.capacity ?? "Unlimited"}</span>
