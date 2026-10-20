@@ -28,13 +28,16 @@ export default async function MyTrackerReportDetail({
     throw error;
   }
   if(!report)notFound();
-  return <article className="space-y-4">
+  return <article className="min-w-0 max-w-full space-y-4">
     <PageHeader title={report.publicId} description={report.issueType}
       actions={<PageBackLink href="/tracker/mine" label="Back to my reports"/>}/>
-    <section className="border-b border-border pb-4">
-      <p className="flex flex-wrap items-center gap-2 text-sm font-semibold">Status: <StatusBadge tone={report.status==="CLOSED"?"success":"info"}>{report.status}</StatusBadge> Severity: <StatusBadge tone={report.severity==="BLOCKER"||report.severity==="CRITICAL"?"error":"warning"}>{report.severity}</StatusBadge></p>
-      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{report.description}</p>
-      <p className="mt-2 text-xs text-muted-foreground">Reported: {report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
+    <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
+      <dl className="flex min-w-0 flex-wrap gap-x-6 gap-y-3 text-sm">
+        <div className="flex min-h-11 items-center gap-2 md:min-h-9"><dt className="font-semibold text-[var(--lms-muted-text)]">Status:</dt><dd><StatusBadge tone={report.status==="CLOSED"?"success":"info"}>{report.status}</StatusBadge></dd></div>
+        <div className="flex min-h-11 items-center gap-2 md:min-h-9"><dt className="font-semibold text-[var(--lms-muted-text)]">Severity:</dt><dd><StatusBadge tone={report.severity==="BLOCKER"||report.severity==="CRITICAL"?"error":"warning"}>{report.severity}</StatusBadge></dd></div>
+      </dl>
+      <p className="mt-3 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{report.description}</p>
+      <p className="mt-3 text-xs text-muted-foreground">Reported: <time dateTime={report.createdAt.toISOString()}>{report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</time></p>
     </section>
   </article>;
 }
