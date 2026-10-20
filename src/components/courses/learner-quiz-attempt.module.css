@@ -37,7 +37,7 @@
   background: #26bac7 !important;
 }
 @media (max-width: 767px) {
-  .header { padding: 8px 0 12px; }
+  .header { position: static; padding: 8px 0 12px; }
   .track { height: 4px !important; }
 }
 @media (prefers-reduced-motion: reduce) {
