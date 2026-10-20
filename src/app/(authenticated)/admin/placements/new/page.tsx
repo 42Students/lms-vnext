@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -19,11 +21,17 @@ export default async function AdminNewPlacementPage() {
   // Require the platform role and exact selected-college write permission before
   // rendering the form or loading any company, learner or season options.
   requireSuperAdminSelectedCollege(context,"placements.manage");
-  return (
-    <PlacementJobCreateWorkspace
-      context={context}
-      collegeId={collegeId}
-      basePath="/admin/placements"
-    />
-  );
+  const loaded=await PlacementJobCreateWorkspace({
+    context,collegeId,basePath:"/admin/placements",
+  }).then(view=>({ok:true as const,view}))
+    .catch(()=>({ok:false as const}));
+  if(!loaded.ok)return <div className="min-w-0 space-y-5">
+    <PageHeader title="Create drive"
+      description="Build the opportunity students will see"
+      actions={<PageBackLink href="/admin/placements" label="Back to drives" />}/>
+    <ErrorState title="Drive setup unavailable"
+      description="Company, season, or student eligibility choices could not be loaded. No draft was created."
+      action={<Link href="/admin/placements/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry creating drive</Link>}/>
+  </div>;
+  return loaded.view;
 }

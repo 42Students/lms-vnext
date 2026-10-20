@@ -137,7 +137,7 @@ export function AdminCourseDisplayEditor({
       </div>
 
       <div className="mt-4 grid gap-4">
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Introduction
           <Input
             className="mt-1.5 min-h-11 md:min-h-9"
@@ -152,7 +152,7 @@ export function AdminCourseDisplayEditor({
           />
         </label>
 
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Rich description HTML
           <Textarea
             className="mt-1.5 min-h-40 font-mono text-sm"
@@ -171,7 +171,7 @@ export function AdminCourseDisplayEditor({
           </span>
         </label>
 
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           What learners will take away
           <Textarea
             className="mt-1.5 min-h-32"
@@ -189,7 +189,7 @@ export function AdminCourseDisplayEditor({
           </span>
         </label>
 
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Thumbnail URL
           <Input
             className="mt-1.5 min-h-11 md:min-h-9"
