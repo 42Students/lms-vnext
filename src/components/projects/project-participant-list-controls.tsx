@@ -69,7 +69,7 @@ export function ProjectParticipantListControls({
       onChange={mentor?liveRefresh:undefined}
       method="get"
       action={basePath}
-      className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
+      className={mentor?"grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-4 [&_label]:min-w-0":"flex flex-wrap items-end gap-3 border-b border-border pb-4"}
     >
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Search
