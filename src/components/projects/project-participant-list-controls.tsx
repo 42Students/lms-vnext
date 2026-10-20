@@ -272,7 +272,7 @@ export function ProjectParticipantPagination({
              Math.min(total,page*(query.pageSize??25))+" of "+total+" projects")
           : <>{total} result{total===1?"":"s"} · Page {page} of {totalPages}</>}
       </p>
-      <div className="flex gap-2">
+      {totalPages>1?<div className="flex gap-2">
         <Link
           href={href(
             Math.max(1, page - 1),
@@ -308,7 +308,7 @@ export function ProjectParticipantPagination({
         >
           Next
         </Link>
-      </div>
+      </div> : null}
     </div>
   );
 }
