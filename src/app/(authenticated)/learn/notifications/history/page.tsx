@@ -68,7 +68,7 @@ export default async function LearnerNotificationHistoryPage({
         Counts are page-local; this is not a complete-inbox count.
       </p>
       {emptyMessage ? (
-        <section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-6 py-12 text-center">
+        <section role="status" className="border-y border-border px-6 py-12 text-center">
           <p className="text-sm text-body">{emptyMessage}</p>
         </section>
       ) : (
