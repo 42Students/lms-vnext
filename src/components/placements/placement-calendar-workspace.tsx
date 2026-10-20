@@ -889,7 +889,7 @@ export async function PlacementCalendarWorkspace({
   return <FilterChipLink key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
     selected={active}
     aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}>
-    <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
+    <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-[var(--lms-radius-pill)] "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
     {filter.label} ({count})
    </FilterChipLink>;
  })}
