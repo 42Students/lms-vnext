@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,8 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  const base="/mentor/projects/"+encodeURIComponent(projectId);
  const current=mentorResourceDirectoryHref({...data.query,page:1});
  const filters=current.includes("?")?"?"+current.split("?")[1]:"";
+ const advanced=data.query.link!=="ALL"||data.query.description!=="ALL"||data.query.order!=="SEQUENCE";
+ const hasFilters=Boolean(data.query.search)||data.query.required!=="ALL"||advanced;
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader eyebrow="Mentor · Project resources" title="Registered resource links"
    description={data.projectTitle}
@@ -42,6 +45,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    </p>
    <FilterBar title="Filters"><form method="get" action={base+"/resources-directory"} role="search" aria-label="Project resources filters"
     className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full [&_button]:max-[767px]:w-full"}>
+    <div className="grid min-w-0 w-full items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-11 md:min-h-9"/>
@@ -60,6 +64,10 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
       <option value="UNAVAILABLE">No safe HTTPS link</option>
      </Select>
     </label>
+    <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9">Filter</Button>
+    </div>
+    <Disclosure title="More filters" defaultOpen={advanced} className="min-w-0 w-full border-y border-border py-2" contentClassName="pt-3">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description recorded
      <Select name="description" defaultValue={data.query.description}
       className="min-h-11 md:min-h-9">
@@ -73,12 +81,9 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
      </Select>
     </label>
-    <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
-     Filter
-    </Button>
-    <Link href={base+"/resources-directory" } className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
-     Clear
-    </Link>
+      </div>
+    </Disclosure>
+    {hasFilters?<Link href={base+"/resources-directory"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
    </form></FilterBar>
    <div className="flex flex-wrap items-center gap-3">
     <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
