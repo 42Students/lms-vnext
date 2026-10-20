@@ -21,7 +21,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
     <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader title="Archived company relationships"
         description="Relationships archived for your own college; these remain available for authorized restoration."
-        actions={<Link href="/tpo/companies" className={directoryLinkClasses}>← Companies directory</Link>}
+        actions={<Link href="/tpo/companies?directory=1" className={directoryLinkClasses}>← Companies directory</Link>}
       />
       {truncated ? (
         <p role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-6 text-body">
@@ -30,7 +30,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
       ) : null}
       {rows.length === 0 ? (
         <EmptyState title="No archived college-company relationships are recorded."
-          action={<Link href="/tpo/companies" className={directoryLinkClasses}>← Companies directory</Link>} />
+          action={<Link href="/tpo/companies?directory=1" className={directoryLinkClasses}>← Companies directory</Link>} />
       ) : (
         <section aria-label="Archived company relationships" className="min-w-0">
           <p className="mb-2 text-sm leading-5 text-body">

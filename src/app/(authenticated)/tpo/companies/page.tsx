@@ -53,7 +53,7 @@ function companiesHref(
   }
 
   const query = params.toString();
-  return query ? `/tpo/companies?${query}` : "/tpo/companies";
+  return query ? `/tpo/companies?${query}` : "/tpo/companies?directory=1";
 }
 
 
@@ -64,7 +64,7 @@ function invalidCompanyFilters(){
   <p className="mt-2 text-sm text-body leading-[22px]">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
-  <Link href="/tpo/companies" className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+  <Link href="/tpo/companies?directory=1" className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
    Clear filters
   </Link>
  </section>;
@@ -242,7 +242,7 @@ export default async function TpoCompanyMemoryPage({
             {page.total === 1 ? "" : " records"}
           </p>
           <Link
-            href="/tpo/companies"
+            href="/tpo/companies?directory=1"
             className="text-sm font-semibold text-link hover:underline"
           >
             Clear filters
