@@ -238,3 +238,45 @@
 - Inspected route page/loading/error, MarketingLayout/Hero/FeatureGrid/Cta, PageHeader, GracefulPageLoading/ErrorBoundary and root layout; cross-checked `polish-lane-15.md`. No route-local template/not-found/layout.
 - Files changed: queue and verification proof only; verified, no page change. No tests or CI.
 
+## Surface 35 — Forbidden public recovery
+- Surface: `src/app/forbidden/page.tsx`.
+- Regressions fixed: 0. Exact access restriction copy, no-index metadata, authenticated home recovery and role-safe public canvas preserved.
+- Extra clutter/alignment fixes: 0. Single heading, message and CTA, responsive branded loading and error recovery; no competing actions.
+- Read route page/loading/error, `GracefulScreen`, PublicPageLoading, GracefulErrorBoundary, PageHeader and root layout. Matched `polish-lane-16.md` Polish2 entry; no route-local template/not-found/layout. No tests/CI.
+- Files changed: queue and verification proof only; verified, no page change.
+
+## Surface 36 — Public home marketing
+- Surface: `src/app/home/page.tsx`.
+- Regressions fixed: 0. Metadata and JSON-LD intact; journey list keeps exact four numbered steps and aria-labelledby; university/enterprise destinations and all CTA copy retained.
+- Extra clutter/alignment fixes: 0. Journey has one bordered hairline sequence rather than duplicate cards, audience actions wrap at 375/768, primary CTA stays prominent.
+- Read home page/loading/error, MarketingLayout/Hero/FeatureGrid/Cta, root layout, shared loading/error and `polish-lane-17.md` proof. No local layout/template/not-found. Source-only, no execution/CI.
+- Files changed: queue and verification proof only; verified, no page change.
+
+## Surface 37 — Retired HR invitation alias
+- Surface: `src/app/hr-invite/[token]/page.tsx`.
+- Regressions fixed: 0. Zod-valid legacy tokens redirect to the recruiter invite route; malformed tokens still return 404 and no invite token is exposed on this alias page.
+- Extra clutter/alignment fixes: 0. A redirect must not show duplicated authentication UI; existing branded public loading/error keep bounded recovery.
+- Read page/loading/error, recruiterInviteHref schema, PublicPageLoading, GracefulErrorBoundary, root layout and `polish-lane-18.md` proof. No route-local layout/not-found/template. Source-only, no tests/CI.
+- Files changed: queue and verification proof only; verified, no page change.
+
+## Surface 38 — Public sign in
+- Surface: `src/app/login/page.tsx` re-exporting `src/app/page.tsx`.
+- Regressions fixed: 0. Confirmed generateMetadata export resolves, tenant/host sign-in policy and returnTo guard stay in root implementation, keyboard skip anchor targets the auth card, LoginForm has matching college/channel props and OTP/second-factor/resend/lockout/error handling preserved.
+- Extra clutter/alignment fixes: 0. Single legacy SVG logo, constrained sign-in card, mobile touch targets, focused notice and footer links align at 375/768.
+- Read login/root route and loading/error, LoginForm, login-shell CSS, Input/Button, public loading/error, root layout, `polish-lane-19.md` prior proof and missing local template/not-found/layout. Source-only; no browser/CI.
+- Files changed: queue and verification proof only; verified, no page change.
+
+## Surface 39 — Tracker bulk status controls
+- Surface: `src/components/tracker/tracker-issue-bulk-actions.tsx`.
+- Regressions fixed: 0. Native Checkbox, Select, Button and ConfirmDialog props/imports valid; selection count, per-issue version-checked PATCH, busy/double-submit guard, partial failure IDs and focusable confirmation preserve behavior/text.
+- Extra clutter/alignment fixes: 0. Collapsed nonprimary selection, contained list and aligned status/apply row retain 375px/768px hierarchy.
+- Read full component, tracker issues list route and inherited shell, Checkbox/Select/Button/InlineNotice/ConfirmDialog, BUG_STATUSES definitions; matched `polish-lane-16.md` Polish2 evidence. No tests, execution or CI.
+- Files changed: queue and proof only; verified, no source changes.
+
+## Surface 40 — Tracker engineering workflow
+- Surface: `src/components/tracker/tracker-workflow-panel.tsx`.
+- Regressions fixed: 0. Save/retest payloads retain expectedVersion and all fields, types and imports align to shared components and enums, independent SHA links have validated href and distinct labels, production check remains accessible; pending/409/failure toast paths intact.
+- Extra clutter/alignment fixes: 0. Primary workflow grid and optional engineering evidence details are aligned, mobile save/retest controls full-width, desktop grouped.
+- Read full component and tracker issue detail route, Checkbox/Select/Button/Input/Textarea/Toast and workflow enums; matched `polish-lane-17.md` prior proof. No execution or CI.
+- Files changed: queue and proof only; verified, no code change.
+
