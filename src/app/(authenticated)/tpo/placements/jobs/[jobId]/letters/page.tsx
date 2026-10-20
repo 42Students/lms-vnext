@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -34,26 +35,25 @@ export default async function TpoOfferLettersPage({
     issuedAt: row.offer.issuedAt, respondedAt: row.offer.respondedAt,
   })));
   const evidenceByOfferId=new Map(offers.map((row,index)=>[row.offer.id,projected[index]] as const));
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-4">
     <PageHeader title={job.title+" · Offer letter evidence"}
       description="Persisted offer records are listed below. An issued offer is not proof that an offer letter was generated, sent, received or acknowledged."
       actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 text-[14px] font-[650] text-[var(--lms-link-text)] min-[768px]:min-h-9 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">← Back to drive</Link>} />
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-semibold text-[var(--lms-link-text)] md:w-auto md:min-h-9 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">← Back to drive</Link>} />
     <Alert tone="warning">
       Letter-issued and letter-acknowledged states are unavailable: the registered
       placement offer schema has no letter document, delivery or acknowledgement
       record. Bulk letter-status changes are disabled until their owner-approved
       transition contract and registered persistence exist.
+      <p className="mt-2 text-xs font-semibold">Letter issued: Unavailable · Letter acknowledged: Unavailable.</p>
     </Alert>
     <DataTable<(typeof offers)[number]> caption="Offer letter evidence"
       rows={offers} getRowKey={row=>row.offer.id}
       empty={<EmptyState title="No persisted offers exist for this drive."/>}
       columns={[
         {key:"candidate",header:"Candidate",mobilePriority:"primary",cell:row=><strong>{row.candidate.displayName??"Unnamed learner"}</strong>},
-        {key:"offer",header:"Offer",mobilePriority:"secondary",cell:row=>row.offer.status},
+        {key:"offer",header:"Offer",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.offer.status==="ACCEPTED"?"success":row.offer.status==="DECLINED"?"error":"neutral"}>{row.offer.status}</StatusBadge>},
         {key:"issued",header:"Offer issued",mobilePriority:"secondary",cell:row=>evidenceByOfferId.get(row.offer.id)?.persistedOfferIssuedAt??"Not recorded"},
-        {key:"letter",header:"Letter issued",mobilePriority:"secondary",cell:()=>"Unavailable"},
-        {key:"ack",header:"Letter acknowledged",mobilePriority:"secondary",cell:()=>"Unavailable"},
       ]}/>
 
   </div>;
