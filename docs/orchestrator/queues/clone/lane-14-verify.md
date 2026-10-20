@@ -19,10 +19,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-14.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/public-link/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/public-link/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/season/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/see/page.tsx`
