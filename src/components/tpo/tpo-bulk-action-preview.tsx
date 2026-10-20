@@ -39,7 +39,7 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
     </Button>
     {outcomes.length > 0 ? <div aria-live="polite" className="text-sm">
       <p>{counts.updated} updated; {counts.skipped} skipped; {counts.failed} failed.</p>
-      <ul className="break-all">{outcomes.map((row, i) => <li key={row.id + ":" + i}>
+      <ul className="break-words [overflow-wrap:anywhere]">{outcomes.map((row, i) => <li key={row.id + ":" + i}>
         {rows.find(selected=>selected.id===row.id)?.label??"Row "+(i+1)}: {row.status}{row.reason ? " — " + row.reason : ""}
       </li>)}</ul>
     </div> : null}
