@@ -433,25 +433,25 @@ export function HrDriveDraftForm({
                       ? { ...item, name: event.target.value } : item),
                   }))} />
               </label>
-              <div className="flex min-w-0 flex-wrap items-end gap-2">
+              <div className="flex min-w-0 flex-wrap items-end gap-2 min-[768px]:col-span-2 min-[992px]:col-span-1 min-[992px]:justify-end">
                 <Button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
                   variant="secondary"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</Button>
                 <Button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
                   variant="secondary"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</Button>
+                <Button type="button" disabled={draft.rounds.length>=12}
+                  aria-label={"Duplicate "+round.name}
+                  variant="secondary" className="max-[767px]:flex-1"
+                  onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
+                  Duplicate
+                </Button>
+                <Button type="button" disabled={draft.rounds.length <= 1}
+                  variant="secondary" className="max-[767px]:flex-1"
+                  onClick={() => setDraft((current) => ({
+                    ...current, rounds: current.rounds.filter((_, i) => i !== index),
+                  }))}>Remove</Button>
               </div>
-              <Button type="button" disabled={draft.rounds.length>=12}
-                aria-label={"Duplicate "+round.name}
-                variant="secondary" className="self-end max-[767px]:w-full"
-                onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
-                Duplicate
-              </Button>
-              <Button type="button" disabled={draft.rounds.length <= 1}
-                variant="secondary" className="self-end max-[767px]:w-full"
-                onClick={() => setDraft((current) => ({
-                  ...current, rounds: current.rounds.filter((_, i) => i !== index),
-                }))}>Remove</Button>
             </div>
           ))}
         </div>

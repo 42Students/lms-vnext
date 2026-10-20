@@ -49,3 +49,13 @@
 - Regressions found/fixed: 0. Read page and route error/loading, parent layout, HrRoundEditorGrid/TpoGrid, PageBackLink, field primitives, POST `/api/placements/recruiter/drives/[jobId]/rounds/route.ts`, and lane-14 proof. Checked action, inputs, optimistic timestamp, editable gating, removal links, column props, empty state and mobile row fallback.
 - Extra clutter/alignment: 0; desktop grid and inline edit details are intentionally different tasks; mobile actions remain touch-sized and status visible.
 - Files changed: verified, no change. No CI/runtime.
+
+## 11. `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
+- Regressions found/fixed: 0. Read round removal and route error/loading, parent HR/round-editor layouts, shared PageBackLink, Button, Input and StatusBadge, round POST handler and lane-14 proof. Editable-only authorization, optimistic updatedAt token, REMOVE action and Keep round navigation retain contracts.
+- Extra clutter/alignment: 0; destructive button and safe navigation retain touch-sized responsive stack and bounded copy.
+- Files changed: verified, no change. Source-only, no CI.
+
+## 12. `src/app/(authenticated)/hr/drives/new/page.tsx`
+- Regressions found/fixed: 0. Read route page and error/loading, HR/authenticated layouts, full HrDriveDraftForm (draft restore, validation, preview, sending, edit/copy/resubmit, all confirmation states), its input/select/textarea/notice/confirm primitives, related hrDriveDraftQuerySchema/hrDriveDraftSchema and lane-14 polish proof. Props, grant guard, query selection, field names and copy retained.
+- Extra clutter/alignment: 1 — grouped all four round reorder/duplicate/remove controls in the third desktop grid column; previously Duplicate/Remove wrapped to an unrelated second row at 992px. Tablet action group spans both columns and phone actions wrap safely; controls/handlers/aria unchanged.
+- Files changed: `src/components/hr/hr-drive-draft-form.tsx`. Source-only, no CI.
