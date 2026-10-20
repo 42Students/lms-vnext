@@ -1,4 +1,5 @@
 import { DateInput } from "@/components/ui/date-input";
+import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -43,7 +44,7 @@ export default async function CollegeActivityPage({
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
-  return <div className="min-w-0 overflow-x-clip space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
       actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View project activity</Link><a href={"/api/activity/college-export" +
@@ -51,26 +52,20 @@ export default async function CollegeActivityPage({
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Export filtered CSV (max 1,000)
       </a></div>} />
-    <nav aria-label="Activity feed categories" className="flex flex-wrap gap-2">
-      {([
-        ["IMPORTANT", "Important"], ["ACADEMIC_SETUP", "Academic setup"],
-        ["PEOPLE_ACCESS", "People & access"], ["TEACHING", "Teaching"],
-        ["PROJECTS", "Projects"], ["EVERYTHING", "Everything"],
-      ] as const).map(([key, label]) => {
-        const category = key==="IMPORTANT"||key==="EVERYTHING" ? undefined : key;
-        const view = key==="EVERYTHING" ? "EVERYTHING" : "IMPORTANT";
-        const active = key==="EVERYTHING"
-          ? data.query.view==="EVERYTHING" && !data.query.category
-          : key==="IMPORTANT" ? !data.query.category && data.query.view!=="EVERYTHING"
-          : data.query.category===category;
-        return <Link key={key} aria-current={active?"page":undefined}
-          href={collegeActivityHref({...data.query,category,view,module:undefined,importance:undefined})}
-          className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 " +
-            (active ? "border-primary bg-primary-subtle text-link" : "border-border text-body")}>
-          {label}
-        </Link>;
-      })}
-    </nav>
+    <Tabs ariaLabel="Activity feed categories" renderPanel={false}
+      value={data.query.category ?? (data.query.view==="EVERYTHING"?"EVERYTHING":"IMPORTANT")}
+      items={([
+        ["IMPORTANT","Important"],["ACADEMIC_SETUP","Academic setup"],
+        ["PEOPLE_ACCESS","People & access"],["TEACHING","Teaching"],
+        ["PROJECTS","Projects"],["EVERYTHING","Everything"],
+      ] as const).map(([key,label])=>({
+        value:key,label,
+        href:collegeActivityHref({...data.query,
+          category:key==="IMPORTANT"||key==="EVERYTHING"?undefined:key,
+          view:key==="EVERYTHING"?"EVERYTHING":"IMPORTANT",
+          module:undefined,importance:undefined}),
+      }))}/>
+
     <p className="text-xs text-muted-foreground">
       Important shows high- and critical-importance events. Category views remain college-scoped; Everything includes all importance levels.
     </p>
@@ -91,7 +86,7 @@ export default async function CollegeActivityPage({
       <Link href={collegeActivityHref({...data.query})}
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Refresh</Link>
     </div>
-    <section className="border-t border-border pt-4" aria-label="Activity log filters">
+    <section className="border-b border-border pb-4" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
           Module

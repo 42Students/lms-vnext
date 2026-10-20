@@ -34,17 +34,17 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
    <label className="grid w-full min-w-0 flex-1 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:max-w-xl">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
       placeholder="Find one student in this college"
-      className="w-full"/>
+      className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
-   <Button type="submit" className="w-full md:w-auto" disabled={!ctx.adminScope?.collegeId}>Search students</Button>
+   <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!ctx.adminScope?.collegeId}>Search students</Button>
   </form>
   {invalid?<ErrorState title="Invalid student search"
    description="Enter 3 to 150 characters in a single search to find students in the selected college."
-   action={<Link href="/admin/placements/student-lookup" className="font-semibold text-primary-text underline">Clear search</Link>}/>:null}
+   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear search</Link>}/>:null}
   {lookup&&!lookup.ok?<ErrorState title="Student placement lookup unavailable"
    description="The selected college's student placement records could not be loaded. Your search was kept."
    action={<Link href={"/admin/placements/student-lookup?q="+encodeURIComponent(q)}
-     className="font-semibold text-primary-text underline">Retry student search</Link>}/>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry student search</Link>}/>:null}
   {!ctx.adminScope?.collegeId?<div id="placement-student-scope-hint" role="status">
    <EmptyState title="Select a college to continue" description="Choose a college in the header above to look up student placements."/>
   </div>:null}
