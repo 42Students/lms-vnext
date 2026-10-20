@@ -1,0 +1,30 @@
+# UI/UX polish VERIFICATION queue: lane chat-9 (surfaces polished by OTHER lanes)
+
+46 surfaces. Each was already polished by another lane. Your job is to VERIFY and improve, strictly one surface at a time.
+
+1. Regressions first (a polish pass edits many files without running code): matching tags, every import present and used, no duplicate attributes, no undeclared packages, props still match their component types, no removed export that another file imports. Fix anything broken.
+2. Behaviour kept: ids, data-testid, aria labels, routes, permissions, form fields, wording (docs/audit/legacy-copy-A.md and B.md) and legacy tokens (docs/design) must be unchanged; if the polish dropped or reworded something, restore it.
+3. Then judge the surface fresh as a senior product designer: is anything still cluttered, misaligned, duplicated or noisy? One obvious primary action? Aligned left edges and gaps on the legacy scale? Calm density? Real layouts at 375 and 768? Empty, loading, error states with a clear next step? Fix what you find.
+4. Also check the route files in the same folder (loading, error, not-found, template) and the nearest parent layout.
+
+Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-9-b with [chat-9] after every 2 surfaces.
+
+
+- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [ ] `src/components/placements/tpo-season-controls.tsx`
+- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
+- [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
+- [ ] `src/components/tpo/tpo-team-assign-unowned.tsx`
+- [ ] `src/components/ui/button-group.tsx`
+- [ ] `src/app/(authenticated)/teacher/loading.tsx`
+- [ ] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
+- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [ ] `src/components/tpo/tpo-applications-spreadsheet.tsx`
+- [ ] `src/components/tpo/tpo-topbar-new-menu.tsx`
+- [ ] `src/components/admin/admin-program-directory.tsx`
+- [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+- [ ] `src/components/academics/college-term-mapping-manager.tsx`
+- [ ] `src/components/courses/faculty-assessment-lifecycle.tsx`
+- [ ] `src/components/admin/college-bulk-import.tsx`
+- [ ] `src/components/admin/super-admin-company-merge.tsx`
