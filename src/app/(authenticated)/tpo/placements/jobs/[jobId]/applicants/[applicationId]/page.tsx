@@ -29,13 +29,13 @@ export default async function TpoApplicantDetailPage({params}:Params){
      ["Screening decided",data.application.screeningDecidedAt?
       new Date(data.application.screeningDecidedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not recorded"]];
  return <div className="min-w-0 space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Applicant pipeline</Link>
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Applicant pipeline</Link>
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
    description={data.job.title+" · "+data.application.roleTitle}/>
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Application and screening</h2>
-   <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+   <dl className="mt-3 grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2">
     {applicationFields.map(([label,value])=><div key={label} className="min-w-0">
        <dt className="text-xs font-semibold text-body">{label}</dt>
        <dd className="mt-1 break-words text-sm text-foreground">{value}</dd>
@@ -55,7 +55,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
    {data.resultsTruncated?<Alert tone="warning">Only 100 applied result versions examined.</Alert>:null}
    {data.appliedRoundResults.length===0?<EmptyState title="No applied round outcomes recorded for this application."/>:
     <div className="mt-3 grid gap-3">{data.appliedRoundResults.map(r=>
-     <article key={r.roundId} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+     <article key={r.roundId} className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
       <h3 className="font-semibold text-foreground">{r.roundName}</h3>
       <p className="mt-1 text-sm text-body">{r.kind} · {r.outcome} · Applied: {r.appliedAt?
        new Date(r.appliedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Time not recorded"}</p>
@@ -66,7 +66,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
    {data.offersTruncated?<Alert tone="warning">Only the latest 100 offer versions examined.</Alert>:null}
    {data.offers.length===0?<EmptyState title="No persisted offer versions for this application."/>:
     <div className="mt-3 grid gap-3">{data.offers.map(offer=>
-     <article key={offer.offerId} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+     <article key={offer.offerId} className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
       <h3 className="font-semibold text-foreground">{offer.roleTitle} · Version {offer.version}</h3>
       <p className="mt-1 text-sm text-body">{offer.status} · Joining: {offer.joiningStatus??"Not confirmed"}
        {" · "}Annual CTC: {offer.annualCtcInr===null?"Not recorded":"₹"+offer.annualCtcInr.toLocaleString("en-IN")}</p>

@@ -1,4 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import Link from "next/link";
 import {Pagination} from "@/components/ui/pagination";
 import {notFound,redirect} from "next/navigation";
@@ -33,11 +35,11 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
    draft?<article className="space-y-4 border-t border-border pt-5">
     <PageHeader title={draft.title}
       description={draft.sender_name+" · "+draft.status+" · "+draft.total_recipients+" potential recipients · "+draft.segment.replaceAll("_"," ")} />
-    <dl className="grid grid-cols-3 gap-3 text-sm">
-      <div><dt>Provider accepted</dt><dd className="font-semibold">{draft.sent}</dd></div>
-      <div><dt>Failed</dt><dd className="font-semibold">{draft.failed}</dd></div>
-      <div><dt>Skipped</dt><dd className="font-semibold">{draft.skipped+Object.values(draft.suppressed_counts).reduce((a,b)=>a+b,0)}</dd></div>
-    </dl>
+    <section aria-label="Campaign delivery summary" className="grid gap-3 min-[768px]:grid-cols-3">
+      <StatTile label="Provider accepted" value={draft.sent} className={tpoTileStyles.tile} />
+      <StatTile label="Failed" value={draft.failed} className={tpoTileStyles.tile} />
+      <StatTile label="Skipped" value={draft.skipped+Object.values(draft.suppressed_counts).reduce((a,b)=>a+b,0)} className={tpoTileStyles.tile} />
+    </section>
     <p className="text-xs text-muted-foreground">Provider acceptance is not proof of delivery.</p>
     <section><h2 className="text-sm font-semibold text-muted-foreground">Subject</h2>
      <p className="mt-1 break-words text-foreground">{draft.subject}</p></section>

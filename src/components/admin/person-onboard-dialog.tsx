@@ -143,16 +143,16 @@ export function PersonOnboardDialog({
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {forcedRole?<div className="grid min-w-0 gap-[var(--lms-space-3)] md:col-span-2 md:grid-cols-2">
-            <label className="grid gap-1 text-[13px] font-semibold text-body">First Name
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">First Name
               <Input className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required onChange={e=>setFirstName(e.target.value)} placeholder="First name"/>
             </label>
-            <label className="grid gap-1 text-[13px] font-semibold text-body">Last Name
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Last Name
               <Input className="min-h-11 md:min-h-9" value={lastName} maxLength={120} required onChange={e=>setLastName(e.target.value)} placeholder="Last name"/>
             </label>
           </div>:<div className="md:col-span-2">
             <label
               htmlFor={`onboard-name-${collegeId}`}
-              className="mb-1.5 block text-[13px] font-semibold text-body"
+              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Display name
             </label>
@@ -170,7 +170,7 @@ export function PersonOnboardDialog({
           <div>
             <label
               htmlFor={`onboard-phone-${collegeId}`}
-              className="mb-1.5 block text-[13px] font-semibold text-body"
+              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Phone
             </label>
@@ -188,7 +188,7 @@ export function PersonOnboardDialog({
           <div>
             <label
               htmlFor={`onboard-email-${collegeId}`}
-              className="mb-1.5 block text-[13px] font-semibold text-body"
+              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Email · optional
             </label>
@@ -204,7 +204,7 @@ export function PersonOnboardDialog({
             />
           </div>
           {forcedRole==="FACULTY" ? <fieldset className="md:col-span-2 space-y-2 border-b border-border py-3">
-            <legend className="text-[13px] font-semibold text-body">Faculty Type</legend>
+            <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty Type</legend>
             <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body md:min-h-9">
               <Checkbox checked={registerAsMentor} disabled={pending}
                 onChange={event=>setRegisterAsMentor(event.target.checked)}/>

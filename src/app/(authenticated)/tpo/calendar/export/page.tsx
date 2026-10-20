@@ -39,21 +39,21 @@ export default async function TpoCalendarExportPage({
     : null;
   const params = parsed.success ? new URLSearchParams(parsed.data) : null;
   return <div className="space-y-6">
+    <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
+      description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." />
     <Link href="/tpo/calendar" className="font-semibold text-link hover:underline">
       ← TPO calendar
     </Link>
-    <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
-      description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." />
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="text-sm font-semibold text-foreground">From (IST)
         <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
-          className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+          className="mt-2 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
         <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
-          className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+          className="mt-2 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
-      <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
+      <Button type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
         Preview range
       </Button>
     </form>
@@ -68,7 +68,7 @@ export default async function TpoCalendarExportPage({
       </p>
       {result.rows.length === 0 ? <EmptyState title="No future scheduled rounds were found in this college for the chosen dates." description="Unscheduled, cancelled, completed and non-published drives are not inferred."/> : null}
       <a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
+        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
         Download rounds CSV
       </a>
     </section> : null}

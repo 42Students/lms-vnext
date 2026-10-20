@@ -410,7 +410,7 @@ function JobActions({
             href={safeExternalUrl!}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle md:min-h-9"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle md:min-h-9"
           >
             Open employer form
           </a>
@@ -532,7 +532,7 @@ export function LearnerPlacementJobs({
         return (
           <article
             key={item.roleOption.id}
-            className="min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none md:p-6"
+            className="min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-primary hover:shadow-sm motion-reduce:transition-none md:p-6"
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
