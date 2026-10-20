@@ -60,7 +60,7 @@ export default async function FacultyAssignmentReportPage({
             assignmentId:assignment.id,deliveryId:assignment.deliveryId,
             filter:"ALL",page:1,
           })}
-          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline hover:bg-[rgba(38,186,199,0.07)]">
           Filter submissions and export
         </Link>
         </div>}
