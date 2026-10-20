@@ -21,6 +21,7 @@ import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focu
 import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
@@ -502,7 +503,7 @@ export default async function HrPlacementJobPage({
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
         {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
           userId={context.user.id} requests={requestData.requests}/> :
-         <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">{requestData.pendingMessage}</p>}
+         <Alert tone="warning" role="status">{requestData.pendingMessage}</Alert>}
       </section>:null}
       {filters.tab === "applicants" ? (
         <section className="space-y-4 border-b border-border pb-4 md:pb-5">
@@ -577,7 +578,7 @@ export default async function HrPlacementJobPage({
                     className={funnelStyles.reviewTrack} />
                 </label>
                 {focusedNavigation.previous ? <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
-                {focusedNavigation.next ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
+                {focusedNavigation.next ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 md:min-h-9 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
               </nav> : null}
               <dl className="mt-5 grid gap-4 text-sm">
                 <div><dt className="text-muted-foreground">Applicant</dt><dd className="font-semibold text-foreground">{selectedApplicant.name}</dd></div>
@@ -732,9 +733,7 @@ export default async function HrPlacementJobPage({
             Hiring rounds
           </h2>
           {driveOverview.readOnly
-            ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm text-body">
-                This drive is finished, so slots and results can no longer be sent.
-              </p>
+            ? <Alert tone="info" role="status">This drive is finished, so slots and results can no longer be sent.</Alert>
             : <div className="flex flex-wrap gap-2">          <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
             className="mt-2 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Add, change or remove rounds
