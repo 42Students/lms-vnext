@@ -26,7 +26,7 @@ export function RecruiterDriveFocusRefresh(){
   return ()=>{window.removeEventListener("focus",refresh);
    document.removeEventListener("visibilitychange",visible);};
  },[router]);
- return stale?<Alert tone="warning"><div className="flex flex-wrap items-center justify-between gap-3">
+ return stale?<Alert tone="warning"><div className="flex flex-wrap items-center justify-between gap-2">
   <span>Some drive information may be stale or unavailable.</span>
   <Button variant="secondary" type="button" onClick={()=>{setStale(false);router.refresh();}}>
    Refresh drive
