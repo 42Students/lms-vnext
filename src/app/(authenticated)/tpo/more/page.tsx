@@ -14,7 +14,7 @@ export default async function TpoMorePage() {
   }
 
   return (
-    <div className="min-w-0 space-y-4 md:space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="TPO · Navigation"
         title="More"
@@ -23,13 +23,13 @@ export default async function TpoMorePage() {
 
       <nav
         aria-label="More TPO destinations"
-        className="space-y-6"
+        className="space-y-6 border-b border-border pb-4"
       >
         {TPO_MORE_GROUPS.map((group) => (
           <section
             key={group.heading}
             aria-label={group.heading}
-            className="space-y-3"
+            className="min-w-0 space-y-3"
           >
             <div>
               <h2 className="text-lg font-semibold text-foreground">
@@ -40,25 +40,25 @@ export default async function TpoMorePage() {
               </p>
             </div>
 
-            <div className="divide-y divide-border border-y border-border">
+            <div className="grid min-w-0 grid-cols-1 border-t border-border min-[768px]:grid-cols-2 min-[768px]:gap-x-6">
               {group.links.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group block min-h-11 py-4 transition-colors hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                  className="group block min-h-11 min-w-0 border-b border-border py-4 transition-colors hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-base font-semibold text-link">
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <h3 className="min-w-0 break-words text-base font-semibold text-link">
                       {item.label}
                     </h3>
                     <span
                       aria-hidden="true"
-                      className="text-link transition group-hover:translate-x-1"
+                      className="shrink-0 text-link transition motion-reduce:transition-none group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                     >
                       →
                     </span>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-body">
+                  <p className="mt-2 max-w-prose break-words text-sm leading-6 text-body">
                     {item.description}
                   </p>
                 </Link>
@@ -68,11 +68,11 @@ export default async function TpoMorePage() {
         ))}
       </nav>
 
-      <p className="text-xs leading-5 text-muted-foreground">
-        Only implemented TPO destinations are linked.
-        This navigation links to the implemented scoped tools; complete
-        legacy Messages and Settings parity remains open.
-      </p>
+      <details className="min-w-0 text-xs leading-5 text-muted-foreground">
+        <summary className="min-h-11 cursor-pointer py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Only implemented TPO destinations are linked.</summary>
+        <p className="mt-2 max-w-prose">This navigation links to the implemented scoped tools; complete
+          legacy Messages and Settings parity remains open.</p>
+      </details>
     </div>
   );
 }

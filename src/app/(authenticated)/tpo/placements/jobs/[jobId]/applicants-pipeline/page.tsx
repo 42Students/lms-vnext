@@ -70,7 +70,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     <Input name="search" defaultValue={data.search} maxLength={100}
      className="block min-h-11 w-full min-[768px]:min-h-9"/></label>
    <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[992px]:w-auto">Apply</Button>
-   <details className="group col-span-full" defaultOpen={data.channel !== "ALL" || data.eligibility !== "ALL" || data.flag !== "ALL" || data.sort !== "NEWEST" || data.submittedWithin !== "ALL"}>
+   <details className="group col-span-full" open={data.channel !== "ALL" || data.eligibility !== "ALL" || data.flag !== "ALL" || data.sort !== "NEWEST" || data.submittedWithin !== "ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Filter applicants <span aria-hidden="true" className="ml-2">⌄</span></summary>
     <div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application channel
