@@ -1,4 +1,5 @@
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -62,43 +63,42 @@ export default async function FacultyGradebookPage({
   const filtered=paginateFacultyGradebookRows(data.rows,view.data);
   const base={...view.data};
   const csv="/api/courses/faculty/gradebook/"+encodeURIComponent(parsed.data.deliveryId)+"/csv";
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Published gradebook"
       actions={<Link href={csv}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
         Download full section CSV
       </Link>} />
     <p className="text-sm text-body leading-[22px]">
       {data.rosterSize} current eligible learners · {data.publishedAssessments}
       {" "}assessments with published result records
     </p>
-    <form role="search" aria-label="gradebook filters" method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid min-w-56 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <form role="search" aria-label="gradebook filters" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Find learner
         <Input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
           className="min-h-11 md:min-h-[var(--lms-control-height)]" />
       </label>
-      <Button type="submit" variant="primary">
+      <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Search
       </Button>
       <Link href={facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1})}
-        className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center px-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
         Clear
       </Link>
     </form>
     <p aria-live="polite" className="text-sm text-muted-foreground leading-[22px]">
       Showing {filtered.matching} of {filtered.total} authorized learners · Page {filtered.page} of {filtered.totalPages}.
-      The CSV contains the full authorized Section, not only visible search matches.
     </p>
     {data.rows.length===0?<EmptyState title="No current enrolled learners"
       description="The authorized section roster is empty. No scores were inferred."/>
     :filtered.items.length===0?<EmptyState title="No matching learners"
       description="Try another name, roll number or email. Published grades were not inferred."/>
-    :<div className="grid gap-3">
+    :<div className="min-w-0 divide-y divide-border border-y border-border">
       {filtered.items.map(row=><article key={row.membershipId}
-        className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+        className="min-w-0 py-4">
+        <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">
           {row.displayName||row.email||"Unnamed learner"}
         </h2>
         <p className="mt-1 text-xs text-muted-foreground leading-5">
@@ -110,7 +110,7 @@ export default async function FacultyGradebookPage({
           className="mt-2 inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           View published score breakdown →
         </Link>
-        <div className="mt-3 grid gap-2 md:grid-cols-3">
+        <div className="mt-3 grid min-w-0 grid-cols-2 gap-2 md:grid-cols-3">
           <p className="text-sm text-body leading-[22px]">Published scores: {row.gradedCount}/{row.publishedAssessments}</p>
           <p className="text-sm text-body leading-[22px]">Recorded points: {
             row.earned===null?"Unknown":row.earned+" / "+row.possible
@@ -141,10 +141,13 @@ export default async function FacultyGradebookPage({
         </Link>}
       </div>
     </nav>}
-    <p className="text-xs text-muted-foreground leading-5">
-      This read-only gradebook includes only actually published learner grades.
-      Private, missing and ungraded results never become zero scores; percentages
-      describe recorded published points only, not weighted course outcomes.
-    </p>
+    <Disclosure title="About published grades and CSV scope" className="border-t border-border">
+      <p className="max-w-3xl px-2 pb-2 text-xs leading-5 text-muted-foreground">
+        The CSV contains the full authorized Section, not only visible search matches.
+        This read-only gradebook includes only actually published learner grades.
+        Private, missing and ungraded results never become zero scores; percentages
+        describe recorded published points only, not weighted course outcomes.
+      </p>
+    </Disclosure>
   </div>;
 }
