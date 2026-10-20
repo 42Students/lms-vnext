@@ -23,17 +23,17 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-16.md: surface | regre
 - [x] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/interviews/[roundId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/interviews/[roundId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/interviews/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/job-settings/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/job-settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/joining/[offerId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/joining/page.tsx`
