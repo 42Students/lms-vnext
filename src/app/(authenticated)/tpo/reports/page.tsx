@@ -47,7 +47,7 @@ export default async function TpoReportsPage({
     <PageHeader title="Invalid report search" />
     <Alert tone="error">
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
-    <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">
+    <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-link underline lms-inline-link">
       Clear search
     </Link>
     </Alert>
@@ -67,7 +67,7 @@ export default async function TpoReportsPage({
       <Alert tone="error">
         <h2 className="text-base font-semibold text-foreground">The headline numbers could not be loaded.</h2>
         <p className="mt-2 text-sm text-body">The report is temporarily unavailable. No placement totals are being inferred from missing data.</p>
-        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link">Retry</Link>
+        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link">Retry</Link>
       </Alert>
     </div>;
   }
@@ -183,7 +183,7 @@ export default async function TpoReportsPage({
   const legacyGroups=groups.map(group=>({...group,cards:group.cards.map(legacyTpoReportCard)}));
   const visibleGroups = alphabetizeTpoReportGallery(filterTpoReportGallery(legacyGroups,parsedSearch.data,parsedGroup.data));
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="TPO · Insights"
         title="Reports"
@@ -191,7 +191,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-white"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-white"
           >
             Open management view
           </Link>
@@ -204,16 +204,16 @@ export default async function TpoReportsPage({
       <nav aria-label="Placement journey" className="space-y-2 border-t border-border pt-5">
        <h2 className="font-semibold">Placement journey</h2>
        <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
-       <div className="grid gap-3 sm:grid-cols-3">
-        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+       <div className="grid gap-3 md:grid-cols-3">
+        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
          <strong className="block">Looking for a job</strong>
          <span className="text-sm">{workspace.report.metrics.registered} registered · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)} not placed</span>
         </Link>
-        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
          <strong className="block">Placed</strong>
          <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college&apos;s placement rule</span>
         </Link>
-        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
          <strong className="block">Accepted</strong>
          <span className="text-sm">{workspace.report.metrics.acceptedOffers} accepted offers · {Math.max(0,workspace.report.metrics.offers-workspace.report.metrics.acceptedOffers)} not yet accepted</span>
         </Link>
@@ -231,25 +231,25 @@ export default async function TpoReportsPage({
 
       <form method="get" action="/tpo/reports"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
-        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 flex-1 gap-2 text-sm font-semibold text-body">
           Find a report
           <Input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
             placeholder="Report name or purpose"
-            className="min-h-11 sm:min-h-9 w-full"/>
+            className="min-h-11 md:min-h-9 w-full"/>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-body">Report category
           <Select name="group" defaultValue={parsedGroup.data}
-            className="min-h-11 sm:min-h-9">
+            className="min-h-11 md:min-h-9">
             {TPO_REPORT_GALLERY_GROUPS.map(group=><option key={group} value={group}>
               {group==="ALL"?"All report categories":group}
             </option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 sm:min-h-9">Search</Button>
+        <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
         <Link href={reportHref("/tpo/reports",workspace)}
-          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">
+          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
           Clear
         </Link>
       </form>

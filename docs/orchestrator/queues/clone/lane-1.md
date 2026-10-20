@@ -24,10 +24,10 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/college/videos/page.tsx`
 - [x] `src/app/(authenticated)/hr/colleges/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
-- [ ] `src/app/(authenticated)/learn/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/home/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/job-types/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/app/(authenticated)/learn/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/home/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/job-types/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
