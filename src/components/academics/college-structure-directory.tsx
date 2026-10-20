@@ -42,13 +42,13 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
       <PageHeader
         title={title}
         actions={<Link href="/college/academics"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Academic workspace
         </Link>}
       />
       {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
       <FilterBar title="Filters"><section aria-label={title + " filters"} className="border-t border-border pt-4">
-        <form method="get" action={path} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <form method="get" action={path} className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {classes ? "Class, batch or program" : "Elective or program"}
             <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
@@ -354,7 +354,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
               Filter
             </Button>
             <Link href={path}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Clear
             </Link>
           </div>

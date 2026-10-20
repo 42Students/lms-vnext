@@ -78,7 +78,7 @@ export default async function LearnerCourseProgressPage({
                 <ul className="mt-4 grid gap-2 md:grid-cols-2">
                   {lesson.items.map((item) => (
                     <li key={item.kind + ":" + item.id}
-                      className="flex min-w-0 items-start justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+                      className="flex min-w-0 items-start justify-between gap-2 rounded-[var(--lms-radius-card)] border border-border p-3">
                       <div className="min-w-0">
                         <p className="break-words text-sm font-medium text-foreground">{item.title}</p>
                         <p className="mt-1 text-xs text-muted-foreground">
