@@ -52,20 +52,20 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
   finally{setPending(false);}
  }
  if(!mine)return <p className="mt-3 text-xs text-muted-foreground">Only the assigned learner can update this task.</p>;
- return <section aria-label="My task actions" className="mt-5 space-y-3 border-t border-border pt-4">
+ return <section aria-label="My task actions" className="mt-[var(--lms-space-5)] min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
   <h3 className="font-semibold">Task actions</h3>
   {task.blockerReason?<p className="text-sm text-body">Blocker: {task.blockerReason}</p>:null}
-  {canBlock?<label className="block text-sm text-body">What is blocking this task?
+  {canBlock?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What is blocking this task?
    <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
-    className="mt-1" />
+    />
   </label>:null}
-  <div className="flex flex-wrap gap-3">
+  <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row">
    {canStart?<Button type="button" disabled={pending} onClick={()=>void change("IN_PROGRESS")}
-     className="min-h-9">Start work</Button>:null}
+     className="w-full sm:w-auto" loading={pending}>Start work</Button>:null}
    {canBlock?<Button type="button" disabled={pending} onClick={()=>void change("BLOCKED")}
-     variant="secondary" className="min-h-9">Report blocker</Button>:null}
+     variant="secondary" className="w-full sm:w-auto">Report blocker</Button>:null}
   </div>
-  {["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?<div className="flex flex-wrap gap-2" aria-label="Reorder my task">
+  {["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?<div className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)]" aria-label="Reorder my task">
    <Button type="button" disabled={pending} onClick={()=>void reorder("MOVE_UP")}
     variant="secondary" className="min-h-9">Move up</Button>
    <Button type="button" disabled={pending} onClick={()=>void reorder("MOVE_DOWN")}
