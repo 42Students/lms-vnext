@@ -22,7 +22,7 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
   }catch(e){setError(e instanceof Error?e.message:"Verification unavailable. Please try again.");}
   finally{setBusy(false);}
  }
- return <div className="mt-2 space-y-2">
+ return <div className="mt-2 space-y-2 print:hidden">
   <Button type="button" variant="secondary" disabled={busy} loading={busy}
    onClick={()=>setConfirm(true)} className="min-h-11 md:min-h-9">
    {verified?"Unverify":"Verify"} company
