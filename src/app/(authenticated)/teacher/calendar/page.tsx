@@ -49,7 +49,7 @@ export default async function FacultyCalendarPage({
     <PageHeader title="Class Schedule" />
     <div className="flex justify-end">
       <Link href="/teacher/live-classes"
-        className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View live classes
       </Link>
     </div>

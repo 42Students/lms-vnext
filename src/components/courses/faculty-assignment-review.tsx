@@ -290,7 +290,7 @@ function SubmissionGradeCard({
   }
 
   return (
-    <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-[var(--lms-space-4)]">
+    <section className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h4 className="m-0 text-sm font-semibold text-foreground">
