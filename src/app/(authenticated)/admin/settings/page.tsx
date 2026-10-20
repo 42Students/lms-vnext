@@ -91,10 +91,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <section aria-label="Tenant Settings overview" className="border-b border-border pb-5">
         <p className="text-sm font-semibold text-body">Runtime configuration · {scopeLabel}</p>
         <h2 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Settings with explicit execution scope</h2>
-        <dl className="mt-3 grid gap-3 text-sm md:grid-cols-3">
-          <div><dt>Documented controls</dt><dd className="font-semibold">{documentedControls} visible inventory settings</dd></div>
-          <div><dt>Stored keys</dt><dd className="font-semibold">{editorData?.ready?editorData.entries.length:"Unavailable"} in this scope</dd></div>
-          <div><dt>Editing</dt><dd className="font-semibold">{editorData?.ready?scopeLabel:"Select an authorized scope"}</dd></div>
+        <dl className="mt-3 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 md:grid-cols-3 md:divide-x md:divide-y-0">
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Documented controls</dt><dd className="mt-2 font-semibold tabular-nums text-[24px] leading-[1.3] text-[var(--lms-heading)]">{documentedControls} visible inventory settings</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored keys</dt><dd className="mt-2 font-semibold tabular-nums text-[24px] leading-[1.3] text-[var(--lms-heading)]">{editorData?.ready?editorData.entries.length:"Unavailable"} in this scope</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Editing</dt><dd className="mt-2 break-words font-semibold text-[var(--lms-body-text)]">{editorData?.ready?scopeLabel:"Select an authorized scope"}</dd></div>
         </dl>
       </section>
       <section
