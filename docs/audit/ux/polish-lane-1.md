@@ -287,3 +287,11 @@
 **Problems fixed (7):** unpredictable wrap around the Sort by input; cramped Ascending checkbox tap area; squeezed Columns trigger on 375px; tall 15-item dropdown clipping near viewport bottom; no obvious way to close the phone dropdown; unbounded column labels; selected column order drifting after toggling. Used a one-column phone / three-part tablet grid, full-width trigger, the shared mobile-sheet dropdown with Done/focus restoration, a scroll-bounded list, and ordered updates preserving locked Contact and the column callback contract.
 
 **Files:** `src/components/tpo/recruiter-roster-display-controls.tsx`, polish queue, proof log. Shared Select, Checkbox, Dropdown and Button inspected but unchanged. Source only; no execution/CI.
+
+## Surface 47 — TPO batch invitation control
+
+**Reviewed:** Finished batch, uninvited/zero-eligible/invitable batch, open or passed registration, date selection/minimum and version conflict, invite/extend/reopen/remove deadline, reminder reviewed checkbox and send confirmation, asynchronous busy/error/success, all dialog actions and layout at 375/768. Shared Input, Checkbox, Button, ConfirmDialog and InlineNotice inspected. No execution/CI.
+
+**Problems fixed (9):** unstyled terminal status; inconsistent section/heading/label typography; date picker and action buttons cramped on phones; unchecked recipient-review label had a small tap area; invitation could submit a visibly past date; deadline clear dialog lacked explanatory copy; status/errors were plain unframed text; action groups had unpredictable wraps; primary action and secondary removal looked equally prominent. Used legacy typography/borders, full-width 44px mobile actions, touch-sized review label, consistent dismissible notices, and explicit destructive confirm while preserving invitation/reminder/clear wording, request payloads, optimistic version tokens and role gates.
+
+**Files:** `src/components/tpo/tpo-batch-invitation-control.tsx`, queue, proof. Source review only, no app runtime/screenshots/CI.
