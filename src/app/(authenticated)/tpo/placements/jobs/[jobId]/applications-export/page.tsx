@@ -35,6 +35,10 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     <Select name="stage" defaultValue={result.stage} className="block min-h-11 w-full min-[768px]:min-h-9">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
     </Select></label>
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
+    <Input type="search" name="search" defaultValue={result.search} maxLength={100} className="block min-h-11 w-full min-[768px]:min-h-9"/>
+   </label>
+   <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[992px]:w-auto">Preview filters</Button>
    <details className="group col-span-full" open={result.flag !== "ALL" || result.channel !== "ALL" || result.eligibility !== "ALL" || result.sort !== "NEWEST" || result.submittedWithin !== "ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Applicant flags · Channel · Eligibility evidence · Order by · Submitted window</summary>
     <div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
@@ -44,9 +48,6 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      <option value="NO_SHOW">No-show</option><option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
-    <Input type="search" name="search" defaultValue={result.search} maxLength={100} className="block min-h-11 w-full min-[768px]:min-h-9"/>
-   </label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
     <Select name="channel" defaultValue={result.channel} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">All</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
@@ -68,7 +69,6 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     </Select></label>
     </div>
    </details>
-   <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[992px]:w-auto">Preview filters</Button>
   </form>
   <Banner tone="info">
    {result.rows.length} application records shown in this preview.
