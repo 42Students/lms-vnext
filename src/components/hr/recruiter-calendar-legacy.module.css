@@ -28,7 +28,7 @@
   /* CalendarGrid owns display so Tailwind hidden / min-[861px]:grid still work.
    * Setting display:grid here would outrank .hidden at <=860px, duplicating
    * the mobile agenda and causing horizontal overflow. */
-  grid-template-columns: repeat(7, minmax(150px, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
   min-width: 0;
   padding-bottom: 6px;
@@ -105,10 +105,10 @@
   color: #66758d;
   font-size: 12px;
 }
-/* At <=860px the route renders occupied-day articles instead of a
+/* At <=1099px the route renders occupied-day articles instead of a
  * seven-column grid; the hidden CalendarGrid must never create a horizontal
  * 1110px overflow region beneath those mobile articles. */
-@media (max-width: 860px) {
+@media (max-width: 1099px) {
   .board[data-slot="calendar-grid"] {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -118,7 +118,13 @@
     border-top: 1px solid #e3e8ef;
     border-bottom: 1px solid #e3e8ef;
   }
-  .nav { gap: 8px; }
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+  .nav > a { min-width: 0; padding-inline: 8px; white-space: nowrap; }
   .mobileDay { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
