@@ -566,7 +566,7 @@ export function LearnerClassSchedule({
           <label className="mt-4 block max-w-sm border-t border-border pt-4 text-xs font-semibold text-body">
             Section
             <Select value={sectionId} onChange={event => setSectionId(event.target.value)}
-              aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 sm:min-h-9 w-full">
+              aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 md:min-h-9 w-full">
               <option value="">All my sections</option>
               {sections.map(section => <option key={section.sectionId} value={section.sectionId}>
                 {section.sectionName} · {section.academicPeriodName}
