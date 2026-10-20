@@ -143,7 +143,7 @@ export async function ProjectAdminSubmissionsPage({
       {unsubmitted?<section className="space-y-3 border-b border-border pb-5">
         <ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/>
         <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total} />
-        <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
+        <h2 className="font-semibold text-foreground">Not submitted · {unsubmitted.total} workspaces</h2>
         <DataTable
           caption="Unsubmitted project workspaces"
           rows={unsubmitted.items}
@@ -165,7 +165,7 @@ export async function ProjectAdminSubmissionsPage({
           label="Unsubmitted workspace pages"/>
       </section>:null}
       {view==="ALL" && result ? <>
-      {summary?<div aria-label="Submission summary" className="grid min-w-0 grid-cols-1 divide-y divide-border rounded-[var(--lms-control-radius)] border border-border bg-surface min-[992px]:grid-cols-4 min-[992px]:divide-x min-[992px]:divide-y-0">
+      {summary?<div className="grid min-w-0 grid-cols-2 divide-x divide-border border-y border-border min-[1366px]:grid-cols-4">
         {([
           ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
           ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
@@ -173,7 +173,7 @@ export async function ProjectAdminSubmissionsPage({
           ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
         ] as const).map(([name, value, href]) => {
           return <Link key={name} href={href}
-            className="block min-w-0 p-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-safe:transition-colors motion-reduce:transition-none">
+            className="block min-w-0 bg-surface px-3 py-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             <p className="text-xs font-semibold text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;
