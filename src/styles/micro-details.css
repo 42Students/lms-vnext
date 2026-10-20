@@ -155,18 +155,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    Existing table heading borders and sticky position remain intact.
    No shadow or layout override is applied here. */
 
-/* Legacy: components___variables.scss:253-259 normal 250ms material easing;
-   components___antddesign.scss:7-13 uses a page-panel entrance. The opener's
-   state remains controlled by native details / the existing overlay component. */
-@media (prefers-reduced-motion: no-preference) {
-  [data-slot="dropdown-root"][open] > [data-slot="dropdown"]:not(:where([data-unskin], [data-unskin] *)) {
-    animation: lms-micro-dropdown-enter 250ms cubic-bezier(0.2, 0, 0, 1) both;
-  }
-}
-@keyframes lms-micro-dropdown-enter {
-  from { opacity: 0; translate: 0 -6px; }
-  to { opacity: 1; translate: 0 0; }
-}
+/* The generic dropdown has no legacy-specific 250ms/6px animation.
+   components___variables.scss:253 lists a default component timing token,
+   not a dropdown timing requirement. The shared overlay layer (chat-16)
+   already paints 200ms ease-out from -8px. Do not override that with an
+   inferred micro animation; leave ownership and native <details> intact. */
 
 /* Legacy: components___accessibility.scss:116-124; existing globals.css
    has the same 0.01ms emergency limit. This additionally avoids an entrance
@@ -249,8 +242,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 :where([data-slot="table"], [data-slot="data-table"])
   [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  /* Legacy-skin.css:511-514 gives a generic important thumb fill and
+     a normal 1px radius. This narrower exception keeps the measured admin
+     20% gray fill and 2px radius (admin-list-pages.scss:102-105,250-253). */
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 2px !important;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child {
   scrollbar-width: thin;
@@ -261,8 +257,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   height: 3px;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  /* Legacy-skin.css:511-514 gives a generic important thumb fill and
+     a normal 1px radius. This narrower exception keeps the measured admin
+     20% gray fill and 2px radius (admin-list-pages.scss:102-105,250-253). */
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 2px !important;
 }
 /* Legacy: old-lms-shell.css:41-43 — sidebar hover thumb 4px / 28% grey;
    chat-19 handles sidebar scroll chrome, do not duplicate/override it here. */

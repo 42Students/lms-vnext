@@ -45,10 +45,10 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    (status==="APPROVED"&&!allowLock))return null;
  return <section aria-label="Review final submission" className="mt-3">
   <Button type="button" variant="secondary" onClick={()=>setOpen(true)}
-   className="text-primary-text">
+   className="">
    Review
   </Button>
-  {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
+  {message?<p role="status" className="mt-2 text-sm text-body">{message}</p>:null}
   <Dialog open={open} onOpenChange={setOpen} title={"Review — "+(workspaceTitle??"project submission")}
    description="Review the current submission and record feedback for the learner."
    footer={<>
@@ -64,7 +64,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
      <Button type="button" variant="secondary" disabled={pending} onClick={()=>setConfirmLock(true)}
       >Lock submission</Button>:null}
    </>}>
-   <label className="block text-sm font-medium">Feedback for the learner
+   <label className="block text-[13px] font-semibold text-body">Feedback for the learner
     <Textarea maxLength={6000} value={feedback} disabled={pending}
       onChange={event=>setFeedback(event.target.value)} rows={4}
       className="mt-2 w-full"

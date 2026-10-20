@@ -9,6 +9,7 @@ import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { ProjectTemplateCatalogueExport } from "@/components/projects/project-template-catalogue-export";
@@ -23,11 +24,18 @@ export default async function CollegeProjectTemplatesPage({
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) return <ProjectAdminMissingCollege/>;
 
-  const templates =
-    await listAssignedProjectTemplates(
-      context,
-      collegeId,
-    );
+  const templateRead = await listAssignedProjectTemplates(context, collegeId)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}));
+  if(!templateRead.ok) return <div className="min-w-0 space-y-6">
+    <PageHeader title="Project templates"
+      description="Published project templates assigned to this college."/>
+    <ErrorState title="Project templates unavailable"
+      description="The assigned template catalogue could not be loaded. Your filters were not changed."
+      action={<Link href="/college/projects/templates"
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading templates</Link>}/>
+  </div>;
+  const templates = templateRead.value;
 
   const params = await searchParams;
   const rawSearch = params.q;
