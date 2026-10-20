@@ -35,7 +35,7 @@ export default async function RecruiterDriveProposalHistory({
    <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Draft another proposal</Link>
   </nav>
   {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3">
-   <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Choose a college</h2>
+   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Choose a college</h2>
    <NeedsDoingChips label="Authorized colleges:" items={data.choices.map(grant=>({
     key:grant.collegeId,label:grant.collegeName,
     href:"/hr/drives/proposals?collegeId="+encodeURIComponent(grant.collegeId),
@@ -91,7 +91,7 @@ export default async function RecruiterDriveProposalHistory({
         dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
       }).format(row.createdAt)} IST
      </p>
-     <p className="mt-2 text-xs text-body">No approval or drive publication is implied.</p>
+     <p className="mt-2 text-xs text-[var(--lms-muted-text)]">No approval or drive publication is implied.</p>
     </li>)}
    </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."/>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-2">

@@ -57,7 +57,7 @@ export default async function LearnerCourseProgressPage({
             <article key={lesson.id} className="border-b border-border py-4 md:py-5">
               <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
-                  <h2 className="text-base font-semibold text-foreground">{lesson.name}</h2>
+                  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{lesson.name}</h2>
                   <p className="mt-1 text-sm text-body">
                     {lesson.total === 0
                       ? "No published learning items"

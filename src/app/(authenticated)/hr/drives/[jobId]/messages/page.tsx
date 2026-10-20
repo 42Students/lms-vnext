@@ -28,7 +28,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
    description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}
    actions={<Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to drive overview</Link>}/>
   <section className="border-b border-border pb-5">
-   <h2 className="font-semibold text-foreground">Drive conversation</h2>
+   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Drive conversation</h2>
    <p className="mt-2 text-sm text-body">Open or resume the conversation tied to this authorized employer drive.</p>
    <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
     <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>

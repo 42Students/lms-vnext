@@ -62,14 +62,14 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="border-b border-border pb-4 md:pb-5">
-      <h2 className="font-semibold text-foreground">Choose round</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Choose round</h2>
       <Tabs renderPanel={false} ariaLabel="Hiring rounds" value={selectedRound?.id??""}
         items={rounds.map(round=>({value:round.id,label:round.sequence+". "+round.name,
           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}))}/>
     </section>
     {results?<section className="space-y-4 border-b border-border pb-4 md:pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h2 className="font-semibold text-foreground">{results.round.name}</h2>
+        <div><h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{results.round.name}</h2>
         <p className="mt-1 text-sm text-body">{results.round.kind} · {results.round.status} · {counts?.all??0} eligible, shared candidates</p></div>
         <StatusBadge tone={results.round.status==="APPLIED"?"success":results.round.status==="STAGED"?"warning":"neutral"}>{results.round.status}</StatusBadge>
       </div>

@@ -43,7 +43,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
   </nav>
   <>
    <section className="space-y-3 border-b border-border pb-4">
-    <h2 className="font-semibold text-foreground">Propose an interviewer time block</h2>
+    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Propose an interviewer time block</h2>
     {rounds.length===0?<Alert tone="warning">
      No pending or scheduled interview round is available for this drive.{" "}
      <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
@@ -55,7 +55,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     }))}/>
    </section>
    <section className="space-y-3">
-    <h2 className="font-semibold text-foreground">Time blocks ({slots.items.length})</h2>
+    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Time blocks ({slots.items.length})</h2>
     {slots.items.map(slot=><article key={slot.id} className="min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0">
      <p className="font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
      <p className="text-sm text-body">
