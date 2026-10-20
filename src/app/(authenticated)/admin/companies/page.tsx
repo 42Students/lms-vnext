@@ -42,12 +42,12 @@ export default async function SuperAdminCompaniesPage({
     <nav aria-label="Company directory tabs" className="flex flex-wrap gap-3">
       <Link href="/admin/companies?view=GLOBAL"
        aria-current={view==="GLOBAL"?"page":undefined}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+       className="inline-flex min-h-11 items-center border-b-2 border-transparent px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
        42&apos;s company list
       </Link>
       {context.adminScope?.collegeId?<Link href="/admin/companies?view=COLLEGE"
        aria-current={view==="COLLEGE"?"page":undefined}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+       className="inline-flex min-h-11 items-center border-b-2 border-transparent px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
        This college&apos;s companies
       </Link>:null}
     </nav>
@@ -63,62 +63,62 @@ export default async function SuperAdminCompaniesPage({
       <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle">Active companies →</Link>
     </div>
     <form method="get" className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 min-[1366px]:grid-cols-3">
-      <label className="grid gap-1 text-sm font-semibold text-body">Company
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
         <Input name="q" defaultValue={data.query.q} placeholder="Search company name or domain"
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Search in
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search in
         <Select name="searchField" defaultValue={data.query.searchField} className="min-h-11 md:min-h-9">
           <option value="ALL">Name, other name or domain</option><option value="NAME">Name or other name</option><option value="DOMAIN">Any company domain</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold text-body">Relationship
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Relationship
         <Select name="status" defaultValue={data.query.status}
           className="min-h-11 md:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Company status
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company status
         <Select name="companyStatus" defaultValue={data.query.companyStatus} className="min-h-11 md:min-h-9">
           <option value="MATCH">Match relationship filter</option><option value="ACTIVE">Active company</option>
           <option value="ARCHIVED">Archived company</option><option value="ALL">Any company status</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Trust state
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Trust state
         <Select name="trust" defaultValue={data.query.trust} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option><option value="TRUSTED">Trusted</option><option value="UNTRUSTED">Not trusted</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold text-body">Global verification
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Global verification
         <Select name="verified" defaultValue={data.query.verified}
           className="min-h-11 md:min-h-9">
           <option value="ALL">All companies</option><option value="NOT_VERIFIED">Only not verified</option>
           <option value="VERIFIED">Verified by 42</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">College
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College
         <Select name="collegeId" defaultValue={data.query.collegeId ?? ""} className="min-h-11 md:min-h-9">
           <option value="">All permitted colleges</option>
           {availableColleges.map(college=><option key={college.id} value={college.id}>{college.name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Order
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
         <Select name="sort" defaultValue={data.query.sort} className="min-h-11 md:min-h-9">
           <option value="NAME">Company name</option><option value="RECENT">Recently changed relationship</option>
         </Select>
       </label>
       {data.query.companyId ? <Input type="hidden" name="companyId" value={data.query.companyId}/> : null}
-      <label className="grid gap-1 text-sm font-semibold text-body">Relationship owner
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Relationship owner
         <Select name="owner" defaultValue={data.query.owner} className="min-h-11 md:min-h-9">
           <option value="ALL">Any owner assignment</option><option value="ASSIGNED">Owner assigned</option><option value="UNASSIGNED">Needs an owner</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Company website
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company website
         <Select name="website" defaultValue={data.query.website} className="min-h-11 md:min-h-9">
           <option value="ALL">Any website state</option><option value="HAS_WEBSITE">Website recorded</option><option value="MISSING_WEBSITE">Website missing</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Relationship changed
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Relationship changed
         <Select name="changedWithin" defaultValue={data.query.changedWithin} className="min-h-11 md:min-h-9">
           <option value="ALL">Any time</option><option value="7">Past 7 days</option><option value="30">Past 30 days</option><option value="90">Past 90 days</option>
         </Select>
@@ -126,7 +126,7 @@ export default async function SuperAdminCompaniesPage({
       <Button type="submit" className="min-h-11 md:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary">Filter</Button>
     </form>
     <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+      className="inline-flex min-h-11 items-center border-b-2 border-transparent px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       Export matching companies as CSV →
     </Link>
     {context.adminScope?.collegeId?
@@ -148,7 +148,7 @@ export default async function SuperAdminCompaniesPage({
       </div>
       {candidates.length===0?<p className="text-sm text-muted-foreground">No matching domains found in this result page.</p>:
        <ul className="grid gap-2 md:grid-cols-2">{candidates.map(group=>
-        <li key={group.domain} className="min-w-0 rounded-md border border-border p-3">
+        <li key={group.domain} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
           <p className="break-all text-sm font-semibold">{group.domain}</p>
           <ul className="mt-2 space-y-1 text-sm text-body">{group.companies.map(company=>
            <li key={company.id} className="break-words">{company.name}</li>)}</ul>

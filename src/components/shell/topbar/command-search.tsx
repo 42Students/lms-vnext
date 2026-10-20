@@ -146,7 +146,6 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         onDismiss={() => {setOpen(false);setMobileOpen(false);input.current?.focus();}}
         onKeyDown={event => {
           if (event.defaultPrevented || event.nativeEvent.isComposing) return;
-          if (event.defaultPrevented || event.nativeEvent.isComposing) return;
           if (event.key === "Escape") {
             event.preventDefault();
             input.current?.focus();
@@ -181,19 +180,19 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             : (index - 1 + options.length) % options.length;
           options[next]?.focus();
         }}>
-        <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-[.08em] text-muted-foreground">Go to</p>
+        <p className="px-2 py-1 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-[.08em] text-muted-foreground">Go to</p>
         {config.portal === "learn" && courseLoading ?
           <p role="status" className="px-2 py-2 text-xs text-muted-foreground">Loading your courses…</p> : null}
         {config.portal === "learn" && courseError ?
-          <p role="status" className="px-2 py-2 text-xs text-error">Could not load courses. Search shortcuts remain available.</p> : null}
-        {courseMatches.length > 0 ? <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Courses</p> : null}
+          <p role="alert" className="px-2 py-2 text-xs text-error">Could not load courses. Search shortcuts remain available.</p> : null}
+        {courseMatches.length > 0 ? <p className="px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Courses</p> : null}
         {courseMatches.map(course => <Link key={course.deliveryId}
           role="option" aria-selected={false}
           href={"/learn/courses/" + encodeURIComponent(course.deliveryId) + "/home"}
           className={style.suggestion}
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
           <SearchIcon /> <span className="min-w-0"><span className="block truncate">{course.courseName}</span>
-            <span className="block truncate text-[11px] text-muted-foreground">{course.courseCode} · {course.sectionName}</span></span>
+            <span className="block truncate text-[length:var(--lms-topbar-caption-size,11px)] text-muted-foreground">{course.courseCode} · {course.sectionName}</span></span>
         </Link>)}
         {config.portal === "tpo" && query.trim().length >= 2
           ? <TpoFindSuggestions query={query} onOpen={href => {
@@ -202,7 +201,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
               setOpen(false);
               setMobileOpen(false);
             }}/> : null}
-        {destinations.length > 0 ? <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Search within</p> : null}
+        {destinations.length > 0 ? <p className="px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Search within</p> : null}
         {destinations.map(destination => <Link key={destination.href}
           role="option" aria-selected={false} href={destination.href}
           className={style.suggestion}
