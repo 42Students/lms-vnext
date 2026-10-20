@@ -23,7 +23,7 @@ export default async function SuperAdminProjectReassignMentorRoute({
 
   if (!collegeId) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-4">
         <PageHeader
           title="Bulk mentor reassignment"
           description="A selected college scope is required."
@@ -42,7 +42,7 @@ export default async function SuperAdminProjectReassignMentorRoute({
     organizationId:context.adminScope?.organizationId??null,
     collegeId,
   })){
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href="/admin/projects" label="Back to workspaces" />}/>
       <ProjectAdminNav basePath="/admin/projects" active="workspaces"/>
       <ErrorState title="Mentor reassignment access denied"

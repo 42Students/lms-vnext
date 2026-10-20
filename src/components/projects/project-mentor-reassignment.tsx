@@ -182,7 +182,7 @@ export function ProjectMentorReassignment({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       <section className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Select workspaces
@@ -210,11 +210,11 @@ export function ProjectMentorReassignment({
             No non-archived workspaces are available.
           </p>
         ) : (
-          <div className="mt-3 space-y-2">
+          <div className="mt-3 min-w-0 border-t border-border">
             {workspaces.map((workspace) => (
               <label
                 key={workspace.id}
-                className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 motion-safe:transition-colors motion-reduce:transition-none hover:border-primary hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+                className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-3 border-b border-border px-2 py-3 motion-safe:transition-colors motion-reduce:transition-none hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
               >
                 <Checkbox
                   checked={selected.includes(
@@ -225,7 +225,7 @@ export function ProjectMentorReassignment({
                   }
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold text-foreground">
+                  <span className="block break-words text-sm font-semibold text-foreground">
                     {workspace.title}
                   </span>
                   <span className="block text-xs text-muted-foreground">
@@ -249,7 +249,7 @@ export function ProjectMentorReassignment({
         <h2 className="m-0 text-base font-semibold text-foreground">
           Reassign to mentor
         </h2>
-        <div className="mt-4 grid gap-4 min-[768px]:grid-cols-2">
+        <div className="mt-4 grid min-w-0 gap-4 min-[768px]:grid-cols-2">
           <label className="grid gap-1 text-[13px] font-semibold text-body">
             Search mentors
             <Input
@@ -315,7 +315,7 @@ export function ProjectMentorReassignment({
           </p> : null}
         {!selected.length ? <p role="status" className="mt-3 text-sm text-body">Select at least one workspace to reassign.</p> : null}
         <div className="mt-4">
-          <Button
+          <Button className="w-full sm:w-auto"
             disabled={
               pending ||
               !selected.length ||

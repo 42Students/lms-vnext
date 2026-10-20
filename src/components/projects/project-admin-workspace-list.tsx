@@ -57,12 +57,14 @@ export function ProjectAdminWorkspaceList({
   emptyTitle,
   emptyDescription,
   view="cards",
+  compactAdmin = false,
 }: {
   items: readonly ProjectAdminWorkspaceListItem[];
   basePath: string;
   emptyTitle: string;
   emptyDescription: string;
   view?:"cards"|"table";
+  compactAdmin?: boolean;
 }) {
   if (!items.length) {
     return (
@@ -106,6 +108,30 @@ export function ProjectAdminWorkspaceList({
     ]}
     empty={<EmptyState title={emptyTitle} description={emptyDescription}/>}
   />;
+  if (compactAdmin) return <div className="min-w-0 divide-y divide-border border-y border-border">
+    {items.map(item=><article key={item.id} className="min-w-0 py-4">
+      <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-center min-[768px]:gap-5">
+        <div className="min-w-0">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
+            <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">{item.title}</Link>
+            <StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>
+          </div>
+          <p className="mt-1 break-words text-sm text-body">{item.summary ?? "Project workspace."}</p>
+          <p className="mt-2 break-words text-xs text-muted-foreground">{item.templateTitle ? "Template: "+item.templateTitle : "No template — attach one"}</p>
+          <dl className="mt-2 grid min-w-0 gap-x-4 gap-y-2 text-xs sm:grid-cols-3">
+            <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Mentor</dt><dd className="break-words text-foreground">{item.mentorName??"Unassigned"}</dd></div>
+            <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Members</dt><dd className="text-foreground">{item.memberCount}</dd></div>
+            <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Progress</dt><dd className="text-foreground">{safeProjectProgressPercent(item.progressPercent)===null?"Unavailable":safeProjectProgressPercent(item.progressPercent)+"%"}</dd></div>
+          </dl>
+          <p className="mt-2 text-xs text-muted-foreground">Updated {formatProjectAdminUpdatedDateIst(item.updatedAt)}</p>
+        </div>
+        <div className="flex min-w-0 flex-wrap items-center gap-2 min-[768px]:justify-end">
+          <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Open workspace</Link>
+          <ProjectArchiveControl projectId={item.id} projectTitle={item.title} status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
+        </div>
+      </div>
+    </article>)}
+  </div>;
   return (
     <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
       {items.map((item) => (

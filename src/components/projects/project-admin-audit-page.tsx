@@ -14,6 +14,7 @@ import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { DateInput } from "@/components/ui/date-input";
 import {
   listActivityEvents,
 } from "@/modules/activity/service";
@@ -185,11 +186,11 @@ export async function ProjectAdminAuditPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-      <PageHeader
-        title="Project audit"
-        description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
-        actions={<PageBackLink href={basePath} label="Project workspaces" />}
-      />
+      <div className="min-w-0">
+        <PageBackLink href={basePath} label="Project workspaces" />
+        <PageHeader title="Project audit"
+          description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."} />
+      </div>
       <ProjectAdminNav basePath={basePath} active="audit" />
 
       {filters.ignoredInvalidFilters ? (
@@ -264,10 +265,9 @@ export async function ProjectAdminAuditPage({
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
           </span>
-          <Input
+          <DateInput mode="date"
             className={inputClass}
             name="from"
-            type="date"
             defaultValue={from}
           />
         </label>
@@ -275,10 +275,9 @@ export async function ProjectAdminAuditPage({
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
           </span>
-          <Input
+          <DateInput mode="date"
             className={inputClass}
             name="to"
-            type="date"
             defaultValue={to}
           />
         </label>
