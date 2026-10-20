@@ -63,12 +63,12 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
    </ul>}
   <fieldset disabled={!ready||busy} className="space-y-2">
    <legend className="font-semibold text-foreground">Add setting</legend>
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Key
+   <label className="grid gap-1 text-sm font-semibold text-body">Key
     <Input value={key} onChange={event=>setKey(event.target.value)} maxLength={120}
      placeholder="custom.settingName" autoComplete="off"
      className="min-h-11 md:min-h-9 w-full"/>
    </label>
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Value
+   <label className="grid gap-1 text-sm font-semibold text-body">Value
     <Textarea rows={2} value={value} onChange={event=>setValue(event.target.value)}
      maxLength={4096} className="min-h-11 md:min-h-9 w-full"/>
    </label>

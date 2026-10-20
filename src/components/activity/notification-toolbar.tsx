@@ -54,14 +54,14 @@ export function NotificationToolbar({
         <Link
           href={baseHref + "?view=all"}
           aria-current={view === "all" ? "page" : undefined}
-          className={`inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border px-4 text-sm font-medium transition-colors duration-150 ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
+          className={`inline-flex min-h-11 min-[768px]:min-h-9 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-filter-radius,8px)] border px-4 text-sm font-medium transition-colors duration-150 ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           {allLabel}
         </Link>
         <Link
           href={baseHref + "?view=unread"}
           aria-current={view === "unread" ? "page" : undefined}
-          className={`inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border px-4 text-sm font-medium transition-colors duration-150 ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
+          className={`inline-flex min-h-11 min-[768px]:min-h-9 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-filter-radius,8px)] border px-4 text-sm font-medium transition-colors duration-150 ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           Unread ({unreadCount})
         </Link>
