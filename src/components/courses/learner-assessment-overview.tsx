@@ -1,6 +1,7 @@
 "use client";
 import { StatTile } from "@/components/ui/stat-tile";
 import styles from "./learner-assessment-metrics.module.css";
+import { AssessmentMetricGlyph } from "./learner-assessment-metric-glyph";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -246,13 +247,17 @@ export function LearnerAssessmentOverview({
               : "Quizzes"
           }
           value={scopedAttentionItems.length}
-        />
+        ><span className={styles.icon}><AssessmentMetricGlyph kind="assignment" /></span></StatTile>
         <StatTile className={styles.tile}
           label="Courses"
           value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
-        />
-        <StatTile className={styles.tile} label="Needs action" value={actionCounts.pending} />
-        <StatTile className={styles.tile} label="Overdue / missed" value={actionCounts.overdue} />
+        ><span className={styles.icon}><AssessmentMetricGlyph kind="courses" /></span></StatTile>
+        <StatTile className={styles.tile} label="Needs action" value={actionCounts.pending}>
+          <span className={styles.icon}><AssessmentMetricGlyph kind="pending" /></span>
+        </StatTile>
+        <StatTile className={styles.tile} label="Overdue / missed" value={actionCounts.overdue}>
+          <span className={styles.icon}><AssessmentMetricGlyph kind="overdue" /></span>
+        </StatTile>
         <StatTile className={styles.tile}
           label={
             kind === "ASSIGNMENT"
@@ -260,7 +265,7 @@ export function LearnerAssessmentOverview({
               : "Attempted"
           }
           value={completed}
-        />
+        ><span className={styles.icon}><AssessmentMetricGlyph kind="submitted" /></span></StatTile>
       </div>
       )}
 
