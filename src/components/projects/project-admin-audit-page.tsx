@@ -190,8 +190,8 @@ export async function ProjectAdminAuditPage({
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
            <PageBackLink href={basePath} label="Project workspaces" />
-          <a href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Refresh</a>
-          {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View activity log</a> : null}
+          <Link href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Refresh</Link>
+          {basePath === "/admin/projects" ? <Link href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View activity log</Link> : null}
         </div>}
       />
       <ProjectAdminNav basePath={basePath} active="audit" />
@@ -204,11 +204,11 @@ export async function ProjectAdminAuditPage({
 
       <Tabs ariaLabel="Audit time range" renderPanel={false} value={selectedAuditRange} items={auditRangeTabs} />
       <form
-        className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 min-[1366px]:grid-cols-5"
+        className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-5"
         action={basePath + "/audit"}
       >
         <label>
-          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Action
           </span>
           <Select className={inputClass} name="action" defaultValue={eventType??""}>
@@ -221,7 +221,7 @@ export async function ProjectAdminAuditPage({
           </Select>
         </label>
         <label>
-          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Importance
           </span>
           <Select
@@ -245,7 +245,7 @@ export async function ProjectAdminAuditPage({
           </Select>
         </label>
         <label>
-          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Subject
           </span>
           <Input
@@ -256,12 +256,12 @@ export async function ProjectAdminAuditPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">Entity ID</span>
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity ID</span>
           <Input className={inputClass} name="subjectId" defaultValue={subjectId??""}
             placeholder="Exact project or task UUID"/>
         </label>
         <label>
-          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
           </span>
           <Input
@@ -272,7 +272,7 @@ export async function ProjectAdminAuditPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
           </span>
           <Input
@@ -282,19 +282,19 @@ export async function ProjectAdminAuditPage({
             defaultValue={to}
           />
         </label>
-        <div className="flex flex-wrap items-end gap-2 md:col-span-2 min-[1366px]:col-span-5">
+        <div className="flex flex-wrap items-end gap-2 md:col-span-2 xl:col-span-5">
           <Button
             type="submit"
             className="justify-center"
           >
             Apply filters
           </Button>
-          <a
+          <Link
             href={basePath + "/audit"}
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Reset
-          </a>
+          </Link>
         </div>
       </form>
 

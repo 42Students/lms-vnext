@@ -7,6 +7,7 @@ import {
   type AdminAttendanceWorkspaceData,
 } from "@/components/attendance/admin-attendance-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import {ErrorState} from "@/components/ui/error-state";
 import {
   getAdminAttendanceGrid,
@@ -37,7 +38,7 @@ export default async function CollegeAttendancePage({
     context.membership?.collegeId ??
     (isSuperAdmin(context) ? context.adminScope?.collegeId : null);
   if (!collegeId) {
-    return <ErrorState title="Choose a college to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Return to college dashboard</Link>}/>;
+    return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><ErrorState title="Choose a college to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Return to college dashboard</Link>}/></div>;
   }
   const parsed = z.object({
     deliveryId: z.uuid().optional(),
@@ -46,7 +47,7 @@ export default async function CollegeAttendancePage({
     allCourses: z.enum(["1"]).optional(),
     month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional(),
   }).safeParse(await searchParams);
-  if (!parsed.success) return <ErrorState title="Unable to load attendance" description="These attendance filters are not valid. Clear them and choose a class, course and month again." action={<Link href="/college/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Reset attendance filters</Link>}/>;
+  if (!parsed.success) return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><ErrorState title="Unable to load attendance" description="These attendance filters are not valid. Clear them and choose a class, course and month again." action={<Link href="/college/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Reset attendance filters</Link>}/></div>;
   const query=parsed.data;
   const month = query.month ?? currentMonth();
   const options = await getAdminAttendanceOptions(context, collegeId);
@@ -113,29 +114,21 @@ export default async function CollegeAttendancePage({
   };
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Attendance"
         description={`College-wide attendance oversight for ${options.college.name}, including unmarked sessions and admin corrections.`}
-        actions={
-          <nav aria-label="Attendance views" className="flex min-w-0 flex-wrap gap-3 border-b border-border pb-2">
-          <Link href="/college/attendance/departments"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-            Attendance by Department
-          </Link>
-          <Link
-            href="/college/attendance/corrections"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-            Correction windows
-          </Link>
-          <Link
-            href="/college/attendance/settings"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
-          >
-            Attendance policy
-          </Link>
-          </nav>
-        }
+      />
+      <Tabs
+        ariaLabel="Attendance views"
+        renderPanel={false}
+        value="/college/attendance"
+        items={[
+          { value: "/college/attendance", label: "Overview", href: "/college/attendance" },
+          { value: "/college/attendance/departments", label: "Attendance by Department", href: "/college/attendance/departments" },
+          { value: "/college/attendance/corrections", label: "Correction windows", href: "/college/attendance/corrections" },
+          { value: "/college/attendance/settings", label: "Attendance policy", href: "/college/attendance/settings" },
+        ]}
       />
       <AdminAttendanceWorkspace
         data={data}
