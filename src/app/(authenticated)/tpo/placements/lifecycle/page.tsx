@@ -17,6 +17,7 @@ import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecyc
 import {driveRequestStatusTone,driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveStatusTone,tpoDriveWhereItIs,tpoDriveEmploymentLabel,tpoDriveWorkModeLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
@@ -299,10 +300,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <input type="hidden" name="scope" value="SELECTED"/>
           <p className="text-sm text-body">Select up to 25 drives shown on this page to export just those rows.</p>
           {data.rows.map((job) => <article key={job.id} className="border-b border-border py-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
               <div className="min-w-0">
-                <label className="mb-2 flex items-center gap-2 text-sm">
-                 <input name="ids" type="checkbox" value={job.id} aria-label={"Select "+job.company+" "+job.title}/>
+                <label className="mb-2 flex min-h-11 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-body-text)] min-[768px]:min-h-9">
+                 <Checkbox name="ids" value={job.id} aria-label={"Select "+job.company+" "+job.title}/>
                  Select for export
                 </label>
                 <h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
