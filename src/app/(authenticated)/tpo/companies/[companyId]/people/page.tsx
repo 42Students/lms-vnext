@@ -20,7 +20,7 @@ export default async function TpoCompanyPeoplePage({
   if (!company) notFound();
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
-      <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+      <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </Link>
