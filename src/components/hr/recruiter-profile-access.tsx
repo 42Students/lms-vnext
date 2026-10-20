@@ -52,7 +52,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
   return (
     <section aria-label="College Access" className="min-w-0 border-t border-border pt-4">
       {hideHeading ? null : <h2 className="text-base font-semibold text-foreground">College Access</h2>}
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">
         Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
       </p>
       {error ? (
@@ -74,7 +74,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
                 <div className="break-words font-medium text-foreground">{grant.collegeName}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Active recruiter access</div>
                 <nav aria-label={"Open "+grant.collegeName+" recruiter pages"}
-                  className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                  className="mt-2 flex min-w-0 flex-wrap gap-x-4 gap-y-1 text-sm">
                   {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
                     <Link key={link.label} href={link.href}
                       className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -83,16 +83,19 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
                   ))}
                 </nav>
               </div>
+              <details className="min-w-0 min-[768px]:shrink-0">
+              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Manage access</summary>
               <Button
                 variant="secondary"
                 type="button"
                 disabled={leaving === grant.id}
                 loading={leaving === grant.id}
                 onClick={() => setConfirmGrant(grant)}
-                className="min-h-11 w-full justify-center border-error/30 text-error hover:bg-error/5 min-[768px]:min-h-9 min-[768px]:w-auto"
+                className="mt-2 min-h-11 w-full justify-center border-error/30 text-error hover:bg-error/5 min-[768px]:min-h-9 min-[768px]:w-auto"
               >
                 {leaving === grant.id ? "Leaving…" : "Leave Access"}
               </Button>
+              </details>
             </div>
           ))}
         </div>
