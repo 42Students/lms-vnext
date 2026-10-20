@@ -13,7 +13,7 @@ import {liveClassIstSchedule} from "@/modules/courses/college-live-classes-model
 import type {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
 type Data=Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;showHeader?:boolean}){
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-4">
   {showHeader?<PageHeader title="Live Classes"
     description="Saved lesson sessions in your college. Meeting links are available only through authorized course workspaces."
     actions={<CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
@@ -21,12 +21,15 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       lesson:item.lessonName,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
       visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>}/>:null}
   <form method="get" action="/college/live-classes"
-    className="flex flex-wrap items-end gap-3 border-b border-border pb-4 print:hidden">
+    className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] print:hidden">
     <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Session, lesson or course
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
         className="min-h-11 min-w-0 md:min-h-9"/>
     </label>
+    <details className="min-w-0 border-t border-border pt-2 md:col-span-2 min-[992px]:col-span-4" open={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined}>
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filters</summary>
+      <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-4">
     <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Course code (exact)
       <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
@@ -72,14 +75,16 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       <DateInput mode="date" name="to" defaultValue={data.to??""}
         className="min-h-11 md:min-h-9"/>
     </label>
-    <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
+      </div>
+    </details>
+    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
   </form>
   <section aria-label="Persisted live classes" className="border-y border-border">
     <p className="border-b border-border p-4 text-sm text-muted-foreground">{data.total} matching live classes</p>
     {data.items.length===0?<p className="p-5 text-sm text-body">No saved sessions match these filters.</p>:
       <div className="divide-y divide-border">{data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 px-1 py-4 md:px-4">
-        <div className="flex flex-wrap justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
           <h2 className="min-w-0 break-words font-semibold text-foreground">{item.title}</h2>
           <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
            type:item.contentType,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
