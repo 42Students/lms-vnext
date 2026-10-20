@@ -17,6 +17,8 @@ import type {
   listCollegeClasses,
   listCollegeElectives,
 } from "@/modules/academics/college-structure-directory-service";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
