@@ -43,7 +43,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
     href:tpoCompanyAuditHref(jobId,option),
    }))}/>
   {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
     Export access history CSV
   </a>:null}
   {!result.ready?<Alert tone="warning">

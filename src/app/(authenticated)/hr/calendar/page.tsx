@@ -251,7 +251,7 @@ export default async function HrCalendarPage({
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Calendar" />
       <ErrorState title="Invalid calendar filters" description="Review the selected date, view and event filters."
-        action={<Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline">Clear filters</Link>}/>
+        action={<Link href="/hr/calendar" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>
     </div>;
   }
 

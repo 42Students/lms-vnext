@@ -78,9 +78,9 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
       <p className="text-sm text-body">
         Cancelling stops new applications. Open applicants are marked Not selected and notified, pending or scheduled rounds are cancelled, and issued offers are withdrawn. Pending withdrawal requests are settled, the recruiter is notified when linked, and accepted offers remain valid. History is retained.
       </p>
-      <dl className="grid grid-cols-1 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2">
+      <dl className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-2">
         {rows.map(([label, n]) => (
-          <div key={label} className="border-b border-border p-3 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0">
+          <div key={label} className="border-b border-border px-1 py-4">
             <dt className="text-xs text-body">{label}</dt>
             <dd className="text-2xl font-semibold tabular-nums">{n}</dd>
           </div>
@@ -112,7 +112,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 maxLength={1000}
                 rows={3}
                 disabled={pending}
-                className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"
+                className="mt-2 min-h-11 w-full min-[768px]:min-h-9"
               />
             </label>
             <p className="text-xs text-body">Students see the reason. You can choose a reason above or write your own.</p>
