@@ -62,15 +62,15 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex flex-wrap items-center justify-end gap-2">
-    <a href="#register-student" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover md:min-h-9">Register New Student ↓</a>
-    <Link href="/admin/people" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+    <a href="#register-student" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3.5 text-sm font-semibold text-on-primary hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Register New Student ↓</a>
+    <Link href="/admin/people" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
-  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-2"><h2 id="register-student-heading" className="text-lg font-semibold">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
+  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-2"><h2 id="register-student-heading" className="text-lg font-semibold text-foreground">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-5">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 id="bulk-register-students-heading" className="text-lg font-semibold">Bulk Register Students</h2>
+      <h2 id="bulk-register-students-heading" className="text-lg font-semibold text-foreground">Bulk Register Students</h2>
       <SuperAdminStudentImportHistory runs={importRuns}/>
     </div>
     <p className="text-sm text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
