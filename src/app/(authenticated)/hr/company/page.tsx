@@ -100,7 +100,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         title="Company & Team"
         description={"Your work with "+result.grant.collegeName}
         actions={<Link href="/hr/profile"
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Your profile
         </Link>}/>
 
@@ -169,7 +169,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-base font-semibold text-foreground">Recruiter team</h2>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Export authorized team CSV
             </Link>
           </div>
@@ -182,7 +182,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
-              className="min-h-11 min-w-0 w-full basis-full md:w-[220px] md:basis-auto md:flex-none"/>
+              className="min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"/>
             <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
@@ -195,9 +195,9 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           {teamPageResult.rows.length===0 ? <EmptyState title="No matching teammates" description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}/> : (
             <div className="mt-4 divide-y divide-border">
               {teamPageResult.rows.map((member) => (
-                <div key={member.userId} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
-                  <div className="flex items-start gap-3">
-                    <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-sm font-semibold text-foreground">
+                <div key={member.userId} className="flex min-w-0 flex-wrap items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted text-sm font-semibold text-foreground">
                       {(member.displayName||member.email||"R").trim().charAt(0).toUpperCase()}
                     </span>
                     <div>
