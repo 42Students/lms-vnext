@@ -43,10 +43,10 @@ export function CollegeLessonReorderActions({
   }
 
   return <>
-    <div role="group" className="flex flex-wrap gap-2" aria-label="Lesson order controls">
-      <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={!canMoveUp || pending}
+    <div role="group" className="flex min-w-0 w-full flex-wrap items-center gap-2 sm:w-auto" aria-label="Lesson order controls">
+      <Button size="sm" className="min-h-11 min-w-0 flex-1 sm:flex-none md:min-h-9" variant="secondary" disabled={!canMoveUp || pending}
         onClick={() => setDirection("UP")}>Move up</Button>
-      <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={!canMoveDown || pending}
+      <Button size="sm" className="min-h-11 min-w-0 flex-1 sm:flex-none md:min-h-9" variant="secondary" disabled={!canMoveDown || pending}
         onClick={() => setDirection("DOWN")}>Move down</Button>
     </div>
     <ConfirmDialog
