@@ -70,12 +70,12 @@ export function CollegeDepartmentInsights({
           These settings are policy context, not department attendance percentages.
         </p>
         <Link href="/college/attendance/settings"
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Attendance policy settings</Link>
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Attendance policy settings</Link>
       </Alert>
     ) : null}
     <section aria-label="Department filters" className="border-t border-border pt-4">
       <form method="get" action={path} className="flex flex-wrap items-end gap-3">
-        <label className="grid min-w-0 w-full flex-1 gap-1 text-sm font-semibold text-body md:min-w-52">
+        <label className="grid w-full min-w-0 basis-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-56 md:basis-auto md:flex-none">
           Department name
           <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"

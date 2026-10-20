@@ -32,7 +32,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
 
   if (!collegeId) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-5">
         <PageHeader
           title="Placement Drives"
           description="Placement administration requires a college safety scope."
@@ -54,7 +54,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
   }
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader
         title="Placement Drives"
         description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."

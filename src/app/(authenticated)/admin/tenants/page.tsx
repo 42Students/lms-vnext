@@ -32,7 +32,7 @@ export default async function TenantDirectory({searchParams}:{
  if(!parsed) return <div className="min-w-0 space-y-4">
   <PageHeader title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
-   action={<Link href="/admin/tenants" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+   action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDirectory>>;
  try{
@@ -44,7 +44,7 @@ export default async function TenantDirectory({searchParams}:{
    <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant directory unavailable"
     description="Colleges and organizations could not be loaded. Try again with the same filters."
-    action={<Link href={tenantLifecycleHref(parsed)} className="font-semibold text-primary-text">Retry tenant directory</Link>}/>
+    action={<Link href={tenantLifecycleHref(parsed)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry tenant directory</Link>}/>
   </div>;
  }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
@@ -64,18 +64,18 @@ export default async function TenantDirectory({searchParams}:{
     </Link>
    </div>} />
   <form className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-4">
-   <label className="grid gap-1 text-sm font-semibold leading-4 text-body">College
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 md:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold leading-4 text-body">Organization
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Organization
     <Select name="organizationId" defaultValue={data.query.organizationId}
      className="min-h-11 md:min-h-9">
      <option value="">All permitted</option>
      {data.organizations.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold leading-4 text-body">College status
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College status
     <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
@@ -90,7 +90,7 @@ export default async function TenantDirectory({searchParams}:{
     columns={[
       {key:"college",header:"College",mobilePriority:"primary",cell:tenant=><>
         <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           {tenant.name}
         </Link>
         <span className="mt-1 block text-xs text-muted-foreground">{tenant.code}</span>
