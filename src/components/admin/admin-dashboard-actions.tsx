@@ -62,14 +62,12 @@ export function CollegeAdminDashboardActions() {
     <div className="space-y-6">
       <CollegeAdminQuickActions />
       <details className="min-w-0 space-y-4 border-t border-border pt-4">
-        <div>
           <summary className="flex min-h-11 cursor-pointer items-center text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             {COLLEGE_SETUP_GUIDE_COPY.heading}
           </summary>
           <p className="mt-1 text-sm text-body">
             {COLLEGE_SETUP_GUIDE_COPY.intro}
           </p>
-        </div>
         <div className="space-y-4 pt-4">{COLLEGE_ADMIN_SETUP_PHASES.map((phase, phaseIndex) => (
           <section
             key={phase.title}
