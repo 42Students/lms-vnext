@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function LearnerApplicationsLoading() {
@@ -6,7 +6,7 @@ export default function LearnerApplicationsLoading() {
     <div className="min-w-0 space-y-5">
       <PageHeader title="Applications"
         description="Retrieving your current applications and verified outcomes." />
-      <LoadingState label="Loading your applications…" />
+      <GracefulPageLoading label="Loading your applications…" shape="directory" />
     </div>
   );
 }
