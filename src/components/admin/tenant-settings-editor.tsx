@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Disclosure} from "@/components/ui/disclosure";
 import {OtherTenantSettings} from "@/components/admin/tenant-settings-other-keys";
 import {LEGACY_TENANT_SETTING_SPECS} from "@/modules/platform-settings/legacy-setting-specs";
 type Entry={key:string;value:string;version:number};
@@ -47,12 +48,16 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  const groups=[...new Set(keys.map(spec=>spec.group))];
  return <section aria-label="Edit Tenant Settings" className="min-w-0 space-y-4 border-b border-border pb-4 print:hidden">
   <h2 className="text-lg font-semibold text-foreground">Edit Tenant Settings</h2>
-  <p className="text-sm text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
+  <p className="max-w-prose text-sm leading-6 text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>
   {!ready?<Alert tone="warning">The tenant-settings migration is pending. This form is read-only.</Alert>:null}
-  {groups.map(group=><fieldset disabled={!ready||saving} key={group} className="space-y-3">
-   <legend className="mb-2 text-base font-semibold text-foreground">{group}</legend>
-   <div className="grid min-w-0 gap-3 md:grid-cols-2">
+  {groups.map((group,index)=><Disclosure key={group} title={<span className="flex min-w-0 flex-wrap items-center gap-2">
+    <span className="text-sm font-semibold">{group}</span>
+    {changed.some(item=>item.group===group)?<span className="text-xs font-normal text-muted-foreground">{changed.filter(item=>item.group===group).length} changed</span>:null}
+   </span>} defaultOpen={index===0} className="border-t border-border" contentClassName="px-2 pb-3">
+   <fieldset disabled={!ready||saving} className="min-w-0">
+    <legend className="sr-only">{group}</legend>
+    <div className="grid min-w-0 gap-3 md:grid-cols-2">
     {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="warning">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
@@ -68,11 +73,14 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
      {"min" in spec&&spec.min!==undefined?<span className="text-xs text-muted-foreground">
        Range {spec.min}–{"max" in spec?spec.max:undefined}</span>:null}
     </label>)}
-   </div>
-  </fieldset>)}
-  <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries}/>
+    </div>
+   </fieldset>
+  </Disclosure>)}
+  <Disclosure title="Other stored keys" className="border-t border-border" contentClassName="pt-3">
+   <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries} showHeading={false}/>
+  </Disclosure>
   <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={()=>void save()}>
+   <Button variant="primary" type="button" loading={saving} disabled={!ready||saving||changed.length===0} className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={()=>void save()}>
     {saving?"Saving…":"Save "+changed.length+" changed setting"+(changed.length===1?"":"s")}
    </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>
@@ -86,7 +94,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    onConfirm={()=>{void save(true);}}>
     <div className="space-y-2 text-sm text-body">
      <p>Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. {changed.length} changed setting(s); {changed.filter(item=>item.dangerous).length} high impact.</p>
-     <ul role="region" aria-label="High-impact settings review" tabIndex={0} className="max-h-48 list-disc space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] pl-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+     <ul role="region" aria-label="High-impact settings review" tabIndex={0} className="max-h-48 list-disc space-y-1 overflow-auto overscroll-contain pl-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
       {changed.map(spec=><li key={spec.key} className="break-all">{spec.label} ({spec.key})</li>)}
      </ul>
      <p>Blank values restore the source default. These saved overrides do not automatically reconfigure deployment-managed authentication or SMS services.</p>
@@ -94,7 +102,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </ConfirmDialog>
   {results.length>0?<div role="status" className="space-y-2">
    <h3 className="font-semibold text-foreground">Save results</h3>
-   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
+   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
     <strong className="break-all">{row.key}</strong><StatusBadge tone={row.status==="SAVED"?"success":row.status==="DELETED"?"info":"error"}>{row.status}</StatusBadge><span className="min-w-0 break-words text-body">{row.message}</span></li>)}</ul>
   </div>:null}
  </section>;
