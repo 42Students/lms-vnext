@@ -64,7 +64,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    <SummaryStrip label="Interview summary" steps={[{label:"Scheduled",value:data.summary?.scheduled??0},{label:"Today",value:data.summary?.today??0},{label:"Companies",value:data.summary?.companies??0},{label:"Conflicts",value:data.summary?.conflicts??0}]}/>
    <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-3">
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student, company or role
-     <Input name="q" defaultValue={valid.data.q} maxLength={100} />
+     <Input type="search" name="q" defaultValue={valid.data.q} maxLength={100} />
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
      <Select name="companyId" defaultValue={valid.data.companyId??""} >

@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { Input } from "@/components/ui/input";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
@@ -169,10 +170,10 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Joined on or after (IST)
-    <Input name="joinedFrom" type="date" defaultValue={filter.joinedFrom??""} className="mt-1 block min-h-11 w-full md:min-h-9"/>
+    <DateInput mode="date" name="joinedFrom" defaultValue={filter.joinedFrom??""} className="mt-1 block min-h-11 w-full md:min-h-9"/>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Joined through (IST)
-    <Input name="joinedThrough" type="date" defaultValue={filter.joinedThrough??""} className="mt-1 block min-h-11 w-full md:min-h-9"/>
+    <DateInput mode="date" name="joinedThrough" defaultValue={filter.joinedThrough??""} className="mt-1 block min-h-11 w-full md:min-h-9"/>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
     <Select name="sort" defaultValue={filter.sort} className="mt-1 w-full">
