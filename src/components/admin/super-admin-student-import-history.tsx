@@ -17,7 +17,7 @@ export function SuperAdminStudentImportHistory({ runs }: { runs: readonly Run[] 
     <Dialog open={open} onOpenChange={setOpen} title="Bulk import history"
       className="max-w-[48rem]" bodyClassName="min-h-0 overflow-hidden">
       <div role="region" aria-label="Bulk import history records" tabIndex={0}
-        className="min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)]">
+        className="min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] print:overflow-visible print:[mask-image:none]">
         <DataTable caption="Bulk import history records"
           rows={runs.map((run,index)=>({...run,index}))}
           getRowKey={run=>String(run.index)}

@@ -170,7 +170,7 @@ export function RecruiterBulkOwnerControls({
           Joined and unsubscribed contacts can be assigned a placement-cell owner. Each reassignment is audited.
         </p>
       </div>
-      {ownersState === "idle" ? (
+      <div className="print:hidden">{ownersState === "idle" ? (
         <Button variant="secondary" type="button" onClick={() => void loadOwners()} className={fieldClass}>
           Load eligible owners
         </Button>
@@ -229,11 +229,11 @@ export function RecruiterBulkOwnerControls({
           {reviewOpen&&reviewSignature===currentSignature?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
             Assign {selections.length} recruiter lead(s) to {owners.find(item=>item.membershipId===ownerId)?.displayName??"selected staff member"}.
             Each changed lead receives an audit record.
-            <Button variant="secondary" type="button" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={()=>setReviewOpen(false)}>Edit</Button>
+            <Button variant="secondary" type="button" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>setReviewOpen(false)}>Edit</Button>
           </p>:null}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <span className="text-body">{selections.length} / 100 selected</span>
-            <Button
+            <Button className="min-h-11 md:min-h-9"
               type="button"
               onClick={() => void submit()}
               disabled={!canSubmit}
@@ -244,6 +244,7 @@ export function RecruiterBulkOwnerControls({
           </div>
         </>
       )}
+      </div>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {results.length > 0 ? (
         <section aria-live="polite">
@@ -252,7 +253,7 @@ export function RecruiterBulkOwnerControls({
           {undoRunId?<div className="mt-3 rounded-lg border border-border p-3 text-sm">
            <p>Undo these owner assignments within five minutes. If a changed lead has since been edited, nothing is restored.</p>
            {undoReview?<p role="status" className="mt-2">Restore the previous owner for every changed recruiter in this batch?</p>:null}
-           <div className="mt-2 flex gap-2">
+           <div className="mt-2 flex gap-2 print:hidden">
             <Button variant="secondary" type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
              {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo owner batch"}</Button>
             {undoReview?<Button variant="secondary" type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</Button>:null}
@@ -269,7 +270,7 @@ export function RecruiterBulkOwnerControls({
               setCopyNotice("Failed rows selected for review. Refresh owners and leads before retrying.");}}>
             Select failed for review ({retryable.length})
           </Button>:null}
-          <ul className="mt-2 max-h-36 overflow-auto text-xs text-body">
+          <ul className="mt-2 max-h-36 overflow-auto text-xs text-body print:max-h-none print:overflow-visible">
             {results.map((item) => (
               <li key={item.leadId}>
                 {rows.find(row=>row.id===item.leadId)?.name??"Recruiter"}: {item.status}
