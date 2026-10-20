@@ -8,6 +8,7 @@ import {
 } from "@/components/activity/notification-list";
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
 import { PageHeader } from "@/components/ui/page-header";
+import notificationStyles from "@/components/tpo/legacy-tpo-notification-feed.module.css";
 import { Alert } from "@/components/ui/alert";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -94,12 +95,14 @@ export default async function TpoNotificationsPage({
         </Alert>
       ) : (
         <>
+          <div className={notificationStyles.feed}>
           <NotificationList
             variant="tpo"
             items={items}
             readEndpoint="/api/tpo/notifications"
             emptyText={inbox.query.view === "unread" ? "No unread notifications" : "Nothing yet"}
           />
+          </div>
           {firstPage&&olderUnread>0?<p role="status" className="text-sm text-muted-foreground">
             {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
           </p>:null}

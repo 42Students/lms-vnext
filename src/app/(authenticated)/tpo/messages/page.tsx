@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import {DataTable} from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -245,7 +246,7 @@ export default async function TpoMessagesPage({
               : "Not applicable",
           },
         ].map((metric) => (
-          <StatTile key={metric.label} label={metric.label} value={metric.value} />
+          <StatTile key={metric.label} label={metric.label} value={metric.value} className={tpoTileStyles.tile} />
         ))}
       </section>
 
