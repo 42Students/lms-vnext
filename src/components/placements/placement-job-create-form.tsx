@@ -62,8 +62,8 @@ export type PlacementCompanyChoice = {
   memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[];existingRoles:Array<{jobId:string;title:string;status:string}>} | null;
 };
 
-const inputClass = "min-h-11 w-full md:min-h-9";
-const textareaClass = "min-h-28 w-full";
+const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
+const textareaClass = "min-h-28 w-full min-w-0";
 
 function splitList(value: string) {
   return value
@@ -682,7 +682,7 @@ export function PlacementJobCreateForm({
           ||fields.get("requireVerifiedEvidence")==="on"
           ||fields.get("missingEvidencePolicy")==="REQUIRE_COMPLETE");
       }}
-      className="min-w-0 space-y-6"
+      className="min-w-0 space-y-4"
     >
       <p role="status" aria-live="polite" className="text-xs text-body">
         {pending?"Saving changes…":lastLocalSaveAt?
@@ -709,6 +709,8 @@ export function PlacementJobCreateForm({
         </div>
         </nav>
       </details>
+      <details className="min-w-0 border-b border-border pb-3">
+       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Placement season</summary>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
@@ -739,6 +741,7 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
+      </details>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
@@ -754,6 +757,7 @@ export function PlacementJobCreateForm({
               <Button
                 size="sm"
                 type="button"
+                className="min-h-11 flex-1 sm:flex-none md:min-h-9"
                 variant={
                   companyMode ===
                   "EXISTING"
@@ -771,6 +775,7 @@ export function PlacementJobCreateForm({
               <Button
                 size="sm"
                 type="button"
+                className="min-h-11 flex-1 sm:flex-none md:min-h-9"
                 variant={
                   companyMode === "NEW"
                     ? "primary"
@@ -832,7 +837,7 @@ export function PlacementJobCreateForm({
             {companySearch.trim()&&!companies.some(company=>
               (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
-              {selectedEmployer?.memory?<aside aria-label="Company Memory" className="border-t border-border pt-3 text-sm">
+              {selectedEmployer?.memory?<details className="min-w-0 border-t border-border py-3 text-sm"><summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9">Company Memory</summary><aside aria-label="Company Memory" className="pt-3 text-sm">
                 <h3 className="font-semibold text-foreground">Company Memory</h3>
                 <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
                 <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
@@ -842,7 +847,7 @@ export function PlacementJobCreateForm({
                     A drive for {selectedEmployer.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).{" "}
                     <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline">Open it</Link> before creating another.
                   </p>:null}
-              </aside>:null}
+              </aside></details>:null}
             </div>
           ) : (
             <div className="grid min-w-0 gap-4 sm:grid-cols-2">
@@ -1445,13 +1450,16 @@ export function PlacementJobCreateForm({
           venues and dates in the drive workspace before inviting candidates.
         </p>
       </section>
+      <details className="min-w-0 border-b border-border pb-3">
+       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Who this reaches</summary>
       <section aria-label="Who this reaches" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
         <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>
 
-      <section className="flex min-w-0 flex-col gap-[var(--lms-space-4)] border-t border-border py-[var(--lms-space-4)] sm:flex-row sm:items-center sm:justify-between">
+      </details>
+      <section className="flex min-w-0 flex-col gap-3 border-t border-border py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !activeSeason || uncertainCreate}>
