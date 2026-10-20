@@ -72,7 +72,7 @@ export default async function HrMessagesPage({searchParams}:{
      <Input type="hidden" name="collegeId" value={result.collegeId} />
      <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
-     <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
+     <Input id="hr-notification-search" type="search" name="q" defaultValue={query.data.q} maxLength={120}
        placeholder="Search drive titles" className="min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none" />
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>

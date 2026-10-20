@@ -180,7 +180,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <Input type="hidden" name="collegeId" value={result.grant.collegeId}/>
             <Input type="hidden" name="tab" value="team"/>
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
-            <Input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
+            <Input id="hr-team-query" type="search" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
               className="min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"/>
             <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
