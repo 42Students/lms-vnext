@@ -70,7 +70,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    cell:row=><span className="tabular-nums">{row.metrics.submittedApplications}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",
    cell:row=><Link href={"/admin/placements/jobs/"+encodeURIComponent(row.job.id)}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
     Open drive →</Link>},
  ];
  return <div className="min-w-0 space-y-5">
@@ -78,11 +78,11 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    description="Review and open every persisted non-archived drive in the selected college."
    actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
     <PageBackLink href="/admin/placements" label="Placement overview" />
-    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Look up a student&apos;s placement status →</Link>
+    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new"
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create drive →</Link>
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Create drive →</Link>
    </div>} />
-  <form action="/admin/placements/drives" method="get"
+  <form action="/admin/placements/drives" method="get" aria-label="Filter placement drives"
    className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid w-full min-w-0 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-44">Search by drive or company
     <Input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
