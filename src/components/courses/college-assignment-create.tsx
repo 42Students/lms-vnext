@@ -147,7 +147,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   </div>:null}
   <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
    title="Create assignment as a draft?" description="Learners cannot submit until published."
-   confirmLabel="Create draft" pending={pending} confirmDisabled={!chosen||!title.trim()} onConfirm={()=>void create()}>
+   confirmLabel="Create draft" confirmVariant="primary" pending={pending} confirmDisabled={!chosen||!title.trim()} onConfirm={()=>void create()}>
    {error?<Alert tone="error">{error}</Alert>:null}
   </ConfirmDialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard unsaved assignment changes?"

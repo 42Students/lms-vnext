@@ -208,7 +208,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   <ConfirmDialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmation(null);}}
     title={confirmation?.kind==="SWITCH"?"Discard unsaved assignment changes and switch drafts?":
       existing?facultyAssignmentArchiveWarning(existing.title):"Archive assignment?"}
-    pending={pending} confirmVariant={confirmation?.kind==="ARCHIVE"?"danger":"primary"}
+    pending={pending} confirmVariant={confirmation?.kind==="ARCHIVE"||confirmation?.kind==="SWITCH"?"danger":"primary"}
     onConfirm={()=>{
       const request=confirmation;setConfirmation(null);
       if(request?.kind==="SWITCH")choose(request.id,true);

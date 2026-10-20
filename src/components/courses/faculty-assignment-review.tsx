@@ -453,7 +453,7 @@ function SubmissionGradeCard({
             ? "Save and publish this grade to the learner?"
             : facultyManualGradePublishPrompt(submission.pointsAwarded,maxPoints,submission.feedback)}
         confirmLabel={confirmAction === "REGRADING" ? "Continue regrading" : confirmAction === "SAVE_PUBLISH" ? "Save and publish" : "Publish grade"}
-        confirmVariant="primary"
+        confirmVariant={confirmAction === "REGRADING" ? "danger" : "primary"}
         pending={saving || publishing}
         confirmDisabled={confirmAction === "REGRADING" || confirmAction === "SAVE_PUBLISH" ? draftState.points === null : !draftState.canPublish}
         onConfirm={() => {
