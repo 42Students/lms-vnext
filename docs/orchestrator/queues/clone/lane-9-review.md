@@ -6,9 +6,9 @@
 - [x] `src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/admin/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
+- [x] `src/app/(authenticated)/admin/students/page.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/import/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
