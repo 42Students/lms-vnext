@@ -52,14 +52,14 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
  }
  return <section aria-labelledby="platform-placement-policy" className="space-y-4 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 id="platform-placement-policy" className="text-lg font-semibold">Placements policy</h2>
+   <div><h2 id="platform-placement-policy" className="text-lg font-semibold text-foreground">Placements policy</h2>
     <p className="text-sm text-muted-foreground">Platform-wide defaults. Clear the college selection to review global settings. Changes require Super Admin access.</p>
    </div>
    <Button type="button" variant="secondary" disabled={Boolean(busy)} onClick={()=>void refresh()}>Reload</Button>
   </div>
   <div className="grid gap-4 md:grid-cols-2">
    {fields.map(field=><div key={field.key} className="space-y-2 border-b border-border py-3">
-     <label htmlFor={"policy-"+field.key} className="block text-sm font-semibold">{field.label}</label>
+     <label htmlFor={"policy-"+field.key} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field.label}</label>
      <p className="text-xs text-muted-foreground">Default: {field.defaultValue} {field.unit} · {field.isOverridden?"Overridden":"Using default"}</p>
      <div className="flex flex-wrap items-center gap-2">
       <Input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step}
@@ -68,7 +68,7 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
        className="min-w-28 flex-1" />
       <span className="text-xs text-muted-foreground">{field.unit}</span>
      </div>
-     <div className="flex gap-2">
+     <div className="flex flex-wrap gap-2">
       <Button type="button" disabled={Boolean(busy)} onClick={()=>void submit(field,false)}>Save</Button>
       <Button type="button" variant="secondary" disabled={Boolean(busy)||!field.isOverridden} onClick={()=>void submit(field,true)}>Reset to default</Button>
      </div>

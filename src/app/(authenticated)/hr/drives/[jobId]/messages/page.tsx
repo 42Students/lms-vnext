@@ -24,8 +24,8 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
  }
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader title="Messages"
-   description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}/>
-  <Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive overview</Link>
+   description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}
+   actions={<Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to drive overview</Link>}/>
   <section className="border-b border-border pb-5">
    <h2 className="font-semibold text-foreground">Drive conversation</h2>
    <p className="mt-2 text-sm text-body">Open or resume the conversation tied to this authorized employer drive.</p>
@@ -37,7 +37,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
   </section>
   {result.threads.length?<ol className="divide-y divide-border border-y border-border">
    {result.threads.map(thread=><li key={thread.id} className="py-4">
-    <Link href={"/hr/conversations/"+thread.id} className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Continue discussion</Link>
+    <Link href={"/hr/conversations/"+thread.id} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Continue discussion</Link>
    </li>)}
   </ol>:<EmptyState title="No drive conversation" description="No conversation has been started for this drive."/>}
  </div>;

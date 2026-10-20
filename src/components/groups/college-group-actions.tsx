@@ -141,16 +141,16 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
       title={group ? "Edit study group" : "New study group"}
       description="This form manages college-owned study groups only.">
       <form onSubmit={(event) => { event.preventDefault(); save(); }} className="space-y-4">
-        <label className="block text-sm font-semibold text-body">Group name
+        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group name
           <Input required maxLength={150} value={draft.name}
             onChange={(event) => update("name", event.target.value)} className={inputClass} />
         </label>
-        <label className="block text-sm font-semibold text-body">Description
+        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
           <Textarea maxLength={1000} value={draft.description} rows={3}
             onChange={(event) => update("description", event.target.value)}
             className={inputClass} />
         </label>
-        <label className="block text-sm font-semibold text-body">Capacity (optional)
+        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (optional)
           <Input inputMode="numeric" type="number" min={1} max={10000} value={draft.capacity}
             onChange={(event) => update("capacity", event.target.value)} className={inputClass} />
         </label>

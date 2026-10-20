@@ -72,7 +72,7 @@ export function LearnerPlacementsDashboard({
   });
   return (
     <section className="space-y-5" aria-label="Placement dashboard">
-      {next ? <div className="min-w-0 rounded-xl border border-primary bg-primary-subtle p-4 md:p-6">
+      {next ? <div className="min-w-0 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle p-4 md:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="max-w-3xl">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
@@ -99,7 +99,7 @@ export function LearnerPlacementsDashboard({
           </Link>
         </div>
       </div> : (
-        <p role="status" className="min-w-0 rounded-xl border border-border bg-surface p-4 text-sm text-body md:p-6">
+        <p role="status" className="min-w-0 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm text-body">
           Next placement action is temporarily unavailable while key sources reload.
           Your current applications or schedule have not been treated as empty.
           {safeFallback ? <Link href={safeFallback.href}
