@@ -27,15 +27,16 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
    });
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not graduate this batch. Try again.");}
  }
- return <div className="space-y-2 print:hidden">
-  <Button type="button" variant="secondary" disabled={pending} onClick={()=>{setError("");setOpen(true);}}
-   className="min-h-11 md:min-h-9">Mark graduated</Button>
-  {success?<p role="status" className="text-sm text-body">{success}</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+ return <div className="min-w-0 space-y-[var(--lms-space-2)] print:hidden">
+  <Button type="button" variant="secondary" disabled={pending} onClick={()=>{setError("");setSuccess("");setOpen(true);}}
+   className="min-h-11 w-full sm:w-auto md:min-h-9">Mark graduated</Button>
+  {success?<p role="status" aria-live="polite" className="max-w-prose text-sm text-success-text">{success}</p>:null}
+  {error?<p role="alert" className="max-w-prose break-words text-sm text-error">{error}</p>:null}
   <ConfirmDialog open={open} onOpenChange={setOpen} title={"Mark "+name+" graduated?"}
    description="This completes the batch lifecycle. Historical enrollment records are retained."
-   confirmLabel="Mark graduated" pending={pending} onConfirm={()=>void submit()}>
-    <p className="text-sm text-body">Confirm that this batch has completed its final semester.</p>
+   confirmLabel="Mark graduated" confirmVariant="danger" pending={pending} onConfirm={()=>void submit()}>
+    <p className="max-w-prose text-sm leading-5 text-body">Confirm that this batch has completed its final semester.</p>
+    {error?<p role="alert" className="mt-[var(--lms-space-3)] break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{error}</p>:null}
   </ConfirmDialog>
  </div>;
 }
