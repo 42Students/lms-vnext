@@ -19,15 +19,17 @@ export default async function CollegeSignInMethods({params}:{params:Promise<{col
  try {result=await readAdminCollegeSignInPolicy(context,collegeId);}
  catch(error){if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();throw error;}
  const {college,policy}=result;
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title={college.name}
    description="Choose the one-time-code channels offered on this college web address."
    actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>
+  <div className="min-w-0 max-w-3xl space-y-[var(--lms-space-4)]">
   {policy.kind==="INVALID_POLICY"?<Alert tone="error">Stored sign-in method is invalid. Please contact an administrator.</Alert>:null}
   <CollegeSigninMethodForm collegeId={college.id}
    method={policy.kind==="CONFIGURED"?policy.method:"EMAIL_AND_PHONE"}
    version={result.version??0}
    ready={policy.kind!=="MIGRATION_PENDING"&&policy.kind!=="INVALID_POLICY"}/>
   <p className="text-xs text-muted-foreground">Changes apply to new college-host code requests. Existing sessions are not revoked.</p>
+  </div>
  </div>;
 }

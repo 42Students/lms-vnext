@@ -206,6 +206,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  }
  return <section className="min-w-0 w-full max-w-full space-y-4 max-[767px]:[&_button]:min-h-11">
   <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Choice-question quiz builder</h2>
+  <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Find a quiz
    <Input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
     placeholder="Title or state" className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
@@ -216,6 +217,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     <option value="">Create new draft</option>
     {visibleQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
    </Select></label>
+  </div>
   {quizSearch.trim()&&visibleQuizzes.length===0?<EmptyState title="No matching quizzes" description="Clear the search to see all Section quizzes."/>:null}
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
@@ -225,10 +227,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     className="min-h-11 min-w-0 max-w-full md:min-h-9">
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
    </Select></label>:null}
+  <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Quiz title
    <Input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,title,e.target.value));setDirtyDraft(true);setTitle(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9"/></label>
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Instructions
+  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 md:col-span-2">Instructions
    <Textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,description,e.target.value));setDirtyDraft(true);setDescription(e.target.value);}}
     className="min-w-0 max-w-full"/></label>
@@ -239,22 +242,23 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <Input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setDirtyDraft(true);setMaxAttempts(Number(e.target.value));}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9"/></label>
-  <fieldset disabled={!editable} className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+  </div>
+  <fieldset disabled={!editable} className="space-y-2 border-y border-border py-3">
     <legend className="text-sm font-semibold">Quiz order</legend>
     <Checkbox label="Shuffle question order per learner" checked={shuffleQuestions}
          onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleQuestions(e.target.checked);}}/>
     <Checkbox label="Shuffle answer options per learner" checked={shuffleOptions}
          onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleOptions(e.target.checked);}}/>
   </fieldset>
-  <section aria-label="Quiz preview" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3">
-   <div className="flex flex-wrap items-center justify-between gap-3">
-    <div>
+  <section aria-label="Quiz preview" className="min-w-0 border-b border-border pb-4">
+   <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="min-w-0">
      <h3 className="text-sm font-semibold text-foreground">Preview Quiz</h3>
      <p className="text-xs text-muted-foreground">Read-only learner-style preview of the current questions. No answers are submitted.</p>
     </div>
     <Button variant="secondary" type="button" onClick={()=>setPreviewOpen(open=>!open)}
      aria-expanded={previewOpen} aria-controls="faculty-quiz-preview"
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
+     className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
      {previewOpen?"Hide preview":"Preview Quiz"}
     </Button>
    </div>
@@ -285,7 +289,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      onChange={e=>setInvalidOnly(e.target.checked)}/>
   {matchingQuestions.length===0?<EmptyState title="No questions match these review filters" description="Clear the search or invalid-only filter to view the entire bank."/>:null}
   {matchingQuestions.map(({q,i})=><fieldset key={i} disabled={!editable}
-   className="min-w-0 max-w-full space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+   className="min-w-0 max-w-full space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 sm:p-4">
    <legend className="text-sm font-semibold">Question {i+1}</legend>
    {facultyQuizQuestionIssue(q)?<p role="status" className="text-xs text-error">Review question {i+1}: {facultyQuizQuestionIssue(q)}</p>:
     <p className="text-xs text-body">Question {i+1} is ready to save.</p>}
@@ -307,8 +311,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       className="min-h-11 md:min-h-9 w-24 rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></label>
    </div>
    <p className="text-xs text-body" role="status">{facultyQuizAnswerSummary(q)}</p>
-   {q.options.map((o,j)=><div key={j} className="flex flex-wrap items-center gap-2">
-    <label className="min-w-0 flex-[1_1_12rem] text-[13px] font-semibold leading-4">Option {j+1}
+   {q.options.map((o,j)=><div key={j} className="grid min-w-0 grid-cols-2 items-end gap-2 border-b border-border pb-3 sm:flex sm:flex-wrap sm:items-center">
+    <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 sm:flex-[1_1_12rem]">Option {j+1}
      <Input value={o.text} maxLength={2000}
       onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>k===j?{...x,text:e.target.value}:x)}))}
       className="mt-1 block min-h-11 md:min-h-9 min-w-0 w-full max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></label>
@@ -363,7 +367,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   <Button variant="secondary" type="button" disabled={!editable||questions.length>=100}
    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyAppendQuizQuestion(old,{...fresh(),sequence:old.length}));}}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm">Add question</Button>
-  <div role="status" aria-live="polite" className="space-y-1 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3 text-sm">
+  <div role="status" aria-live="polite" className="space-y-1 border-y border-border py-3 text-sm">
    <p className="font-semibold">Draft review: {review.questionCount} questions · {review.optionCount} options · {review.totalPoints} total points</p>
    <p>{review.missingCorrect===0?"Every question has a correct answer selected.":review.missingCorrect+" question(s) need a correct answer."}</p>
    <p>{reviewIssues.invalidQuestions===0?"All question formats pass validation.":reviewIssues.invalidQuestions+" question(s) need editing before save."}</p>
@@ -382,7 +386,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       Reload Quiz questions
     </Button> : null}
   {success?<Alert tone="success">{success}</Alert>:null}
-  <div className="flex flex-wrap gap-3">
+  <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center [&_button]:w-full sm:[&_button]:w-auto">
    {facultyQuizMayResetDraft(dirtyDraft,pending)?<Button variant="secondary" type="button" onClick={resetDraft}
     className="text-sm">Discard unsaved edits</Button>:null}
    {!chosen?<div className="flex flex-wrap items-center gap-3">
@@ -403,11 +407,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       Close quiz
      </Button>}
     {["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status)&&
-     <Button variant="danger" type="button" disabled={pending}
-      onClick={()=>void submit("ARCHIVE")}
-      className="min-h-11 md:min-h-9">
-      Archive quiz
-     </Button>}
+     <details className="min-w-0 border-t border-border pt-2 sm:ml-auto sm:border-t-0 sm:pt-0">
+      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Archive quiz</summary>
+      <Button variant="danger" type="button" disabled={pending} onClick={()=>void submit("ARCHIVE")}
+       className="mt-2 min-h-11 md:min-h-9">Archive quiz</Button>
+     </details>}
     </>}
   </div>
   <p className="text-xs text-muted-foreground">
@@ -417,8 +421,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    title="Paste choices"
    description="Paste up to 20 answer choices separated by a new line or |. Empty draft choices will be replaced."
    footer={<>
-     <Button variant="secondary" disabled={pending} onClick={()=>setPasteQuestionIndex(null)}>Cancel</Button>
-     <Button variant="primary" disabled={pending||pastedChoices.trim().length===0}
+     <Button variant="secondary" className="min-h-11 flex-1 sm:flex-none md:min-h-9" disabled={pending} onClick={()=>setPasteQuestionIndex(null)}>Cancel</Button>
+     <Button variant="primary" className="min-h-11 flex-1 sm:flex-none md:min-h-9" disabled={pending||pastedChoices.trim().length===0}
        onClick={()=>{
         const index=pasteQuestionIndex;if(index===null)return;
         const current=questions[index];if(!current){setPasteQuestionIndex(null);return;}

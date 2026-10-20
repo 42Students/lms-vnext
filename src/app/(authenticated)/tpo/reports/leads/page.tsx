@@ -3,10 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Banner } from "@/components/ui/banner";
+import { Disclosure } from "@/components/ui/disclosure";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
@@ -104,7 +103,7 @@ export default async function TpoLeadsReportPage({
     ]);
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Recruiter engagement"
@@ -118,60 +117,16 @@ export default async function TpoLeadsReportPage({
       />
 
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
-      <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
+      <nav aria-label="Recruiter engagement cross-check" className="flex min-w-0 flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:flex-wrap sm:items-center">
        <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
        <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 lms-inline-link">Open Engage →</Link>
        <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 lms-inline-link">Company memory →</Link>
       </nav>
 
-
-      <section aria-label="Recruiter engagement by company" className="space-y-3">
-       <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
-       <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A drive counts as run only when it has a completed round in the selected season/drive. Zero means no completed round is recorded, not proof that nothing occurred.</p>
-       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
-        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-        <label className="grid min-w-0 w-full flex-1 gap-[6px] sm:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
-         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9">
-          <option value="">All companies</option>
-          {companyEngagement.filter(row=>row.companyId).map(row=>
-           <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
-         </Select>
-        </label>
-        <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
-        {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
-         className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
-       </form>
-       <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
-       {!companyFilter.valid?<Banner tone="error">This company is not in the authorized college report. Clear the company filter.</Banner>:null}
-       <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
-        ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
-        ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
-        ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
-       }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Export company engagement CSV</a>
-       <ReportTable title="Engage and placement outcomes by company"
-        headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
-        rows={companyFilter.rows.map(row=>{
-         return [row.companyName,row.contacts,row.invited,row.joined,row.ranDrives,row.placed];
-        })}
-        emptyDescription="No college-linked recruiter leads are recorded. Contact, invitation and placement counts are not inferred."/>
-      </section>
-
-      <section
-        aria-label="Lead reporting scope"
-        className="border-t border-border py-4 text-sm leading-6 text-body"
-      >
-        <p className="font-semibold text-foreground">
-          Reporting methodology
-        </p>
-        <p className="mt-1">{result.leadScopeNote}</p>
-      </section>
-
       <section
         aria-label="Lead conversion metrics"
-        className="grid gap-3 md:grid-cols-2 xl:grid-cols-3"
+        className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3"
       >
         {metrics.map(([label, value]) => (
           <div
@@ -199,14 +154,59 @@ export default async function TpoLeadsReportPage({
         </div>
       </section>
 
-      <section aria-label="Outreach health" className="space-y-3">
-        <h2 className="text-lg font-semibold text-foreground">Outreach health · last 14 days</h2>
+
+
+      <section aria-label="Recruiter engagement by company" className="space-y-3">
+       <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
+       <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A drive counts as run only when it has a completed round in the selected season/drive. Zero means no completed round is recorded, not proof that nothing occurred.</p>
+       <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+        <label className="grid min-w-0 w-full flex-1 gap-[6px] sm:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9">
+          <option value="">All companies</option>
+          {companyEngagement.filter(row=>row.companyId).map(row=>
+           <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
+         </Select>
+        </label>
+        <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
+        {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
+         className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
+       </form>
+       <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
+       {!companyFilter.valid?<Banner tone="error">This company is not in the authorized college report. Clear the company filter.</Banner>:null}
+       <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
+        ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
+        ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
+        ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
+       }).toString()} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link sm:w-auto md:min-h-9">Export company engagement CSV</a>
+       <ReportTable title="Engage and placement outcomes by company"
+        headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
+        rows={companyFilter.rows.map(row=>{
+         return [row.companyName,row.contacts,row.invited,row.joined,row.ranDrives,row.placed];
+        })}
+        emptyDescription="No college-linked recruiter leads are recorded. Contact, invitation and placement counts are not inferred."/>
+      </section>
+
+      <section
+        aria-label="Lead reporting scope"
+        className="border-t border-border py-4 text-sm leading-6 text-body"
+      >
+        <p className="font-semibold text-foreground">
+          Reporting methodology
+        </p>
+        <p className="mt-1">{result.leadScopeNote}</p>
+      </section>
+
+      <Disclosure title="Outreach health · last 14 days" ariaLabel="Outreach health" className="border-b border-border py-3">
+        <div className="min-w-0 space-y-3 pt-3">
+        
         <p className="text-sm text-body">
           Only recorded calls, email, WhatsApp and meetings count as contact.
           Paused, unsubscribed and linked recruiter accounts are excluded.
           Missing contact evidence is not classified as quiet.
         </p>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3">
           {([
             ["Actionable leads", health.actionableLeads],
             ["Contacted in 14 days", health.contactedLast14Days],
@@ -228,8 +228,8 @@ export default async function TpoLeadsReportPage({
             ? new Date(health.lastContactAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
             : "Not recorded"}
         </p>
-      </section>
-
+              </div>
+      </Disclosure>
       <ReportBarChart title="Recruiter leads by manual stage" units="leads"
        rows={leads.byStage.map(row=>({label:row.label,value:row.leads}))}/>
       <ReportTable
@@ -247,6 +247,8 @@ export default async function TpoLeadsReportPage({
         emptyDescription="No persisted recruiter leads are available for this college."
       />
 
+      <Disclosure title="Acquisition source breakdown" className="border-b border-border py-3">
+        <div className="min-w-0 pt-3">
       <ReportTable
         title="Leads by acquisition source"
         headings={[
@@ -261,6 +263,9 @@ export default async function TpoLeadsReportPage({
         rows={reportRows(leads.bySource)}
         emptyDescription="No recorded lead sources are available for this college."
       />
+
+        </div>
+      </Disclosure>
     </div>
   );
 }

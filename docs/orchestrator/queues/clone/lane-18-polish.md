@@ -15,8 +15,8 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-18.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-18-b with [chat-18], ticking [x] in this queue in the same push.
 
 - [x] `src/components/placements/tpo-request-bulk-decision.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/placements/tpo-request-decision-control.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/placements/tpo-request-decision-control.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/profile/learner-profile-workspace.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/profile/learner-skill-catalog-input.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/projects/college-project-mentor-dialog.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))

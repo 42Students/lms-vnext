@@ -21,6 +21,7 @@ import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { FilterBar } from "@/components/ui/filter-bar";
 import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
 import {projectAdminElapsedDays} from "@/modules/projects/admin-submission-age-model";
 import { DataTable } from "@/components/ui/data-table";
@@ -62,7 +63,7 @@ export async function ProjectAdminSubmissionsPage({
     context.adminScope?.organizationId ?? context.membership?.organizationId ?? "");
   const parsed = parseProjectAdminSubmissionsQuery(searchParams);
   if (!parsed.success) {
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
         actions={<PageBackLink href={basePath} label="Project workspaces" />} />
@@ -101,7 +102,7 @@ export async function ProjectAdminSubmissionsPage({
     if(query.page&&query.page>1)params.set("page",String(query.page));
     if(query.pageSize)params.set("pageSize",String(query.pageSize));
     const suffix=params.toString();
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
         actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
@@ -114,11 +115,11 @@ export async function ProjectAdminSubmissionsPage({
   }
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-4">
+      <PageBackLink href={basePath} label="Project workspaces" />
       <PageHeader
         title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
-        actions={<PageBackLink href={basePath} label="Project workspaces" />}
         needsDoingLabel="Review status:"
         selectedNeedKey={query.submissionStatus}
         needsDoingItems={[
@@ -142,8 +143,8 @@ export async function ProjectAdminSubmissionsPage({
         description="The unsubmitted workspace list could not be loaded. Your filters have not changed."
         action={<Link href={projectAdminUnsubmittedHref(queuePath,query,query.page)}
           className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry loading workspaces</Link>}/>:null}
-      {unsubmitted?<section className="space-y-3 border-b border-border pb-5">
-        <ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/>
+      {unsubmitted?<section className="min-w-0 space-y-3 border-b border-border pb-4">
+        <FilterBar title="Filters"><ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/></FilterBar>
         <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total} />
         <h2 className="font-semibold text-foreground">Not submitted · {unsubmitted.total} workspaces</h2>
         <DataTable
@@ -167,7 +168,7 @@ export async function ProjectAdminSubmissionsPage({
           label="Unsubmitted workspace pages"/>
       </section>:null}
       {view==="ALL" && result ? <>
-      {summary?<div className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[992px]:grid-cols-4">
+      {summary?<div className="grid min-w-0 grid-cols-2 divide-y divide-border border-y border-border min-[768px]:grid-cols-4 min-[768px]:divide-x min-[768px]:divide-y-0">
         {([
           ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
           ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
@@ -183,10 +184,10 @@ export async function ProjectAdminSubmissionsPage({
       </div>:<Banner tone="warning">
         Submission totals are temporarily unavailable. The filtered submissions below are still visible.
       </Banner>}
-      <ProjectAdminFilters
+      <FilterBar title="Filters"><ProjectAdminFilters
         query={query}
         includeSubmissionStatus
-      />
+      /></FilterBar>
       <ListToolbar label="Project submissions" viewCount={result.total}
         exportAction={<ProjectSubmissionsPageExport rows={result.items.map(submission=>({
         workspace:submission.projectTitle,
@@ -204,16 +205,17 @@ export async function ProjectAdminSubmissionsPage({
       }))}/>} />
 
       {!result.items.length ? (
-        <EmptyState title="No matching deliveries" description="No final-delivery versions match these filters."/>
+        <EmptyState title="No matching deliveries" description="No final-delivery versions match these filters."
+          action={<Link href={queuePath} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-9">Clear filters</Link>}/>
       ) : (
-        <div className="space-y-3">
+        <div className="min-w-0 divide-y divide-border border-y border-border">
           {result.items.map((submission) => (
             <article
               key={submission.id}
-              className="border-b border-border py-5 last:border-b-0"
+              className="min-w-0 py-4"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
                   <Link
                     href={
                       basePath +
@@ -221,7 +223,7 @@ export async function ProjectAdminSubmissionsPage({
                       submission.projectId +
                       "/delivery"
                     }
-                    className="inline-flex min-h-11 items-center text-base font-semibold text-[var(--lms-heading)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+                    className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-[var(--lms-heading)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                   >
                     {submission.projectTitle}
                   </Link>
@@ -270,12 +272,12 @@ export async function ProjectAdminSubmissionsPage({
                   </span>;
                 })}
               </div>
-              <ProjectAdminSubmissionReview
-                projectId={submission.projectId} submissionId={submission.id}
-                workspaceTitle={submission.projectTitle}
-                status={submission.status} locked={!!submission.lockedAt}
-                projectStatus={submission.projectStatus} allowLock={allowLock} />
-              <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
+              <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold">
+                <ProjectAdminSubmissionReview
+                  projectId={submission.projectId} submissionId={submission.id}
+                  workspaceTitle={submission.projectTitle}
+                  status={submission.status} locked={!!submission.lockedAt}
+                  projectStatus={submission.projectStatus} allowLock={allowLock} />
                 <Link href={basePath+"/"+submission.projectId+
                   "/delivery?from=submissions&reason="+encodeURIComponent(
                     submission.status==="SUBMITTED"?"pending-review":submission.status.toLowerCase())}

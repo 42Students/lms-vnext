@@ -15,10 +15,10 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-17.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-17-b with [chat-17], ticking [x] in this queue in the same push.
 
 - [x] `src/components/courses/college-content-preview.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/courses/faculty-assessment-create.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/courses/faculty-assessment-editor.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/courses/faculty-assignment-review.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/courses/faculty-assessment-create.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/courses/faculty-assessment-editor.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/courses/faculty-assignment-review.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/courses/faculty-content-editor.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/courses/faculty-course-roster.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/courses/faculty-quiz-question-editor.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))

@@ -290,9 +290,9 @@ function SubmissionGradeCard({
   }
 
   return (
-    <section className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+    <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
+      <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
+        <div className="min-w-0">
           <h4 className="m-0 text-sm font-semibold text-foreground">
             {learnerLabel(submission)}
           </h4>
@@ -326,7 +326,7 @@ function SubmissionGradeCard({
         </StatusBadge>
       </div>
 
-      <div className="mt-3 rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] p-3">
+      <div className="mt-3 min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
         {submission.submissionType === "FILE" && filesEnabled ? (
           <div className="space-y-3">
             {submission.textContent?<div>
@@ -348,9 +348,9 @@ function SubmissionGradeCard({
 
       <form
         onSubmit={saveGrade}
-        className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
+        className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
       >
-        <label>
+        <label className="min-w-0">
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Points
           </span>
@@ -368,7 +368,7 @@ function SubmissionGradeCard({
             required
           />
         </label>
-        <label>
+        <label className="min-w-0">
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Feedback
           </span>
@@ -389,16 +389,16 @@ function SubmissionGradeCard({
           />
         </label>
 
-        <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] md:col-span-2">
+        <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-2)] sm:flex sm:flex-wrap md:col-span-2">
           {actions.canGrade&&draftState.hasChanges?(
-            <Button size="md" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            <Button size="md" type="button" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||draftState.points===null}
               onClick={()=>void saveAndPublish()}>
               {saving?"Submitting…":submission.gradingStatus==="GRADED"?"Edit grade":"Submit grade"}
             </Button>
           ):null}
           {actions.canGrade ? (
-            <Button size="md" type="submit" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            <Button size="md" type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||unchanged}>
               {saving?"Saving privately…":"Save privately"}
             </Button>
@@ -407,7 +407,7 @@ function SubmissionGradeCard({
             <Button
               size="md"
               type="button"
-              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={
                 saving || publishing || !draftState.canPublish
@@ -436,7 +436,7 @@ function SubmissionGradeCard({
       </form>
 
       {error ? (
-        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
+        <div className="space-y-2"><Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert><Button type="button" variant="secondary" onClick={()=>void load()} className="min-h-11 md:min-h-9">Refresh</Button></div>
       ) : null}
       {needsRefresh?<Button variant="secondary" type="button" onClick={()=>onUpdated(submission)}
        className="mt-[var(--lms-space-2)] min-h-11 md:min-h-[var(--lms-control-height)]">
@@ -555,18 +555,8 @@ export function FacultyAssignmentReview({
         title="Assignment submissions"
         description="Review authorized Section work. Grades stay private until explicitly published."
       >
-      <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="m-0 text-sm font-semibold text-foreground">
-            Assignment submissions
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Grades are private until explicitly
-            published.
-          </p>
-        </div>
-        <div className="flex gap-2">
+      <div className="min-w-0 space-y-4">
+      <div className="flex min-w-0 flex-wrap items-start justify-end gap-2">
           <Button
             size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
@@ -576,11 +566,7 @@ export function FacultyAssignmentReview({
           >
             Refresh
           </Button>
-          <span className="text-xs text-muted-foreground">
-            Use the drawer close control or Escape to return to the assessment list.
-          </span>
         </div>
-      </div>
 
       <Tabs
         ariaLabel="Submission grading filters"
@@ -605,7 +591,7 @@ export function FacultyAssignmentReview({
       ) : null}
 
       {!loading && submissions && submissions.length === 0 ? (
-        <EmptyState title={facultySubmissionReviewEmptyLabel(filter)} description="" />
+        <EmptyState title={facultySubmissionReviewEmptyLabel(filter)} action={<Button type="button" variant="secondary" onClick={()=>void load()}>Refresh</Button>} />
       ) : null}
 
       {!loading && submissions && submissions.length>0 ? (
@@ -620,15 +606,15 @@ export function FacultyAssignmentReview({
               </option>)}
             </Select>
           </label>
-          <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+          <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id)}>
             Previous student
           </Button>
-          <span className="text-xs text-muted-foreground">
+          <span className="col-span-2 text-center text-xs text-muted-foreground md:col-span-1">
             {Math.max(1,submissions.findIndex(item=>item.id===selectedSubmissionId)+1)} / {submissions.length}
           </span>
-          <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+          <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id)}>
             Next student

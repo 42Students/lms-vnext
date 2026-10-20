@@ -81,12 +81,6 @@ export function LearnerNotificationBell(){
   document.addEventListener("keydown",escape);
   return ()=>document.removeEventListener("keydown",escape);
  },[open,mobile]);
- useEffect(()=>{
-  const mq=window.matchMedia("(max-width:767px)");
-  const update=()=>setMobile(mq.matches);
-  update();mq.addEventListener("change",update);
-  return ()=>mq.removeEventListener("change",update);
- },[]);
  const panelFooter=<>
    <Link href="/learn/notifications" onClick={()=>setOpen(false)}
      className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
@@ -94,8 +88,8 @@ export function LearnerNotificationBell(){
    </Link>
  </>;
  const panelBody=<>
-   {error?<div className="mt-2 space-y-2"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
-    <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" loading={loading} disabled={loading} onClick={()=>void refresh()}>Retry notifications</Button>
+   {error?<div className="min-w-0 space-y-2 border-b border-border pb-3"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
+    <Button variant="ghost" type="button" className="w-full min-h-11 min-[768px]:w-auto text-sm text-primary-text underline" loading={loading} disabled={loading} onClick={()=>void refresh()}>Retry notifications</Button>
    </div>:null}
    {loading&&!everLoaded?<div data-learner-notification-state="" role="status"><GracefulPageLoading/></div>:null}
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground">Showing the last successful notifications.</p>:null}
@@ -114,15 +108,15 @@ export function LearnerNotificationBell(){
      Live Course deadlines, not emailed or marked as read.
     </p>
    </section>:null}
-   <ScrollCue axis="y" label="Learner notifications" className="mt-3" viewportClassName="max-h-[55vh]"><ul role="list" aria-label="Recent learner notifications" className="space-y-1.5">
+   <ScrollCue axis="y" label="Learner notifications" className="mt-3 min-w-0" viewportClassName="max-h-[55vh]"><ul role="list" aria-label="Recent learner notifications" className="divide-y divide-border">
     {items.slice(0,8).map(row=>{
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
      return <li key={row.notification.id}>
       <Link href={target} onClick={()=>setOpen(false)}
-        className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm text-body hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="block min-h-11 min-w-0 px-3 py-3 text-sm text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
-       <span className="mt-1 block line-clamp-2 leading-[1.5] text-muted-foreground">{row.notification.body}</span>
+       <span className="mt-1 block min-w-0 line-clamp-2 break-words leading-[1.5] text-muted-foreground">{row.notification.body}</span>
        <time dateTime={row.notification.createdAt} className="mt-1 block text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(row.notification.createdAt))}</time>
       </Link>
      </li>;
