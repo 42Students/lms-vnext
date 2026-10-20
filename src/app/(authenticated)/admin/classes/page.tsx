@@ -30,7 +30,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
       ])
     : [null, null];
   return <div className="min-w-0 space-y-6">
-    <PageHeader eyebrow="Super Admin · Academic Setup" title="Classes"/>
+    <PageHeader title="Classes"/>
       {data ? <AcademicSetupSteps step={6} /> : null}
     {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
     {data && options ? <>
