@@ -37,9 +37,9 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader eyebrow="TPO" title="Find a student, recruiter or company" description="Search your college records. Search does not execute actions or navigate to arbitrary pages."/>
   <form action="/tpo/find" method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
-   <label className="min-w-0 w-full flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Record name
+   <label className="min-w-0 w-full flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Record name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <Input type="search" name="q" defaultValue={rawText??""} maxLength={100} required
-     className="mt-1 block w-full min-w-0" placeholder="Find a student, recruiter, company or drive"/>
+     className="mt-[6px] block w-full min-w-0" placeholder="Find a student, recruiter, company or drive"/>
    </label><Button type="submit" className="self-end">Find</Button>
   </form>
   {invalid?<Alert tone="error">Search must contain 2–100 characters.</Alert>:!text?<EmptyState title="Type a name or a roll number, for example 21CS001"/>:<>

@@ -45,12 +45,12 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId} userId={ctx.user.id}/></Suspense>
   {!data.available?<Alert tone="warning">After-college outcomes storage is unavailable. This page does not infer destinations.</Alert>:<>
    <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
-    <label className="grid w-full min-w-0 basis-full gap-1 text-sm md:w-[220px] md:basis-auto">Batch
+    <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] md:w-[220px] md:basis-auto text-[var(--lms-neutral-400)] font-semibold leading-4">Batch
      <Select name="batchId" defaultValue={batchId??""} className="min-h-11 w-full md:min-h-9">
       <option value="">All current batches</option>
       {batches.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select></label>
-    <label className="grid w-full min-w-0 basis-full gap-1 text-sm md:w-[220px] md:basis-auto">Branch
+    <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] md:w-[220px] md:basis-auto text-[var(--lms-neutral-400)] font-semibold leading-4">Branch
      <Select name="branchId" defaultValue={branchId??""} className="min-h-11 w-full md:min-h-9">
       <option value="">All branches</option>
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}

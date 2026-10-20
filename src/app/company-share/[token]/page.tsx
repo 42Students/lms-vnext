@@ -33,7 +33,7 @@ export default async function CompanySharePage({
    {access==="invalid"?<p role="alert" className="text-sm text-error">
     That code did not work, or this share is no longer available.</p>:null}
    <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
      <Input name="code" type="text" required inputMode="numeric" autoComplete="one-time-code"
       pattern="[0-9]{6}" minLength={6} maxLength={6}
       className="max-w-full tracking-widest" />
@@ -82,7 +82,7 @@ export default async function CompanySharePage({
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex min-w-0 flex-wrap items-end gap-3 border-y border-border py-4">
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner name
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner name
      <Input name="q" type="search" defaultValue={result.search} maxLength={80}
       className="w-full md:w-64" placeholder="Name contains..." />
     </label>
