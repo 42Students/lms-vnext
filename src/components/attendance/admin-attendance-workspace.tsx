@@ -255,7 +255,7 @@ export function AdminAttendanceWorkspace({
     if (
       !target ||
       !data.selectedDeliveryId ||
-      correcting
+      correcting || new Date(target.session.startsAt).getTime()>loadedAt
     ) {
       return;
     }
@@ -322,7 +322,7 @@ export function AdminAttendanceWorkspace({
   }
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
       {notice?<Alert tone="info">{notice}</Alert>:null}
 
       <form
@@ -332,7 +332,7 @@ export function AdminAttendanceWorkspace({
         }}
         className="grid min-w-0 items-end gap-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
       >
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Class
           <Select className="w-full" value={sectionId}
             onChange={(event) => {
@@ -347,7 +347,7 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Course
           <Select className="w-full" value={courseId}
             disabled={!sectionId}
@@ -364,7 +364,7 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
-        {termDeliveries.length>1?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        {termDeliveries.length>1?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic term
           <Select className="w-full" value={deliveryId||termDeliveries[0]?.deliveryId||""}
             onChange={event=>setDeliveryId(event.target.value)}>
@@ -393,13 +393,13 @@ export function AdminAttendanceWorkspace({
           <div className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] md:justify-start">
             <Button size="sm" variant="secondary"
               aria-label="Previous month"
-              onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
+              type="button" onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
               Previous
             </Button>
             <span className="min-w-0 text-center text-sm font-semibold text-body" aria-live="polite">{attendanceMonthLabel(data.month)}</span>
             <Button size="sm" variant="secondary"
               aria-label="Next month"
-              onClick={() => navigate(shiftAttendanceMonth(data.month, 1))}>
+              type="button" onClick={() => navigate(shiftAttendanceMonth(data.month, 1))}>
               Next
             </Button>
           </div>
@@ -535,7 +535,7 @@ export function AdminAttendanceWorkspace({
                               <Button
                                 type="button"
                                 variant="ghost"
-                                disabled={!multiple && new Date(first.startsAt).getTime() > loadedAt}
+                                disabled={sessions.every(session=>new Date(session.startsAt).getTime()>loadedAt)}
                                 aria-label={multiple
                                   ? String(sessions.length) + " sessions on " + day + " for " + learnerName(learner)
                                   : state.label + " — " + learnerName(learner) + " — " + formatDateTime(first.startsAt)}
@@ -620,8 +620,9 @@ export function AdminAttendanceWorkspace({
 
       <Drawer
         open={Boolean(target)}
+        dismissible={!correcting&&!correctionGuard.pending}
         onOpenChange={(open) => {
-          if (!open && !correcting) {
+          if (!open && !correcting && !correctionGuard.pending) {
             setTarget(null);
             setError(null);
           }
@@ -752,6 +753,8 @@ export function AdminAttendanceWorkspace({
               <Button
                 key={session.id}
                 variant="secondary"
+                disabled={new Date(session.startsAt).getTime()>loadedAt}
+                title={new Date(session.startsAt).getTime()>loadedAt?"This class has not started. Attendance can be corrected after it begins.":undefined}
                 className="w-full min-w-0 justify-between gap-[var(--lms-space-2)] text-left whitespace-normal break-words"
                 onClick={() => {
                   setTarget({ learner: chooser.learner, session, record });
