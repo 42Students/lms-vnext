@@ -150,7 +150,7 @@ export function FacultyLiveClassEditor({
     {!ready?<p className="text-sm text-muted-foreground">
       {action==="CREATE"?"No registered lessons are available to schedule.":"No editable published session is available on this page."}
     </p>:null}
-    <Button type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]" loading={pending} disabled={!ready||pending} onClick={()=>void save()} variant={action==="CANCEL"?"danger":"primary"}>
+    <Button type="button" loading={pending} disabled={!ready||pending} onClick={()=>void save()} variant={action==="CANCEL"?"danger":"primary"}>
       {pending?"Saving…":"Confirm "+(action==="CREATE"?"schedule":action==="EDIT"?"edit":"cancel")}
     </Button>
     <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}

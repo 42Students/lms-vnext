@@ -1,3 +1,4 @@
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -114,8 +115,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </label>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" variant="primary" className="min-h-11 md:min-h-[var(--lms-control-height)]">Apply filters</Button>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">Clear filters</Link>
+          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
           </p>
@@ -180,32 +181,11 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </div>
 
           <div className="mt-auto pt-5">
-            <div className="grid grid-cols-3 gap-2">
-              <div className="rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] p-2.5">
-                <p className="m-0 text-lg font-semibold text-foreground">
-                  {workspace.summary.contents}
-                </p>
-                <p className="m-0 text-xs text-muted-foreground">
-                  Content
-                </p>
-              </div>
-              <div className="rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] p-2.5">
-                <p className="m-0 text-lg font-semibold text-foreground">
-                  {workspace.summary.assignments}
-                </p>
-                <p className="m-0 text-xs text-muted-foreground">
-                  Assignments
-                </p>
-              </div>
-              <div className="rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] p-2.5">
-                <p className="m-0 text-lg font-semibold text-foreground">
-                  {workspace.summary.quizzes}
-                </p>
-                <p className="m-0 text-xs text-muted-foreground">
-                  Quizzes
-                </p>
-              </div>
-            </div>
+            <SummaryStrip label="Course content summary" steps={[
+              {label:"Content",value:workspace.summary.contents},
+              {label:"Assignments",value:workspace.summary.assignments},
+              {label:"Quizzes",value:workspace.summary.quizzes},
+            ]}/>
             <div className="mt-4 flex items-center justify-between gap-3">
               <p className="m-0 text-sm font-semibold text-foreground">
                 Open teaching workspace
