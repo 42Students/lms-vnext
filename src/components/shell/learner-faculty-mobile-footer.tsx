@@ -87,13 +87,13 @@ export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[
   if (!links.length) return null;
   return <footer data-slot="legacy-mobile-footer" className="lms-legacy-mobile-footer">
     <nav aria-label="Mobile navigation" className="lms-legacy-mobile-footer-nav">
-      <ul className="lms-legacy-mobile-footer-items">
+      <ul className="lms-legacy-mobile-footer-items min-w-0">
         {links.map(item=>{
           // Match the desktop sidebar on recruiter alias/detail URLs and
           // college utility pages; the old mobile footer highlighted a role tab.
           const current=legacySidebarItemActive(pathname,item,null,null);
           const alerts=item.href==="/learn/notifications"&&unread!==null;
-          return <li key={item.href} className={current?"active":undefined}>
+          return <li key={item.href} className={current?"active min-w-0 flex-1":"min-w-0 flex-1"}>
             <Link href={item.href} aria-current={current?"page":undefined}
               aria-label={alerts?item.label+", "+unread+" unread":item.label}
               className="lms-legacy-mobile-footer-link">
