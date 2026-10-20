@@ -158,7 +158,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                       : ""}
                   </p>
                   <div className="mt-3">
-                    <StatusBadge tone="info">
+                    <StatusBadge tone={round.roundStatus==="COMPLETED"?"success":"info"}>
                       {round.roundStatus}
                     </StatusBadge>
                   </div>
