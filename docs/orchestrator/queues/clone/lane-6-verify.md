@@ -11,8 +11,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regres
 
 - [x] `src/components/academics/academics-actions.tsx`
 - [x] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
 - [ ] `src/components/activity/learner-notifications-inbox.tsx`
 - [ ] `src/components/admin/college-archive-button.tsx`
 - [ ] `src/components/admin/college-edit-dialog.tsx`
