@@ -1,8 +1,8 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {Alert} from "@/components/ui/alert";
-import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 
@@ -39,9 +39,9 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
       finally { pendingRef.current = false; }
     });
   }
-  return <div className="mt-2 space-y-2">
+  return <div className="min-w-0 space-y-[var(--lms-space-2)]">
     <Button variant="secondary" type="button" disabled={pending} loading={pending}
-      onClick={() => setOpen(true)} className="min-h-11 md:min-h-9">
+      onClick={() => setOpen(true)} className="min-h-11 w-full sm:w-auto md:min-h-9">
       {suspend ? "Suspend" : "Reactivate"}
     </Button>
     {!open&&error?<Alert tone="error">{error}</Alert>:null}
@@ -52,10 +52,10 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
       confirmVariant={suspend?"danger":"primary"} pending={pending}
       confirmDisabled={suspend&&reason.trim().length<3}
       onConfirm={confirm}>
-      <div className="space-y-3">
-        {suspend?<label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason
-          <Input maxLength={500} value={reason} disabled={pending} onChange={event=>setReason(event.target.value)}/>
-        </label>:<p className="text-sm text-body">Restore access for this student membership?</p>}
+      <div className="min-w-0 space-y-[var(--lms-space-3)]">
+        {suspend?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
+          <Input className="min-h-11 w-full md:min-h-9" maxLength={500} value={reason} disabled={pending} onChange={event=>setReason(event.target.value)}/>
+        </label>:<p className="max-w-prose break-words text-sm leading-5 text-body">Restore access for this student membership?</p>}
         {error?<Alert tone="error">{error}</Alert>:null}
       </div>
     </ConfirmDialog>
