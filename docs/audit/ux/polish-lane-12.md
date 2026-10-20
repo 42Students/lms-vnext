@@ -133,3 +133,35 @@
 
 **Files changed:** discussions `page.tsx`, `error.tsx`, shared discussion component, queue and proof.
 **Verification:** static source review; no runtime/CI.
+
+## 15 · Teacher / Individual published gradebook
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
+**Problems found (8):** poorly scanned inline totals, tiny primary numbers, repetitive borders on breakdown rows, type labels lacking distinction, weak return navigation, permanently exposed score methodology copy, padded generic retry view, and generic inherited 404 for private learner scope.
+
+**Fix:** numeric two/three column summary strip, separated assessment rows with neutral type badges, secondary back control, collapsible score explanation, consistent error retry and privacy-safe local not-found. Preserved published-only scoring, unknown values, routes and authorization. Read loading and parent faculty/gradebook layouts; no local not-found before fix.
+
+**Files changed:** page, error, new not-found, queue and proof. Static inspection only; no tests/CI.
+
+## 16 · Teacher / Published gradebook directory
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
+**Problems found (9):** huge learner headings repeated down a report list, list cards detached by large gaps, filter wrapping awkwardly on phone, search controls without clear widths, exported CSV scope cluttering live result count, duplicate per-row borders, metrics single-column despite available tablet width, long published-score caveat occupying lower viewport, and generic padded error state.
+
+**Fix:** one legacy-style hairline-separated learner directory, 2/3-column score summaries, responsive search/filter/CSV controls, concise status counts with a secondary methodology disclosure and explicit CSV-scope explanation. Retain filtered search, bulk CSV export, page links, warning for assessment count cap, grade availability semantics, and privacy-safe learner links. Reviewed route/loading/inherited not-found, normalized data, Pagination, EmptyState and shared controls.
+
+**Files changed:** gradebook `page.tsx`, `error.tsx`, queue and proof. Static review only; no runtime/CI.
+
+## 17 · Teacher / Retired Section notices
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
+**Problems found (5):** no actual rendered notices page (intentional) but a misleading notice-board loading label, duplicate canvas/card skeleton, authorization-error padding drifting from the shared canvas, undersized retry button on phones, and no safe directory route after authorization read failure.
+
+**Fix:** kept scoped-notice authorization check and redirect to the real Discussions route unchanged; corrected loading label/shape, aligned PageHeader, primary Retry and secondary Back to courses recovery at 375 and 768. Inspected parent faculty layout/not-found and target discussion page; did not reconstruct obsolete notice UI.
+
+**Files changed:** notices `error.tsx`, `loading.tsx`, queue and proof. Route is pure redirect, no visible layout. Static review only, no CI.
+
+## 18 · Teacher / Course default route
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
+**Problems found (5):** index page is redirect-only but shows incorrect card-style loading fallback, generic loading label, thick duplicate error-canvas border, Retry framed as a secondary action when it is primary, and a centered recovery row with undersized back link on mobile.
+
+**Fix:** retain validated redirect to the existing Course home tab; align loading shape, error PageHeader, mobile 44px Retry and Back to courses actions to the single canvas. Reviewed faculty course tab loader/error/not-found, dynamic course id validation and parent faculty shell. No fake intermediate content added.
+
+**Files changed:** base course `error.tsx`, `loading.tsx`, queue and proof. Source-only review, no CI.
