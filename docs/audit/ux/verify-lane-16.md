@@ -104,3 +104,9 @@ Inspected polish-lane-6.md proof, screening detail route, its scoped service, Su
 
 ## 35. src/app/(authenticated)/admin/placements/screenings/page.tsx
 Reviewed other-lane polish-lane-6.md proof, screenings directory page, selected-college screening queue service and AdminScopedReadPage including LiveSearch, status Select, compact rows, pagination, empty/invalid-filter/error and route boundaries. Status list, search and detail links correctly match scoped query; notes remain excluded. Checked no lost field/control/test-id, bad JSX/import, inconsistent tablet/phone wrapping or clutter needing a change. Source-only, no CI. Files: queue/proof.
+
+## 36. src/app/(authenticated)/admin/placements/seasons/[seasonId]/page.tsx
+Compared polish-lane-6.md proof with detail route and selected-college season detail service, shared SuperAdminPlacementDetailView, PageHeader/BackLink/StatusBadge, route loading/error/not-found and ancestor admin layout. Checked season ID/code/dates/status/closed and unavailable states, 375/768 value wrapping, restored explicit recovery. No JSX/import/prop/copy/accessibility or selected-college regressions confirmed; no extra layout change. Source-only; no CI. Files: queue/proof.
+
+## 37. src/app/(authenticated)/admin/placements/seasons/page.tsx
+Inspected polish-lane-6.md entry, seasons list page and scoped query/list service, shared AdminScopedReadPage with status/search/result/pagination and UI components, loading/error and parent admin layout. No invalid statuses, scope leakage, broken tags/props, lost fields/labels or mobile row overflow confirmed. Empty, invalid filter, read-only active/closed periods and 375/768 controls remain aligned. No source edit. No CI. Files: queue/proof.
