@@ -5,6 +5,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import weekStyles from "./tpo-week-hour-calendar.module.css";
 import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
@@ -18,6 +19,11 @@ import {TpoCalendarMoveFollowup,type TpoCalendarLeadOption} from "./tpo-calendar
 function currentTimeMs(){return Date.now();}
 
 const FIRST=7,LAST=21,HEIGHT=52;
+type WeekConfirm =
+ | {kind:"MOVE";followupId:string;day:string;hour:number;prompts:string[];index:number}
+ | {kind:"ADD";prompts:string[];index:number}
+ | {kind:"DISCARD";prompts:string[];index:number}
+ | {kind:"LEAVE";href:string;prompts:string[];index:number};
 const label=(day:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",weekday:"short",day:"numeric",month:"short"})
  .format(new Date(day+"T12:00:00Z"));
 const clock=(hour:number)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",hour:"numeric",hour12:true})
@@ -34,6 +40,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const [slot,setSlot]=useState<string|null>(null);
  const [move,setMove]=useState<{id:string;currentIst:string}|null>(null);
  const triggerRef=useRef<HTMLButtonElement|null>(null);
+ const allowUnload=useRef(false);
+ const [review,setReview]=useState<WeekConfirm|null>(null);
  const [leads,setLeads]=useState<TpoCalendarLeadOption[]>([]);
  const [loadingLeads,setLoadingLeads]=useState(false);
  const [leadQuery,setLeadQuery]=useState("");
