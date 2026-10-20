@@ -182,14 +182,18 @@ export default async function CollegeGroupDetailPage({
         )}
       </section>
 
-      {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Manage members</h2>
+      {group.kind === "STUDY_GROUP" ? <section className="min-w-0 space-y-3">
+        <details className="min-w-0 border-b border-border pb-4">
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage members</summary>
+          <div className="min-w-0 space-y-3 pt-3">
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Validate member CSV (dry run)
         </Link>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}
           members={members} available={available} />
+          </div>
+        </details>
       </section> : null}
 
       {group.kind === "STUDY_GROUP" ? <CollegeGroupDetailWrites
