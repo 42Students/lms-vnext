@@ -177,12 +177,14 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     Select eligible rows or act on all matching records in this filtered view (in verified batches of up to 200 per preview).
     Confirmation rechecks permission and versions; existing decisions are audited.
    </p></div>
-  <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {viewCount} matching records (up to 200 processed in each confirmed batch).</p>
-  <Button variant="secondary" type="button" disabled={busy||!canActOnEntireTpoView(viewCount,allRows)}
+  <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
+   <p role="status" aria-live="polite" className="min-w-0 break-words text-sm text-body">Selected {safeSelected.length} of {viewCount} matching records (up to 200 processed in each confirmed batch).</p>
+   <Button variant="secondary" type="button" className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9" disabled={busy||!canActOnEntireTpoView(viewCount,allRows)}
    onClick={()=>{setSelected(allRows!.map(row=>row.id));invalidate();}}
    >
    Act on all {viewCount} in this view
-  </Button>
+   </Button>
+  </div>
   {viewCount>TPO_BULK_VIEW_LIMIT?<p role="status" className="text-sm text-warning-text">
     More than 5,000 records match. Narrow filters to enable an exact selection. No unpreviewed row is changed.
    </p>:null}
@@ -190,7 +192,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     {safeSelected.length} selected. Preview and confirm the next {Math.min(200,safeSelected.length)} rows;
     remaining rows stay selected for the following batch. Each batch must be reviewed and confirmed separately.
    </p>:null}
-  {target==="STUDENTS"?<div className="min-w-0 space-y-2 border-t border-border pt-3 print:hidden">
+  {target==="STUDENTS"?<Disclosure title="Select by roll number" className="min-w-0 border-t border-border print:hidden" contentClassName="space-y-2 px-2 pb-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Paste roll numbers (comma, whitespace or line separated)
      <Textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
       rows={2} maxLength={40000} placeholder="23CS001, 23CS002" />
@@ -204,8 +206,8 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      }}>Select matching rolls</Button>
    {rollFeedback?<p role="status" className="text-xs text-muted-foreground">{rollFeedback}</p>:null}
    <p className="text-xs text-muted-foreground">Rolls outside these loaded rows cannot be selected by pasting. Use whole-batch search to locate them first.</p>
-  </div>:null}
-  <ScrollCue axis="y" label="Select applicants" className="border-y border-border" viewportClassName="max-h-64 space-y-1 p-2">
+  </Disclosure>:null}
+  <ScrollCue axis="y" label="Select applicants" className="min-w-0 border-y border-border" viewportClassName="max-h-64 space-y-0 p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
     <Checkbox  disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
      onChange={e=>{const pageIds=rows.map(row=>row.id);setSelected(current=>e.target.checked?
@@ -219,13 +221,14 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     <span className="min-w-0 break-words">{row.label}</span>
    </label>)}
   </ScrollCue>
-  <div className="flex flex-wrap gap-2 print:hidden">
-   <Button variant="secondary" type="button" disabled={busy||safeSelected.length===0}
+  <Disclosure title="Selection tools" className="print:hidden" contentClassName="px-2 pb-3">
+   <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+   <Button variant="secondary" type="button" className="w-full sm:w-auto" disabled={busy||safeSelected.length===0}
      onClick={()=>{setSelected([]);invalidate();}}
      >
      Clear selection
    </Button>
-   {target==="STUDENTS"?<Button variant="secondary" type="button" disabled={busy||safeSelected.length===0}
+   {target==="STUDENTS"?<Button variant="secondary" type="button" className="w-full sm:w-auto" disabled={busy||safeSelected.length===0}
     onClick={async()=>{
       try{
        await navigator.clipboard.writeText(safeSelected.map(id=>labelsById.get(id)??id).join("\n"));
@@ -233,33 +236,34 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       }catch{setCopyFeedback("Could not copy selected student rows. Check browser clipboard permission.");}
     }}
     >Copy selected rows</Button>:null}
-   {preview&&!busy?<Button variant="secondary" type="button" onClick={invalidate}
+   {preview&&!busy?<Button variant="secondary" type="button" className="w-full sm:w-auto" onClick={invalidate}
      >
      Cancel preview
    </Button>:null}
-  </div>
+   </div>
+  </Disclosure>
   {copyFeedback?<p role="status" className="text-xs text-muted-foreground">{copyFeedback}</p>:null}
   {runAuditId&&target==="STUDENTS"?<Button variant="secondary" type="button" disabled={busy||guardedPending}
    
    onClick={()=>void runGuarded(undoLastRun)}>Undo last student batch (five minutes)</Button>:null}
   {undoNotice?<p role="status" aria-live="polite" className="text-sm">{undoNotice}</p>:null}
   <div className="grid gap-3 md:grid-cols-2 print:hidden">
-   <label className="text-sm font-semibold text-body">Action
-    <Select value={action} disabled={busy}
+   <label className="min-w-0 text-sm font-semibold text-body">Action
+    <Select className="mt-1 w-full" value={action} disabled={busy}
       onChange={e=>{setAction(e.target.value as Action);invalidate();}}
       >
      {options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
     </Select>
    </label>
-   {(target==="APPLICATIONS"||(target==="STUDENTS"&&action==="INELIGIBLE"))?<label className="text-sm font-semibold text-body">{target==="STUDENTS"?"Ineligibility reason (required)":"Review context / private note / message"}
-    {target==="STUDENTS"?<div className="mb-2 flex flex-wrap gap-2" role="group" aria-label="Ineligibility reason presets">
+   {(target==="APPLICATIONS"||(target==="STUDENTS"&&action==="INELIGIBLE"))?<label className="min-w-0 text-sm font-semibold text-body">{target==="STUDENTS"?"Ineligibility reason (required)":"Review context / private note / message"}
+    {target==="STUDENTS"?<div className="mb-2 mt-2 flex flex-wrap gap-2" role="group" aria-label="Ineligibility reason presets">
       {TPO_INELIGIBLE_REASONS.map(preset=><Button variant="secondary" type="button" key={preset}
        disabled={busy} onClick={()=>{setNote(preset);invalidate();}}
        >{preset}</Button>)}
       <Button variant="secondary" type="button" disabled={busy} onClick={()=>{setNote("");invalidate();}}
        >Other</Button>
     </div>:null}
-    <Textarea value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
+    <Textarea className="mt-1 w-full" value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       />
    </label>:null}
@@ -268,13 +272,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    <h3 className="font-semibold">Actions</h3>
    <p className="text-sm text-body">Check how many selected rows can receive each action before you confirm any change.</p>
    {target==="STUDENTS"&&note.trim().length<3?<p className="text-xs text-muted-foreground">To include “Make ineligible” in the action counts, enter an ineligibility reason of at least 3 characters. No eligibility is changed while checking counts.</p>:null}
-   <Button variant="secondary" type="button" disabled={busy||safeSelected.length===0}
+   <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||safeSelected.length===0}
      onClick={()=>void compareActions()}
      >
      Check action counts
    </Button>
-   {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<div className="min-w-0 space-y-2 border-b border-border py-3">
-     <h4 className="font-semibold">Other actions</h4>
+   {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<Disclosure title="Other actions" className="min-w-0 border-b border-border" contentClassName="min-w-0 space-y-2 px-2 pb-3">
      <p className="text-xs text-muted-foreground">Share only this selection using an expiring link. Every selected application is rechecked for a current shortlist before issuance. Review one by one opens each candidate&apos;s authorized detail.</p>
      <label className="flex flex-wrap items-center gap-2 text-sm">Link expires in
       <Select value={shareDays} onChange={event=>setShareDays(Number(event.target.value))}
@@ -283,8 +286,8 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       </Select>
      </label>
      {safeSelected.length>200?<p role="status" className="text-xs text-warning-text">Select at most 200 currently shortlisted applications for one company link. Other rows are not shared.</p>:null}
-     <div className="flex flex-wrap gap-2 print:hidden">
-       <Button variant="secondary" type="button" disabled={busy||safeSelected.length===0||safeSelected.length>200} onClick={()=>setShareConfirmOpen(true)}
+     <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap print:hidden">
+       <Button variant="secondary" type="button" className="w-full sm:w-auto" disabled={busy||safeSelected.length===0||safeSelected.length>200} onClick={()=>setShareConfirmOpen(true)}
         >
          Share {safeSelected.length} selected with the company
        </Button>
@@ -293,16 +296,18 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      <Dialog open={shareConfirmOpen} onOpenChange={open=>{if(!busy&&!guardedPending)setShareConfirmOpen(open);}}
        title="Share selected applicants with the company"
        description={"Share exactly "+safeSelected.length+" currently shortlisted applications with the company? Anyone holding the link can view them until it expires."}
-       footer={<><Button variant="secondary" disabled={busy||guardedPending} onClick={()=>setShareConfirmOpen(false)}>Cancel</Button>
-        <Button disabled={busy||guardedPending||!safeSelected.length||safeSelected.length>200}
-         onClick={()=>void runGuarded(shareSelected)}>Confirm share</Button></>}>
+       footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+         <Button variant="secondary" className="w-full sm:w-auto" disabled={busy||guardedPending} onClick={()=>setShareConfirmOpen(false)}>Cancel</Button>
+         <Button className="w-full sm:w-auto" loading={busy||guardedPending} disabled={!safeSelected.length||safeSelected.length>200}
+          onClick={()=>void runGuarded(shareSelected)}>Confirm share</Button>
+        </div>}>
         <p className="text-sm">Each application is checked again by the server. The private URL is shown only after sharing succeeds.</p>
       </Dialog>
       {companyShareUrl?<div className="min-w-0 space-y-2 border-b border-border py-3">
       <p className="text-xs font-semibold">Copy this URL now. The secret cannot be recovered later.</p>
-      <Input aria-label="Selected applicant share URL" readOnly value={companyShareUrl}
+      <Input className="w-full min-w-0" aria-label="Selected applicant share URL" readOnly value={companyShareUrl}
        onFocus={e=>e.currentTarget.select()} />
-      <Button variant="secondary" type="button" className="underline text-link"
+      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
        onClick={()=>void navigator.clipboard.writeText(companyShareUrl).then(
         ()=>setError("Link copied."),()=>setError("Select the link field and copy it manually."))}>Copy link</Button>
      </div>:null}
@@ -315,7 +320,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
          </li>)}
        </ol></ScrollCue>
      </Disclosure>:null}
-   </div>:null}
+   </Disclosure>:null}
    {actionCounts.length>0?<div className="grid min-w-0 gap-0 overflow-hidden border-y border-border md:grid-cols-2">
      {safeSelected.length>200?<p className="col-span-full text-xs text-muted-foreground">Action counts apply to the next 200 selected records. Recheck each subsequent batch.</p>:null}
      {actionCounts.map(count=><div key={count.action} className="min-w-0 border-b border-r border-border px-3 py-3 text-sm last:border-r-0">
@@ -324,17 +329,17 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
        {count.reasonSamples.map(reason=><p key={reason} className="mt-1 text-xs text-muted-foreground">{reason}</p>)}
      </div>)}
    </div>:null}
-   {suggested?<div className="flex flex-wrap items-center gap-3">
+   {suggested?<div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
      <p className="text-sm font-semibold">Suggested: {suggested.label}</p>
-     <Button variant="primary" type="button" disabled={busy} onClick={()=>void startPreview(suggested.action as Action)}
+     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} onClick={()=>void startPreview(suggested.action as Action)}
        >Do it</Button>
    </div>:null}
   </section>
-  <Button variant="primary" type="button" disabled={busy||safeSelected.length===0}
+  {!preview&&outcomes.length===0?<Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={busy||safeSelected.length===0}
     onClick={()=>void startPreview()}
     >
     {busy?"Checking…":"Preview next "+Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)+" selected"}
-  </Button>
+  </Button>:null}
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
   {preview&&plan&&["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)?(
@@ -358,7 +363,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       <p className="break-words text-body">{group.names.join(", ")}{group.count>group.names.length?", and "+(group.count-group.names.length)+" more":""}</p>
      </li>)}</ul>
     </div>:null}
-    {safeSelected.length>0?<Button variant="primary" type="button" disabled={busy} onClick={()=>void startPreview(plan?.action??action)}
+    {safeSelected.length>0?<Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={busy} onClick={()=>void startPreview(plan?.action??action)}
      >
      Preview next batch ({Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)} of {safeSelected.length} remaining)
     </Button>:null}
