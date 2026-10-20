@@ -29,3 +29,43 @@
 **Files changed:** `src/app/(authenticated)/teacher/calendar/page.tsx`, `src/app/(authenticated)/teacher/calendar/error.tsx`, queue and proof. Route loading, parent layout/error/not-found and the legacy class-month CSS, ScrollCue, CalendarGrid and LearnerClassSchedule inspected; no local template/not-found exists.
 
 **Verification boundary:** static review only; no runtime or CI executed.
+
+## 04 · Teacher / Contact detail
+**Surface:** `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`  
+**Problems found (7):** vertically spread read-only facts, an overlarge empty-state component embedded under a simple roles heading, inconsistent gaps between sections, long disclaimer not capped for readability, Back button compressed on narrow devices, error retry without directory recovery, and missing route-local not-found treatment for intentionally hidden contacts.
+
+**Fix:** align department and current roles in a responsive two-column description area at 768px (stacked on phones), retain all labels and role badges, replace a redundant nested full-page empty state with a compact status message, cap privacy copy line length, widen Back action for 375px screens, align retry and safe directory navigation, and add a generic `not-found.tsx` which does not reveal hidden membership data. Preserved filtered return URL, authorization/hidden-contact handling, parameters, identifiers and confidentiality boundary.
+
+**Files changed:** `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`, its `error.tsx`, new `not-found.tsx`, queue and proof. Loading state and nearest parent faculty layout reviewed, unchanged.
+
+**Verification boundary:** static JSX and responsive review; no browser run or CI.
+
+## 05 · Teacher / Tabbed contacts directory
+**Surface:** `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`  
+**Problems found (8):** contact cards in a three-column grid instead of the legacy directory table, repeated boxed row treatment on the only canvas, cramped filter toolbar at 768px, misaligned count/controls when labels wrap, full-width filter controls fighting a narrow flex row, contact/department text lacking an aligned reading order, inconsistent mobile row tap area, and incorrectly escaped error header with a centered paragraph.
+
+**Fix:** render compact shared hairline Table with Contact/Department/Current college roles at tablet+ widths; switch to no-card, separator-only mobile rows with full 44px accessible links; consolidate toolbar as a 1/2/3-column responsive grid; align total count, tab strip, search and pagination to a common gutter; retain existing filter query semantics, user-role privacy, role pills, and direct detail links; align the retry surface. Mobile/tablet are genuinely separate layouts, not squeezed cards.
+
+**Files changed:** `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`, its `error.tsx`, `src/components/courses/faculty-contacts-table.tsx`, queue and proof. Pagination, filters, loading, parent layout, link states and redirected invalid tabs inspected.
+
+**Verification boundary:** static TypeScript/JSX inspection only; no build/tests or screenshots.
+
+## 06 · Teacher / Contacts index redirect
+**Surface:** `src/app/(authenticated)/teacher/contacts/page.tsx`  
+**Problems found (0):** this route has no rendered surface; it only performs a server redirect to `/teacher/contacts/allContacts` and should not introduce a duplicate heading, loading card or intermediate screen.
+
+**Fix:** reviewed the redirect destination, tab validation, query-filtered directory landing route and parent loading/error/access/not-found fallbacks. Kept the redirect unchanged so that the index never flashes a second layout at 375px, 768px or desktop. The actual directory layout was polished under surface 05.
+
+**Files changed:** queue and proof only. Preserved original route and redirect behavior.
+
+**Verification boundary:** source inspection, no runtime tests or CI.
+
+## 07 · Teacher / Course home and Blueprint route
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx`  
+**Problems found (9):** content and assignment item cards nested inside bordered lesson cards and the global canvas, unusually dense authoring/video/order forms exposed for every expanded lesson, action links compressed on phone, five stat tiles overly separated from content, double border treatments on empty lessons, heavy lesson-card padding drifting from global gutter, generic loading title, generic route error, and generic missing-lesson state without a recovery path.
+
+**Fix:** retain Course Workspace and all query parsing/filter/lesson navigation but use native Disclosure for less-frequent lesson authoring, video and reorder controls; unfold these automatically for a selected lesson; render lesson and assessment items as hairline-separated rows rather than cards within cards; align the lesson heading to the shared canvas, make header actions stack at phone widths, and provide route-specific loading, retry/back, and safe not-found states. Existing faculty ownership, video permission, edit/delete confirmations, quiz attempts, content links, assessment state, class links, and learner preview behaviours remain wired.
+
+**Files changed:** `src/components/courses/faculty-course-workspace.tsx`, `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/error.tsx`, `loading.tsx`, new `not-found.tsx`, queue and proof. Teacher parent layout, lesson authoring, video manager, content order editor, quiz editor/review, item lifecycle, and home signals inspected.
+
+**Verification boundary:** source-only review; no runtime/test/CI.

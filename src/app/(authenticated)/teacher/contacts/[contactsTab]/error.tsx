@@ -10,12 +10,12 @@ export default function FacultyContactsError({
   reset: () => void;
 }) {
   return (
-    <section className="min-w-0 border-b border-border bg-transparent py-[var(--lms-space-5)]">
-      <PageHeader title={"Couldn&apos;t load contacts"} />
-      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
+    <section className="min-w-0 space-y-4">
+      <PageHeader title={"Couldn't load contacts"} />
+      <p className="max-w-xl text-sm leading-6 text-body">
         The college directory request failed. Retry instead of treating the directory as empty.
       </p>
-      <Button variant="secondary" className="mt-5" onClick={reset}>Retry</Button>
+      <Button onClick={reset}>Retry</Button>
     </section>
   );
 }
