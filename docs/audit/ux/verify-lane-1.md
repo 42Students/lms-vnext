@@ -29,3 +29,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** verified server DTO mapping, quiz branch of shared assessment renderer, type-safe quiz column/action callbacks, destination links, filters/counters, published-result states and route loading/error/parent layouts; no source-level broken tags/imports or lost routes/aria found.
 - **Extra clutter/alignment fixes (1):** removed the redundant bottom border on the Submitted disclosure nested inside the Quiz summary's existing bottom border. Keeps one separator, same disclosure title, keyboard behavior, count, submitted records and mobile hit target.
 - **Files changed:** `src/components/courses/learner-assessment-overview.tsx`; verification proof and queue.
+
+## Surface 5 — Assignments route alias
+- **Surface:** `src/app/(authenticated)/learn/assignments/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 5.
+- **Regressions found/fixed (0):** verified the authorized redirect target, legacy wording preserved at destination, route loading/error fallbacks and GracefulErrorBoundary, nearest learner/authenticated layouts; no visible page components to modify or lost attributes/imports.
+- **Extra clutter/alignment fixes (0):** redirect-only path correctly avoids a flash of duplicate content.
+- **Files changed:** verification proof and queue only (verified, no change to source).
+
+## Surface 6 — Learner attendance calendar
+- **Surface:** `src/app/(authenticated)/learn/attendance/calendar/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 6.
+- **Regressions found/fixed (1):** removed unused `Alert` import left by preceding polish, avoiding strict unused-local compilation failure. Checked DateInput, Select, FilterBar/ResponsiveFilterDrawer, CalendarGrid, CSS month geometry, SummaryStrip and Badge contracts, query/links/roles, loading/error routes and parent layouts.
+- **Extra clutter/alignment fixes (0):** responsive month navigator, concealed filtered totals, class rows and invalid/empty-result recovery maintain clear hierarchy at 375/768. Existing legacy CSS and wording retained.
+- **Files changed:** `src/app/(authenticated)/learn/attendance/calendar/page.tsx`; verification proof and queue.
