@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { SuperAdminHrAccounts } from "@/components/admin/super-admin-hr-accounts";
 import type {
@@ -41,7 +42,7 @@ export default async function SuperAdminHrPage({
 
   if (!parsed) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-4">
         <PageHeader
           title="Recruiter accounts"
           description="Employer recruiter administration."
@@ -50,12 +51,12 @@ export default async function SuperAdminHrPage({
           title="Invalid account filters"
           description="The supplied search, status or pagination values are invalid. Return to Recruiter Accounts and retry."
           action={
-            <a
+            <Link
               href="/admin/recruiters"
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
             >
               Reset filters
-            </a>
+            </Link>
           }
         />
       </div>

@@ -127,7 +127,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}} >Refresh</Button>
   </div>
   {reviewFeedback&&<Banner tone="info">{reviewFeedback}</Banner>}
-  {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Review one by one" className="space-y-2 rounded-md border p-3">
+  {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Review one by one" className="space-y-2 border-y border-border py-3">
     <h2 className="font-semibold">Review one by one</h2>
     <p className="text-sm">Each student&apos;s values next to their documents, with Verify and Send back. The next one opens by itself.</p>
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{
@@ -153,7 +153,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":"",ageBand:tab==="WAITING"?query.ageBand??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query.attention)?"ALL":query.attention??"ALL"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1",...(kind==="IDENTITY"?{marksheets:"ANY",attention:query.attention==="MISSING_MARKSHEET"?"ALL":query.attention}:{})})}
    onReview={row=>setSelected(row)}/>
-  {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 rounded-md border p-3">
+  {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 border-y border-border py-3">
    <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));resetBulkFeedback();}} >Select first 20 waiting</Button>
@@ -161,7 +161,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     <Button variant="secondary" type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("VERIFY");}} >Preview verify</Button>
     <Button variant="secondary" type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("SEND_BACK");}} >Preview send back</Button>
    </div>
-   {bulkAction&&<div className="space-y-2 rounded-md border p-3">
+   {bulkAction&&<div className="space-y-2 border-y border-border py-3">
     <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
     <p className="text-sm">{preview?.eligible.length??0} eligible and {preview?.skipped.length??0} skipped. This is a local preview only; the server will recheck each document, role and row version.</p>
     <ul className="max-h-48 space-y-1 overflow-y-auto text-sm" aria-label="Selected review candidates">
@@ -203,7 +203,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>setBulkAction(null)} >Cancel preview</Button>
    </div>}
   </section>}
-  {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 rounded-md border p-3">
+  {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 border-y border-border py-3">
    <h2 className="font-semibold">Bulk review results</h2>
    <p className="text-sm">{bulkResult.summary.succeeded} of {bulkResult.summary.attempted} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
    <ul className="space-y-1 text-sm">{bulkResult.labels.map(result=><li key={result.key}>

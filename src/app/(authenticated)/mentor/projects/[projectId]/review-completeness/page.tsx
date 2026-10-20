@@ -3,6 +3,7 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {getMentorProjectReviewCompleteness}
   from "@/modules/projects/mentor-review-completeness-service";
 import {mentorReviewCompletenessHref,mentorReviewCompletenessQuerySchema}
@@ -45,7 +46,7 @@ export default async function MentorProjectReviewCompletenessPage({
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="min-w-0 break-words font-semibold text-foreground">Delivery version {item.version}</h2>
-            <span className="text-sm font-semibold text-body">{item.status}</span>
+            <StatusBadge tone={item.status==="APPROVED"?"success":item.status==="REJECTED"?"warning":"neutral"}>{item.status}</StatusBadge>
           </div>
           <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
             <div><dt className="text-xs text-muted-foreground">Review decision</dt>

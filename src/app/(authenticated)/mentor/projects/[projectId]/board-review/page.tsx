@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
@@ -33,16 +34,16 @@ export default async function MentorBoardReviewPage({
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no tasks were loaded."}
       actions={<Link data-unskin="" href={base+"?tab=board"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Full task workspace
       </Link>}/>
     {!data.enabled?
       <section role="status" className="border-b border-border pb-4">
         Projects access is disabled; no tasks were loaded.
       </section>:<>
-      <section aria-label="Registered task counts" className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-5">
+      <section aria-label="Registered task counts" className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-5">
         {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
-          <article key={status} className="rounded-xl border border-border bg-surface p-3">
+          <article key={status} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
             <h2 className="text-xs font-semibold text-muted-foreground">{status.replaceAll("_"," ")}</h2>
             <p className="mt-2 text-xl font-bold tabular-nums">{data.totals[status]}</p>
           </article>)}
@@ -51,27 +52,27 @@ export default async function MentorBoardReviewPage({
         {data.completedPercent===null?" Completion unknown (no tasks)":
           " "+data.completedPercent+"% recorded DONE tasks"}
       </p>
-      <form method="get" action={base+"/board-review"}
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
-        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search tasks or sprints
+      <FilterBar title="Filters"><form method="get" action={base+"/board-review"}
+        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
             className="min-h-11 w-full md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Status
+        <label className="grid gap-1 text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 w-full md:min-h-9">
             {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Priority
+        <label className="grid gap-1 text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Priority
           <Select name="priority" defaultValue={data.query.priority??"ALL"}
             className="min-h-11 w-full md:min-h-9">
             {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Sprint
+        <label className="grid gap-1 text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Sprint
           <Select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
             className="min-h-11 w-full md:min-h-9">
             <option value="ALL">All sprints</option>
@@ -82,12 +83,12 @@ export default async function MentorBoardReviewPage({
           Filter
         </Button>
         <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
-      </form>
+      </form></FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
           (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
             "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-          download className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none md:py-0">
+          download className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none md:py-0">
           Download filtered CSV (max 500)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -100,7 +101,7 @@ export default async function MentorBoardReviewPage({
           <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-            download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+            download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
             Download filtered Sprint summary CSV (max 100)
           </Link>
         </div>
@@ -114,7 +115,7 @@ export default async function MentorBoardReviewPage({
           </p>:
           <div className="grid gap-3 md:grid-cols-2">
             {data.sprintSummaries.slice(0,6).map(sprint=>
-              <article key={sprint.id} className="rounded-xl border border-border bg-surface p-4">
+              <article key={sprint.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
                 <h3 className="break-words font-semibold">{sprint.title}</h3>
                 <p className="mt-2 text-sm text-body">{sprint.matchingTasks} matching of
                   {" "}{sprint.registeredTasks} registered tasks</p>

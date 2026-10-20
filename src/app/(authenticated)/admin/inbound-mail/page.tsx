@@ -22,10 +22,10 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const repeated=["status","q","recipient","page"].some(key=>
    Array.isArray(params[key]));
  const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status)??"NEW",q:one(params.q),recipient:one(params.recipient),page:one(params.page)});
- if(repeated||!parsed.success)return <div className="space-y-6">{header}
+ if(repeated||!parsed.success)return <div className="min-w-0 space-y-4">{header}
    <div role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-primary-text">Reset</Link></div></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
- if(!data.available)return <div className="space-y-6">{header}
+ if(!data.available)return <div className="min-w-0 space-y-4">{header}
   <div role="status" className="space-y-3 border-b border-border pb-5">
    <p>Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.</p>
    <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>
@@ -44,7 +44,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const base=new URLSearchParams({...parsed.data.q?{q:parsed.data.q}:{},...parsed.data.recipient?{recipient:parsed.data.recipient}:{}});
  const tabs=[{value:"NEW",label:"To read",count:data.toReadCount},{value:"TRIAGED",label:"Being handled",count:null},
   {value:"RESOLVED",label:"Done",count:null},{value:"ALL",label:"All",count:null}] as const;
- return <div className="min-w-0 space-y-6">{header}
+ return <div className="min-w-0 space-y-4">{header}
   <Tabs ariaLabel="Inbound mail views" value={parsed.data.status} renderPanel={false}
     items={tabs.map(tab=>{
      const url=new URLSearchParams(base);url.set("status",tab.value);
@@ -53,11 +53,11 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
       href:"/admin/inbound-mail?"+url.toString()};
     })}/>
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+   <label className="min-w-0 flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-w-0" placeholder="Sender, subject or message body"/></label>
-   <label className="min-w-0 flex-1 basis-48 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recipient inbox
+   <label className="min-w-0 flex-1 basis-48 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recipient inbox
     <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-w-0" placeholder="inbox@example.edu"/></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+   <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Status
     <Select name="status" defaultValue={parsed.data.status} className="mt-1 w-full">
      <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
     </Select></label>

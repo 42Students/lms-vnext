@@ -7,6 +7,7 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Banner } from "@/components/ui/banner";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { ErrorState } from "@/components/ui/error-state";
@@ -29,7 +30,7 @@ export async function ProjectAdminAtRiskPage({
 }: {
   collegeId: string;
   basePath: string;
-  eyebrow: string;
+  eyebrow?: string;
   searchParams: Record<
     string,
     string | string[] | undefined
@@ -38,9 +39,11 @@ export async function ProjectAdminAtRiskPage({
   const context = await getCurrentRequestContext();
   const parsed = parseProjectAdminRiskQuery(searchParams);
   if (!parsed.success) {
-    return <div className="space-y-6">
+    return <div className="min-w-0 space-y-6">
       <PageHeader title="At-risk projects"
-        description="Workspaces with no recent activity, an active blocker, or a pending review." />
+        description="Workspaces with no recent activity, an active blocker, or a pending review."
+        actions={<PageBackLink href={basePath} label="Project workspaces" />} />
+      <ProjectAdminNav basePath={basePath} active="at-risk" />
       <ErrorState title="Invalid project filters"
         description="Check the risk, status, sort, search and page filters, or clear them to continue."
         action={<Link href={basePath + "/at-risk"}
@@ -48,19 +51,29 @@ export async function ProjectAdminAtRiskPage({
     </div>;
   }
   const query: ProjectAdminCollectionQuery = parsed.data;
-  const result =
-    await listProjectAdminRiskQueue(
-      context,
-      collegeId,
-      query,
-    );
+  const riskResult = await listProjectAdminRiskQueue(context, collegeId, query)
+    .then(value => ({ ok: true as const, value }))
+    .catch(() => ({ ok: false as const }));
+  if (!riskResult.ok) {
+    return <div className="min-w-0 space-y-6">
+      <PageHeader title="At-risk projects"
+        description="Workspaces with no recent activity, an active blocker, or a pending review."
+        actions={<PageBackLink href={basePath} label="Project workspaces" />} />
+      <ProjectAdminNav basePath={basePath} active="at-risk" />
+      <ErrorState title="At-risk workspaces unavailable"
+        description="Could not load the risk queue. Your search and filters have not changed."
+        action={<Link href={basePath+"/at-risk"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry risk queue</Link>} />
+    </div>;
+  }
+  const result = riskResult.value;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
-        actions={
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
+        <PageBackLink href={basePath} label="Project workspaces" />
         <ProjectAtRiskPageExport collegeId={collegeId}
           rows={result.items.map(project=>({
             id:project.id,title:project.title,mentorName:project.mentorName,
@@ -68,7 +81,7 @@ export async function ProjectAdminAtRiskPage({
             blockerReason:project.blockerReason,
             lastActivityAt:safeProjectAdminUtcIso(project.lastActivityAt),
           }))}/>
-        }
+        </div>}
       />
       <ProjectAdminNav basePath={basePath} active="at-risk" />
       {!result.blockerSignalSupported ? (
@@ -88,7 +101,7 @@ export async function ProjectAdminAtRiskPage({
           </FilterChipLink>)}
       </nav>
       <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
-      <ProjectAdminFilters query={query} includeRiskSort />
+      <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort /></FilterBar>
       <ListToolbar label="At-risk workspaces" viewCount={result.total} />
 
       {!result.items.length ? (

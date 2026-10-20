@@ -50,16 +50,16 @@ export default async function FacultyAssignmentSubmissionsPage({
         Full Section report
       </Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">
-      <input type="hidden" name="deliveryId" value={query.deliveryId}/>
-      {query.filter!=="ALL"?<input type="hidden" name="filter" value={query.filter}/>:null}
-      {query.order!=="NEWEST"?<input type="hidden" name="order" value={query.order}/>:null}
-      {query.publication!=="ALL"?<input type="hidden" name="publication" value={query.publication}/>:null}
+      <Input type="hidden" name="deliveryId" value={query.deliveryId}/>
+      {query.filter!=="ALL"?<Input type="hidden" name="filter" value={query.filter}/>:null}
+      {query.order!=="NEWEST"?<Input type="hidden" name="order" value={query.order}/>:null}
+      {query.publication!=="ALL"?<Input type="hidden" name="publication" value={query.publication}/>:null}
       <label className="grid min-w-0 flex-1 basis-56 gap-1 text-[13px] font-semibold leading-4 text-body">
         Find learner submissions
         <Input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-body text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
-      <Button type="submit" variant="primary">Search</Button>
+      <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear search</Link>
     </form>
@@ -93,7 +93,7 @@ export default async function FacultyAssignmentSubmissionsPage({
         {data.items.map(row=>{
           const late=report.assignment.dueAt!==null&&
             row.submittedAt.getTime()>report.assignment.dueAt.getTime();
-          return <li key={row.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          return <li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary motion-reduce:transition-none md:p-6">
             <h2 className="font-semibold text-foreground">
               {row.learnerDisplayName||row.learnerEmail||"Learner"}
             </h2>

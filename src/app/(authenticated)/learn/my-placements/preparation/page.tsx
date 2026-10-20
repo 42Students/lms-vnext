@@ -33,7 +33,7 @@ export default async function LearnerPlacementPreparationPage({
     <PageHeader title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."
       actions={<Link href="/learn/my-placements"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
         My Placements
       </Link>} />
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
@@ -64,7 +64,7 @@ export default async function LearnerPlacementPreparationPage({
             </div>
             <p className="mt-2 text-sm leading-6 text-body">{item.description}</p>
             <Link href={item.href}
-              className="mt-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-4 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
               {item.recorded?"Review recorded information":"Review this section"} →
             </Link>
           </li>)}

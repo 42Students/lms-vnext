@@ -52,7 +52,7 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
   }finally{submitting.current=false;setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 border-t border-border pt-4">
-  <h3 className="font-semibold">Required preparation courses</h3>
+  <h3 className="text-lg font-semibold text-foreground">Required preparation courses</h3>
   <p className="text-sm text-muted-foreground">Select active courses from this college only. TPO Students derives preparation support from saved learner course completions when published course evidence is available; missing progress remains unclassified.</p>
   <label className="block text-sm">Find a preparation course
    <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
@@ -65,10 +65,10 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setSelected(current=>current.filter(id=>available.has(id)))}
     className="ml-2 min-h-11 min-[768px]:min-h-9">Remove unavailable courses</Button>
   </Alert>:null}
-  <fieldset disabled={busy} className="max-h-72 space-y-2 overflow-y-auto">
+  <fieldset disabled={busy} className="max-h-72 overflow-y-auto border-t border-border">
    <legend className="text-sm">Courses used for readiness</legend>
    {choices.filter(course=>(course.name+" "+course.code).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))).map(course=>
-    <label key={course.id} className="flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-border px-3 text-sm">
+    <label key={course.id} className="flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center gap-2 border-b border-border px-3 text-sm hover:bg-surface-subtle focus-within:bg-primary-subtle">
      <Checkbox checked={selected.includes(course.id)} onChange={e=>{
       setSelected(current=>e.target.checked?current.includes(course.id)?current:[...current,course.id]:
        current.filter(id=>id!==course.id));

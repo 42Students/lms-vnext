@@ -30,9 +30,9 @@ export default async function BatchRegistrations({params,searchParams}:{
   if(data.filters.pageSize!==25)params.set("pageSize",String(data.filters.pageSize));
   params.set("page",String(page));return "/tpo/batches/"+batchId+"/registrations?"+params.toString();};
  return <div className="min-w-0 space-y-4">
-  <PageHeader title={data.batch.name+" — Registration choices"}/>
+  <PageHeader title={data.batch.name+" — Registration choices"} description="Recorded student choices and consent evidence."/>
   <TpoBatchWorkspaceTabs batchId={batchId} active="registrations" />
-  {!data.ready?<p role="status" className="rounded border border-border p-4">Registration storage is unavailable. No learner choices were loaded.</p>:<>
+  {!data.ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">Registration storage is unavailable. No learner choices were loaded.</p>:<>
    <form action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-3">
     <label className="min-w-0 text-sm">Find learner
      <Input type="search" name="q" maxLength={100} defaultValue={data.filters.q}

@@ -38,8 +38,8 @@ export default async function CollegeAssignmentsPage({
     context, "ASSIGNMENT", parseCollegeAssessmentQuery("ASSIGNMENT", validation.data),
   );
   const lessons=await getCollegeAssignmentAuthoringOptions(context);
-  return <div className="space-y-4">
-    <CollegeAssignmentCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
-    <CollegeAssessmentAggregate data={data}/>
+  return <div className="min-w-0 overflow-x-clip">
+    <CollegeAssessmentAggregate data={data}
+      leading={<CollegeAssignmentCreate lessons={lessons} deliveries={data.reviewDeliveries}/>}/>
   </div>;
 }

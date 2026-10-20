@@ -12,7 +12,7 @@ export function FacultyAssignmentMethodPicker({methods,onChange,disabled}:{
   </p>
   <div className="grid gap-2 md:grid-cols-2">
    {ALL_ASSIGNMENT_METHODS.map(method=><label key={method}
-    className="flex min-h-11 items-center gap-2 text-[13px] text-body md:min-h-[var(--lms-control-height)]">
+    className="flex min-h-11 items-center gap-2 text-[13px] text-body md:min-h-9">
     <Checkbox  checked={methods.includes(method)}
      onChange={e=>{
       const next=e.target.checked?[...methods,method]:methods.filter(item=>item!==method);

@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
@@ -40,15 +41,15 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
       description={data.enabled?data.projectTitle+" · "+data.projectStatus:"Projects are disabled. No private task, meeting or delivery evidence was loaded."}
       actions={<Link data-unskin="" href={base}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Full project workspace
       </Link>}/>
     {!data.enabled?<section role="status" className="border-b border-border pb-4">
       Projects are disabled. No private task, meeting or delivery evidence was loaded.
     </section>:<>
-      <section aria-label="Recorded workflow signals" className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
+      <section aria-label="Recorded workflow signals" className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
         {metrics.map(([label,value])=>
-          <article key={label} className="rounded-xl border border-border bg-surface p-4">
+          <article key={label} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
             <h2 className="text-xs font-semibold text-muted-foreground">{label}</h2>
             <p className="mt-2 text-2xl font-bold tabular-nums">{value}</p>
           </article>)}
@@ -60,16 +61,16 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         Priority filters affect task drill-ins only; project totals and non-task signals stay unchanged.
         A project without tasks is never assumed complete.
       </p>
-      <form method="get" action={base+"/risk-readiness"}
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Show
+      <FilterBar title="Filters"><form method="get" action={base+"/risk-readiness"}
+        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Show
           <Select name="focus" defaultValue={data.query.focus}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All evidence</option><option value="RISK">Attention only</option>
             <option value="READINESS">Readiness gaps only</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
           <Select name="taskPriority" defaultValue={data.query.taskPriority}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All task priorities</option>
@@ -82,7 +83,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         </Button>
         <Link href={base+"/risk-readiness"}
           className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
-      </form>
+      </form></FilterBar>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
         description="No matching stored signals were found. This is not a certificate of project safety or completeness."/>:
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>

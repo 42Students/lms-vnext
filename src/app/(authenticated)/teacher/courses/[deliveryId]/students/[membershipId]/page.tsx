@@ -21,11 +21,10 @@ export default async function FacultyStudentDetailPage({
   const name = data.student.displayName?.trim() || "Unnamed learner";
   const root = "/teacher/courses/" + encodeURIComponent(data.course.deliveryId);
   return <div className="min-w-0 max-w-full space-y-6">
-    <Link href={root + "/students"}
-      className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Students</Link>
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
-        data.course.academicPeriodName].join(" · ")} />
+        data.course.academicPeriodName].join(" · ")}
+      actions={<Link href={root + "/students"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Students</Link>} />
     <section aria-label="Student details" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
       {[
         ["Roll number", data.student.rollNumber ?? "Not assigned"],
@@ -34,19 +33,19 @@ export default async function FacultyStudentDetailPage({
         ["Recorded attendance", data.summary.percent === null
           ? "Unknown" : data.summary.percent + "%"],
       ].map(([label, value]) =>
-        <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
           <p className="text-xs font-semibold text-muted-foreground">{label}</p>
           <p className="mt-2 break-words font-semibold text-foreground">{value}</p>
         </div>)}
     </section>
-    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+    <section className="border-y border-[var(--lms-canvas-border)] bg-transparent py-5">
       <h2 className="text-lg font-semibold text-foreground">Course attendance</h2>
       <div className="mt-4 grid gap-3 md:grid-cols-4">
         {[
           ["Present", data.summary.present], ["Absent", data.summary.absent],
           ["Unmarked", data.summary.unmarked], ["Upcoming", data.summary.upcoming],
         ].map(([label, value]) =>
-          <div key={label} className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3">
+          <div key={label} className="min-w-0 border-b border-border py-3">
             <p className="text-xs text-body">{label}</p>
             <p className="mt-1 text-xl font-semibold tabular-nums">{value}</p>
           </div>)}

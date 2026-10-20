@@ -40,8 +40,8 @@ export default async function CollegeElectivesPage({
     listCollegeElectives(context, parsed.data),
     listCollegeElectiveSlotOptions(context),
   ]);
-  return <div className="space-y-4">
-    <div className="flex flex-wrap items-center gap-3">
+  return <div className="min-w-0 max-w-full space-y-4">
+    <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-border pb-4">
     <Link prefetch={false} download href={electiveCsvHref(data.query)}
       className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
       Export filtered electives CSV

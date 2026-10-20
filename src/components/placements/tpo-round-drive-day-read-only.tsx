@@ -196,7 +196,7 @@ export function TpoRoundDriveDayReadOnly({
           {summary.map(([label, count]) => (
             <div
               key={label}
-              className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 lg:border-b-0"
+              className="border-b border-border p-4 last:border-b-0 md:border-r md:last:border-r-0 lg:border-b-0"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {label}
@@ -265,7 +265,7 @@ export function TpoRoundDriveDayReadOnly({
               cell:(student:(typeof data.rows)[number])=><StatusBadge>{student.applicationStatus}</StatusBadge>},
             {key:"attendance",header:"Round attendance",mobilePriority:"action" as const,
               cell:(student:(typeof data.rows)[number])=><div className="min-w-0 space-y-2">
-                <span className="block text-xs font-semibold text-body sm:hidden">Round attendance</span>
+                <span className="block text-xs font-semibold text-body md:hidden">Round attendance</span>
                 <StatusBadge tone={statusTone(student.attendance)}>
                   {student.attendance.replaceAll("_"," ")}
                 </StatusBadge>
@@ -279,7 +279,7 @@ export function TpoRoundDriveDayReadOnly({
               </div>},
             {key:"result",header:"Latest result",mobilePriority:"action" as const,
               cell:(student:(typeof data.rows)[number])=><div className="min-w-0 space-y-2">
-                <span className="block text-xs font-semibold text-body sm:hidden">Latest result</span>
+                <span className="block text-xs font-semibold text-body md:hidden">Latest result</span>
                 {student.resultStatus && student.resultOutcome ?
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge tone={statusTone(student.resultStatus)}>

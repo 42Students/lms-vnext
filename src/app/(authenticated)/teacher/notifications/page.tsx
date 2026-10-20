@@ -69,7 +69,7 @@ export default async function FacultyNotificationsPage({
   }));
 
   return (
-    <div className="min-w-0 max-w-full space-y-8">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title="Notifications"
       />

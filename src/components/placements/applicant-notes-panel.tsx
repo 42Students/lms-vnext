@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {
   APPLICANT_NOTE_MAX_LENGTH,
   type ApplicantNotesSnapshot,
@@ -98,9 +99,7 @@ export function ApplicantNotesPanel({
           />
         </label>
         {error ? (
-          <p role="alert" className="text-sm text-error">
-            {error}
-          </p>
+          <InlineNotice tone="error" message={error}/>
         ) : null}
         <Button
           type="submit"

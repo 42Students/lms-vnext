@@ -24,12 +24,12 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/new/page.tsx`
 - [x] `src/app/(authenticated)/hr/placements/page.tsx`
-- [ ] `src/app/(authenticated)/hr/profile/page.tsx`
-- [ ] `src/app/(authenticated)/learn/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/programs/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
-- [ ] `src/app/hr-invite/[token]/page.tsx`
+- [x] `src/app/(authenticated)/hr/profile/page.tsx`
+- [x] `src/app/(authenticated)/learn/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/programs/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
+- [x] `src/app/hr-invite/[token]/page.tsx`

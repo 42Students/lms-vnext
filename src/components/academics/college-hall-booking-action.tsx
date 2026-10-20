@@ -36,12 +36,12 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
       }catch(reason){setError(reason instanceof Error?reason.message:"Booking failed");}
     });
   }
-  const field="min-h-[var(--lms-control-height)] min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground";
+  const field="min-h-11 md:min-h-9 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground";
   return <section className="border-t border-border pt-4" aria-label="Book lecture hall">
     <h2 className="font-semibold text-foreground">Book class session</h2>
     <p className="mt-2 text-sm text-body">Dates and times use IST. A booking is only confirmed after rechecking persisted overlaps.</p>
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
-      <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <form onSubmit={submit} className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">Class
           <Select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
             <option value="">Select class</option>

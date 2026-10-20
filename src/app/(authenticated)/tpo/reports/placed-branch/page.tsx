@@ -29,40 +29,40 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
   if (report.season) csvParams.set("seasonId", report.season.id);
   if (report.selectedJobId) csvParams.set("jobId", report.selectedJobId);
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-6">
       <TpoReportPresentation />
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/placed-branch" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader eyebrow="TPO · Reports" title="Placed students by branch"
         description="Unique learners with accepted offers and confirmed joins by current branch and season."
         actions={report.season ? <a
           href={"/api/placements/reports/placed-branch?" + csvParams}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
+          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Download CSV
         </a> : null}
       />
       <Link href="/tpo/reports" className="text-sm font-semibold text-link hover:underline">← Reports</Link>
       <form action="/tpo/reports/placed-branch" method="get"
-        className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2">
-        <label className="text-sm font-semibold text-body">Season
+        className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
           <Select name="seasonId" defaultValue={report.season?.id ?? ""}
-            className="mt-2 min-h-11 sm:min-h-9 w-full">
+            className="mt-2 min-h-11 min-[768px]:min-h-9 w-full">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">Drive
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive
           <Select name="jobId" defaultValue={report.selectedJobId ?? ""}
-            className="mt-2 min-h-11 sm:min-h-9 w-full">
+            className="mt-2 min-h-11 min-[768px]:min-h-9 w-full">
             <option value="">All drives</option>
             {report.jobs.map((item) => <option key={item.id} value={item.id}>{item.companyName} · {item.title}</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 sm:min-h-9 sm:col-span-2"
+        <Button type="submit" className="min-h-11 min-[768px]:min-h-9 min-[768px]:col-span-2"
           disabled={!report.season}>Apply filters</Button>
       </form>
       {!report.season ? <EmptyState title="No placement season" description="No results can be inferred without a recorded season." /> : (
         <>
-          <section className="grid gap-3 sm:grid-cols-3">
+          <section className="grid gap-3 min-[992px]:grid-cols-3">
             {([
               ["Placed learners", report.totals.placed],
               ["Confirmed joined learners", report.totals.joined],
