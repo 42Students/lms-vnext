@@ -45,13 +45,15 @@ export default async function TpoCalendarExportPage({
       ← TPO calendar
     </Link>
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-      <label className="text-sm font-semibold text-foreground">From (IST)
-        <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
-          className="mt-2 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+      <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">From (IST)
+        <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
+    <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
+          className="mt-[6px] block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
-      <label className="text-sm font-semibold text-foreground">Through (IST)
-        <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
-          className="mt-2 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+      <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Through (IST)
+        <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
+    <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
+          className="mt-[6px] block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
       <Button type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
         Preview range
