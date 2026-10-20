@@ -44,12 +44,12 @@ export default async function ProfileCompleteness({searchParams}:{
         National identity details are optional and are not required for this checklist. Sensitive identity storage and verification are not available through this view.
       </p>
     </section>
-    <nav aria-label="Checklist filters" className="flex min-w-0 max-w-[calc(100vw-48px)] flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0">
+    <nav aria-label="Checklist filters" className="flex min-w-0 max-w-full flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0">
       {options.map(option=><Link key={option.value}
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
         className={
-          "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] px-4 py-2 text-[14px] font-medium leading-[1.3] transition-[color,background,border-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none " +
+          "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] px-4 py-2 text-sm font-medium leading-5 transition-[color,background,border-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none " +
           (readiness.show===option.value ? "border-[var(--lms-primary)] bg-[var(--lms-primary)] text-[var(--lms-on-primary)] hover:bg-[var(--lms-primary-hover)]" :
             "border-[var(--lms-neutral-200)] bg-transparent text-[var(--lms-neutral-500)] hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)]")
         }>
