@@ -25,14 +25,14 @@ export default async function TpoCompanyTeamPage({params}:{
   throw error;
  }
  // The read model preserves history for archived relationships; only ACTIVE can post.
- return <main className="space-y-5">
-  <PageHeader eyebrow="TPO · Team" title={result.status==="READY"?
+ return <div className="min-w-0 space-y-5">
+  <PageHeader  title={result.status==="READY"?
    "Company discussion · "+result.companyName:"Company discussion"}
    description="A college-private conversation about this company. Recruiters and students cannot read it."/>
   <Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
    className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to company</Link>
   {result.status==="NOT_REGISTERED"?
-   <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
+   <p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
     Company Team discussions require their registered database migration. No messages were inferred from private conversations.
    </p>:
    <>
@@ -57,5 +57,5 @@ export default async function TpoCompanyTeamPage({params}:{
      </p>}
    </>
   }
- </main>;
+ </div>;
 }
