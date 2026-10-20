@@ -14,12 +14,13 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
  })));
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Faculty · Courses" title="Section assignments"
-   description={workspace.course.courseName+" · "+workspace.course.sectionName} />
+   description={workspace.course.courseName+" · "+workspace.course.sectionName}
+   actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to course</Link>} />
   {workspace.lessons.length?
    <FacultyAssignmentEditor deliveryId={deliveryId}
      methodsEnabled={true}
      lessons={workspace.lessons.map(x=>({id:x.id,name:x.name}))} assignments={assignments}/>
-   :<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">No registered lessons yet. Create and publish a learning path before authoring assignments.</p>}
+   :<p role="status" className="border-y border-[var(--lms-canvas-border)] bg-transparent py-4">No registered lessons yet. Create and publish a learning path before authoring assignments.</p>}
   <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to course</Link>
  </div>;

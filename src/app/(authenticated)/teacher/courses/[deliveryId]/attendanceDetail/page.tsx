@@ -73,6 +73,7 @@ export default async function FacultyCourseAttendancePage({
 
   return (
     <div className="min-w-0 max-w-full space-y-5">
+      <nav aria-label="Course attendance shortcuts" className="flex min-w-0 flex-wrap items-center gap-3">
       <Link
         href={`/teacher/courses/${deliveryId}/home`}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text md:min-h-[var(--lms-control-height)] hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -81,9 +82,10 @@ export default async function FacultyCourseAttendancePage({
       </Link>
 
       <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/session-coverage"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Review session coverage →
       </Link>
+      </nav>
       <FacultyAttendanceScheduleEditor
         deliveryId={deliveryId}
         sessions={data.sessions.flatMap(session=>

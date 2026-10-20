@@ -16,8 +16,8 @@ export default async function FacultyProfileDetailsPage(){
  return <div className="min-w-0 space-y-6">
   <Breadcrumbs items={[{label:"Profile",href:"/teacher/profile"},{label:"About & details"}]}/>
   <PageHeader title="About & details"
-   description="Your self-managed profile sections, separate from college-managed employment information."/>
-  <Link href="/teacher/profile" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text">← Profile</Link>
+   description="Your self-managed profile sections, separate from college-managed employment information."
+   actions={<Link href="/teacher/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">← Profile</Link>} />
   {!ready||!profile?<section role="status" className="border-b border-border py-5">
    <h2 className="font-semibold text-foreground">Profile editing unavailable</h2>
    <p className="mt-2 text-sm text-body">Private Faculty profile storage awaits an approved database migration. No edits will be sent or saved until it is ready.</p>

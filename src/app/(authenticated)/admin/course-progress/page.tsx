@@ -11,6 +11,7 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Pagination } from "@/components/ui/pagination";
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
 import { adminLearningHref, adminProgressStats } from "@/modules/courses/admin-learning-read-model";
 import {parseSuperAdminCourseProgressParams} from "@/modules/courses/super-admin-course-progress-query";
@@ -40,9 +41,9 @@ export default async function SuperAdminCourseProgressPage({
       actions={<div className="flex flex-wrap items-center gap-2"><PageBackLink href="/admin/courses" label="Courses" /><a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export course-progress.csv</a></div>}
     />
-    <p className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">
+    <Alert tone="info">
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
-    </p>
+    </Alert>
     
     <form className="grid gap-3 py-1 md:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-xs font-semibold leading-4 text-body">Course or cohort
@@ -60,7 +61,7 @@ export default async function SuperAdminCourseProgressPage({
     {filtersResult.status==="rejected"?<Alert tone="warning">
       Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
     </Alert>:null}
-    <Link className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text" href="/admin/course-progress">Clear filters</Link>
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/course-progress">Clear filters</Link>
     <p className="text-sm text-muted-foreground">
       {data.total} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
       {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.
@@ -87,14 +88,11 @@ export default async function SuperAdminCourseProgressPage({
         </Link>
       </article>)}
     </div> : <EmptyState title="No recorded course progress" description="No course offerings match these filters. The absence of records is not proof of incomplete student work." />}
-    <nav aria-label="Course progress pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-      <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
-      <div className="flex gap-2">
-        {data.query.page > 1 ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page - 1 })}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Previous</Link> : null}
-        {data.query.page < data.totalPages ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page + 1 })}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Next</Link> : null}
-      </div>
-    </nav>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <span className="text-sm text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
+      <Pagination page={data.query.page} pageCount={data.totalPages}
+        hrefForPage={page=>adminLearningHref("PROGRESS",{...data.query,page})}
+        label="Course progress pages" showBoundaryLinks={false}/>
+    </div>
   </div>;
 }

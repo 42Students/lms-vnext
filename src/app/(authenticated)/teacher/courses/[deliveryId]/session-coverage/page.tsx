@@ -10,12 +10,11 @@ export default async function FacultySessionCoveragePage({
   const data=await getFacultySessionCoverage(await getCurrentRequestContext(),{deliveryId});
   const base="/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail";
   return <div className="min-w-0 max-w-full space-y-5">
-    <Link href={base} className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Attendance</Link>
-    <PageHeader title="Attendance session coverage"/>
+    <PageHeader title="Attendance session coverage" actions={<Link href={base} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Attendance</Link>} />
     <section aria-label="Session state counts" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
       {([["Scheduled sessions",data.total],["Marked",data.marked],
         ["Ended without marks",data.completedUnmarked],["Upcoming",data.upcoming]] as const)
-        .map(([name,value])=><div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        .map(([name,value])=><div key={name} className="min-w-0 border-b border-border py-4">
           <p className="text-xs text-muted-foreground">{name}</p>
           <p className="mt-2 text-xl font-semibold tabular-nums">{value}</p>
         </div>)}
@@ -24,8 +23,8 @@ export default async function FacultySessionCoveragePage({
       <h2 className="text-lg font-semibold">Recent scheduled sessions</h2>
       {data.shown.length===0?<EmptyState title="No scheduled sessions"
         description="No persisted class sessions were found for this authorized Section."/>:
-        <ol className="grid gap-2">{data.shown.map(row=><li key={row.id}
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.shown.map(row=><li key={row.id}
+          className="min-w-0 bg-transparent py-4">
           <p className="font-semibold break-words">{row.title}</p>
           <p className="mt-1 text-sm text-body">{row.label}</p>
           <time dateTime={row.startsAt} className="text-xs text-muted-foreground">

@@ -384,7 +384,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   {success?<Alert tone="success">{success}</Alert>:null}
   <div className="flex flex-wrap gap-3">
    {facultyQuizMayResetDraft(dirtyDraft,pending)?<Button variant="secondary" type="button" onClick={resetDraft}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm">Discard unsaved edits</Button>:null}
+    className="text-sm">Discard unsaved edits</Button>:null}
    {!chosen?<div className="flex flex-wrap items-center gap-3">
     <Checkbox label="Publish now" checked={publishNow} disabled={pending}
         onChange={event=>setPublishNow(event.target.checked)}/>

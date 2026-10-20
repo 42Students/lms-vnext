@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import { ErrorRecoveryActions } from "./error-recovery-actions";
 import styles from "./public-screen.module.css";
 
@@ -19,7 +20,7 @@ export function ErrorPageView({ code, title, message, retry }: {
       <div className={styles.center}>
         <section className={styles.card} aria-labelledby="error-page-title">
           <div className={styles.icon} aria-hidden="true">{code}</div>
-          <h1 id="error-page-title" className={styles.heading}>{title}</h1>
+          <PageHeader id="error-page-title" title={title} />
           <p className={styles.message}>{message}</p>
           <ErrorRecoveryActions retry={retry} />
         </section>

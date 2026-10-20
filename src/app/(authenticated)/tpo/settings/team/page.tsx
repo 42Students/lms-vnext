@@ -80,7 +80,7 @@ export default async function TpoPlacementTeamPage() {
         </Alert>
       ) : null}
 
-      <section className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">
         {[
           ["Distinct active members", String(summary.total)],
           ["TPO memberships", String(summary.tpoMemberships)],
@@ -119,7 +119,7 @@ export default async function TpoPlacementTeamPage() {
 
       <section className="border-t border-border">
         <div className="border-b border-border py-4">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Active team memberships
           </h2>
           <p className="mt-1 text-sm leading-6 text-body">

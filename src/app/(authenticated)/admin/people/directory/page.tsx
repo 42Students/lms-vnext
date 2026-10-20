@@ -64,7 +64,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   <Tabs ariaLabel="People directory tabs" value={data.query.tab} renderPanel={false}
    items={tabs.map(tab=>({value:tab.id,label:tab.label,
     href:adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}))}/>
-  <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">
+  <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
    <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Student accounts</Link>
    <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Faculty accounts</Link>
    <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Teaching assignments</Link>

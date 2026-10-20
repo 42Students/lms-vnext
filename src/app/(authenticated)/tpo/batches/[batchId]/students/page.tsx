@@ -48,7 +48,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const visible=selectTpoBatchStudentView(result.students,view.data,result.registrationAvailable);
  const pageSummary=summarizeBatchStudentEvidence(result.students);
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
- return <div className="min-w-0 space-y-4"><PageHeader eyebrow="TPO · Batches" title={result.batch.name+" — Students"}/>
+ return <div className="min-w-0 space-y-4"><PageHeader title={result.batch.name+" — Students"} description="Eligibility, registration and student evidence."/>
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
  <TpoBatchStudentSavedViews batchId={batchId}/>
  <TpoBatchStudentKeyboardActions
@@ -161,7 +161,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   </div>
  </Disclosure>
  <p className="text-xs text-muted-foreground">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>
- <dl aria-label="Loaded-page eligibility evidence" className="grid grid-cols-2 gap-2 md:grid-cols-3">{[["Loaded",pageSummary.assessed],["Eligible",pageSummary.eligible],["Ineligible",pageSummary.ineligible],["Not decided",pageSummary.undecided],["Needs review",pageSummary.needsReview],["Direct overrides",pageSummary.directOverrides]].map(([name,count])=><div key={name} className="min-w-0 border-l-2 border-border px-3 py-2 [overflow-wrap:anywhere]"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
+ <dl aria-label="Loaded-page eligibility evidence" className="grid min-w-0 grid-cols-2 gap-2 md:grid-cols-3">{[["Loaded",pageSummary.assessed],["Eligible",pageSummary.eligible],["Ineligible",pageSummary.ineligible],["Not decided",pageSummary.undecided],["Needs review",pageSummary.needsReview],["Direct overrides",pageSummary.directOverrides]].map(([name,count])=><div key={name} className="min-w-0 border-l-2 border-border px-3 py-2 [overflow-wrap:anywhere]"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
  <p className="text-xs text-muted-foreground">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
  <div id="batch-student-decisions" className="min-w-0">

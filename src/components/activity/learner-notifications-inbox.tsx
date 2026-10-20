@@ -127,7 +127,7 @@ export function LearnerNotificationsInbox({
               type="button"
               aria-pressed={active === key}
               onClick={() => selectCategory(key)}
-              className="min-h-11 min-[768px]:min-h-9 shrink-0 rounded-[var(--lms-filter-radius,8px)] px-4 text-center text-sm font-medium whitespace-nowrap"
+              className="min-h-[var(--lms-control-height)] max-md:min-h-11 shrink-0 rounded-[var(--lms-filter-radius,8px)] px-4 text-center text-sm font-medium whitespace-nowrap"
             >
               {label}
             </FilterChip>
@@ -141,25 +141,25 @@ export function LearnerNotificationsInbox({
             onChange={event=>setSearch(event.target.value)}
             onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applySearch();}}}
             placeholder="Search title or message"
-            className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
+            className="mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11 w-full"/>
         </label>
         <FilterChip type="button" aria-pressed={unread==="unread"}
-          onClick={()=>selectUnread(unread==="unread"?"all":"unread")} className="min-h-11 min-[768px]:min-h-9">
+          onClick={()=>selectUnread(unread==="unread"?"all":"unread")} className="min-h-[var(--lms-control-height)] max-md:min-h-11">
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </FilterChip>
         <Button type="button" onClick={applySearch}
-          variant="secondary" className="min-h-11 min-[768px]:min-h-9">
+          variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11">
           Apply search
         </Button>
         <Button type="button" disabled={!filtered} onClick={resetFilters}
-          variant="secondary" className="min-h-11 min-[768px]:min-h-9">
+          variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11">
           Clear filters
         </Button>
       </div>
       {unreadPersonalCount>0 ? (
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3">
           <p className="text-sm text-body">{unreadPersonalCount} unread personal notifications</p>
-          <Button variant="secondary" size="sm" className="min-h-11 min-[768px]:min-h-9" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
+          <Button variant="secondary" size="sm" className="min-h-[var(--lms-control-height)] max-md:min-h-11" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
             Mark all personal as read
           </Button>
         </div>
@@ -177,7 +177,7 @@ export function LearnerNotificationsInbox({
         <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
           <p className="font-semibold text-foreground">Announcements not refreshed</p>
           <p className="mt-1">{sourceStatus.notice}</p>
-          <Button size="sm" variant="secondary" className="min-h-11 min-[768px]:min-h-9" onClick={()=>router.refresh()}>
+          <Button size="sm" variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11" onClick={()=>router.refresh()}>
             Retry announcements
           </Button>
         </div>
@@ -196,7 +196,7 @@ export function LearnerNotificationsInbox({
           } />
           {filtered ? (
             <Button type="button" onClick={resetFilters}
-              variant="ghost" className="min-h-11 min-[768px]:min-h-9 underline">
+              variant="ghost" className="min-h-[var(--lms-control-height)] max-md:min-h-11 underline">
               View all
             </Button>
           ) : null}
@@ -232,14 +232,14 @@ export function LearnerNotificationsInbox({
               <Link
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text min-[768px]:w-auto"
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text min-[768px]:w-auto"
               >
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
             ) : null}
             {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
               <a href={selected.externalCta.href} target="_blank" rel="noopener noreferrer"
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
                 {selected.externalCta.label} ↗
               </a>:null}
             <Button onClick={() => setSelected(null)}>Got it</Button>

@@ -100,7 +100,7 @@ export function RecruiterPlacementPortfolio({
           key={item.job.id}
           className={cx("rounded-[var(--lms-radius-card)] border p-5", (unansweredRequests[item.job.id]??0)>0 ? "border-warning bg-[var(--lms-warning-subtle)]" : "border-border bg-surface")}
         >
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge

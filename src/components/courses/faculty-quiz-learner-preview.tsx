@@ -39,7 +39,7 @@ export function FacultyQuizLearnerPreview({quizId,deliveryId}:{
   })();
   return ()=>controller.abort();
  },[open,quizId,deliveryId]);
- return <section className="mt-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3">
+ return <section className="mt-3 border-y border-[var(--lms-canvas-border)] bg-transparent py-3">
   <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(v=>!v)}
    aria-expanded={open}>{open?"Close Quiz Preview":"Preview Quiz"}</Button>
   {open?<div className="mt-3 space-y-3">

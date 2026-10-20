@@ -65,7 +65,7 @@ export function SuperAdminFacultyScheduleReassignAction({
         <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button className="min-h-11 md:min-h-9" disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
       </>}>
-      <label htmlFor={id} className="mb-2 block text-[13px] font-semibold text-body">Replacement faculty</label>
+      <label htmlFor={id} className="mb-2 block text-[var(--lms-font-sm)] font-semibold text-body">Replacement faculty</label>
       <Select id={id} className="min-h-11 w-full md:min-h-9"
         value={replacementMembershipId} onChange={event=>setReplacementMembershipId(event.target.value)}>
         <option value="">Select faculty</option>

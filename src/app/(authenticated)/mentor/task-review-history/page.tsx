@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -37,20 +38,20 @@ export default async function MentorTaskReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Task Board" title="Reviewed task submissions"
       description="Registered task decisions on projects currently assigned to you."
       actions={<Link data-unskin="" href="/mentor/task-reviews"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Pending task reviews
       </Link>} />
     {!data.enabled ? <section role="status"
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Reviewed task history is unavailable.
     </section> : <>
-      <form action="/mentor/task-review-history" method="get"
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Task or project
+      <FilterBar title="Filters"><form action="/mentor/task-review-history" method="get"
+        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Decision
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Decision
           <Select name="decision" defaultValue={data.query.decision}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All reviews</option>
@@ -58,7 +59,7 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CHANGES_REQUESTED">Changes requested</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
@@ -66,7 +67,7 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CRITICAL">Critical</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Review chronology
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Review chronology
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Most recently reviewed</option>
@@ -79,13 +80,13 @@ export default async function MentorTaskReviewHistoryPage({
         <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
           Clear
         </Link>
-      </form>
+      </form></FilterBar>
       <p className="text-sm text-body">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,
             order:data.query.order,search:data.query.search}).toString()}
-          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-150 motion-reduce:transition-none">
+          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-150 motion-reduce:transition-none">
           Export reviewed task decisions CSV (max 200)
         </Link>
         {data.total>200?<span role="status">

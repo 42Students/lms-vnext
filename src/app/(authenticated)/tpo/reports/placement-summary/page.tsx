@@ -133,7 +133,7 @@ export default async function TpoPlacementSummaryPage({
          ["Declined",workspace.details.offers.totals.declined],
          ["Withdrawn",workspace.details.offers.totals.withdrawn],
          ["Expired waiting",workspace.details.offers.totals.expiredOutstanding],
-        ] as const).map(([label,value])=><div key={label} className="rounded border border-border p-3">
+        ] as const).map(([label,value])=><div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
          <dt className="text-xs font-semibold text-body">{label}</dt>
          <dd className="mt-1 text-xl font-semibold tabular-nums">{reportNumber(value)}</dd>
         </div>)}

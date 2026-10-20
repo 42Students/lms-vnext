@@ -2,36 +2,36 @@
 
 These items were moved from chat-3's queue to chat-20 (chat-20 finished its own queue). They are NOT chat-3's any more. Same rules as your main queue; full fidelity per item. Tick here, in this file.
 
-- [ ] `src/components/courses/faculty-assignment-review.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/courses/faculty-quiz-learner-preview.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/courses/faculty-report-student-table.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/people/faculty-profile-editor.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/app/(authenticated)/admin/academics/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/allAssignments/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/courses/faculty-quiz-learner-preview.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/courses/faculty-report-student-table.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/people/faculty-profile-editor.tsx` (score 1: arbitrary px size x1)
+- [x] `src/app/(authenticated)/admin/academics/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/page.tsx`
+- [x] `src/app/(authenticated)/college/people/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
+- [x] `src/app/(authenticated)/teach/courses/page.tsx`
+- [x] `src/app/(authenticated)/teacher/allAssignments/page.tsx`
+- [x] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/live-classes/page.tsx`

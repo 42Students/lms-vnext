@@ -1,11 +1,7 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {LEGACY_TPO_BRANCH_COLUMNS,legacyTpoBranchReportRow} from "@/modules/placements/tpo-branch-report-view-model";
-import {Suspense} from "react";
-import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -64,12 +60,10 @@ export default async function TpoByBranchReportPage({
 
       <Link
         href="/tpo/reports/branch-season"
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
+        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
       >
         View applicant and accepted-offer evidence by season →
       </Link>
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/by-branch" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}

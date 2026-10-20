@@ -216,10 +216,10 @@ export function AnnouncementAdminWorkspace({
           <p className="text-sm text-muted-foreground">Select a college scope before creating an announcement.</p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Audience
               <Select
-                className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+                className="mt-1 min-h-11 w-full md:min-h-9"
                 value={target}
                 onChange={(event) => setTarget(event.target.value)}
               >
@@ -230,23 +230,23 @@ export function AnnouncementAdminWorkspace({
                 ))}
               </Select>
             </label>
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Title
               <Input className="mt-1" value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
             </label>
-            <label className="md:col-span-2 text-sm font-semibold text-body">
+            <label className="md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Message
               <Textarea className="mt-1" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
             </label>
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Schedule · local time
               <Input className="mt-1" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
             </label>
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Show until · local time
               <Input className="mt-1" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
             </label>
-            <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
+            <label className="flex min-h-11 items-center gap-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               <Checkbox checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
               Pin for recipients
             </label>
@@ -340,12 +340,12 @@ export function AnnouncementAdminWorkspace({
               <Checkbox checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
             </label>:null}
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Audience
               <Select
                 name="target"
                 defaultValue={`${editing.receiverType}:${editing.receiverId}`}
-                className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+                className="mt-1 min-h-11 w-full md:min-h-9"
               >
                 {!targets.some(
                   (entry) =>
@@ -363,19 +363,19 @@ export function AnnouncementAdminWorkspace({
                 ))}
               </Select>
             </label>
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Title
               <Input name="title" defaultValue={editing.title} maxLength={255} className="mt-1" />
             </label>
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Message
               <Textarea name="message" defaultValue={editing.message} maxLength={10000} className="mt-1" />
             </label>
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Schedule · local time
               <Input name="scheduledAt" type="datetime-local" defaultValue={localInputValue(editing.scheduledAt)} className="mt-1" />
             </label>
-            <label className="text-sm font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Show until · local time
               <Input name="expiresAt" type="datetime-local" defaultValue={localInputValue(editing.expiresAt)} className="mt-1" />
             </label>

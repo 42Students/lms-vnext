@@ -30,7 +30,7 @@ export async function ProjectAdminAtRiskPage({
 }: {
   collegeId: string;
   basePath: string;
-  eyebrow: string;
+  eyebrow?: string;
   searchParams: Record<
     string,
     string | string[] | undefined
@@ -101,7 +101,7 @@ export async function ProjectAdminAtRiskPage({
           </FilterChipLink>)}
       </nav>
       <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
-      <ProjectAdminFilters query={query} includeRiskSort />
+      <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort /></FilterBar>
       <ListToolbar label="At-risk workspaces" viewCount={result.total} />
 
       {!result.items.length ? (

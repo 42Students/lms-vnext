@@ -49,7 +49,7 @@ export default async function FacultyContactsPage({
     tabs[contactsTab as keyof typeof tabs];
   const raw=await searchParams;
   const filters=parseFacultyContactsQuery(raw);
-  if(!filters)return <section role="alert" className="space-y-3 p-5">
+  if(!filters)return <section role="alert" className="min-w-0 space-y-3">
     <PageHeader title={"Invalid directory filters"} />
     <Link href={"/teacher/contacts/"+contactsTab}
       className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -82,12 +82,10 @@ export default async function FacultyContactsPage({
           value:key,label:tab.label,href:`/teacher/contacts/${key}`,
         }))} />
 
-      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <section className="min-w-0 border-b border-border pb-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">
-              {selected.label}
-            </h2>
+            <h2 className="m-0 text-base font-semibold text-foreground">Directory results</h2>
             <p className="mt-1 text-sm text-body" role="status" aria-live="polite">
               {result.total}{" "}
               {result.total === 1
@@ -114,13 +112,13 @@ export default async function FacultyContactsPage({
               Contacts per page
               <Select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
-                className="mt-1.5 block min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="mt-1.5 block">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
               </Select>
             </label>
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
               Search
             </Button>
           </form>
@@ -132,7 +130,7 @@ export default async function FacultyContactsPage({
             </span>
             <Link
               href={baseHref}
-              className="font-semibold text-primary-text hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="font-semibold text-primary-text hover:underline inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Clear search
             </Link>

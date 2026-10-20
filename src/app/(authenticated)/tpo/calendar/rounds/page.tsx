@@ -25,10 +25,10 @@ export default async function TpoRoundCalendarPage({searchParams}:{
     <Link href="/tpo/calendar" className="text-sm font-semibold text-link hover:underline lms-inline-link">
       ← Calendar
     </Link>
-    <PageHeader eyebrow="TPO · Calendar" title="Drive round scheduling"
+    <PageHeader title="Drive round scheduling"
       description="Schedule an existing pending drive round, reschedule an active one or cancel it. All times are IST." />
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-     <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Find rounds
+     <label className="grid w-full min-w-0 flex-1 gap-1 text-sm font-semibold sm:min-w-56">Find rounds
       <Input type="search" name="q" maxLength={100} defaultValue={result.q}
        placeholder="Company, drive or round name" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 sm:min-h-9"/>
      </label>

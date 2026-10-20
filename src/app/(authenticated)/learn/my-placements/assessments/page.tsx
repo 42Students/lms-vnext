@@ -1,3 +1,4 @@
+import { Banner } from "@/components/ui/banner";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { resolveOwnAssessmentDeepLink } from "@/modules/placements/learner-assessment-deeplink-model";
@@ -48,7 +49,7 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
           </Link>
         }
       />
-      <aside role="note" className="min-w-0 border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3 md:px-6">
+      <Banner tone="info">
         <h2 className="m-0 text-sm font-semibold text-foreground">
           Submit assessments on the employer’s platform
         </h2>
@@ -57,7 +58,7 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
           confirm receipt. Complete the assessment using the provider’s
           instructions. The recruiter controls official submission and results.
         </p>
-      </aside>
+      </Banner>
 
       <LearnerCareerRoundsWorkspace
         key={link.key ?? "all-assessments"}

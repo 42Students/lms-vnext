@@ -1,3 +1,4 @@
+import { Banner } from "@/components/ui/banner";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { notFound } from "next/navigation";
@@ -82,12 +83,12 @@ export default async function LearnerApplicationCompanyPage({
             </dd>
           </div>
         </dl>
-        <div role="status" className="mt-5 rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
+        <Banner tone="info" className="mt-5">
           What the company sees here is limited to the verified public employer profile
           associated with your own application. This is not a live employer-access audit.
           Your private files, personal contacts and other learners&apos; applications
           are never included in this preview.
-        </div>
+        </Banner>
       </section>
     </div>
   );

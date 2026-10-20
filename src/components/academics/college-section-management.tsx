@@ -83,52 +83,52 @@ export function CollegeClassCreate({ cohorts, periods }: {
             <Link href="/college/academics" className="font-semibold text-primary-text underline">Set up academic periods</Link>
           </>}
       </p>
-      : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <label className="grid gap-1 text-sm font-medium text-body">Program
+      : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
-           className="min-h-[var(--lms-control-height)] ">
+           className="min-h-11 w-full md:min-h-9">
            <option value="">Select program</option>
            {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Batch
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select required value={cohortId} onChange={event => setCohortId(event.target.value)}
-            className="min-h-[var(--lms-control-height)] ">
+            className="min-h-11 w-full md:min-h-9">
             <option value="">Select batch</option>
             {filteredCohorts.map(c => <option key={c.id} value={c.id}>
               {c.programName} · {c.name} ({c.code})
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Academic period
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
           <Select required value={academicPeriodId}
             onChange={event => setAcademicPeriodId(event.target.value)}
-            className="min-h-[var(--lms-control-height)] ">
+            className="min-h-11 w-full md:min-h-9">
             <option value="">Select period</option>
             {periods.map(p => <option key={p.id} value={p.id}>
               {p.name} ({p.code})
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Class name
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
           <Input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Class code (optional; generated from name)
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
           <Input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Capacity (required, 1–200)
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (required, 1–200)
           <Input required type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body sm:col-span-2 lg:col-span-5">Description (optional)
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2 lg:col-span-5">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
-            className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground" />
+            className="min-h-11 w-full md:min-h-9" />
         </label>
-        <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
-        <div className="sm:col-span-2 lg:col-span-5">
+        <p className="text-xs text-muted-foreground md:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
+        <div className="md:col-span-2 lg:col-span-5">
           <Button variant="primary" disabled={pending} type="submit"
             >
             {pending ? "Creating…" : "Create class"}
@@ -193,22 +193,22 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         <p className="text-sm text-muted-foreground">
           Batch and academic period are immutable. Name and code changes require no dependent records.
         </p>
-        <label className="grid gap-1 text-sm font-medium text-body">Class name
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Class code
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Capacity (blank means unlimited)
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (blank means unlimited)
           <Input type="number" min={1} max={10000} step={1} value={capacity}
             onChange={e => setCapacity(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Description
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
           <Textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
-            className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground" />
+            className="min-h-11 w-full md:min-h-9" />
         </label>
         <p className="text-xs text-muted-foreground">Active learner enrollments: {row.activeLearners}.</p>
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}

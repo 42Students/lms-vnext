@@ -24,7 +24,7 @@ export default async function CollegeHiringDashboardPage({
     return <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader title="Analytics"
       actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         Placement Evidence by Department
       </Link>} />
       <ErrorState title="Invalid report search" description="No placement metrics were loaded."
@@ -41,7 +41,7 @@ export default async function CollegeHiringDashboardPage({
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Analytics"
       actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         Placement Evidence by Department
       </Link>} />
     <CollegeReportNavigation/>

@@ -50,7 +50,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
-    <div className="space-y-5">
+    <div className="min-w-0 max-w-full space-y-5">
       <PageHeader title="Progress" />
       <ErrorState title="Invalid course progress filters"
         description="The search, offering status or page is invalid. No activity was loaded."
@@ -61,12 +61,12 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     offeringId:first(params.offeringId)||undefined,
     deliveryId:first(params.deliveryId)||undefined,
   });
-  return <div className="min-w-0 overflow-x-clip space-y-4">
-    <CollegeLearnerProgressReport data={report}/>
-    <Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
+  return <div className="min-w-0 max-w-full space-y-4">
+    <PageHeader title="Progress" actions={<Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
       className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
       Export recorded course activity CSV
-    </Link>
+    </Link>} />
+    <CollegeLearnerProgressReport data={report}/>
     <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} />
   </div>;
 }

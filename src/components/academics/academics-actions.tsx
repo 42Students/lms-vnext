@@ -141,7 +141,7 @@ export function ProgramActions({
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="md"
-          className="min-h-11 md:min-h-[var(--lms-control-height)]"
+         
           variant="secondary"
           onClick={openEdit}
         >
@@ -149,7 +149,7 @@ export function ProgramActions({
         </Button>
         <Button
           size="md"
-          className="min-h-11 md:min-h-[var(--lms-control-height)]"
+         
           variant="ghost"
           disabled={programHasLinkedRecords}
           title={programHasLinkedRecords
@@ -384,7 +384,7 @@ export function AcademicPeriodActions({
         ) : (
           <Button
             size="md"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+           
             variant="secondary"
             onClick={() => setCloseOpen(true)}
           >
@@ -610,7 +610,7 @@ export function CohortActions({
         ) : cohort.status === "ACTIVE" ? (
           <Button
             size="md"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+           
             variant="secondary"
             onClick={() =>
               setConfirmAction("COMPLETE")
@@ -621,7 +621,7 @@ export function CohortActions({
         ) : (
           <Button
             size="md"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+           
             variant="ghost"
             onClick={() =>
               setConfirmAction("ARCHIVE")
@@ -814,13 +814,13 @@ export function SectionActions({
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Link
           href={operationsHref}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
         >
           Open
         </Link>
         <Button
           size="md"
-          className="min-h-11 md:min-h-[var(--lms-control-height)]"
+         
           variant="secondary"
           onClick={openEdit}
         >
@@ -828,7 +828,7 @@ export function SectionActions({
         </Button>
         <Button
           size="md"
-          className="min-h-11 md:min-h-[var(--lms-control-height)]"
+         
           variant="ghost"
           onClick={() => setArchiveOpen(true)}
         >

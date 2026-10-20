@@ -32,7 +32,7 @@ export default async function TpoDriveCloseoutPage({
     ["Confirmed joined learners", counts.joined],
   ] as const;
   return <div className="min-w-0 space-y-5">
-    <Link className="text-sm font-semibold text-[var(--lms-teal-deep)]"
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]"
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}>← Back to drive</Link>
     <PageHeader title={data.job.title+" · Close-out summary"}
       description={"Current persisted facts for a "+data.job.status.toLowerCase()+" drive. These numbers are not a finalized, immutable historical snapshot."} />
@@ -40,9 +40,9 @@ export default async function TpoDriveCloseoutPage({
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
       Export CSV
     </a>
-    <section aria-label="Close-out metrics" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
+    <section aria-label="Close-out metrics" className="grid min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 xl:grid-cols-4">
       {cells.map(([label, value]) => <div key={label}
-        className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
+        className="border-b border-[var(--lms-canvas-border)] p-[var(--lms-space-4)] last:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0 xl:border-b-0">
         <p className="text-sm font-medium text-body">{label}</p>
         <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
           {value === null ? "Unavailable" : value}

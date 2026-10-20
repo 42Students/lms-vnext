@@ -27,8 +27,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   const id = projectTemplateIdSchema.safeParse((await params).templateId);
   if (!id.success) notFound();
   if (!can(context,"project-template.read")) return <div className="min-w-0 space-y-5">
-    <PageHeader title="College availability"
-      actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
+    <PageHeader title="College availability" />
     <ErrorState title="College availability access denied"
       description="Only an active Super Admin can read global project template assignments."
       action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
@@ -36,8 +35,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   const raw = await searchParams;
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
   if (!parsed.success) return <div className="min-w-0 space-y-5">
-    <PageHeader title="College availability"
-      actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
+    <PageHeader title="College availability" />
     <ErrorState title="Invalid college filters" description="Review the search, status and page."
       action={<Link href={templateCollegeAvailabilityHref(id.data,{})}
         className="font-semibold text-primary-text underline">Clear filters</Link>} />
@@ -49,8 +47,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     // A failed college/template read must never be interpreted as an empty
     // assignment list. Keep the filters for an explicit retry instead.
     return <div className="min-w-0 space-y-5">
-      <PageHeader title="College availability"
-      actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
+      <PageHeader title="College availability" />
       <ErrorState title="College availability unavailable"
         description="Template assignments could not be loaded. No availability is shown until the read succeeds."
         action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="font-semibold text-primary-text">Retry loading colleges</Link>} />
@@ -60,16 +57,16 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   return <div className="min-w-0 space-y-5">
     <PageHeader title={data.template.title}
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
-      actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
+      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">← Template catalogue</Link>} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
-    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College name or code
+    <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-3">
+      <label className="grid gap-1 text-sm font-semibold text-body">College name or code
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="w-full" /></label>
-      <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Availability
+      <label className="grid gap-1 text-sm font-semibold text-body">Availability
         <Select name="status" defaultValue={data.query.status} className="w-full">
           {statuses.map(status => <option key={status}>{status}</option>)}
         </Select></label>
-      <Button className="min-h-11 w-full self-end md:min-h-9" type="submit">Filter</Button>
+      <Button className="self-end" type="submit">Filter</Button>
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching active colleges · page {data.query.page} of {data.totalPages}</p>
     <SuperAdminTemplateCollegeBulk templateId={id.data} published={data.template.status==="PUBLISHED"}

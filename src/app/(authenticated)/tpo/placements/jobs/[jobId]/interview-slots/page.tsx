@@ -31,9 +31,9 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
     description={data.job.title+" · Employer-proposed time blocks for your college."}
     actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">← Back to drive</Link>} />
-  <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
+  <Alert tone="info">
    Proposals and employer-internal reservations are not confirmed student interviews. The placement cell must arrange its own rooms, candidates and confirmed schedule separately.
-  </p>
+  </Alert>
   {data.slots.length?<ol className="divide-y divide-border">{data.slots.map(slot=><li key={slot.id}
     className="py-4">
     <h2 className="font-semibold text-foreground">{slot.roundName}</h2>
@@ -42,7 +42,7 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
       slot.status==="OFFERED"?"Waiting for the placement cell":
       slot.status==="BOOKED"?"Reserved internally; confirm with placement cell":
       slot.status==="CANCELLED"?"Cancelled":"Status unavailable"}</p>
-    <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+    <dl className="mt-3 grid min-w-0 gap-[var(--lms-space-2)] text-sm min-[768px]:grid-cols-2">
       <div><dt className="text-muted-foreground">Capacity</dt><dd>{slot.capacity}</dd></div>
       <div><dt className="text-muted-foreground">Mode</dt><dd>{slot.mode==="ON_CAMPUS"?"On campus":"Virtual"}</dd></div>
       <div><dt className="text-muted-foreground">Panel</dt><dd>{slot.panelLabel??"Not recorded"}</dd></div>

@@ -38,7 +38,7 @@ export default async function PublicPlacementsPage() {
     { label: "Recruiting employers", count: published?.employers ?? null },
   ]);
   return (
-    <main className="mx-auto my-4 min-h-[calc(100vh-2rem)] w-full max-w-4xl rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-none min-[768px]:p-6">
+    <main className="mx-auto my-4 min-h-[calc(100vh-2rem)] w-full max-w-4xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)] shadow-none min-[768px]:p-6">
       <header className="space-y-3">
         <PageHeader title={college?.collegeName??"College placements"} />
       </header>
@@ -60,13 +60,13 @@ export default async function PublicPlacementsPage() {
         </p>
       ) : null}
       {published&&content?.about?<section className="mt-7 space-y-2">
-       <h2 className="text-lg font-semibold">About your placements</h2>
+       <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">About your placements</h2>
        <p className="whitespace-pre-wrap break-words text-sm text-body">{content.about}</p>
       </section>:null}
       {published?<p className="mt-8 text-xs text-muted-foreground">Live numbers over the last 12 months.</p>:null}
-      <section aria-label="Placement results" className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
+      <section aria-label="Placement results" className="mt-4 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
         {metricKeys.map(key=><article key={key}
-         className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+         className="min-w-0 border-b border-[var(--lms-canvas-border)] px-1 py-4">
          <h2 className="text-sm font-medium text-muted-foreground">{PUBLIC_METRIC_LABELS[key]}</h2>
          <p className="mt-3 break-words text-lg font-semibold text-foreground">
           {formatPublicPlacementMetric(key,{
