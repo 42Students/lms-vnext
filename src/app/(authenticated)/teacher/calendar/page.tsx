@@ -69,13 +69,13 @@ export default async function FacultyCalendarPage({
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className={monthStyles.toolbarForm}>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month (IST)
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month (IST)
           <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <DateInput mode="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
              />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
           <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
@@ -87,9 +87,9 @@ export default async function FacultyCalendarPage({
           Apply
         </Button>
       </form>
-      {schedule.courses.length===0?<p className="mt-5 text-sm text-body">
+      {schedule.courses.length===0?<p className="mt-5 text-sm text-body leading-[22px]">
         No current teaching assignments. Your college has not assigned a course Section.
-      </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body">
+      </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body leading-[22px]">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </p>:null}
       <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className={monthStyles.scroll}>
@@ -103,8 +103,8 @@ export default async function FacultyCalendarPage({
             <div className="mt-2 space-y-2">
               {day.events.map(event=><article key={event.id}
                 className={monthStyles.dayEvent}>
-                <p className="text-xs font-semibold text-foreground">{event.title}</p>
-                <p className="text-xs text-body">
+                <p className="text-xs font-semibold text-foreground leading-5">{event.title}</p>
+                <p className="text-xs text-body leading-5">
                   {new Intl.DateTimeFormat("en-IN",{
                     timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
                   }).format(event.startsAt)} IST
@@ -118,13 +118,13 @@ export default async function FacultyCalendarPage({
           </section>)}
         </CalendarGrid>
       </ScrollCue>
-      <p className="mt-3 text-xs text-muted-foreground">
+      <p className="mt-3 text-xs text-muted-foreground leading-5">
         Month cells use Asia/Kolkata calendar dates, including sessions crossing IST midnight.
         A Section-wide session is shown without guessing a course link.
       </p>
     </section>
     <section aria-label="Detailed class schedule" className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">Detailed day/week schedule</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Detailed day/week schedule</h2>
       <LearnerClassSchedule sections={schedule.sections} courses={schedule.courses}
         events={events} courseBasePath="/teacher/courses"
         initialView="week" />

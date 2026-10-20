@@ -47,7 +47,7 @@ export default async function FacultyGradebookPage({
        error.code==="FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS") {
       return <section role="alert" className="min-w-0 space-y-3">
         <PageHeader title={"Gradebook report limit"} />
-        <p className="text-sm text-body">
+        <p className="text-sm text-body leading-[22px]">
           This Section has more than 100 published assessments. Contact your college
           administrator to request a gradebook report. No grades have been changed.
         </p>
@@ -68,12 +68,12 @@ export default async function FacultyGradebookPage({
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Download full Section CSV
       </Link>} />
-    <p className="text-sm text-body">
+    <p className="text-sm text-body leading-[22px]">
       {data.rosterSize} current eligible learners · {data.publishedAssessments}
       {" "}assessments with published result records
     </p>
     <form method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid min-w-56 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-56 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Find learner
         <Input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
@@ -87,7 +87,7 @@ export default async function FacultyGradebookPage({
         Clear
       </Link>
     </form>
-    <p aria-live="polite" className="text-sm text-muted-foreground">
+    <p aria-live="polite" className="text-sm text-muted-foreground leading-[22px]">
       Showing {filtered.matching} of {filtered.total} authorized learners · Page {filtered.page} of {filtered.totalPages}.
       The CSV contains the full authorized Section, not only visible search matches.
     </p>
@@ -98,10 +98,10 @@ export default async function FacultyGradebookPage({
     :<div className="grid gap-3">
       {filtered.items.map(row=><article key={row.membershipId}
         className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
-        <h2 className="font-semibold text-foreground">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
           {row.displayName||row.email||"Unnamed learner"}
         </h2>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-1 text-xs text-muted-foreground leading-5">
           {row.rollNumber?"Roll "+row.rollNumber+" · ":""}
           {row.email??"No email on record"}
         </p>
@@ -111,15 +111,15 @@ export default async function FacultyGradebookPage({
           View published score breakdown →
         </Link>
         <div className="mt-3 grid gap-2 md:grid-cols-3">
-          <p className="text-sm text-body">Published scores: {row.gradedCount}/{row.publishedAssessments}</p>
-          <p className="text-sm text-body">Recorded points: {
+          <p className="text-sm text-body leading-[22px]">Published scores: {row.gradedCount}/{row.publishedAssessments}</p>
+          <p className="text-sm text-body leading-[22px]">Recorded points: {
             row.earned===null?"Unknown":row.earned+" / "+row.possible
           }</p>
-          <p className="text-sm text-body">
+          <p className="text-sm text-body leading-[22px]">
             {row.percent===null?"Score unknown":"Recorded score "+row.percent+"%"}
           </p>
         </div>
-        {row.hasUnknown&&<p className="mt-2 text-xs text-muted-foreground">
+        {row.hasUnknown&&<p className="mt-2 text-xs text-muted-foreground leading-5">
           Incomplete: one or more recorded assessments have no published grade.
           Recorded points do not represent a final course grade.
         </p>}
@@ -141,7 +141,7 @@ export default async function FacultyGradebookPage({
         </Link>}
       </div>
     </nav>}
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       This read-only gradebook includes only actually published learner grades.
       Private, missing and ungraded results never become zero scores; percentages
       describe recorded published points only, not weighted course outcomes.

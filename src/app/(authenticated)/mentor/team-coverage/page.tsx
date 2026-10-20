@@ -63,12 +63,12 @@ export default async function MentorTeamCoveragePage({
       : <>
         <FilterBar title="Filters"><form role="search" aria-label="mentor team coverage filters" method="get" action="/mentor/team-coverage"
           className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project search
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
               className="min-h-11 md:min-h-9"
               placeholder="Project name" />
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team coverage
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team coverage
             <Select name="filter" defaultValue={data.query.filter}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All projects</option>
@@ -82,7 +82,7 @@ export default async function MentorTeamCoveragePage({
               <option value="SINGLE_MENTOR">Exactly one active Mentor</option>
             </Select>
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project state
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project state
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All current assignments</option>
@@ -90,12 +90,12 @@ export default async function MentorTeamCoveragePage({
               <option value="COMPLETED">Completed</option>
             </Select>
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
             <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9">
               <option value="ALL">All assignments</option><option value="PRIMARY">Primary Mentor</option><option value="SUPPORTING">Supporting Mentor</option>
             </Select>
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team-size order
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team-size order
             <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9">
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </Select>
@@ -111,7 +111,7 @@ export default async function MentorTeamCoveragePage({
            ] as const).map(([label,value])=>
              <StatTile key={label} label={label} value={value} className="min-h-[104px]" />)}
          </section>
-        <p className="text-sm text-body">
+        <p className="text-sm text-body leading-[22px]">
           {data.total} matching project{data.total === 1 ? "" : "s"}
         </p>
         {data.items.length === 0
@@ -123,7 +123,7 @@ export default async function MentorTeamCoveragePage({
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
             <article key={item.projectId} className="py-[var(--lms-space-3)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h2 className="font-semibold text-foreground">{item.title}</h2>
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.title}</h2>
                 <span className="text-xs font-semibold text-body">{item.status}</span>
               </div>
               <dl className="mt-4 grid gap-3 md:grid-cols-3">
