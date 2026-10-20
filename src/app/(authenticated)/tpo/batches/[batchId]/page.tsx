@@ -94,7 +94,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm text-muted-foreground leading-[22px]">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
    "Partial snapshot: only the first "+eligibility.limit+" learners were assessed. Do not treat these counts as batch totals."}</p>
-  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
+  <dl className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
    {[
     ["Eligible",summary.eligible],["Ineligible",summary.ineligible],
     ["Not decided",summary.undecided],["Needs review",summary.needsReview],

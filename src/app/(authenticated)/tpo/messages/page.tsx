@@ -280,7 +280,7 @@ export default async function TpoMessagesPage({
             <Select
               name="status"
               defaultValue={query.status}
-              className="min-h-11"
+              className="min-h-11 md:min-h-9"
             >
               {TPO_MESSAGE_STATUSES.filter(
                 (status) =>
@@ -305,7 +305,7 @@ export default async function TpoMessagesPage({
               type="date"
               name="from"
               defaultValue={query.from ?? ""}
-              className="min-h-11"
+              className="min-h-11 md:min-h-9"
             />
           </label>
 
@@ -315,7 +315,7 @@ export default async function TpoMessagesPage({
               type="date"
               name="to"
               defaultValue={query.to ?? ""}
-              className="min-h-11"
+              className="min-h-11 md:min-h-9"
             />
           </label>
 
@@ -325,7 +325,7 @@ export default async function TpoMessagesPage({
               value={query.q} placeholder="Recruiter, subject or message"/>:
               <Input type="search" name="q" maxLength={120} defaultValue={query.q}
                 placeholder="TPO name or event type"
-                className="min-h-11"/>}
+                className="min-h-11 md:min-h-9"/>}
           </label>
 
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -333,7 +333,7 @@ export default async function TpoMessagesPage({
             <Select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-11"
+              className="min-h-11 md:min-h-9"
             >
               <option value="25">25</option>
               <option value="50">50</option>

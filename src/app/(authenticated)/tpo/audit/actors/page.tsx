@@ -82,7 +82,7 @@ export default async function TpoActorAuditPage({
       does not prove no action occurred in a domain without an activity writer.
     </p>
     <form role="search" aria-label="audit actors filters" action="/tpo/audit/actors" method="get"
-      className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-3">
+      className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
       {([
         ["actorId", "Actor user UUID", "00000000-0000-4000-8000-000000000000"],
         ["entityType", "Entity type", "placement_offer"],
@@ -113,7 +113,7 @@ export default async function TpoActorAuditPage({
           {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
         </Select>
       </label>
-      <div className="flex flex-wrap items-end gap-3 sm:col-span-2 lg:col-span-3">
+      <div className="flex flex-wrap items-end gap-3 md:col-span-2 lg:col-span-3">
         <Button type="submit">Apply filters</Button>
         <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center text-sm font-semibold text-link">
           Reset filters
