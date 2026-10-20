@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
@@ -31,9 +32,9 @@ export default async function PublicPlacementSettingsPage({
  const raw=await searchParams;
  const updated=Array.isArray(raw.updated)?raw.updated[0]:raw.updated;
  return <div className="min-w-0 space-y-6">
-  <TpoSettingsNav active="public-page"/>
-  <section className="border-t border-border pt-5">
-   <PageHeader title="Public placements" description={view.label} />
+  <PageHeader title="Public placements" description={view.label} />
+  <TpoSettingsNav active="public-page" compact/>
+  <section className="min-w-0 space-y-4 border-t border-border pt-5">
    {updated==="1"?<InlineNotice tone="success" message={view.enabled?"Your placements page is live":"Your placements page is off"}/>:null}
    <p className="mt-2 text-sm text-body">
     The public page displays live, college-scoped results from the last 12 months only after you opt in.
@@ -47,8 +48,8 @@ export default async function PublicPlacementSettingsPage({
      Public placement settings storage is unavailable until the registered migration is ready. No publication preference was changed.
     </Alert>}
    {value.ready&&!view.canEnable&&!view.enabled?<Alert tone="warning">Public statistics cannot be enabled without a recorded cohort of at least five.</Alert>:null}
-   <section aria-label="Published placement preview" className="mt-5 space-y-3 border-t border-border pt-4">
-    <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">How your public placements look</h2>
+   <Disclosure title="How your public placements look" className="mt-5 min-w-0 border-t border-border pt-4" contentClassName="min-w-0 pt-3">
+   <section aria-label="Published placement preview" className="min-w-0 space-y-3">
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
     {!view.enabled?<Alert tone="info">Publication is off; this preview does not make any statistics public.</Alert>:null}
     {view.enabled&&!published?<Alert tone="warning">{preview?.available?"Not enough data yet. There is no current published snapshot to preview. Figures remain withheld.":"The published preview could not be loaded. Figures remain withheld."}</Alert>:null}
@@ -58,8 +59,9 @@ export default async function PublicPlacementSettingsPage({
      {content.metricKeys.map(key=><StatTile key={key} label={PUBLIC_METRIC_LABELS[key]} value={formatPublicPlacementMetric(key,{population:published?.population??null,placed:published?.placed??null,offers:published?.offers??null,employers:published?.employers??null,highestCtcInr:published?.highestCtcInr??null,medianCtcInr:published?.medianCtcInr??null})} className="min-h-[104px]" />)}
     </div>
    </section>
+   </Disclosure>
    <TpoPublicPlacementContentEditor initial={content}/>
-   <Link href="/placements" className="mt-4 inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
+   <Link href="/placements" className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-[13px] sm:w-auto sm:justify-start font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
      Open public placements page
    </Link>
   </section>
