@@ -29,7 +29,7 @@ export function CollegeArchivedLessonRestore({id,name}:{id:string;name:string}){
   <ConfirmDialog open={confirming} onOpenChange={setConfirming}
    title={"Restore "+name+"?"}
    description="Restoring makes the Lesson available in its active Learning Path. Historical progress and submissions are kept."
-   confirmLabel="Restore Lesson" pending={pending} onConfirm={()=>void restore()}/>
+   confirmLabel="Restore Lesson" confirmVariant="primary" pending={pending} onConfirm={()=>void restore()}/>
   {error?<Alert tone="error">{error}</Alert>:null}
  </div>;
 }
