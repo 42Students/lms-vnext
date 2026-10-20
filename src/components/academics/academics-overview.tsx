@@ -3,6 +3,7 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import type { getAcademicsWorkspace } from "@/modules/academics/workspace";
 import { AcademicsCreatePanel } from "./academics-create-panel";
@@ -338,7 +339,7 @@ export function AcademicsOverview({
             College calendar windows with explicit lifecycle.
           </p>
         </div>
-        <DataTable caption="Academic periods" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic periods" empty={<EmptyState title="No records to show." />}
           columns={periodColumns}
           rows={workspace.periods}
           getRowKey={(period) => period.id}
@@ -354,7 +355,7 @@ export function AcademicsOverview({
             Department-owned academic programs.
           </p>
         </div>
-        <DataTable caption="Academic programs" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic programs" empty={<EmptyState title="No records to show." />}
           columns={programColumns}
           rows={workspace.programs}
           getRowKey={(program) => program.id}
@@ -370,7 +371,7 @@ export function AcademicsOverview({
             Program intakes with progression stored as learner history.
           </p>
         </div>
-        <DataTable caption="Cohorts and batches" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Cohorts and batches" empty={<EmptyState title="No records to show." />}
           columns={cohortColumns}
           rows={workspace.cohorts}
           getRowKey={(cohort) => cohort.id}
@@ -386,7 +387,7 @@ export function AcademicsOverview({
             Period-specific roster boundaries. Open a Section for learners, Faculty responsibilities and schedule.
           </p>
         </div>
-        <DataTable caption="Academic sections" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic sections" empty={<EmptyState title="No records to show." />}
           columns={sectionColumns}
           rows={workspace.sections}
           getRowKey={(section) => section.id}
