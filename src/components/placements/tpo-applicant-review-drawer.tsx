@@ -14,7 +14,7 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
  function move(event:KeyboardEvent<HTMLDivElement>){
   if(event.altKey||event.ctrlKey||event.metaKey)return;
   const target=event.target as HTMLElement;
-  if(target.closest("input,select,textarea,button,[contenteditable]"))return;
+  if(target.closest("a,input,select,textarea,button,[role=button],[contenteditable]"))return;
   const id=event.key==="ArrowLeft"?previousId:event.key==="ArrowRight"?nextId:null;
   if(id){event.preventDefault();setOpen(false);router.push(applicantHref(id));}
  }
@@ -25,7 +25,7 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
   </Button>
   <Drawer open={open} onOpenChange={setOpen} title={app.student??"Name unavailable"}>
    <div onKeyDown={move} className="min-w-0 space-y-4 break-words">
-   <dl className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-3 border-b border-border pb-4 text-sm sm:grid-cols-2">
+   <dl className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-3 border-b border-border pb-4 text-sm md:grid-cols-2">
     <div><dt className="text-body">Role</dt><dd className="break-words">{app.role}</dd></div>
     <div className="min-w-0"><dt className="text-body">Application</dt><dd className="break-words">{app.applicationStatus}</dd></div>
     <div className="min-w-0"><dt className="text-body">Screening</dt><dd className="break-words">{app.screeningStatus??"Not recorded"}</dd></div>
@@ -42,7 +42,7 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
     {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">Next applicant →</Link>:null}
    </nav>
    <p className="text-xs text-body">Use left and right arrows outside form controls to open the previous or next applicant.</p>
-   <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+app.id}
+   <Link href={applicantHref(app.id)}
     className="inline-flex min-h-11 w-full items-center justify-center border-t border-border pt-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline sm:w-auto sm:justify-start md:min-h-9">
     Open full applicant detail →
    </Link>
