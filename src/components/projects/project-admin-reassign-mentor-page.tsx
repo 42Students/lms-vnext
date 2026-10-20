@@ -70,9 +70,11 @@ export async function ProjectAdminReassignMentorPage({
   const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
     <div className="min-w-0 space-y-[16px]">
-      <PageHeader title="Bulk mentor reassignment"
-        description="Move selected non-archived project workspaces to a new primary mentor."
-        actions={<PageBackLink href={basePath} label="Back to workspaces" />} />
+      <div className="min-w-0">
+        <PageBackLink href={basePath} label="Back to workspaces" />
+        <PageHeader title="Bulk mentor reassignment"
+          description="Move selected non-archived project workspaces to a new primary mentor." />
+      </div>
       <ProjectAdminNav basePath={basePath} active="workspaces" />
       <Disclosure title="Mentor workload" className="border-b border-border pb-4" contentClassName="pt-2">
         <div className="mt-2 grid min-w-0 gap-x-4 gap-y-0 md:grid-cols-2">

@@ -65,3 +65,15 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Regression fixed (1): the Select workspace disclosure was collapsed by default when nothing had been selected, hiding the task's primary starting control. It now starts open, while remaining collapsible and preserving selected workspace releases/Manage override.
 - Extra alignment fix (1): moved original Project workspaces back link above single PageHeader instead of retaining it in its action slot, as required by prior polish; no text or destination changed.
 - Files changed: `src/components/projects/project-admin-readiness-page.tsx`, proof and queue.
+
+## Surface 11 — `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 11. Inspected route/loading/error, `ProjectAdminReassignMentorPage`, complete `ProjectMentorReassignment`, independent GET filter controls, mentor workload, statuses, confirmations, per-workspace failed retries, parent layouts.
+- Regressions found/fixed: 0. Source has no stray FilterBar import; reviewed TSX tags, component prop contracts, buttons, form names, role and dialog labels and result state. No behavior change.
+- Extra alignment fix (1): moved original Back to workspaces destination outside heading actions and above the PageHeader as requested by polish proof.
+- Files changed: `src/components/projects/project-admin-reassign-mentor-page.tsx`, proof and queue. UI/TypeScript reviewed only, not executed.
+
+## Surface 12 — `src/app/(authenticated)/admin/projects/submissions/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 12. Inspected route/loading/error, `ProjectAdminSubmissionsPage`, two GET filter modes, export, status chips, row/review modal and pagination, read services and shared components.
+- Regression fixed (1): Open · Review submission used `reason=pending-review` or status strings not recognized by shared project route guard (only `STALLED|BLOCKER|REVIEW`). Preserve existing destination and `from=submissions` and supply valid `REVIEW` only for submitted deliveries; other statuses omit unsupported reason.
+- Extra alignment fix (1): moved unchanged Project workspaces back link above the single PageHeader; review chips remain in PageHeader. All labels, permissions, accessible targets and legacy tokens preserved.
+- Files changed: `src/components/projects/project-admin-submissions-page.tsx`, proof and queue. No CI or runtime.
