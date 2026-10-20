@@ -74,15 +74,21 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   }catch(error){setMessage(error instanceof Error?error.message:"Could not load leads.");}
   finally{setLoadingLeads(false);}
  }
- async function moveFollowup(followupId:string,day:string,hour:number){
+ async function moveFollowup(followupId:string,day:string,hour:number,confirmed=false){
   if(!canCreate||saving)return;
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(day+"T"+String(hour).padStart(2,"0")+":00");}
   catch{setMessage("The selected IST time is invalid.");return;}
   if(new Date(dueAt).getTime()<=currentTimeMs()){setMessage("Choose a future time to reschedule.");return;}
-  if(blocked.has(day)&&!window.confirm("This date is blocked in placement settings. Move the follow-up here anyway?"))return;
-  if(!blockedDatesAvailable&&!window.confirm("Blocked dates could not be checked. Move this follow-up anyway?"))return;
-  if(!window.confirm("Move this follow-up to "+label(day)+" at "+clock(hour)+" IST?"))return;
+  if(!confirmed){
+   const prompts=[
+    ...(blocked.has(day)?["This date is blocked in placement settings. Move the follow-up here anyway?"]:[]),
+    ...(!blockedDatesAvailable?["Blocked dates could not be checked. Move this follow-up anyway?"]:[]),
+    "Move this follow-up to "+label(day)+" at "+clock(hour)+" IST?",
+   ];
+   setReview({kind:"MOVE",followupId,day,hour,prompts,index:0});
+   return;
+  }
   setSaving(true);setMessage("");
   try{
    const response=await fetch("/api/placements/tpo/calendar/follow-ups/"+encodeURIComponent(followupId),{
