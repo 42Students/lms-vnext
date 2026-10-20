@@ -28,7 +28,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-8.md: surface | regres
 - [x] `src/components/projects/project-archive-control.tsx`
 - [x] `src/components/projects/project-create-control.tsx`
 - [x] `src/components/projects/project-delivery-reopen-control.tsx`
-- [ ] `src/components/projects/project-final-delivery-controls.tsx`
+- [x] `src/components/projects/project-final-delivery-controls.tsx`
 - [ ] `src/components/projects/project-lifecycle-actions.tsx`
 - [ ] `src/components/projects/project-meeting-controls.tsx`
 - [ ] `src/components/projects/project-mentor-reassignment.tsx`
