@@ -40,7 +40,7 @@ export async function ProjectAdminAtRiskPage({
   const context = await getCurrentRequestContext();
   const parsed = parseProjectAdminRiskQuery(searchParams);
   if (!parsed.success) {
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
         actions={<PageBackLink href={basePath} label="Project workspaces" />} />
@@ -56,7 +56,7 @@ export async function ProjectAdminAtRiskPage({
     .then(value => ({ ok: true as const, value }))
     .catch(() => ({ ok: false as const }));
   if (!riskResult.ok) {
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
         actions={<PageBackLink href={basePath} label="Project workspaces" />} />
@@ -69,21 +69,12 @@ export async function ProjectAdminAtRiskPage({
   const result = riskResult.value;
 
   return (
-    <div className="min-w-0 space-y-6">
-      <PageHeader
-        title="At-risk projects"
-        description="Workspaces with no recent activity, an active blocker, or a pending review."
-        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
+    <div className="min-w-0 space-y-4">
+      <div className="min-w-0">
         <PageBackLink href={basePath} label="Project workspaces" />
-        <ProjectAtRiskPageExport collegeId={collegeId}
-          rows={result.items.map(project=>({
-            id:project.id,title:project.title,mentorName:project.mentorName,
-            inactiveDays:project.inactiveDays,riskReasons:project.riskReasons,
-            blockerReason:project.blockerReason,
-            lastActivityAt:safeProjectAdminUtcIso(project.lastActivityAt),
-          }))}/>
-        </div>}
-      />
+        <PageHeader title="At-risk projects"
+          description="Workspaces with no recent activity, an active blocker, or a pending review." />
+      </div>
       <ProjectAdminNav basePath={basePath} active="at-risk" />
       {!result.blockerSignalSupported ? (
         <Banner tone="warning">
@@ -101,21 +92,29 @@ export async function ProjectAdminAtRiskPage({
             {title} <span className="tabular-nums">{value}</span>
           </FilterChipLink>)}
       </nav>
-      <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
       <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort /></FilterBar>
-      <ListToolbar label="At-risk workspaces" viewCount={result.total} />
+      <ListToolbar label="At-risk workspaces" viewCount={result.total}
+        exportAction={<ProjectAtRiskPageExport collegeId={collegeId}
+          rows={result.items.map(project=>({
+            id:project.id,title:project.title,mentorName:project.mentorName,
+            inactiveDays:project.inactiveDays,riskReasons:project.riskReasons,
+            blockerReason:project.blockerReason,
+            lastActivityAt:safeProjectAdminUtcIso(project.lastActivityAt),
+          }))}/>} />
+      <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
 
       {!result.items.length ? (
-        <EmptyState title="No at-risk projects" description="No at-risk project workspaces match these filters."/>
+        <EmptyState title="No at-risk projects" description="No at-risk project workspaces match these filters."
+          action={<Link href={basePath+"/at-risk"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
       ) : (
         <div className="min-w-0 divide-y divide-border border-y border-border">
           {result.items.map((project) => (
             <article
               key={project.id}
-              className="min-w-0 py-5"
+              className="min-w-0 py-[var(--lms-space-4)]"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
                   <Link
                     href={
                       basePath +
@@ -123,7 +122,7 @@ export async function ProjectAdminAtRiskPage({
                       project.id +
                       "/summary"
                     }
-                    className="text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
                   >
                     {project.title}
                   </Link>
@@ -152,7 +151,7 @@ export async function ProjectAdminAtRiskPage({
                 <strong>Active blocker: </strong>
                 <span className="whitespace-pre-wrap break-words">{project.blockerReason}</span>
               </Banner> : null}
-              <dl className="mt-3 grid min-w-0 gap-3 text-sm text-body md:grid-cols-3">
+              <dl className="mt-3 grid min-w-0 gap-x-4 gap-y-2 text-sm text-body md:grid-cols-3">
                 <div><dt className="font-semibold">Severity</dt><dd>
                   {project.riskReasons.length > 1 || project.blockerReason ? "Risk" : "Watch"}
                 </dd></div>
@@ -165,18 +164,18 @@ export async function ProjectAdminAtRiskPage({
                   {project.blockerReason ?? "—"}
                 </dd></div>
               </dl>
-              <div className="mt-3 flex flex-wrap gap-3 text-sm font-semibold">
+              <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold">
                 <Link href={basePath + "/" + project.id + "/summary?from=at-risk&reason=" +
                   encodeURIComponent(project.riskReasons.join(", "))}
-                  className="text-primary-text hover:underline">Open</Link>
+                  className="inline-flex min-h-11 items-center text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open</Link>
                 <Link href={basePath + "/reassign-mentor?fromMentorId=" +
                   encodeURIComponent(project.mentorMembershipId ?? "UNASSIGNED")}
-                  className="text-primary-text hover:underline">
+                  className="inline-flex min-h-11 items-center text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                   {project.mentorMembershipId ? "Reassign mentor" : "Assign mentor"}
                 </Link>
                 {project.riskReasons.includes("Pending review") ?
                   <Link href={basePath + "/" + project.id + "/delivery?from=at-risk&reason=pending-review"}
-                    className="text-primary-text hover:underline">Review submission</Link> : null}
+                    className="inline-flex min-h-11 items-center text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review submission</Link> : null}
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {project.riskReasons.map((reason) => (
