@@ -40,19 +40,20 @@ export default async function TpoDriveJoiningPage({
   ] as const;
 
   return (
-    <div className="min-w-0 space-y-6">
-      <Link href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-        ← Back to drive workspace
-      </Link>
+    <div className="min-w-0 space-y-4">
+
       <PageHeader
         eyebrow="TPO · Drive offers"
         title={tracker.job.title + " · Joining outcomes"}
         description="Record joining outcomes only for persisted accepted offers. All edits reuse the audited joining-history API."
+        actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">
+          ← Back to drive workspace
+        </Link>}
       />
-      <section aria-label="Joining summary" className="grid min-w-0 max-w-full overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface min-[768px]:grid-cols-2 xl:grid-cols-5">
+      <section aria-label="Joining summary" className="grid min-w-0 max-w-full overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface grid-cols-2 xl:grid-cols-5">
         {labels.map(([name, value]) => (
-          <div key={name} className="min-w-0 border-b border-border p-4 last:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0 xl:border-b-0">
+          <div key={name} className="min-w-0 border-b border-r border-border p-3 even:border-r-0 last:border-b-0 xl:border-b-0 xl:border-r xl:p-4 xl:last:border-r-0">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
@@ -64,10 +65,10 @@ export default async function TpoDriveJoiningPage({
         <div className="space-y-4">
           {tracker.items.map((item) => (
             <section key={item.offerId}
-              className="border-b border-border pb-6">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{item.displayName}</h2>
+              className="min-w-0 border-b border-border pb-4">
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.displayName}</h2>
                   <p className="mt-1 text-sm text-body">{item.roleTitle}</p>
                   <Link
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}
@@ -83,11 +84,16 @@ export default async function TpoDriveJoiningPage({
                 Current joining date: {item.joiningDate ?? "Not recorded"}
                 {item.reason ? " · Reason: " + item.reason : ""}
               </p>
-              <TpoJoiningUpdateForm
-                offerId={item.offerId}
-                initialStatus={item.joiningStatus}
-                initialJoiningDate={item.joiningDate}
-              />
+              <details className="group mt-3 min-w-0">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+                  New joining outcome <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
+                </summary>
+                <TpoJoiningUpdateForm
+                  offerId={item.offerId}
+                  initialStatus={item.joiningStatus}
+                  initialJoiningDate={item.joiningDate}
+                />
+              </details>
             </section>
           ))}
         </div>
