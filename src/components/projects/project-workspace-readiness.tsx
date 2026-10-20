@@ -12,12 +12,13 @@ import {formatProjectAdminActivityDateIst} from "@/modules/projects/project-admi
 import {z} from "zod";
 import {ProjectAdminNav} from "./project-admin-nav";
 import { Tabs } from "@/components/ui/tabs";
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatusBadge } from "@/components/ui/status-badge";
 export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:string;basePath:string}){
   // A forged project UUID, expired role or interrupted DB read must never
   // produce a raw server error or expose another college's readiness values.
   if(!z.string().uuid().safeParse(projectId).success)
-    return <div className="space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title={copy.title} eyebrow="Projects"/>
       <ErrorState title="Workspace readiness unavailable"
         description="Return to workspaces and open an authorized workspace to try again."
@@ -29,23 +30,20 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
     return getProjectReadiness(context,projectId);
   })().then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   if(!result.ok)
-    return <div className="space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title={copy.title} eyebrow="Projects"/>
       <ErrorState title="Workspace readiness unavailable"
         description="Return to workspaces and open an authorized workspace to try again."
         action={<PageBackLink href={basePath} label="Back to workspaces" />}/>
     </div>;
   const readiness=result.value;
-  return <div className="min-w-0 space-y-5 md:space-y-6">
+  return <div className="min-w-0 space-y-4">
     <ProjectAdminNav basePath={basePath} active="readiness" />
-    <PageHeader title={copy.title} eyebrow="Projects"
-      description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side."
-      actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
-        <StatusBadge tone={readiness.finalSubmission.canSubmitDraft?"success":"warning"}>
-          {readiness.finalSubmission.canSubmitDraft?"Ready":"Not ready"}
-        </StatusBadge>
-        <PageBackLink href={basePath} label="Back to workspaces" />
-      </div>} />
+    <div className="min-w-0">
+      <PageBackLink href={basePath} label="Back to workspaces" />
+      <PageHeader title={copy.title} eyebrow="Projects"
+        description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side." />
+    </div>
     <Tabs ariaLabel="Workspace sections" renderPanel={false} value="readiness"
       items={([
         ["summary","Summary"], ["overview","Overview"], ["team","Team"], ["sprints","Sprints"],
@@ -68,9 +66,9 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         Override recorded {formatProjectAdminActivityDateIst(readiness.readinessOverride.occurredAt)}
       </p>:null}
       {([
-        {name:"Tasks",done:readiness.execution.tasks.done,total:readiness.execution.tasks.total},
-        {name:"Sprints",done:readiness.execution.sprints.completed,total:readiness.execution.sprints.total},
-        {name:"Releases",done:readiness.execution.releases.shipped,total:readiness.execution.releases.total},
+        {name:"Tasks completed:",done:readiness.execution.tasks.done,total:readiness.execution.tasks.total},
+        {name:"Sprints completed:",done:readiness.execution.sprints.completed,total:readiness.execution.sprints.total},
+        {name:"Releases shipped:",done:readiness.execution.releases.shipped,total:readiness.execution.releases.total},
       ]).map(item=><div key={item.name} className={styles.progress}>
        <div className={styles.label}>
         <span>{item.name}</span><span className={styles.amount}>{item.done}/{item.total}</span>
@@ -79,7 +77,11 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         value={item.done} maximum={item.total||1} />
       </div>)}
     </section>
-    <div className="min-w-0 max-w-2xl"><ProjectReadinessOverrideForm projectId={projectId} initialState={readiness.readinessOverride.state} initialNote={readiness.readinessOverride.note}
-      hasSubmission={readiness.finalSubmission.latest!==null}/></div>
+    <Disclosure title={copy.overrideTitle} defaultOpen={Boolean(readiness.readinessOverride.state)}
+      className="border-b border-[var(--lms-canvas-border)]"
+      summaryClassName="min-h-11" contentClassName="pt-2">
+      <ProjectReadinessOverrideForm projectId={projectId} initialState={readiness.readinessOverride.state} initialNote={readiness.readinessOverride.note}
+        hasSubmission={readiness.finalSubmission.latest!==null} compactLayout />
+    </Disclosure>
   </div>;
 }
