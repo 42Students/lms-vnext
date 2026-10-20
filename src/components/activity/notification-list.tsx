@@ -101,10 +101,10 @@ export function NotificationList({
   }
 
   return (
-    <div className={readEndpoint==="/api/learn/notifications" ? "space-y-4 min-[768px]:space-y-6" : variant==="tpo" ? "space-y-0" : "space-y-5"}>
+    <div className={readEndpoint==="/api/learn/notifications" ? "space-y-[var(--lms-space-3)]" : variant==="tpo" ? "space-y-0" : "space-y-5"}>
       {groupNotificationsByDate(items, groupingNow).map((group) => (
         <section key={group.label} aria-label={group.label}
-          className={readEndpoint==="/api/learn/notifications" ? "space-y-4" : "space-y-2"}>
+          className={readEndpoint==="/api/learn/notifications" ? "space-y-[var(--lms-space-2)]" : "space-y-2"}>
           <h2 className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{group.label}</h2>
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
@@ -127,7 +127,7 @@ export function NotificationList({
              </Button>:<article
               key={item.id}
               className={readEndpoint==="/api/learn/notifications"
-                ? "overflow-hidden rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 min-[768px]:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+                ? "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)] transition-colors duration-200 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
                 : "border-b border-[var(--lms-canvas-border)] bg-transparent py-4 transition-colors duration-150 hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:py-5"}
             >
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">

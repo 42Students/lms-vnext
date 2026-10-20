@@ -127,7 +127,7 @@ export function CollegeArchiveButton({
         title="Archive college"
         description={`Archive ${name}? This disables the tenant boundary and is allowed only after all live dependencies are cleared.`}
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               className="min-h-11 md:min-h-9 print:hidden"
@@ -147,10 +147,10 @@ export function CollegeArchiveButton({
                 ? "Archiving…"
                 : "Archive college"}
             </Button>
-          </>
+          </div>
         }
       >
-        <p className="m-0 text-sm text-body">
+        <p className="m-0 max-w-prose text-sm text-body">
           The server checks memberships,
           departments, academic periods,
           Projects, Placements and tenant
