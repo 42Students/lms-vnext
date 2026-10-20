@@ -5,6 +5,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { collegePromotionQuerySchema, formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
@@ -116,7 +118,7 @@ export default async function CollegeBatchPromotionPage({
             {preview.blockedLearners} have learner-specific blockers in the examined set.
           </p>
           {preview.blockers.length ? (
-            <div role="alert" className="space-y-2">
+            <Alert tone="error" className="space-y-2">
               <h3 className="font-semibold text-foreground">Batch blockers</h3>
               <ul className="list-inside list-disc text-sm text-body">
                 {preview.blockers.map(blocker => <li key={blocker}>
@@ -129,17 +131,15 @@ export default async function CollegeBatchPromotionPage({
                   </>:blocker.replaceAll("_"," ")}
                 </li>)}
               </ul>
-            </div>
-          ) : <p className="text-sm text-body">
-            No batch-level blockers were observed. This is not authorization to execute a promotion.
-          </p>}
+            </Alert>
+          ) : <Alert tone="info">No batch-level blockers were observed. This is not authorization to execute a promotion.</Alert>}
           <p className="text-sm font-semibold text-body">
             {preview.simulatedReadiness ? BATCH_PROMOTION_COPY.ready : BATCH_PROMOTION_COPY.notReady}
           </p>
-          {facultySetup?.incomplete && <p role="status" className="text-sm font-semibold text-amber-700">
+          {facultySetup?.incomplete && <Alert tone="warning">
             Faculty setup is still incomplete
             {facultySetup.totalCourses > 0 ? ` — ${facultySetup.missingCourses} of ${facultySetup.totalCourses} mapped course(s) lack active teaching assignments.` : " — no target semester courses mapped."}
-          </p>}
+          </Alert>}
           {preview.simulatedReadiness && preview.plan.action === "PROMOTE" &&
             preview.batch.version !== null ? (
               <CollegePromotionConfirmation cohortId={preview.batch.id}
@@ -152,17 +152,15 @@ export default async function CollegeBatchPromotionPage({
             ) : null}
         </section>
         <section aria-label="Learner-level preview" className="min-w-0 border-t border-border pt-4">
-          <h2 className="border-b border-border p-4 text-lg font-semibold text-foreground">Learner blockers</h2>
+          <h2 className="border-b border-border pb-3 text-lg font-semibold text-foreground">Learner blockers</h2>
           <DataTable rows={preview.learners} getRowKey={learner=>learner.membershipId} caption="Learner blockers"
             columns={[
               {key:"name",header:"Learner",mobilePriority:"primary",cell:learner=>learner.name},
-              {key:"status",header:"Enrollment",mobilePriority:"secondary",cell:learner=>learner.enrollmentStatus},
+              {key:"status",header:"Enrollment",mobilePriority:"secondary",cell:learner=><StatusBadge tone={learner.enrollmentStatus==="ACTIVE"?"success":"neutral"}>{learner.enrollmentStatus}</StatusBadge>},
               {key:"blockers",header:"Blockers",mobilePriority:"secondary",cell:learner=>
                 learner.blockers.length?learner.blockers.join(", ").replaceAll("_"," "):"No detected learner blocker"},
             ]}
-            empty={<p className="text-sm text-body">
-              No persisted learner enrollments exist for this batch. No eligible count is inferred.
-            </p>}/>
+            empty={<EmptyState title="No learner enrollments" description="No persisted learner enrollments exist for this batch. No eligible count is inferred."/>}/>
         </section>
       </>
     )}
