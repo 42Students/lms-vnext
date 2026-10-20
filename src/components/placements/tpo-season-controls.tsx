@@ -82,19 +82,19 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
               </label>
             ))}
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Button type="button" onClick={() => void save()} disabled={busy}
-              className="min-h-11 md:min-h-9">
+              className="min-h-11 w-full sm:w-auto md:min-h-9">
               {busy ? "Saving..." : edit ? "Review and confirm edit" : "Review and confirm new season"}
             </Button>
             {edit ? <Button type="button" variant="secondary" onClick={() => select(null)}
-              className="min-h-11 md:min-h-9">Cancel edit</Button> : null}
+              className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel edit</Button> : null}
           </div>
         </>
       )}
       {seasons.filter((season) => season.status === "ACTIVE").map((season) => (
         <Button type="button" variant="ghost" key={season.id} onClick={() => select(season)}
-          className="min-h-11 md:min-h-9 text-sm underline">
+          className="min-h-11 w-full sm:w-auto md:min-h-9 text-sm underline">
           Edit {season.name} →
         </Button>
       ))}

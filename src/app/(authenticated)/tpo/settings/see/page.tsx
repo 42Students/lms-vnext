@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import { PageHeader } from "@/components/ui/page-header";
 import { redirect } from "next/navigation";
 
@@ -43,11 +44,11 @@ export default async function TpoWhatCompaniesSeePage() {
       : "Standard college settings";
 
   return (
-    <div className="space-y-6">
-      <TpoSettingsNav active="see" />
+    <div className="min-w-0 space-y-6">
+      <PageHeader title="What Companies See" />
+      <TpoSettingsNav active="see" compact />
 
       <section className="space-y-2">
-        <PageHeader title="What Companies See" />
         <p className="text-sm leading-6 text-body">
           Review the data-sharing permissions configured
           for recruiters viewing learner information
@@ -61,9 +62,10 @@ export default async function TpoWhatCompaniesSeePage() {
        initial={{showCgpaExact:visibility.showCgpaExact,showTenthTwelfth:visibility.showTenthTwelfth,
         showProjectLinks:visibility.showProjectLinks,showAssessmentScores:visibility.showAssessmentScores,
         showAttendance:visibility.showAttendance}}/>
+      <Disclosure title="College sharing policy" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section
         aria-label="Company visibility policy source"
-        className="border-t border-border pt-5"
+        className="min-w-0 space-y-3"
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -108,7 +110,9 @@ export default async function TpoWhatCompaniesSeePage() {
           </div>
         </div>
       </section>
+      </Disclosure>
 
+      <Disclosure title="Recruiter-visible fields" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section
         aria-labelledby="company-visibility-fields"
         className="space-y-3"
@@ -177,7 +181,9 @@ export default async function TpoWhatCompaniesSeePage() {
           ))}
         </div>
       </section>
+      </Disclosure>
 
+      <Disclosure title="How these settings work" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section
         aria-label="Company visibility methodology"
         className="border-t border-border pt-4 text-sm leading-6 text-body"
@@ -203,6 +209,7 @@ export default async function TpoWhatCompaniesSeePage() {
           remain separate controls.
         </p>
       </section>
+      </Disclosure>
 
     </div>
   );

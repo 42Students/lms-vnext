@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -55,7 +56,7 @@ export default async function TpoPlacementTeamPage() {
           </Link>
         }
       />
-      <TpoSettingsNav active="team" />
+      <TpoSettingsNav active="team" compact />
 
       {!sources.teamAssignmentsAvailable ? (
         <Alert tone="warning">
@@ -81,6 +82,7 @@ export default async function TpoPlacementTeamPage() {
         </Alert>
       ) : null}
 
+      <Disclosure title="Team totals" className="min-w-0" contentClassName="pt-3">
       <section aria-label="Placement team summary" className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">
         {[
           ["Distinct active members", String(summary.total)],
@@ -117,6 +119,7 @@ export default async function TpoPlacementTeamPage() {
           </div>
         ))}
       </section>
+      </Disclosure>
 
       <section className="border-t border-border">
         <div className="border-b border-border py-4">
@@ -151,11 +154,12 @@ export default async function TpoPlacementTeamPage() {
                 <StatusBadge tone="success">{member.status}</StatusBadge>},
               {key:"duties",header:"Student duties",mobilePriority:"secondary",cell:member=>
                 member.studentDuties.length===0?<span className="text-muted-foreground">—</span>:
-                <div className="space-y-2">
+                <div className="min-w-0 space-y-2">
                   <p className="text-xs font-semibold text-body">
                     {member.studentDuties.length} recorded{" "}drive/date assignment
                     {member.studentDuties.length===1?"":"s"}
                   </p>
+                  <Disclosure title="View duty dates" className="min-w-0" contentClassName="pt-2">
                   {member.studentDuties.map(duty=><p key={duty.jobId+":"+duty.onDate} className="text-xs text-body">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(duty.jobId)}
                       className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -163,12 +167,14 @@ export default async function TpoPlacementTeamPage() {
                     </Link>
                     {" · "}{dutyDate(duty.onDate)}
                   </p>)}
+                  </Disclosure>
                 </div>},
             ]}
           />
         )}
       </section>
 
+      <Disclosure title="About placement team records" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         This page does not expose team-member email addresses or
         phone numbers. It does not assign, reassign or remove
@@ -177,6 +183,7 @@ export default async function TpoPlacementTeamPage() {
         are available. Legacy role-management flows and browser
         parity remain unverified.
       </p>
+      </Disclosure>
     </div>
   );
 }
