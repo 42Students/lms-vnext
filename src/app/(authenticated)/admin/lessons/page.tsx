@@ -61,11 +61,11 @@ export default async function SuperAdminLessonsPage({
     />
     
     <form className="grid gap-3 py-1 md:grid-cols-2 xl:grid-cols-5">
-      <label className="grid gap-1 text-xs font-semibold text-body">Search
+      <label className="grid gap-1 text-[13px] font-semibold text-body">Search
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-body">Status
+      <label className="grid gap-1 text-[13px] font-semibold text-body">Status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
