@@ -564,10 +564,10 @@ export async function SuperAdminTemplateSubviewPage({
         ) : (
           <section
             aria-label="Template version history"
-            className="space-y-4"
+            className="min-w-0 space-y-3"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="m-0 text-lg font-semibold leading-7 text-[var(--lms-heading)]">
                 Version history
               </h2>
               <StatusBadge>
@@ -591,11 +591,11 @@ export async function SuperAdminTemplateSubviewPage({
               return (
                 <article
                   key={version.id}
-                  className="border-b border-border py-5 last:border-b-0"
+                  className="min-w-0 border-b border-border py-4 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="m-0 text-base font-semibold text-foreground">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="m-0 break-words text-base font-semibold text-foreground">
                         Version {version.version} ·{" "}
                         {version.title}
                       </h3>
@@ -628,17 +628,17 @@ export async function SuperAdminTemplateSubviewPage({
                   </div>
 
                   <Link href={templateVersionComparisonHref(detail.template.id, version.id)}
-                    className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    className="mt-3 inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     Compare changes and inspect snapshot →
                   </Link>
 
                   {version.summary ? (
-                    <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
+                    <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-body">
                       {version.summary}
                     </p>
                   ) : null}
 
-                  <p className="mt-3 text-sm text-body">
+                  <p className="mt-3 break-words text-sm text-body">
                     {version.changeNote ||
                       "No change note recorded."}
                   </p>
@@ -664,7 +664,7 @@ export async function SuperAdminTemplateSubviewPage({
                 </article>
               );
             })}
-            {historyPaging ? <div className="flex min-w-0 flex-wrap items-center gap-3">
+            {historyPaging ? <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
               <span className="text-xs text-muted-foreground">25 versions per page</span>
               <Pagination label="Template version pages" page={historyPaging.page}
                 pageCount={historyPaging.totalPages}
