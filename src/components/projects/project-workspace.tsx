@@ -325,7 +325,7 @@ export function ProjectWorkspace({
         ]} />
       ) : null}
       {sectionBaseHref ? (
-        <Tabs className="min-w-0" ariaLabel="Project workspace sections" renderPanel={false} value={activeSection}
+        <Tabs className="min-w-0" ariaLabel="Project workspace sections" renderPanel={false} value={activeSection ?? "summary"}
           items={PROJECT_WORKSPACE_SECTIONS.map(section=>({
             value:section, label:PROJECT_WORKSPACE_SECTION_LABELS[section],
             href:sectionBaseHref+"/"+section+sectionQuerySuffix,
