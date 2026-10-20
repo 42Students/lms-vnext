@@ -89,27 +89,15 @@ export function OrganizationActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2 print:hidden">
-        <Button
-          type="button"
-          variant="secondary"
-          size="sm"
-          onClick={() => {
-            setNextName(name);
-            setRenameOpen(true);
-          }}
-        >
-          Rename
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setArchiveOpen(true)}
-        >
-          Archive
-        </Button>
-      </div>
+      <details className="group min-w-0 text-left print:hidden">
+        <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Actions</summary>
+        <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col gap-[var(--lms-space-2)]">
+          <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9"
+            onClick={() => { setNextName(name); setRenameOpen(true); }}>Rename</Button>
+          <Button type="button" variant="ghost" size="sm" className="min-h-11 md:min-h-9"
+            onClick={() => setArchiveOpen(true)}>Archive</Button>
+        </div>
+      </details>
 
       <Dialog
         open={renameOpen}
@@ -120,12 +108,14 @@ export function OrganizationActions({
           <>
             <Button
               variant="secondary"
+              className="min-h-11 w-full md:min-h-9 md:w-auto"
               disabled={pending}
               onClick={() => setRenameOpen(false)}
             >
               Cancel
             </Button>
             <Button
+              className="min-h-11 w-full md:min-h-9 md:w-auto"
               disabled={
                 pending ||
                 !nextName.trim() ||
