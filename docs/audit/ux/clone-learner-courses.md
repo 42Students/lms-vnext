@@ -894,3 +894,45 @@ After the nine-file batch above, four additional learner TSX files were updated 
 **STRICT TICK:** Four files remain source-corrected but unchecked for *finished pixel parity*, because computed hover/disabled/focus and per-breakpoint phone/tablet screenshots are still missing and full-area source inventory is incomplete. H1–H6 remain `[ ]`. This is deliberate under `docs/design/ui-clone-checklist.md` STRICT TICK RULE. No CI, tests, build or app run.
 
 **Next exact unticked file:** `src/components/courses/learner-course-workspace.tsx` (1020-line lesson/resource course shell; review deep nested lesson cards, content-status rows, pending/error/empty and @768px breakpoint before any edit), followed by `src/components/courses/learner-course-attendance.tsx`.
+
+### Batch 9C — learner roadmap, Super Admin content and College content authoring
+
+Six additional source files were edited and re-read in full after synchronizing concurrent main. Existing modules, vNext page contents, section order, permissions, mutations and labels were intentionally preserved.
+
+| File in `src/components/courses/` | Concrete visual/state work | Required state and responsive mapping |
+| --- | --- | --- |
+| `learner-course-workspace.tsx` | Roadmap Back/Previous/Next lesson links now >=44px on phone, focus-visible ring/hover foreground, 36px from tablet; mobile Jump to Lesson links get teal-subtle hover and focus ring. Removed nested bordered empty-content message in lesson pane and normalized shared neutral `Badge` JSX spacing. Missed quiz now shared `Alert tone=warning`; recorded attempt now shared success `StatusBadge`, preserving release messaging. | `min-h-11 md:min-h-9`; existing 768px phone `Disclosure`/desktop Tabs, role-status alerts, lesson index, aria progress, historical/read-only lessons and authenticated navigation unchanged |
+| `super-admin-content-directory-page.tsx` | Removed five redundant `PageHeader eyebrow="Super Admin · Courses"` props (owner page-head spec prohibits eyebrow); invalid filters/loading retry and edit actions 44px phone with hover/focus; Filter action 44px until 768px. | Shared `PageHeader` in normal, invalid, no-college, forbidden and unavailable states; existing `Banner`, `EmptyState`, `ErrorState`, `Pagination`, audience/status `StatusBadge`, no media leak; filter/CSV action state retained |
+| `super-admin-content-actions.tsx` | Edit uses secondary outlined variant, Publish stays primary, destructive Delete uses danger variant rather than red text forced onto secondary; ordinary metadata edit panel loses extra nested card (flat `border-t`/hairline). | Form fields and save action stay shared `Input`/`Select`/`Textarea`/`Button`; 44px phone/36px desktop, archived read-only, busy/disabled, confirm and success/error `Alert` intact |
+| `super-admin-lesson-bulk-visibility.tsx` | Bulk result custom gray framed notice replaced with shared `Alert tone=success` on full success or `tone=warning` when failures exist. | Preserves changed/unchanged/failed values, failure list, scrolled checkbox selection, 44px buttons, service calls and partial error reporting |
+| `super-admin-course-bulk-visibility.tsx` | Corrected bulk action hierarchy (Show students = primary, Hide = outlined secondary). Results use shared success/warning `Alert` depending on failures or no eligible lessons; retry remains inside notice. | `min-h-11 md:min-h-9`, selected checkboxes, pending-disable, failure retry and API scope/version semantics unchanged |
+| `college-content-authoring-control.tsx` | Refreshed against latest main: removed independent rounded canvas (flat section hairline), 9 authoring fields + 3 catalogue selectors 44px phone/36px tablet, 9 authoring labels + 3 search labels use global 13px/600 skin, New/Save/Cancel/Order/Materials/Edit/Publish/Delete 44px phone, outlined secondary and danger variants; full-row responsive action wrap; keyboard focus on third-party resource link; inline error/success migrated to shared `Alert`. | Full 3-content-kind form (`YOUTUBE`, `RESOURCE`, `LIVE_CLASS`) retains time-zone conversion, publisher status, notes, order, private materials, editing guard, disabled states, truncation, no matches and REST handling. All 9 native authorship `className="mt-1"` control bindings now `mt-1 min-h-11 md:min-h-9` |
+
+**Legacy exact property crosswalk for these six files**
+
+| Property / state | Old LMS exact rule | Current vNext mapping | Source judgement |
+| --- | --- | --- | --- |
+| Page title row, no eyebrow | `docs/design/old-lms-pages.md:1-12`: single large heading and inline small description/actions in one canvas; no eyebrow | Super Admin directory has five conditional `PageHeader` render paths and zero `eyebrow` after edits | MATCH source hierarchy; rendered alignment pending |
+| Card count & separators | `old-lms-pages.md:1,6,9` ordinary filters/lists live directly on one white 12px canvas, hairlines `#e5e9f0`; cards only for distinct objects | Admin content metadata editor `border-t border-border pt-3`; college content editor `border-b`; learner empty-content line `border-t`; independent lessons retain cards | MATCH affected nesting in source |
+| Buttons default, hover, active, danger, disabled | `master-queue.md:4-9`: primary solid `#0a7c88` white, radius9, 36px, 14px/650, hover `#086873`; secondary outlined; danger separate | Shared `Button variant="primary/secondary/danger"`, no local `text-error` override on Delete; `--lms-control-height:36px`, radius9px inherited; busy props retained | Semantic source route MATCH; exact browser state pixel proof OPEN |
+| Label font/field backgrounds | `components___form.scss:107-132`: 13px/600 neutral-400 `#a9a7ae`, input 14px, background `#fbfcfd`, 10px radius | `src/styles/legacy-skin.css:375-391` forces label 13px/600/neutral-400; 9 fields + 3 selectors inherit global shared skins with no page-local border/rounded/bg overrides | MATCH global-skin value path; computed padding/error/focus proof OPEN |
+| Phone/tablet sizing | `components___learn-layout.scss:34,361-383`: phone maximum767px and 44px back/action touch targets | `min-h-11` below768 and `md:min-h-9` above; no `sm:` in six files; mobile links wrap and lesson jump indexed; 768px+ form 2 columns | SOURCE MATCH responsive class contract; actual viewport check OPEN |
+| Warning, error, success and status | `components___variables.scss:63-78`: success #059669, warning #d97706, error #ef4444 and pale background | `Alert tone=warning/success/error` for quiz deadline/missed, failed batch, success, metadata errors; `StatusBadge tone=success` completed attempt | Semantic source skin MATCH; exact alert/states render OPEN |
+| Focus and hover | `components___form.scss:23-28,125-138`: visible teal focus shadow and color; `components___variables.scss:10-14` teal accent/subtle | Roadmap navigation and external links `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary` and teal hover; controls via shared skins | Correct source token path; keyboard traversal OPEN |
+
+**Scoped grep proof, post-write exact fetched files (not a local executable `rg`):**
+
+| File | Raw controls/table | Hex | Handmade modal | `sm:` | `md:` | Tag consistency |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| learner roadmap | 0 | 0 | 0 | 0 | 10 | Alert 5/5, Button 1/1 |
+| Super Admin content directory | 0 | 0 | 0 | 0 | 11 | PageHeader 5 conditional occurrences, form 1/1, Button 1/1, no eyebrow |
+| Super Admin content actions | 0 | 0 | 0 | 0 | 11 | Alert 2/2, Button 4/4 |
+| Super Admin bulk lessons | 0 | 0 | 0 | 0 | 5 | Alert 2/2, Button 2/2 |
+| Super Admin bulk courses | 0 | 0 | 0 | 0 | 3 | Alert 2/2, Button 3/3 |
+| College content editor | 0 | 0 | 0 | 0 | 26 | Alert 2/2, Button 8/8 |
+
+Regex on fully fetched UTF-8 source: `/<(button|input|select|textarea|table)(?=[\\s>])/g`, `/#[0-9a-fA-F]{6}\\b/g`, `/fixed inset-0|role=["']dialog["']/g`, `/\\bsm:/g`, `/\\bmd:/g`; JSX openings/closings counted by tag for the structural rows. Aggregate six-path source totals **0 raw, 0 hex, 0 hand-rolled modal, 0 sm, 66 md**. No application compilation, no CI, no browser and no runtime tests.
+
+**STRICT-TICK STATUS:** H1–H6 remain `[ ]`. Source code migration and tables are complete for the six named files, but this does **not** prove pixel-level default/hover/focus/disabled/loading/error state parity until computed-value/screenshot checks and full-area grep against refreshed inventory happen. Shared skin and global Button/Alert ownership belong to chat-17/chat-5; no other lane code was altered.
+
+**Next exact unticked file:** `src/components/courses/learner-course-attendance.tsx` (376 lines; calendar month controls/table/status pill responsive and value proof), followed by `src/components/courses/learner-course-state-retry.tsx` and the learner live-session status file.

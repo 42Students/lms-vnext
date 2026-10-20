@@ -10,6 +10,7 @@ import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
 import type { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 
@@ -331,10 +332,10 @@ export function LearnerCourseAttendance({
           <div><dt className="text-muted-foreground">Absent</dt><dd className="font-semibold">{summary.absent}</dd></div>
           <div><dt className="text-muted-foreground">Held</dt><dd className="font-semibold">{summary.heldSessions}</dd></div>
         </dl>
-        {summary.unmarkedSessions>0?<p className="mt-3 text-xs text-muted-foreground">{summary.unmarkedSessions} held class(es) are not marked yet and do not affect this percentage.</p>:null}
+        {summary.unmarkedSessions>0?<Alert tone="warning" role="status" className="mt-3">{summary.unmarkedSessions} held class(es) are not marked yet and do not affect this percentage.</Alert>:null}
       </section>
       <section aria-label="Attendance History" className="space-y-1">
-        <h3 className="font-semibold text-foreground">Attendance History</h3>
+        <h3 className="text-lg font-semibold text-foreground">Attendance History</h3>
         <p className="text-sm text-muted-foreground">Review each scheduled class and your status for it.</p>
       </section>
       {records.length === 0 ? (
