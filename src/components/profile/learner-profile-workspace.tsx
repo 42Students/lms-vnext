@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { learnerProfileDocumentSchema, type LearnerProfileDocument } from "@/modules/people/profile-validation";
@@ -551,7 +552,7 @@ export function LearnerProfileWorkspace(props: {
       </div>
       <section id="profile-introduction" className="scroll-mt-24 border-b border-border pb-5">
         <div className="flex flex-col gap-5 min-[768px]:flex-row min-[768px]:items-center">
-          <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
+          <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[50%] bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
             <PageHeader
               
@@ -640,7 +641,7 @@ export function LearnerProfileWorkspace(props: {
                 </span>
                 <span className="min-w-0 break-words">{item.label}</span>
                 {(["personal-details","contacts","education","skills"].includes(item.section))?
-                  <span className="ml-auto shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">Required</span>:null}
+                  <Badge tone="warning" className="ml-auto shrink-0">Required</Badge>:null}
                 <span className="sr-only">{item.completed ? "Completed" : "Not filled"}</span>
               </Link>
             </li>
