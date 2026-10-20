@@ -63,14 +63,14 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Time blocks ({slots.items.length})</h2>
     {slots.items.map(slot=><article key={slot.id} className="min-w-0 space-y-2 border-b border-border py-4">
      <p className="break-words font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
-     <p className="text-sm text-body">
+     <p className="break-words [overflow-wrap:anywhere] text-sm text-body">
       {slot.status==="OFFERED"?"Waiting for the placement cell":
         slot.status==="BOOKED"?"Reserved internally; confirm with placement cell":
         slot.status==="CANCELLED"?"Cancelled":slot.status==="PROPOSED"?"Not sent yet":slot.status}
       {" · "}{slot.mode} · Internal reservations: {slot.bookedCount}/{slot.capacity}
      </p>
-     {slot.panelLabel?<p className="text-sm text-body">Panel: {slot.panelLabel}</p>:null}
-     {slot.meetingLocation?<p className="text-sm text-body">Venue: {slot.meetingLocation}</p>:
+     {slot.panelLabel?<p className="break-words [overflow-wrap:anywhere] text-sm text-body">Panel: {slot.panelLabel}</p>:null}
+     {slot.meetingLocation?<p className="break-words [overflow-wrap:anywhere] text-sm text-body">Venue: {slot.meetingLocation}</p>:
        <p className="text-xs text-muted-foreground">Room or joining details not recorded yet.</p>}
      {slot.canEdit?<RecruiterInterviewSlotActions action={action}
       slot={{id:slot.id,version:slot.version,status:slot.status,
