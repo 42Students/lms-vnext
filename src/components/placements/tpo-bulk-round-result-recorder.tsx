@@ -136,7 +136,7 @@ export function TpoBulkRoundResultRecorder({
   }
 
   return (
-    <section aria-label="Bulk stage round results" className="space-y-4 border-b border-border pb-6">
+    <section aria-label="Bulk stage round results" className="min-w-0 space-y-4 border-b border-border pb-4">
       <div>
         <h2 className="text-base font-semibold text-foreground">Bulk stage round results</h2>
         <p className="mt-1 text-sm text-body">
@@ -158,36 +158,37 @@ export function TpoBulkRoundResultRecorder({
                placeholder="Search name, roll or application ID"
                className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
-            <div className="flex flex-wrap gap-3 text-sm">
+            <div className="flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
               <Button variant="secondary" type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
-                className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9">Select first 25 unmarked</Button>
+                className="inline-flex min-h-11 w-full items-center justify-center px-4 font-semibold text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked</Button>
               <Button variant="secondary" type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
-                className="min-h-11 font-semibold text-primary-text md:min-h-9">Clear selection</Button>
+                className="min-h-11 w-full px-4 font-semibold text-primary-text sm:w-auto md:min-h-9">Clear selection</Button>
             </div>
-            <Disclosure title="Paste application IDs from a spreadsheet" className="rounded-[var(--lms-control-radius)] border border-border p-3">
+            <Disclosure title="Paste application IDs from a spreadsheet" className="min-w-0 border-y border-border py-3">
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
               <Textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
-                className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"/>
-              <Button variant="secondary" type="button" disabled={busy} className="mt-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm"
+                className="mt-2 block min-h-24 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"/>
+              <Button variant="secondary" type="button" disabled={busy} className="mt-2 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm sm:w-auto md:min-h-9"
                 onClick={()=>{
                   const resolved=resolveBulkRoundLearnerTokens(pastedIds,available);
                   if(resolved.error){setError(resolved.error);return;}
                   setError(null);setSelected(resolved.ids);
                 }}>Select matching learners</Button>
             </Disclosure>
-            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] print:max-h-none print:overflow-visible">
+            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-56 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border px-2 print:max-h-none print:overflow-visible">
               {visible.map((row) => (
-                <label key={row.applicationId} className="flex min-h-11 items-center gap-3 px-2 text-sm text-body hover:bg-muted md:min-h-9">
+                <label key={row.applicationId} className="flex min-h-11 min-w-0 items-center gap-3 px-2 text-sm text-body hover:bg-muted md:min-h-9">
                   <Checkbox
                     checked={selected.includes(row.applicationId)}
                     onChange={(event) => toggle(row.applicationId, event.target.checked)}
                     disabled={busy || (!selected.includes(row.applicationId) && selected.length >= 25)}
                     className="h-4 w-4 accent-primary"
                   />
-                  <span>{row.displayName}</span>
+                  <span className="min-w-0 break-words">{row.displayName}</span>
                 </label>
               ))}
             </div>
+            {visible.length===0?<p role="status" className="py-3 text-sm text-muted-foreground">No unmarked learners match this search.</p>:null}
           </fieldset>
           <label className="block text-sm font-semibold text-foreground print:hidden">
             Staged outcome
@@ -203,7 +204,9 @@ export function TpoBulkRoundResultRecorder({
               <option value="ABSENT">Marked absent (ABSENT)</option>
             </Select>
           </label>
-          <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 print:hidden">
+          <details className="group min-w-0 border-y border-border py-2 print:hidden">
+           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">Everyone I did not mark <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+          <fieldset className="space-y-2 px-2 py-3">
             <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
             <label className="flex items-start gap-2 text-sm text-body">
               <Checkbox disabled={busy||available.length>25}
@@ -214,6 +217,7 @@ export function TpoBulkRoundResultRecorder({
             </label>
             <p className="text-xs text-body">Opt in explicitly. All affected learners receive an audited staged result, but nothing is published until Apply results. This bulk action is limited to 25 total applicants; for larger rosters use the reviewed import.</p>
           </fieldset>
+          </details>
           {(outcome !== "PASS" || failUnselected) ? (
             <label className="block text-sm font-semibold text-foreground print:hidden">
               Learner-facing message (required)
@@ -231,7 +235,7 @@ export function TpoBulkRoundResultRecorder({
             First waitlist rank (in checkbox selection order)
             <Input type="number" min={1} max={100000} value={firstWaitlistRank}
               onChange={e=>setFirstWaitlistRank(Number(e.target.value))}
-              className="mt-1 block min-h-11 md:min-h-9 w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+              className="mt-1 block min-h-11 w-full sm:w-40 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
             <span className="mt-1 block text-xs font-normal text-body">Chosen learners are assigned consecutive ranks. Check existing waitlisted results to avoid duplicate ranks.</span>
           </label>:null}
           {selected.length>0?<Alert tone="info">
@@ -248,7 +252,7 @@ export function TpoBulkRoundResultRecorder({
               ((outcome !== "PASS" || failUnselected) && !message.trim()) ||
               pendingTotal > 25 ||
               (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1))}
-            className="min-h-11 rounded-[var(--lms-control-radius)] px-4 text-sm font-[650] disabled:opacity-50 md:min-h-9 print:hidden"
+            className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 text-sm font-[650] disabled:opacity-50 sm:w-auto md:min-h-9 print:hidden"
           >
             {busy ? "Staging..." : "Review and confirm staged results"}
           </Button>
@@ -276,13 +280,13 @@ export function TpoBulkRoundResultRecorder({
             document.body.appendChild(link);
             try { link.click(); }
             finally { link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
-          }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text md:min-h-9 print:hidden">
+          }} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text sm:w-auto md:min-h-9 print:hidden">
             Export per-learner staging report (CSV)
           </Button>
           <p className="font-semibold">Per-learner outcomes</p>
           <ul className="divide-y divide-border border-t border-border">
             {results.map((item) => (
-              <li key={item.applicationId} className="flex flex-wrap gap-2 px-3 py-2">
+              <li key={item.applicationId} className="flex min-w-0 flex-col gap-1 px-2 py-3 text-sm sm:flex-row sm:flex-wrap sm:gap-2">
                 <span className="font-semibold text-foreground">
                   {rows.find((row) => row.applicationId === item.applicationId)?.displayName ??
                     "Learner"}
