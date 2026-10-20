@@ -103,7 +103,7 @@ export default async function CollegeLectureHallsPage({
         Export CSV
       </Link>
       <section aria-label="Lecture hall filters" className="border-t border-border pt-4">
-        <form action="/college/lecture-halls" method="get" className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <form action="/college/lecture-halls" method="get" className="grid min-w-0 md:grid-cols-2 xl:grid-cols-5 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:grid-cols-1">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Room name
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
