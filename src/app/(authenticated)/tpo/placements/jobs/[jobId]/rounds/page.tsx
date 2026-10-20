@@ -42,10 +42,10 @@ export default async function TpoDriveRoundsPage({
     value ? new Intl.DateTimeFormat("en-IN", {
       timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
     }).format(value) + " IST" : "To be scheduled";
-  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
+  return <div className="min-w-0 space-y-[var(--lms-space-5)]">
     <PageHeader eyebrow="TPO · Drive workspace" title="Rounds and schedule"
       description="Plan the drive rounds, check bookings and record company results." />
-    <Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    <Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       Manage and reorder rounds
     </Link>
     {drive.rounds.length === 0
@@ -62,7 +62,7 @@ export default async function TpoDriveRoundsPage({
                 <p className="mt-1 flex min-w-0 flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={round.status==="COMPLETED"?"success":round.status==="CANCELLED"?"error":round.status==="SCHEDULED"?"info":"warning"}>{round.status}</StatusBadge><span>{round.mode} · {date(round.scheduledAt)}</span></p>
               </div>
               <Link href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                 See who / record results
               </Link>
             </div>
@@ -83,7 +83,7 @@ export default async function TpoDriveRoundsPage({
               <div><dt className="text-body">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes + " minutes" : "Not specified"}</dd></div>
             </dl>
             {round.kind==="INTERVIEW"?<Link href={root+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
-              className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+              className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
               Slots and rooms · {countFor(proposals,round.id)+countFor(requests,round.id)} need review
             </Link>:null}
             {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}

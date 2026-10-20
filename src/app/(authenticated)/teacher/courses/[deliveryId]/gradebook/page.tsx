@@ -33,7 +33,7 @@ export default async function FacultyGradebookPage({
     <PageHeader title={"Invalid gradebook link or filters"} />
     <Link href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
-      "/teacher/courses"} className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      "/teacher/courses"} className="text-primary-text underline inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Return to the gradebook
     </Link>
   </section>;
@@ -51,7 +51,7 @@ export default async function FacultyGradebookPage({
           administrator to request a gradebook report. No grades have been changed.
         </p>
         <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Return to your course
         </Link>
       </section>;
@@ -76,13 +76,13 @@ export default async function FacultyGradebookPage({
         Find learner
         <Input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
-          className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
+          className="min-h-11 md:min-h-[var(--lms-control-height)]" />
       </label>
       <Button type="submit" variant="primary">
         Search
       </Button>
       <Link href={facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1})}
-        className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center px-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Clear
       </Link>
     </form>
@@ -106,7 +106,7 @@ export default async function FacultyGradebookPage({
         </p>
         <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)+
           "/gradebook/"+encodeURIComponent(row.membershipId)}
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="mt-2 inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           View published score breakdown →
         </Link>
         <div className="mt-3 grid gap-2 md:grid-cols-3">
@@ -131,11 +131,11 @@ export default async function FacultyGradebookPage({
       </span>
       <div className="flex gap-3">
         {filtered.page>1&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page-1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          ...base,page:filtered.page-1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Previous
         </Link>}
         {filtered.page<filtered.totalPages&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page+1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          ...base,page:filtered.page+1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Next
         </Link>}
       </div>
