@@ -12,7 +12,7 @@ export default async function TeacherCoursesPage({searchParams}: {
 }) {
   const context = await getCurrentRequestContext();
   const query=parseFacultyCourseListLocation(await searchParams);
-  if(!query)return <div className="min-w-0 max-w-full space-y-6">
+  if(!query)return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader title="My Courses" />
     <Alert tone="error" className="min-w-0">
       The Course filters could not be understood. No other Section has been loaded.
