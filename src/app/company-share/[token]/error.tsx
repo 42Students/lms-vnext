@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 import Link from "next/link";
 import authStyles from "@/components/public/public-auth-skin.module.css";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export default function CompanyShareError({reset}:{error:Error&{digest?:string};reset:()=>void}){
  return <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl flex-col justify-center px-4 py-10`}>
   <section role="alert" className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
-   <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">We couldn&apos;t load this share</h1>
+   <PageHeader title="We couldn&apos;t load this share" />
    <p className="text-sm text-body">
     We couldn&apos;t load the shared applicant list right now. Please retry. If this keeps happening, contact the placement cell.
    </p>

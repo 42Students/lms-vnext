@@ -149,8 +149,8 @@ function friendlyError(status: number, payload: { error?: string }) {
 }
 
 const inputStyle = "min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground md:min-h-9";
-const buttonStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
-const primaryStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] bg-primary px-4 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
+const buttonStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
+const primaryStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
 
 export function RecruiterLeadsWorkspace({
   collegeId,
@@ -1098,7 +1098,7 @@ export function RecruiterLeadsWorkspace({
                            <div role="group" aria-label={"Update "+(lead.name||"recruiter")} className="mt-2 min-w-0 space-y-2 break-words [overflow-wrap:anywhere]">
                              <RecruiterInlineStage lead={lead} onUpdated={()=>void load()} />
                              <RecruiterInlineOwner lead={lead} onUpdated={()=>void load()} />
-                             <Link className="inline-flex min-h-11 max-w-full items-center rounded-[8px] px-3 text-[var(--lms-teal-deep)] underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                             <Link className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-control-radius)] px-3 text-[var(--lms-teal-deep)] underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                                href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
                              <Button variant="ghost" type="button" className="min-h-11 w-full justify-center md:min-h-9"
                                onClick={event=>{

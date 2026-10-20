@@ -1,3 +1,4 @@
+import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
 import {listTpoTeamAsks} from "@/modules/placements/tpo-team-asks-service";
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
@@ -102,7 +103,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
        {own?"You":message.authorName?.trim()||"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
       </p>
-      {message.decision&&!message.removed?<span className="rounded-full border border-[var(--lms-canvas-border)] px-2 py-0.5 text-xs font-semibold text-success">Decision</span>:null}
+      {message.decision&&!message.removed?<StatusBadge tone="success">Decision</StatusBadge>:null}
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
        {message.removed?"Message removed":message.body}
       </p>
