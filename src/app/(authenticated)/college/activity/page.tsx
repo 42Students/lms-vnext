@@ -43,7 +43,7 @@ export default async function CollegeActivityPage({
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
     <PageHeader title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
       actions={<div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]"><Link href="/college/projects/audit" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View project activity</Link><a href={"/api/activity/college-export" +
@@ -65,13 +65,6 @@ export default async function CollegeActivityPage({
           module:undefined,importance:undefined}),
       }))}/>
 
-    <p className="text-xs text-muted-foreground">
-      Important shows high- and critical-importance events. Category views remain college-scoped; Everything includes all importance levels.
-    </p>
-    <p className="text-xs text-muted-foreground">
-      The export uses severity, module, action, actor, entity type, entity identifier and IST date filters from the newest event,
-      with a 1,000-row cap and an explicit CSV footer if truncated.
-    </p>
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <span className="text-muted-foreground">IST date shortcuts:</span>
       <Link href={collegeActivityTodayHref(data.query,new Date())}
@@ -117,6 +110,9 @@ export default async function CollegeActivityPage({
             placeholder="Summary, entity or action text"
             className="min-h-11 md:min-h-9" />
         </label>
+        <details className="min-w-0 md:col-span-2 lg:col-span-4" open={Boolean(data.query.actorUserId || data.query.actorName || data.query.subjectType || data.query.subjectId || data.query.from || data.query.to || (data.query.pageSize && data.query.pageSize !== "25"))}>
+          <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Activity log filters</summary>
+          <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Actor user UUID
           <Input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
@@ -160,6 +156,8 @@ export default async function CollegeActivityPage({
             <option value="50">50 events</option>
           </Select>
         </label>
+          </div>
+        </details>
         <div className="flex flex-wrap items-end gap-2 md:col-span-2 lg:col-span-4">
           <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">
             Apply filters
@@ -174,8 +172,8 @@ export default async function CollegeActivityPage({
       <DataTable rows={data.items} getRowKey={item=>item.event.id} caption="College activity events"
         columns={[
           {key:"occurred",header:"Occurred (IST)",mobilePriority:"secondary",cell:item=>when(item.event.occurredAt)},
-          {key:"actor",header:"Actor",mobilePriority:"primary",cell:item=>collegeActivityActor(item.actor)},
-          {key:"event",header:"Event / entity",mobilePriority:"secondary",cell:item=><>
+          {key:"actor",header:"Actor",mobilePriority:"secondary",cell:item=>collegeActivityActor(item.actor)},
+          {key:"event",header:"Event / entity",mobilePriority:"primary",cell:item=><>
             <p className="font-semibold text-foreground">{item.event.summary}</p>
             <p className="mt-1 text-xs text-muted-foreground">{collegeActivityAction(item.event.eventType)} · {item.event.subjectType}</p>
             <p className="mt-1 text-xs text-muted-foreground">{collegeActivityItem(item.event)}</p>
@@ -184,7 +182,7 @@ export default async function CollegeActivityPage({
             <Link href={"/college/activity/" + encodeURIComponent(item.event.id)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View event</Link>},
         ]}
-        empty={<EmptyState title="No matching activity" description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred."/>}/>
+        empty={<EmptyState title="No matching activity" description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred." action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>} />}/>
     </section>
     <nav aria-label="Activity history pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
@@ -193,6 +191,13 @@ export default async function CollegeActivityPage({
         Older activity
       </Link> : <span className="text-muted-foreground">No older matching events</span>}
     </nav>
+    <p className="text-xs text-muted-foreground">
+      Important shows high- and critical-importance events. Category views remain college-scoped; Everything includes all importance levels.
+    </p>
+    <p className="text-xs text-muted-foreground">
+      The export uses severity, module, action, actor, entity type, entity identifier and IST date filters from the newest event,
+      with a 1,000-row cap and an explicit CSV footer if truncated.
+    </p>
     <p className="text-xs text-muted-foreground">
       Audit results are immutable persisted events. Detail metadata is sanitized before display.
       Search filters are scoped to the signed-in College Admin; this page has no write actions.
