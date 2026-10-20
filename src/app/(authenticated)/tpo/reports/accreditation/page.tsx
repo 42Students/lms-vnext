@@ -4,6 +4,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
+import {Disclosure} from "@/components/ui/disclosure";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import { DataTable } from "@/components/ui/data-table";
@@ -66,28 +67,27 @@ export default async function TpoAccreditationReportPage({
   );
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Accreditation export"
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/accreditation"].description}
-        actions={selectedBatch&&studentReport&&studentReport.rows.length>0?
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><PageBackLink href="/tpo/reports" label="All reports" />{selectedBatch&&studentReport&&studentReport.rows.length>0?
           <a href={"/api/placements/reports?"+query.toString()}
-           className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
+           className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white sm:w-auto md:min-h-9">
            Export student list CSV
           </a>:
-          <span aria-disabled="true" role="status" className="inline-flex min-h-11 min-[768px]:min-h-9 cursor-not-allowed items-center rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground">
+          <span aria-disabled="true" role="status" className="inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground sm:w-auto md:min-h-9">
            Export student list CSV — {selectedBatch?"No placed students":"Pick a batch first"}
           </span>
-        }
+        }</div>}
       />
-      <PageBackLink href="/tpo/reports" label="All reports" />
       <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <section aria-labelledby="section-naac-5-2-1-placed-students" id="accreditation-batch" className="space-y-3 border-t border-border pt-5">
        <h2 id="section-naac-5-2-1-placed-students" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">NAAC 5.2.1 · Placed students</h2>
        <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
-       <form role="search" aria-label="reports accreditation filters" method="get" className="flex flex-wrap items-end gap-3">
+       <form role="search" aria-label="reports accreditation filters" method="get" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
          <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-[6px] block min-h-11 min-[768px]:min-h-9">
           <option value="">Pick a batch</option>
@@ -96,12 +96,12 @@ export default async function TpoAccreditationReportPage({
         </label>
         {report.selectedSeasonId&&<Input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
         {report.selectedJobId&&<Input type="hidden" name="jobId" value={report.selectedJobId}/>}
-        <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9">Show students</Button>
+        <Button variant="secondary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Show students</Button>
        </form>
        {batchId&&!selectedBatch&&<Alert tone="error">Choose a batch from this college.</Alert>}
        {selectedBatch&&studentReport?.rows.length===0?<Alert tone="info">No placed students in this batch. Export is unavailable until a recorded placement exists.</Alert>:null}
        {studentReport&&<>
-        {completeness?<div role="group" aria-label="NAAC and NIRF completeness" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+        {completeness?<div role="group" aria-label="NAAC and NIRF completeness" className="min-w-0 space-y-2 border-y border-border py-4">
          <h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</h3>
          <ul className="grid gap-1 text-sm min-[768px]:grid-cols-2">{completeness.fields.map(field=>
           <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
@@ -152,13 +152,9 @@ export default async function TpoAccreditationReportPage({
         </p>
       </section>
 
-      <section
-        aria-label="Accreditation data completeness"
-        className="border-t border-border py-5"
-      >
-        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
-          Completeness preflight
-        </h2>
+      <Disclosure title="Completeness preflight" ariaLabel="Accreditation data completeness" className="border-y border-border py-3">
+        <div className="min-w-0 pt-3">
+        
         <p className="mt-2 text-sm text-body">
           The following warnings are included in the exported CSV.
           Blank denominator/rate cells mean unavailable, not zero.
@@ -168,7 +164,8 @@ export default async function TpoAccreditationReportPage({
             <li key={issue}>{issue}</li>
           ))}
         </ul>
-      </section>
+        </div>
+      </Disclosure>
 
       <section aria-labelledby="section-evidence-preview" className="space-y-3">
         <h2 id="section-evidence-preview" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
