@@ -52,7 +52,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
   {open?<div id="admin-college-bulk-import-panel" role="region" aria-label="Bulk Import" className="min-w-0 space-y-[var(--lms-space-3)]">
    <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Organization
     <Select className="min-h-11 w-full md:min-h-9" value={organizationId} disabled={busy}
-     onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
+     onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);setResults([]);setError("");}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
    <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">CSV (name, code, city, state, country)
