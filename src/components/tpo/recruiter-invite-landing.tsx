@@ -185,7 +185,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         Contact details are shared only as the placement cell allows.
       </p>
 
-      <div className="mt-5 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4 text-sm text-body">
+      <div className="mt-5 min-w-0 space-y-2 border-y border-[var(--lms-canvas-border)] py-3 text-sm leading-6 text-body [overflow-wrap:anywhere]">
         <p><strong>Contact:</strong> {invite.contactName}</p>
         {invite.designation ? <p><strong>Designation:</strong> {invite.designation}</p> : null}
       </div>
@@ -238,11 +238,11 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
       {actionError ? <div ref={errorRef} tabIndex={-1} className="mt-4 outline-none"><InlineNotice tone="error" message={actionError} /></div> : null}
 
-      <div className="mt-5 space-y-2">
+      <div className="mt-5 space-y-2 border-t border-[var(--lms-canvas-border)] pt-4">
         <Button type="button" className="min-h-11 w-full md:min-h-9" variant="secondary" disabled={busy} onClick={() => void answer("not-hiring")}>
           Not hiring from this college this season
         </Button>
-        <Button type="button" className="min-h-11 w-full md:min-h-9" variant="secondary" disabled={busy} onClick={() => void answer("unsubscribe")}>
+        <Button type="button" className="min-h-11 w-full md:min-h-9" variant="ghost" disabled={busy} onClick={() => void answer("unsubscribe")}>
           Stop contacting me
         </Button>
       </div>
