@@ -7,7 +7,7 @@
  * accounts.json: { "<role>": { "uid": "...", "prefixes": ["/tpo"] } }   (uids only, never secrets)
  * env: E2E_AUTH_SECRET (read from .env.local), BASE_URL (default http://localhost:8080)
  */
-import { chromium, type BrowserContext } from "@playwright/test";
+import { chromium, request as pwRequest, type BrowserContext } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -108,17 +108,43 @@ const measure = `(allowed) => {
       const px = parseFloat(v); if (px > 0 && px < 100 && !radii.has(px)) add("radius", v, el, corner);
     }
   }
-  return { elements: n, title: document.title, violations: Object.values(found), text: (document.body.innerText || "").replace(/\\s+/g, " ").trim().slice(0, 140), h1: [...document.querySelectorAll("h1")].map((h) => { const s = getComputedStyle(h); return s.fontSize + "/" + s.fontWeight + "/" + s.color; }) };
+
+  const geo = {};
+  const bump = (k, label) => { const g = geo[k] || (geo[k] = {}); g[label] = (g[label] || 0) + 1; };
+  const vis = (el) => { const r = el.getBoundingClientRect(); const cs2 = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs2.visibility !== 'hidden' && cs2.display !== 'none'; };
+  for (const b of document.body.querySelectorAll('[data-slot=button]')) { if (!vis(b)) continue; const r = b.getBoundingClientRect(), c = getComputedStyle(b); bump('button', b.dataset.variant + ' h' + Math.round(r.height) + ' r' + c.borderTopLeftRadius + ' fs' + c.fontSize + ' fw' + c.fontWeight + ' pl' + c.paddingLeft); }
+  for (const i of document.body.querySelectorAll('input,select,textarea')) { if (!vis(i) || ['checkbox','radio','hidden','file','range','color'].includes(i.type)) continue; const r = i.getBoundingClientRect(), c = getComputedStyle(i); bump(i.tagName.toLowerCase(), 'h' + Math.round(r.height) + ' r' + c.borderTopLeftRadius + ' fs' + c.fontSize + ' pl' + c.paddingLeft + ' b' + c.borderTopColor); }
+  for (const t of document.body.querySelectorAll('th')) { if (!vis(t)) continue; const c = getComputedStyle(t); bump('th', 'fs' + c.fontSize + ' fw' + c.fontWeight + ' pt' + c.paddingTop + ' pl' + c.paddingLeft + ' bg' + c.backgroundColor + ' c' + c.color); }
+  for (const t of document.body.querySelectorAll('td')) { if (!vis(t)) continue; const c = getComputedStyle(t); bump('td', 'fs' + c.fontSize + ' pt' + c.paddingTop + ' pl' + c.paddingLeft + ' bb' + c.borderBottomColor); }
+  for (const el of document.body.querySelectorAll('div,section,article,aside')) { if (!vis(el)) continue; const c = getComputedStyle(el); const rad = parseFloat(c.borderTopLeftRadius); if (rad >= 8 && parseFloat(c.borderTopWidth) === 1 && c.backgroundColor === 'rgb(255, 255, 255)') bump('card', 'r' + c.borderTopLeftRadius + ' pad' + c.paddingTop + '/' + c.paddingLeft + ' b' + c.borderTopColor + ' sh' + (c.boxShadow === 'none' ? 'none' : 'shadow')); }
+  for (const h of document.body.querySelectorAll('h2,h3')) { if (!vis(h)) continue; const c = getComputedStyle(h); bump(h.tagName.toLowerCase(), 'fs' + c.fontSize + ' fw' + c.fontWeight + ' c' + c.color); }
+
+  const iw = window.innerWidth;
+  const inScroller = (el) => { let p = el.parentElement; while (p && p !== document.body) { const o = getComputedStyle(p).overflowX; const pr = p.getBoundingClientRect(); if ((o === 'auto' || o === 'scroll' || o === 'hidden') && pr.right <= iw + 1) return true; p = p.parentElement; } return false; };
+  const offenders = [];
+  for (const el of document.body.querySelectorAll('*')) { const r = el.getBoundingClientRect(); if (r.width < 1 || r.height < 1) continue; const c = getComputedStyle(el); if (c.position === 'fixed' || c.visibility === 'hidden' || c.display === 'none') continue; if (r.right > iw + 1 && !inScroller(el)) { const cls = (typeof el.className === 'string' ? el.className : '').split(/s+/).filter(Boolean).slice(0, 2).join('.'); offenders.push(el.tagName.toLowerCase() + (cls ? '.' + cls : '') + ' right=' + Math.round(r.right) + ' w=' + Math.round(r.width)); if (offenders.length >= 4) break; } }
+  const taps = [];
+  if (iw < 768) for (const el of document.body.querySelectorAll('[data-slot=button], input, select, textarea')) { if (['hidden','checkbox','radio','file'].includes(el.type)) continue; const r = el.getBoundingClientRect(); if (r.width < 1 || r.height < 1) continue; if (r.height < 44 || r.width < 44) { const c = getComputedStyle(el); if (c.visibility === 'hidden' || c.display === 'none') continue; taps.push(el.tagName.toLowerCase() + ' ' + Math.round(r.width) + 'x' + Math.round(r.height) + ' ' + ((el.innerText || el.getAttribute('aria-label') || el.placeholder || '').trim().slice(0, 18))); } }
+  const responsive = { iw, scrollWidth: document.documentElement.scrollWidth, overflowPx: Math.max(0, document.documentElement.scrollWidth - iw), offenders, tapCount: taps.length, tapSamples: taps.slice(0, 4) };
+  return { elements: n, title: document.title, violations: Object.values(found), geo, responsive, text: (document.body.innerText || "").replace(/\\s+/g, " ").trim().slice(0, 140), h1: [...document.querySelectorAll("h1")].map((h) => { const s = getComputedStyle(h); return s.fontSize + "/" + s.fontWeight + "/" + s.color; }) };
 }`;
 
 async function main() {
-  const accounts = JSON.parse(fs.readFileSync(accountsFile, "utf8")) as Record<string, { uid: string; prefixes: string[] }>;
+  const accounts = JSON.parse(fs.readFileSync(accountsFile, "utf8")) as Record<string, { uid: string; prefixes: string[]; login?: string }>;
   const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
   const report: any = { when: new Date().toISOString(), allowedCounts: { colors: colors.size, radii: radii.size, sizes: sizes.size }, routes: {} as any };
   for (const [role, acct] of Object.entries(accounts)) {
     if (only && role !== only) continue;
-    const ctx: BrowserContext = await browser.newContext({ viewport: { width: 1280, height: 800 } });
-    await ctx.addCookies([
+    const vp = (process.env.VP || "1280x800").split("x").map(Number);
+    const ctx: BrowserContext = await browser.newContext({ viewport: { width: vp[0], height: vp[1] } });
+    if (acct.login) {
+      // real OTP login (privileged roles reject the e2e identity cookie); dev-only test OTP from .env.local, never printed
+      const rctx = await pwRequest.newContext({ baseURL: BASE, extraHTTPHeaders: { Origin: BASE } });
+      const st: any = await (await rctx.post("/api/auth/login/start", { data: { channel: "PHONE", contact: "+" + acct.login } })).json().catch(() => ({}));
+      if (st.attemptId) await rctx.post("/api/auth/login/verify", { data: { attemptId: st.attemptId, code: env.AUTH_TEST_OTP, ...(st.requiresSecondFactor ? { secondCode: env.AUTH_TEST_OTP } : {}) } });
+      await ctx.addCookies((await rctx.storageState()).cookies);
+      await rctx.dispose();
+    } else await ctx.addCookies([
       { name: "lms_e2e_identity", value: acct.uid, url: BASE, httpOnly: true, sameSite: "Lax" },
       { name: "lms_e2e_secret", value: SECRET!, url: BASE, httpOnly: true, sameSite: "Lax" },
     ]);
