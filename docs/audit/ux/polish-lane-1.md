@@ -255,3 +255,11 @@
 **Problems fixed (8):** pill list nested three ghost buttons horizontally and overflowed; long view names compressed action buttons; save action undersized at 375; clear-all danger text floated above saved views; success link notice remained after editing name; list lacked continuous legacy row dividers; summary focus cue inconsistent; every row used isolated bordered cards. Converted to compact 2/3-column hairline list, touch-sized save and row actions, bounded text, moved Clear all after entries, cleared stale clipboard success on edits, enhanced summary focus. Names, labels/ARIA, limit eight, localStorage and URLs preserved.
 
 **Files:** `src/components/placements/tpo-drive-saved-views.tsx`, queue, proof. No CI.
+
+## Surface 43 — Joining outcome update form
+
+**Reviewed:** accepted offer PENDING vs recorded correction flows, Joined/Deferred/Did not join, conditional date/reason/correction reason, form validity, guarded PUT, explicit confirmation, busy/success/error with refresh, 375/768 and shared Disclosure/Dialog/form primitives. No execution or CI.
+
+**Problems fixed (8):** finalized offers exposed correction form at all times; dense two-column form felt unfinished when no change intended; note textareas too short; conditional fields didn't indicate required status; confirmation lacked date and outcome summary; every choice inherited destructive red styling; phone form hierarchy lacked a clear disclosure task; long correction controls increased list height. Kept pending offer edit visible by default, collapsed correction behind native disclosure, enlarged note areas, added required attributes, made modal show selected outcome/date while styling Did not join as destructive and positive states primary. All guards, endpoint, payload, IDs and wording retained.
+
+**Files:** `src/components/placements/tpo-joining-update-form.tsx`, queue, proof. No CI.
