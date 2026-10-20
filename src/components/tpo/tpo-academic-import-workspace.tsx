@@ -147,7 +147,7 @@ export function TpoAcademicImportWorkspace() {
             {key:"include",header:"Include",mobilePriority:"action",cell:row=>
               <Checkbox aria-label={"Include "+row.studentCode}
                 checked={!excluded.includes(row.studentCode)}
-                disabled={row.match!=="WILL_UPDATE"}
+                disabled={busy || row.match!=="WILL_UPDATE"}
                 onChange={event=>setExcluded(current=>event.target.checked
                   ?current.filter(id=>id!==row.studentCode):[...current,row.studentCode])}/>},
             {key:"id",header:"Student ID",mobilePriority:"primary",cell:row=><span className="break-all font-mono text-xs">{row.studentCode}</span>},
@@ -157,7 +157,7 @@ export function TpoAcademicImportWorkspace() {
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.match==="WILL_UPDATE"?"success":"warning"}>{row.match==="WILL_UPDATE"?"Will update":"Can't match"}</StatusBadge>},
           ]}/>
         <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
-          <Checkbox checked={preview.filter(row => row.match === "WILL_UPDATE")
+          <Checkbox disabled={busy} checked={preview.filter(row => row.match === "WILL_UPDATE")
             .every(row => !excluded.includes(row.studentCode))}
             onChange={event => setExcluded(event.target.checked
               ? preview.filter(row => row.match !== "WILL_UPDATE").map(row => row.studentCode)
