@@ -1,6 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
 import progressStyles from "@/components/courses/learner-course-progress.module.css";
-import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -35,15 +34,20 @@ export default async function LearnerCourseProgressPage({
         ← Course overview
       </Link>
       <PageHeader title="Course progress by lesson" />
-      <section className="grid gap-3 md:grid-cols-2 lg:grid-cols-4" aria-label="Progress summary">
-        {[
-          { label: "Overall", value: progress.summary.overallPercent + "%" },
-          { label: "Lessons", value: progress.summary.lessonsCompleted + "/" + progress.summary.lessonsTotal },
-          { label: "Assignments", value: progress.summary.assignmentsCompleted + "/" + progress.summary.assignmentsTotal },
-          { label: "Quizzes", value: progress.summary.quizzesCompleted + "/" + progress.summary.quizzesTotal },
-        ].map((metric) => (
-          <StatTile key={metric.label} label={metric.label} value={metric.value} />
-        ))}
+      <section aria-label="Progress summary" className="border-y border-border py-4">
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-4 md:grid-cols-4">
+          {[
+            { label: "Overall", value: progress.summary.overallPercent + "%" },
+            { label: "Lessons", value: progress.summary.lessonsCompleted + "/" + progress.summary.lessonsTotal },
+            { label: "Assignments", value: progress.summary.assignmentsCompleted + "/" + progress.summary.assignmentsTotal },
+            { label: "Quizzes", value: progress.summary.quizzesCompleted + "/" + progress.summary.quizzesTotal },
+          ].map((metric) => (
+            <div key={metric.label} className="min-w-0">
+              <dt className="text-xs font-medium text-muted-foreground">{metric.label}</dt>
+              <dd className="mt-1 break-words text-2xl font-semibold tabular-nums text-foreground">{metric.value}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
       {!progress.learningPathPublished ? (
         <EmptyState title="Learning path not published"
@@ -75,11 +79,11 @@ export default async function LearnerCourseProgressPage({
                   label={lesson.name + " completion"} value={lesson.percentage} maximum={100} unit="percent" />
               ) : null}
               {lesson.items.length ? (
-                <ul className="mt-4 grid gap-2 md:grid-cols-2">
+                <ul className="mt-3 divide-y divide-border">
                   {lesson.items.map((item) => (
                     <li key={item.kind + ":" + item.id}
-                      className="flex min-w-0 items-start justify-between gap-2 rounded-[var(--lms-radius-card)] border border-border p-3">
-                      <div className="min-w-0">
+                      className="flex min-w-0 flex-col items-start justify-between gap-2 py-3 sm:flex-row sm:gap-3">
+                      <div className="min-w-0 flex-1">
                         <p className="break-words text-sm font-medium text-foreground">{item.title}</p>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {item.kind.toLowerCase()}
@@ -95,7 +99,7 @@ export default async function LearnerCourseProgressPage({
               <Link
                 href={"/learn/courses/" + encodeURIComponent(deliveryId) +
                   "/roadmap?lesson=" + encodeURIComponent(lesson.id)}
-                className="mt-4 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Open in learning path →
               </Link>
             </article>
