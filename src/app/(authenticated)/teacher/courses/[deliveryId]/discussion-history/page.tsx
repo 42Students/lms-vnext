@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -55,15 +56,7 @@ export default async function FacultyDiscussionHistoryPage({
             {item.actorMembershipId?"Recorded member action":"System/unknown actor"}
           </p>
         </li>)}</ol>}
-    <nav aria-label="Discussion history pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-      <div className="flex gap-3">
-        {data.page>1&&<Link href={facultyDiscussionHistoryHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-        {data.page<data.totalPages&&<Link href={facultyDiscussionHistoryHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-      </div>
-    </nav>
+    <Pagination label="Discussion history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyDiscussionHistoryHref({...data.query,page})} />
     <p className="text-xs text-muted-foreground">
       This is an audit of registered pin changes, deletions and Faculty replies, not a full message history.
       A learner may delete their own message; deletion events cannot prove that Faculty

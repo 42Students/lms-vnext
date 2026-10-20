@@ -162,15 +162,7 @@ export default async function MentorTaskReviewsPage({
           className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Return to first matching page
         </Link>:null}
-      <nav aria-label="Task review pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-body">Page {data.page} of {data.totalPages}</p>
-        <div className="flex gap-3">
-          {data.page > 1 && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link"
-            href={mentorTaskReviewHref({...data.query, page: data.page - 1})}>Previous</Link>}
-          {data.page < data.totalPages && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link"
-            href={mentorTaskReviewHref({...data.query, page: data.page + 1})}>Next</Link>}
-        </div>
-      </nav>
+      <Pagination label="Task review pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTaskReviewHref({...data.query,page})}/>
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
       This view reads registered task submissions only.
