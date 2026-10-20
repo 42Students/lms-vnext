@@ -27,11 +27,11 @@ export function TpoKeyboardShortcuts({showTrigger=true}:{showTrigger?:boolean}={
   return ()=>{document.removeEventListener("keydown",onKey);if(timeout)clearTimeout(timeout);};
  },[router,open]);
  return <>{showTrigger?<Button variant="secondary" type="button" aria-label="Keyboard shortcuts" onClick={()=>setOpen(true)}
-  className="min-h-9">?</Button>:null}
+  className="min-h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">?</Button>:null}
   <Drawer title="Keyboard shortcuts" open={open} onOpenChange={setOpen}
    description="Press a key, then the next one. They do nothing while you are typing in a box.">
    <h3 className="font-semibold">Go to</h3>
-   <ul className="mt-2 grid grid-cols-2 gap-2 text-sm">{Object.entries(go).map(([key])=>
+   <ul className="mt-2 grid min-w-0 grid-cols-1 gap-2 text-sm md:grid-cols-2">{Object.entries(go).map(([key])=>
     <li key={key}><kbd>G</kbd> <kbd>{key.toUpperCase()}</kbd> · {goLabels[key]}</li>)}</ul>
    <h3 className="mt-4 font-semibold">Create</h3>
    <p>N then L · New recruiter lead</p><p>N then D · New drive</p>
