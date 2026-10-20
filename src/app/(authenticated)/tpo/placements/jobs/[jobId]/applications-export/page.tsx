@@ -23,7 +23,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
  const query=new URLSearchParams({stage:result.stage,search:result.search,channel:result.channel,eligibility:result.eligibility,flag:result.flag,sort:result.sort,submittedWithin:result.submittedWithin}).toString();
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  return <div className="min-w-0 space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Applicants</Link>
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Applicants</Link>
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
    actions={<a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download

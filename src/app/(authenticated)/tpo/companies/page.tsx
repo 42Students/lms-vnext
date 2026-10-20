@@ -63,7 +63,7 @@ function invalidCompanyFilters(){
   <p className="mt-2 text-sm text-body">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
-  <Link href="/tpo/companies" className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+  <Link href="/tpo/companies" className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
    Clear filters
   </Link>
  </section>;
@@ -129,13 +129,13 @@ export default async function TpoCompanyMemoryPage({
             <TpoCompanyCreateForm />
             <Link
               href="/tpo/companies/archived"
-              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
             >
               Archived relationships
             </Link>
             <Link
               href="/tpo/recruiters"
-              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
             >
               Recruiter leads
             </Link>
@@ -164,7 +164,7 @@ export default async function TpoCompanyMemoryPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0"
+            className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0 md:border-b-0"
           >
             <p className="text-sm font-semibold text-body">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
@@ -188,14 +188,14 @@ export default async function TpoCompanyMemoryPage({
               maxLength={150}
               defaultValue={query.search ?? ""}
               placeholder="Company name or website"
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)]"
             />
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Sort by
             <Select name="sort" defaultValue={query.sort}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)]">
               <option value="NAME">Company name</option>
               <option value="CONTACTS">Most contacts</option>
               <option value="DRIVES">Most drives</option>
@@ -207,7 +207,7 @@ export default async function TpoCompanyMemoryPage({
             <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)]"
             >
               <option value="25">25</option>
               <option value="50">50</option>
@@ -285,7 +285,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Previous
               </Link>
@@ -299,7 +299,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Next
               </Link>
