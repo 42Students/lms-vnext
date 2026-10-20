@@ -28,7 +28,7 @@ export default async function AccountSecurityPage() {
       {rows === null ? (
         <ErrorState description="Your current session could not be listed."
           action={<Link href="/account/security"
-            className="inline-flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Try again</Link>}/>
+            className="inline-flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Try again</Link>}/>
       ) : rows.length === 0 ? (
         <EmptyState
           title="No active devices"
