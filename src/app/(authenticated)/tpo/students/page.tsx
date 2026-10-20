@@ -259,7 +259,7 @@ export default async function TpoStudentsPage({
 
   if (urlError || !parsed.success) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4 md:space-y-6">
         <PageHeader
           title={TPO_OWNER_PAGE_COPY.students}
           description="Everyone in placements, from the batches you made eligible."
@@ -407,7 +407,7 @@ export default async function TpoStudentsPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
         title={TPO_OWNER_PAGE_COPY.students}
         description="Everyone in placements, from the batches you made eligible."

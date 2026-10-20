@@ -25,7 +25,7 @@ export default async function TpoCompanyTeamPage({params}:{
   throw error;
  }
  // The read model preserves history for archived relationships; only ACTIVE can post.
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader  title={result.status==="READY"?
    "Company discussion · "+result.companyName:"Company discussion"}
    description="A college-private conversation about this company. Recruiters and students cannot read it."/>
