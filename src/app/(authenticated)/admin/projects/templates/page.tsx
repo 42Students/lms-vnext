@@ -60,11 +60,11 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">New template →</Link>:undefined}/>
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
-   <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
+   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Template title or slug
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Status
+   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Status
     <Select name="status" defaultValue={data.query.status} className="min-h-11 w-full min-w-0 md:min-h-9">
      {statuses.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
