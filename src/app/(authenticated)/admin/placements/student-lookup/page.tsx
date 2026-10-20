@@ -28,7 +28,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
   <PageHeader title="Student placement lookup"
    actions={<>
     <PageBackLink href="/admin/placements" label="Placement overview" />
-    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Analytics</Link>
+    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Analytics</Link>
    </>}/>
   <form action="/admin/placements/student-lookup" role="search" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end">
    <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:max-w-xl">Name, roll number or email
@@ -40,11 +40,11 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
   </form>
   {invalid?<ErrorState title="Invalid student search"
    description="Enter 3 to 150 characters in a single search to find students in the selected college."
-   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear search</Link>}/>:null}
+   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear search</Link>}/>:null}
   {lookup&&!lookup.ok?<ErrorState title="Student placement lookup unavailable"
    description="The selected college's student placement records could not be loaded. Your search was kept."
    action={<Link href={"/admin/placements/student-lookup?q="+encodeURIComponent(q)}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry student search</Link>}/>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry student search</Link>}/>:null}
   {!ctx.adminScope?.collegeId?<div id="placement-student-scope-hint" role="status">
    <EmptyState title="Select a college to continue" description="Choose a college in the header above to look up student placements."/>
   </div>:null}
