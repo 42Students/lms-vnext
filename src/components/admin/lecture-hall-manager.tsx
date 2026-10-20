@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
 import { Dialog } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -189,7 +190,7 @@ export function LectureHallManager({
           description={emptyState?.description ?? "Add the rooms your college teaches in, so classes can be scheduled into them."}
         />
       ) : (
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable empty={<EmptyState title="No lecture halls" description="No records to show."/>}
           columns={[
             { key: "name", header: LECTURE_HALL_COPY.columns.name, mobilePriority: "primary", cell: (hall: HallRow) => <span className="font-semibold text-foreground">{hall.name}</span> },
             { key: "type", header: LECTURE_HALL_COPY.columns.type, cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },
@@ -265,9 +266,9 @@ export function LectureHallManager({
       >
         <div className="space-y-3">
           {formError ? (
-            <p role="alert" className="m-0 border-l-2 border-error bg-error-subtle px-4 py-3 text-sm text-error">
+            <Banner tone="error">
               {formError}
-            </p>
+            </Banner>
           ) : null}
           <div>
             <label className={field} htmlFor="hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
