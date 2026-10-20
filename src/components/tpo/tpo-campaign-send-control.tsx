@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -34,10 +36,10 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
  </p>;
  return <section className="space-y-3 border-t border-border pt-4" aria-label="Campaign send">
   <h2 className="font-semibold">Send this campaign</h2>
-  {!ready?<p role="alert" className="text-sm text-body">
+  {!ready?<Alert tone="warning">
    Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.
    {" "}{CAMPAIGN_DELIVERY_UNAVAILABLE}
-  </p>:<p className="text-sm text-body">
+  </Alert>:<p className="text-sm text-body">
    This sends one email to each currently eligible recipient, excluding opt-outs, bounced and Not now leads.
    The system rechecks every contact before attempting delivery.
   </p>}
@@ -52,6 +54,6 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
    {outcome.sent} accepted by provider · {outcome.failed} failed · {outcome.skipped} skipped.
    Provider acceptance does not prove delivery.
   </p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
