@@ -10,6 +10,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Disclosure } from "@/components/ui/disclosure";
 import { collegeIdSchema } from "@/modules/colleges/validation";
 import { requirePermission } from "@/modules/permissions/policy";
 import {parseAdminModuleDetailPageParams} from "@/modules/module-access/admin-module-detail-query";
@@ -109,36 +110,25 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <LearnerModuleAccessDrawer collegeId={college.id}/>
 
-      <section className="border-t border-border pt-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
-              Why this learner sees a module
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-body">
-              Find an active learner in this college and trace the
-              module-access decision through membership, academic
-              scopes, college, organization, global rules and defaults.
-            </p>
-          </div>
-          <Link
-            href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white"
-          >
-            Open learner access trace →
-          </Link>
-        </div>
-      </section>
+      <nav aria-label="Learner access explanation" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
+        <p className="max-w-2xl text-sm leading-6 text-body">
+          Find an active learner to trace the module-access decision through membership, academic scopes, college, organization, global rules and defaults.
+        </p>
+        <Link href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
+          Open learner access trace →
+        </Link>
+      </nav>
 
       <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
         View audited college module changes →
       </Link>
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <section className="grid min-w-0 gap-x-6 gap-y-0 md:grid-cols-2 xl:grid-cols-3">
         {modules.map((decision) => (
           <article
             key={decision.module}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6"
+            className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 md:py-5"
           >
             <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               {decision.label}
@@ -166,8 +156,9 @@ export default async function SuperAdminCollegeModuleAccessPage({
         ))}
       </section>
 
-      <section className="border-t border-border pt-6" aria-label="Placements college access impact">
+      <section className="min-w-0 border-t border-border pt-4" aria-label="Placements college access impact">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Placements: college-level access impact</h2>
+        <Disclosure title="View Placements impact" className="mt-2" contentClassName="pb-3 pt-2">
         {modules.filter(decision=>decision.module==="placements").map(decision=>(
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
             <p>Effective policy in {college.name}: <strong>{decision.enabled?"On":"Off"}</strong></p>
@@ -176,6 +167,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             <p className="text-xs text-muted-foreground">Turning access off does not delete historical jobs, applications or learner placement records.</p>
           </div>
         ))}
+        </Disclosure>
       </section>
 
       <form method="get" className="flex flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch" aria-label="Filter stored module overrides">
@@ -192,6 +184,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
               <option key={key} value={key}>{MODULE_SCOPE_LABELS[key]}</option>)}
           </Select>
         </label>
+        <Disclosure title="More override filters"
+          defaultOpen={Boolean(result.lockFilter==="LOCKED" || result.stateFilter!=="ALL" || result.scopeIdFilter)}
+          className="min-w-0"
+          contentClassName="grid min-w-0 gap-3 pb-3 pt-2 sm:grid-cols-2 xl:grid-cols-3">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lock state
           <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">All stored rules</option><option value="LOCKED">Locked rules only</option>
@@ -205,7 +201,8 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact scope ID (optional)
           <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 md:min-h-9"/>
         </label>
-        <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Filter overrides</Button>
+        </Disclosure>
+        <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto min-[768px]:min-h-9">Filter overrides</Button>
         <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Reset</Link>
       </form>
 
@@ -316,6 +313,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         </nav>
       </section>
 
+      <Disclosure title="Policy notes" className="mt-4" contentClassName="pt-2 pb-3">
       <p className="text-xs leading-5 text-muted-foreground">
         The college matrix and this hierarchy are read-only.
         A lower-level configured override is not necessarily
@@ -329,6 +327,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         exact legacy in-page access-trace interactions
         remain outside this partial implementation.
       </p>
+      </Disclosure>
     </div>
   );
 }
