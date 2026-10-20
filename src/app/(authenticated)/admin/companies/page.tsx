@@ -135,7 +135,7 @@ export default async function SuperAdminCompaniesPage({
         ["Visible now", data.visibleCompaniesOnPage],["With drives",data.relationshipsWithDrivesOnPage],
         ["Relationships", data.relationships],["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
         <div key={label} className="min-w-0 border-b border-border p-4">
-          <p className="m-0 text-xs text-muted-foreground">{label}</p>
+          <p className="m-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
         </div>)}
     </div>
