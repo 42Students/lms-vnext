@@ -31,7 +31,7 @@ export function ActionPagination({
   onPageChange(target);
  };
  return <nav data-slot="action-pagination" aria-label={label}
-  className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]",className)}>
+  className={cx("flex min-w-0 flex-wrap items-center justify-center gap-1 md:justify-start md:gap-[var(--lms-space-2)]",className)}>
    <Button variant="secondary" type="button" className={base} disabled={disabled||!hasPrevious}
     onClick={()=>go(current-1)} aria-label="Previous page">Previous</Button>
    <span role="status" className="px-1 text-[12px] font-medium text-[var(--lms-neutral-500)] md:sr-only">
@@ -40,7 +40,7 @@ export function ActionPagination({
    {pages.map(target=>target===current?
     <span key={target} aria-current="page" aria-label={"Current page "+target+" of "+total}
      className={cx("inline-flex items-center justify-center",base,
-      "cursor-default border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]")}>
+      "cursor-default border-[var(--lms-primary)] bg-white text-[var(--lms-primary)]")}>
      {target}
     </span>:
     <Button key={target} variant="secondary" type="button" disabled={disabled}

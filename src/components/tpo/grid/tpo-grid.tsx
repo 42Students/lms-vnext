@@ -29,7 +29,7 @@ import {gridClipboardTsv} from "./grid-export";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const quartz=themeQuartz.withParams({
- accentColor:"var(--lms-button-primary)",
+ accentColor:"var(--lms-primary)",
  backgroundColor:"var(--lms-white)",
  foregroundColor:"var(--lms-neutral-700)",
  borderColor:"var(--lms-canvas-border)",
@@ -181,7 +181,7 @@ export function TpoGrid<Row>({
   });
   const selectedIds=new Set(selection?.selected??[]);
   const selectedVisible=visible.filter(row=>selectedIds.has(rowKey(row)));
-  const copied=selectedVisible.length?selectedVisible:visible;
+  const copied=selection?.selected.length?selectedVisible:visible;
   if(!navigator.clipboard?.writeText){setNotice("Clipboard unavailable. Use Export CSV instead.");return;}
   void navigator.clipboard.writeText(gridClipboardTsv(display,copied,true))
    .then(()=>setNotice("Copied "+copied.length+" authorized row(s) as TSV."))
@@ -194,6 +194,8 @@ export function TpoGrid<Row>({
    pinned:"left",lockPinned:true,suppressMovable:true,resizable:false,sortable:false,
    headerComponent:()=> <Checkbox aria-label="Select all filtered students"
     checked={currentVisibleIds().length>0&&currentVisibleIds().every(id=>selection.selected.includes(id))}
+    indeterminate={currentVisibleIds().some(id=>selection.selected.includes(id))&&
+      !currentVisibleIds().every(id=>selection.selected.includes(id))}
     onChange={event=>selectAll(event.target.checked)}/>,
    cellRenderer:(p:{data?:Row})=>p.data?<Checkbox
     aria-label={"Select "+(openPrimary?.ariaLabel(p.data)??rowKey(p.data))}

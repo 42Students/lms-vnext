@@ -1,8 +1,4 @@
-import { PageHeader } from "@/components/ui/page-header";
-
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 export default function DepartmentsLoading() {
-  return <section className="space-y-4" aria-busy="true" aria-label="Loading departments">
-    <PageHeader title="Departments" />
-    <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5 text-sm text-body">Loading departments…</p>
-  </section>;
+  return <GracefulPageLoading label="Loading departments" shape="directory"/>;
 }

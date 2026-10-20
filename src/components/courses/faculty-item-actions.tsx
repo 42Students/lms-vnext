@@ -86,8 +86,8 @@ export function FacultyItemActions({
         {actions.map((action) => (
           <Button
             key={action}
-            size="sm"
-            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+            size="md"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant={
               action === "ARCHIVE"
                 ? "ghost"

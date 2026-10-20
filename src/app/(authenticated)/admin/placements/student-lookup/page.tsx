@@ -18,7 +18,11 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
  // Invalid lengths/duplicate query keys are recoverable and NEVER passed to
  // strict service validation, which would otherwise throw from a hostile URL.
  const q=query??"";
- const data=query&&ctx.adminScope?.collegeId?await lookupCollegeStudentPlacement(ctx,query):null;
+ const lookup=query&&ctx.adminScope?.collegeId?
+  await lookupCollegeStudentPlacement(ctx,query)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const})):null;
+ const data=lookup&&lookup.ok?lookup.value:null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
    actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Analytics</Link>}/>
@@ -32,7 +36,11 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
   </form>
   {invalid?<ErrorState title="Invalid student search"
    description="Enter 3 to 150 characters in a single search to find students in the selected college."
-   action={<Link href="/admin/placements/student-lookup" className="font-semibold text-primary-text">Clear search</Link>}/>:null}
+   action={<Link href="/admin/placements/student-lookup" className="font-semibold text-primary-text underline">Clear search</Link>}/>:null}
+  {lookup&&!lookup.ok?<ErrorState title="Student placement lookup unavailable"
+   description="The selected college's student placement records could not be loaded. Your search was kept."
+   action={<Link href={"/admin/placements/student-lookup?q="+encodeURIComponent(q)}
+     className="font-semibold text-primary-text underline">Retry student search</Link>}/>:null}
   {!ctx.adminScope?.collegeId?<div id="placement-student-scope-hint" role="status">
    <EmptyState title="Select a college to continue" description="Choose a college in the header above to look up student placements."/>
   </div>:null}
@@ -49,11 +57,11 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
     getRowKey={row=>row.uxKey}
     columns={[
       {key:"job",header:"Company / drive",mobilePriority:"primary",cell:row=>row.company+" · "+row.job},
-      {key:"application",header:"Application",mobilePriority:"secondary",cell:row=>row.applicationStatus},
-      {key:"offer",header:"Offer",mobilePriority:"secondary",cell:row=>row.offerStatus??"None"},
+      {key:"application",header:"Application",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="SUBMITTED"?"info":row.applicationStatus==="WITHDRAWN"?"neutral":"warning"}>{row.applicationStatus}</StatusBadge>},
+      {key:"offer",header:"Offer",mobilePriority:"secondary",cell:row=>row.offerStatus?<StatusBadge tone={row.offerStatus==="ACCEPTED"?"success":row.offerStatus==="DECLINED"?"neutral":"info"}>{row.offerStatus}</StatusBadge>:"None"},
       {key:"joining",header:"Joining",mobilePriority:"secondary",cell:row=>row.joining??"Not recorded"},
     ]}
-    empty={<p className="text-sm text-body">No applications found.</p>}
+    empty={<EmptyState title="No applications found" description="No applications found."/>}
    />
    {person.truncated?<p className="text-xs text-muted-foreground">Showing newest 100 application/offer records.</p>:null}
   </section>)}
