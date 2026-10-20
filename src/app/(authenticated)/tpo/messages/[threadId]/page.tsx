@@ -1,6 +1,7 @@
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
+import {EmptyState} from "@/components/ui/empty-state";
 import bubbleStyles from "@/components/tpo/tpo-conversation-bubble.module.css";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -26,10 +27,9 @@ export default async function TpoRecruiterConversationPage({params}:{
  const data=await getTpoRecruiterThreadDetail(context,threadId);
  if(!data)notFound();
  return <div className="min-w-0 space-y-4">
-  <PageHeader title="Recruiter conversation" actions={<PageBackLink href="/tpo/messages" label="All conversations"/>}/>
-  <p className="text-sm text-body">{data.total} messages · Showing the latest 100</p>
-  <section role="log" aria-live="polite" aria-busy={false} aria-label="Conversation messages" className="space-y-3">
-   {data.messages.length===0?<p role="status">No messages yet.</p>:data.messages.map((item,index)=>
+  <PageHeader title="Recruiter conversation" description={data.total+" messages · Showing the latest 100"} actions={<PageBackLink href="/tpo/messages" label="All conversations"/>}/>
+  <section role="log" aria-live="polite" aria-busy={false} aria-label="Conversation messages" className="min-w-0 space-y-3 border-b border-border pb-4">
+   {data.messages.length===0?<EmptyState title="No messages yet."/>:data.messages.map((item,index)=>
     <div key={item.id} className="space-y-2">
      {index===0||new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"})
        .format(data.messages[index-1].createdAt)!==
@@ -38,9 +38,8 @@ export default async function TpoRecruiterConversationPage({params}:{
        {new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)}
       </p>:null}
     <article className={bubbleStyles.bubble+" "+(item.senderType==="TPO"?bubbleStyles.mine:"")}>
-     <p className="text-xs text-muted-foreground">{item.senderType==="TPO"?"You":"Recruiter"}</p>
      <p className="text-xs font-semibold text-muted-foreground">
-      {item.senderType==="RECRUITER"?"Recruiter":"Placement cell"} ·
+      {item.senderType==="RECRUITER"?"Recruiter":"You"} ·
       {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.createdAt)} IST
      </p>
      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground">{item.body}</p>
@@ -48,6 +47,6 @@ export default async function TpoRecruiterConversationPage({params}:{
     </article></div>)}
   </section>
   <TpoRecruiterMessageReply threadId={threadId} actorUserId={context.user.id} unread={data.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)} />
-  <p className="text-xs text-muted-foreground">Reading and sending require explicit confirmation.</p>
+  <p className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">Reading and sending require explicit confirmation.</p>
  </div>;
 }
