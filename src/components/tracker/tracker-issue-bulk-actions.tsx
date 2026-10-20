@@ -55,36 +55,36 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
       }
     }finally{lock.current=false;setBusy(false);setConfirmOpen(false);}
   }
-  return <section aria-label="Bulk issue status" className="space-y-3 border-b border-border pb-4">
-    <div className="flex flex-wrap items-center gap-3">
-      <Button variant="secondary" type="button" disabled={busy} className="min-h-11 md:min-h-9" onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
+  return <section aria-label="Bulk issue status" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
+    <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
+      <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
        >
         {selecting?"Close selection":"Select issues"}
       </Button>
       {selecting?<span role="status" className="text-sm">{selected.length} selected</span>:null}
     </div>
-    {selecting?<div className="space-y-3">
-      <div className="flex flex-wrap gap-3">
-        <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" disabled={busy} onClick={()=>setSelected(rows.map(x=>x.publicId))}
+    {selecting?<div className="min-w-0 space-y-[var(--lms-space-4)]">
+      <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] md:flex md:flex-wrap">
+        <Button variant="ghost" className="min-h-11 w-full underline text-primary-text md:min-h-9 md:w-auto" type="button" disabled={busy} onClick={()=>setSelected(rows.map(x=>x.publicId))}
          >Select this page</Button>
-        <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" disabled={busy} onClick={()=>setSelected([])}
+        <Button variant="ghost" className="min-h-11 w-full underline text-primary-text md:min-h-9 md:w-auto" type="button" disabled={busy} onClick={()=>setSelected([])}
          >Clear selection</Button>
       </div>
-      <div role="group" aria-label="Issues on this page" className="grid gap-2 md:grid-cols-2">
-        {rows.map(row=><label key={row.publicId} className="flex min-h-11 items-center gap-2 text-sm md:min-h-9">
+      <div role="group" aria-label="Issues on this page" className="grid min-w-0 max-h-64 grid-cols-1 gap-0 overflow-y-auto overscroll-contain border-y border-border md:grid-cols-2 md:gap-x-[var(--lms-space-4)]">
+        {rows.map(row=><label key={row.publicId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] border-b border-border/50 py-[var(--lms-space-2)] text-sm md:min-h-9">
           <Checkbox checked={selected.includes(row.publicId)} disabled={busy}
             onChange={()=>toggle(row.publicId)}/>
           {row.publicId} <span className="text-muted-foreground">({row.status.toLowerCase().replaceAll("_"," ")})</span>
         </label>)}
       </div>
-      <div className="flex min-w-0 flex-wrap items-end gap-3">
-        <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold md:w-[220px] md:basis-auto">Set status to…
+      <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,220px)_auto]">
+        <label className="grid min-w-0 gap-[6px] text-sm font-semibold">Set status to…
           <Select value={status} onChange={event=>setStatus(event.target.value as BugStatus)}
             disabled={busy} className="min-h-11 md:min-h-9">
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
-        <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>void apply()}
+        <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start" onClick={()=>void apply()}
          >
           {busy?"Updating…":"Apply to "+selected.length+" selected"}
         </Button>

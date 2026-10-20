@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
+import { Alert } from "@/components/ui/alert";
 import { courseApiError } from "./learner-course-api";
 
 type Action = "PUBLISH" | "CLOSE" | "ARCHIVE";
@@ -81,17 +84,17 @@ export function FacultyItemActions({
 
   return (
     <>
-    <div className="mt-3">
-      <div className="flex flex-wrap gap-2">
-        {actions.map((action) => (
+    <div className="mt-[var(--lms-space-3)] min-w-0 space-y-[var(--lms-space-2)]">
+      <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] md:flex md:flex-wrap md:items-center">
+        {actions.filter(action => action !== "ARCHIVE" || actions.length === 1).map((action) => (
           <Button
             key={action}
             size="md"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            className={actions.length === 1 ? "col-span-2 min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]" : "min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"}
             variant={
               action === "ARCHIVE"
                 ? "ghost"
-                : "secondary"
+                : action === "PUBLISH" ? "primary" : "secondary"
             }
             disabled={active !== null}
             onClick={() => action === "PUBLISH" ? void run(action) : setConfirmAction(action)}
@@ -101,14 +104,12 @@ export function FacultyItemActions({
               : actionLabel(action)}
           </Button>
         ))}
+        {actions.includes("ARCHIVE") && actions.length > 1 ? <Dropdown trigger="More" label="Item actions" align="end" mobileSheet triggerClassName="w-full md:!min-h-9">
+          <Menu className="w-full min-w-0"><MenuItem disabled={active !== null} onClick={() => setConfirmAction("ARCHIVE")}>Archive</MenuItem></Menu>
+        </Dropdown> : null}
       </div>
       {error ? (
-        <p
-          role="alert"
-          className="mt-2 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error">{error}</Alert>
       ) : null}
     </div>
     <ConfirmDialog
