@@ -38,7 +38,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
                     {alert.title}
 
                   </p>
-                  <p className="mt-1 whitespace-pre-wrap break-words text-[13px] leading-[1.5] text-body sm:text-[14px]">{alert.body}</p>
+                  <p className="mt-1 whitespace-pre-wrap break-words text-[13px] leading-[1.5] text-body md:text-[14px]">{alert.body}</p>
                 </div>
                 <time dateTime={learnerAlertSafeDate(alert.createdAt).iso??undefined}
                   className="shrink-0 text-xs text-muted-foreground">{learnerAlertSafeDate(alert.createdAt).label}</time>

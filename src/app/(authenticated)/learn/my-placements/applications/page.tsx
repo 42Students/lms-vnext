@@ -71,7 +71,7 @@ export default async function LearnerPlacementApplicationsPage() {
       
       {!roundsRead.available ? <Alert tone="error">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
-        <Link href="/learn/my-placements/applications" className="ml-2 font-semibold text-primary-text underline">Retry round shortcuts</Link>
+        <Link href="/learn/my-placements/applications" className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry round shortcuts</Link>
       </Alert> : null}
       <Suspense fallback={<PageLoading label="Loading application filters" variant="form" count={2} />}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}
