@@ -60,9 +60,9 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
   {result.ready?<nav aria-label="Access history pages" className="flex min-w-0 flex-wrap items-center gap-3 text-[13px]">
    <span>{result.total} events · Page {result.page} of {result.totalPages}, 25 per page</span>
    {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
-    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Previous</Link>:null}
+    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
    {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
-    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">Next</Link>:null}
+    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
   </nav>:null}
  </div>;
 }
