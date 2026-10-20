@@ -811,7 +811,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-title"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Title
             </label>
@@ -827,7 +827,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-start"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Starts
             </label>
@@ -843,7 +843,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-end"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Ends
             </label>
@@ -859,7 +859,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-location"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Location
             </label>
@@ -877,7 +877,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-course"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Course · optional
             </label>
@@ -906,7 +906,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-faculty"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Faculty · optional
             </label>

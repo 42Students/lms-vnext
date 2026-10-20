@@ -502,7 +502,7 @@ export function LearnerClassSchedule({
             </span>
           </div>
 
-          <label className={styles.actions+" text-xs font-semibold text-body"}>
+          <label className={styles.actions+" text-xs font-semibold text-body"} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             View
             <Select
               value={view}
@@ -527,7 +527,7 @@ export function LearnerClassSchedule({
 
         {courseBasePath === "/learn/courses" ? (
           <div className={styles.filters}>
-            <label className="min-w-0 flex-1 text-xs font-semibold text-body">Find sessions
+            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find sessions
               <Input type="search" value={sessionSearch} maxLength={100}
                 onChange={event=>setSessionSearch(event.target.value)}
                 placeholder="Class title, faculty, location or course"
@@ -537,7 +537,7 @@ export function LearnerClassSchedule({
               >
               Clear search
             </Button> : null}
-            <label className="min-w-44 text-xs font-semibold text-body">Session kind
+            <label className="min-w-44 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session kind
               <Select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
                 className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm text-foreground">
                 <option value="ALL">All sessions</option>
@@ -563,7 +563,7 @@ export function LearnerClassSchedule({
           </div>
         ) : null}
         {sections.length > 1 ? (
-          <label className="mt-4 block max-w-sm border-t border-border pt-4 text-xs font-semibold text-body">
+          <label className="mt-4 block max-w-sm border-t border-border pt-4 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Section
             <Select value={sectionId} onChange={event => setSectionId(event.target.value)}
               aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 md:min-h-9 w-full">

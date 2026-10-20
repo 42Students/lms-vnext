@@ -132,11 +132,11 @@ export function CollegeRecurringPreview({
         </Alert>
       ) : (
         <form onSubmit={preview} className="space-y-4 border-t border-border pt-4">
-          <label className="grid gap-1 text-sm font-semibold text-body">Session title
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session title
             <Input required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
               className="min-h-11 min-w-0 md:min-h-9"/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Class
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
             <Select required value={sectionId} onChange={(e) => onClass(e.target.value)}
               className="min-h-11 min-w-0 md:min-h-9">
               <option value="">Select a class</option>
@@ -144,7 +144,7 @@ export function CollegeRecurringPreview({
             </Select>
           </label>
           {selected ? <p className="text-xs text-muted-foreground">Academic period: {selected.periodStart} to {selected.periodEnd}</p> : null}
-          <label className="grid gap-1 text-sm font-semibold text-body">Course (optional)
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course (optional)
             <Select value={deliveryId} onChange={e => setDeliveryId(e.target.value)}
               disabled={!sectionId} className="min-h-11 min-w-0 md:min-h-9">
               <option value="">No course linked</option>
@@ -153,21 +153,21 @@ export function CollegeRecurringPreview({
             </Select>
           </label>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            <label className="grid gap-1 text-sm font-semibold text-body">From
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From
               <Input type="date" required value={from} min={selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setFrom(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
-            <label className="grid gap-1 text-sm font-semibold text-body">To (up to 93 days)
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 93 days)
               <Input type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setTo(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
-            <label className="grid gap-1 text-sm font-semibold text-body">Start (IST)
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
               <Input type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
-            <label className="grid gap-1 text-sm font-semibold text-body">End (IST)
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
               <Input type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
@@ -187,14 +187,14 @@ export function CollegeRecurringPreview({
             </div>
           </fieldset>
           <div className="grid gap-3 md:grid-cols-2">
-            <label className="grid gap-1 text-sm font-semibold text-body">Faculty (optional)
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
               <Select value={facultyId} onChange={(e) => setFacultyId(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No faculty selected</option>
                 {faculty.map((f) => <option key={f.id} value={f.id}>{f.displayName || "Unnamed faculty"}</option>)}
               </Select>
             </label>
-            <label className="grid gap-1 text-sm font-semibold text-body">Lecture hall (optional)
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lecture hall (optional)
               <Select value={hallId} onChange={(e) => setHallId(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No lecture hall selected</option>

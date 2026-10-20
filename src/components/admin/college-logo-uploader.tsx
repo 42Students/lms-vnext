@@ -77,7 +77,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   {(savedUrl||currentUrl)?<Card as="div" className="w-fit p-3">
    <img src={savedUrl||currentUrl!} alt="Current college logo" className="aspect-square w-24 max-w-full object-contain"/>
   </Card>:null}
-  {canEdit?<><label className="block text-sm font-semibold text-body print:hidden">Select logo to crop
+  {canEdit?<><label className="block print:hidden text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Select logo to crop
     <Input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy}
      onChange={e=>select(e.target.files?.[0]??null)}
      className="mt-2 min-h-11 md:min-h-9 w-full"/>
@@ -87,13 +87,13 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
       <img src={preview} alt="Selected logo crop preview" className="h-full w-full object-cover"
        style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
     </div>
-    <label className="block text-sm font-semibold text-body">Horizontal crop position ({positionX}%)
+    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Horizontal crop position ({positionX}%)
      <Input aria-label="Horizontal crop position" className="block !h-auto !min-h-0 !w-full !max-w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
     </label>
-    <label className="block text-sm font-semibold text-body">Vertical crop position ({positionY}%)
+    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Vertical crop position ({positionY}%)
      <Input aria-label="Vertical crop position" className="block !h-auto !min-h-0 !w-full !max-w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
     </label>
-    <label className="block text-sm font-semibold text-body">Zoom ({Math.round(zoom*100)}%)
+    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Zoom ({Math.round(zoom*100)}%)
      <Input aria-label="Crop zoom" className="block !h-auto !min-h-0 !w-full !max-w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
     </label>
     <Button type="button" disabled={busy} onClick={()=>void upload()}

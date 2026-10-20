@@ -98,19 +98,19 @@ export default async function IndependentFindingsPage({searchParams}:{
    }))}/>
   <form role="search" aria-label="tracker audit findings filters" method="get" className="grid min-w-0 gap-2 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
    <Input type="hidden" name="view" value={parsed.view}/>
-   <label className="text-sm font-semibold">Search
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
-   <label className="text-sm font-semibold">Area
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area
     <Input name="area" defaultValue={parsed.area} maxLength={80} placeholder="All areas"/></label>
-   <label className="text-sm font-semibold">Status (multiple)
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status (multiple)
     <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
     </Select></label>
-   <label className="text-sm font-semibold">Severity (multiple)
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Severity (multiple)
     <Select name="severity" multiple size={4} defaultValue={parsed.severities}>
      {FINDING_SEVERITIES.map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
-   <label className="text-sm font-semibold">Kind (multiple)
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind (multiple)
     <Select name="kind" multiple size={4} defaultValue={parsed.kinds}>
      {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>

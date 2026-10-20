@@ -144,16 +144,16 @@ export function PersonOnboardDialog({
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {forcedRole?<div className="grid min-w-0 gap-[var(--lms-space-3)] md:col-span-2 md:grid-cols-2">
-            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">First Name
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First Name
               <Input className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required onChange={e=>setFirstName(e.target.value)} placeholder="First name"/>
             </label>
-            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Last Name
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last Name
               <Input className="min-h-11 md:min-h-9" value={lastName} maxLength={120} required onChange={e=>setLastName(e.target.value)} placeholder="Last name"/>
             </label>
           </div>:<div className="md:col-span-2">
             <label
               htmlFor={`onboard-name-${collegeId}`}
-              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Display name
             </label>
@@ -171,7 +171,7 @@ export function PersonOnboardDialog({
           <div>
             <label
               htmlFor={`onboard-phone-${collegeId}`}
-              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Phone
             </label>
@@ -189,7 +189,7 @@ export function PersonOnboardDialog({
           <div>
             <label
               htmlFor={`onboard-email-${collegeId}`}
-              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Email · optional
             </label>
