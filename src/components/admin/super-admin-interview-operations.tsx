@@ -23,7 +23,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
  const csv=useMemo(()=>superAdminInterviewCsv(exported),[exported]);
  const unique=(values:string[])=>[...new Set(values)].sort();
  const choices=(label:string,items:string[],value:string,change:(v:string)=>void)=>
-  <label className="grid min-w-36 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{label}
+  <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{label}
    <Select className="min-h-11 min-[768px]:min-h-9" value={value}
     onChange={e=>change(e.target.value)}>
     <option value="ALL">All</option>{items.map(i=><option key={i} value={i}>{i}</option>)}
@@ -31,27 +31,34 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
   </label>;
  const dateInIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
  const inIst=(iso:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(iso));
- return <section aria-label="Interview operations" className="space-y-4 border-b border-border pb-5">
+ return <section aria-label="Interview operations" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="font-semibold text-foreground">Interview operations</h2>
-  <dl className="grid grid-cols-2 divide-x divide-border border-y border-border sm:grid-cols-4">
+  <dl className="grid min-w-0 grid-cols-2 border-y border-border sm:grid-cols-4">
    {([["Scheduled",events.filter(x=>x.status==="SCHEDULED").length],["Today",events.filter(x=>dateInIst(x.startsAt)===today).length],
     ["Companies",new Set(events.map(x=>x.companyName)).size],["Possible venue conflicts",conflicts.size]] as const)
-    .map(([label,value])=><div key={label} className="min-w-0 p-3">
+    .map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-border p-[var(--lms-space-3)]">
      <dt className="text-xs text-muted-foreground">{label}</dt><dd className="text-xl font-semibold tabular-nums">{value}</dd>
     </div>)}
   </dl>
-  <div className="flex flex-wrap items-end gap-3 print:hidden">
-   {choices("Type",unique(events.map(x=>x.kind)),kind,setKind)}
-   {choices("Status",unique(events.map(x=>x.status)),status,setStatus)}
-   {choices("Mode",unique(events.map(calendarMode)),mode,setMode)}
-   {choices("Department",unique(events.map(x=>x.departmentName??"Not recorded")),department,setDepartment)}
-   {choices("Sort",["DATE","COMPANY"],sort,setSort)}
-   <label className="flex min-h-11 items-center gap-2 text-sm text-body">
-    <Checkbox checked={conflictsOnly} onChange={e=>setConflictsOnly(e.target.checked)}/>
-    Possible conflicts only
-   </label>
-   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
-     setKind("ALL");setStatus("ALL");setMode("ALL");setDepartment("ALL");setConflictsOnly(false);setSort("DATE");
+  <div className="min-w-0 space-y-[var(--lms-space-3)] print:hidden">
+   <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
+    {choices("Type",unique(events.map(x=>x.kind)),kind,setKind)}
+    {choices("Status",unique(events.map(x=>x.status)),status,setStatus)}
+   </div>
+   <details className="min-w-0" open={mode!=="ALL"||department!=="ALL"||sort!=="DATE"||conflictsOnly}>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+    <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
+     {choices("Mode",unique(events.map(calendarMode)),mode,setMode)}
+     {choices("Department",unique(events.map(x=>x.departmentName??"Not recorded")),department,setDepartment)}
+     {choices("Sort",["DATE","COMPANY"],sort,setSort)}
+     <label className="flex min-h-11 items-center gap-[var(--lms-space-2)] text-sm text-body">
+      <Checkbox checked={conflictsOnly} onChange={e=>setConflictsOnly(e.target.checked)}/>
+      Possible conflicts only
+     </label>
+    </div>
+   </details>
+   <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
+    setKind("ALL");setStatus("ALL");setMode("ALL");setDepartment("ALL");setConflictsOnly(false);setSort("DATE");
    }}>Clear filters</Button>
   </div>
   <p role="status" aria-live="polite" className="text-sm text-body">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
@@ -77,7 +84,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
       {row.status}{conflicts.has(row.id)?<strong className="block text-warning">{conflicts.get(row.id)?.join("; ")}</strong>:null}
      </>},
      {key:"venue",header:"Venue",mobilePriority:"secondary",cell:row=>row.venue??"Not recorded"},
-     {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap gap-2">
+     {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)]">
       {row.jobId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
        href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</Link>:null}
       <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
