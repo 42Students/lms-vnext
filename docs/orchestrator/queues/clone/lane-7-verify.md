@@ -44,16 +44,16 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/components/placements/tpo-general-requests-panel.tsx`
 - [x] `src/components/placements/tpo-remind-non-applicants.tsx`
 - [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/groups/college-group-detail-writes.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/components/admin/people-pagination.tsx`
-- [ ] `src/components/auth/session-response-guard.tsx`
-- [ ] `src/components/hr/recruiter-display-name-editor.tsx`
-- [ ] `src/components/projects/learner-board-task-index.tsx`
-- [ ] `src/components/public/offline-banner.tsx`
-- [ ] `src/components/tracker/audit-finding-filter-persistence.tsx`
-- [ ] `src/components/ui/form-section.tsx`
-- [ ] `src/components/ui/page-canvas.tsx`
+- [x] `src/components/groups/college-group-detail-writes.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/components/admin/people-pagination.tsx`
+- [x] `src/components/auth/session-response-guard.tsx`
+- [x] `src/components/hr/recruiter-display-name-editor.tsx`
+- [x] `src/components/projects/learner-board-task-index.tsx`
+- [x] `src/components/public/offline-banner.tsx`
+- [x] `src/components/tracker/audit-finding-filter-persistence.tsx`
+- [x] `src/components/ui/form-section.tsx`
+- [x] `src/components/ui/page-canvas.tsx`
 - [ ] `src/app/(authenticated)/admin/error.tsx`
 - [ ] `src/app/(authenticated)/teach/loading.tsx`
 - [ ] `src/app/(authenticated)/college-admin/not-found.tsx`
