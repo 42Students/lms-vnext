@@ -10,7 +10,7 @@ export default function Error({reset}:{
     <p className="mt-2 text-sm text-body">
       The authorization read failed. This is not evidence that Section notices are available.
     </p>
-    <Button type="button" variant="secondary" type="button" onClick={reset}
+    <Button type="button" variant="secondary" onClick={reset}
       className="mt-4 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text">
       Retry
     </Button>

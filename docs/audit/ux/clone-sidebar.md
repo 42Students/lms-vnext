@@ -3,7 +3,7 @@
 Owner: chat-19. Source: `docs/design/ui-clone-checklist.md:8-18`, `docs/design/old-lms-shell.css`, `docs/design/old-lms-shell-spec.md` and `docs/design/legacy-styles/`. The owner runs runtime/CI and screenshot comparison later; **none was run here**.
 
 - [ ] **B3 Sidebar** (missing: command-level full-repository grep proof and exact historical icon/artwork equivalence; browser icon/hover/tablet verification is deferred to checklist J. See refreshed source-value and import evidence below.)
-- [ ] **B4 Footer, progress and route transitions** (role-specific mobile footer and 20s recovery are source-matched; the four-dot spinner now follows Ant Design v5 dimensions and per-dot animation, but the thin intent bar remains a modern adaptation; executable repo-wide greps and browser comparison are outstanding.)
+- [ ] **B4 Footer, progress and route transitions** (nonlegacy 3px progress strip removed; the legacy white full-page four-dot spinner, mobile footer and 20s recovery are source-matched or documented adaptations. Final checkout-wide greps, historic TPO More behavior and rendered comparison remain outstanding.)
 
 ## B3 value proof (legacy → vNext)
 
@@ -58,8 +58,8 @@ Source parse of `shell-model.ts:45-86,122-320`: **63 declared navigation rows / 
 |---|---|---|---|
 | Sidebar footer geometry | `old-lms-shell.css:22`: z2, margin-top auto, 25px 16px | `app-shell.tsx:86-99`, `sidebar-legacy.css:235` | Geometry match; copy unverified |
 | TPO bottom mobile footer | No comparable TPO-specific footer markup in original legacy sources; shared 64px + safe-area `.ln-footer` at `components___antddesign.scss:912-936` | `src/components/tpo/tpo-mobile-footer.tsx:27-49`, `legacy-mobile-footer.css:27-34` matches shared shell styling, retains TPO link content | Shared skin matched, **TPO-specific visual contents unverified** |
-| Top route progress bar | No top strip specified in `old-lms-shell.css:1-101`; original `lms2-fe/src/pages/_app.js:1-34` has no route event progress | `route-progress.tsx:14-69`, `route-progress.css:7-26`: *new accessible indeterminate adapter* using legacy teal #26bac7 | Implemented; **not a historic pixel match** |
-| Full-page loader | `legacy-styles/components___common.scss:1008-1019` fixed fullscreen z999, rgba(255,255,255,.99) | Route-specific skeleton/loading components | Open: not equivalent |
+| Top route progress bar | No top strip in `old-lms-shell.css:1-101`; original `lms2-fe/src/pages/_app.js:1-34` has no route event progress | `route-progress.tsx:84-100` now renders **only** the fullscreen legacy loader after slow route intent; `route-progress.css` no longer contains `.lms-route-progress` | **Absent as in legacy**; 700ms delayed reveal is a modern navigation policy, not a measured legacy timing |
+| Full-page loader | `legacy-styles/components___common.scss:1008-1019` fixed fullscreen z999, rgba(255,255,255,.99) | `route-progress.css:6-60` fullscreen z999 white .99 and AntD large 4-dot spinner; `route-progress.tsx:84-100` status wrapper | Source geometry and spinner matched; rendered pixel comparison still open |
 | Learner page entrance | `legacy-styles/components___learn-layout.scss:49-69` opacity 0→1, translateY(8→0), 250ms ease-out | `route-transition.css:4-7,20-24`, `route-transition.tsx:11-12,39-40` learner-only | CSS values source-match |
 | Learner route exit | `legacy-styles/components___learn-layout.scss:71-86` 220ms opacity, 260ms transform, .78 opacity, translateY(6px) scale(.998) | `route-transition.css:15-24`, `route-transition.tsx:12-38` capture-phase Link intent | CSS source-match; browser/back states unverified |
 | Reduced motion | `legacy-styles/components___learn-layout.scss:577-585` disables transitions | `route-transition.css:26-29` disables animation/transition/transform | Source match |
@@ -98,7 +98,7 @@ Every edited sidebar-related JSX opening and closing tag has been source reviewe
 
 1. Complete repository-wide grep counts and resolve any duplicate shell/sidebar markup before B3 tick.
 2. Obtain running-legacy screenshot/asset checks for desktop collapsed/hover and tablet, especially icon artwork and precise canvas x, plus mobile drawers.
-3. Find authoritative old top progress-bar and TPO mobile footer behavior; align `src/components/shell/route-transition.tsx` and loading/page exit states. Leave B4 unticked until values and states are proven.
+3. Top strip absent in old LMS and now removed from vNext. Confirm live Ant spin, 700ms navigation reveal, TPO More behavior and route exits against the running legacy UI; leave B4 unticked until actual pixels and state proof are present.
 4. HR pages are owned by chat-15; only sweep HR files explicitly unowned in their queue, without overwriting chat-15 work.
 
 **Historic handoff superseded:** route-transition has been updated; see latest continuation below.
@@ -753,3 +753,67 @@ mobile footer and shared shell wrappers were re-read by source.
 Only confirmed remote-source findings are reported. Under the strict
 tick rule, B3 and B4 remain **[ ]** until the owner executes the
 generated ledger and verifies browser pixels and interactions.
+
+
+## 2026-10-20 B3/B4 continuation: synced main, legacy rail corrections, 18 source files
+
+**Branch safety:** `chatgpt/chat-19-b` was 0 commits ahead and 1,695 behind `main` (compare at `96efdcc5dcf3b3f7bc54a85ff033923e6ca06c84`); safely fast-forwarded only the lane branch. No other branch/HR-owned page was written. The following is a bounded **source** audit; it does not certify old/new browser pixels.
+
+### Two source-value corrections, opening/hover/mobile state
+
+| Property | Legacy source file:line / exact value | vNext file:line / exact value | Result |
+|---|---|---|---|
+| Admin menu item, normal/hover/active vertical inset | `docs/design/old-lms-shell.css:27-28`: admin menu `padding-top:12px; padding-bottom:12px`, min-height44 | `src/components/shell/sidebar-legacy.css:122-124`: same; previous base rule was 10px | Fixed; 12px in normal/hover/active |
+| TPO/recruiter menu item, normal/hover/active inset | `docs/design/old-lms-shell.css:30-31`: `padding:10px 12px`, radius8, min-height44 | `sidebar-legacy.css:111`: `padding:10px 12px` retained outside admin-specific override | Still matches |
+| Learner desktop right inset | `docs/design/old-lms-shell.css:24-25` + `legacy-styles/components___learn-layout.scss:516-521`: `$learn-s2 = 16px` at ≥768 | `src/components/shell/sidebar-legacy.css:25`: `padding-right:16px` at ≥768 | Fixed; 96→256 border-box width unchanged |
+| Explicit visual-role choice | Legacy `.admin-sidebar-panel` and `.learn-layout` style by account; not by arbitrary destination | `sidebar-nav.tsx:58-96`: derives visual skin from **visible role rows** | Super Admin overview at /dashboard gets admin rules; College Admin /tpo/home shortcut keeps college rules |
+| Rail collapsed/hover width and easing | `old-lms-shell.css:13,18`: 96→256px, .15s cubic-bezier(.2,0,0,1) | `sidebar-legacy.css:10-12`: same | Unchanged |
+| Phone drawer dimensions | `components___antddesign.scss:305-359`: 82%, max300, visible text | `sidebar-legacy.css:201`, `mobile-navigation.tsx:39` | Still matches, tablet conversion at 768 |
+
+### 18-file complete scoped source review
+
+Each listed file was fetched in full from `chatgpt/chat-19-b`, and its control/overlay literal occurrences were counted directly in the returned source. This is a **per-file connected-source scan**, **not** an executed checkout `git grep`; results are not evidence that all remaining `src/app`/TPO component code is clean. No other lane's ownership was altered.
+
+| File checked | Legacy property reference | Current vNext source anchor | State, breakpoints and scoped grep counts |
+|---|---|---|---|
+| `src/components/shell/app-shell.tsx` | `old-lms-shell.css:13,18,22` | `app-shell.tsx:76` | Flex-push, footer box, sidebar hidden at ≤767 via md:flex; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/sidebar-nav.tsx` | `old-lms-shell.css:27-53` | `sidebar-nav.tsx:96` | One role-scoped navigation for phone and desktop; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/sidebar-legacy.css` | `old-lms-shell.css:13-53; learn-layout.scss:516-521` | `sidebar-legacy.css:25` | 96→256 hover/focus desktop; learner right inset; 82vw phone drawer; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/shell-model.ts` | `docs/audit/legacy-copy-A.md; old-lms-shell.css:49-53` | `shell-model.ts:45` | Account-route keys and legacy section grouping; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/shell-nav-icons.tsx` | `old-lms-shell.css:12,34-35` | `shell-nav-icons.tsx:3` | 38×36 SVG rail mark, 20px glyphs; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/legacy-ant-paths.ts` | `old-lms-shell.css:34-35` | `legacy-ant-paths.ts:6` | SVG paths are fixed size-independent artwork; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/legacy-sidebar-active-model.ts` | `old-lms-shell.css:45-46` | `legacy-sidebar-active-model.ts:4` | Legacy teal state selected by route for phone and desktop; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/shell-counts-model.ts` | `old-lms-shell.css:39-40` | `shell-counts-model.ts:12` | Collapsed .72 bubble and expanded position styled in CSS; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/mobile-navigation.tsx` | `components___antddesign.scss:305-359` | `mobile-navigation.tsx:39` | 82vw/max300 phone drawer; closes on viewport ≥768; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/tpo-mobile-footer.tsx` | `components___antddesign.scss:912-936` | `tpo-mobile-footer.tsx:4` | Re-export avoids second TPO bottom nav; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-progress.tsx` | `components___common.scss:1008-1019` | `route-progress.tsx:90` | Full-screen slow loader present; nonhistoric top bar open; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-progress.css` | `components___common.scss:1008-1019` | `route-progress.css:35` | White fixed overlay, 4-dot Ant spin; novel 3px bar open; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-transition.tsx` | `components___learn-layout.scss:49-86` | `route-transition.tsx:55` | Learner-only exit, path change, browser Back; no query remount; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-transition.css` | `components___learn-layout.scss:49-86` | `route-transition.css:21` | 250ms entrance + 220/260ms exit, reduction opt out; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-announcer.tsx` | `No matching visual legacy rule (screen-reader only)` | `route-announcer.tsx:34` | Live route announcement, no painted footprint; raw control openings **0**, direct dialog/overlay tokens **1** |
+| `src/components/shell/learner-faculty-mobile-footer.tsx` | `components___antddesign.scss:912-936` | `learner-faculty-mobile-footer.tsx:88` | Phone-only permitted-account link inventory; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/legacy-mobile-footer.css` | `components___antddesign.scss:912-936` | `legacy-mobile-footer.css:13` | Phone 64px+safe area; hidden ≥768; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/shell-widget-boundary.tsx` | `No matching visual legacy rule (failure-only)` | `shell-widget-boundary.tsx:10` | Only mounts retry/error when widget throws; raw control openings **0**, direct dialog/overlay tokens **0** |
+
+**Source scan predicates and scope:** `<(button|select|input|textarea)(?=[ >\\n])` and `role="dialog"|fixed inset-0` on the 18 exact source paths above. Totals are **0 direct raw-control tag openings** and **1 direct hand-rolled overlay tokens** in this inspected scope. The sole native Drawer is imported from `@/components/ui/drawer`; actual overlay focus/escape is delegated to shared UI. `shell-nav-icons.tsx:3` imports `legacyAntPaths` from `./legacy-ant-paths`, and `legacy-ant-paths.ts:6` exports it.
+
+**Responsive static proof:** 320, 360, 390, and 767px: `md:flex` keeps rail hidden and native Drawer uses max300px/82vw, with icon+labels visible and touch-scroll; the new admin/learner overrides are wrapped in `@media(min-width:768px)` and have no mobile effect. At 768/1024/1280px the rail remains a relative flex sibling, pushing content from 96 to 256px on hover/focus in .15s, learner right padding is 16px, admin block padding 12px, and ordinary TPO/recruiter menu padding 10px. Phone footer remains 64px+safe-area and hidden at tablet sizes; route entrance/exits are reduced-motion aware. These are **source-rule proofs**, not browser screenshots.
+
+**Remaining strict tick prerequisites:** run `node scripts/audit/chat19-shell-grep.cjs --markdown` on the final checkout and retain its command-level complete-tree output; verify historical icon glyphs, actual desktop expanded/collapsed canvas x and 320/768/1024px drawer in a real browser; confirm historic TPO More interactions, Ant spin rendering, and the nonlegacy 3px intent bar disposition. Accordingly, **B3 [ ] and B4 [ ] stay open**. The source-only test assertions are written but no tests, code, build, lint or CI were executed.
+
+
+### 2026-10-20 final B4 source correction (supersedes earlier historic intent-bar notes)
+
+The original legacy `lms2-fe/src/pages/_app.js` does not mount a route-event top progress indicator. The 3px vNext teal `.lms-route-progress` line introduced an obvious extra pixel element and has now been removed; **no substitute top strip was added**. `route-progress.tsx` only mounts the original white 0.99-opacity fullscreen `.ln-page-loader` adapter on navigation slower than 700ms; it retains the measured 32px four-dot AntD geometry, z-index999 and reduced-motion behavior. The 700ms reveal and 20s recovery are vNext timing adaptations, not historical source matches.
+
+| Property / state | Old LMS file:line / value | Updated vNext file:line / value | Outcome |
+|---|---|---|---|
+| Top route bar, idle/fast/slow | `old-lms-shell.css:1-101` and old `src/pages/_app.js:1-34`: no top strip | `src/components/shell/route-progress.tsx:84-101`: no progressbar element; `route-progress.css:1-9`: no top bar selector | Source match (absence) |
+| Slow fullscreen overlay | `components___common.scss:1008-1019`: rgba(255,255,255,.99), fixed 100%, center, z999 | `route-progress.css:6-26`: same | Source match |
+| Four-dot size | old `Loader/loader.js:18-30` AntD large 32px | `route-progress.css:28-53`: 32px group, 14px dots, scale .75 | Source match |
+| Motion accessibility | legacy `learn-layout.scss:577-585`: suppress motion on reduced preference | `route-progress.css:60-62`: large Spin animations disabled under reduce | Equivalent accessibility rule |
+| Browser history and intent clearing | Not established from original `_app.js` CSS | `route-progress.tsx:63-82`: no loading for query/hash-only popstate; clear on pathname commit/pageshow | vNext safety adaptation, not pixel claim |
+
+**Negative source-grep proof:** scoped remote-source scan of all 27 `tests/unit/chat19*` test files found **0 positive assertions** expecting the removed top strip; two *negative* assertions appear in `tests/unit/chat19-route-progress.test.ts:13-14`. The complete-checkout ledger now has a dedicated `nonlegacy-top-strip-regressions` rule with expected **0** source matches, but it has **not** been run; the audit cannot treat an unexecuted expected zero as actual output.
+
+JSX closing audit: the route loader returned element is a single balanced `<div>…</div>`, with nested `<div>`, `<span>`, four self-closed `<i/>` and the conditional recovery `<div>` all paired; no opening-tag rename was left with a stale close tag. Imports are unchanged and `legacyAntPaths` stays explicitly imported. No build/tests/lint/CI or runtime screenshots were run. B3 and B4 stay **[ ]** until strict proof is completed.

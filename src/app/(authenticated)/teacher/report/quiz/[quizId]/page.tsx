@@ -154,7 +154,7 @@ export default async function FacultyQuizReportPage({
             return (
               <Disclosure key={bucket.label} title={<span className={styles.distribution+" min-w-0 flex-1"}>
                 <span className={styles.distributionLabel}>{bucket.label}</span>
-                <MetricBar className={styles.distributionTrack} label={bucket.label+" grade distribution"}
+                <MetricBar className={styles.distributionTrack+" "+(bucket.min>=90?styles.distributionExcellent:bucket.min>=80?styles.distributionGood:bucket.min>=70?styles.distributionFair:bucket.min>=60?styles.distributionWeak:styles.distributionPoor)} label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
                 <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}

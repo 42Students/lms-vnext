@@ -118,7 +118,7 @@ export function TpoAcademicImportWorkspace() {
       </p>
       <a download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
-        className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">
+        className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download a template
       </a>
       <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Drop a CSV file here, or click to choose" accept=".csv,text/csv" maxBytes={200_000}
@@ -127,7 +127,7 @@ export function TpoAcademicImportWorkspace() {
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
         }} rows={5} maxLength={200000}
-          className="mt-1 min-h-32 w-full min-w-0 font-mono text-xs" />
+          className="mt-1 min-h-32 w-full min-w-0 font-mono text-sm" />
       </label>
       <Button variant="secondary" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} type="button" onClick={() => void validate()}
         >
@@ -172,8 +172,8 @@ export function TpoAcademicImportWorkspace() {
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy&&!guardedPending)setConfirmOpen(value);}}
         title="Import verified academic details"
         description={"Import "+(preview?.filter(row=>row.match==="WILL_UPDATE"&&!excluded.includes(row.studentCode)).length??0)+" selected academic records? This updates their recorded CGPA and active backlogs."}
-        footer={<><Button variant="secondary" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></>}>
+        footer={<><Button variant="secondary" className="min-h-11 md:min-h-9" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+          <Button className="min-h-11 md:min-h-9" disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></>}>
         <p className="text-sm">Your academic import choices are kept below if the import cannot be completed.</p>
       </Dialog>
       {error && <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p>}

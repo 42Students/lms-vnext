@@ -5,10 +5,9 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import "./route-progress.css";
 
-/** The original LMS has a fullscreen .ln-page-loader, not a top progress
- * strip (common.scss:1008-1019; Loader/loader.js:6-35). We show a nonblocking
- * thin intent bar immediately and restore the original fullscreen spinner only
- * for slow navigation. Modern bar delay/timing is not a legacy value.
+/** Original LMS has no top progress strip. Its .ln-page-loader
+ * (common.scss:1008-1019) is the historical full-screen slow route visual.
+ * No modern indeterminate 3px bar is painted.
  */
 export function RouteProgress() {
   const pathname = usePathname();
@@ -81,13 +80,10 @@ export function RouteProgress() {
     };
   }, [pathname]);
 
-  if (!pending) return null;
-  return <>
-    <div data-slot="route-progress" className="lms-route-progress" role="progressbar"
-      aria-label="Opening page" aria-valuemin={0} aria-valuemax={100}>
-      <span aria-hidden="true" className="lms-route-progress-segment"/>
-    </div>
-    {slow ? <div data-slot="legacy-page-loader" className="lms-legacy-page-loader" role="status"
+  // No legacy top strip: the historic full-screen loader is the only
+  // route-intent visual, and only appears for a slow navigation.
+  if (!pending || !slow) return null;
+  return <div data-slot="legacy-page-loader" className="lms-legacy-page-loader" role="status"
       aria-label="Loading page">
       <div className="lms-legacy-loader-spin">
         <span className="lms-legacy-loader-dots" aria-hidden="true">
@@ -98,6 +94,5 @@ export function RouteProgress() {
           <Button type="button" variant="secondary" onClick={()=>window.location.reload()}>Reload</Button>
         </div> : null}
       </div>
-    </div> : null}
-  </>;
+    </div>;
 }

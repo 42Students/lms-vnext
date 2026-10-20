@@ -318,10 +318,10 @@
 - [ ] `src/components/college/student-class-move-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/use-college-confirmation.tsx`
 - [ ] `src/components/colleges/college-contact-profile-form.tsx`
-- [ ] `src/components/groups/college-group-actions.tsx`
-- [ ] `src/components/groups/college-group-detail-writes.tsx`
-- [ ] `src/components/groups/college-group-import-preview.tsx`
-- [ ] `src/components/groups/college-study-member-actions.tsx`
+- [ ] `src/components/groups/college-group-actions.tsx` — **SOURCE PASS (chat-4 full-file state and responsive scan; strict parity open)**
+- [ ] `src/components/groups/college-group-detail-writes.tsx` — **SOURCE PASS (chat-4 full-file state and responsive scan; strict parity open)**
+- [ ] `src/components/groups/college-group-import-preview.tsx` — **SOURCE PASS (chat-4 full-file state and responsive scan; strict parity open)**
+- [ ] `src/components/groups/college-study-member-actions.tsx` — **SOURCE PASS (chat-4 full-file state and responsive scan; strict parity open)**
 - [ ] `src/components/people/faculty-profile-editor.tsx`
 - [ ] `src/components/people/faculty-profile-metadata.tsx`
 - [ ] `src/components/people/faculty-profile-repeatable.tsx`
@@ -2937,3 +2937,87 @@ Source anchors: PageHeader:55, DataTable:138, EmptyState:128, ErrorState:56, Gra
 **STRICT TICK RULE: 0 newly checked.** Scope and props audited by reading, but repo-wide greps, computed CSS for every hover/active/focus/disabled/loading state, actual 375/767/768 responsive render and TSX parser proof are outstanding. Do not conflate scoped source review with finished pixel-level parity.
 
 **Exact next route:** `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx` source-review complete; proceed to `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx` child component `src/components/groups/college-group-import-preview.tsx`, then the next College Admin unticked component.
+
+
+### Replacement chat-4 — Four college study-group interaction components — 2026-10-20
+
+Four complete TSX files fetched after direct writes. User-visible forms now rely on shared field and modal controls rather than hand-built appearance. Data models, request payloads, RBAC/tenant server controls, optimistic tokens and copy retained. Native `window.confirm` was replaced by shared ConfirmDialog in group rule/waitlist actions; actual browser flow not executed. `src/components/ui` untouched; no typecheck, tests, CI or screenshots.
+
+**Scoped full-file grep:** `/<(button|input|select|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`, `/window\.confirm/g`. CSS breakpoints: `md:` >=768px and phone 44px through 767px. Paired opening/closing tag families compared for shared Button/Input/Select/Alert/ConfirmDialog/Dialog/EmptyState/StatusBadge and native section/div/form/li; no excess closing count. No global grep or TSX parse claimed.
+
+| File | Native visible controls | Hex | Custom overlay | `window.confirm` | Native h1 | md/sm tokens |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `src/components/groups/college-group-actions.tsx` | 0 | 0 | 0 | 0 | 0 | 8/0 |
+| `src/components/groups/college-group-detail-writes.tsx` | 0 | 0 | 0 | 0 | 0 | 2/0 |
+| `src/components/groups/college-group-import-preview.tsx` | 0 | 0 | 0 | 0 | 0 | 2/0 |
+| `src/components/groups/college-study-member-actions.tsx` | 0 | 0 | 0 | 0 | 0 | 6/0 |
+
+#### `src/components/groups/college-group-actions.tsx`
+
+| State/property | Old LMS reference/value | vNext source/value | Gap/proof |
+| --- | --- | --- | --- |
+| Page canvas/section | old-lms-shell-spec.md:18-20: white #fff, 1px border #e5e9f0, 12px radius and 24px padding; ordinary rows hairline | Inherit parent canvas and use shared Dialog/Alert/DataTable components, no nested page canvas | **Source structure checked; exact screen coordinates pending** |
+| Desktop default CTA | old-lms-shell-spec.md:22-24: 36px height, radius9, 14px font at weight650, primary #0a7c88 and white text | Shared ui/button variants with min-h-9 from md, no hand-rolled native button | **Matching token family; actual computed border/font values not screen-proof** |
+| Input and keyboard focus | legacy-styles/components___form.scss:22-36 focus-visible, :117-143 radius10, 14px/20px, tracking0.2px and focus halo | Shared Input/Select/Textarea or FileUpload with 2px teal focus-visible; input validation/required unchanged | **Source state proof only; keyboard playback not run** |
+| Hover/active/loading/disabled | legacy-styles/components___button.scss:13-24 150ms transition, :49-51 disabled | Shared Button loading/disabled/pending; ConfirmDialog present where required | **Exact old hover/active/disabled screenshots missing** |
+| Error/empty/confirmation | old-lms-pages.md:6,11-12: in-canvas feedback, no hand-rolled popup/record card | Alert(error/info/success), EmptyState and ConfirmDialog imported where relevant | **State anatomy moved to shared UI; precise legacy banner/modal pixels unmeasured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: stack <=767px, 20px title, 44px tap targets | Shared controls max-[767px] 44px; touched CTA min-h-11 md:min-h-9; flex-wrap/min-w-0 | **CSS class/source evidence; 375/767/768 rendered proof absent** |
+| Modal title, content, no duplicated card | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Dialog field Input/Textarea now min-h-11 md:min-h-9, no handwritten field chrome | **Shared Dialog already owns form heading, name/description/capacity fields preserved** |
+| Save/disabled | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Save Button loading while pending; edit/status/close/archive triggers disabled while pending | **Group version, name length 150, capacity 1–10000 and server POST/PATCH checks remain** |
+| Error/error while dialog closed | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Alert(error) inside form and after modal close; ConfirmDialog owns status-change warnings | **Inline hard-coded error texts removed** |
+| Responsive | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | All four status action buttons have min-h-11 md:min-h-9 and inherited keyboard focus | **Action row flex-wrap, form vertical and 44px phone/36px desktop CTA** |
+
+**Source anchors:** Alert 157, ConfirmDialog 164. The exact legacy hover/popup motion and keyboard sequencing cannot be certified without a browser.
+
+#### `src/components/groups/college-group-detail-writes.tsx`
+
+| State/property | Old LMS reference/value | vNext source/value | Gap/proof |
+| --- | --- | --- | --- |
+| Page canvas/section | old-lms-shell-spec.md:18-20: white #fff, 1px border #e5e9f0, 12px radius and 24px padding; ordinary rows hairline | Inherit parent canvas and use shared Dialog/Alert/DataTable components, no nested page canvas | **Source structure checked; exact screen coordinates pending** |
+| Desktop default CTA | old-lms-shell-spec.md:22-24: 36px height, radius9, 14px font at weight650, primary #0a7c88 and white text | Shared ui/button variants with min-h-9 from md, no hand-rolled native button | **Matching token family; actual computed border/font values not screen-proof** |
+| Input and keyboard focus | legacy-styles/components___form.scss:22-36 focus-visible, :117-143 radius10, 14px/20px, tracking0.2px and focus halo | Shared Input/Select/Textarea or FileUpload with 2px teal focus-visible; input validation/required unchanged | **Source state proof only; keyboard playback not run** |
+| Hover/active/loading/disabled | legacy-styles/components___button.scss:13-24 150ms transition, :49-51 disabled | Shared Button loading/disabled/pending; ConfirmDialog present where required | **Exact old hover/active/disabled screenshots missing** |
+| Error/empty/confirmation | old-lms-pages.md:6,11-12: in-canvas feedback, no hand-rolled popup/record card | Alert(error/info/success), EmptyState and ConfirmDialog imported where relevant | **State anatomy moved to shared UI; precise legacy banner/modal pixels unmeasured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: stack <=767px, 20px title, 44px tap targets | Shared controls max-[767px] 44px; touched CTA min-h-11 md:min-h-9; flex-wrap/min-w-0 | **CSS class/source evidence; 375/767/768 rendered proof absent** |
+| Waitlist list | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Hairline `divide-y divide-border`, py-3, min-w-0 wrap action; shared EmptyState for none | **One row per member rather than individual nested bordered cards** |
+| Destructive confirmation | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Replaced with shared ConfirmDialog, pending state, retained server action and optimistic version payload | **Native browser `window.confirm` could not match old-LMS modal** |
+| Validation/error/success | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Alert(error/warning/success), shared Textarea, Switch and primary loading Button | **Group criteria JSON parse and Zod rule evaluator unchanged** |
+| Responsive | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Rows flex-wrap, disabled Promote min-h-11 md:min-h-9, no nested card widths | **Auto-sorted waitlist and active button eligibility guards retained** |
+
+**Source anchors:** Alert 83, ConfirmDialog 101. The exact legacy hover/popup motion and keyboard sequencing cannot be certified without a browser.
+
+#### `src/components/groups/college-group-import-preview.tsx`
+
+| State/property | Old LMS reference/value | vNext source/value | Gap/proof |
+| --- | --- | --- | --- |
+| Page canvas/section | old-lms-shell-spec.md:18-20: white #fff, 1px border #e5e9f0, 12px radius and 24px padding; ordinary rows hairline | Inherit parent canvas and use shared Dialog/Alert/DataTable components, no nested page canvas | **Source structure checked; exact screen coordinates pending** |
+| Desktop default CTA | old-lms-shell-spec.md:22-24: 36px height, radius9, 14px font at weight650, primary #0a7c88 and white text | Shared ui/button variants with min-h-9 from md, no hand-rolled native button | **Matching token family; actual computed border/font values not screen-proof** |
+| Input and keyboard focus | legacy-styles/components___form.scss:22-36 focus-visible, :117-143 radius10, 14px/20px, tracking0.2px and focus halo | Shared Input/Select/Textarea or FileUpload with 2px teal focus-visible; input validation/required unchanged | **Source state proof only; keyboard playback not run** |
+| Hover/active/loading/disabled | legacy-styles/components___button.scss:13-24 150ms transition, :49-51 disabled | Shared Button loading/disabled/pending; ConfirmDialog present where required | **Exact old hover/active/disabled screenshots missing** |
+| Error/empty/confirmation | old-lms-pages.md:6,11-12: in-canvas feedback, no hand-rolled popup/record card | Alert(error/info/success), EmptyState and ConfirmDialog imported where relevant | **State anatomy moved to shared UI; precise legacy banner/modal pixels unmeasured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: stack <=767px, 20px title, 44px tap targets | Shared controls max-[767px] 44px; touched CTA min-h-11 md:min-h-9; flex-wrap/min-w-0 | **CSS class/source evidence; 375/767/768 rendered proof absent** |
+| File upload | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Shared FileUpload, Textarea, primary Button loading/disabled and no extra page canvas | **128KiB file, 500-row server preview unchanged** |
+| Preview results | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Warning Alert, Error Alert, EmptyState for zero rows, DataTable hairline list | **Dry-run counts and report CSV download same copy** |
+| Scroll and export | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Scrollable result is max 35rem with min-w-0 and no extra border; CSV download link min-h-11 md:min-h-9 | **Preview may include many rows** |
+| Responsive | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Controls stacked, DataTable owns card/row breakpoint; export 44px phone/36px desktop | **Only email CSV preview, no mutation** |
+
+**Source anchors:** Alert 75, ConfirmDialog n/a. The exact legacy hover/popup motion and keyboard sequencing cannot be certified without a browser.
+
+#### `src/components/groups/college-study-member-actions.tsx`
+
+| State/property | Old LMS reference/value | vNext source/value | Gap/proof |
+| --- | --- | --- | --- |
+| Page canvas/section | old-lms-shell-spec.md:18-20: white #fff, 1px border #e5e9f0, 12px radius and 24px padding; ordinary rows hairline | Inherit parent canvas and use shared Dialog/Alert/DataTable components, no nested page canvas | **Source structure checked; exact screen coordinates pending** |
+| Desktop default CTA | old-lms-shell-spec.md:22-24: 36px height, radius9, 14px font at weight650, primary #0a7c88 and white text | Shared ui/button variants with min-h-9 from md, no hand-rolled native button | **Matching token family; actual computed border/font values not screen-proof** |
+| Input and keyboard focus | legacy-styles/components___form.scss:22-36 focus-visible, :117-143 radius10, 14px/20px, tracking0.2px and focus halo | Shared Input/Select/Textarea or FileUpload with 2px teal focus-visible; input validation/required unchanged | **Source state proof only; keyboard playback not run** |
+| Hover/active/loading/disabled | legacy-styles/components___button.scss:13-24 150ms transition, :49-51 disabled | Shared Button loading/disabled/pending; ConfirmDialog present where required | **Exact old hover/active/disabled screenshots missing** |
+| Error/empty/confirmation | old-lms-pages.md:6,11-12: in-canvas feedback, no hand-rolled popup/record card | Alert(error/info/success), EmptyState and ConfirmDialog imported where relevant | **State anatomy moved to shared UI; precise legacy banner/modal pixels unmeasured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: stack <=767px, 20px title, 44px tap targets | Shared controls max-[767px] 44px; touched CTA min-h-11 md:min-h-9; flex-wrap/min-w-0 | **CSS class/source evidence; 375/767/768 rendered proof absent** |
+| Member editor | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Flattened native section card to hairline border-top, Input/Select shared chrome | **Select member UUID and manually entered ID preserved** |
+| Row actions | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Hairline row divide-y, StatusBadge for state, shared ConfirmDialog for destructive actions | **Lock/unlock, remove, remove+lock and service payload unchanged** |
+| Error/empty | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | Alert(error) and EmptyState when all members removed | **Inline error message and no-member gap previously bespoke** |
+| Responsive | old-lms-pages.md:6,11; legacy-styles/components___form.scss:117-143; components___button.scss:13-24 | min-w-0 wrapping row, flex-wrap buttons with min-h-11 md:min-h-9 | **Three per-member actions and add form** |
+
+**Source anchors:** Alert 111, ConfirmDialog 112. The exact legacy hover/popup motion and keyboard sequencing cannot be certified without a browser.
+
+**Strict checklist:** 0 ticks for these 4 files. Full global grep, screenshot alignment and per-state computed style/behavior remain outstanding; source-pass is not full pixel parity.
