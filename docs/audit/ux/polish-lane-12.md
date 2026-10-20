@@ -149,3 +149,11 @@
 **Fix:** one legacy-style hairline-separated learner directory, 2/3-column score summaries, responsive search/filter/CSV controls, concise status counts with a secondary methodology disclosure and explicit CSV-scope explanation. Retain filtered search, bulk CSV export, page links, warning for assessment count cap, grade availability semantics, and privacy-safe learner links. Reviewed route/loading/inherited not-found, normalized data, Pagination, EmptyState and shared controls.
 
 **Files changed:** gradebook `page.tsx`, `error.tsx`, queue and proof. Static review only; no runtime/CI.
+
+## 17 · Teacher / Retired Section notices
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
+**Problems found (5):** no actual rendered notices page (intentional) but a misleading notice-board loading label, duplicate canvas/card skeleton, authorization-error padding drifting from the shared canvas, undersized retry button on phones, and no safe directory route after authorization read failure.
+
+**Fix:** kept scoped-notice authorization check and redirect to the real Discussions route unchanged; corrected loading label/shape, aligned PageHeader, primary Retry and secondary Back to courses recovery at 375 and 768. Inspected parent faculty layout/not-found and target discussion page; did not reconstruct obsolete notice UI.
+
+**Files changed:** notices `error.tsx`, `loading.tsx`, queue and proof. Route is pure redirect, no visible layout. Static review only, no CI.
