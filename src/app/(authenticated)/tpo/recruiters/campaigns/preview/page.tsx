@@ -2,6 +2,7 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
@@ -20,13 +21,10 @@ export default async function PreviewCampaign({searchParams}:PageProps){
  return <div className="min-w-0 space-y-6">
   <PageHeader title="Audience preview"
     description="Read-only counts from current recruiter contacts. No messages will be sent from this page." />
-  <nav aria-label="Audience segments" className="flex flex-wrap gap-2">
-   {(["ALL_ELIGIBLE","NEW","UNASSIGNED"] as const).map(item=><Link key={item}
-    href={"/tpo/recruiters/campaigns/preview?segment="+item} aria-current={query.data.segment===item?"page":undefined}
-    className={"inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold "+(query.data.segment===item?"border-primary bg-primary text-on-primary":"border-border bg-surface text-primary-text hover:bg-primary-subtle")}>
-    {item.replaceAll("_"," ")}
-   </Link>)}
-  </nav>
+  <Tabs ariaLabel="Audience segments" renderPanel={false} value={query.data.segment}
+   items={(["ALL_ELIGIBLE","NEW","UNASSIGNED"] as const).map(item=>({
+    value:item,label:item.replaceAll("_"," "),href:"/tpo/recruiters/campaigns/preview?segment="+item,
+   }))}/>
   <section aria-label="Campaign audience totals" className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
    {([["Contacts",preview.total],["Potential recipients",preview.eligible],
       ["No email",preview.withoutEmail],["Opted out",preview.unsubscribed],
