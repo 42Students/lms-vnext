@@ -181,3 +181,60 @@
 - Extra clutter/alignment fixes: 0. Redirect has no rendered page; public fallback retains 375/768 single-column accessibility.
 - Inspected handoff page/loading/error, root layout, PublicPageLoading and GracefulErrorBoundary; compared `polish-lane-15.md`. No local not-found/template/layout.
 - Files changed: queue and proof only; verified, no page change. Static source review, no CI.
+
+## Surface 27 — Campaign unsubscribe confirmation
+- Surface: `src/app/campaign-unsubscribe/[token]/page.tsx`.
+- Regressions fixed: 0. The read-only GET, strict invalid/unavailable distinction, explicit consent action and redirect verification still hold; no token leakage into UI or log.
+- Extra clutter/alignment fixes: 0. Existing single narrow canvas, bounded message, phone-size confirm and titled loader match the previous proof.
+- Inspected token page/loading/error, `CampaignUnsubscribeConfirm` pending/error/focus/timeout logic, Card, PageHeader, public-auth skin, GracefulPageLoading and root layout; compared `polish-lane-15.md`. No local template/not-found/layout.
+- Files changed: queue and proof only; verified, no page change. Source-only, no tests/CI.
+
+## Surface 28 — Campaign unsubscribe result
+- Surface: `src/app/campaign-unsubscribe/confirmed/page.tsx`.
+- Regressions fixed: 0. Scope parsing, both placement-cell/global wording variants and role=status remain; result view performs no mutation.
+- Extra clutter/alignment fixes: 0. Confirmation canvas uses responsive Card padding, contained message and visible full-width phone home navigation, as promised by prior lane.
+- Inspected result page/loading/error, Card, PageHeader, public skin, GracefulPageLoading and root layout; matched `polish-lane-15.md` evidence. No local template/not-found/layout.
+- Files changed: queue and proof only; verified, no page change. Source-only, no tests/CI.
+
+## Surface 29 — College recruiter invitation
+- Surface: `src/app/college-join/[token]/page.tsx`.
+- Regressions fixed: 0. Preview errors still route to distinct retry state; invalid/revoked invitation never probes readiness; valid invite waits for readiness and never treats provider errors as valid.
+- Extra clutter/alignment fixes: 0. Required company email/name precede optional contact details in native disclosure, one-time-code action follows, mobile tap targets and brand safe area preserved.
+- Inspected page/loading/error, full `PublicRecruiterJoinForm` including send/join/resend, invalid/blocked/already-joined states; `PublicJoinPreviewRetry`, Card, PageHeader, Input, Button, InlineNotice and auth skin/root layout. Cross-checked `polish-lane-15.md`. No local template/not-found/layout.
+- Files changed: queue and proof only; verified, no page change. Static review only, no CI.
+
+## Surface 30 — Company recruiter invitation
+- Surface: `src/app/company-join/[token]/page.tsx`.
+- Regressions fixed: 0. COMPANY scope, ready/blocked/error boundaries, company-domain copy and distinct send-code/join routes retained; no token displayed.
+- Extra clutter/alignment fixes: 0. Matched invite/loading widths, typography, phone/tablet action geometry and optional contact disclosure.
+- Inspected route page/loading/error, shared preview/join components and their API/validation calls, public auth skin, PageHeader, Card, Input, InlineNotice, Button and root layout; matched `polish-lane-15.md`. No local not-found/template/layout.
+- Files changed: queue and proof only; verified, no page change. Source-only, no tests/CI.
+
+## Surface 31 — Authorized company applicant share
+- Surface: `src/app/company-share/[token]/page.tsx`.
+- Regressions fixed: 0. Confirmed access code only POSTs, proof cookie handling, non-indexing/no-referrer, selected-column server redaction, read failure distinct from invalid token, controlled search/pagination/export hrefs and watermark.
+- Extra clutter/alignment fixes: 0. Existing accessible code entry, semantic error/empty state, narrow phone form, restrained hairline directory and disclosed optional CSV keep one action per stage.
+- Inspected page/loading/error, DataTable, Input, Button, Pagination, PageHeader, ErrorState, company-share filter/column/export URL models, public auth skin, root layout and `polish-lane-15.md`; no route-local template. Source review only.
+- Files changed: queue and proof only; verified, no page change. No tests/CI.
+
+## Surface 32 — Development UI fixture
+- Surface: `src/app/e2e/chat17-ui-kit/page.tsx` and `ui-harness.tsx`.
+- Regressions fixed: 0. Dev-only notFound guard, every data-testid/aria fixture, overlay toggles/focus cases, scroll overflow states, file selection, tab disabled state, toast feedback, table permission fail-closed checks and interview fixture remain intact.
+- Extra clutter/alignment fixes: 0. Fixture uses visible subheads, divided test sections, 5xl constrained canvas and phone action heights without changing test behavior.
+- Inspected harness fully, shared Dialog/Drawer/BottomSheet/ConfirmDialog/DataTable/FileUpload/FilterBar/Tabs/ScrollCue/ToastProvider/FormField imports and matching other-lane evidence. Parent root layout, no route-local loading/error/template.
+- Files changed: queue and proof only; verified, no page change. Source-only, no test execution/CI.
+
+## Surface 33 — Privileged e2e bookmark
+- Surface: `src/app/e2e/superadmin-login/page.tsx`.
+- Regressions fixed: 0. Server redirect remains /login without bypassing sign-in; route-local error recovery points to same destination.
+- Extra clutter/alignment fixes: 0. Branded public loading and bounded retry mirror sign-in instead of directory skeleton, including mobile spacing.
+- Inspected route page/loading/error, PublicPageLoading, GracefulPageLoading/ErrorBoundary and root layout, plus `polish-lane-15.md`. No local template/layout/not-found.
+- Files changed: queue and verification proof only; verified, no page change. Source-only, no CI.
+
+## Surface 34 — Enterprise marketing
+- Surface: `src/app/enterprises/page.tsx`.
+- Regressions fixed: 0. All four original features, metadata, labels, links and navigation remain, grid maxColumns=2 is accepted by shared MarketingFeatureGrid.
+- Extra clutter/alignment fixes: 0. 2x2 feature grid at tablet/desktop and single-column phone; loading retains public header/footer; recovery goes /home.
+- Inspected route page/loading/error, MarketingLayout/Hero/FeatureGrid/Cta, PageHeader, GracefulPageLoading/ErrorBoundary and root layout; cross-checked `polish-lane-15.md`. No route-local template/not-found/layout.
+- Files changed: queue and verification proof only; verified, no page change. No tests or CI.
+
