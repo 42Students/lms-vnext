@@ -10,8 +10,8 @@
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-4.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-4-b with [chat-4] after every 2 surfaces.
 
 
-- [ ] `src/components/placements/super-admin-drive-duplicate.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/super-admin-drive-duplicate.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
 - [ ] `src/components/tpo/tpo-campaign-send-control.tsx`
 - [ ] `src/components/placements/tpo-drive-change-requests.tsx`
 - [ ] `src/components/placements/tpo-selection-import.tsx`
