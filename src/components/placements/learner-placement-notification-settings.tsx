@@ -79,10 +79,10 @@ export function LearnerPlacementNotificationSettings({initial}:{
       </label>
     </div>
     <div className="mt-5 flex flex-wrap items-center gap-3">
-      <Button disabled={!changed || pending} onClick={()=>setConfirm(true)}>
+      <Button className="max-md:min-h-11" disabled={!changed || pending} onClick={()=>setConfirm(true)}>
         Review changes
       </Button>
-      <Button variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Reload saved choices</Button>
+      <Button className="max-md:min-h-11" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Reload saved choices</Button>
       {changed ? <span className="text-xs text-body">Unsaved changes</span>
         : <span className="text-xs text-muted-foreground">No changes to save</span>}
     </div>
@@ -90,8 +90,8 @@ export function LearnerPlacementNotificationSettings({initial}:{
       title="Confirm placement notification choices"
       description="Only the two placement notification preferences will change. Other placement preferences remain intact."
       footer={<div className="flex flex-wrap justify-end gap-2">
-        <Button variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Keep current choices</Button>
-        <Button disabled={pending || !changed} onClick={()=>void save()}>
+        <Button className="max-md:min-h-11" variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Keep current choices</Button>
+        <Button className="max-md:min-h-11" disabled={pending || !changed} onClick={()=>void save()}>
           {pending?"Saving…":"Confirm and save"}
         </Button>
       </div>}>
