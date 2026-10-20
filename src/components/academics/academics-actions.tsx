@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
+import { Dropdown } from "@/components/ui/dropdown";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -138,7 +139,7 @@ export function ProgramActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] md:justify-end">
         <Button
           size="md"
          
@@ -352,7 +353,7 @@ export function AcademicPeriodActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] md:justify-end">
         {period.status === "PLANNED" ? (
           <>
             <Button
@@ -569,16 +570,9 @@ export function CohortActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] md:justify-end">
         {cohort.status === "PLANNED" ? (
           <>
-            <Button
-              size="md"
-              variant="secondary"
-              onClick={openEdit}
-            >
-              Edit
-            </Button>
             <Button
               size="md"
               variant="secondary"
@@ -597,15 +591,16 @@ export function CohortActions({
             >
               Activate
             </Button>
-            <Button
-              size="md"
-              variant="ghost"
-              onClick={() =>
-                setConfirmAction("ARCHIVE")
-              }
-            >
-              Archive
-            </Button>
+            <Dropdown trigger="More" label="Cohort actions" align="end" mobileSheet
+              triggerClassName="md:!min-h-9">
+              <div className="grid min-w-0 gap-[var(--lms-space-1)]">
+                <Button role="menuitem" size="md" variant="secondary"
+                  className="w-full justify-start" onClick={openEdit}>Edit</Button>
+                <Button role="menuitem" size="md" variant="ghost"
+                  className="w-full justify-start"
+                  onClick={() => setConfirmAction("ARCHIVE")}>Archive</Button>
+              </div>
+            </Dropdown>
           </>
         ) : cohort.status === "ACTIVE" ? (
           <Button
@@ -811,29 +806,23 @@ export function SectionActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] md:justify-end">
         <Link
           href={operationsHref}
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
         >
           Open
         </Link>
-        <Button
-          size="md"
-         
-          variant="secondary"
-          onClick={openEdit}
-        >
-          Edit
-        </Button>
-        <Button
-          size="md"
-         
-          variant="ghost"
-          onClick={() => setArchiveOpen(true)}
-        >
-          Archive
-        </Button>
+        <Dropdown trigger="More" label="Section actions" align="end" mobileSheet
+          triggerClassName="md:!min-h-9">
+          <div className="grid min-w-0 gap-[var(--lms-space-1)]">
+            <Button role="menuitem" size="md" variant="secondary"
+              className="w-full justify-start" onClick={openEdit}>Edit</Button>
+            <Button role="menuitem" size="md" variant="ghost"
+              className="w-full justify-start"
+              onClick={() => setArchiveOpen(true)}>Archive</Button>
+          </div>
+        </Dropdown>
       </div>
 
       <Dialog
