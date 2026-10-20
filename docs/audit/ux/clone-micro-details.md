@@ -10,20 +10,20 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 - [x] A3: interactive button hover, active, pressed, disabled, loading/pending paint — `components___antddesign.scss:153-181`, `components___button.scss:13-16`; existing `globals.css:371-405,615-635,1127-1148` + micro CSS 38-52,203-205 (no changes to component behavior).
 - [x] A3: touch pressed card feedback — `components___accessibility.scss:49-60`; micro CSS 67-74 (scale .98, opacity .9, 50ms ease).
 - [x] A3/A4: pointer, disabled, loading cursor states — `components___button.scss:13-17`, `components___notification-drawer.scss:26-41,192-203`; micro CSS 38-52,203-205; disabled not-allowed is vNext fallback because legacy leaves it unspecified.
-- [x] A4: click versus keyboard focus — `components___accessibility.scss:13-36`; micro CSS 23-33,55-59,437-441 (generic 2px #1a95a1 / +3px, elevated 2px / +2px and 12% halo; extra `[tabindex]` and editable-region fallback).
+- [x] A4: click versus keyboard focus — `components___accessibility.scss:13-36`; micro CSS 23-33,55-59,443-447 (generic 2px #1a95a1 / +3px, elevated 2px / +2px and 12% halo; extra `[tabindex]` and editable-region fallback).
 - [x] A4: notification item focus ring — `components___notification-drawer.scss:217-224`; micro CSS 221-224 (1px #6b7280 / +1px).
 - [x] A4: hidden scrollbar baseline — `components___common.scss:307-311,329-331` and `old-lms-shell.css:10-11`; existing `globals.css:183-193`.
 - [x] A4: admin table 4px and tab 3px scrollbars — `pages___admin-list-pages.scss:96-106,244-254`; micro CSS 233-265 plus transparent WebKit scrollbar track at 456-462, using real ScrollCue viewport markup (`src/components/ui/scroll-cue.tsx`).
 - [x] A4: tap highlight disabled for semantic controls — `components___notification-drawer.scss:38-41,196-203`; micro CSS 176-179.
 - [x] A4: link colour and hover underline — `components___common.scss:68-75`; micro CSS 79-87 and `legacy-skin.css:349-368`.
 - [x] A4: placeholder muted neutral — `components___form.scss:57-60`, `components___variables.scss:28`; micro CSS 112-115 (14px inherited from legacy skin).
-- [x] I: checkbox/radio checked TEAL and switch checked track — `components___antddesign.scss:123-132,742-745`, `components___common.scss:226-228`; micro CSS 92-104,184-187,331-340.
+- [x] I: checkbox/radio checked TEAL and switch checked track — `components___antddesign.scss:123-132,742-745`, `components___common.scss:226-228`; micro CSS 92-104,184-187,344-353.
 - [x] I: notification list link/button hover, active and focus transition 200ms — `components___notification-drawer.scss:192-224`; micro CSS 200-224 (list-button hover at 214-218, item focus at 221-224).
 - [x] I: desktop notification panel **200ms ease-out/-8px** and actual TPO mobile notification drawer backdrop **150ms ease-out/opacity 0→1** — `components___notification-drawer.scss:83-102,112-143`; micro CSS 304-312,319-332; confirmed separate desktop `PopoverPanel` / mobile `Drawer` markup in `src/components/tpo/tpo-bell-panel.tsx:154-168`. Does not alter generic mobile filter sheets.
 - [x] I: active-tab underline width and opacity 200ms ease-in-out — `components___common.scss:381-415`; micro CSS 407-409 (same native tab pseudo-element; no layout changes).
 - [x] I: selected menu option #26bac7/white (separate from nav tint) — `components___antddesign.scss:134-137`; micro CSS 144-148.
 - [ ] I: **sticky table shadow parity** — corrected the earlier false source mapping: `old-lms-shell.css:55-56` applies `0 1px 3px rgba(26,45,72,.035)` to `.tpo-shell-header.ln-head` **only**, not `thead`/`th`. Removed ungrounded sticky-table shadows from micro CSS (comments `micro-details.css:149-156,284-290`); table header shadow, if any, requires a real legacy table selector or browser measurement. Topbar styling belongs to chat-13.
-- [x] I: reduced-motion preference — `components___accessibility.scss:116-124`, `components___antddesign.scss:184-189`; existing `globals.css:304-312`; micro CSS 167-171,379-386.
+- [x] I: reduced-motion preference — `components___accessibility.scss:116-124`, `components___antddesign.scss:184-189`; existing `globals.css:304-312`; micro CSS 167-171,392-399.
 - [x] I: print interaction paint only, no layout — `components___accessibility.scss:116-124`; micro CSS 375-385; `src/app/(authenticated)/authenticated-print.css` owns paper/layout rules.
 - [ ] A4: text-selection **legacy exact parity** — `components___variables.scss:10-13,24` supplies colours but no `::selection` selector; micro CSS 125-128 uses those tokens. Actual legacy selection paint unverified.
 - [ ] I: table-row hover and selected-row **whole-app parity** — standard `.ln-table` hover is now source-matched (`components___common.scss:697-714,849-855` → micro CSS 456-467: cell `background:none !important`); `components___common.scss:130-139` proves the white no-hover exemption. Selected-row colour is still not specified by legacy SCSS (`old-lms-shell.css:45-48` is navigation, not a table), and custom/non-shared table instances have not been exhaustively grepped; full strict tick withheld.
@@ -69,7 +69,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 | TPO mobile notification backdrop enter | `components___notification-drawer.scss:83-102` 150ms ease-out, opacity 0→1 | `micro-details.css:319-332`: exactly 150ms ease-out on `dialog#tpo-notification-drawer[open]::backdrop` (and reduced-motion none) | Equal for TPO mobile drawer's backdrop; runtime measurement pending |
 | Selected option | `components___antddesign.scss:134-137` teal + white | `micro-details.css:144-148` teal + white | Equal |
 | Sticky **topbar** shadow, not a table rule | `old-lms-shell.css:55-56` `.tpo-shell-header.ln-head` only: `0 1px 3px rgba(26,45,72,.035)` | `micro-details.css:149-156,284-290` deliberately carries **no** table shadow; chat-13 owns header | Previous table application was incorrect; corrected, table-specific value unverified |
-| Reduced motion | `components___accessibility.scss:116-124` .01ms and scroll auto | `globals.css:304-312`, `micro-details.css:379-386` | Equal |
+| Reduced motion | `components___accessibility.scss:116-124` .01ms and scroll auto | `globals.css:304-312`, `micro-details.css:392-399` | Equal |
 | Print interaction | No legacy print-specific declarations in copied SCSS | `micro-details.css:375-385`: transition/animation none, no geometry | Unverifiable |
 
 ## Next unticked batch — source-backed value and coverage proof (2026-10-19)
