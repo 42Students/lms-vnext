@@ -1,5 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Disclosure } from "@/components/ui/disclosure";
 
 import { Select } from "@/components/ui/select";
 import { Alert } from "@/components/ui/alert";
@@ -52,6 +53,8 @@ export function CollegeRecurringPreview({
   const [pending, startTransition] = useTransition();
   const [confirming, setConfirming] = useState(false);
   const selected = classes.find((item) => item.id === sectionId);
+  const previewChanged = Boolean(result && lastPreviewKey !== previewKey());
+  const invalidRange = Boolean(from && to && from > to);
   function onClass(id: string) {
     setSectionId(id);
     setDeliveryId("");
@@ -60,11 +63,15 @@ export function CollegeRecurringPreview({
     setTo(entry?.periodEnd ?? "");
     setResult(null);
     setCreated(null);
+    setError("");
+    setLastPreviewKey("");
   }
   function preview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending || invalidRange) return;
     setError("");
     setResult(null);
+    setCreated(null);
     startTransition(async () => {
       try {
         const payload=await apiFetch<Result>("/api/academics/sections/recurring-preview", {
@@ -84,7 +91,7 @@ export function CollegeRecurringPreview({
     });
   }
   function execute() {
-    if (!selected?.updatedAt || !result || result.ready===0) return;
+    if (pending || previewChanged || !selected?.updatedAt || !result || result.ready===0) return;
     if (lastPreviewKey !== previewKey()) {
       setError("Schedule fields changed since the preview. Preview this pattern again before saving.");
       return;
@@ -92,6 +99,7 @@ export function CollegeRecurringPreview({
     setConfirming(true);
   }
   function confirmExecute() {
+    if (pending) return;
     setConfirming(false);
     const version = selected?.updatedAt;
     if (!version || !result || result.ready===0) return;
@@ -131,14 +139,14 @@ export function CollegeRecurringPreview({
           No active classes are registered for this college. Create a class before previewing a schedule.
         </Alert>
       ) : (
-        <form onSubmit={preview} className="min-w-0 space-y-[var(--lms-space-4)]">
+        <form onSubmit={preview} aria-busy={pending} className="min-w-0 space-y-[var(--lms-space-4)]">
           <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session title
-            <Input required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
+            <Input disabled={pending} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
               className="min-h-11 min-w-0 md:min-h-9"/>
           </label>
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
-            <Select required value={sectionId} onChange={(e) => onClass(e.target.value)}
+            <Select disabled={pending} required value={sectionId} onChange={(e) => onClass(e.target.value)}
               className="min-h-11 min-w-0 md:min-h-9">
               <option value="">Select a class</option>
               {classes.map((c) => <option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
@@ -147,7 +155,7 @@ export function CollegeRecurringPreview({
           {selected ? <p className="text-xs text-muted-foreground">Academic period: {selected.periodStart} to {selected.periodEnd}</p> : null}
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course (optional)
             <Select value={deliveryId} onChange={e => setDeliveryId(e.target.value)}
-              disabled={!sectionId} className="min-h-11 min-w-0 md:min-h-9">
+              disabled={pending || !sectionId} className="min-h-11 min-w-0 md:min-h-9">
               <option value="">No course linked</option>
               {deliveries.filter(item => item.sectionId === sectionId).map(item =>
                 <option key={item.id} value={item.id}>{item.name} ({item.code})</option>)}
@@ -156,21 +164,21 @@ export function CollegeRecurringPreview({
           </div>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From
-              <Input type="date" required value={from} min={selected?.periodStart} max={selected?.periodEnd}
+              <Input disabled={pending} type="date" required value={from} min={selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setFrom(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 93 days)
-              <Input type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
+              <Input disabled={pending} type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setTo(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
-              <Input type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)}
+              <Input disabled={pending} type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
-              <Input type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)}
+              <Input disabled={pending} type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
           </div>
@@ -179,7 +187,7 @@ export function CollegeRecurringPreview({
             <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] sm:grid-cols-4 lg:grid-cols-7">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
                 <label key={day} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-3)] text-sm text-body">
-                  <Checkbox checked={weekdays.includes(index)}
+                  <Checkbox disabled={pending} checked={weekdays.includes(index)}
                     onChange={(e) => setWeekdays((current) => e.target.checked
                       ? [...current, index].sort()
                       : current.filter((n) => n !== index))} />
@@ -188,26 +196,27 @@ export function CollegeRecurringPreview({
               ))}
             </div>
           </fieldset>
-          <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+          <Disclosure title="Optional teaching details" defaultOpen={Boolean(facultyId || hallId)} className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 py-3"><div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
-              <Select value={facultyId} onChange={(e) => setFacultyId(e.target.value)}
+              <Select disabled={pending} value={facultyId} onChange={(e) => setFacultyId(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No faculty selected</option>
                 {faculty.map((f) => <option key={f.id} value={f.id}>{f.displayName || "Unnamed faculty"}</option>)}
               </Select>
             </label>
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lecture hall (optional)
-              <Select value={hallId} onChange={(e) => setHallId(e.target.value)}
+              <Select disabled={pending} value={hallId} onChange={(e) => setHallId(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No lecture hall selected</option>
                 {halls.map((h) => <option key={h.id} value={h.id}>{h.name}</option>)}
               </Select>
             </label>
-          </div>
-          <Button type="submit" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || !sectionId || !from || !to || weekdays.length === 0}>
+          </div></Disclosure>
+          {invalidRange ? <Alert tone="error">To date cannot be earlier than From date.</Alert> : null}
+          <Button type="submit" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || invalidRange || !sectionId || !from || !to || weekdays.length === 0}>
             {pending ? "Checking conflicts…" : "Preview sessions"}
           </Button>
-          {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+          {error ? <Alert tone="error">{error}</Alert> : null}
         </form>
       )}
       {created !== null ? <Alert tone="success" className="space-y-2">
@@ -220,8 +229,9 @@ export function CollegeRecurringPreview({
       </Alert> : null}
       {result ? <section aria-label="Schedule preview results" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
         <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Preview · {result.ready} clear, {result.blocked} blocked</h2>
-        <p className="text-sm text-muted-foreground">{result.notice}</p>
-        <Button type="button" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || !title.trim() || result.ready===0}
+        <p className="max-w-prose text-sm leading-6 text-muted-foreground">{result.notice}</p>
+        {previewChanged ? <Alert tone="warning">Schedule fields changed since the preview. Preview this pattern again before saving.</Alert> : null}
+        <Button type="button" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || previewChanged || !title.trim() || result.ready===0}
           onClick={execute}>{pending?"Creating…":"Confirm and create "+result.ready+" sessions"}</Button>
         {result.blocked>0 ? <Alert tone="warning">Conflicting dates will be skipped; clear dates may still be created.</Alert> : null}
         {result.slots.length === 0 ? <EmptyState title="No matching dates" description="No selected weekdays match this date range."/> : (
