@@ -1,6 +1,7 @@
 import { Dropdown } from "@/components/ui/dropdown";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -53,11 +54,13 @@ export async function PlacementDriveWorkspace({
   jobId,
   eyebrow,
   openPublish = false,
+  overview,
 }: {
   context: RequestContext;
   jobId: string;
   eyebrow?: string;
   openPublish?: boolean;
+  overview?: ReactNode;
 }) {
   const [
     driveDay,
@@ -260,7 +263,7 @@ export async function PlacementDriveWorkspace({
     : null;
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
         eyebrow={eyebrow}
         title={driveDay.job.company.name + " · " + driveDay.job.title}
@@ -398,6 +401,7 @@ export async function PlacementDriveWorkspace({
           <span>Applications close: {headerFacts.deadline}</span>
         </div>
       </section>
+      {overview}
       {job.legacyPostingDetails&&(job.legacyPostingDetails.portal?.studentsRegisterSeparately||
         job.legacyPostingDetails.campusPool?.hostCollege||
         job.legacyPostingDetails.campusPool?.reportingTime||
