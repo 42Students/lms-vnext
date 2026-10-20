@@ -1,5 +1,6 @@
 import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -41,19 +42,16 @@ export default async function MentorBoardReviewPage({
       <section role="status" className="border-b border-border pb-4">
         Projects access is disabled; no tasks were loaded.
       </section>:<>
-      <section aria-label="Registered task counts" className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-5">
-        {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
-          <article key={status} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-            <h2 className="text-xs font-semibold text-muted-foreground">{status.replaceAll("_"," ")}</h2>
-            <p className="mt-2 text-xl font-bold tabular-nums">{data.totals[status]}</p>
-          </article>)}
-      </section>
+      <section aria-label="Registered task counts" className="grid gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
+         {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
+           <StatTile key={status} label={status.replaceAll("_"," ")} value={data.totals[status]} className="min-h-[104px]" />)}
+       </section>
       <p className="text-sm text-body">{data.count} registered tasks ·
         {data.completedPercent===null?" Completion unknown (no tasks)":
           " "+data.completedPercent+"% recorded DONE tasks"}
       </p>
       <FilterBar title="Filters"><form method="get" action={base+"/board-review"}
-        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
         <label className="grid gap-1 text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
             className="min-h-11 w-full md:min-h-9"/>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -82,17 +83,7 @@ export default async function TpoTrustedCompaniesPage() {
               : String(data.summary.trustedDomainCount),
           ],
         ].map(([label, value]) => (
-          <div
-            key={label}
-            className="border-b border-border px-1 py-4"
-          >
-            <p className="text-xs font-semibold text-muted-foreground">
-              {label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {value}
-            </p>
-          </div>
+          <StatTile key={label} label={label} value={value} className="min-h-[104px]" />
         ))}
       </section>
 

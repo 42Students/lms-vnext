@@ -73,10 +73,10 @@ export default async function TpoAccreditationReportPage({
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/accreditation"].description}
         actions={selectedBatch&&studentReport&&studentReport.rows.length>0?
           <a href={"/api/placements/reports?"+query.toString()}
-           className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
+           className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
            Export student list CSV
           </a>:
-          <span aria-disabled="true" role="status" className="inline-flex min-h-11 sm:min-h-9 cursor-not-allowed items-center rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground">
+          <span aria-disabled="true" role="status" className="inline-flex min-h-11 min-[768px]:min-h-9 cursor-not-allowed items-center rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground">
            Export student list CSV — {selectedBatch?"No placed students":"Pick a batch first"}
           </span>
         }
@@ -89,24 +89,24 @@ export default async function TpoAccreditationReportPage({
        <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
        <form method="get" className="flex flex-wrap items-end gap-3">
         <label className="text-sm">Batch
-         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 sm:min-h-9">
+         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 min-[768px]:min-h-9">
           <option value="">Pick a batch</option>
           {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
          </Select>
         </label>
         {report.selectedSeasonId&&<Input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
         {report.selectedJobId&&<Input type="hidden" name="jobId" value={report.selectedJobId}/>}
-        <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9">Show students</Button>
+        <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9">Show students</Button>
        </form>
        {batchId&&!selectedBatch&&<Alert tone="error">Choose a batch from this college.</Alert>}
        {selectedBatch&&studentReport?.rows.length===0?<Alert tone="info">No placed students in this batch. Export is unavailable until a recorded placement exists.</Alert>:null}
        {studentReport&&<>
         {completeness?<div aria-label="NAAC and NIRF completeness" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
          <h3 className="font-semibold">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</h3>
-         <ul className="grid gap-1 text-sm sm:grid-cols-2">{completeness.fields.map(field=>
+         <ul className="grid gap-1 text-sm min-[768px]:grid-cols-2">{completeness.fields.map(field=>
           <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
          <p className="text-xs text-muted-foreground">This checks seven fields in the recorded placed-student export, not all graduating learners or external placement evidence.</p>
-         {studentReport.rows.length>0?<a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">
+         {studentReport.rows.length>0?<a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline">
           Export anyway
          </a>:null}
         </div>:null}
