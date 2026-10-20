@@ -28,13 +28,13 @@ export default async function MentorReviewsPage({
     page:raw.page,pageSize:raw.pageSize,
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid review filters"} />
+    <PageHeader title="Delivery review queue" description="Invalid review filters" />
     <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear filters</Link>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
-    <PageHeader eyebrow="Mentor · Projects" title="Delivery review queue"
-      description="Submitted deliveries awaiting review across your currently assigned Mentor projects."
+    <PageHeader title="Delivery review queue"
+      description="Submitted deliveries awaiting review across your currently assigned mentor projects."
       actions={<div className="flex flex-wrap items-center gap-3">
         <Link href="/mentor/review-history"
           className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
