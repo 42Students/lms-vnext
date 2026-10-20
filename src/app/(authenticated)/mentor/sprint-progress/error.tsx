@@ -11,7 +11,7 @@ export default function Error({ reset }: {
     <p className="mt-2 text-sm text-body">
       The read failed. No data absence is inferred from this error.
     </p>
-    <Button type="button" variant="secondary" onClick={reset}>
+    <Button type="button" variant="secondary" className="mt-4 w-full md:w-auto" onClick={reset}>
       Retry
     </Button>
   </section>;
