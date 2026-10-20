@@ -12,7 +12,7 @@ Polish checklist (apply every point to the surface and to every component it ren
 
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-5.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-5-b with [chat-5], ticking [x] in this queue in the same push.
 
-- [ ] `src/app/(authenticated)/admin/academics/page.tsx` (Admin page)
+- [x] `src/app/(authenticated)/admin/academics/page.tsx` (Admin page)
 - [ ] `src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx` (Admin page)
 - [ ] `src/app/(authenticated)/admin/announcements/page.tsx` (Admin page)
 - [ ] `src/app/(authenticated)/admin/assignments/page.tsx` (Admin page)

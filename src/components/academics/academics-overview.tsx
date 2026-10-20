@@ -3,6 +3,7 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import type { getAcademicsWorkspace } from "@/modules/academics/workspace";
@@ -293,7 +294,7 @@ export function AcademicsOverview({
   ];
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 space-y-[var(--lms-space-6)]">
       <AcademicsCreatePanel
         collegeId={collegeId}
         departments={workspace.departments.map(
@@ -339,7 +340,10 @@ export function AcademicsOverview({
             College calendar windows with explicit lifecycle.
           </p>
         </div>
-        <DataTable caption="Academic periods" empty={<EmptyState title="No records to show." />}
+        <DataTable caption="Academic periods" empty={<EmptyState title="No records to show."
+          description="Create the College calendar window before placing Cohorts or Sections."
+          action={<Link href="#academic-create-period" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">New academic period</Link>}
+        />}
           columns={periodColumns}
           rows={workspace.periods}
           getRowKey={(period) => period.id}
@@ -355,7 +359,10 @@ export function AcademicsOverview({
             Department-owned academic programs.
           </p>
         </div>
-        <DataTable caption="Academic programs" empty={<EmptyState title="No records to show." />}
+        <DataTable caption="Academic programs" empty={<EmptyState title="No records to show."
+          description="Programs are owned by Departments; duration is measured in academic terms."
+          action={<Link href="#academic-create-program" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">New program</Link>}
+        />}
           columns={programColumns}
           rows={workspace.programs}
           getRowKey={(program) => program.id}
@@ -371,7 +378,10 @@ export function AcademicsOverview({
             Program intakes with progression stored as learner history.
           </p>
         </div>
-        <DataTable caption="Cohorts and batches" empty={<EmptyState title="No records to show." />}
+        <DataTable caption="Cohorts and batches" empty={<EmptyState title="No records to show."
+          description="Cohorts are long-lived Program intakes; learner term progression is stored separately."
+          action={<Link href="#academic-create-cohort" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">New cohort / batch</Link>}
+        />}
           columns={cohortColumns}
           rows={workspace.cohorts}
           getRowKey={(cohort) => cohort.id}
@@ -387,7 +397,10 @@ export function AcademicsOverview({
             Period-specific roster boundaries. Open a Section for learners, Faculty responsibilities and schedule.
           </p>
         </div>
-        <DataTable caption="Academic sections" empty={<EmptyState title="No records to show." />}
+        <DataTable caption="Academic sections" empty={<EmptyState title="No records to show."
+          description="Sections are period-specific. Rosters and movement history attach here."
+          action={<Link href="#academic-create-section" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">New section</Link>}
+        />}
           columns={sectionColumns}
           rows={workspace.sections}
           getRowKey={(section) => section.id}
