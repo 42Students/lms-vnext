@@ -10,7 +10,7 @@ export default function MentorNotificationsError({
     <PageHeader eyebrow="Mentor" title="Notifications"/>
     <div className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <p className="text-sm text-body">We couldn’t load your notifications. Please try again.</p>
-      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>
+      <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>
         Retry
       </Button>
     </div>
