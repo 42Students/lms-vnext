@@ -641,3 +641,32 @@ Expected **selected 15-file subset**: zero matches; full route tree remains subj
 **Strict status: LRN-06 OPEN**, as is every other LRN-01..07 item. Missing: actual phone/tablet screenshots, mouse/keyboard hover/focus proof, computed values, full-tree zero-remaining-instances grep, local parser/typecheck, loading/error flows and global skin side-by-side comparison.
 
 **Next file:** `src/app/(authenticated)/learn/my-placements/announcements/page.tsx` personal search styles and `src/app/(authenticated)/learn/profile/completeness/page.tsx` (source fixes already made; rendered value proof remains), then `src/app/(authenticated)/learn/projects/page.tsx` LRN-05 sweep.
+
+## Learner projects entry and detail — source clone pass (2026-10-20)
+
+The learner Projects route pages were scoped to this lane; **project core workspace components** remain in their original owning lane and were not altered. Four page-level sources inspected and updated:
+`learn/projects/page.tsx`, `learn/projects/[projectId]/{page,error,loading}.tsx`. Existing membership-scoped project loader, permission gates, workspace panels, tasks, status and query validation remain untouched.
+
+| Property/state | Old LMS value and source | vNext file value / state | Source result |
+|---|---|---|---|
+| Disabled module | `old-lms-pages.md:5-13`: one content canvas with inline status; no nested pane | `projects/page.tsx` disabled branch `min-w-0 space-y-4`, one PageHeader, existing text unchanged | Source structural match |
+| Project pagination | `components___learn-notifications.scss:9-11`: minimum 44px mobile links | `projects/page.tsx`: `[&_a]:min-h-11 md:[&_a]:min-h-9`, `min-w-0` wrapper, no nested scroll | Source touch match; visual proof missing |
+| Project detail page actions | `components___learn-notifications.scss:9-10`: 767px mobile threshold, 44px hit | `projects/[projectId]/page.tsx`: all 4 legacy `sm:min-h-9` converted to `md:min-h-9` | Source breakpoint match |
+| Detail stale task state | `old-lms-pages.md:7`, `components___variables.scss:9-13`: slim pale info (#eff8fa) with #26bac7 accent | `projects/[projectId]/page.tsx`: `border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3` | Source token match; still read-only status |
+| Nested error page | `old-lms-pages.md:5-13`: left-aligned title/description/retry inside one page canvas; no center card | `projects/[projectId]/error.tsx`: `min-w-0 space-y-4`, left-aligned body `max-w-2xl`, wrap actions, retry Button `max-md:min-h-11`, back `md:min-h-9` | Source match; click flow unverified |
+| Nested loading | `old-lms-pages.md`: directory content should not show separate boxed card | `projects/[projectId]/loading.tsx`: `GracefulPageLoading shape="directory"` | Source-level structural match |
+
+### Full-file source grep / tag-balance proof (GitHub connector, not a local process)
+
+| File | Lines | Raw HTML controls | Hex literals | `sm:` old breakpoints | PageHeader source occurrences | 44px touch tokens | Shared Button pair / section pair |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `projects/page.tsx` | 215 | 0 | 0 | 0 | 2 (exclusive disabled/normal branches) | 1 | 0/0, 1/1 |
+| `projects/[projectId]/page.tsx` | 205 | 0 | 0 | 0 | 2 (invalid-filter and audit-only branches) | 4 | 0/0, 1/1 |
+| `projects/[projectId]/error.tsx` | 24 | 0 | 0 | 0 | 1 | 2 | 1/1, 1/1 |
+| `projects/[projectId]/loading.tsx` | 6 | 0 | 0 | 0 | 0 | 0 | 0/0, 0/0 |
+
+Regexes applied to fetched full strings: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:/g`, Button/section open-close counts. No code, app, CI or browser executed. Responsive *source-rule* comparison: 375px/700px both have 44px page-level links and same mobile content, 768px moves to optional 36px desktop targets and desktop controls, 1024px retains existing project tabs and board without another canvas. No computed DOM or screenshots.
+
+**Strict status:** LRN-05 still OPEN until project-workspace owner evidence, complete route-tree source coverage, mouse/focus/keyboard, rendered phone/tablet and old-LMS screenshot comparison exist.
+
+**Exact next file for source pass:** `src/app/(authenticated)/learn/notifications/page.tsx` (LRN-05 notifications page) and its owned route states, followed by `src/app/(authenticated)/learn/calendar/page.tsx` (calendar details).
