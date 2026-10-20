@@ -4,7 +4,7 @@ import {listSuperAdminPlacementSeasons} from "@/modules/admin-ui/super-admin-pla
 const statuses=["ALL","ACTIVE","CLOSED"] as const;
 export default async function SuperAdminSeasonsPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
- return <AdminScopedReadPage title="Placement Seasons" path="/admin/placements/seasons"
+ return <AdminScopedReadPage backHref="/admin/placements" title="Placement Seasons" path="/admin/placements/seasons"
   description="Read-only selected-college placement seasons, registered date ranges and active/closed lifecycle; no implicit global season selection."
   statuses={statuses} searchParams={searchParams} loader={q=>listSuperAdminPlacementSeasons(context,q)}/>;
 }
