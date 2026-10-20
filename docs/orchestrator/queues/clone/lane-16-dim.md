@@ -73,16 +73,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-16.md: file, number of 
 - [x] `src/app/(authenticated)/learn/projects/page.tsx`
 - [x] `src/app/(authenticated)/mentor/activity/error.tsx`
 - [x] `src/app/(authenticated)/mentor/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/error.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/error.tsx`
