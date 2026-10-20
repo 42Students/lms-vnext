@@ -64,7 +64,7 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
     mobilePriority: "action",
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
-    cell: (item) => <ProgramActions displayDurationYears program={{
+    cell: (item) => <ProgramActions compactActions displayDurationYears program={{
       id: item.id,
       name: item.name,
       code: item.code,
@@ -133,9 +133,10 @@ export function AdminProgramDirectory({
   }
 
   return (
-    <div className="space-y-5">
-      <form onSubmit={create} className="border-b border-border pb-5 print:hidden">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Create New Program</h2>
+    <div className="min-w-0 space-y-5">
+      <details className="min-w-0 border-b border-border pb-4 print:hidden" open={programs.length===0}>
+        <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Create New Program</summary>
+        <form onSubmit={create} className="min-w-0 pt-3">
         <p className="mt-1 text-sm text-muted-foreground">
           Programs belong to a department. Choose the usual academic years; two terms are stored per year.
         </p>
@@ -144,7 +145,7 @@ export function AdminProgramDirectory({
             No departments in this college yet. <Link href="/admin/departments" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Go to Departments</Link>
           </p>
         ) : null}
-        <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+        <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-4">
           <div>
             <label htmlFor="admin-program-department" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department</label>
             <Select
@@ -177,24 +178,28 @@ export function AdminProgramDirectory({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending || departments.length === 0}>
+          <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending || departments.length === 0}>
             {pending ? "Creating…" : "Create Program"}
           </Button>
         </div>
-      </form>
-      <section className="space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
-        <div className="flex flex-wrap items-end justify-between gap-3 print:hidden">
+        </form>
+      </details>
+      <section className="min-w-0 space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
+        <div className="flex min-w-0 flex-col gap-3 print:hidden min-[768px]:flex-row min-[768px]:items-end min-[768px]:justify-between">
           <div className="w-full min-w-0 flex-1 md:min-w-56">
             <label htmlFor="admin-program-search" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search programs or departments</label>
-            <Input className="min-h-11 md:min-h-9" id="admin-program-search" value={search}
+            <Input type="search" className="min-h-11 md:min-h-9" id="admin-program-search" value={search}
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search program, code or department" />
           </div>
-          <div className="flex w-full flex-wrap items-end gap-2 md:w-auto">
-            <PageSizeSelect id="admin-program-page-size" label="Rows per page"
-              options={[10, 25, 50, 100]} value={pageSize}
-              onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
-              wrapperClassName="w-full md:w-auto" />
+          <div className="flex min-w-0 w-full flex-wrap items-end gap-2 min-[768px]:w-auto min-[768px]:justify-end">
+            <details className="w-full min-w-0 min-[768px]:w-auto">
+              <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Rows per page</summary>
+              <PageSizeSelect id="admin-program-page-size" label="Rows per page"
+                options={[10, 25, 50, 100]} value={pageSize}
+                onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
+                wrapperClassName="w-full min-[768px]:w-[140px]" />
+            </details>
             {filtered.length ? (
               <a
                 href={csvHref} download="programs.csv"
@@ -218,8 +223,8 @@ export function AdminProgramDirectory({
           </p>} />
         {result.total > 0 ? (
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground print:hidden">
-            <span>Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}</span>
-            <div className="flex items-center gap-3">
+            <span className="tabular-nums">Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}</span>
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={result.page === 1}
                 onClick={() => setPage(result.page - 1)}>Previous</Button>
               <span aria-live="polite">Page {result.page} of {result.pages}</span>

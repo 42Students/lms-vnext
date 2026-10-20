@@ -14,3 +14,25 @@
 - `docs/audit/ux/polish-lane-7.md`
 
 **Source-level state and viewport audit:** Filled rows, empty search, invalid filters, denied permission, missing selected college, loader failure, route error + Retry, loading + slow network recovery; hover/focus inherit existing shared controls. 1280: aligned record/action columns; 768: constrained search/status/Filter row, secondary actions grouped; 375: stacked full-width primary controls, 44px targets and wrapped record text. Visual browser comparison and CI not performed, per instruction.
+
+
+## Surface 2 — `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
+
+**Problems found (7):** header back navigation and Analytics competed with the primary search; search field occupied only a narrow slice of tablet width; controls lost their common bottom alignment; initial section gaps fragmented the single-canvas layout; student heading, roll/email and joining badge wandered across narrow widths; truncation notice was buried after the entire result list; no-match result had no direct recovery action.
+
+**Fixed:** Left-aligned existing Placement overview back link above the single h1; preserved the Analytics destination/action but demoted it beneath the search bar. Made Name, roll number or email the widest control, paired with one Search students action at 768 and stacked both to full width with 44px targets at 375. Unified 16/12px legacy section gaps and hairline-separated student groups. Added min-width/wrap handling for long names, roll/email; joined status aligns in its own column at tablet widths without overflow. Moved original truncation message ahead of results for immediate visibility; reused existing Clear search label/route as the no-result recovery action. Loading now uses shared directory-row skeleton; invalid query, loader failure, missing scope, no applications and retry states retain wording/behavior and existing IDs/aria labels.
+
+**Files changed:** `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`, `src/app/(authenticated)/admin/placements/student-lookup/loading.tsx`, `docs/orchestrator/queues/clone/lane-7-polish.md`, `docs/audit/ux/polish-lane-7.md`.
+
+**Coverage:** source inspection of page, DateTable, PageHeader, StatusBadge, EmptyState, ErrorState, Input/Button/PageBackLink, graceful loading and route error. Desktop 1280/tablet 768/phone 375 layouts reasoned from explicit grid breakpoints; browser screenshot and CI not run.
+
+
+## Surface 3 — src/app/(authenticated)/admin/programs/page.tsx
+
+**Problems found (9):** creation form dominated above-the-fold space, fields cramped at 768px, duplicate overview affordances crowded the header, search lacked search semantics, page-size dominated the toolbar, CSV/Refresh alignment was inconsistent, Edit/Archive crowded action cells, mobile Create Program did not fill its column, and loading had a generic card skeleton.
+
+**Fixed:** Made Create New Program an accessible details disclosure (open automatically when there are no programs); all fields, names, IDs, mutation validation, pending/success/error behavior preserved. Kept the existing overview link ahead of PageHeader and the Academic Setup steps under it; widened 768px create fields to two columns, four from 1280, single on phones. Made the primary submit full-width on phones; shared search semantics and aligned toolbar; moved Rows per page into a disclosure, preserved all export/refresh interactions; reuses the concurrently updated compactActions option, which groups Edit and Archive in the existing accessible Actions menu, retaining disabled and confirmation flows. Rows and paging controls wrap, with tabular range numbers; loading is a directory skeleton.
+
+**Files changed:** src/app/(authenticated)/admin/programs/page.tsx; src/components/admin/admin-program-directory.tsx; src/app/(authenticated)/admin/programs/loading.tsx; docs/orchestrator/queues/clone/lane-7-polish.md; docs/audit/ux/polish-lane-7.md.
+
+**States covered:** missing college/permission and service failure, no departments, no programs, populated/filtered page, create validation/pending/response, edit/discard/archive modal/disabled, mobile 375, tablet 768, 1280, route load/retry. Source review; no browser screenshots or CI.
