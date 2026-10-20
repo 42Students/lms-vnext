@@ -10,8 +10,8 @@ const labels={
 } as const;
 export function CollegeDriveAttentionCards({data}:{data:Attention}){
  const categories=Object.keys(labels) as (keyof typeof labels)[];
- return <div className="space-y-5">
-  <section className="rounded-xl border border-border bg-surface p-5">
+ return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
    <h2 className="text-lg font-semibold">Needs attention ({data.total})</h2>
    {!data.categories.length?<p className="mt-3 text-sm text-body">
     No drives currently flagged in this view.</p>:categories.map(category=>{
@@ -20,10 +20,10 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     return <div key={category} className="mt-4 space-y-2">
       <h3 className="font-semibold">{labels[category]} ({rows.length})</h3>
       <ul className="space-y-2">{rows.slice(0,3).map(row=><li key={row.jobId}
-       className="flex flex-wrap items-center justify-between gap-3 rounded border border-border p-3">
-       <div><p className="font-semibold">{row.title}</p>
+       className="flex min-w-0 flex-col items-stretch justify-between gap-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-3)] sm:flex-row sm:items-center">
+       <div className="min-w-0 break-words [overflow-wrap:anywhere]"><p className="font-semibold">{row.title}</p>
         <p className="text-sm text-body">{row.count} candidate(s) need review</p></div>
-       <Link href={row.href} className="min-h-11 rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+       <Link href={row.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">
         Review applications</Link>
       </li>)}</ul>
       {rows.length>3?<Disclosure title={`+${rows.length-3} more · Show more`} className="text-sm">
@@ -39,23 +39,23 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     “Offered, no offer letter attached” cannot be verified until approved private offer-letter evidence storage is connected; no missing-letter count is invented.
    </p>:null}
   </section>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
     <h2 className="text-lg font-semibold">Active drives ({data.jobs.length})</h2>
     <Link href="/college/placements/drives?status=ALL"
      className="font-semibold text-primary-text underline">All drives</Link>
    </div>
-   {data.jobs.length?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    {data.jobs.map(job=><article key={job.id} className="space-y-2 rounded-lg border border-border p-4">
-     <h3 className="font-semibold">{job.title}</h3>
+   {data.jobs.length?<div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 xl:grid-cols-3">
+    {data.jobs.map(job=><article key={job.id} className="min-w-0 space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
+     <h3 className="break-words [overflow-wrap:anywhere] font-semibold">{job.title}</h3>
      <p className="text-sm">{job.applicants} applicants
       {job.attention>0?<span className="ml-2 font-semibold text-warning-text">
        {job.attention} attention item(s)</span>:null}</p>
      <p className="text-xs">Deadline: {job.deadline?
       new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(job.deadline):"Not specified"}</p>
-     <div className="flex flex-wrap gap-2">
+     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
       <Link href={"/college/placements/jobs/"+job.id+"/applications"}
-       className="min-h-11 rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">Applications</Link>
+       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Applications</Link>
       <CollegeDriveDeadlineAction jobId={job.id} title={job.title}
        currentDeadline={job.deadline?.toISOString()??null}/>
      </div>
