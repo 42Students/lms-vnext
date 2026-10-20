@@ -15,6 +15,8 @@ import {
   tpoStudentRequestsQuerySchema,
 } from "@/modules/placements/tpo-students-service";
 import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Table} from "@/components/ui/table";
 
 type SearchParams = {
   status?: string | string[];
