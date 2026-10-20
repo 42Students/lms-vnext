@@ -11,6 +11,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
@@ -380,6 +381,6 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      </Button>
     </div>:null}
    </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
