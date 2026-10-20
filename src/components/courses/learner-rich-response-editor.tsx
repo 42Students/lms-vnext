@@ -19,10 +19,10 @@ export function LearnerRichResponseEditor({value,onChange,disabled=false}:{
   requestAnimationFrame(()=>{target.focus();target.setSelectionRange(a+before.length,a+before.length+selection.length);});
  }
  return <div className="space-y-2" aria-label="Written response rich-text editor">
-  <div role="toolbar" aria-label="Text formatting" className="flex flex-wrap gap-2">
-   <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={disabled} onClick={()=>wrap("**")} aria-label="Bold selected text" aria-controls={editorId}>Bold</Button>
-   <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={disabled} onClick={()=>wrap("_")} aria-label="Italic selected text" aria-controls={editorId}>Italic</Button>
-   <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={disabled} onClick={()=>wrap("- ","")} aria-label="Make selected text a list item" aria-controls={editorId}>List item</Button>
+  <div role="toolbar" aria-label="Text formatting" className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
+   <Button type="button" variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={disabled} onClick={()=>wrap("**")} aria-label="Bold selected text" aria-controls={editorId}>Bold</Button>
+   <Button type="button" variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={disabled} onClick={()=>wrap("_")} aria-label="Italic selected text" aria-controls={editorId}>Italic</Button>
+   <Button type="button" variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={disabled} onClick={()=>wrap("- ","")} aria-label="Make selected text a list item" aria-controls={editorId}>List item</Button>
   </div>
   <Textarea id={editorId} name="writtenResponse" rows={6} maxLength={50000}
    disabled={disabled} required value={value} onChange={event=>onChange(event.target.value)}
