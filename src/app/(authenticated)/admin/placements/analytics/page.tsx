@@ -100,8 +100,8 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </Banner>:null}
   <dl className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[992px]:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
-   <div key={key} className="min-w-0 px-4 py-3"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
-    <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>
+   <div key={key} className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 capitalize text-[var(--lms-neutral-400)]">{hiringMetricLabel(key)}</dt>
+    <dd className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{totals[key]}</dd></div>)}</dl>
   <section className="border-b border-border pb-6" aria-label="Hiring Funnel">
    <div className="flex flex-wrap items-start justify-between gap-3">
     <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Hiring Funnel</h2>
