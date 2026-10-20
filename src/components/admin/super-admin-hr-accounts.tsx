@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import {
   DataTable,
   type DataTableColumn,
@@ -544,6 +546,28 @@ export function SuperAdminHrAccounts({
     }
   }
 
+  const accountActions = (account: HrAccount, mobile = false) => (
+    <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
+      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" onClick={() => openDetail(account)}>View</Button>
+      <Dropdown label="Recruiter actions" trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+        <Menu className="w-full min-w-0">
+          <MenuItem disabled={!account.accountManageable}
+            title={!account.accountManageable ? mobile
+              ? "Active grants exist outside the selected administrative scope"
+              : "This recruiter has grants outside the selected administrative scope"
+              : undefined}
+            onClick={() => openEdit(account)}>Edit</MenuItem>
+          {account.status !== "DISABLED" ? (
+            <MenuItem disabled={pending || !account.accountManageable}
+              onClick={() => quickStatus(account)}>{account.status === "ACTIVE" ? "Suspend" : "Reactivate"}</MenuItem>
+          ) : null}
+          <MenuItem disabled={pending || !account.accountManageable}
+            onClick={() => setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</MenuItem>
+        </Menu>
+      </Dropdown>
+    </div>
+  );
+
   const columns: DataTableColumn<HrAccount>[] = [
     {
       key: "name",
@@ -606,32 +630,7 @@ export function SuperAdminHrAccounts({
       key: "actions",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
-      cell: (account) => (
-        <div className="flex flex-wrap justify-end gap-2 print:hidden">
-          <Button
-            variant="secondary"
-            size="sm"
-            className="min-h-11 md:min-h-9"
-            onClick={() => openDetail(account)}
-          >
-            View
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="min-h-11 md:min-h-9"
-            disabled={!account.accountManageable}
-            title={!account.accountManageable?"This recruiter has grants outside the selected administrative scope":undefined}
-            onClick={() => openEdit(account)}
-          >
-            Edit
-          </Button>
-          {account.status!=="DISABLED"?<Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={pending||!account.accountManageable}
-            onClick={()=>quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
-          <Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={pending||!account.accountManageable}
-            onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
-        </div>
-      ),
+      cell: (account) => accountActions(account),
     },
   ];
 
@@ -671,9 +670,9 @@ export function SuperAdminHrAccounts({
         Account totals are temporarily unavailable. The directory is still usable.
         <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Retry totals</Button>
       </p>}
-      <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
+      <dl className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-4">{([
         ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled",statusSummary?.disabled],
-      ] as const).map(([label,value])=><div key={label} className="border-r border-border pr-4 last:border-r-0"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl>
+      ] as const).map(([label,value])=><div key={label} className="min-w-0 border-r border-border pr-[var(--lms-space-4)] even:border-r-0 md:even:border-r md:last:border-r-0"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl>
       <form
         key={[
           filters.q,
@@ -682,9 +681,9 @@ export function SuperAdminHrAccounts({
         ].join("|")}
         method="get"
         action="/admin/recruiters"
-        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 print:hidden"
+        className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]"
       >
-        <label className="grid min-w-52 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="col-span-2 grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body lg:col-span-1">
           Search
           <Input
             className="min-h-11 md:min-h-9" name="q"
@@ -695,7 +694,7 @@ export function SuperAdminHrAccounts({
           />
         </label>
 
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">
           Status
           <Select
             className="min-h-11 md:min-h-9" name="status"
@@ -708,7 +707,7 @@ export function SuperAdminHrAccounts({
           </Select>
         </label>
 
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">
           Rows per page
           <Select
             className="min-h-11 md:min-h-9" name="pageSize"
@@ -720,11 +719,11 @@ export function SuperAdminHrAccounts({
           </Select>
         </label>
 
-        <Button type="submit" className="min-h-11 md:min-h-9">Apply filters</Button>
+        <Button type="submit" className="min-h-11 w-full lg:min-h-9 lg:w-auto">Apply filters</Button>
 
         <Link
           href="/admin/recruiters"
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9 lg:w-auto"
         >
           Clear
         </Link>
@@ -788,7 +787,7 @@ export function SuperAdminHrAccounts({
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <h2 className="m-0 break-words text-base font-semibold text-foreground">{hrDisplayName(account)}</h2>
-                        <p className="mt-1 break-all text-xs text-muted-foreground">{account.email || account.phoneE164 || "No contact listed"}</p>
+                        <p className="mt-1 break-words text-xs text-muted-foreground">{account.email || account.phoneE164 || "No contact listed"}</p>
                       </div>
                       <StatusBadge tone={hrStatusTone(account.status)}>{account.status==="ARCHIVED"?"Suspended":account.status==="ACTIVE"?"Active":"Disabled"}</StatusBadge>
                     </div>
@@ -796,16 +795,7 @@ export function SuperAdminHrAccounts({
                       <div><dt className="text-xs text-muted-foreground">Company</dt><dd className="m-0 break-words">{account.companyName}</dd></div>
                       <div><dt className="text-xs text-muted-foreground">Colleges</dt><dd className="m-0 break-words">{account.grants.length ? account.grants.map((grant) => grant.collegeName).join(", ") : "No visible grants"}</dd></div>
                     </dl>
-                    <div className="mt-4 flex flex-wrap justify-end gap-2 print:hidden">
-                      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" onClick={() => openDetail(account)}>View</Button>
-                      <Button variant="ghost" size="sm" className="min-h-11 md:min-h-9" disabled={!account.accountManageable}
-           title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
-           onClick={() => openEdit(account)}>Edit</Button>
-                      {account.status!=="DISABLED"?<Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending||!account.accountManageable}
-                        onClick={()=>quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
-                      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending||!account.accountManageable}
-                        onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
-                    </div>
+                    {accountActions(account, true)}
                   </article>
                 ))}
               </div>
