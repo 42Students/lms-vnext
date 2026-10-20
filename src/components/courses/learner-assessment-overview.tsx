@@ -225,7 +225,7 @@ export function LearnerAssessmentOverview({
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3 text-sm font-semibold text-body">
           <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
-          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 border-b border-border">
+          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0">
             {submittedQuizzes.length>0 ? (
               <>
                 <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
