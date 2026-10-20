@@ -70,7 +70,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   })),
  ];
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
-  <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}<Select name={key} defaultValue={q[key]??""}
+  <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}<Select name={key} defaultValue={q[key]??""}
    className="min-w-0">
    <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
  );
@@ -80,34 +80,41 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    actions={<a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Export report (CSV) →</a>}/>
-  <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive or company
-    <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="min-w-0"/></label>
-   {select("jobId","Job",filters.jobs)}
-   {select("departmentId","Department",filters.departments)}
-   {select("programId","Program",filters.programs)}
-   {select("cohortId","Batch",filters.batches)}
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied from
-    <DateInput mode="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-w-0"/></label>
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied through
-    <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-w-0"/></label>
-   <div className="flex flex-wrap items-end gap-3"><Button type="submit">Refresh</Button>
-    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Clear all</Link></div>
+  <form method="get" action="/admin/placements/analytics" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive or company
+     <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="min-w-0 w-full"/></label>
+    {select("jobId","Job",filters.jobs)}
+    <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Refresh</Button>
+   </div>
+   <details className="min-w-0" open={Boolean(q.departmentId||q.programId||q.cohortId||q.appliedFrom||q.appliedTo)}>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
+     {select("departmentId","Department",filters.departments)}
+     {select("programId","Program",filters.programs)}
+     {select("cohortId","Batch",filters.batches)}
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied from
+      <DateInput mode="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="w-full"/></label>
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied through
+      <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="w-full"/></label>
+    </div>
+   </details>
+   <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear all</Link>
   </form>
-  {params.size?<p className="text-sm text-body">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
+  {params.size?<p role="status" className="max-w-full break-words text-xs text-muted-foreground">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
   <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
   {data.truncated?<Banner tone="warning">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </Banner>:null}
-  <dl className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[992px]:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
-   <div key={key} className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 capitalize text-[var(--lms-neutral-400)]">{hiringMetricLabel(key)}</dt>
+  <dl className="grid min-w-0 grid-cols-2 gap-0 border-y border-border sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
+   <div key={key} className="min-w-0 border-b border-r border-border px-[var(--lms-space-3)] py-[var(--lms-space-3)]"><dt className="text-[13px] font-semibold leading-4 capitalize text-[var(--lms-neutral-400)]">{hiringMetricLabel(key)}</dt>
     <dd className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{totals[key]}</dd></div>)}</dl>
-  <section className="border-b border-border pb-6" aria-label="Hiring Funnel">
+  <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]" aria-label="Hiring Funnel">
    <div className="flex flex-wrap items-start justify-between gap-3">
-    <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Hiring Funnel</h2>
+    <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Hiring Funnel</h2>
     <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
    </div>
-   <ol className="mt-4 grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">{funnel.map(step=>
+   <ol className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">{funnel.map(step=>
     <li key={step.key} className={styles.step}>
      <span className={styles.label}>{step.label}</span>
      <strong className={styles.count}>{step.count.toLocaleString("en-IN")}</strong>
@@ -119,14 +126,14 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   </section>
   <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
   <section aria-label="Company hiring results" className="min-w-0 space-y-4">
-   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Company hiring results</h2>
+   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company hiring results</h2>
    <DataTable columns={columns} rows={data.rows} getRowKey={row=>row.jobId}
      caption="Company hiring report" empty={<EmptyState title="No hiring results" description="No hiring results match these filters."/>}/>
   </section>
   {groups.length?<section aria-label="Company totals" className="space-y-3">
-   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Company totals</h2>
-   <div className="grid min-w-0 gap-3 lg:grid-cols-2">{groups.map(group=>
-     <article key={group.companyName} className="min-w-0 border-b border-border py-4">
+   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company totals</h2>
+   <div className="grid min-w-0 gap-[var(--lms-space-3)] lg:grid-cols-2">{groups.map(group=>
+     <article key={group.companyName} className="min-w-0 border-b border-border py-[var(--lms-space-4)]">
       <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{group.companyName}</h3>
       <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
        {metricKeys.map(key=><div key={key} className="min-w-0">
