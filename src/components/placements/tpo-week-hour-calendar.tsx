@@ -250,5 +250,32 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     </div>
    </div>
   </Dialog>:null}
+  <ConfirmDialog open={review !== null}
+   onOpenChange={next => {if(!next&&!saving)setReview(null);}}
+   title={review?.kind==="MOVE"?"Confirm follow-up move?" :
+    review?.kind==="ADD"?"Confirm blocked-date follow-up?" :
+    review?.kind==="LEAVE"?"Leave unfinished follow-up?":"Discard unfinished follow-up?"}
+   description={review?.prompts[review.index]??""}
+   confirmLabel={review?.kind==="LEAVE"||review?.kind==="DISCARD"?"Discard":
+    review?.index===review?.prompts.length-1?"Confirm":"Continue"}
+   confirmVariant={review?.kind==="LEAVE"||review?.kind==="DISCARD"?"danger":"primary"}
+   pending={saving} onConfirm={()=>{
+    if(!review)return;
+    if(review.index+1<review.prompts.length){
+     setReview({...review,index:review.index+1});
+     return;
+    }
+    setReview(null);
+    if(review.kind==="MOVE")void moveFollowup(review.followupId,review.day,review.hour,true);
+    else if(review.kind==="ADD")void save(true);
+    else if(review.kind==="DISCARD")cancelDraft(true);
+    else {
+     cancelDraft(true);
+     const href=new URL(review.href,window.location.href);
+     allowUnload.current=true;
+     if(href.origin===window.location.origin)router.push(href.pathname+href.search+href.hash);
+     else window.location.assign(href.href);
+    }
+   }}/>
  </section>;
 }
