@@ -46,7 +46,7 @@ export function PageHeader({ eyebrow, title, id, description, actions, needsDoin
         ) : null}
       </div>
       {actions ? (
-        <div className="mt-1 flex w-full min-w-0 flex-col items-stretch justify-start gap-2 md:ml-auto md:mt-0 md:w-auto md:shrink-0 md:flex-row md:flex-wrap md:items-center md:justify-end md:gap-4 md:pt-2">
+        <div className="mt-1 flex w-full min-w-0 flex-col items-stretch justify-start gap-2 md:ml-auto md:mt-0 md:w-auto md:min-w-0 md:max-w-full md:shrink md:flex-row md:flex-wrap md:items-center md:justify-end md:gap-4 md:pt-2">
           {actions}
         </div>
       ) : null}
