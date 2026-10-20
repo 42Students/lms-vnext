@@ -57,7 +57,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
       {!previousHref ?
         <span aria-disabled="true" className={cx(buttonClass, "cursor-not-allowed opacity-50")}>Previous</span> :
         <Link className={buttonClass} href={previousHref} scroll={scroll} aria-label="Previous page">Previous</Link>}
-      <span role="status" className="px-1 text-[12px] font-medium text-[var(--lms-neutral-500)] md:sr-only">Page {current} of {total}</span>
+      <span role="status" className="px-1 text-[12px] font-medium text-[var(--lms-neutral-500)] sr-only">Page {current} of {total}</span>
       {showBoundaryLinks && firstShown > 1 ? <>
         {firstHref ? <Link href={firstHref} scroll={scroll} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page 1 of ${total}`}>1</Link> :
           <span aria-disabled="true" aria-label="First page unavailable" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>1</span>}
