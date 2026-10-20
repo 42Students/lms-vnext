@@ -3,7 +3,6 @@ import { FilterBar } from "@/components/ui/filter-bar";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { CollegeCohortRowActions } from "@/components/academics/college-cohort-management";

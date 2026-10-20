@@ -3,7 +3,6 @@ import { FilterBar } from "@/components/ui/filter-bar";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { CollegeSectionLifecycleAction } from "@/components/academics/college-section-lifecycle-action";
 import { CollegeSlotManager } from "@/components/electives/college-slot-manager";

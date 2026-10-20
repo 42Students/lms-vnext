@@ -2,7 +2,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { Select } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
