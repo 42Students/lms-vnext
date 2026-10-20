@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
@@ -24,8 +26,9 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
   | Awaited<ReturnType<typeof listCollegeElectives>>;
 
-export function CollegeStructureDirectory({ data, electiveOptions }: {
+export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
   data: DirectoryData;
+  prepend?: ReactNode;
   electiveOptions?: {
     programs: { id: string; name: string; durationTerms: number }[];
     periods: { id: string; name: string }[];
@@ -43,15 +46,16 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           Academic workspace
         </Link>}
       />
-      <section aria-label={title + " filters"} className="border-t border-border pt-4">
+      {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
+      <FilterBar title="Filters"><section aria-label={title + " filters"} className="border-t border-border pt-4">
         <form method="get" action={path} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {classes ? "Class, batch or program" : "Elective or program"}
             <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
               placeholder="Search registered records" />
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -63,7 +67,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               ))}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -75,7 +79,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           <Disclosure title={"More filters"} className="col-span-full rounded-[var(--lms-control-radius)] border border-border p-3">
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum slot credits
               <Input name="minimumCredits" type="number" min={1} max={500} step={1}
                 defaultValue={data.query.minimumCredits??""} placeholder="Any credits"
@@ -83,7 +87,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum slot credits
               <Input name="maximumCredits" type="number" min={1} max={500} step={1}
                 defaultValue={data.query.maximumCredits ?? ""} placeholder="No upper bound"
@@ -91,7 +95,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Semester number
               <Input name="semesterNumber" type="number" min={1} max={24} step={1}
                 defaultValue={data.query.semesterNumber ?? ""} placeholder="All semesters"
@@ -99,7 +103,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Capacity configuration
               <Select name="capacityState" defaultValue={data.query.capacityState}
                 className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -110,7 +114,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Batch code
               <Input name="cohortCode" type="text" maxLength={64}
                 defaultValue={data.query.cohortCode ?? ""} placeholder="Exact batch code"
@@ -118,7 +122,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum configured capacity
               <Input name="maximumCapacity" type="number" min={1} max={100000} step={1}
                 defaultValue={data.query.maximumCapacity??""} placeholder="No upper bound"
@@ -126,7 +130,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum configured capacity
               <Input name="minimumCapacity" type="number" min={1} max={100000} step={1}
                 defaultValue={data.query.minimumCapacity ?? ""} placeholder="Any capacity"
@@ -134,7 +138,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Batch status
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch status
               <Select name="cohortStatus" defaultValue={data.query.cohortStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="PLANNED">Planned</option>
@@ -145,7 +149,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Program status
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program status
               <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active</option>
@@ -154,7 +158,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Academic period
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
               <Select name="periodState" defaultValue={data.query.periodState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="LINKED">Linked to a period</option>
@@ -163,7 +167,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Program status
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program status
               <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active programs</option>
@@ -172,19 +176,19 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Class academic period code
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class academic period code
               <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
                 placeholder="Exact registered code" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Class code
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code
               <Input name="classCode" type="search" maxLength={64} defaultValue={data.query.classCode ?? ""}
                 placeholder="Exact registered code" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Number of choices
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Number of choices
               <Select name="choiceMode" defaultValue={data.query.choiceMode ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="FLEXIBLE">Minimum and maximum differ</option>
@@ -193,7 +197,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Course offerings
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course offerings
               <Select name="offeringState" defaultValue={data.query.offeringState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="HAS_ACTIVE">Has active course offerings</option>
@@ -202,7 +206,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Academic year
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year
               <Select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="RECORDED">Academic year recorded</option>
@@ -211,13 +215,13 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Academic period code
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period code
               <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
                 placeholder="Exact linked period code" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Academic period status
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period status
               <Select name="periodLifecycle" defaultValue={data.query.periodLifecycle} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All periods</option>
                 <option value="PLANNED">Planned</option>
@@ -227,22 +231,22 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Exact program code
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact program code
               <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Class name
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
               <Input name="className" type="search" maxLength={255} defaultValue={data.query.className ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Batch name
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
               <Input name="cohortName" type="search" maxLength={255} defaultValue={data.query.cohortName ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Saved section schedule
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Saved section schedule
               <Select name="schedulePresence" defaultValue={data.query.schedulePresence} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All classes</option>
                 <option value="HAS_EVENTS">With schedule events</option>
@@ -251,7 +255,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Faculty assignments
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty assignments
               <Select name="facultyCoverage" defaultValue={data.query.facultyCoverage} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All classes</option>
                 <option value="HAS_FACULTY">Has active Faculty assignments</option>
@@ -260,7 +264,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Courses
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Courses
               <Select name="deliveryPresence" defaultValue={data.query.deliveryPresence} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All classes</option>
                 <option value="HAS_DELIVERIES">Has course deliveries</option>
@@ -269,76 +273,76 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Period start date on or after
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Period start date on or after
               <Input name="periodStartsOnOrAfter" type="date" defaultValue={data.query.periodStartsOnOrAfter ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Period end date on or before
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Period end date on or before
               <Input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Department code
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department code
               <Input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Elective name
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Elective name
               <Input name="slotName" type="search" maxLength={150} defaultValue={data.query.slotName ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Program code
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program code
               <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Department code
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department code
               <Input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Minimum required elective choices
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum required elective choices
               <Input name="minimumRequiredPicks" type="number" min={0} max={1000} step={1} defaultValue={data.query.minimumRequiredPicks ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Maximum allowed elective choices
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum allowed elective choices
               <Input name="maximumAllowedPicks" type="number" min={1} max={1000} step={1} defaultValue={data.query.maximumAllowedPicks ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Semester from
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester from
               <Input name="semesterFrom" type="number" min={1} max={24} step={1} defaultValue={data.query.semesterFrom ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Semester through
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester through
               <Input name="semesterThrough" type="number" min={1} max={24} step={1} defaultValue={data.query.semesterThrough ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Linked academic-period lifecycle
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Linked academic-period lifecycle
               <Select name="periodLifecycle" defaultValue={data.query.periodLifecycle} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All linked and unlinked</option><option value="PLANNED">Planned</option><option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Elective description availability
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Elective description availability
               <Select name="descriptionPresence" defaultValue={data.query.descriptionPresence} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">Any description state</option><option value="RECORDED">Field is recorded</option><option value="MISSING">Field is missing</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Elective linked period starts on or after
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Elective linked period starts on or after
               <Input name="periodStartsOnOrAfter" type="date" defaultValue={data.query.periodStartsOnOrAfter ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Elective linked period ends on or before
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Elective linked period ends on or before
               <Input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
@@ -355,7 +359,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </Link>
           </div>
         </form>
-      </section>
+      </section></FilterBar>
       <section aria-label={title + " results"} role="region" tabIndex={0} className="max-w-full overflow-x-auto rounded-[var(--lms-control-radius)] border border-border bg-surface">
         <p className="px-4 pt-3 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all class or elective columns.</p>
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">

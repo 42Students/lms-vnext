@@ -1,3 +1,5 @@
+import { FilterBar } from "@/components/ui/filter-bar";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Button } from "@/components/ui/button";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
@@ -10,7 +12,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { StatTile } from "@/components/ui/stat-tile";
 import {
   attendanceCalendarDayKey, attendanceCalendarDays,
   attendanceCalendarHref, learnerAttendanceCalendarQuerySchema,
@@ -74,13 +75,13 @@ export default async function LearnerAttendanceCalendarPage({
       actions={<Link href={sourceLink} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Attendance detail
       </Link>} />
-    <form action="/learn/attendance/calendar" method="get"
+    <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
       className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
-      <label className="grid gap-1 text-xs font-semibold text-body">Month
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month
         <Input name="month" type="month" defaultValue={data.query.month}
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-body">Course
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
           className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All accessible Courses</option>
@@ -90,7 +91,7 @@ export default async function LearnerAttendanceCalendarPage({
             </option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-body">Status
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={data.query.status}
           className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All status types</option>
@@ -105,16 +106,13 @@ export default async function LearnerAttendanceCalendarPage({
         <Link href="/learn/attendance/calendar"
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear</Link>
       </div>
-    </form>
-    <div className="grid gap-3 md:grid-cols-4" aria-label="Filtered attendance totals">
-      {([
-        ["Marked",data.summary.marked],
-        ["Present",data.summary.present],
-        ["Not marked",data.summary.unmarked],
-        ["Scheduled",data.summary.scheduled],
-      ] as const).map(([label,value])=>
-        <StatTile key={label} label={label} value={value} />)}
-    </div>
+    </form></FilterBar>
+    <SummaryStrip label="Filtered attendance totals" steps={[
+      {label:"Marked",value:data.summary.marked},
+      {label:"Present",value:data.summary.present},
+      {label:"Not marked",value:data.summary.unmarked},
+      {label:"Scheduled",value:data.summary.scheduled},
+    ]} />
     <p className="text-sm text-body">
       {data.summary.total} recorded class{data.summary.total===1?"":"es"} match the filters.
       {" "}Attendance percentage: {data.summary.percentage===null
@@ -158,9 +156,9 @@ export default async function LearnerAttendanceCalendarPage({
             description={data.hasAnyRecords
               ?"Try another month, Course or status. Missing records are not assumed absent."
               :"Your authorized Course sessions have no registered attendance records yet. This does not mean you were absent."} />
-        : <ol className="grid gap-3 md:grid-cols-2">
+        : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {data.rows.map(row=><li key={row.id}
-            className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-none motion-reduce:transition-none md:p-6">
+            className="min-w-0 py-[var(--lms-space-4)]">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <h3 className="font-semibold text-foreground">{row.title}</h3>
               <StatusBadge tone={statusTone[row.status]??"neutral"}>

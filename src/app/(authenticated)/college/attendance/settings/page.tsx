@@ -36,10 +36,10 @@ export default async function CollegeAttendanceSettingsPage() {
         }
       />
 
-      <CollegeAttendancePolicyForm
+      <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"><CollegeAttendancePolicyForm
         collegeId={college.id}
         initialPolicy={policy}
-      />
+      /></section>
     </div>
   );
 }
