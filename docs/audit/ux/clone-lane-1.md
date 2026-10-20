@@ -1,3 +1,16 @@
 # Clone lane 1 — source checks only (no live browser/CI)
 - [x] src/components/placements/learner-placement-alerts.tsx — learn-notifications.scss:90-116,314-352; 14/16/13px fonts to legacy tokens, 1.3 heading line height, centered 180px empty; grep raw=0,hex=0,fontPx=0,sm=0; breakpoint source 375/768/1280.
 - [x] src/app/(authenticated)/learn/my-placements/support/page.tsx — learn-notifications.scss:67-85,90-128,183-221,314-352; 48px mobile scroll token, 14px filter token, centered 180px empty, 44px back link; grep raw=0,hex=0,fontPx=0,sm=0; breakpoint source 375/768/1280.
+- [x] src/app/(authenticated)/admin/placements/interviews/[roundId]/page.tsx — one PageHeader with deduplicated action links and StatusBadge; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/admin/placements/offers/[offerId]/page.tsx — shared detail header/actions and status already updated; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx — authorized redirect only, zero rendered elements; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx — rendered template subview uses PageHeader, Tabs, badges, DataTable and pagination; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/college-admin/programs/page.tsx — redirect alias, zero rendered elements; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/college/live-classes/page.tsx — moved single PageHeader above unboxed authoring and directory list; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx — flat filter row, 44px search/button/pagination and DataTable; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx — readiness subview PageHeader/Tabs/MetricBar/status and errors inspected; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/college/projects/create/page.tsx — one PageHeader action, duplicate standalone h2 removed; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/college/resources/page.tsx — Resources head above editor, removed authoring outer card and nested head; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/college/videos/page.tsx — Video head above editor, no duplicate title/card; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/hr/colleges/page.tsx — retired HR redirect only, no rendered elements; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/learn/my-placements/support/page.tsx — support already fixed in item2; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.

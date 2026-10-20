@@ -30,12 +30,13 @@ export default async function CollegeVideosPage({
     );
   }
   const authoring=await getCollegeContentAuthoringOptions(context,"YOUTUBE");
-  return <main className="min-w-0 space-y-4">
+  return <div className="min-w-0 space-y-4">
+    <PageHeader title="Video" eyebrow="College Admin · Courses & Content" />
     <CollegeContentAuthoringControl kind="YOUTUBE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} />
     <Link prefetch={false} download href={collegeContentCsvHref("VIDEO",parsed.data)}
       className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Export filtered video metadata CSV
     </Link>
-    <CollegeContentAggregate data={await listCollegeContentAggregate(context, "VIDEO", parsed.data)} />
-  </main>;
+    <CollegeContentAggregate showHeader={false} data={await listCollegeContentAggregate(context, "VIDEO", parsed.data)} />
+  </div>;
 }
