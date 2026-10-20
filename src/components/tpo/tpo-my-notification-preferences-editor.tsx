@@ -2,6 +2,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useRouter} from "next/navigation";
 import {TPO_NOTIFICATION_PREFERENCE_FIELDS,type TpoNotificationPreferences} from "@/modules/placements/tpo-my-notifications-model";
 export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:TpoNotificationPreferences;version:string|null}){
@@ -50,7 +51,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
   </div>
   <Button type="button" disabled={busy||(!dirty&&currentVersion!==null)} onClick={()=>void save()}
    className="min-h-11 min-[768px]:min-h-9">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;
 }
