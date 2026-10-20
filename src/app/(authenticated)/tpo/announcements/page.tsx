@@ -119,26 +119,26 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <Input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
     {query.success&&query.data.targetId?<Input type="hidden" name="targetId" value={query.data.targetId}/>:null}
     {query.success?query.data.targetIds?.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>):null}
-    <label className="grid gap-1 text-sm font-semibold">Title
-     <Input name="title" required maxLength={200} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+     <Input name="title" required maxLength={200} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]" />
     </label>
-    <label className="grid gap-1 text-sm font-semibold">Message
-     <Textarea name="message" required maxLength={8000} rows={5} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" />
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+     <Textarea name="message" required maxLength={8000} rows={5} className="" />
     </label>
     <fieldset className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
      <legend className="text-sm font-semibold">Button (optional)</legend>
-     <label className="grid gap-1 text-sm">Button label
+     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
       <Input name="buttonLabel" maxLength={60} placeholder="Register"
-       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
      </label>
-     <label className="grid gap-1 text-sm">Button link
+     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
       <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
        placeholder="https://forms.gle/…" title="The link has to start with https://"
-       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
      </label>
     </fieldset>
-    <label className="grid gap-1 text-sm">Show until (IST, optional)
-      <Input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST, optional)
+      <Input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
     </label>
     <label className="flex items-center gap-2 text-sm"><Checkbox name="pinned" /> Pin this notice</label>
     <TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}
@@ -192,35 +192,35 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <TpoNoticeComposerDialog mode="EDIT">
       <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="mt-3 grid gap-3">
        <Input type="hidden" name="expectedVersion" value={row.version}/>
-       <label className="grid gap-1 text-sm text-body">Title
+       <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
         <Input name="title" required maxLength={200} defaultValue={row.title}
-         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>
-       <label className="grid gap-1 text-sm text-body">Message
+       <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
         <Textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
-         className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
+         className=""/>
        </label>
        <fieldset className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
         <legend className="text-sm font-semibold">Button (optional)</legend>
-        <label className="grid gap-1 text-sm">Button label
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
          <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
-          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
         </label>
-        <label className="grid gap-1 text-sm">Button link
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
          <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
           defaultValue={row.buttonUrl??""} title="The link has to start with https://"
-          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
         </label>
        </fieldset>
-       <label className="grid gap-1 text-sm text-body">Send at (IST)
+       <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Send at (IST)
         <Input type="datetime-local" name="sendAt"
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
-         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>
-       <label className="grid gap-1 text-sm text-body">Show until (IST)
+       <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST)
         <Input type="datetime-local" name="showUntil"
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
-         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>
        <label className="flex items-center gap-2 text-sm text-body">
         <Checkbox name="pinned" defaultChecked={row.isPinned}/> Pinned
