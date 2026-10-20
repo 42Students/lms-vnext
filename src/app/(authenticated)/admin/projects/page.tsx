@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -137,8 +138,8 @@ export default async function SuperAdminProjectsPage({
         description="Live projects, each run by a mentor with a team of students."
         actions={
           <div className="flex min-w-0 w-full flex-col items-stretch justify-end gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
             <CreateProjectControl
               collegeId={collegeId}
               basePath="/admin/projects"
@@ -162,7 +163,7 @@ export default async function SuperAdminProjectsPage({
           {value:"table",label:"Table",href:viewHref("table"),count:result.total},
           {value:"cards",label:"Cards",href:viewHref("cards"),count:result.total},
         ]} />
-      <ProjectAdminFilters query={query} legacyWorkspaces />
+      <FilterBar title="Project workspace filters"><ProjectAdminFilters query={query} legacyWorkspaces /></FilterBar>
       <ListToolbar label="Project workspaces" viewCount={result.total}
         exportAction={<ProjectWorkspacePageExport items={result.items.map(item=>({
           id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,

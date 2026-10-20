@@ -27,17 +27,17 @@ export default async function SuperAdminAuthSettings(){
   <Banner tone="info">
    Configuration runtime status is not attested by this page. Privileged second-factor readiness must be verified separately before production.
   </Banner>
-  <ul className="min-w-0 divide-y divide-border border-y border-border">
-   {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 py-4">
-    <h2 className="break-words font-semibold text-foreground">{item.title}</h2>
+  <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+   {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
+    <h2 className="break-words text-[var(--lms-font-md)] font-semibold text-[var(--lms-heading)]">{item.title}</h2>
     <p className="mt-2 text-sm text-body">{item.description}</p>
     <div className="mt-3"><StatusBadge tone="neutral" className="max-w-full">{item.state}</StatusBadge></div>
    </li>)}
   </ul>
-  <section aria-label="Legacy platform and auth setting keys" className="space-y-3 border-b border-border pb-5">
-   <h2 className="font-semibold">Platform &amp; auth policy keys</h2>
+  <section aria-label="Legacy platform and auth setting keys" className="space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+   <h2 className="text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Platform &amp; auth policy keys</h2>
    <p className="text-sm text-body">Names and validation are listed for review. Environment and live network configuration are never displayed. Changes to host, cookie or network controls require manual deployment acceptance.</p>
-   <ul className="space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="border-b border-border py-3">
+   <ul className="space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
     <strong className="block">{spec.label}</strong>
     <code className="break-all text-xs">{spec.key}</code>
     {spec.dangerous?<StatusBadge tone="warning" className="ml-2">High impact · deployment gated</StatusBadge>:null}
