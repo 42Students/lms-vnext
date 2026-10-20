@@ -1,6 +1,7 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
+import {Disclosure} from "@/components/ui/disclosure";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -63,7 +64,7 @@ export default async function TpoFailureReasonsPage({
       : "No placement season or matching drive data is available. No adverse outcome is inferred from missing data.";
 
   return (
-    <div data-tpo-presentation-report className="min-w-0 space-y-5">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         
         title="Failure reasons"
@@ -95,18 +96,17 @@ export default async function TpoFailureReasonsPage({
         </p>
       </section>
 
-      <section
-        aria-label="Report methodology"
-        className="border-t border-[var(--lms-canvas-border)] py-4 text-[14px] leading-6 text-[var(--lms-body-text)]"
-      >
-        <p className="font-semibold text-foreground">
-          Reporting methodology
-        </p>
+      <Disclosure title="Reporting methodology" ariaLabel="Report methodology" className="border-y border-border py-3">
+        <div className="min-w-0 pt-3 text-[14px] leading-6 text-[var(--lms-body-text)]">
+        
         <p className="mt-1">{methodology}</p>
-      </section>
+      </div>
+      </Disclosure>
 
       <ReportBarChart title="Recorded adverse outcomes by type" units="events"
        rows={failures.byKind.map(row=>({label:FAILURE_KIND_LABELS[row.kind],value:row.count}))}/>
+      <Disclosure title="Round and branch details" className="border-b border-border pb-3">
+        <div className="min-w-0 space-y-4 pt-3">
       <ReportBarChart title="Round failures by recorded round" units="failed decisions"
        rows={workspace.roundFailureShares.map(row=>({
         label:row.roundName,value:row.failed,
@@ -123,7 +123,7 @@ export default async function TpoFailureReasonsPage({
       <a href={"/api/placements/tpo/reports/round-failures?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{})
-       }).toString()} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
+       }).toString()} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] sm:w-auto md:min-h-9 border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
        Download round-and-branch failures CSV
       </a>
       <ReportTable
@@ -136,6 +136,11 @@ export default async function TpoFailureReasonsPage({
        emptyDescription="No applied round decisions are available by current academic branch."/>
       <p className="text-xs text-muted-foreground">Branch uses the learner&apos;s current active academic enrollment; past branch membership is not reconstructed. A missing branch is labelled Not recorded. Percentages use only applied round decisions for that round and branch.</p>
       
+
+        </div>
+      </Disclosure>
+      <Disclosure title="Reason breakdowns" className="border-b border-border pb-3">
+        <div className="min-w-0 space-y-4 pt-3">
       <ReportTable
         title="Outcomes by type"
         headings={["Outcome", "Recorded count"]}
@@ -179,6 +184,9 @@ export default async function TpoFailureReasonsPage({
         ])}
         emptyDescription="No drive-specific adverse outcomes are available for these filters."
       />
+
+        </div>
+      </Disclosure>
     </div>
   );
 }

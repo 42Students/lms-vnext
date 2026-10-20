@@ -37,15 +37,13 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const requestedPage=Number(first(raw.page)??"1");
  const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(pageCount,requestedPage)):1;
  const pageHref=(nextPage:number)=>{const next=new URLSearchParams(query);next.set("page",String(nextPage));return "/tpo/reports/after-college?"+next.toString();};
- return <div data-tpo-presentation-report className="space-y-5">
+ return <div data-tpo-presentation-report className="min-w-0 space-y-4">
   <PageHeader title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."
    actions={<><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">← All reports</Link>{data.available?<a href={"/api/placements/tpo/reports/after-college?"+query.toString()} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">Download CSV</a>:null}</>}/>
-  <TpoReportPresentation />
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId} userId={ctx.user.id}/></Suspense>
   {!data.available?<Alert tone="warning">After-college outcomes storage is unavailable. This page does not infer destinations.</Alert>:<>
-   <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
-    <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] md:w-[220px] md:basis-auto text-[var(--lms-neutral-400)] font-semibold leading-4">Batch
+   <form method="get" className="grid min-w-0 gap-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] lg:items-end">
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
      <Select name="batchId" defaultValue={batchId??""} className="min-h-11 w-full md:min-h-9">
       <option value="">All current batches</option>
       {batches.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
@@ -55,10 +53,12 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
       <option value="">All branches</option>
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
      </Select></label>
-    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+    <Button type="submit" className="min-h-11 w-full sm:w-auto lg:justify-self-start md:min-h-9">Filter</Button>
     <Link href="/tpo/reports/after-college" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline md:min-h-9 md:w-auto">Clear</Link>
 
    </form>
+   <div className="flex min-w-0 flex-wrap items-center gap-2"><TpoReportPresentation /></div>
+   <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId} userId={ctx.user.id}/></Suspense>
    <p className="text-sm text-body">{data.total} students in this reporting population. NAAC 5.2 / NIRF working data only; unreported choices remain Not decided.</p>
    <SummaryStrip label="After-college outcomes" steps={AFTER_COLLEGE_OUTCOMES.map(key=>({label:AFTER_COLLEGE_LABELS[key],value:data.counts[key]}))}/>
    <DataTable rows={data.rows.slice((page-1)*25,page*25)} getRowKey={row=>row.membershipId}
