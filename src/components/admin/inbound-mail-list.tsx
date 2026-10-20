@@ -1,5 +1,6 @@
 "use client";
 import {useRef,useState} from "react";
+import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
 import {Button} from "@/components/ui/button";
@@ -39,38 +40,50 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
  }
 
  return <div className="min-w-0 space-y-3">
-  {rows.length===0?<p role="status" className="border-y border-border py-4 text-sm text-body">No inbound messages match these filters.</p>:
-   <div className="min-w-0 divide-y divide-border border-y border-border">
-    {rows.map(row=><article key={row.id} className="min-w-0 py-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-       <h2 className="min-w-0 break-words text-base font-semibold text-foreground">{row.subject||"(No subject)"}</h2>
-       <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
+  {rows.length===0?
+   <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-5)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
+    <p role="status" className="text-sm text-body">No inbound messages match these filters.</p>
+    <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white min-[768px]:min-h-9 min-[768px]:w-auto">Clear</Link>
+   </div>:
+   <>
+    <div className="min-w-0 divide-y divide-border border-y border-border">
+     {rows.map(row=><article key={row.id} className="min-w-0 py-4">
+      <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between min-[768px]:gap-[var(--lms-space-6)]">
+       <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
+         <h2 className="min-w-0 break-words text-base font-semibold text-foreground">{row.subject||"(No subject)"}</h2>
+         <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
+        </div>
+        <p className="mt-1 break-all text-sm text-body">From {row.fromAddress} · To {row.toAddress}</p>
+        <p className="mt-2 line-clamp-2 break-words text-sm text-muted-foreground print:line-clamp-none">{safeInboundPreview(row.bodyPlain)}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+       </div>
+       <Button type="button" variant="secondary" className="w-full min-h-11 shrink-0 min-[768px]:w-auto min-[768px]:min-h-9 print:hidden" onClick={()=>{setMessage("");setSelected(row);}}>Read message</Button>
       </div>
-      <p className="mt-1 break-all text-sm text-body">From {row.fromAddress} · To {row.toAddress}</p>
-      <p className="mt-2 line-clamp-2 break-words text-sm text-muted-foreground print:line-clamp-none">{safeInboundPreview(row.bodyPlain)}</p>
-      <p className="mt-1 text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
-      <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-      <Button type="button" variant="secondary" className="mt-3 min-h-11 md:min-h-9 print:hidden" onClick={()=>{setMessage("");setSelected(row);}}>Read message</Button>
-    </article>)}
-   </div>}
-  {selected?<Drawer open onOpenChange={open=>{if(!open)setSelected(null)}} title={selected.subject||"(No subject)"}
-    description="Private inbound message">
-    <dl className="grid min-w-0 gap-3 text-sm">
-     <div><dt className="font-semibold">From</dt><dd className="m-0 break-all">{selected.fromAddress}</dd></div>
-     <div><dt className="font-semibold">To</dt><dd className="m-0 break-all">{selected.toAddress}</dd></div>
-     <div><dt className="font-semibold">Received</dt><dd className="m-0">{new Date(selected.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</dd></div>
-    </dl>
-    <div className="mt-4 flex flex-wrap gap-2">
-     {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
-      <Button key={action.status} type="button" className="min-h-11 md:min-h-9" variant={action.status==="RESOLVED"?"primary":"secondary"} disabled={busy} onClick={()=>void change(selected,action.status)}>
-       {busy?"Saving…":action.label}
-      </Button>)}
+     </article>)}
     </div>
-    {message?<p role="status" className="mt-3 text-sm text-body">{message}</p>:null}
-    <section className="mt-5 min-w-0 border-t border-border pt-4">
-      <h3 className="text-sm font-semibold text-foreground">Plain text message</h3>
-      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{selected.bodyPlain.slice(0,15000)}</p>
-      {selected.bodyPlain.length>15000?<p className="text-xs text-muted-foreground">Message preview truncated after 15,000 characters.</p>:null}
+    <p className="text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
+   </>}
+  {selected?<Drawer open onOpenChange={open=>{if(!open)setSelected(null)}} title={selected.subject||"(No subject)"}
+    description="Private inbound message"
+    footer={<div className="flex w-full min-w-0 flex-col gap-[var(--lms-space-3)]">
+     {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:justify-end">
+      {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
+       <Button key={action.status} type="button" className="w-full min-h-11 min-[768px]:w-auto min-[768px]:min-h-9" variant={action.status==="RESOLVED"?"primary":"secondary"} disabled={busy} onClick={()=>void change(selected,action.status)}>
+        {busy?"Saving…":action.label}
+       </Button>)}
+     </div>
+    </div>}>
+    <dl className="grid min-w-0 gap-[var(--lms-space-3)] text-sm min-[768px]:grid-cols-2">
+     <div className="min-w-0"><dt className="font-semibold">From</dt><dd className="m-0 break-all">{selected.fromAddress}</dd></div>
+     <div className="min-w-0"><dt className="font-semibold">To</dt><dd className="m-0 break-all">{selected.toAddress}</dd></div>
+     <div className="min-w-0 min-[768px]:col-span-2"><dt className="font-semibold">Received</dt><dd className="m-0">{new Date(selected.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</dd></div>
+    </dl>
+    <section className="mt-4 min-w-0 border-t border-border pt-4">
+     <h3 className="text-sm font-semibold text-foreground">Plain text message</h3>
+     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{selected.bodyPlain.slice(0,15000)}</p>
+     {selected.bodyPlain.length>15000?<p className="text-xs text-muted-foreground">Message preview truncated after 15,000 characters.</p>:null}
     </section>
    </Drawer>:null}
  </div>;
