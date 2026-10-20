@@ -28,7 +28,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-9.md: surface | proble
 - [x] `src/app/(authenticated)/college/live-classes/page.tsx` (College admin page)
 - [x] `src/app/(authenticated)/college/page.tsx` (College admin page)
 - [x] `src/app/(authenticated)/college/people/manage/page.tsx` (College admin page)
-- [ ] `src/app/(authenticated)/college/people/page.tsx` (College admin page)
+- [x] `src/app/(authenticated)/college/people/page.tsx` (College admin page)
 - [ ] `src/app/(authenticated)/college/placements/calendar/page.tsx` (College admin page)
 - [ ] `src/app/(authenticated)/college/placements/drives/page.tsx` (College admin page)
 - [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx` (College admin page)
