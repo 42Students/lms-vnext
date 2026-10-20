@@ -594,13 +594,13 @@ export default async function TpoStudentsPage({
         <Link
           href="/tpo/students"
           aria-current="page"
-          className="rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Students roster
         </Link>
         <Link
           href="/tpo/students/requests"
-          className="rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Requests
         </Link>

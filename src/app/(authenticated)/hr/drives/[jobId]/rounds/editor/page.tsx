@@ -33,7 +33,7 @@ export default async function HrRoundsEditorPage({params}:{
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."
    actions={<nav className="flex flex-wrap items-center gap-2 text-sm">
     <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Back to drive rounds"/>
-    <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Drives</Link>
+    <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Drives</Link>
    </nav>} />
   <section className="space-y-4 border-b border-border pb-4">
    <h2 className="font-semibold text-foreground">Add a round</h2>
