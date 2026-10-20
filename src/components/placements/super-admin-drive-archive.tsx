@@ -35,7 +35,7 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
     setPreview(null);}
   });
  }
- return <section className="space-y-3 border-b border-border pb-5">
+ return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="font-semibold">Delete drive</h2>
   <p className="text-sm text-body">Delete archives the drive and preserves its history.
    Learners are notified; scheduled interviews and unaccepted offers are cancelled.</p>
@@ -43,7 +43,7 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
    Preview delete impact</Button>:
    <form onSubmit={e=>void confirm(e)} className="space-y-3">
     <p className="text-sm font-semibold">Delete {title}?</p>
-    <dl className="grid grid-cols-2 gap-2 text-sm">
+    <dl className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] text-sm">
      {([["Active applications",preview.impact.activeApplications],
        ["Affected learners",preview.impact.affectedLearners],
        ["Interviews to cancel",preview.impact.openRounds],
@@ -53,13 +53,13 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
     </dl>
     {preview.impact.acceptedOffers>0?<p role="alert" className="text-warning">
      Resolve accepted offers before deleting this drive.</p>:null}
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (required)
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (required)
      <Textarea required minLength={10} maxLength={1000} value={reason}
       onChange={e=>setReason(e.target.value)} rows={2}
       className="w-full"/></label>
     <Button type="submit" variant="danger" disabled={pending||!preview.archivable||reason.trim().length<10}>
      {pending?"Deleting…":"Confirm delete (archive)"}</Button>
-    <Button type="button" variant="secondary" className="ml-2" disabled={pending} onClick={()=>setPreview(null)}>Cancel</Button>
+    <Button type="button" variant="secondary" className="mt-[var(--lms-space-2)] w-full sm:mt-0 sm:ml-[var(--lms-space-2)] sm:w-auto" disabled={pending} onClick={()=>setPreview(null)}>Cancel</Button>
    </form>}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
