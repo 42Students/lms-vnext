@@ -37,6 +37,7 @@ export function NotificationToolbar({
       await run(async () => {
         await apiFetch(markAllEndpoint, { method: "POST", timeoutMs: 25_000 });
         setConfirmOpen(false);
+        showToast({ tone: "success", title: "Marked all as read" });
         router.refresh();
       });
     } catch (error) {
@@ -49,19 +50,19 @@ export function NotificationToolbar({
   }
 
   return (
-    <div className="flex flex-col items-stretch gap-3 border-b border-border pb-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-      <div className="flex w-full min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:w-auto min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0" role="group" aria-label="Notification filter">
+    <div className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
+      <div className="grid w-full min-w-0 grid-cols-2 gap-2 min-[768px]:flex min-[768px]:w-auto min-[768px]:flex-wrap" role="group" aria-label="Notification filter">
         <Link
           href={baseHref + "?view=all"}
           aria-current={view === "all" ? "page" : undefined}
-          className={`inline-flex min-h-11 min-[768px]:min-h-9 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-filter-radius,8px)] border px-4 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
+          className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           {allLabel}
         </Link>
         <Link
           href={baseHref + "?view=unread"}
           aria-current={view === "unread" ? "page" : undefined}
-          className={`inline-flex min-h-11 min-[768px]:min-h-9 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-filter-radius,8px)] border px-4 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
+          className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           Unread ({unreadCount})
         </Link>
@@ -75,7 +76,7 @@ export function NotificationToolbar({
       >
         {pending ? "Marking…" : "Mark all as read"}
       </Button>
-      <ConfirmActionDialog
+      {confirmMarkAll ? <ConfirmActionDialog
         open={confirmOpen}
         title="Mark all as read"
         consequence={confirmMessage}
@@ -83,7 +84,7 @@ export function NotificationToolbar({
         onCancel={() => setConfirmOpen(false)}
         onConfirm={() => void markAllRead()}
         pending={pending}
-      />
+      /> : null}
     </div>
   );
 }
