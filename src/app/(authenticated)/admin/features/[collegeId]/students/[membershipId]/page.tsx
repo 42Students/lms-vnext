@@ -4,6 +4,7 @@ import {notFound} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Disclosure} from "@/components/ui/disclosure";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
 import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
@@ -18,21 +19,26 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
   <PageHeader eyebrow="Super Admin · Module Access" title="Student overrides and locks"
    description={"Stored membership rules for "+(student.displayName||"Unnamed learner")+" in "+result.college.name+". No email or mobile details are exposed."} actions={<Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Learner access trace</Link>}/>
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history"}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">
     View module override and lock history →
   </Link>
   <Alert tone="info">
    These values are persisted at the learner membership scope. Inherit is not Off, and broader locked rules can override stored values. Placements ignores membership-level rules.
    </Alert>
-  <div className="min-w-0 divide-y divide-border border-y border-border">
+  <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {studentRuleCards(student.modules).map(rule=><article key={rule.module} className="min-w-0 py-[var(--lms-space-4)]">
-    <h2 className="font-semibold text-foreground">{rule.label}</h2>
-    <p className="mt-2 text-sm text-body">Stored: {rule.state}{rule.locked?" · Locked":""}</p>
-    <p className="mt-2 text-xs text-muted-foreground">{rule.consequence}</p>
-    {rule.module!=="placements"?<StudentRuleEditor collegeId={collegeId} membershipId={membershipId} module={rule.module}
-      stored={rule.stored} locked={rule.locked} blocked={student.modules.some(m=>m.module===rule.module&&m.winnerLocked&&m.winnerLevel!=="MEMBERSHIP")}/> : null}
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+      <h2 className="font-semibold text-foreground">{rule.label}</h2>
+      <p className="text-sm text-body">Stored: {rule.state}{rule.locked?" · Locked":""}</p>
+    </div>
+    <p className="mt-2 max-w-3xl break-words text-xs text-muted-foreground">{rule.consequence}</p>
+    {rule.module!=="placements"?<Disclosure title="Edit membership override" className="mt-3"
+      contentClassName="max-w-3xl pb-3 pt-2">
+      <StudentRuleEditor collegeId={collegeId} membershipId={membershipId} module={rule.module}
+        stored={rule.stored} locked={rule.locked} blocked={student.modules.some(m=>m.module===rule.module&&m.winnerLocked&&m.winnerLevel!=="MEMBERSHIP")}/>
+      </Disclosure> : null}
    </article>)}
   </div>
-  <p className="text-xs text-muted-foreground">Changes are scoped to this verified learner membership. Placements membership rules remain read-only because they do not affect the production resolver.</p>
+  <p className="max-w-3xl text-xs leading-5 text-muted-foreground">Changes are scoped to this verified learner membership. Placements membership rules remain read-only because they do not affect the production resolver.</p>
  </div>;
 }
