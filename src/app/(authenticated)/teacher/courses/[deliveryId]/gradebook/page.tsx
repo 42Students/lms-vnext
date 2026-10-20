@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -124,22 +125,7 @@ export default async function FacultyGradebookPage({
         </p>}
       </article>)}
     </div>}
-    {filtered.totalPages>1&&<nav aria-label="Gradebook pages"
-      className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-      <span className="text-sm text-muted-foreground">
-        Page {filtered.page} of {filtered.totalPages}
-      </span>
-      <div className="flex gap-3">
-        {filtered.page>1&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page-1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          Previous
-        </Link>}
-        {filtered.page<filtered.totalPages&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page+1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          Next
-        </Link>}
-      </div>
-    </nav>}
+    {filtered.totalPages>1 && <Pagination label="Gradebook pages" page={filtered.page} pageCount={filtered.totalPages} hrefForPage={page=>facultyGradebookViewHref(parsed.data.deliveryId,{...base,page})} />}
     <p className="text-xs text-muted-foreground">
       This read-only gradebook includes only actually published learner grades.
       Private, missing and ungraded results never become zero scores; percentages
