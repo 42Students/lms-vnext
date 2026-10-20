@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
@@ -20,9 +22,10 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
   | Awaited<ReturnType<typeof listCollegeBatches>>;
 
-export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
+export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend }: {
   data: DirectoryData;
   batchPeriods?: { id: string; name: string; code: string }[];
+  prepend?: ReactNode;
 }) {
   const semesters = data.kind === "SEMESTERS";
   const title = semesters ? "Semesters" : "Batches";
@@ -39,15 +42,16 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         }
       />
       {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
-      <section aria-label={title + " filters"} className="border-t border-border pt-4">
+      {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
+      <FilterBar title="Filters"><section aria-label={title + " filters"} className="border-t border-border pt-4">
         <form action={path} method="get" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {semesters ? "Semester or program" : "Batch or program"}
             <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
               placeholder="Search name or code"
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -59,7 +63,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
               ))}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -82,7 +86,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           <Disclosure title={"More filters"} className="col-span-full rounded-[var(--lms-control-radius)] border border-border p-3">
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Recorded current term
               <Input type="number" name="currentTerm" min={1} max={24} step={1}
                 defaultValue={data.query.currentTerm??""} placeholder="All progression terms"
@@ -90,7 +94,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Progression record
               <Select name="progression" defaultValue={data.query.progression}
                 className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -101,7 +105,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Recorded academic year (start)
               <Input name="yearStart" type="number" min={1900} max={9998} step={1}
                 defaultValue={data.query.yearStart ?? ""} placeholder="All academic years"
@@ -109,7 +113,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum configured credits
               <Input type="number" name="minimumCredits" min={0} max={500} step={1}
                 defaultValue={data.query.minimumCredits??""} placeholder="All credit totals"
@@ -117,7 +121,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum configured credits
               <Input type="number" name="maximumCredits" min={0} max={500} step={1}
                 defaultValue={data.query.maximumCredits ?? ""} placeholder="All credit totals"
@@ -125,7 +129,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Semester number
               <Input type="number" name="termNumber" min={1} max={24} step={1}
                 defaultValue={data.query.termNumber ?? ""} placeholder="All semesters"
@@ -133,7 +137,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Credits availability
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Credits availability
               <Select name="creditState" defaultValue={data.query.creditState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All terms</option>
                 <option value="CONFIGURED">Credits configured</option>
@@ -142,7 +146,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Program status
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program status
               <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active programs</option>
@@ -151,7 +155,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Course mapping
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course mapping
               <Select name="mappingState" defaultValue={data.query.mappingState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All terms</option>
                 <option value="MAPPED">Has mapped courses</option>
@@ -160,7 +164,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Expected end period
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period
               <Select name="expectedEndState" defaultValue={data.query.expectedEndState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="SET">End period recorded</option>
@@ -169,7 +173,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Academic year
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year
               <Select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="RECORDED">Year recorded</option>
@@ -178,7 +182,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Program status
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program status
               <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All parent programs</option>
                 <option value="ACTIVE">Active</option>
@@ -187,19 +191,19 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Batch start on or after
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch start on or after
               <Input type="date" name="startOnOrAfter" defaultValue={data.query.startOnOrAfter ?? ""}
                 className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Batch start on or before
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch start on or before
               <Input type="date" name="startOnOrBefore" defaultValue={data.query.startOnOrBefore ?? ""}
                 className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Classes
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Classes
               <Select name="activeClassState" defaultValue={data.query.activeClassState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="HAS_ACTIVE">Has active classes</option>
@@ -208,7 +212,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Students
+            <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Students
               <Select name="activeLearnerState" defaultValue={data.query.activeLearnerState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="HAS_ACTIVE">Has active learner enrollments</option>
@@ -227,7 +231,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </Link>
           </div>
         </form>
-      </section>
+      </section></FilterBar>
 
       <section aria-label={title + " results"} role="region" tabIndex={0} className="max-w-full overflow-x-auto rounded-[var(--lms-control-radius)] border border-border bg-surface">
         <p className="px-4 pt-3 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all semester or batch columns.</p>

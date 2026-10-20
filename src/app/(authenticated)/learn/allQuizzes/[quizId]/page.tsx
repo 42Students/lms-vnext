@@ -23,8 +23,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const resolution=resolveLearnerOfferingDelivery(overview.quizzes,path.quizId,query.deliveryId);
   if(resolution.kind==="none") notFound();
   if(resolution.kind==="choose") return <div className="min-w-0 space-y-6">
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
-    <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." />
+    <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." actions={<Link href="/learn/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>} />
     <ul className="divide-y divide-border border-y border-border">
       {resolution.options.map(option=><li key={option.deliveryId} className="p-4">
         <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9"
@@ -44,17 +43,16 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   if(attemptId && !selected) notFound();
   const historyUrl="/learn/allQuizzes/"+encodeURIComponent(quiz.id)+"?deliveryId="+encodeURIComponent(quiz.deliveryId);
   return <div className="space-y-6">
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
-    <PageHeader title={quiz.title} />
+    <PageHeader title={quiz.title} actions={<Link href="/learn/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>} />
     <section className="border-b border-border py-4 md:py-6">
       <h2 className="text-base font-semibold text-foreground">Attempt history</h2>
       <p className="mt-2 text-sm text-body">
         Attempts are recorded against your current college membership. Results appear only after Faculty publishes them.
       </p>
-      {attempts.length===0 ? <p className="mt-4 rounded-lg bg-surface-subtle p-4 text-sm text-body">
+      {attempts.length===0 ? <p className="mt-4 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-sm text-body">
         Not attempted · No quiz attempt is recorded for you in this course.
-      </p> : <ol className="mt-4 grid gap-3 md:grid-cols-2">
-        {attempts.map(attempt=><li key={attempt.id} className="min-w-0 rounded-xl border border-border p-4">
+      </p> : <ol className="mt-4 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+        {attempts.map(attempt=><li key={attempt.id} className="min-w-0 py-[var(--lms-space-4)]">
           <h3 className="text-sm font-semibold text-foreground">Attempt {attempt.attemptNumber}</h3>
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
           <p className="mt-2 text-sm text-body">{learnerAttemptResultLabel(attempt)}</p>
@@ -75,7 +73,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
         <p className="mt-4 text-sm text-body">No question-level review was recorded for this attempt.</p>
       ) : <div className="mt-4 space-y-3">
         {selected.answers.map((answer,index)=><article key={answer.id}
-          className="rounded-xl border border-border p-4">
+          className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
           <h3 className="text-sm font-semibold text-foreground">
             Question {index+1}: {answer.prompt}
           </h3>

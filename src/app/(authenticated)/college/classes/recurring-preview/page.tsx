@@ -14,7 +14,7 @@ export default async function CollegeRecurringPreviewPage({
   const query = await searchParams;
   const classId = typeof query.classId === "string" &&
     options.classes.some(row => row.id === query.classId) ? query.classId : "";
-  return <div className="min-w-0 overflow-x-clip space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-5)]">
     <PageHeader title="Recurring Schedule Preview"
       description="Preview weekday/time patterns against persisted class, faculty and lecture hall scheduling conflicts in India Standard Time."
       actions={<PageBackLink href="/college/classes" label="Back to classes"/>}/>
