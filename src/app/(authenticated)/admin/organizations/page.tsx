@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { OrganizationActions } from "@/components/admin/organization-actions";
@@ -94,7 +95,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         <h2 className="mb-3 text-lg font-semibold text-foreground">Create New Organization</h2>
         <OrganizationCreateForm />
       </section> : null}
-      <h2 className="text-lg font-semibold text-foreground">Existing Organizations</h2>
+      <h2 className="text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Existing Organizations</h2>
       {canCreate?<Disclosure title={`Archived organizations · ${archived.length} shown`} className="border-t border-border pt-4">
        <p className="mt-2 text-xs text-muted-foreground">Restoring an organization does not restore archived colleges. Only the first 200 records in your safety scope are shown.</p>
        <ul className="mt-3 divide-y divide-border border-y border-border">
@@ -106,12 +107,12 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
        </ul>
        {!archived.length?<EmptyState title="No archived organizations" description="No archived organizations in this scope."/>:null}
       </Disclosure>:null}
-      <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
-       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold leading-4 text-body md:min-w-48">Search organizations
+      <FilterBar title="Organization filters"><form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
+       <label className="flex min-w-0 w-full flex-1 flex-col gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search organizations
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="w-full" />
        </label>
-       <label className="flex flex-col gap-1 text-sm font-semibold leading-4 text-body">Rows per page
+       <label className="flex flex-col gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)} className="w-full">
          {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
@@ -119,7 +120,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
        <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
        <Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear search</Link>
        <Link href={href(page)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline">Refresh</Link>
-      </form>
+      </form></FilterBar>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
       <DataTable caption="Existing Organizations" empty={<EmptyState
         title={q?"No organizations match your search":"No organizations in this scope"}
