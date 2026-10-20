@@ -81,7 +81,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       <div className="flex flex-wrap items-center gap-3">
         <Button type="button" onClick={reset}>Try again</Button>
         <Link href={homeHref}
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Go to home
         </Link>
       </div>
