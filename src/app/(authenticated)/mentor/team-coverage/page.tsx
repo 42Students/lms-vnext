@@ -43,7 +43,7 @@ export default async function MentorTeamCoveragePage({
   });
   if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid team coverage filters"} />
-    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
+    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear filters</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -53,7 +53,7 @@ export default async function MentorTeamCoveragePage({
     <PageHeader eyebrow="Mentor · Projects" title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
       actions={<Link data-unskin="" href="/mentor/projects"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Projects
       </Link>} />
     {!data.enabled
@@ -61,7 +61,7 @@ export default async function MentorTeamCoveragePage({
           Projects access is disabled for this membership. No team records were loaded.
         </section>
       : <>
-        <FilterBar title="Filters"><form method="get" action="/mentor/team-coverage"
+        <FilterBar title="Filters"><form role="search" aria-label="mentor team coverage filters" method="get" action="/mentor/team-coverage"
           className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
           <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
@@ -101,7 +101,7 @@ export default async function MentorTeamCoveragePage({
             </Select>
           </label>
           <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>
-          <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
+          <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear</Link>
         </form></FilterBar>
         <section aria-label="Registered team coverage summary" className="grid gap-3 min-[768px]:grid-cols-3">
            {([
@@ -144,15 +144,15 @@ export default async function MentorTeamCoveragePage({
               </dl>
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=team"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                   Team workspace →
                 </Link>
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-history"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                   Membership history →
                 </Link>
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-meetings"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                   Team meeting log →
                 </Link>
               </div>

@@ -32,7 +32,7 @@ export default async function RecruiterDriveProposalHistory({
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
   <nav aria-label="Proposal actions" className="flex flex-wrap gap-2">
    <PageBackLink href="/hr/drives" label="Back to drives"/>
-   <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Draft another proposal</Link>
+   <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">Draft another proposal</Link>
   </nav>
   {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3">
    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Choose a college</h2>
@@ -41,7 +41,7 @@ export default async function RecruiterDriveProposalHistory({
     href:"/hr/drives/proposals?collegeId="+encodeURIComponent(grant.collegeId),
    }))}/>
   </section>:data.status==="NO_ACCESS"?<EmptyState title="No active college access" description="No active recruiter college access."/>:<>
-   <form action="/hr/drives/proposals" method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-4">
+   <form action="/hr/drives/proposals" method="get" role="search" aria-label="Search sent drive proposals" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-4">
     <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-0 flex-[1_1_12rem] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role title
      <Input type="search" name="q" maxLength={100} defaultValue={input.data.q}
@@ -58,7 +58,7 @@ export default async function RecruiterDriveProposalHistory({
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
       page:data.page,sort:input.data.sort})}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">
      Export this page (summary CSV)
     </Link>:null}
    <p role="status" className="text-sm text-body">
@@ -82,7 +82,7 @@ export default async function RecruiterDriveProposalHistory({
     {data.items.map(row=><li key={row.id}
      className="py-4">
      <Link href={"/hr/conversations/"+row.threadId}
-      className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 min-[768px]:min-h-9">{row.title}</Link>
+      className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-h-11 min-[768px]:min-h-9">{row.title}</Link>
      <p className="mt-2 text-xs text-muted-foreground">
       Proposal reference: {row.referenceId}
      </p>
@@ -96,9 +96,9 @@ export default async function RecruiterDriveProposalHistory({
    </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."/>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-2">
     {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">Newer proposals</Link>:null}
     {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Older proposals</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">Older proposals</Link>:null}
    </nav>
   </>}
  </div>;

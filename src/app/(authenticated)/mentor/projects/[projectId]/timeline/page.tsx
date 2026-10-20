@@ -26,7 +26,7 @@ export default async function MentorProjectTimelinePage({
   if(!parsed.success)return <div className="min-w-0 space-y-4">
     <PageHeader title="Release & Sprint timeline"/>
     <ErrorState title="Invalid timeline selector" description="Choose valid release, sprint and page filters."
-      action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)]">Projects</Link>}/>
+      action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Projects</Link>}/>
   </div>;
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,
@@ -35,7 +35,7 @@ export default async function MentorProjectTimelinePage({
     <PageHeader title="Release & Sprint timeline"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-surface hover:bg-primary-subtle hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-0 bg-surface hover:bg-primary-subtle hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Sprint workspace
       </Link>} />
     {!data.enabled?<section role="status"
