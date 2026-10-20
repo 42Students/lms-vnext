@@ -50,12 +50,9 @@ export default async function TpoCompanyTeamPage({params}:{
     {result.truncated?<Alert tone="info">
      Showing the latest 100 company Team messages. Older messages are not loaded here.
     </Alert>:null}
-    {!result.messages.length?<p role="status" className="text-sm text-body">
-     No company Team messages yet.</p>:null}
+    {!result.messages.length?<Alert tone="info">No company Team messages yet.</Alert>:null}
     {result.canPost?<TpoCompanyTeamComposer companyId={companyId} actorUserId={context.user.id}/>:
-     <p role="status" className="text-sm text-body">
-      This relationship is archived. Its discussion is read-only.
-     </p>}
+     <Alert tone="info">This relationship is archived. Its discussion is read-only.</Alert>}
    </>
   }
  </div>;
