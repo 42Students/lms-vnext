@@ -148,7 +148,7 @@ function friendlyError(status: number, payload: { error?: string }) {
   return "The request failed. Check your connection and try again.";
 }
 
-const inputStyle = "min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const inputStyle = "min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground md:min-h-9";
 const buttonStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
 const primaryStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] bg-primary px-4 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
 
@@ -720,7 +720,7 @@ export function RecruiterLeadsWorkspace({
             </div>:null}
             {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
              needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
-            <Link className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline"
+            <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               href="/tpo/settings/recruiters">
               {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
             </Link>
@@ -875,7 +875,7 @@ export function RecruiterLeadsWorkspace({
             {visible.length} of {rows.length} in this view
           </p>
           {freshInvite ? (
-            <section className="rounded-lg border border-border bg-surface p-3" aria-label="Fresh recruiter invite link">
+            <section className="min-w-0 border-l-2 border-warning bg-warning-subtle px-3 py-3" aria-label="Fresh recruiter invite link">
               <p className="text-sm text-body">Copy this link now. It is shown only once. No email has been sent.</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <Input readOnly aria-label="Invite link" value={freshInvite.url}
