@@ -18,21 +18,21 @@ export default async function CollegeActivityDetailPage({
       description={event.summary}
       actions={<PageBackLink href="/college/activity" label="Back to Activity Log"/>} />
     <dl className="grid min-w-0 gap-4 border-y border-border py-4 text-sm md:grid-cols-2">
-      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Occurred (IST)</dt>
+      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Occurred (IST)</dt>
         <dd className="mt-1 text-body">{date}</dd></div>
-      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor</dt>
+      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor</dt>
         <dd className="mt-1 text-body">{actor?.displayName ?? actor?.email ?? "System"} ({actor?.id ?? "Unrecorded"})</dd></div>
-      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event type</dt>
+      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event type</dt>
         <dd className="mt-1 break-all text-body">{event.eventType}</dd></div>
-      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Importance</dt>
+      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Importance</dt>
         <dd className="mt-1 text-body"><StatusBadge tone={event.importance==="CRITICAL"?"error":event.importance==="HIGH"?"warning":"neutral"}>{event.importance}</StatusBadge></dd></div>
-      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity type</dt>
+      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity type</dt>
         <dd className="mt-1 text-body">{event.subjectType}</dd></div>
-      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity reference</dt>
+      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity reference</dt>
         <dd className="mt-1 break-all text-body">{event.subjectLabel ?? event.subjectId}</dd></div>
     </dl>
     <section className="border-t border-border pt-5">
-      <h2 className="m-0 text-lg font-semibold text-foreground">Sanitized event metadata</h2>
+      <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Sanitized event metadata</h2>
       <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 text-xs text-body">
         {JSON.stringify(event.metadata, null, 2)}
       </pre>

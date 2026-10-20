@@ -113,7 +113,7 @@ export default async function CollegeBatchPromotionPage({
     ) : (
       <>
         <section className="space-y-3 border-t border-border pt-5" aria-label="Promotion preview">
-          <h2 className="text-lg font-semibold text-foreground">{preview.batch.name}</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{preview.batch.name}</h2>
           <p className="text-sm text-body">Program: {preview.batch.programName} · Batch status: {preview.batch.status}</p>
           <p className="text-sm text-body">
             Recorded term: {preview.batch.currentTermNumber ?? "Not recorded"} of {preview.batch.durationTerms}.
@@ -131,7 +131,7 @@ export default async function CollegeBatchPromotionPage({
           </p>
           {preview.blockers.length ? (
             <Alert tone="error" className="space-y-2">
-              <h3 className="font-semibold text-foreground">Batch blockers</h3>
+              <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Batch blockers</h3>
               <ul className="list-inside list-disc text-sm text-body">
                 {preview.blockers.map(blocker => <li key={blocker}>
                   {blocker==="NEXT_TERM_NO_MAPPED_COURSES"?<>
@@ -164,7 +164,7 @@ export default async function CollegeBatchPromotionPage({
             ) : null}
         </section>
         <section aria-label="Learner-level preview" className="min-w-0 border-t border-border pt-4">
-          <h2 className="border-b border-border pb-3 text-lg font-semibold text-foreground">Learner blockers</h2>
+          <h2 className="border-b border-border pb-3 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Learner blockers</h2>
           <DataTable rows={preview.learners} getRowKey={learner=>learner.membershipId} caption="Learner blockers"
             columns={[
               {key:"name",header:"Learner",mobilePriority:"primary",cell:learner=>learner.name},
