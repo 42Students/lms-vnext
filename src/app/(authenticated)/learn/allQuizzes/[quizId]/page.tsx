@@ -48,8 +48,8 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const historyUrl="/learn/allQuizzes/"+encodeURIComponent(quiz.id)+"?deliveryId="+encodeURIComponent(quiz.deliveryId);
   return <div className="min-w-0 space-y-[16px]">
     <PageHeader title={quiz.title} actions={<PageBackLink href="/learn/allQuizzes" label="All Quizzes"/>} />
-    <section className="border-b border-border py-[16px]">
-      <h2 className="text-base font-semibold text-foreground">Attempt history</h2>
+    <section aria-labelledby="quiz-attempt-history-heading" className="border-b border-border py-[16px]">
+      <h2 id="quiz-attempt-history-heading" className="text-base font-semibold text-foreground">Attempt history</h2>
       <p className="mt-2 text-sm text-body">
         Attempts are recorded against your current college membership. Results appear only after Faculty publishes them.
       </p>

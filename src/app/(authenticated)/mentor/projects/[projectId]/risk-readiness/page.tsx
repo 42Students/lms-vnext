@@ -61,7 +61,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         Priority filters affect task drill-ins only; project totals and non-task signals stay unchanged.
         A project without tasks is never assumed complete.
       </p>
-      <FilterBar title="Filters"><form method="get" action={base+"/risk-readiness"}
+      <FilterBar title="Filters"><form method="get" action={base+"/risk-readiness"} role="search" aria-label="Risk readiness filters"
         className="flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Show
           <Select name="focus" defaultValue={data.query.focus}

@@ -109,7 +109,7 @@ export default async function MentorNotificationsPage({
       <h2 id="mentor-attention" className="text-lg font-semibold text-foreground">
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
-      <form method="get" action={MENTOR_INBOX}
+      <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
         <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}

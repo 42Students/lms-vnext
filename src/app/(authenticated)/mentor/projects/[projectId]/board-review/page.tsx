@@ -50,7 +50,7 @@ export default async function MentorBoardReviewPage({
         {data.completedPercent===null?" Completion unknown (no tasks)":
           " "+data.completedPercent+"% recorded DONE tasks"}
       </p>
-      <FilterBar title="Filters"><form method="get" action={base+"/board-review"}
+      <FilterBar title="Filters"><form method="get" action={base+"/board-review"} role="search" aria-label="Task board review filters"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
         <label className="grid gap-1 text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
