@@ -13,8 +13,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regres
 - [x] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
 - [x] `src/app/(authenticated)/teacher/calendar/page.tsx`
 - [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
