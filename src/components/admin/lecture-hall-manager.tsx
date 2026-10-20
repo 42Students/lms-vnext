@@ -176,7 +176,7 @@ export function LectureHallManager({
     });
   }
 
-  const field = "mb-1.5 block text-[13px] font-semibold text-body";
+  const field = "mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body";
 
   return (
     <div className="space-y-4">
