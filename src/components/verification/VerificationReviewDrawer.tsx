@@ -72,7 +72,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  }
  return <Drawer open={true} onOpenChange={next=>{if(!next&&!saving)onClose();}} dismissible={!saving}
   title={row.learnerName} description={(row.rollNumber?"Roll no.: "+row.rollNumber+" · ":"")+(row.section==="EDUCATION"?"Education":"Identity")+" · "+row.status.replaceAll("_"," ")}
-  className="sm:w-[min(600px,100vw)]" bodyClassName="pb-[max(1rem,env(safe-area-inset-bottom))]">
+  className="w-full sm:w-[min(600px,100vw)]" bodyClassName="pb-[max(1rem,env(safe-area-inset-bottom))]">
    {sequenceProgress&&<nav aria-label="Sequential verification progress" className="flex flex-wrap items-center gap-3 border-b py-3 text-sm">
      <span role="status">{sequenceProgress}</span>
      <Button variant="secondary" type="button" disabled={saving} onClick={onNext} className="min-h-[var(--lms-control-height)]">Next</Button>
@@ -162,7 +162,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      {pendingAction&&<section aria-label="Confirm verification decision" className="w-full space-y-2 rounded-md border p-3">
       <h3 className="font-semibold">{(isTpo||apiBase==="/api/admin/verification")&&pendingAction==="SEND_BACK"?"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
       <p className="break-words text-sm">{pendingAction==="SEND_BACK"?"The student sees your reason and fixes it on their profile.":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
        <Button variant="primary" type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="min-h-[var(--lms-control-height)]">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</Button>
        <Button variant="secondary" type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="min-h-[var(--lms-control-height)]">Cancel</Button>
       </div>

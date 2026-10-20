@@ -39,7 +39,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   if(draftError){setError(draftError);return;}
   setError("");onApply(value);
  }
- return <Disclosure title="More filters: learner name, marksheets, batch, branch, class, waiting since" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+ return <Disclosure title="More filters: learner name, marksheets, batch, branch, class, waiting since" className="min-w-0 border-b border-border pb-3">
   
   <form className="mt-3 space-y-3" onSubmit={e=>{e.preventDefault();apply(fields);}}>
    <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
@@ -123,7 +123,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
     </label>
    </div>
    {error&&<p role="alert" className="text-sm">{error}</p>}
-   <div className="flex flex-wrap gap-2">
+   <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
     <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] ">Apply filters</Button>
     <Button variant="secondary" type="button" onClick={()=>{setFields(empty);apply(empty);}} className="min-h-[var(--lms-control-height)] ">Clear extra filters</Button>
    </div>
