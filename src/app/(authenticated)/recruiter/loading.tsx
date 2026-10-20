@@ -1,6 +1,10 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+import { PageHeader } from "@/components/ui/page-header";
 
-/** GR-19: loading is bounded by a visible recovery action. */
+/** The entrypoint redirects into Today; its fallback should not resemble a directory. */
 export default function Loading() {
-  return <GracefulPageLoading />;
+  return <div className="min-w-0 max-w-full space-y-4">
+    <PageHeader title="Today" />
+    <GracefulPageLoading label="Opening recruiter Today…" />
+  </div>;
 }
