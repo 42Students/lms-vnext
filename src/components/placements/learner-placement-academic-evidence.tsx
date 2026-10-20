@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Disclosure } from "@/components/ui/disclosure";
 import { useToast } from "@/components/ui/toast";
 
 export type PlacementAcademicEvidenceValue = {
@@ -171,8 +172,25 @@ export function LearnerPlacementAcademicEvidence({
     }
   }
 
+  const evidenceFields = [
+    ["cgpa", "CGPA", evidence.cgpa, "0.01", "10"],
+    ["tenthPercentage", "10th %", evidence.tenthPercentage, "0.01", "100"],
+    ["undergraduatePercentage", "Undergraduate %", evidence.undergraduatePercentage, "0.01", "100"],
+    ["activeBacklogs", "Active backlogs", evidence.activeBacklogs, "1", "100"],
+    ["pastBacklogs", "Past backlogs", evidence.pastBacklogs, "1", "100"],
+    ["gapYears", "Gap years", evidence.gapYears, "1", "50"],
+    ["passingYear", "Passing year", evidence.passingYear, "1", "2200"],
+  ] as const;
+  const renderEvidenceField = ([name, label, value, step, max]: typeof evidenceFields[number]) => (
+    <label key={name} className="min-w-0">
+      <span className="mb-1.5 block text-xs font-semibold text-body">{label}</span>
+      <Input className={inputClass+" w-full"} name={name} type="number" min={0} max={max}
+        step={step} disabled={locked} defaultValue={value===null?"":String(value)} />
+    </label>
+  );
+
   return (
-    <section id="placement-academic-evidence" className="scroll-mt-24 border-b border-border pb-5">
+    <section id="placement-academic-evidence" className="min-w-0 scroll-mt-24 border-b border-border pb-5">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border py-4 md:flex-row md:items-start md:justify-between">
         <div>
           <h2 className="m-0 text-base font-semibold text-foreground">
@@ -200,82 +218,10 @@ export function LearnerPlacementAcademicEvidence({
       </div>
       <form
         onSubmit={save}
-        className="grid min-w-0 gap-4 py-5 md:grid-cols-2 lg:grid-cols-4"
+        className="min-w-0 space-y-4 py-4"
       >
-        {[
-          ["cgpa", "CGPA", evidence.cgpa, "0.01", "10"],
-          [
-            "activeBacklogs",
-            "Active backlogs",
-            evidence.activeBacklogs,
-            "1",
-            "100",
-          ],
-          [
-            "pastBacklogs",
-            "Past backlogs",
-            evidence.pastBacklogs,
-            "1",
-            "100",
-          ],
-          [
-            "tenthPercentage",
-            "10th %",
-            evidence.tenthPercentage,
-            "0.01",
-            "100",
-          ],
-          [
-            "undergraduatePercentage",
-            "Undergraduate %",
-            evidence.undergraduatePercentage,
-            "0.01",
-            "100",
-          ],
-          [
-            "gapYears",
-            "Gap years",
-            evidence.gapYears,
-            "1",
-            "50",
-          ],
-          [
-            "passingYear",
-            "Passing year",
-            evidence.passingYear,
-            "1",
-            "2200",
-          ],
-        ].map(
-          ([
-            name,
-            label,
-            value,
-            step,
-            max,
-          ]) => (
-            <label key={String(name)}>
-              <span className="mb-1.5 block text-xs font-semibold text-body">
-                {label}
-              </span>
-              <Input
-                className={inputClass}
-                name={String(name)}
-                type="number"
-                min={0}
-                max={String(max)}
-                step={String(step)}
-                disabled={locked}
-                defaultValue={
-                  value === null
-                    ? ""
-                    : String(value)
-                }
-              />
-            </label>
-          ),
-        )}
-
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {evidenceFields.slice(0,3).map(renderEvidenceField)}
         <label className="flex min-h-11 min-w-0 items-center gap-2 self-end py-2 text-sm font-semibold text-body">
           <Checkbox
             checked={lateralEntry}
@@ -329,13 +275,19 @@ export function LearnerPlacementAcademicEvidence({
           </label>
         )}
 
-        <div className="md:col-span-2 lg:col-span-4">
+        </div>
+        <Disclosure title="Other academic details" className="border-y border-border py-3">
+          <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 lg:grid-cols-4">
+            {evidenceFields.slice(3).map(renderEvidenceField)}
+          </div>
+        </Disclosure>
+        <div className="min-w-0">
           {locked ? (
             <p className="m-0 text-sm text-muted-foreground">
               This evidence was verified by your college and cannot be overwritten by self-service.
             </p>
           ) : (
-            <Button className="max-md:min-h-11"
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
               type="submit"
               size="sm"
               disabled={pending}
