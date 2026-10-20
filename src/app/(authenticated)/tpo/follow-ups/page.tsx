@@ -56,7 +56,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
         <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Find recruiter or company
           <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
             className="mt-[6px] min-h-11 w-full border border-border px-3 text-foreground md:min-h-9"/>
-        </label><Button type="submit" className="min-h-[var(--lms-control-height)]">Search</Button>
+        </label><Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Clear</Link>:null}
       </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
