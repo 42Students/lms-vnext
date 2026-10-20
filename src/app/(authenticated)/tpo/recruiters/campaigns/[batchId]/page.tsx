@@ -14,17 +14,17 @@ export default async function BatchDetail({params}:{params:Promise<{batchId:stri
  if(!z.string().uuid().safeParse(batchId).success)notFound();
  const batch=await getTpoMessagingBatch(context,batchId);
  if(!batch)notFound();
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-4">
   <PageHeader title="Delivery batch"
-    description={batch.purpose+" · Provider acceptance is not recipient delivery."}/>
-  <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to history</Link>
-  <section className="border-b border-border py-5">
+    description={batch.purpose+" · Provider acceptance is not recipient delivery."}
+    actions={<Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 w-full items-center justify-center text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-[var(--lms-control-height)]">Back to history</Link>}/>
+  <section className="min-w-0 space-y-3 border-b border-border pb-5">
    <p className="text-sm text-body">{batch.finalizedAt?"Finalized":"Not finalized"} · {batch.actualReceipts} persisted receipts of {batch.total} intended</p>
-   <section aria-label="Delivery receipts" className="mt-4 grid grid-cols-2 gap-3 min-[768px]:grid-cols-4">
+   <div aria-label="Delivery receipts" className="grid min-w-0 grid-cols-2 gap-3 md:grid-cols-4">
     {([["Queued",batch.actualQueued],["Provider accepted",batch.actualSent],
       ["Failed",batch.actualFailed],["Suppressed",batch.actualSuppressed]] as const).map(([label,count])=>
       <StatTile key={label} label={label} value={count} className={tpoTileStyles.tile} />)}
-   </section>
+   </div>
   </section>
   <p className="text-xs text-muted-foreground">For privacy, individual addresses, phone numbers, template variables, invitation links, and opaque recipient keys are not displayed.</p>
  </div>;

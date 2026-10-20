@@ -7,6 +7,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FilterChip } from "@/components/ui/filter-chip";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Disclosure } from "@/components/ui/disclosure";
 
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -393,7 +395,7 @@ export function RecruiterLeadDetailWorkspace({
   }
 
   return (
-    <section className="space-y-6">
+    <section className="min-w-0 space-y-5">
       {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Recruiter leads</Link>:null}
       {phase === "loading" ? (
         <p role="status" className="border-y border-border py-6">Loading recruiter details…</p>
@@ -413,28 +415,29 @@ export function RecruiterLeadDetailWorkspace({
             description={(lead.companyName || "Company not provided") +
               (lead.designation ? " · " + lead.designation : "")}
             actions={
-            <div className="flex min-w-0 flex-wrap gap-2">
-              <Link href="/tpo/recruiters" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}>← Recruiter leads</Link>
+            <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
               {!lead.recruiterUserId&&!lead.unsubscribedAt?<a className={button}
-                 href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
-               <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
-               {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
-               <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={openEdit}>Edit details</Button>
-              {lead.manualStage === "NEW" ? (
-                <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={saving} onClick={() => void mutate(
-                  base + "/contacted", "POST", { collegeId },
-                )}>Mark contacted</Button>
-              ) : null}
-              <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={() => setNotNowOpen(true)}>Not now</Button>
+                href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
+              <Dropdown mobileSheet align="end" label="Other recruiter actions" trigger="More ···">
+                <div className="flex min-w-48 flex-col gap-1">
+                  <Link href="/tpo/recruiters" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}>← Recruiter leads</Link>
+                  <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
+                  {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
+                  <Button type="button" variant="ghost" className="w-full justify-start" onClick={openEdit}>Edit details</Button>
+                  {lead.manualStage==="NEW"?<Button type="button" variant="ghost" disabled={saving}
+                    className="w-full justify-start" onClick={()=>void mutate(base+"/contacted","POST",{collegeId})}>Mark contacted</Button>:null}
+                  <Button type="button" variant="ghost" className="w-full justify-start" onClick={()=>setNotNowOpen(true)}>Not now</Button>
+                </div>
+              </Dropdown>
             </div>
             }
           />
-          <div className="space-y-1">
-              <p className="mt-1 text-sm text-muted-foreground">Stage: {RECRUITER_STAGE_LEGACY_LABELS[lead.stage as TpoRecruiterLeadStage]??lead.stage}</p>
-               <p className="mt-1 text-sm text-muted-foreground">Added: {formatDateTimeIst(lead.createdAt)}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Invite: {({NOT_SENT:"Not invited",NOT_INVITED:"Not invited",SENT:"Invite sent, not opened",OPENED:"Invite opened",CLICKED:"Invite opened",BOUNCED:"Invite bounced",JOINED:"Joined"} as Record<string,string>)[lead.inviteStatus]??lead.inviteStatus}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
+          <div className="grid min-w-0 gap-x-6 gap-y-1 text-sm sm:grid-cols-2 lg:grid-cols-3">
+              <p className="text-muted-foreground">Stage: {RECRUITER_STAGE_LEGACY_LABELS[lead.stage as TpoRecruiterLeadStage]??lead.stage}</p>
+               <p className="text-muted-foreground">Added: {formatDateTimeIst(lead.createdAt)}</p>
+              <p className="text-muted-foreground">Invite: {({NOT_SENT:"Not invited",NOT_INVITED:"Not invited",SENT:"Invite sent, not opened",OPENED:"Invite opened",CLICKED:"Invite opened",BOUNCED:"Invite bounced",JOINED:"Joined"} as Record<string,string>)[lead.inviteStatus]??lead.inviteStatus}</p>
+              <p className="text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
+              <p className="text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
                 formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
 
           </div>
@@ -448,7 +451,8 @@ export function RecruiterLeadDetailWorkspace({
           {actionToast?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">{actionToast}</p>:null}
           {actionError ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-destructive">{actionError}</p> : null}
 
-          {lead.companyName?<section aria-label="Company" className="border-b border-border py-5">
+          {lead.companyName?<Disclosure title="Company" ariaLabel="Company" className="border-b border-border py-3">
+             <section aria-label="Company" className="min-w-0 space-y-2">
              <h2 className="font-semibold text-foreground">Company</h2>
              <p className="mt-2 text-sm font-medium">{lead.companyName}</p>
              {companySummary?<div className="mt-3 space-y-2 text-sm text-body">
@@ -469,8 +473,9 @@ export function RecruiterLeadDetailWorkspace({
                className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                Open company memory
              </Link>
-           </section>:null}
-           <div className="grid gap-5 lg:grid-cols-2">
+             </section>
+           </Disclosure>:null}
+           <div className="grid min-w-0 gap-5 lg:grid-cols-2">
             <section className="space-y-3 border-b border-border py-5">
               <h2 className="text-lg font-semibold">Contact</h2>
               <dl className="space-y-2 text-sm">
@@ -586,7 +591,7 @@ export function RecruiterLeadDetailWorkspace({
                   <Textarea className="mt-1 min-h-11 md:min-h-9" maxLength={2000} rows={3} value={logNote}
                     onChange={e => setLogNote(e.target.value)} />
                 </label>
-                <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving||(logType==="CALL"&&!logOutcome)||(logType==="NOTE"&&!logNote.trim())}>
+                <Button variant="primary" className="w-full min-h-11 md:min-h-9 sm:w-auto" type="submit" disabled={saving||(logType==="CALL"&&!logOutcome)||(logType==="NOTE"&&!logNote.trim())}>
                   {saving ? "Saving…" : "Log activity"}
                 </Button>
               </form>
@@ -616,7 +621,7 @@ export function RecruiterLeadDetailWorkspace({
 
           <section className="space-y-4 border-b border-border py-5">
             <h2 className="text-lg font-semibold">Follow-ups</h2>
-            <form className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] md:items-end"
+            <form className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] lg:items-end"
               onSubmit={e => void addFollowup(e)}>
               <div className="flex flex-wrap gap-2 md:col-span-3">
                 {([["Tomorrow",1],["In 3 days",3],["In a week",7]] as const).map(([label,days])=>
@@ -635,7 +640,7 @@ export function RecruiterLeadDetailWorkspace({
                 <Input className="mt-1 min-h-11 md:min-h-9" maxLength={500}
                   value={followNote} onChange={e => setFollowNote(e.target.value)} />
               </label>
-              <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving}>
+              <Button variant="primary" className="w-full min-h-11 md:min-h-9 sm:w-auto" type="submit" disabled={saving}>
                 Add follow-up
               </Button>
             </form>
@@ -683,7 +688,7 @@ export function RecruiterLeadDetailWorkspace({
                  Contact already exists: <Link href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
                   className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open {duplicateLead.name}</Link>
                 </p>:null}
-                <div className="flex justify-end gap-2">
+                <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                   <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={()=>closeEdit()}>Cancel</Button>
                   <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving}>Save</Button>
                 </div>
@@ -702,7 +707,7 @@ export function RecruiterLeadDetailWorkspace({
                     onChange={e => setRevisitDate(e.target.value)} />
                 </label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
-                <div className="flex justify-end gap-2">
+                <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                   <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={()=>closeNotNow()}>Cancel</Button>
                   <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving}>Mark not now</Button>
                 </div>
