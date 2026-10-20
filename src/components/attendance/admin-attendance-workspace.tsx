@@ -17,6 +17,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Alert } from "@/components/ui/alert";
 
 import {
   adminAttendanceCellState,
@@ -320,7 +321,7 @@ export function AdminAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
-      {notice?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body">{notice}</p>:null}
+      {notice?<Alert tone="info">{notice}</Alert>:null}
       <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
       <section className="grid gap-3 md:grid-cols-2">
         <div className="border-b border-border pb-4">
@@ -674,7 +675,7 @@ export function AdminAttendanceWorkspace({
       >
         {target ? (
           <div className="space-y-4 text-sm">
-            <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4">
+            <div className="border-t border-border pt-4">
               <p className="font-semibold text-foreground">
                 Current status
               </p>
