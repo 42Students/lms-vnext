@@ -43,32 +43,32 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     className={mentorResourceDirectoryFilterLayout}>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
+      className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Requirement
      <Select name="required" defaultValue={data.query.required}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+      className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">All</option><option value="REQUIRED">Required</option>
       <option value="OPTIONAL">Optional</option>
      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">HTTPS link availability
      <Select name="link" defaultValue={data.query.link}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+      className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
       <option value="UNAVAILABLE">No safe HTTPS link</option>
      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Description recorded
      <Select name="description" defaultValue={data.query.description}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+      className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">Any</option><option value="RECORDED">Has a description</option>
       <option value="MISSING">No written description</option>
      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource order
      <Select name="order" defaultValue={data.query.order}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+      className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
      </Select>
     </label>

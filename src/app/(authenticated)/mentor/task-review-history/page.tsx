@@ -48,11 +48,11 @@ export default async function MentorTaskReviewHistoryPage({
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground" />
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Decision
           <Select name="decision" defaultValue={data.query.decision}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All reviews</option>
             <option value="APPROVED">Approved</option>
             <option value="CHANGES_REQUESTED">Changes requested</option>
@@ -60,7 +60,7 @@ export default async function MentorTaskReviewHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Task priority
           <Select name="priority" defaultValue={data.query.priority}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
@@ -68,7 +68,7 @@ export default async function MentorTaskReviewHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
           <Select name="order" defaultValue={data.query.order}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Most recently reviewed</option>
             <option value="OLDEST">Earliest reviewed first</option>
           </Select>
