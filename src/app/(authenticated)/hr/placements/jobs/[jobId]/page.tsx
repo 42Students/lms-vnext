@@ -287,7 +287,7 @@ export default async function HrPlacementJobPage({
             "Date to be decided")}
       />
 
-      <section className="border-b border-border pb-5">
+      <section aria-label="Hiring drive status and key facts" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge
             tone={
@@ -397,7 +397,7 @@ export default async function HrPlacementJobPage({
                 <p className={funnelStyles.label}>{stage.label}</p>
                 <p className={funnelStyles.count}>{stage.count??"—"}</p>
                 <MetricBar className={funnelStyles.track+" mt-2"} role="img"
-                  label={stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage"}
+                  label={stage.label+": "+(stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage")}
                   value={stage.ofPrevious??0} maximum={100} unit="percent" />
                 <p className={funnelStyles.note}>{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"} · {stage.ofApplied===null?"Applied percentage unavailable":stage.ofApplied+"% of shared applicants"}</p>
               </li>)}

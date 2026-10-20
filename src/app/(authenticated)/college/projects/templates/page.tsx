@@ -75,7 +75,7 @@ export default async function CollegeProjectTemplatesPage({
         title="Project templates"
         description="Published project templates assigned to this college."
       />
-      <form action="/college/projects/templates" method="get" role="search"
+      <form action="/college/projects/templates" method="get" role="search" aria-label="Project template search"
         className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="min-w-52 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search templates
