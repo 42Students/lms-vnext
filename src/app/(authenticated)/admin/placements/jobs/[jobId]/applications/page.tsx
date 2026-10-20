@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { PageBackLink } from "@/components/ui/page-back-link";
 import { Tabs } from "@/components/ui/tabs";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -38,7 +37,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <ErrorState title="Invalid applicant filters"
       description="The requested search, status, screening or page is invalid."
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>}/>
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
   </div>;
   const [data,filters] = await Promise.all([
     getCollegeApplicationPipeline(context,jobId,query),
@@ -48,27 +47,27 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
-      actions={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Drive overview</Link>} />
+      actions={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Drive overview</Link>} />
     <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-4">
-      <label className="grid gap-1 text-sm">Name, email, roll or role
+      <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 w-full md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-sm">Application
+      <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Application
         <Select name="status" defaultValue={query.status} className="min-h-11 w-full md:min-h-9">
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Screening
+      <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Screening
         <Select name="screening" defaultValue={query.screening} className="min-h-11 w-full md:min-h-9">
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Source
+      <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Source
         <Select name="source" defaultValue={query.source} className="min-h-11 w-full md:min-h-9">
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Department
+      <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Department
         <Select name="departmentId" defaultValue={query.departmentId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All departments</option>
           {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
@@ -76,7 +75,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
           {filters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Program
+      <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Program
         <Select name="programId" defaultValue={query.programId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All programs</option>
           {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
@@ -84,7 +83,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
           {filters.programs.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Batch
+      <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Batch
         <Select name="cohortId" defaultValue={query.cohortId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All batches</option>
           {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
@@ -103,7 +102,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${adminHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
       <Banner tone="warning">Application stage actions are awaiting migration registration. You can still review the scoped applicant register.</Banner>
