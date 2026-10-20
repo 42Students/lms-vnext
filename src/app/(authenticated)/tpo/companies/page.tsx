@@ -119,9 +119,9 @@ export default async function TpoCompanyMemoryPage({
   const page = data.page;
 
   return (
-    <div className="min-w-0 space-y-5"
+    <div className="space-y-6">
       <PageHeader
-        
+        eyebrow="TPO · Recruiter relationships"
         title="Companies"
         description="Explore college-linked employers, recruiter contacts, drives, offers and confirmed joining outcomes. Company records and activity are read-only here; authorized TPOs may create or link an employer."
         actions={

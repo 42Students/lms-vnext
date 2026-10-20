@@ -3,7 +3,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -49,12 +48,12 @@ export default async function TpoLearnerPlacementHistoryPage({
     encodeURIComponent(history.learner.membershipId) + "/history?page=" + page;
 
   return (
-    <div className="min-w-0 space-y-5"
+    <div className="space-y-6">
       <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Back to Students
       </Link>
       <PageHeader
-        
+        eyebrow="TPO · Students"
         title={history.learner.displayName + " · Placement history"}
         description="Read-only application status, versioned round results, offer transitions and joining evidence across persisted placement seasons."
         actions={
@@ -103,7 +102,9 @@ export default async function TpoLearnerPlacementHistoryPage({
                   {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
                     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open drive</Link>:null}
                 </div>
-                <Badge tone="info">{item.applicationStatus}</Badge>
+                <span className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
+                  {item.applicationStatus}
+                </span>
               </div>
               <p className="text-sm text-body">
                 Applied {dateFormat.format(new Date(item.submittedAt))} IST ·
@@ -118,9 +119,9 @@ export default async function TpoLearnerPlacementHistoryPage({
                     No separate application status events are recorded.
                   </p>
                 ) : (
-                  <ul className="divide-y divide-border text-sm">
+                  <ul className="flex flex-wrap gap-2 text-sm">
                     {item.applicationEvents.map((event) => (
-                      <li key={event.id} className="border-b border-border py-2">
+                      <li key={event.id} className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2">
                         {event.fromStatus ?? "NEW"} → {event.toStatus}
                         {" · "}{dateFormat.format(new Date(event.at))} IST
                       </li>
