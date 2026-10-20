@@ -27,13 +27,13 @@ export default async function SuperAdminLessonsPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
   const parsed = parseSuperAdminLearningQuery(raw);
-  if (!parsed.success) return <div className="space-y-5">
+  if (!parsed.success) return <div className="space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
       action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
-  if (!context.adminScope?.collegeId) return <div className="space-y-5">
+  if (!context.adminScope?.collegeId) return <div className="space-y-6">
     <PageHeader title="Lessons" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its lessons." />
   </div>;
@@ -43,7 +43,7 @@ export default async function SuperAdminLessonsPage({
     getSuperAdminLearningFilterOptions(context),
     listSuperAdminLearningPathPicker(context),
   ]);
-  if(dataResult.status==="rejected")return <div className="space-y-5">
+  if(dataResult.status==="rejected")return <div className="space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Lessons unavailable"
       description="The lesson directory could not be loaded. Your filters have not changed."
@@ -54,7 +54,7 @@ export default async function SuperAdminLessonsPage({
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
   const paths=pathsResult.status==="fulfilled"?pathsResult.value:[];
   const summary = adminLessonStats(data.items);
-  return <div className="space-y-5">
+  return <div className="space-y-6">
     <PageHeader title="Lessons"
       description="Authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion."
       actions={<a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
