@@ -111,7 +111,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         {key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name??"Unnamed learner"},
         {key:"roll",header:"Roll",mobilePriority:"secondary",cell:row=>row.rollNumber??"Not recorded"},
         {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
-        {key:"application",header:"Application",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="SUBMITTED"?"info":"neutral"}>{row.status}</StatusBadge>},
+        {key:"application",header:"Application",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="SUBMITTED"?"info":row.status==="REJECTED"?"error":row.status==="WITHDRAWN"?"neutral":"warning"}>{row.status}</StatusBadge>},
         {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
        ]} empty={<EmptyState title="No matching applications" description="No applications match these filters."/>}/>
      </section>:
