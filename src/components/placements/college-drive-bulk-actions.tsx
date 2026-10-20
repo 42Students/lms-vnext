@@ -37,8 +37,8 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
  }
  const canProcess=selected.length>0&&selected.length<=25&&!busy;
  return <section className="space-y-3 border-t border-border pt-4" aria-label="Bulk drive actions">
-  <div className="flex flex-wrap items-center gap-3">
-   <h2 className="font-semibold">Bulk drives</h2>
+  <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+   <h2 className="sr-only">Bulk drives</h2>
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <Checkbox disabled={!eligible.length||busy}
      checked={eligible.length>0&&eligible.every(row=>selected.includes(row.id))}
@@ -48,15 +48,15 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
    </label>
    <span className="text-sm">{selected.length} selected</span>
    <Select aria-label="Drive bulk action" value={action} onChange={e=>{setAction(e.target.value as "OPEN"|"CLOSE");setSelected([]);setPreview(null);setResult(null);setError("");}}
-    className="w-auto">
+    className="w-full sm:w-auto">
     <option value="CLOSE">Close selected</option><option value="OPEN">Open closed drives</option>
    </Select>
-   <Button variant="primary" type="button" disabled={!canProcess} onClick={()=>void send("PREVIEW")}>Preview change</Button>
+   <Button variant="primary" type="button" disabled={!canProcess} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void send("PREVIEW")}>Preview change</Button>
   </div>
-  <div className="grid max-h-40 gap-2 overflow-auto sm:grid-cols-2 lg:grid-cols-4">
-   {eligible.map(row=><label key={row.id} className="flex gap-2 rounded border border-border p-2 text-xs">
+  <div className="grid max-h-52 min-w-0 gap-2 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
+   {eligible.map(row=><label key={row.id} className="flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-xs">
      <Checkbox checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/>
-     <span><strong>{row.title}</strong><span className="block text-muted-foreground">
+     <span className="min-w-0 break-words"><strong>{row.title}</strong><span className="block text-muted-foreground">
       {row.companyName} · {row.status}</span></span>
     </label>)}
   </div>
@@ -66,7 +66,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
    {action==="CLOSE"?<p>{preview.pendingLettersWithdrawn} issued offers will be withdrawn across these drives.</p>:
     <p>Previously withdrawn offers will not be reissued when a drive is reopened.</p>}
    <p>Confirm {action.toLowerCase()} for these {preview.eligible} eligible drives?</p>
-   <Button variant="primary" type="button" disabled={busy||!preview.eligible} onClick={()=>void send("CONFIRM")}>
+   <Button variant="primary" type="button" disabled={busy||!preview.eligible} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void send("CONFIRM")}>
      {busy?"Processing…":"Confirm "+action.toLowerCase()}</Button>
   </div>:null}
   {result?<div role="status" className="space-y-2 text-sm">
