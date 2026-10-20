@@ -69,3 +69,13 @@
 **Files changed:** `src/components/courses/faculty-course-workspace.tsx`, `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/error.tsx`, `loading.tsx`, new `not-found.tsx`, queue and proof. Teacher parent layout, lesson authoring, video manager, content order editor, quiz editor/review, item lifecycle, and home signals inspected.
 
 **Verification boundary:** source-only review; no runtime/test/CI.
+
+## 08 · Teacher / Section assessment health
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`  
+**Problems found (9):** Scope heading competing with h1, assessment row titles rendered as oversized page headings, filter controls wrapping at 375px, narrow 4-column metric grids on tablets, page header action lacking a mobile width rule, heavy repeated report-item borders, permanent pagination even for one page, dense grading-methodology disclaimer occupying primary content, and a generic card-shaped loading/error treatment.
+
+**Fix:** restore one h1 visual hierarchy, use compact row titles/status Badge and legacy dividers, make filter grid 1/3 responsive with 44px touch targets, metric pairs on phones/tablets and four cells on wide screens, hide single-page pagination, move methodology explanation into an accessible native disclosure, align Retry and switch loading to directory shape. Kept counts, unknown-data semantics, permitted Section-only links, filters and URL pagination unchanged.
+
+**Files changed:** assessment-health `page.tsx`, `error.tsx`, `loading.tsx`, queue and proof; nearest faculty course layout and inherited not-found states checked.
+
+**Verification boundary:** static state/class review only; no runtime or CI.
