@@ -42,7 +42,7 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
     }));
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-4">
       <PageHeader
         title="All Quizzes"
       />

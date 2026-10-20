@@ -31,10 +31,10 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  const result=await recordedOutsideChoices(context,collegeId);
  const savedId=q.saved;
  const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Record an outside-platform drive"
-   description="Historical employer-college record only. This cannot publish a student-visible job."/>
-  <PageBackLink href={"/hr/drives/new?collegeId="+collegeId} label="Back to drive request"/>
+   description="Historical employer-college record only. This cannot publish a student-visible job."
+   actions={<PageBackLink href={"/hr/drives/new?collegeId="+collegeId} label="Back to drive request"/>}/>
   {saved?<InlineNotice tone="success" message="External drive record saved. It was not published as a job."/>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
  </div>;
