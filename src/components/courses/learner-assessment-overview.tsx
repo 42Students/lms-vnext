@@ -200,7 +200,7 @@ export function LearnerAssessmentOverview({
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
     return <Alert tone="error" role="alert">
       Couldn&apos;t load your class, so quizzes can&apos;t be shown.
-      <Link href="/learn/allQuizzes" className="inline-flex min-h-11 w-fit items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry</Link>
+      <Link href="/learn/allQuizzes" className="inline-flex min-h-11 w-fit items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</Link>
     </Alert>;
   }
   if (items.length === 0) {
@@ -225,11 +225,11 @@ export function LearnerAssessmentOverview({
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm font-semibold text-body">
           <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
-          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 rounded-lg border border-border px-3 py-1">
+          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 rounded-[var(--lms-radius-control)] border border-border px-3 py-1">
             {submittedQuizzes.length>0 ? (
               <>
                 <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
-                  className="mt-2 max-h-48 space-y-1 overflow-y-auto overscroll-contain pr-2 text-xs font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  className="mt-2 max-h-48 space-y-1 overflow-y-auto overscroll-contain pr-2 text-xs font-normal focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                   {submittedQuizzes.map(item=><li key={item.deliveryId+":"+item.id}>{item.title}</li>)}
                 </ul>
                 {submittedQuizzes.length>5?<p className="mt-1 text-xs font-normal text-muted-foreground">
@@ -285,14 +285,14 @@ export function LearnerAssessmentOverview({
       />
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         <label className="w-full">
-          <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
+          <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
           <Input type="search" value={search} maxLength={100}
             onChange={event => {setSearch(event.target.value);setPage(1);}}
             placeholder="Title, lesson or course"
             className="min-h-11 md:min-h-9" />
         </label>
         <label className="w-full">
-          <span className="mb-1.5 block text-xs font-semibold text-body">
+          <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Course
           </span>
           <Select className="min-h-11 md:min-h-9"
@@ -317,7 +317,7 @@ export function LearnerAssessmentOverview({
           </Select>
         </label>
         <label className="w-full">
-          <span className="mb-1.5 block text-xs font-semibold text-body">State</span>
+          <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</span>
           <Select className="min-h-11 md:min-h-9" value={stateFilter}
             onChange={event => {
               setStateFilter(event.target.value as LearnerAssessmentStateFilter);
@@ -329,7 +329,7 @@ export function LearnerAssessmentOverview({
           </Select>
         </label>
         <label className="w-full">
-          <span className="mb-1.5 block text-xs font-semibold text-body">Sort</span>
+          <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort</span>
           <Select className="min-h-11 md:min-h-9" value={sort} onChange={event => {
             setSort(event.target.value as LearnerAssessmentSort);setPage(1);
           }}>
@@ -554,7 +554,7 @@ export function LearnerAssessmentOverview({
         {selectedAssignment ? (
           <div className="space-y-5">
             <div className="grid gap-3 md:grid-cols-2">
-              <div className="rounded-lg border border-border bg-surface-subtle p-4">
+              <div className="rounded-[var(--lms-radius-card)] border border-border bg-surface-subtle p-4">
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                   Due
                 </p>
@@ -562,7 +562,7 @@ export function LearnerAssessmentOverview({
                   {formatDate(selectedAssignment.dueAt)}
                 </p>
               </div>
-              <div className="rounded-lg border border-border bg-surface-subtle p-4">
+              <div className="rounded-[var(--lms-radius-card)] border border-border bg-surface-subtle p-4">
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                   Points
                 </p>

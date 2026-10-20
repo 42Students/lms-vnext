@@ -334,7 +334,7 @@ export function ProjectWorkspace({
 
       {mode === "ADMIN" && show("readiness") ? (
         <Link href={"/admin/projects/readiness?projectId=" + encodeURIComponent(workspace.project.id)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)]" border border-border px-3 text-sm font-semibold text-link">
           Manage override
         </Link>
       ) : null}
@@ -356,7 +356,7 @@ export function ProjectWorkspace({
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
         project={workspace.project}/>:null}
       {show("summary") || show("readiness") || (mode === "MENTOR" && show("overview")) ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Metric
             label="Tasks"
             value={
@@ -465,7 +465,7 @@ export function ProjectWorkspace({
             updatedAt={workspace.project.updatedAt}/>:null}
           {mode==="MENTOR"&&!readOnly?<MentorProjectAboutEditor project={workspace.project}/>:null}
           {(isAuthored&&authoredBrief.completionConditions.length>0)||
-            (isAuthored&&authoredBrief.personas.length>0)?<div className="mt-4 grid gap-3 sm:grid-cols-2">
+            (isAuthored&&authoredBrief.personas.length>0)?<div className="mt-4 grid gap-3 md:grid-cols-2">
             <div><h3 className="text-sm font-semibold">Completion conditions</h3>
               <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.completionConditions.map((v,i)=><li key={i}>{v}</li>)}</ul>
             </div>
@@ -473,7 +473,7 @@ export function ProjectWorkspace({
               <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.personas.map((v,i)=><li key={i}>{v}</li>)}</ul>
             </div>
           </div>:null}
-          {mode!=="ADMIN"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {mode!=="ADMIN"?<div className="mt-4 grid gap-3 md:grid-cols-2">
             <section className="border-b border-border pb-3">
               <h3 className="font-semibold text-foreground">Definition of done</h3>
               <p className="mt-1 text-sm text-body">
@@ -501,7 +501,7 @@ export function ProjectWorkspace({
           </section>:null}
           {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 border-b border-border pb-4">
             <h3 className="font-semibold">Task progress</h3>
-            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
                 <div key={lane.id} className="rounded-[var(--lms-control-radius)] bg-muted p-2 text-center">
                   <p className="text-xl font-bold tabular-nums">{lane.tasks.length}</p>
@@ -540,7 +540,7 @@ export function ProjectWorkspace({
           </section>:null}
           {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 border-b border-border pb-4">
             <h3 className="font-semibold text-foreground">Task progress</h3>
-            <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
+            <div className="mt-2 grid grid-cols-2 gap-2 text-sm md:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
                 <div key={lane.id} className="rounded-[var(--lms-control-radius)] bg-muted p-2 text-center">
                   <p className="text-xl font-bold tabular-nums">{lane.tasks.length}</p>
@@ -619,7 +619,7 @@ export function ProjectWorkspace({
           ) : null}
           {mode === "LEARNER" ? (
             <div className="mt-4 space-y-3">
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 md:grid-cols-2">
                 <div className="rounded-[var(--lms-control-radius)] bg-muted p-3 text-sm">
                   <p className="font-semibold text-foreground">Mentor</p>
                   <p className="mt-1 text-body">{workspace.members.find(member =>
@@ -827,7 +827,7 @@ export function ProjectWorkspace({
           })()}
         </div>:null}
         {mode==="LEARNER"&&workspace.releases.length>0?
-          <nav aria-label="Release roadmap" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <nav aria-label="Release roadmap" className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
             {workspace.releases.map(release=><a key={release.id}
               href={"#project-release-"+release.id}
               aria-current={release.status==="ACTIVE"?"step":undefined}
@@ -1068,7 +1068,7 @@ export function ProjectWorkspace({
                                 </StatusBadge>
                               </div>
                             </div>
-                            <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
+                            <dl className="mt-3 grid gap-2 text-xs text-body md:grid-cols-2">
                               <div><dt className="font-semibold">Assignee</dt><dd>{taskFacts.assignee}</dd></div>
                               <div><dt className="font-semibold">Due date</dt>
                                 <dd>{taskFacts.dueDate}
@@ -1267,7 +1267,7 @@ export function ProjectWorkspace({
                     </div>
 
                     {mode !== "LEARNER" ? (
-                      <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
+                      <dl className="mt-3 grid gap-2 text-xs text-body md:grid-cols-2">
                         <div><dt className="font-semibold">Submission type</dt>
                           <dd>{submission.attachments.some(item=>(item as {kind?:string}|null)?.kind==="FILE") ? "File upload" :
                             submission.sourceUrl && submission.demoUrl ? "Source + demo" :

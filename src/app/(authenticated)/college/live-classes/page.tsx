@@ -20,7 +20,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 overflow-x-clip space-y-4">
   <PageHeader title="Live Classes"/>
   <ErrorState title="Invalid session filters" description="Invalid page, publication or search filter."
-    action={<Link href="/college/live-classes" className="font-semibold text-link lms-inline-link">Clear filters</Link>}/>
+    action={<Link href="/college/live-classes" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>}/>
  </div>;
  const [data,authoring]=await Promise.all([listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data),getCollegeContentAuthoringOptions(context,"LIVE_CLASS")]);
  return <div className="min-w-0 space-y-4">
@@ -31,7 +31,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
      visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>} />
   <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated}/>
   <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,from:data.from,to:data.to})}
-    className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
     Export live-class schedule CSV (UTC)
   </Link>
   <CollegeLiveClassesDirectory data={data} showHeader={false}/>

@@ -48,7 +48,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
       <form method="get" className="mt-3 flex flex-wrap items-end gap-3"
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
-        <label className="grid gap-2 text-sm font-semibold text-body">
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Assignment history
           <Select name="status" defaultValue={data.filter.status}
             >
@@ -57,7 +57,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="ENDED">Ended only</option>
           </Select>
         </label>
-        <label className="grid gap-2 text-sm font-semibold text-body">
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Teaching role
           <Select name="role" defaultValue={data.filter.role}
             >
