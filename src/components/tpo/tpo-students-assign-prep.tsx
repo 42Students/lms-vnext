@@ -51,14 +51,14 @@ export function TpoStudentsAssignPrep(){
   {!loading&&courses.length===0&&!error?<p role="status" className="text-sm text-body">No preparation courses are available for assignment.</p>:null}
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
    <label className="grid min-w-0 gap-1 text-sm">Preparation course
-    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={offeringId} onChange={e=>setOfferingId(e.target.value)} disabled={pending||loading}
+    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={offeringId} onChange={e=>{setOfferingId(e.target.value);setError("");}} disabled={pending||loading}
      >
      <option value="">Choose a course</option>
      {courses.map(course=><option key={course.id} value={course.id}>{course.name} · {course.code}</option>)}
     </Select>
    </label>
    <label className="grid min-w-0 gap-1 text-sm">Due date and time (IST, optional)
-    <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="datetime-local" disabled={pending} value={dueAt} onChange={e=>setDueAt(e.target.value)} />
+    <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="datetime-local" disabled={pending} value={dueAt} onChange={e=>{setDueAt(e.target.value);setError("");}} />
    </label>
   </div>
   {dueAt&&!tpoPrepDueAtUtc(dueAt)?<InlineNotice tone="error" message="Choose a valid IST due date."/>:null}
@@ -69,15 +69,15 @@ export function TpoStudentsAssignPrep(){
    description={"Assign this course to the first "+Math.min(100,picked.length)+" selected students, skipping existing assignments? Learners will be notified."}
    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
     <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
-    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending} onClick={()=>void submit()}>{pending?"Saving…":"Confirm assignments"}</Button>
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||loading||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>void submit()}>{pending?"Saving…":"Confirm assignments"}</Button>
    </div>}>
    <div className="min-w-0 space-y-2 text-sm"><p className="break-words">Course: {courses.find(course=>course.id===offeringId)?.name??"Choose a course"}</p>
     <p className="break-words">Due date: {dueAt?dueAt+" IST":"No due date"}. Review the learner roster and course before confirming.</p>
-    {error&&!confirm?<InlineNotice tone="error" message={error}/>:null}
+    {error&&confirm?<InlineNotice tone="error" message={error}/>:null}
    </div>
   </Dialog>
   {notice?<InlineNotice tone="success" message={notice}/>:null}
   {results.some(row=>row.status==="skipped")?<p className="text-sm">Some students belong to another cohort or are no longer active. No cross-college assignment was created.</p>:null}
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error&&!confirm?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
