@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import { Alert } from "@/components/ui/alert";
 import { courseApiError } from "./learner-course-api";
 import {
   getYouTubeVideoId,
@@ -439,16 +440,13 @@ export function LearnerYouTubePlayer({
 
   if (!videoId) {
     return (
-      <div className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
-        <p className="m-0 text-sm font-semibold text-error">
-          This YouTube URL cannot be played
-          inline.
-        </p>
+      <div className="mt-4 space-y-2">
+        <Alert tone="error">This YouTube URL cannot be played inline.</Alert>
         <a
           href={externalUrl}
           
           rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
         >
           Open on YouTube ↗
         </a>
@@ -492,20 +490,13 @@ export function LearnerYouTubePlayer({
           href={externalUrl}
           
           rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
         >
           Open on YouTube ↗
         </a>
       ) : null}
 
-      {saveError ? (
-        <p
-          role="alert"
-          className="mt-2 text-sm font-semibold text-error"
-        >
-          {saveError}
-        </p>
-      ) : null}
+      {saveError ? <Alert tone="error" className="mt-2">{saveError}</Alert> : null}
     </div>
   );
 }
