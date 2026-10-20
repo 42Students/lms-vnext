@@ -213,3 +213,43 @@
 **Fixed:** Preserved all legacy ConfirmActionDialog props, caller action callbacks, alertdialog role, consequence description, undo hint, focus-first Cancel, pending escape/backdrop lock, original button labels, variant and aria-live. Grouped Cancel/danger in the existing Dialog.footer with a 44px full-width phone stack and right-aligned desktop row, explicit non-submit types, responsive legacy canvas-padding variable, and overflow-safe undo guidance. Read shared Dialog/Button implementations and call sites in HR, Activity and TPO plus their conditional draft/discard/grant flows. Reasoned through open/closed, pending/error controlled by callers, no-undo/undo, keyboard, 375/768. No runtime/CI, source-only.
 
 **Files changed:** `src/components/ui/confirm-action-dialog.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 27 — `src/components/ui/confirm-dialog.tsx`
+
+**Problems found (7):** Footer actions squeezed into a single row at 375px; unequal target sizes between this and ConfirmActionDialog; long localized labels risk wrapping awkwardly; the default body repeated a caller-provided description; no explicit button type; destructive action could be visually secondary on phone; long caller body text had no resilient width.
+
+**Fixed:** Aligned with the already-audited ConfirmActionDialog: a single responsive footer with 44px full-width mobile controls, compact inline tablet/desktop controls and clear confirm-first mobile order; preserved autofocus on Cancel, danger/primary variants, all labels, disabled and pending safeguards, role=alertdialog, routes and callbacks. Kept the fallback explanation only when the caller supplied neither children nor description, avoiding duplicate guidance. Kept content inside the existing Dialog/ScrollCue without nested cards. Source-reviewed Dialog, Button and sibling ConfirmActionDialog for open, confirm, pending, description-only, long-body, 375px and 768px; no runtime or CI.
+
+**Files changed:** `src/components/ui/confirm-dialog.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 28 — `src/components/ui/date-input.tsx`
+
+**Problems found (8):** Calendar popup anchored past the viewport when a narrow date field sat near either screen edge; 7-column grid forced a sideways scroll on 375px; the picker looked like a tiny dropdown on phone rather than a usable sheet; Hour and Minute columns lacked visible headings; time options were hard to distinguish; combined date/time Apply button competed for width with the time input; popup had an arbitrary 12px radius instead of the shared canvas token; narrow mobile value controls could cram into one row.
+
+**Fixed:** Kept all five native HTML input modes, calendar/time/month/week/datetime selection, min/max/step enforcement, focus recovery, keyboard navigation, native bubbling change/input events, ARIA ids and legacy styling. Converted the nonmodal popup into an inset viewport-safe bottom sheet at phone widths (scroll-contained to 70dvh) while retaining anchored popup on tablets/desktops. Tightened the seven-column phone grid to legacy 2px gaps and compact gutters so all date buttons stay 44px without horizontal scrolling at 375px; labelled Hour and Minute columns visibly and gave datetime Apply a full-width phone row. Reviewed Input, Button, PopoverPanel, CalendarGrid and every picker branch for empty, selected, disabled, invalid, bounded, opening/dismissal, Escape, 375px and 768px; source-only, no CI/runtime.
+
+**Files changed:** `src/components/ui/date-input.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 29 — `src/components/ui/drawer.tsx`
+
+**Problems found (8):** Footer peers lacked reliable mobile stacking and direct-button widths, tiny phone action targets, poor safe-area footer grouping, narrow left-panel title gutter, long description overflow, insufficient min-width guards, different footer hierarchy from Dialog, and mobile content competing with footer for width.
+
+**Fixed:** Preserved native dialog/backdrop/Escape, focus return, history state, both left/right geometry, title/close controls, inline-desktop filter behavior and all props. Added safe width/overflow, compact phone header gaps, long-description wrapping, full-width direct footer buttons and confirm-first mobile order; kept wrapped/right-aligned tablet-desktop footer with legacy spacing/borders. Inspected Button, ScrollCue and responsive filter use of Drawer across dismissal, disabled/pending, empty/tall body, left-navigation, 375px and 768px; source only, no CI/browser.
+
+**Files changed:** `src/components/ui/drawer.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 30 — `src/components/ui/searchable-select.tsx`
+
+**Problems found (9):** Dropdown opened below viewport edge; unnecessary 120px empty height; only 200px list for many options; invisible scroll affordance; overlong options clipped; weak scroll containment; tiny empty feedback; filter list could remain off-screen; narrow touch layouts were dense.
+
+**Fixed:** Added root-geometry-aware above/below placement at opening, viewport-bounded scrolling (max 18rem/half screen), no forced empty height, multiline labels with resilient breaking, readable compact empty notice and preserved 44px options. Maintained native input/selection and clearable behavior, controlled/uncontrolled props, keyboard arrows/Enter/Escape/Tab, blur validation, outside dismissal and exact ARIA roles, IDs and result text. Reviewed PopoverListbox/Input/Button for no/one/many results, disabled, validation error, focus, 375px and 768px by source; no runtime/CI.
+
+**Files changed:** `src/components/ui/searchable-select.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 31 — `src/components/verification/VerificationReviewDrawer.tsx`
+
+**Problems found (15):** Decision history consumed the top of the task; two boxed sections repeated chrome; every snapshot field rendered as a card within a drawer; confirmation and sending back had equal priority; action buttons were cramped at 375px; error/retry lost visual hierarchy; sequential review nav wrapped awkwardly; lengthy personal fields risked overflow; long document links lacked touch targets; review feedback crowded the body; muted status had weak contrast; decision CTA lived beyond lengthy history; confirm controls didn't stack; large education rows occupied the narrow drawer; and completed state lacked a clear distinction from pending.
+
+**Fixed:** Preserved privacy-masked snapshots, signed document routes, section-specific reasons, verification versions/CAS, guarded save and conflict retry, all text, APIs and callbacks. Made current submitted-vs-verified data the first review content, flattened its field list to hairline dividers, moved historical records into a native keyboard-operable disclosure after actionable content, promoted Verify as primary, kept Send back secondary and moved mobile action/confirmation/retry controls onto full-width 44px rows. Aligned sequence progress above content, document link tap targets, overflow-resistant values and light error/confirm strips, keeping the Drawer header and scroll container as the only shell. Inspected Drawer, Button, DataTable, Select, Textarea, comparison helpers for loading, error, no records, already decided, pending/retry, 375px and 768px. Source-only, no runtime/CI.
+
+**Files changed:** `src/components/verification/VerificationReviewDrawer.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
