@@ -69,3 +69,53 @@
 - **Regressions found/fixed:** 1. The visible "Clear" link navigated to `/college/people`, the contacts directory, rather than clearing the current manage-directory filters; updated its href to `/college/people/manage`. Checked page/loading/error, parent college shell, membership scope/roles, filter query and pager, DataTable, PersonOnboardDialog (role defaults, validation/loading/success), PersonMembershipActions (roles, suspend, reactivate, end with server receipt verification), ProfileDialog and shared Dialog/Menu controls; copy and mutation routes unchanged.
 - **Extra clutter/alignment fixes:** Existing collapsed secondary actions, aligned responsive search controls and full-width mobile primary are retained; corrected destination keeps user in one workflow.
 - **Files changed:** `src/app/(authenticated)/college/people/manage/page.tsx`; queue/proof. Source 375/768, no CI.
+
+## Surface 15 — `src/app/(authenticated)/college/people/page.tsx`
+- **Regressions found/fixed:** 0. The historical People route is intentionally a server redirect to `/college/contacts`; this preserves the old read-only directory while `/college/people/manage` owns membership changes. Checked its loading/error route files and parent college layout, dashboard/contact destination constraints and chat-9 polish entry. No broken imports, lost labels or accessibility regression in redirect flow.
+- **Extra clutter/alignment fixes:** None; no transient second page header, duplicate card or extra action introduced.
+- **Files changed:** Queue and proof only; source review, no CI.
+
+## Surface 16 — `src/app/(authenticated)/college/placements/calendar/page.tsx`
+- **Regressions found/fixed:** 1 strict TS unused import: `ErrorState` remained imported in route `error.tsx` but recovery uses PageHeader, paragraph and Button; removed unused import. Inspected chat-9 proof, route/page loading/error/not-found/template, membership role check, shared PlacementCalendarWorkspace's audience filters, dates, event grouping, month/week/agenda panels, day navigation, mobile agenda, read-only college semantics and shared CalendarGrid/StatusBadge/Button. Retained all query keys, copy and event links.
+- **Extra clutter/alignment fixes:** None necessary: College Admin agenda is compact below the date/filter toolbar, multi-column calendar hides on narrow screens, error view uses existing canvas with clear retry.
+- **Files changed:** `src/app/(authenticated)/college/placements/calendar/error.tsx`; queue/proof. Source checked at 375/768, no CI.
+
+## Surface 17 — `src/app/(authenticated)/college/placements/drives/page.tsx`
+- **Regressions found/fixed:** 1: a filtered empty drive view had no directly accessible reset and basic toolbar offered no Clear action. Added a reset link beside Filter and an empty-view recovery without changing filters, route or list semantics. Read chat-9 proof; page/loading/error, college shell, CollegeDriveBulkActions, CollegeDriveRowLifecycleAction, CollegeDriveDeadlineAction, DateInput/Select/DataTable, 25-drive preview/confirm, error and pagination states. Retained all existing action/route/test IDs.
+- **Extra clutter/alignment fixes:** Collapsed deadline range, applicant minimum and sorting into active-aware Advanced filters; left title/status/season/company visible and preserved GET form values, 44px phone target and responsive 768px layout.
+- **Files changed:** `src/app/(authenticated)/college/placements/drives/page.tsx`; queue/proof. Source-only; no CI.
+
+## Surface 18 — `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- **Regressions found/fixed:** 2 unused imports (`Alert`, `StatTile`) remained despite SummaryStrip/Disclosure-based polish; removed to avoid strict TypeScript warnings/errors. Read chat-9 proof, page/loading/error, college shell, appointment service/schema, CollegeInterviewStatusActions with reason-confirm modal and versioned POST, shared Date/Select/Table/Disclosure/EmptyState/SummaryStrip/StatusBadge. Reviewed ready/unavailable/limited/empty/error, ICS/CSV, status changes and mobile.
+- **Extra clutter/alignment fixes:** Existing collapsed advanced fields and single Exports disclosure already match hierarchy; no additional rearrangement needed.
+- **Files changed:** `src/app/(authenticated)/college/placements/interviews/page.tsx`; queue/proof. No CI.
+
+## Surface 19 — `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- **Regressions found/fixed:** 0. Compared chat-9 polish proof; reviewed page loading/error, college/placements/job parent layouts and 404 behavior, filter/query/schema, export href, page/row links and protected pipeline service. Read CollegeApplicationPipelineControls and detail drawer for role-safe selection, stage options, optimistic version, confirmed POST, feedback, email-disabled state and mobile controls; checked shared Tabs/Disclosure/DataTable/EmptyState. Existing status constraints, stage counts, export cap, empty clearing and legacy copy remain intact.
+- **Extra clutter/alignment fixes:** None necessary: expert filters are disclosed, stage tabs expose counts, one bulk action and row Manage controls avoid competing buttons, and responsive paging stacks.
+- **Files changed:** Queue and verification proof only. Source checks 375/768; no CI.
+
+## Surface 20 — `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- **Regressions found/fixed:** 0. Checked chat-9 proof, page/loading/error/parent job layout, interview query and list, candidate-slot schedule, CollegeInterviewAppointments with add/edit/cancel/complete/no-show confirmations, ICS download, IST conversion, required reason, optimistic version and API pending/errors; checked shared Date/Select/DataTable/Disclosure/Dialog/ConfirmDialog. All routes, IDs and wording preserved.
+- **Extra clutter/alignment fixes:** Existing candidate table exposes one Schedule CTA, per-row Actions disclosure, compact round filter form and route-safe empty/pager recovery; no source change needed.
+- **Files changed:** Queue and verification proof only. Source checked at 375/768; no CI.
+
+## Surface 21 — `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- **Regressions found/fixed:** 0. Compared chat-9 polish proof, checked page/loading/error and job/college parent layouts, three scoped reads, metrics and stage labels, candidate-count semantics and responsive stat links. Inspected CollegeDrivePipelineOverview with stage link targets and attention flags, CollegeDriveDuplicateAction with audited confirmation/duplicate/redirect, StatusBadge/StatTile/Disclosure and empty attention state. No missing import, broken JSX or permission/URL drift observed.
+- **Extra clutter/alignment fixes:** Existing one Applications primary action and More actions disclosure already demote Edit, All drives and duplicate, and the fact row wraps at 375px. No source mutation required.
+- **Files changed:** Queue and verification proof only. No runtime/CI.
+
+## Surface 22 — `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
+- **Regressions found/fixed:** 0. Read the route redirect guard, loading/error, nested `[jobId]/layout.tsx` and its CollegeDriveLegacyNav/Tabs, shared PlacementDriveWorkspace, including scope-gated TPO-only sections, College-only primary applications link, dropdown states, draft edit, placement screening and lifecycle/offer controls. Verified source-level nesting, mapped props/IDs, confirmed write endpoints, error handling, existing legacy copy and small-screen actions; no dropped route or aria label found.
+- **Extra clutter/alignment fixes:** One inherited drive tab strip plus continuous white canvas, responsive header CTA and grouped Actions menu; no new nested chrome.
+- **Files changed:** Queue/proof only. Source review 375/768, no CI.
+
+## Surface 23 — `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- **Regressions found/fixed:** 0. Compared chat-9 polish proof; read page/loading/error, shared drive layout/tabs and role/tenant guards, job/eligibility/academic data, PlacementDraftEditForm and unsaved-change guard (disclosures, validation, two API writes, optimistic behavior), CollegeLegacyDriveSettings (close/reopen confirmation) and CollegeDriveArchiveAction (impact preview, persisted safety, confirmation and redirect). Verified server-side draft-only editing and archived state, keyboard and responsive control geometry, no lost imports/IDs/copy/routes.
+- **Extra clutter/alignment fixes:** Existing advanced draft fields are disclosed, primary Save remains identifiable, guarded delete is hidden behind a separate disclosure; no source change.
+- **Files changed:** Queue and verification proof only; 375/768 source review, no CI.
+
+## Surface 24 — `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- **Regressions found/fixed:** 0. Read page/loading/error and parent drive/college layouts, role guard, collegeShortlistedQuery and driveApplicationsQuerySchema, scoped application service, DataTable, PageHeader, StatusBadge, EmptyState and export query helper. Checked filter/clear, shortlist-only results, 1000-row safe CSV, pager, missing/zero and tablet/mobile states; no broken TSX, dropped test/ARIA or reworded copy.
+- **Extra clutter/alignment fixes:** Search, Filter and optional Clear on one aligned rail; narrow table and separate Export link avoid action clutter. No source change.
+- **Files changed:** Queue and verification proof only. No runtime/CI.

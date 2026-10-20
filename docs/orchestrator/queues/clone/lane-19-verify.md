@@ -23,16 +23,16 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-19.md: surface | regre
 - [x] `src/app/(authenticated)/college/live-classes/page.tsx`
 - [x] `src/app/(authenticated)/college/page.tsx`
 - [x] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [x] `src/app/(authenticated)/college/people/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/calendar/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/new/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`

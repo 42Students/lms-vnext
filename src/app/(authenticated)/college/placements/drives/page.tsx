@@ -78,6 +78,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </Select>
       </label>
+      <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4 xl:col-span-6"
+        open={Boolean(query.deadlineAfter||query.deadlineBefore||query.minimumApplicants||query.sort!=="TITLE")||undefined}>
+        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Advanced filters</summary>
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-3 md:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline from
         <DateInput mode="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
           />
@@ -97,16 +101,20 @@ export default async function CollegeDrivesPage({ searchParams }: {
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </Select>
       </label>
+        </div>
+      </details>
       <Button type="submit" className="w-full self-end min-[768px]:w-auto">Filter</Button>
+      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-link underline md:min-h-9">Clear filters</Link>
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">
       <p role="status" className="text-sm text-body">{data.total} matching persisted drives</p>
       <DataTable caption="College placement drives" columns={columns} rows={data.items}
         getRowKey={item=>item.id}
-        empty={<p role="status" className="text-sm text-body">
-          {data.total===0?"No drives match these filters in this college.":"No rows on this page. Choose an earlier page."}
-        </p>} />
+        empty={<div className="min-w-0 space-y-2 text-sm text-body" role="status">
+          <p>{data.total===0?"No drives match these filters in this college.":"No rows on this page. Choose an earlier page."}</p>
+          <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+        </div>} />
     </section>
     <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
       <span>Page {data.query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
