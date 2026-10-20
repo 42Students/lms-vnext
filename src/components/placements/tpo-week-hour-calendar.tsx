@@ -164,7 +164,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      {label(day)}{day===today?" · Today":""}{blocked.has(day)?" · Blocked":""}
     </div>)}
     <div className="relative border-r border-border bg-surface" style={{height}}>
-     {Array.from({length:LAST-FIRST},(_,offset)=><div key={offset} className="absolute w-full border-t border-[#e7ecf2]"
+     {Array.from({length:LAST-FIRST},(_,offset)=><div key={offset} className="absolute w-full border-t border-border"
        style={{top:offset*HEIGHT}}><span className={weekStyles.hourMarker}>{clock(FIRST+offset)}</span></div>)}
     </div>
     {days.map(day=>{
@@ -196,10 +196,10 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         <span className="block truncate">{event.companyName}</span>
         <span className="block text-xs">{kinds[event.kind]??event.kind}</span></>;
        return canCreate&&event.followupId&&event.status==="OPEN"?
-        <button key={event.id} type="button"
+        <Button variant="ghost" key={event.id} type="button"
          aria-label={"Move follow-up: "+event.title} data-event-kind={event.kind}
          onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
-         style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles.event}>{inner}</button>:
+         style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles.event+" !min-h-0 !max-w-none !rounded-[var(--lms-control-radius)]"}>{inner}</Button>:
        event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title} data-event-kind={event.kind}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
@@ -211,7 +211,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
        <div key={event.id} data-event-kind={event.kind} style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles.event}>{inner}</div>;
       })}
       {offHours.length?<div className="absolute inset-x-0 bottom-0 z-20 space-y-1 border-t border-border bg-surface/95 p-1">
-       {offHours.map(e=><p key={e.id} className="truncate text-[10px]" title={e.title}>Outside displayed hours · {e.title}</p>)}
+       {offHours.map(e=><p key={e.id} className="truncate text-xs" title={e.title}>Outside displayed hours · {e.title}</p>)}
       </div>:null}
      </div>;
     })}

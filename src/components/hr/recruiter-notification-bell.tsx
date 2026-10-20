@@ -54,7 +54,7 @@ export function RecruiterNotificationBell(){
     variant="secondary" className="relative min-h-11 min-w-11 !p-0 md:min-h-9 md:min-w-9">
     <ShellNavGlyph name="bell" />
     {data?.unread&&data.unread>0?<Badge tone="error" aria-hidden="true"
-      className="absolute -right-1 -top-1 !min-h-4 !min-w-4 !rounded-full !border-0 !bg-[var(--lms-error)] !px-1 !py-0 !text-[10px] !leading-3 !text-white">
+      className="pointer-events-none absolute -right-1 -top-1 !min-h-4 !min-w-4 !rounded-full !border-0 !bg-[var(--lms-error)] !px-1 !py-0 !text-xs !leading-3 !text-white">
       {data.unread>99?"99+":data.unread}</Badge>:null}
   </Button>
   <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications">

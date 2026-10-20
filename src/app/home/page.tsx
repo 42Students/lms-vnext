@@ -16,8 +16,8 @@ export default function HomeMarketingPage() {
     {title:"HR and recruiters",description:"Collaborate with placement teams through a connected hiring workflow."}
   ]}/>
   <section className="grid min-w-0 gap-4 sm:grid-cols-2" aria-label="Who the platform serves">
-   <Link href="/universities" className="group flex min-h-11 min-w-0 flex-col justify-center rounded-[12px] border border-border bg-surface p-5 transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:p-6"><h2 className="break-words text-xl font-semibold">Universities</h2><p className="mt-2 text-body">Develop employable graduates with integrated learning and placements.</p></Link>
-   <Link href="/enterprises" className="rounded-[12px] border border-border bg-surface p-6"><h2 className="break-words text-xl font-semibold">Enterprises</h2><p className="mt-2 text-body">Build talent pipelines with visible skills and practical experience.</p></Link>
+   <Link href="/universities" className="group flex min-h-11 min-w-0 flex-col justify-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:p-6"><h2 className="break-words text-xl font-semibold">Universities</h2><p className="mt-2 text-body">Develop employable graduates with integrated learning and placements.</p></Link>
+   <Link href="/enterprises" className="group flex min-h-11 min-w-0 flex-col justify-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:p-6"><h2 className="break-words text-xl font-semibold">Enterprises</h2><p className="mt-2 text-body">Build talent pipelines with visible skills and practical experience.</p></Link>
   </section>
   <MarketingFeatureGrid title="Connected platform pillars" items={[
     {title:"Personalised learning",description:"Give each learner a clear next step."},
@@ -26,7 +26,7 @@ export default function HomeMarketingPage() {
     {title:"Career readiness",description:"Take learners from preparation through hiring."}
   ]}/>
   <section className="min-w-0 space-y-4"><h2 className="text-2xl font-semibold">One continuous journey</h2>
-   <ol className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">{["Learn","Build","Demonstrate","Get hired"].map((step,i)=><li className="min-w-0 rounded-[12px] border border-border bg-surface p-5" key={step}><span className="text-sm text-primary-text">0{i+1}</span><p className="mt-2 font-semibold">{step}</p></li>)}</ol>
+   <ol className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">{["Learn","Build","Demonstrate","Get hired"].map((step,i)=><li className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5" key={step}><span className="text-sm text-primary-text">0{i+1}</span><p className="mt-2 font-semibold">{step}</p></li>)}</ol>
   </section>
   <MarketingCta title="See how 42 LMS connects the talent journey" />
  </MarketingLayout>;
