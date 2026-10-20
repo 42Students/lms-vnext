@@ -97,7 +97,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {recentOnly ? <Input type="hidden" name="recent" value="1" /> : null}
         {unreadOnly ? <Input type="hidden" name="unread" value="1" /> : null}
         {sortKey!=="pinned"?<Input type="hidden" name="sort" value={sortKey}/>:null}
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="flex min-w-0 flex-1 flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search college notices
           <Input type="search" name="q" maxLength={100} defaultValue={queryText}
             placeholder="Title or message" className="min-h-11 min-w-0 md:min-h-9" />
@@ -113,8 +113,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {unreadOnly?<Input type="hidden" name="unread" value="1"/>:null}
         {recentOnly?<Input type="hidden" name="recent" value="1"/>:null}
         {queryText?<Input type="hidden" name="q" value={queryText}/>:null}
-        <label className="flex flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort college notices
-          <Select name="sort" defaultValue={sortKey} className="min-h-11 md:min-h-9">
+        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort college notices
+          <Select name="sort" defaultValue={sortKey} className="min-h-11">
             <option value="pinned">Pinned then newest</option>
             <option value="latest">Newest first</option>
             <option value="oldest">Oldest first</option>
@@ -236,7 +236,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {queryText?<Input type="hidden" name="q" value={queryText}/>:null}
         {sortKey!=="pinned"?<Input type="hidden" name="sort" value={sortKey}/>:null}
         {source==="placement-cell"?<Input type="hidden" name="source" value={source}/>:null}
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="flex min-w-0 flex-1 flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search loaded personal alerts
           <Input type="search" name="alertQ" defaultValue={alertQ} maxLength={80}
             placeholder="Title or message" className="min-h-11 min-w-0 md:min-h-9"/>

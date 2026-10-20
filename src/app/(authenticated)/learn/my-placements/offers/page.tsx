@@ -134,7 +134,7 @@ export default async function LearnerOffersPage({
         {kind !== "all" ? <Input type="hidden" name="kind" value={kind} /> : null}
         {joiningFilter!=="all"?<Input type="hidden" name="joining" value={joiningFilter}/>:null}
         {expiry!=="all"?<Input type="hidden" name="expiry" value={expiry}/>:null}
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
+        <label className="flex min-w-0 flex-1 flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search my offers
           <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
             placeholder="Employer or role" className="min-h-11 min-w-0 md:min-h-9" />
@@ -150,7 +150,7 @@ export default async function LearnerOffersPage({
         {kind!=="all"?<Input type="hidden" name="kind" value={kind}/>:null}
         {joiningFilter!=="all"?<Input type="hidden" name="joining" value={joiningFilter}/>:null}
         {expiry!=="all"?<Input type="hidden" name="expiry" value={expiry}/>:null}
-        <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
+        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Sort my offers
           <Select name="sort" defaultValue={order} className="min-h-11 md:min-h-9">
             <option value="priority">Needs response first</option>

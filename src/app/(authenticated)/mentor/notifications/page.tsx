@@ -111,22 +111,22 @@ export default async function MentorNotificationsPage({
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
       <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
-        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Project with recorded attention
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
             className="min-h-11 max-w-full min-[768px]:min-h-9">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Attention order
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attention order
           <Select name="attentionOrder" defaultValue={attentionOrder.data}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Attention type
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attention type
           <Select name="kind" defaultValue={kind.data}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>

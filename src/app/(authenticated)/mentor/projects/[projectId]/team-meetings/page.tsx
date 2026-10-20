@@ -64,7 +64,7 @@ export default async function MentorTeamMeetingsPage({
       </section>
       <FilterBar title="Filters"><form method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting status
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All</option><option value="REQUESTED">Requested</option>
@@ -73,7 +73,7 @@ export default async function MentorTeamMeetingsPage({
             <option value="CANCELLED">Cancelled</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting type
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting type
           <Select name="type" defaultValue={data.query.type}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All types</option><option value="GENERAL">General</option>
@@ -81,21 +81,21 @@ export default async function MentorTeamMeetingsPage({
             <option value="REVIEW">Review</option><option value="RETRO">Retrospective</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recorded outcome
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded outcome
           <Select name="outcome" defaultValue={data.query.outcome}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All meetings</option><option value="RECORDED">With written outcome</option>
             <option value="NOT_RECORDED">Without written outcome</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting order
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9">
             <option value="NEWEST">Most recent first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting title
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting title
           <Input type="search" name="search" maxLength={100}
             defaultValue={data.query.search}
             className="min-h-11 md:min-h-9"/>
