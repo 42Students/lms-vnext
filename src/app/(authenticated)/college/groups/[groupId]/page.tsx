@@ -152,7 +152,7 @@ export default async function CollegeGroupDetailPage({
       ) : null}
 
       <section className="min-w-0 space-y-3 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Members</h2>
+        <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Members</h2>
         {members.length === 0 ? (
           <EmptyState title="No members yet" description="Nobody has joined this group." />
         ) : (
