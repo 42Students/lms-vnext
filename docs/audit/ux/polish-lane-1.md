@@ -183,3 +183,11 @@
 **Problems fixed (9):** duplicated message count in a detached paragraph; two sender identity lines in each bubble; no structured empty log; Quick replies took permanent high-priority space; multi-button compose actions cramped phones; Send competed with secondary actions; log had no subtle boundary; loading omitted conversation identity; generic error boundary gave no conversation destination. Put count next to H1, reduced repeated sender labels, used EmptyState, collapsed Quick replies into shared Disclosure, stacked full-width action buttons at 375, separated transcript from compose area, contextualized route fallbacks. Existing bubble legacy visual tokens, read/submit/draft/confirm semantics and accessible log preserved.
 
 **Files:** `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`, `src/app/(authenticated)/tpo/messages/[threadId]/loading.tsx`, `src/app/(authenticated)/tpo/messages/[threadId]/error.tsx`, `src/components/tpo/tpo-recruiter-message-reply.tsx`, queue, proof. No CI.
+
+## Surface 34 — Interview status actions
+
+**Reviewed:** scheduled/non-scheduled states, Completed/No Show controls, 409 version conflict, double-submit/busy handling, required reason validation and focus, open/cancel/confirm modal via shared ConfirmDialog, message success/error, 375/768 source layout. No runtime/CI.
+
+**Problems fixed (7):** actions wrapped into uneven narrow rows; both had weak mobile touch widths; completed action used danger-confirm visual even though it is not destructive; reason label duplicated within dialog; invalid confirm remained clickable; reason textarea lacked stable visible height; saved/failure messages looked identical and were duplicated inside the modal. Made phone actions full-width, selected positive primary vs destructive danger confirmation, required trimmed length before confirm, expanded note area and used semantically toned InlineNotice outside the dialog. Existing ID, expectedVersion, endpoint, status transition rules, dialog wording and restore behavior preserved.
+
+**Files:** `src/components/placements/college-interview-status-actions.tsx`, queue, proof. Shared Button/ConfirmDialog/Textarea/InlineNotice reviewed and unchanged. No CI.
