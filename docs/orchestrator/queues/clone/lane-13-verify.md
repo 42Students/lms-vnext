@@ -42,8 +42,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-13.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/reports/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
-- [ ] `src/components/placements/learner-placement-academic-evidence.tsx`
-- [ ] `src/components/placements/placement-candidate-evidence-editor.tsx`
+- [x] `src/components/placements/learner-placement-academic-evidence.tsx`
+- [x] `src/components/placements/placement-candidate-evidence-editor.tsx`
 - [ ] `src/components/placements/placement-employer-relationships.tsx`
 - [ ] `src/components/placements/placement-request-queue.tsx`
 - [ ] `src/components/placements/recruiter-interview-slot-form.tsx`

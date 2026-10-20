@@ -294,7 +294,6 @@ export function PlacementCandidateEvidenceEditor({
               {evidenceFields.slice(0,3).map(renderEvidenceField)}
               <label className="flex min-h-11 min-w-0 items-center gap-2 self-end py-2 text-[var(--lms-font-sm)] font-semibold text-body">
                 <Checkbox
-                  type="checkbox"
                   checked={lateralEntry}
                   onChange={(event) =>
                     setLateralEntry(
