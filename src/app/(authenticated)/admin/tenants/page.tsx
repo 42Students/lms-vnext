@@ -90,7 +90,7 @@ export default async function TenantDirectory({searchParams}:{
     columns={[
       {key:"college",header:"College",mobilePriority:"primary",cell:tenant=><>
         <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           {tenant.name}
         </Link>
         <span className="mt-1 block text-xs text-muted-foreground">{tenant.code}</span>

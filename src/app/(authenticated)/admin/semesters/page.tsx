@@ -69,7 +69,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <ErrorState title="Semesters unavailable"
         description="The semester directory could not be loaded. Your filters were not changed."
         action={<Link href={pageHref(parsed.data)}
-          className="font-semibold text-primary-text underline">Retry loading semesters</Link>}/>
+          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Retry loading semesters</Link>}/>
     </div>;
   }
   const data=result.value;

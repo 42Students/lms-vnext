@@ -30,7 +30,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  try{filter=parseCollegeContactsSearchParams(raw);}
  catch(error){return <div className="min-w-0 overflow-x-clip space-y-4"><PageHeader title="Contacts"/>
   <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
-   action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
+   action={<Link href="/college/contacts" className="inline-flex items-center min-h-11 md:min-h-9 underline">Reset contact filters</Link>}/></div>;}
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
  const pageCount=Math.max(1,Math.ceil(results.total/results.pageSize));
  const range=collegeContactsPageRange(filter.page,results.pageSize,results.total);
