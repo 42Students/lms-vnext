@@ -12,7 +12,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-8.md: surface | regres
 - [x] `src/components/placements/tpo-request-bulk-decision.tsx`
 - [x] `src/components/placements/tpo-request-decision-control.tsx`
 - [x] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
 - [ ] `src/components/profile/learner-skill-catalog-input.tsx`
 - [ ] `src/components/projects/college-project-mentor-dialog.tsx`
 - [ ] `src/components/projects/college-project-student-roster-dialog.tsx`
