@@ -102,7 +102,6 @@ export default async function SuperAdminLearnerAccessTracePage({
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          eyebrow="Super Admin · Module Access"
           title="Learner access trace"
           description="Read-only, college-scoped explanation of optional module access."
         />
@@ -161,7 +160,6 @@ export default async function SuperAdminLearnerAccessTracePage({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin · Module Access"
         title={`${college.name} · Learner access trace`}
         description={`Explain why an active learner's Projects, Placements and Electives module settings resolve to On or Off. The selected college is fixed to ${college.code}.`}
         actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← {college.name} access hierarchy</Link>}

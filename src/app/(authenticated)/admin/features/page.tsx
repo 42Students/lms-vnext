@@ -121,7 +121,7 @@ export default async function SuperAdminFeaturesPage({
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Feature Controls"
-        description="Effective college-level access for the three optional modules configured in vNext: Projects, Placements and Electives. Values are resolved using the existing persisted-rule inheritance and source defaults."
+        description="Effective college-level access for the three optional modules available: Projects, Placements and Electives. Values are resolved using the existing persisted-rule inheritance and source defaults."
       />
 
       <section aria-label="Feature Controls overview" className="border-t border-border pt-6">
