@@ -77,7 +77,7 @@ export function TpoFindShortcut(){
  }
  return <>
   <Button variant="ghost" type="button" onClick={()=>setOpen(true)}
-   className="min-h-11 gap-2 md:min-h-9">
+   className="min-h-11 w-full flex-wrap justify-between gap-2 text-left sm:w-auto md:min-h-9">
    Find a student, recruiter or company
    <kbd className="rounded border border-border px-1.5 py-0.5 text-xs no-underline">Ctrl K</kbd>
   </Button>
@@ -88,26 +88,26 @@ export function TpoFindShortcut(){
       role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={open}
       aria-controls="tpo-find-results" aria-activedescendant={active>=0&&active<showing.length?"tpo-find-result-"+active:undefined}
       onChange={event=>changeQuery(event.target.value)} placeholder="Type at least 2 characters"
-      maxLength={100} className="mt-2 min-h-11 w-full md:min-h-9"/>
+      maxLength={100} className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
-   <PopoverListbox id="tpo-find-results" label="Matching records" className="mt-4 max-h-80 space-y-1 overflow-y-auto" onDismiss={() => setOpen(false)}>
-    {query.trim().length<2?<h3 className="text-xs font-semibold text-muted-foreground">Recently opened</h3>:null}
+   <PopoverListbox id="tpo-find-results" label="Matching records" className="mt-3 !min-h-0 max-h-72 space-y-0 overflow-y-auto !border-0 !p-0 !shadow-none" onDismiss={() => setOpen(false)}>
+    {query.trim().length<2?<div role="presentation" className="px-3 pb-2 pt-2 text-xs font-semibold text-muted-foreground">Recently opened</div>:null}
     {showing.map((row,index)=><Button variant="ghost" type="button" key={row.href}
       id={"tpo-find-result-"+index} role="option" aria-selected={active===index}
       onMouseEnter={()=>setActive(index)} onClick={()=>select(row)}
-      className={"flex min-h-11 w-full items-center justify-between rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 "+
+      className={"flex min-h-11 w-full min-w-0 flex-wrap items-start justify-between gap-x-3 gap-y-1 rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 "+
        (active===index?"bg-primary-subtle":"hover:bg-muted")}>
-      <span className="truncate">{row.label}</span><span className="ml-3 shrink-0 text-xs text-muted-foreground">{row.group}</span>
+      <span className="min-w-0 flex-1 break-words">{row.label}</span><span className="max-w-full shrink-0 break-words text-xs text-muted-foreground">{row.group}</span>
     </Button>)}
-    {!showing.length&&!loading?<p role="status" className="p-3 text-sm text-muted-foreground">
+    {!showing.length&&!loading&&!error?<p role="status" className="p-3 text-sm text-muted-foreground">
       {query.trim().length<2?"Open a record to see it here.":"No matching records."}</p>:null}
     {loading?<p role="status" className="p-3 text-sm text-muted-foreground">Searching…</p>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
    </PopoverListbox>
-   <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
-    <span>↑ ↓ Navigate · Enter Open · Esc Close</span>
+   <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+    <span className="min-w-0 break-words">↑ ↓ Navigate · Enter Open · Esc Close</span>
     <Link href={"/tpo/find"+(query.trim()?"?q="+encodeURIComponent(query.trim()):"")}
-      className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" onClick={()=>setOpen(false)}>Open full search</Link>
+      className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9" onClick={()=>setOpen(false)}>Open full search</Link>
    </div>
   </Dialog>
  </>;

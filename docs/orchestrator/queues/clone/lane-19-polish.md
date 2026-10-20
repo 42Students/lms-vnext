@@ -19,7 +19,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-19.md: surface | probl
 - [x] `src/components/tpo/tpo-bell-panel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/tpo/tpo-bulk-action-panel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/tpo/tpo-company-create-form.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/tpo/tpo-find-shortcut.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-keyboard-shortcuts.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-new-followup-modal.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
