@@ -193,7 +193,7 @@ export function DriveDayRoster({
         ].map(([label, value]) => (
           <div
             key={String(label)}
-            className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 lg:border-b-0"
+            className="border-b border-border p-4 last:border-b-0 md:border-r md:last:border-r-0 lg:border-b-0"
           >
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
               {label}
