@@ -7,6 +7,7 @@ import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {Alert} from "@/components/ui/alert";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {useState,useTransition} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -54,6 +55,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
  const [failed,setFailed]=useState<string[]>([]);
  const [retryTarget,setRetryTarget]=useState<boolean|null>(null);
  const [message,setMessage]=useState("");
+ const [messageTone,setMessageTone]=useState<"success"|"warning"|"error">("success");
  const [pending,start]=useTransition();
  const [versions,setVersions]=useState<Record<string,string>>({});
  const [latestVisible,setLatestVisible]=useState<Record<string,boolean>>({});
@@ -96,10 +98,11 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     setFailed(failures);setSelected(failures);
     const detail=failedRows.slice(0,5).map(item=>
      (items.find(row=>row.id===item.lessonId)?.name??"Lesson")+": "+item.reason).join("; ");
+    setMessageTone(failures.length?"warning":"success");
     setMessage(changed.length+" Lessons updated. "+failures.length+
      " failed."+ (detail?" "+detail:""));
     router.refresh();
-   }catch(error){setMessage(error instanceof Error?error.message:friendlyApiError({}));}
+   }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:friendlyApiError({}));}
   });
  }
  return <Disclosure title="Show to students / Hide from students" className="border-y border-border py-3 text-sm text-body">
@@ -117,13 +120,13 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     <Checkbox checked={selected.includes(item.id)} disabled={pending}
      onChange={()=>toggle(item.id)}/>
     <span className="truncate" title={item.name}>{item.name}</span>
-    <span className="text-xs text-muted-foreground">
+    <StatusBadge tone={(latestVisible[item.id]??item.visibleToStudents)?"success":"neutral"}>
      {(latestVisible[item.id]??item.visibleToStudents)?"Visible":"Hidden"}
-    </span>
+    </StatusBadge>
    </label>)}
   </div></ScrollCue>
   <div className="mt-3 flex flex-wrap gap-2">
-   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending||!selected.length}
+   <Button type="button" variant="primary" className="min-h-11 md:min-h-9" disabled={pending||!selected.length}
     onClick={()=>apply(true)}>
     Show to students
    </Button>
@@ -137,6 +140,6 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     Retry failed
    </Button>:null}
   </div>
-  {message?<p role="status" className="mt-2 text-xs">{message}</p>:null}
+  {message?<Alert tone={messageTone} role="status" className="mt-2">{message}</Alert>:null}
  </Disclosure>;
 }
