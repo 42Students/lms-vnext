@@ -50,4 +50,4 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-3.md: surface | regres
 - [x] `src/components/projects/project-readiness-override-form.tsx`
 - [x] `src/components/projects/project-resource-files-panel.tsx`
 - [x] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
