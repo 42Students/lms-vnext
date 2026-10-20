@@ -1,7 +1,6 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
 
-
 import {useEffect,useRef,useState} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -204,7 +203,7 @@ export function FacultyQuizReview({
   return (
     <>
       {notice?<Alert tone="success" className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
-      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
+      <div className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:flex sm:flex-wrap sm:items-center [&_button]:w-full sm:[&_button]:w-auto">
         <Button
           size="md"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"
@@ -259,15 +258,15 @@ export function FacultyQuizReview({
         title={quizTitle??"Submissions"}
         description="Review immutable Section-scoped attempts and choose whether released results are visible to learners."
       >
-      <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
+      <div className="min-w-0 space-y-4">
+      <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <p className="text-[var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
             Submitted scores and answer review are read from
             immutable submitted snapshots.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex min-w-0 flex-wrap gap-2">
           {actions.canPublishResults ? (
             <Button
               size="md"
@@ -306,33 +305,31 @@ export function FacultyQuizReview({
           >
             Refresh
           </Button>
-          <span className="text-xs text-muted-foreground">
-            Escape or close the drawer to return to the assessment list.
-          </span>
+
         </div>
       </div>
 
       {loading ? <LoadingState label="Loading attempts…" /> : null}
 
       {error ? (
-        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
+        <div className="space-y-2"><Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert><Button type="button" variant="secondary" onClick={()=>void load()} className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh</Button></div>
       ) : null}
 
       {!loading && attempts && attempts.length === 0 ? (
-        <EmptyState title="No submissions yet" description="" />
+        <EmptyState title="No submissions yet" action={<Button type="button" variant="secondary" onClick={()=>void load()} className="min-h-11 md:min-h-9">Refresh</Button>} />
       ) : null}
 
       {!loading && attempts ? <p className="text-sm font-semibold text-foreground">{attempts.length} submission(s)</p> : null}
       {!loading && attempts &&
       attempts.length > 0 ? (
-        <div className="mt-4 space-y-3">
+        <div className="mt-3 min-w-0 divide-y divide-border">
           {attempts.map((attempt) => (
             <section
               key={attempt.id}
-              className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-[var(--lms-space-4)]"
+              className="min-w-0 py-[var(--lms-space-4)]"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+              <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
+                <div className="min-w-0">
                   <h4 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
                     {learnerLabel(attempt)}
                   </h4>
@@ -355,12 +352,12 @@ export function FacultyQuizReview({
                 </StatusBadge>
               </div>
 
-              <div className="mt-4 space-y-3">
+              <div className="mt-4 min-w-0 divide-y divide-border">
                 {attempt.answers.map(
                   (answer, index) => (
                     <div
                       key={answer.id}
-                      className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-[var(--lms-space-3)]"
+                      className="min-w-0 py-[var(--lms-space-3)]"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <p className="m-0 text-sm font-semibold text-foreground">
@@ -411,7 +408,7 @@ export function FacultyQuizReview({
                                       ? "•"
                                       : "–"}
                                 </span>
-                                <span>
+                                <span className="min-w-0 break-words [overflow-wrap:anywhere]">
                                   {option.text}
                                 </span>
                                 {selected ? (
