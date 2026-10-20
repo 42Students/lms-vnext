@@ -19,27 +19,27 @@ export function LearnerProjectMobileFilters({
 }) {
   const active=learnerProjectMobileFilterSummary(query);
   return (
-    <section className="space-y-2 sm:hidden" aria-label="Mobile project filters">
+    <section className="min-w-0 space-y-2 min-[768px]:hidden" aria-label="Mobile project filters">
       <Disclosure
-        className="border-b border-border pb-4 [&>summary]:min-h-12 [&>summary]:px-4 [&>summary]:py-3"
+        className="border-b border-border pb-3 [&>summary]:min-h-11 [&>summary]:px-0 [&>summary]:py-2"
         title={<span className="flex min-w-0 flex-1 items-center justify-between gap-3 text-foreground">
           <span>Search &amp; filters</span>
           <span className="text-muted-foreground">
             {active.count ? String(active.count)+" active" : "All projects"}
           </span>
         </span>}>
-        <form method="get" action="/learn/projects" className="grid gap-3 border-t border-border px-4 py-4">
+        <form method="get" action="/learn/projects" className="grid min-w-0 gap-3 border-t border-border py-3">
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Search Projects
             <Input type="search" name="search" maxLength={100}
               defaultValue={query.search ?? ""}
               placeholder="Search project title, course or slug"
-              className="min-h-9" />
+              className="min-h-11 w-full" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Project status
             <Select name="status" defaultValue={query.status ?? ""}
-              className="min-h-9">
+              className="min-h-11 w-full">
               <option value="">All statuses</option>
               {statuses.map(([value,label])=>(
                 <option key={value} value={value}>{label}</option>
@@ -49,7 +49,7 @@ export function LearnerProjectMobileFilters({
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Attention
             <Select name="attention" defaultValue={query.attention ?? ""}
-              className="min-h-9">
+              className="min-h-11 w-full">
               <option value="">All projects</option>
               <option value="LEARNER_ACTION">Needs my action</option>
               <option value="BLOCKED">Blocked</option>
@@ -58,7 +58,7 @@ export function LearnerProjectMobileFilters({
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Work attention
             <Select name="work" defaultValue={query.work ?? ""}
-              className="min-h-9">
+              className="min-h-11 w-full">
               <option value="">All work</option>
               <option value="BLOCKED">Has blocked tasks</option>
               <option value="NO_TASKS">No tracked tasks yet</option>
@@ -67,7 +67,7 @@ export function LearnerProjectMobileFilters({
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Sort projects
             <Select name="sort" defaultValue={query.sort ?? "RECENT"}
-              className="min-h-9">
+              className="min-h-11 w-full">
               <option value="RECENT">Recently updated</option>
               <option value="TITLE">Title A–Z</option>
               <option value="PROGRESS">Least progress first</option>
@@ -76,16 +76,16 @@ export function LearnerProjectMobileFilters({
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Results per page
             <Select name="pageSize" defaultValue={String(query.pageSize ?? 25)}
-              className="min-h-9">
+              className="min-h-11 w-full">
               {[10,25,50].map(value=>(
                 <option key={value} value={value}>{value}</option>
               ))}
             </Select>
           </label>
           <div className="grid grid-cols-2 gap-3">
-            <Button type="submit" className="min-h-9">Apply</Button>
+            <Button type="submit" className="min-h-11 w-full">Apply</Button>
             <Link href="/learn/projects"
-              className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-body">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-body">
               Clear
             </Link>
           </div>
