@@ -49,22 +49,22 @@ export function TopbarOrganizationSwitcher({
       document.removeEventListener("keydown",onKey);
     };
   },[open]);
-  if(!canSwitch)return <p className={style.orgName} title={organizationName}>{organizationName}</p>;
-  return <div ref={root} className={style.orgSwitcher}
+  if(!canSwitch)return <p className={style.orgName+" min-w-0"} title={organizationName}>{organizationName}</p>;
+  return <div ref={root} className={style.orgSwitcher+" min-w-0"}
     onBlur={event=>{
       const next=event.relatedTarget;
       if(open && next instanceof Node && !event.currentTarget.contains(next))setOpen(false);
     }}>
-    <Button variant="secondary" size="sm" ref={trigger} type="button" className={style.orgTrigger}
+    <Button variant="secondary" size="sm" ref={trigger} type="button" className={style.orgTrigger+" min-w-0"}
       title={organizationName} aria-label={"Switch workspace, current "+organizationName}
       aria-haspopup="dialog" aria-expanded={open} aria-keyshortcuts="ArrowDown"
       aria-controls={open?"lms-topbar-org-switcher":undefined}
       onClick={()=>setOpen(value=>!value)}
       onKeyDown={event=>{if(event.key==="ArrowDown"){event.preventDefault();setOpen(true);}}}>
-      <span className={style.orgName}>{organizationName}</span>
+      <span className={style.orgName+" min-w-0"}>{organizationName}</span>
       <ChevronIcon/>
     </Button>
-    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+organizationName} aria-describedby="lms-org-switcher-context" tabIndex={-1} className={style.orgPopover}
+    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+organizationName} aria-describedby="lms-org-switcher-context" tabIndex={-1} className={style.orgPopover+" !min-h-0 min-w-0"}
       onDismiss={() => { setOpen(false); trigger.current?.focus(); }}>
       <span id="lms-org-switcher-context" className="sr-only">Current workspace: {organizationName}</span>
       <p className={style.accountSectionHeading}>Switch workspace</p>

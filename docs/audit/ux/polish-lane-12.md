@@ -9,3 +9,23 @@
 **Files changed:** `src/app/(authenticated)/teacher/allAssignments/page.tsx`, `src/app/(authenticated)/teacher/allAssignments/error.tsx`, `src/components/courses/faculty-assessment-overview.tsx`, `src/components/courses/faculty-assessment-create.tsx`, `src/components/courses/faculty-assignment-review.tsx`, `docs/orchestrator/queues/clone/lane-12-polish.md`, this proof file.
 
 **Verification boundary:** static inspection of layout, responsive utility classes, user actions, state branches and TypeScript references only; no runtime, screenshot, build, test or CI executed per lane rules.
+
+## 02 · Teacher / My Quizzes
+**Surface:** `src/app/(authenticated)/teacher/allQuizzes/page.tsx`  
+**Problems found (8):** unbalanced page spacing against sibling assignments, overextended results navigation button at phone widths, error actions centered instead of aligned with the canvas, competing row-level Submit/Release/Withhold controls, duplicate result-publication actions already present inside the submissions drawer, stale attempts remaining visible when a subsequent load fails, dense uncollapsed answer transcripts, and repeated zero-count plus empty-state messages.
+
+**Fix:** align PageHeader and link geometry with the first polished faculty listing; align error/retry navigation and increase touch targets at 375px; keep the Submissions trigger as the single inline entry point and move Release/Withhold controls to their existing explicit-confirmation drawer controls; clear stale attempts before loading; provide native accessible answer disclosures per learner; suppress redundant zero-count beside the empty state. Preserved `?content=` preselection, permissions, per-section attempt data, publication confirmations, and notification wording.
+
+**Files changed:** `src/app/(authenticated)/teacher/allQuizzes/page.tsx`, `src/app/(authenticated)/teacher/allQuizzes/error.tsx`, `src/components/courses/faculty-quiz-review.tsx`, queue and proof. Shared assessment creation/list/editor, question editor, and legacy faculty route loading/access/error/not-found inspected; unchanged as part of this surface.
+
+**Verification boundary:** source inspection and responsive class/state review only; no tests, app runtime, build or CI performed.
+
+## 03 · Teacher / Class Schedule
+**Surface:** `src/app/(authenticated)/teacher/calendar/page.tsx`  
+**Problems found (9):** secondary navigation isolated under the title, nested calendar card duplicating the authenticated canvas border, toolbar/form gutters misaligned with the PageHeader, inflexible narrow section/month form controls, unusably compressed seven-day cells at 375px, missing visual treatment for today's date, weak empty-state contrast, unseparated detailed day/week section, and centered error actions.
+
+**Fix:** promote “View live classes” to the shared page header, remove duplicate outer card, align calendar tools/form and preserve date links, use responsive 1/2/3-column filters and a full-width mobile Apply action, give the month grid a deliberate horizontally scrollable 770px minimum at phone widths (with the existing ScrollCue), apply existing legacy `data-today` highlighting in IST, use the shared slim alert for no schedules, separate the detailed agenda with one hairline, and align retry/courses error actions. Preserved query validation, timezone, current/previous/next month links, schedule exports, and learner class schedule interactions.
+
+**Files changed:** `src/app/(authenticated)/teacher/calendar/page.tsx`, `src/app/(authenticated)/teacher/calendar/error.tsx`, queue and proof. Route loading, parent layout/error/not-found and the legacy class-month CSS, ScrollCue, CalendarGrid and LearnerClassSchedule inspected; no local template/not-found exists.
+
+**Verification boundary:** static review only; no runtime or CI executed.

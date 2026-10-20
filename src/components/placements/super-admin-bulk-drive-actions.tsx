@@ -47,10 +47,12 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       setError(cause instanceof Error ? cause.message : "Unable to update drives. Please try again.");
     } finally {inFlightRef.current=false;setBusy(false);}
   }
-  return <section className="space-y-3 border-b border-border pb-5"
+  return <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]"
     aria-label="Super Admin bulk drive actions">
-    <div className="flex flex-wrap items-center gap-3">
-      <h2 className="font-semibold">Bulk Open / Close</h2>
+    <details className="min-w-0">
+      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Bulk Open / Close</summary>
+      <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
+       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
       <label className="flex min-h-11 items-center gap-2 text-sm text-body">
         <Checkbox disabled={busy || !eligible.length}
           checked={eligible.length>0 && eligible.every(d=>selected.includes(d.id))}
@@ -58,7 +60,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
             setPreview(null);setResult(null);}}/>
         Select eligible on this page ({eligible.length})
       </label>
-      <label className="flex items-center gap-2 text-sm">Action
+      <label className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] text-sm">Action
         <Select value={action} aria-label="Bulk action" onChange={e=>{
           setAction(e.target.value as "OPEN" | "CLOSE");setSelected([]);
           setPreview(null);setResult(null);}}
@@ -75,7 +77,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     {eligible.length>3?<p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review the eligible drives.</p>:null}
     <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby={eligible.length>3?"bulk-drive-scroll-cue":undefined}
       className="grid max-h-48 min-w-0 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 xl:grid-cols-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">
-      {eligible.map(d=><label key={d.id} className="flex min-w-0 items-start gap-2 border-b border-border py-2 text-xs">
+      {eligible.map(d=><label key={d.id} className="flex min-h-11 min-w-0 items-start gap-[var(--lms-space-2)] border-b border-border py-[var(--lms-space-2)] text-xs">
         <Checkbox disabled={busy} checked={selected.includes(d.id)}
           onChange={()=>toggle(d.id)}/>
         <span><strong>{d.title}</strong><span className="block text-muted-foreground">
@@ -106,6 +108,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         className="!min-h-11 !px-0 !text-primary-text">Preview failed drives for retry</Button>:null}
     </div>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+      </div>
+    </details>
     <ConfirmDialog open={confirmOpen&&preview!==null} pending={busy}
       onOpenChange={next=>{if(!next&&!busy)setConfirmOpen(false);}}
       title={"Confirm "+action.toLowerCase()+" for "+(preview?.eligible??0)+" drives?"}

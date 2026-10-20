@@ -73,42 +73,42 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">
     Open drive →</Link>},
  ];
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="All drives"
    description="Review and open every persisted non-archived drive in the selected college."
-   actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+   actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-end">
     <PageBackLink href="/admin/placements" label="Placement overview" />
     <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new"
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Create drive →</Link>
    </div>} />
   <form action="/admin/placements/drives" method="get" aria-label="Filter placement drives"
-   className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-   <label className="grid w-full min-w-0 flex-1 gap-[6px] md:w-auto md:min-w-44 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by drive or company
+   className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_minmax(0,13rem)_auto_auto]">
+   <label className="grid w-full min-w-0 flex-1 gap-[var(--lms-space-2)] md:w-auto md:min-w-44 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by drive or company
     <Input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
      className="min-h-11 w-full md:min-h-9"/>
    </label>
-   <label className="grid w-full min-w-0 flex-1 gap-[6px] md:w-auto md:min-w-36 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+   <label className="grid w-full min-w-0 flex-1 gap-[var(--lms-space-2)] md:w-auto md:min-w-36 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="status" defaultValue={parsed.data.status}
      className="min-h-11 w-full md:min-h-9">
      <option value="ALL">All</option><option value="DRAFT">Draft</option>
      <option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
     </Select>
    </label>
-   <label className="grid w-full min-w-0 flex-1 gap-[6px] md:w-auto md:min-w-36 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+   <label className="grid w-full min-w-0 flex-1 gap-[var(--lms-space-2)] md:w-auto md:min-w-36 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
     <Select name="pageSize" defaultValue={parsed.data.pageSize}
      className="min-h-11 w-full md:min-h-9">
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
     </Select>
    </label>
-   <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
+   <Button type="submit" className="min-h-11 w-full sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
    <Link href="/admin/placements/drives" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
   <p role="status" className="text-sm text-muted-foreground">{data.total} matching drives · Page {data.page} of {data.totalPages}</p>
   <DataTable columns={columns} rows={data.items} getRowKey={row=>row.job.id}
     caption="All drives" empty={<EmptyState title="No drives found" description="No drives match these filters."/>}/>
-  <Pagination page={data.page} pageCount={data.totalPages} hrefForPage={href} label="Drive list pages"/>
+  <div className="min-w-0 border-t border-border pt-[var(--lms-space-3)]"><Pagination page={data.page} pageCount={data.totalPages} hrefForPage={href} label="Drive list pages"/></div>
 
  </div>;
 }

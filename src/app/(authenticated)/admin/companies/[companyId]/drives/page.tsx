@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
@@ -15,16 +16,16 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
   const {companyId}=await params;
   const data=await listSuperAdminCompanyDriveHistory(context,companyId);
   if(!data)notFound();
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title={data.company.name}
       description="Drive history and recorded joining outcomes within the selected college only."
-      actions={<Link href="/admin/companies" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">← Companies</Link>} />
-    <section aria-label="Company history totals" className="grid grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
+      actions={<PageBackLink href="/admin/companies" label="Companies"/>} />
+    <section aria-label="Company history totals" className="grid min-w-0 grid-cols-2 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
       {([["Drives run",data.totals.drives],["Total applications",data.totals.applicants],
         ["Total hired",data.totals.hired]] as const).map(([label,value])=>
-        <div key={label} className="min-w-0 bg-surface px-3 py-4">
-          <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{value}</p>
+        <div key={label} className="min-w-0 bg-surface px-[var(--lms-space-4)] py-[var(--lms-space-3)]">
+          <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</p>
+          <p className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{value}</p>
         </div>)}
     </section>
     <DataTable<(typeof data.items)[number]> caption="Company drive history"

@@ -18,7 +18,7 @@ function CountBadge({ count }: { count: number | null }) {
 function IconLink({
   href, label, count, message = false,
 }: { href: string; label: string; count: number | null; message?: boolean }) {
-  return <Link href={href} className={style.iconButton}
+  return <Link href={href} className={style.iconButton+" shrink-0"}
     aria-label={label + (count !== null ? count >= 40 ? ", at least " + count + " unread" : ", " + count + " unread" : "")}
     title={label}>
     {message ? <MessageIcon /> : <BellIcon />}
@@ -30,7 +30,7 @@ function IconLink({
  * learner accounts. The adapter changes just the icon trigger presentation.
  */
 function ExistingBell({ portal }: { portal: "hr" | "learn" }) {
-  return <div className={portal === "hr" ? style.bellAdapter + " " + style.recruiterBell : style.bellAdapter + " " + style.learnerBell}>
+  return <div className={portal === "hr" ? style.bellAdapter + " " + style.recruiterBell + " shrink-0" : style.bellAdapter + " " + style.learnerBell + " shrink-0"}>
     {portal === "hr" ? <HrRecruiterBell /> : <LearnerNotificationBell />}
     <span aria-hidden="true" className={style.bellOverlay}><BellIcon /></span>
   </div>;
@@ -78,7 +78,7 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
   }, [update]);
 
   if (config.portal === "tpo") return <TpoNotificationCluster/>;
-  return <div className={style.actions} aria-label="Messages and notifications">
+  return <div className={style.actions + " min-w-0 shrink-0"} aria-label="Messages and notifications">
     {config.messagesHref ? <IconLink href={config.messagesHref} label="Messages"
       count={null} message /> : null}
     {config.portal === "learn" || config.portal === "hr"

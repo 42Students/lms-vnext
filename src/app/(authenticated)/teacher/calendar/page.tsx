@@ -1,6 +1,7 @@
 import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -44,17 +45,15 @@ export default async function FacultyCalendarPage({
     courseName:event.courseName,courseCode:event.courseCode,
   }));
   const names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const todayIst = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const selected=grid.query.deliveryId;
-  return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader title="Class Schedule" />
-    <div className="flex justify-end">
-      <Link href="/teacher/live-classes"
-        className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-        View live classes
-      </Link>
-    </div>
-    <section className={monthStyles.calendarCard}>
-      <div className={monthStyles.toolbar}>
+  return <div className="min-w-0 max-w-full space-y-4">
+    <PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
+      View live classes
+    </Link>} />
+    <section className="min-w-0">
+      <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className={monthStyles.period}>
           {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",month:"long",year:"numeric"})
             .format(new Date(grid.query.month+"-01T12:00:00.000Z"))} · IST
@@ -68,14 +67,14 @@ export default async function FacultyCalendarPage({
             className={monthStyles.navLink}>Next month</Link>
         </div>
       </div>
-      <form method="get" action="/teacher/calendar" className={monthStyles.toolbarForm}>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month (IST)
+      <form method="get" action="/teacher/calendar" className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_auto] lg:items-end">
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month (IST)
           <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <DateInput mode="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
              />
         </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
           <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
@@ -83,20 +82,20 @@ export default async function FacultyCalendarPage({
             </option>)}
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="w-full sm:col-span-2 lg:col-span-1 lg:w-auto">
           Apply
         </Button>
       </form>
-      {schedule.courses.length===0?<p className="mt-5 text-sm text-body leading-[22px]">
+      {schedule.courses.length===0?<Alert tone="info" className="mt-4">
         No current teaching assignments. Your college has not assigned a course Section.
-      </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body leading-[22px]">
+      </Alert>:grid.days.every(day=>day.events.length===0)?<Alert tone="info" className="mt-4">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
-      </p>:null}
+      </Alert>:null}
       <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className={monthStyles.scroll}>
-        <CalendarGrid variant="hairline" className={monthStyles.grid}>
+        <CalendarGrid variant="hairline" className={monthStyles.grid+" max-[767px]:!min-w-[770px]"}>
           {names.map((name,index)=><div key={name} className={monthStyles.weekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{name}</div>)}
           {grid.days.map(day=><section key={day.key}
-            aria-label={day.key+" IST"} data-outside={!day.inMonth} className={monthStyles.day}>
+            aria-label={day.key+" IST"} data-outside={!day.inMonth} data-today={day.key===todayIst} className={monthStyles.day}>
             <time dateTime={day.key} className={monthStyles.dayNumber+" "+(new Date(day.key+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>
               {Number(day.key.slice(8))}
             </time>
@@ -123,7 +122,7 @@ export default async function FacultyCalendarPage({
         A Section-wide session is shown without guessing a course link.
       </p>
     </section>
-    <section aria-label="Detailed class schedule" className="space-y-3">
+    <section aria-label="Detailed class schedule" className="min-w-0 space-y-3 border-t border-border pt-5">
       <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Detailed day/week schedule</h2>
       <LearnerClassSchedule sections={schedule.sections} courses={schedule.courses}
         events={events} courseBasePath="/teacher/courses"
