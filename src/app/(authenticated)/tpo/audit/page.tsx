@@ -17,6 +17,7 @@ import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-rea
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import { FilterChipLink } from "@/components/ui/filter-chip";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -94,7 +95,7 @@ export default async function TpoAuditPage({
 
   if (!parsed.success) {
     return (
-      <div className="min-w-0 max-w-full space-y-6">
+      <div className="min-w-0 max-w-full space-y-4">
         <PageHeader
           eyebrow="TPO · Oversight"
           title="Audit Log"
@@ -169,30 +170,35 @@ export default async function TpoAuditPage({
         eyebrow="TPO · Oversight"
         title="Audit Log"
         description="A traceable history of placement decisions, changes, sharing and access across the workspace."
-        actions={<div className="flex flex-wrap gap-2">
+        actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">
+            Actor / entity filters and CSV →
+          </Link>
+
+        <Disclosure title="Exports" className="min-w-0 border-0" summaryClassName="border border-[var(--lms-canvas-border)] px-3" contentClassName="pt-2">
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
           <a href={"/api/placements/tpo/audit/export?"+new URLSearchParams({
             ...(query.kind!=="ALL"?{kind:query.kind}:{}),
             ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
             ...(query.q?{q:query.q}:{}),...(query.who?{who:query.who}:{}),
            }).toString()}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+           className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
            Export audit-log CSV
           </a>
           <a href={"/api/placements/tpo/audit/actors/export?"+new URLSearchParams({
            ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
           }).toString()}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+           className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
            Export actor audit CSV
           </a>
-          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">
-            Actor / entity filters and CSV →
-          </Link>
+          </div>
+        </Disclosure>
         </div>}
       />
 
       <section
         aria-label="Audit summary"
-        className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
+        className="grid min-w-0 grid-cols-2 gap-2 md:gap-3 xl:grid-cols-4"
       >
         {[
           {
@@ -216,7 +222,6 @@ export default async function TpoAuditPage({
         ))}
       </section>
 
-      <p role="note" className="text-xs text-muted-foreground leading-5">Audit totals count source records, not necessarily unique actions. Related records are retained so no recorded decision is silently discarded.</p>
       <TpoAuditSavedViews
        filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
       <nav aria-label="Quick looks" className="flex flex-wrap gap-2">
@@ -224,7 +229,7 @@ export default async function TpoAuditPage({
        {quickLooks.map(look=><FilterChipLink key={look.label} href={quickHref(look.from,look.to)} selected={query.from===look.from&&query.to===look.to}>{look.label}</FilterChipLink>)}
       </nav>
       <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,count:item.count??undefined,href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
-      <section aria-labelledby="section-audit-filters" className="min-w-0 border-b border-border pb-5">
+      <section aria-labelledby="section-audit-filters" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <h2 id="section-audit-filters" className="m-0 text-base font-semibold text-foreground">
           Audit filters
         </h2>
@@ -232,9 +237,9 @@ export default async function TpoAuditPage({
         <form role="search" aria-label="tpo audit filters"
           method="get"
           action="/tpo/audit"
-          className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5"
+          className="mt-3 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
         >
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <div className="contents">          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             About
             <Select
               name="kind"
@@ -285,22 +290,27 @@ export default async function TpoAuditPage({
             />
           </label>
 
+          </div>
+          <Disclosure title="Who · Rows per page" className="min-w-0 border-0 sm:col-span-2 lg:col-span-4" defaultOpen={Boolean(query.who || pageSize!==25)} contentClassName="pt-3">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Who
             <Input type="search" name="who" maxLength={100} defaultValue={query.who}
               placeholder="Actor name contains…" className="min-h-11 md:min-h-9"/>
           </label>
           <PageSizeSelect name="pageSize" defaultValue={String(pageSize)} options={[25,50,100]} />
+            </div>
+          </Disclosure>
 
-          <div className="flex flex-wrap items-center gap-3 md:col-span-2 xl:col-span-5">
+          <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:col-span-2 lg:col-span-4">
             <Button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover  md:min-h-9"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 sm:w-auto text-sm font-semibold text-on-primary hover:bg-primary-hover  md:min-h-9"
             >
               Apply filters
             </Button>
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
             >
               Clear filters
             </Link>
@@ -320,7 +330,7 @@ export default async function TpoAuditPage({
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+            <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">
               Event history
             </h2>
             <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
@@ -348,12 +358,14 @@ export default async function TpoAuditPage({
                 ? "Every drive, decision and setting change your team makes shows up here."
                 : "This page number is outside the available result range. Return to the first page or adjust the filters."
             }
+            action={<Link href={summary.total===0?"/tpo/audit":tpoAuditHref({...paginationFilters,page:1})}
+              className="inline-flex min-h-11 items-center font-semibold text-link underline">{summary.total===0?"Clear filters":"First page"}</Link>}
           />
         ) : (
           <TpoAuditGrid rows={items}/>
         )}
 
-        <nav
+        {totalPages>1?<nav
           aria-label="Audit pagination"
           className="flex flex-wrap items-center justify-between gap-3"
         >
@@ -398,9 +410,10 @@ export default async function TpoAuditPage({
               </Link>
             ) : null}
           </div>
-        </nav>
+        </nav>:null}
       </section>
 
+      <p role="note" className="text-xs leading-5 text-muted-foreground">Audit totals count source records, not necessarily unique actions. Related records are retained so no recorded decision is silently discarded.</p>
       <p className="text-xs leading-5 text-muted-foreground">
         This history shows recorded placement decisions, changes, sharing and access. Sensitive personal details are hidden. Earlier changes may not appear if they were not recorded at the time.
       </p>

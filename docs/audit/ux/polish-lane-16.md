@@ -1,17 +1,7 @@
-# UI/UX polish — lane 16
+# Lane 16 — UI/UX polish
 
-## 1. `src/components/academics/academics-actions.tsx` — Academic actions and edit/confirmation overlays
+## `src/components/academics/college-cohort-management.tsx`
+Problems found (12): 3-column create controls crowded at 768px; inconsistent 12px create-form rhythm; informational date text competed with the primary action; submission below unrelated fields; row actions without common alignment; ad-hoc button grid in More overlay; inconsistent menu actions; single-column edit form too long at 768px; locked-period note broke reading; validation message squeezed; footer buttons wrapped at 375px; unclear primary action on mobile. Changes: 16px legacy gap, two-column 768px create/edit grids (one-column 375px); shared Menu/MenuItem for lifecycle operations preserving callbacks/disabled/confirmation; separated summary and anchored submit row; right-aligned row controls; full-width mobile primary action and reverse-stacked edit footer; spanned helper and error messaging. Inspected creation, edit, pending, disabled, archived, graduating/removing confirmations, error and notices at source across 375/768/1280; no browser test. Wording, routes, existing aria labels, tokens and permissions unchanged. Files: `src/components/academics/college-cohort-management.tsx`, queue, this proof file.
 
-**Problems found (8):**
-1. Program row displayed both Edit and Archive as competing actions, including an inactive destructive option.
-2. Planned academic-period row gave Edit and lifecycle Activate the same prominence.
-3. Planned cohort row exposed Edit, Activate and Archive side by side, causing width pressure and unclear priority.
-4. Section row displayed Open, Edit and Archive equally, wrapping at phone widths.
-5. Thirteen field labels were separate siblings rather than associated wrappers, with inconsistent label and field spacing.
-6. The optional department field preceded the program's core name, code and duration fields.
-7. Cohort form stayed one long column on tablet/desktop; expected-end selector was not visually grouped beneath the pair of primary fields.
-8. Dialog action footers could crowd or wrap unpredictably on phones, with Save visually following Cancel.
-
-**Polish applied:** One clear inline action per row with less-common lifecycle or edit actions in the existing shared Dropdown + Menu/MenuItem. The same Archive/Edit/Activate labels, disabled rules, confirmation dialogs, callbacks, permissions and mutation routes remain in place. The menu uses the shared native keyboard/Escape/disclosure implementation and a full-width mobile sheet. Linked all 13 previously detached visible labels with their controls, standardized the Department label to the existing LMS field rhythm, and moved that optional field below Program name, Code and Duration. Reorganized the cohort edit layout to one column on phones and two at tablet width, with the expected-end selector spanning the row. All four edit dialogs use a shared responsive footer grouping that places Save first on narrow screens, keeps Cancel then Save on wider screens, and aligns controls. The existing Dialog/ConfirmDialog, Input/Select, Button, Toast, loading, pending, confirmation, error and discard flows remain in use. Source-inspected responsive 375/768 and desktop structure, not browser-verified; no CI.
-
-**Files changed:** `src/components/academics/academics-actions.tsx`, `docs/orchestrator/queues/clone/lane-16-polish.md`, `docs/audit/ux/polish-lane-16.md`.
+## `src/components/academics/college-section-management.tsx`
+Problems found (10): three-column create form compressed inputs at 768px, 12px gaps inconsistent with legacy 16px, optional description and helper misaligned, create action stranded, edit modal single-column despite available width, description too narrow, eligibility explanation broken into narrow column, status/error text narrow, uneven footer actions, mobile buttons wrapping. Changes: two-column create/edit grids at tablet+ and full-width at 375px; aligned description, helpers and errors; single action row after divider; responsive reversed footer with full-width mobile Save first. Native inputs/textarea, existing Disclosure/Dialog/ConfirmDialog, all event handlers, validation, routes, text, aria labels and tokens preserved. Examined create/no cohort/no period/pending/error/success, edit/discard and read-only states; class-based 375/768/1280 source review only. Files changed: `src/components/academics/college-section-management.tsx`, queue, proof.

@@ -18,6 +18,8 @@ import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { FilterBar } from "@/components/ui/filter-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   listProjectAdminSnapshots,
 } from "@/modules/projects/admin-insights-service";
@@ -72,7 +74,7 @@ export async function ProjectAdminReadinessPage({
   const validSize=sizeValue===undefined||["10","20","25","50","100"].includes(sizeValue);
   const validStatus=statusValue===undefined||statusValue===""||
     ["PLANNED","ACTIVE","COMPLETED","ARCHIVED"].includes(statusValue);
-  if(!validPage||!validSize||!validStatus)return <div className="min-w-0 space-y-6">
+  if(!validPage||!validSize||!validStatus)return <div className="min-w-0 space-y-4">
     <PageHeader title="Submission readiness" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <ErrorState title="Invalid readiness filters"
@@ -93,7 +95,7 @@ export async function ProjectAdminReadinessPage({
     listCollegeReadinessWorkspaceChoices(context,collegeId),
   ]).then(value => ({ ok: true as const, value }))
     .catch(() => ({ ok: false as const }));
-  if (!read.ok) return <div className="min-w-0 space-y-6">
+  if (!read.ok) return <div className="min-w-0 space-y-4">
     <PageHeader title="Submission readiness"
       description="Execution completion and final-delivery readiness across project workspaces."
       actions={<PageBackLink href={basePath} label="Project workspaces" />} />
@@ -111,41 +113,13 @@ export async function ProjectAdminReadinessPage({
     basePath + "/readiness";
 
   return (
-    <div className="min-w-0 space-y-6">
-      <PageHeader
-        title="Submission readiness"
-        description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to."
-        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
-          <PageBackLink href={basePath} label="Project workspaces" />
-          <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">Export overrides CSV</a></div>}
-      />
+    <div className="min-w-0 space-y-4">
+      <div className="min-w-0">
+        <PageBackLink href={basePath} label="Project workspaces" />
+        <PageHeader title="Submission readiness"
+          description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to." />
+      </div>
       <ProjectAdminNav basePath={basePath} active="readiness" />
-      <section className="border-b border-border pb-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-semibold text-foreground">Active overrides ({activeOverrides.length})</h2>
-        </div>
-        {!activeOverrides.length ? <p className="mt-3 text-sm text-muted-foreground">
-          No workspace currently has a manual override — every gate is running on its own completion state.
-        </p> : <DataTable<(typeof activeOverrides)[number]>
-          caption="Active overrides"
-          rows={activeOverrides.filter(row=>!query.q||row.workspace.toLowerCase().includes(query.q.toLowerCase()))}
-          getRowKey={row=>row.projectId}
-          columns={[
-            {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:row=>row.workspace},
-            {key:"direction",header:"Override",mobilePriority:"secondary",cell:row=>row.direction},
-            {key:"note",header:"Note",mobilePriority:"secondary",cell:row=>row.note},
-            {key:"by",header:"By",mobilePriority:"secondary",cell:row=>row.by},
-            {key:"at",header:"At",mobilePriority:"secondary",cell:row=>new Intl.DateTimeFormat("en-IN",{
-              dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-            }).format(row.at)},
-            {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
-              href={basePath+"/"+row.projectId+"/readiness"}>Manage</Link>},
-          ]}
-          empty={<EmptyState title="No matching overrides" description="No workspace overrides match these filters." />}
-        />}
-      </section>
       <section className="space-y-3 border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Select workspace</h2>
         {outsideScope ? <Banner tone="warning" role="alert">This workspace belongs to a different college — switch colleges in the header and try again.</Banner> : null}
@@ -171,20 +145,47 @@ export async function ProjectAdminReadinessPage({
             />}
         </> : null}
       </section>
-      <ProjectAdminFilters query={query} />
+      <Disclosure title={"Active overrides ("+activeOverrides.length+")"} defaultOpen={activeOverrides.length>0} className="border-b border-border pb-4" contentClassName="min-w-0 pt-3">
+        {!activeOverrides.length ? <p className="mt-3 text-sm text-muted-foreground">
+          No workspace currently has a manual override — every gate is running on its own completion state.
+        </p> : <DataTable<(typeof activeOverrides)[number]>
+          caption="Active overrides"
+          rows={activeOverrides.filter(row=>!query.q||row.workspace.toLowerCase().includes(query.q.toLowerCase()))}
+          getRowKey={row=>row.projectId}
+          columns={[
+            {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:row=>row.workspace},
+            {key:"direction",header:"Override",mobilePriority:"secondary",cell:row=>row.direction},
+            {key:"note",header:"Note",mobilePriority:"secondary",cell:row=>row.note},
+            {key:"by",header:"By",mobilePriority:"secondary",cell:row=>row.by},
+            {key:"at",header:"At",mobilePriority:"secondary",cell:row=>new Intl.DateTimeFormat("en-IN",{
+              dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+            }).format(row.at)},
+            {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+              href={basePath+"/"+row.projectId+"/readiness"}>Manage</Link>},
+          ]}
+          empty={<EmptyState title="No matching overrides" description="No workspace overrides match these filters." />}
+        />}
+      </Disclosure>
+      <div className="flex min-w-0 justify-end">
+      <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export overrides CSV</a>
+      </div>
+      <FilterBar title="Filters"><ProjectAdminFilters query={query} /></FilterBar>
       <ListToolbar label="Readiness workspaces" viewCount={result.total} />
 
       {!result.items.length ? (
-        <EmptyState title="No matching project workspaces" description="No project workspaces match these filters."/>
+        <EmptyState title="No matching project workspaces" description="No project workspaces match these filters."
+          action={<Link href={readinessPath} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
       ) : (
         <div className="space-y-3">
           {result.items.map((project) => (
             <article
               key={project.id}
-              className="border-b border-border py-5 last:border-b-0"
+              className="min-w-0 border-b border-border py-4 last:border-b-0"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
                   <Link
                     href={
                       basePath +
@@ -192,7 +193,7 @@ export async function ProjectAdminReadinessPage({
                       project.id +
                       "/readiness"
                     }
-                    className="text-base font-semibold text-foreground hover:text-primary-text"
+                    className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
                   >
                     {project.title}
                   </Link>

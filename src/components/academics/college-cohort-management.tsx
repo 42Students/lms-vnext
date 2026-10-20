@@ -8,6 +8,7 @@ import { apiFetch } from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Dropdown} from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -96,7 +97,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
           <Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
         </>}
       </p>
-      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
+      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId} onChange={e => setProgramId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
@@ -138,12 +139,12 @@ export function CollegeCohortCreateForm({ programs, periods }: {
           <Input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <div className="md:col-span-2 xl:col-span-3 text-sm text-body">
+        <div className="min-w-0 space-y-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm text-body md:col-span-2">
           <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
           <p>Academic Year: {year?`${year}–${year+1}`:"Select a start period to see the academic year."}</p>
           {dateInvalid?<p role="alert" className="text-error">End date cannot be before start date.</p>:null}
         </div>
-        <div className="md:col-span-2 xl:col-span-3">
+        <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
           <Button variant="primary" disabled={pending||dateInvalid} type="submit" className="w-full md:w-auto"
             >
             {pending ? "Creating…" : "Create batch"}
@@ -238,29 +239,29 @@ export function CollegeCohortRowActions({ row, periods }: {
   }
 
   return <div className="min-w-0">
-    <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
+    <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
     <Button variant="secondary" type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
       >
       Edit
     </Button>
     <Dropdown trigger="More" label="Batch lifecycle actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
-      <div className="grid min-w-0 gap-[var(--lms-space-2)]">
-    {row.status === "ACTIVE" && <Button role="menuitem" variant="secondary" type="button"
+      <Menu className="w-full min-w-0">
+    {row.status === "ACTIVE" && <MenuItem type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
       onClick={graduate}
       >
       Mark graduated
-    </Button>}
-    <Button role="menuitem" variant="secondary" type="button" disabled={pending || row.status!=="PLANNED" ||
+    </MenuItem>}
+    <MenuItem type="button" disabled={pending || row.status!=="PLANNED" ||
         row.activeSections>0 || row.activeEnrolledLearners>0} onClick={retire}
       title={row.activeSections>0 || row.activeEnrolledLearners>0
         ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
         : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
       >
       Remove
-    </Button>
-      </div>
+    </MenuItem>
+      </Menu>
     </Dropdown>
     </div>
     <ConfirmDialog open={Boolean(pendingLifecycleAction)}
@@ -276,9 +277,9 @@ export function CollegeCohortRowActions({ row, periods }: {
     </p> : null}
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)close();}}
       title={"Edit batch " + row.name}>
-      <form onSubmit={save} className="space-y-3">
+      <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
-        <p className="text-sm text-muted-foreground">Program and starting period cannot change after creation.</p>
+        <p className="text-sm text-muted-foreground md:col-span-2">Program and starting period cannot change after creation.</p>
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
@@ -305,11 +306,11 @@ export function CollegeCohortRowActions({ row, periods }: {
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
           <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        {endDateLocked && <p className="text-xs text-muted-foreground">
+        {endDateLocked && <p className="text-xs text-muted-foreground md:col-span-2">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
         </p>}
-        {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
-        <div className="flex flex-wrap justify-end gap-3">
+        {notice ? <p role="alert" className="text-sm text-body md:col-span-2">{notice}</p> : null}
+        <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={pending} type="button" onClick={close}
             >
             Cancel

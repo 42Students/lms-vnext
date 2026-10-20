@@ -35,8 +35,8 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
   }
  }
 
- return <div className="space-y-2">
-  <Button type="button" variant="danger" className="min-h-11 md:min-h-9 print:hidden" disabled={busy||count<1} onClick={()=>setConfirmOpen(true)}>
+ return <div className="min-w-0 space-y-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+  <Button type="button" variant="danger" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy||count<1} onClick={()=>setConfirmOpen(true)}>
    {busy?"Signing out…":"Sign out everywhere"}
   </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Sign out everywhere?" description={"All active sessions for this administrator, including other colleges, will be revoked immediately."+(errorMessage?" "+errorMessage:"")} confirmLabel="Sign out everywhere" confirmVariant="danger" pending={busy} onConfirm={()=>void revoke()}/>

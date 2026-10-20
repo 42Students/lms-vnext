@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
+import {Disclosure} from "@/components/ui/disclosure";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -31,7 +32,7 @@ export default async function SuperAdminCollegeBrandingPage({
   const [persisted,tenant]=await Promise.all([getCollegeBranding(context,collegeId),getSuperAdminTenantLifecycleDetail(context,collegeId)]);
   const canEdit=can(context,"college.manage",{collegeId,organizationId:tenant.organizationId});
 
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Look and feel" actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
       <PageBackLink href={`/admin/colleges/${encodeURIComponent(collegeId)}`} label="College overview"/>
       {context.adminScope?.collegeId===collegeId ? <Link href={`/admin/colleges/${encodeURIComponent(collegeId)}/subdomain`}
@@ -39,11 +40,7 @@ export default async function SuperAdminCollegeBrandingPage({
         Verify web address
       </Link> : null}
     </div>}/>
-    <p className="text-xs text-muted-foreground">
-      This preview uses stored brand details. Actual login appearance and tenant-domain routing require separate browser verification.
-    </p>
-    <CollegeBrandingPreview branding={branding}/>
-    <section aria-label="Edit college branding" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
+    <section aria-label="Edit college branding" className="min-w-0 space-y-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
      <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Edit college branding</h2>
      <p className="text-sm text-body">Update the stored college logo URL, colours and sign-in appearance. Upload and crop your square logo above, then edit colours and sign-in appearance.</p>
      <CollegeLogoUploader collegeId={collegeId} currentUrl={persisted.uploadedLogoUrl} canEdit={canEdit}/>
@@ -57,5 +54,11 @@ export default async function SuperAdminCollegeBrandingPage({
        termsUrl:persisted.termsUrl,privacyUrl:persisted.privacyUrl,
       }}/>
     </section>
+    <Disclosure title="Stored branding preview" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+      <p className="text-xs text-muted-foreground">
+        This preview uses stored brand details. Actual login appearance and tenant-domain routing require separate browser verification.
+      </p>
+      <CollegeBrandingPreview branding={branding}/>
+    </Disclosure>
   </div>;
 }
