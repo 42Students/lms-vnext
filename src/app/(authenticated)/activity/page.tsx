@@ -193,6 +193,9 @@ export default async function ActivityPage({
   if(defaultFrom)nextParams.set("from",defaultFrom);
   // Export starts from the newest matching activity, without an older-page cursor.
   const exportParams = new URLSearchParams(nextParams);
+  // An explicit all-time list must stay all-time when the user loads older events.
+  // Keep this UI-only flag out of the strict CSV export query contract.
+  if (range === "ALL" && !defaultFrom && !one(params.to)) nextParams.set("range", "ALL");
   if (result.nextCursor) {
     nextParams.set(
       "beforeOccurredAt",
@@ -217,7 +220,7 @@ export default async function ActivityPage({
             Export
           </a>
           {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
-            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
+            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]">
             Open audit findings board →
           </Link> : null}
           </div>
@@ -392,7 +395,7 @@ export default async function ActivityPage({
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
           <Link
             href="/activity"
-            className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9"
           >
             Reset
           </Link>
