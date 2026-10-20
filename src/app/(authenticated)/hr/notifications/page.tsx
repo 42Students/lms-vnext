@@ -78,7 +78,7 @@ export default async function HrMessagesPage({searchParams}:{
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
 
-   {result.rows.length?<div className="space-y-5">
+   {result.rows.length?<div className="space-y-6">
      <p className="text-xs text-muted-foreground">Grouped by drive within this page only. This is not a conversation thread.</p>
      {groupHrNotificationPage(result.rows).map(group=><section key={group.jobId}
        aria-label={"Notifications for "+group.title}

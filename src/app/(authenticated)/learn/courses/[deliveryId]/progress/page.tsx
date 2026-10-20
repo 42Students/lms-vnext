@@ -54,7 +54,7 @@ export default async function LearnerCourseProgressPage({
       ) : (
         <section className="space-y-4" aria-label="Lesson completion">
           {progress.lessons.map((lesson) => (
-            <article key={lesson.id} className="border-b border-border py-4 md:py-5">
+            <article key={lesson.id} className="border-b border-border py-4 md:py-6">
               <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{lesson.name}</h2>

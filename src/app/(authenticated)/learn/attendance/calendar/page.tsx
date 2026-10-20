@@ -127,7 +127,7 @@ export default async function LearnerAttendanceCalendarPage({
         <Link href={next} aria-label="Next month"
           className={monthStyles.navLink+" inline-flex min-h-11 items-center md:min-h-9"}>Next →</Link>
       </div>
-      <CalendarGrid className={monthStyles.mobileGrid+" p-3 md:p-5"}>
+      <CalendarGrid className={monthStyles.mobileGrid+" p-3 md:p-6"}>
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>
           <span key={day} className={monthStyles.mobileWeekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{day}</span>)}
         {days.map((day,index)=>{

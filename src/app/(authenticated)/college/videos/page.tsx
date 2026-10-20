@@ -21,7 +21,7 @@ export default async function CollegeVideosPage({
   const parsed = collegeContentQuerySchema.safeParse(raw);
   if (!parsed.success) {
     return (
-      <div className="space-y-5">
+      <div className="space-y-6">
         <PageHeader eyebrow="College Admin · Courses & Content" title="Video" />
         <ErrorState title="Invalid video filters"
           description="The title, status or page filter is invalid. No content was loaded."
