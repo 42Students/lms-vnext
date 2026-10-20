@@ -12,18 +12,18 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 
 - [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
 - [x] `src/components/placements/tpo-season-controls.tsx`
-- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
-- [ ] `src/components/tpo/tpo-team-assign-unowned.tsx`
-- [ ] `src/components/ui/button-group.tsx`
-- [ ] `src/app/(authenticated)/teacher/loading.tsx`
-- [ ] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
-- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [ ] `src/components/tpo/tpo-applications-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-topbar-new-menu.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/tpo/recruiter-roster-display-controls.tsx`
+- [x] `src/components/tpo/tpo-team-assign-unowned.tsx`
+- [x] `src/components/ui/button-group.tsx`
+- [x] `src/app/(authenticated)/teacher/loading.tsx`
+- [x] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [x] `src/components/tpo/tpo-applications-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
 - [ ] `src/components/academics/college-term-mapping-manager.tsx`
 - [ ] `src/components/courses/faculty-assessment-lifecycle.tsx`
 - [ ] `src/components/admin/college-bulk-import.tsx`
