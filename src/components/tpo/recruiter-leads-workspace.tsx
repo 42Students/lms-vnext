@@ -665,7 +665,7 @@ export function RecruiterLeadsWorkspace({
         title={TPO_OWNER_PAGE_COPY.recruiterLeads}
         description="Every company contact you find, and what you will do next."
         actions={
-          <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
+          <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <Button variant="primary" ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase!=="ready"}
               onClick={()=>{setAdding(true);setForm(EMPTY);setSaveError("");setDuplicate(null);setReviewingCreate(false);}}>
               <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
@@ -731,12 +731,12 @@ export function RecruiterLeadsWorkspace({
           <div className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
             <label className="min-w-48 flex-1 text-sm">
               Search name, company or contact
-              <Input className={inputStyle + " mt-1"} value={query} onChange={e => updateFilter("query",e.target.value)}
+              <Input className={inputStyle + " mt-1.5 min-w-0"} value={query} onChange={e => updateFilter("query",e.target.value)}
                 placeholder="Search recruiter leads" />
             </label>
             <label className="min-w-40 text-sm">
               Stage
-              <Select className={inputStyle + " mt-1"} value={stage}
+              <Select className={inputStyle + " mt-1.5 min-w-0"} value={stage}
                 onChange={e => updateFilter("stage",e.target.value)}>
                 {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : RECRUITER_STAGE_LEGACY_LABELS[x]}</option>)}
               </Select>
@@ -771,14 +771,14 @@ export function RecruiterLeadsWorkspace({
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
               className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4">
               <label className="text-sm">Status
-                <Select className={inputStyle+" mt-1"} value={statusFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={statusFilter}
                   onChange={e=>updateFilter("status",e.target.value)}>
                   {["ALL","JOINED","UNSUBSCRIBED","NOT_JOINED"].map(item=>
                    <option key={item} value={item}>{item==="ALL"?"All statuses":item.replaceAll("_"," ")}</option>)}
                 </Select>
               </label>
               <label className="text-sm">Owner
-                <Select className={inputStyle+" mt-1"} value={ownerFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={ownerFilter}
                   onChange={e=>updateFilter("owner",e.target.value)}>
                   <option value="ALL">All owners</option>
                   <option value="UNASSIGNED">Unassigned</option>
@@ -787,14 +787,14 @@ export function RecruiterLeadsWorkspace({
                 </Select>
               </label>
               <label className="text-sm">Invite
-                <Select className={inputStyle+" mt-1"} value={inviteFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={inviteFilter}
                   onChange={e=>updateFilter("invite",e.target.value)}>
                   {["ALL","NOT_INVITED","SENT","OPENED","BOUNCED","JOINED"].map(item=>
                    <option key={item} value={item}>{item==="ALL"?"All invites":item.replaceAll("_"," ")}</option>)}
                 </Select>
               </label>
               <label className="text-sm">Source
-                <Select className={inputStyle+" mt-1"} value={sourceFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={sourceFilter}
                   onChange={e=>updateFilter("source",e.target.value)}>
                   <option value="ALL">All sources</option>
                   {[...new Set(rows.map(r=>r.source).filter((name):name is string=>Boolean(name)))]
@@ -802,7 +802,7 @@ export function RecruiterLeadsWorkspace({
                 </Select>
               </label>
               <label className="text-sm">Company
-                <Select className={inputStyle+" mt-1"} value={companyFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyFilter}
                   onChange={e=>updateFilter("company",e.target.value)}>
                   <option value="ALL">All companies</option>
                   {[...new Set(rows.map(row=>row.companyName).filter((name):name is string=>Boolean(name)))]
@@ -810,7 +810,7 @@ export function RecruiterLeadsWorkspace({
                 </Select>
               </label>
               <label className="text-sm">Drives that ran
-                <Select className={inputStyle+" mt-1"} value={driveFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={driveFilter}
                   onChange={e=>updateFilter("drives",e.target.value)}>
                   <option value="ALL">Any drive count</option>
                   <option value="NONE">No drives</option>
@@ -820,12 +820,12 @@ export function RecruiterLeadsWorkspace({
                 </Select>
               </label>
               <label className="text-sm">Designation
-                <Input className={inputStyle+" mt-1"} value={designationFilter}
+                <Input className={inputStyle+" mt-1.5 min-w-0"} value={designationFilter}
                   placeholder="Search designation" maxLength={100}
                   onChange={e=>updateFilter("designation",e.target.value)}/>
               </label>
               <label className="text-sm">Can be reached by
-                <Select className={inputStyle+" mt-1"} value={reachFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={reachFilter}
                   onChange={e=>updateFilter("reach",e.target.value)}>
                   <option value="ALL">Any contact method</option>
                   <option value="EMAIL">Has an email</option>
@@ -836,7 +836,7 @@ export function RecruiterLeadsWorkspace({
                 </Select>
               </label>
               <label className="text-sm">Next follow-up
-                <Select className={inputStyle+" mt-1"} value={nextFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={nextFilter}
                   onChange={e=>updateFilter("nextFollowup",e.target.value)}>
                   <option value="ALL">Any date</option>
                   <option value="DUE">Due now</option>
@@ -848,7 +848,7 @@ export function RecruiterLeadsWorkspace({
                 </Select>
               </label>
               <label className="text-sm">Last activity
-                <Select className={inputStyle+" mt-1"} value={activityFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={activityFilter}
                   onChange={e=>updateFilter("lastActivity",e.target.value)}>
                   <option value="ALL">Any activity</option>
                   <option value="LAST_7">Last 7 days</option>
@@ -858,7 +858,7 @@ export function RecruiterLeadsWorkspace({
                 </Select>
               </label>
               <label className="text-sm">Added
-                <Select className={inputStyle+" mt-1"} value={addedFilter}
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={addedFilter}
                   onChange={e=>updateFilter("added",e.target.value)}>
                   <option value="ALL">Any date</option>
                   <option value="LAST_7">Last 7 days</option>
@@ -923,11 +923,11 @@ export function RecruiterLeadsWorkspace({
             <section className="space-y-3" aria-label="Company filters">
               <div className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 md:grid-cols-3">
                 <label className="text-sm">Search company or people
-                  <Input type="search" className={inputStyle+" mt-1"} value={companySearch}
+                  <Input type="search" className={inputStyle+" mt-1.5 min-w-0"} value={companySearch}
                     onChange={e=>setCompanySearch(e.target.value)} placeholder="Search companies"/>
                 </label>
                 <label className="text-sm">Contact
-                  <Select className={inputStyle+" mt-1"} value={companyContacts}
+                  <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyContacts}
                     onChange={e=>setCompanyContacts(e.target.value)}>
                     <option value="ALL">All companies</option>
                     <option value="HAS">With contacts</option>
@@ -935,7 +935,7 @@ export function RecruiterLeadsWorkspace({
                   </Select>
                 </label>
                 <label className="text-sm">Drives that ran
-                  <Select className={inputStyle+" mt-1"} value={companyHistory}
+                  <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyHistory}
                     onChange={e=>setCompanyHistory(e.target.value)}>
                     <option value="ALL">Any drive history</option>
                     <option value="HAS">Has drives</option>
@@ -943,7 +943,7 @@ export function RecruiterLeadsWorkspace({
                   </Select>
                 </label>
                 <label className="text-sm">Communication
-                  <Select className={inputStyle+" mt-1"} value={companyCommunicationFilter}
+                  <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyCommunicationFilter}
                     onChange={e=>setCompanyCommunicationFilter(e.target.value)}>
                     <option value="ALL">All communication</option>
                     <option value="NOT_CONTACTED">Not contacted</option>
@@ -1127,21 +1127,18 @@ export function RecruiterLeadsWorkspace({
           dismissible={!saving} title="Add recruiter lead">
           <form ref={createDialogRef} onSubmit={e=>void create(e)}
             className="min-w-0 space-y-4">
-            <div className="flex justify-end">
-              <Button variant="secondary" type="button" className={buttonStyle} onClick={()=>closeAddDialog()} disabled={saving}>Close</Button>
-            </div>
-            <label className="block text-sm">Name *<Input ref={createNameRef} className={inputStyle + " mt-1"} required maxLength={150}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4">Name *<Input ref={createNameRef} className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
               value={form.name} onChange={e => field("name", e.target.value)} /></label>
-            <label className="block text-sm">Email<Input className={inputStyle + " mt-1"} type="email" maxLength={150}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4">Email<Input className={inputStyle + " mt-1.5 min-w-0"} type="email" maxLength={150}
               value={form.email} onChange={e => field("email", e.target.value)} /></label>
-            <label className="block text-sm">Phone<Input className={inputStyle + " mt-1"} type="tel" maxLength={30}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4">Phone<Input className={inputStyle + " mt-1.5 min-w-0"} type="tel" maxLength={30}
               value={form.phone} onChange={e => field("phone", e.target.value)} /></label>
             <Button variant="secondary" type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</Button>
             {duplicate ? <p role="alert" className="text-sm text-foreground">
               Contact already exists: <Link className="underline" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
             </p> : null}
-            <label className="block text-sm">Company *<Input className={inputStyle + " mt-1"} required maxLength={150}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4">Company *<Input className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
               value={form.companyName} onChange={e => field("companyName", e.target.value)}
               list="known-engage-companies" placeholder="Company name" />
               <datalist id="known-engage-companies">
@@ -1151,26 +1148,29 @@ export function RecruiterLeadsWorkspace({
                 Choose a company you&apos;ve worked with, or type a new company name.
               </span>
             </label>
-            <label className="block text-sm">Designation<Input className={inputStyle + " mt-1"} maxLength={100}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4">Designation<Input className={inputStyle + " mt-1.5 min-w-0"} maxLength={100}
               value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
-            <label className="block text-sm">Where did you find them?
-              <Select className={inputStyle + " mt-1"} value={form.source}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4">Where did you find them?
+              <Select className={inputStyle + " mt-1.5 min-w-0"} value={form.source}
                 onChange={e => field("source", e.target.value)}>
                 <option value="">Added by hand</option>
                 {SOURCE_CHOICES.map(([code,label]) => <option value={code} key={code}>{label}</option>)}
               </Select>
             </label>
-            <label className="block text-sm">First follow-up (optional, IST)
-              <Input type="date" className={inputStyle+" mt-1"} min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())} value={form.followupDate}
+            <details className="border-t border-border pt-3" open={Boolean(form.followupDate)}>
+              <summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">First follow-up (optional, IST)</summary>
+            <label className="block min-w-0 text-[13px] font-semibold leading-4">First follow-up (optional, IST)
+              <Input type="date" className={inputStyle+" mt-1.5 min-w-0"} min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())} value={form.followupDate}
                 onChange={e=>field("followupDate",e.target.value)}/>
             </label>
-            <label className="block text-sm">Follow-up note (optional)
-              <Textarea className={inputStyle+" mt-1"} maxLength={500} value={form.followupNote}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4">Follow-up note (optional)
+              <Textarea className={inputStyle+" mt-1.5 min-w-0"} maxLength={500} value={form.followupNote}
                 onChange={e=>field("followupNote",e.target.value)}
                 disabled={!form.followupDate}
                 placeholder="What should the placement cell do next?"/>
             </label>
-            {reviewingCreate?<div role="status" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+            </details>
+            {reviewingCreate?<div role="status" className="border-l-[3px] border-primary bg-primary-subtle p-3 text-sm">
               <p>Confirm: Create recruiter lead for <strong>{form.name.trim()}</strong> at <strong>{form.companyName.trim()}</strong>?
                 This saves a new college contact and records an auditable creation event.
               </p>
@@ -1179,9 +1179,10 @@ export function RecruiterLeadsWorkspace({
                 Edit details
               </Button>
             </div>:null}
-            {saveError && <p role="alert" className="text-sm text-foreground">{saveError}</p>}
-            <div className="flex justify-end">
-              <Button variant="primary" type="submit" className={primaryStyle+" w-full sm:w-auto"}
+            {saveError && <p role="alert" className="break-words text-sm text-error">{saveError}</p>}
+            <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
+              <Button variant="secondary" type="button" className="w-full sm:w-auto" onClick={()=>closeAddDialog()} disabled={saving}>Cancel</Button>
+              <Button variant="primary" type="submit" loading={saving} className={primaryStyle+" w-full sm:w-auto"}
                 disabled={saving || checking || Boolean(duplicate)}>
                 {saving ? "Creating…" : reviewingCreate?"Confirm and create recruiter":"Review and create recruiter"}
               </Button>
