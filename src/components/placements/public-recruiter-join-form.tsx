@@ -119,12 +119,12 @@ export function PublicRecruiterJoinForm({
   }
 
   return (
-    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 py-8 min-[768px]:py-12`}>
+    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
       <Card as="section" className="w-full">
         {preview.kind !== "READY" ? (
           <>
             <PageHeader title="This link is no longer valid" />
-            <p className="mt-3 text-sm text-body">Ask the placement cell for a new one.</p>
+            <p className="mt-3 max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for a new one.</p>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
@@ -148,7 +148,7 @@ export function PublicRecruiterJoinForm({
               Join with your company email. You can then request placement drives and review the students who apply.
             </p>
             {sentTo?<h2 className="mt-5 text-lg font-semibold text-foreground">One more step</h2>:null}
-            <form className="mt-5 space-y-4" onSubmit={event=>{
+            <form className="mt-4 min-w-0 space-y-4" aria-busy={pending} onSubmit={event=>{
              event.preventDefault(); if(sentTo)void join();else void sendCode();
             }}>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
@@ -168,6 +168,9 @@ export function PublicRecruiterJoinForm({
                   onChange={event => setName(event.target.value)}
                   className="w-full min-w-0" />
               </label>
+              <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
+                <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text min-[768px]:min-h-9">Optional contact details</summary>
+                <div className="grid min-w-0 gap-4 pt-3 min-[768px]:grid-cols-2">
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Designation (optional)
                 <Input type="text" value={designation} maxLength={100}
@@ -183,6 +186,8 @@ export function PublicRecruiterJoinForm({
                   Only for the placement cell to call you. You never sign in with it.
                 </span>
               </label>
+                </div>
+              </details>
               {scope === "COLLEGE"&&knownCompany?<p role="status" className="text-sm font-semibold">You are joining as {knownCompany}.</p>:null}
               {scope === "COLLEGE"&&!knownCompany&&sentTo ? (
                 <label className="flex flex-col gap-1 text-sm font-semibold text-body">
@@ -193,7 +198,7 @@ export function PublicRecruiterJoinForm({
                 </label>
               ) : null}
               {!sentTo ? (
-                <Button type="submit" loading={pending} className="w-full min-[768px]:w-auto">Send me a code</Button>
+                <Button type="submit" loading={pending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Send me a code</Button>
               ) : (
                 <>
                   <label className="flex flex-col gap-1 text-sm font-semibold text-body">
