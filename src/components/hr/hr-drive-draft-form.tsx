@@ -1,5 +1,6 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -532,7 +533,7 @@ export function HrDriveDraftForm({
               Live preview of your unsent request. The college decides what students see after approval.
             </p>
           </div>
-        {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
+        {notice ? <InlineNotice tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"} message={notice}/> : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
         </p>
