@@ -96,7 +96,7 @@ export default async function HrProfilePage() {
         aria-labelledby="recruiter-current-grants"
         className="border-b border-border pb-5"
       >
-        <div className="border-b border-border pb-4">
+        <div className="pb-4">
           <h2
             id="recruiter-current-grants"
             className="text-base font-semibold text-foreground"
