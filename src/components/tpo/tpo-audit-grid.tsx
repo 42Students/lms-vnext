@@ -20,7 +20,7 @@ function when(value:string){
  const instant=Date.parse(value);
  return Number.isFinite(instant)?new Intl.DateTimeFormat("en-IN",{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
- }).format(new Date(instant)):"Not recorded";
+ }).format(new Date(instant))+" IST":"Not recorded";
 }
 export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  const [showAbout,setShowAbout]=useState(true),[showDetail,setShowDetail]=useState(true);
@@ -34,7 +34,7 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  async function copy(){
   const wanted=selected.length?visible.filter(row=>selected.includes(row.kind+":"+row.id)):visible;
   const text=wanted.map(row=>[formatTpoAuditEventType(row.eventType),
-   TPO_AUDIT_KIND_LABELS[row.kind],row.title,row.detail,row.actorName,when(row.occurredAt)+" IST"]
+   TPO_AUDIT_KIND_LABELS[row.kind],row.title,row.detail,row.actorName,when(row.occurredAt)]
     .map(safeGridClipboardCell).join("\t")).join("\n");
   try{await navigator.clipboard.writeText(text);setNotice("Rows copied");}
   catch{setNotice("Could not copy rows. Select the table text instead.");}
@@ -42,7 +42,7 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  const columns:readonly TpoGridColumn<TpoAuditRow>[]=[
   {key:"when",label:"When",sortKind:"date",
    sortValue:row=>{const instant=Date.parse(row.occurredAt);return Number.isFinite(instant)?instant:null;},
-   read:row=>when(row.occurredAt)+" IST"},
+   read:row=>when(row.occurredAt)},
   {key:"event",label:"Event",read:row=>formatTpoAuditEventType(row.eventType)},
   ...(showAbout?[{key:"about",label:"About",read:(row:TpoAuditRow)=>TPO_AUDIT_KIND_LABELS[row.kind]+": "+row.title}]:[]),
   ...(showDetail?[{key:"detail",label:"Detail",read:(row:TpoAuditRow)=>row.detail}]:[]),

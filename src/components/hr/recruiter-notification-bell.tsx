@@ -74,7 +74,7 @@ export function RecruiterNotificationBell(){
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 rounded-lg border border-border bg-surface px-4 py-3 text-sm font-semibold leading-[1.4] text-foreground transition-[background-color,border-color,box-shadow] duration-200 hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-muted focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none">
+       className="block min-h-11 rounded-lg border border-border bg-surface px-4 py-3 text-sm font-semibold leading-[1.4] text-foreground transition-[background-color,border-color,box-shadow] duration-200 hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-muted focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-neutral-500)] motion-reduce:transition-none">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}

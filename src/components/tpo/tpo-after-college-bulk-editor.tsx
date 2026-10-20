@@ -95,12 +95,12 @@ export function TpoAfterCollegeBulkEditor({
     </p>
     {!available && <p role="status" className="text-sm text-warning">
       After college records are unavailable until the database table is registered.</p>}
-    <label className="inline-flex min-h-11 items-center gap-2 text-sm">
+    <label className="inline-flex min-h-11 items-center gap-2 text-sm print:hidden">
       <Checkbox disabled={!available || busy} checked={selectAll}
         onChange={event => setSelected(event.target.checked ? rows.map(row => row.membershipId) : [])} />
       Select all {rows.length} students on this page
     </label>
-    <div className="max-h-40 min-w-0 space-y-1 overflow-auto overscroll-contain border-y border-border py-2">
+    <div className="max-h-40 min-w-0 space-y-1 overflow-auto overscroll-contain border-y border-border py-2 print:hidden">
       {rows.map(row => <label key={row.membershipId}
         className="flex min-h-11 min-w-0 items-center gap-2 break-words py-1 text-sm">
         <Checkbox disabled={!available || busy} checked={ids.includes(row.membershipId)}
@@ -110,7 +110,7 @@ export function TpoAfterCollegeBulkEditor({
         <span>{row.displayName}</span>
       </label>)}
     </div>
-    <div className="flex flex-wrap items-end gap-3">
+    <div className="flex flex-wrap items-end gap-3 print:hidden">
       <label className="grid gap-1 text-sm font-semibold">After college
         <Select value={outcome} onChange={event => setOutcome(event.target.value as AfterCollegeOutcome)}
           disabled={!available || busy} className="min-h-11 md:min-h-9">
@@ -132,8 +132,8 @@ export function TpoAfterCollegeBulkEditor({
       description={confirmation==="SAVE"?
         ids.length+" student(s) will have their recorded After college outcome changed. Continue?":
         "Restore the previous outcome for "+(undo?.length??0)+" student(s)?"}
-      footer={<><Button variant="secondary" disabled={busy||guardedPending} onClick={()=>setConfirmation(null)}>Cancel</Button>
-        <Button disabled={busy||guardedPending||(confirmation==="SAVE"?!ids.length:!undo?.length)}
+      footer={<><Button variant="secondary" className="min-h-11 md:min-h-9" disabled={busy||guardedPending} onClick={()=>setConfirmation(null)}>Cancel</Button>
+        <Button className="min-h-11 md:min-h-9" disabled={busy||guardedPending||(confirmation==="SAVE"?!ids.length:!undo?.length)}
           onClick={()=>void runGuarded(async()=>{if(confirmation==="SAVE")await save();else if(confirmation==="UNDO")await reverse();})}>
           {busy||guardedPending?"Saving…":"Confirm"}
         </Button></>}>
