@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -117,8 +118,7 @@ export default async function TpoStudentRequestsPage({
     return (
       <div className="min-w-0 space-y-4 md:space-y-6">
         <PageHeader
-          eyebrow="TPO · Students"
-          title="Student Requests"
+           title="Student Requests"
           description="College-wide placement exception and change requests."
         />
         <Alert tone="error">
@@ -170,8 +170,7 @@ export default async function TpoStudentRequestsPage({
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
-        eyebrow="TPO · Students"
-        title="Student Requests"
+         title="Student Requests"
         description="Read-only, college-scoped placement withdrawal, round reschedule and offer extension requests. Open the related placement job for operational context."
         actions={
           <Link
@@ -202,7 +201,7 @@ export default async function TpoStudentRequestsPage({
         </Link>
       </nav>
 
-      <section className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-5">
+      <section className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-3 xl:grid-cols-5">
         <Link
           href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize))}
           aria-current={!query.status ? "page" : undefined}
@@ -246,7 +245,7 @@ export default async function TpoStudentRequestsPage({
       <form
         action="/tpo/students/requests"
         method="get"
-        className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-3"
+        className="grid min-w-0 gap-3 border-y border-border py-4 sm:grid-cols-2 xl:grid-cols-3"
       >
         <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Status
@@ -289,10 +288,10 @@ export default async function TpoStudentRequestsPage({
           </Select>
         </label>
 
-        <div className="md:col-span-3">
+        <div className="sm:col-span-2 xl:col-span-3">
           <Button variant="primary"
             type="submit"
-            className="min-h-11 md:min-h-9 px-5"
+            className="min-h-11 w-full px-5 sm:w-auto md:min-h-9"
           >
             Apply filters
           </Button>
@@ -313,7 +312,7 @@ export default async function TpoStudentRequestsPage({
           </div>
           <Link
             href="/tpo/students/requests"
-            className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+            className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto sm:justify-start hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >
             Clear filters
           </Link>
@@ -350,10 +349,12 @@ export default async function TpoStudentRequestsPage({
                 </div>
                 <p className="text-sm font-semibold">{humanize(request.requestType)}</p>
                 <p className="break-words text-sm text-body">{request.jobTitle} · {request.companyName}</p>
+                <Disclosure title="Request details" className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 pt-2">
                 <p className="whitespace-pre-wrap break-words text-sm text-body">{request.reason}</p>
                 {request.decisionNote ? <p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">
                   Decision: {request.decisionNote}
                 </p> : null}
+                </Disclosure>
                 <time dateTime={request.requestedAt.toISOString()} className="block text-xs text-muted-foreground">
                   {formatRequestedAt(request.requestedAt)} IST
                 </time>
@@ -490,12 +491,14 @@ export default async function TpoStudentRequestsPage({
           </nav>
         </div>
 
+        <Disclosure title="Request decision policy notes" className="min-w-0" contentClassName="pt-2">
         <p className="text-xs leading-5 text-muted-foreground">
           Approvals and rejections reuse the existing transactional request
           service, which applies the authoritative consequence and records
           the actor audit. Send-back is not represented as a persisted
           request status.
         </p>
+        </Disclosure>
       </section>
     </div>
   );
