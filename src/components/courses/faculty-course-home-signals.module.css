@@ -8,11 +8,11 @@
   min-width: 0;
   overflow: hidden;
   border-radius: 999px;
-  background: #f1f4f9 !important;
+  background: var(--lms-neutral-100) !important;
 }
 .track > div {
   border-radius: inherit;
-  background: #6b7280 !important;
+  background: var(--lms-neutral-500) !important;
 }
 .distribution {
   display: grid;
@@ -22,12 +22,12 @@
   min-width: 0;
 }
 .distributionLabel {
-  color: #54505d;
+  color: var(--lms-neutral-700);
   font-size: 12px;
   font-weight: 600;
 }
 .distributionCount {
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
