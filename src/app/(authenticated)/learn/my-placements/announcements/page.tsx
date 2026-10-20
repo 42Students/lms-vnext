@@ -97,10 +97,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {recentOnly ? <Input type="hidden" name="recent" value="1" /> : null}
         {unreadOnly ? <Input type="hidden" name="unread" value="1" /> : null}
         {sortKey!=="pinned"?<Input type="hidden" name="sort" value={sortKey}/>:null}
-        <label className="flex min-w-0 flex-1 flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search college notices
           <Input type="search" name="q" maxLength={100} defaultValue={queryText}
-            placeholder="Title or message" className="min-h-11 min-w-0 md:min-h-9" />
+            placeholder="Title or message" className="min-h-11 min-w-0" />
         </label>
         <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Search</Button>
         {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
@@ -113,7 +113,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {unreadOnly?<Input type="hidden" name="unread" value="1"/>:null}
         {recentOnly?<Input type="hidden" name="recent" value="1"/>:null}
         {queryText?<Input type="hidden" name="q" value={queryText}/>:null}
-        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort college notices
+        <label className="flex flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort college notices
           <Select name="sort" defaultValue={sortKey} className="min-h-11">
             <option value="pinned">Pinned then newest</option>
             <option value="latest">Newest first</option>
@@ -146,21 +146,21 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       </nav>
       <p className="text-xs text-muted-foreground">These college-targeted announcements may include notices published by your placement cell. Only notices addressed to your membership are displayed.</p>
       {pageClamped && collegeNoticesRead.available ? (
-        <Banner tone="info">>
+        <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           The requested notice page no longer exists in the current filtered results. Showing page {pages.page} instead.
           <Link href={noticePageUrl(pages.page)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
             Update page link
           </Link>
-        </Banner>
+        </p>
       ) : null}
       {ready && collegeNoticesRead.available && learnerNoticeMissing(filters.focus,focused.found) ? (
-        <Banner tone="info">>
+        <div role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           That notice is not among your currently visible college notices. It may have expired or become unavailable to your membership.
           <Link href={learnerNoticeRecoveryHref(filters.focus)}
             className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
             Search all my visible notices
           </Link>
-        </Banner>
+        </div>
       ) : null}
       {!ready ? (
         <div role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-b border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
@@ -190,7 +190,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                 {noticeNow-Date.parse(notice.createdAt)<7*24*60*60*1000 && noticeNow>=Date.parse(notice.createdAt)
                   ? <Badge  tone="info">New</Badge>:null}
               </div>
-              <h2 className="break-words text-lg font-semibold text-[var(--lms-heading)]">{notice.title}</h2>
+              <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
               <p className="mt-1 text-xs text-muted-foreground">
                 {notice.senderLabel ? "Issued by "+notice.senderLabel : "College announcement"}
                 {notice.audienceLabel ? " · For "+notice.audienceLabel : ""}
@@ -236,7 +236,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {queryText?<Input type="hidden" name="q" value={queryText}/>:null}
         {sortKey!=="pinned"?<Input type="hidden" name="sort" value={sortKey}/>:null}
         {source==="placement-cell"?<Input type="hidden" name="source" value={source}/>:null}
-        <label className="flex min-w-0 flex-1 flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search loaded personal alerts
           <Input type="search" name="alertQ" defaultValue={alertQ} maxLength={80}
             placeholder="Title or message" className="min-h-11 min-w-0 md:min-h-9"/>

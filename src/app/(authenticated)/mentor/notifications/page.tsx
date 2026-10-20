@@ -9,7 +9,6 @@ import {
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
 import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
-import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
@@ -92,7 +91,7 @@ export default async function MentorNotificationsPage({
   return <div className="min-w-0 max-w-full space-y-8">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
-    {failedSources.length ? <Alert tone="warning" role="alert">
+    {failedSources.length ? <div role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
       <h2 className="font-semibold text-foreground">Some notification sources are unavailable</h2>
       <p className="mt-1 text-sm text-body">
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
@@ -111,22 +110,22 @@ export default async function MentorNotificationsPage({
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
       <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project with recorded attention
+        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
+        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
             className="min-h-11 max-w-full min-[768px]:min-h-9">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attention order
+        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Attention order
           <Select name="attentionOrder" defaultValue={attentionOrder.data}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </Select>
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attention type
+        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Attention type
           <Select name="kind" defaultValue={kind.data}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
@@ -171,13 +170,13 @@ export default async function MentorNotificationsPage({
         baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
         confirmMarkAll /> : null}
       {inbox?.cursor.invalid
-        ? <Alert tone="error" role="alert">
+        ? <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface-subtle px-6 py-12 text-center text-sm text-foreground">
             The notification page link is invalid.{" "}
             <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
               className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Return to newest notifications
             </Link>
-          </Alert>
+          </div>
         : <>
             <NotificationList items={items} readEndpoint="/api/mentor/notifications"
               emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
