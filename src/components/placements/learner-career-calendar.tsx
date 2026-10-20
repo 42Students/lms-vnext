@@ -141,7 +141,7 @@ export function LearnerCareerCalendar({
               Approved reschedules replace the original slot.
             </p>
           </div>
-          <Button className="max-md:min-h-11"
+          <Button className="max-[767px]:min-h-11"
             type="button"
             onClick={downloadCalendar}
             disabled={period.events.length === 0}
@@ -157,7 +157,7 @@ export function LearnerCareerCalendar({
               aria-pressed={view === option}
               onClick={() => changeCalendar({view:option})}
               variant={view===option?"primary":"secondary"}
-              className="min-h-11 capitalize md:min-h-9"
+              className="min-h-11 capitalize min-[768px]:min-h-9"
             >
               {option}
             </Button>
@@ -187,7 +187,7 @@ export function LearnerCareerCalendar({
             {view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
           </span>
         </div>
-        <label className="mt-3 block max-w-xs text-xs font-semibold text-body">
+        <label className="mt-3 block max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Jump to date (IST)
           <Input type="date" aria-label="Choose career calendar date"
             min="2000-01-01" max="2100-12-31" value={anchor}
@@ -195,7 +195,7 @@ export function LearnerCareerCalendar({
               const day=parseLearnerCareerDate(event.target.value);
               if(day)changeCalendar({date:day});
             }}
-            className="mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
         <div className={styles.legend} role="group" aria-label="Filter career events">
           {filters.map((option) => (
@@ -212,7 +212,7 @@ export function LearnerCareerCalendar({
       </section>
 
       {view === "month" ? (
-        <section className="flex flex-wrap gap-3 border-b border-border pb-4 text-sm text-body" aria-label="Selected month round totals">
+        <section className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)] pb-4 text-sm text-body" aria-label="Selected month round totals">
           <strong className="text-foreground">{new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(period.start+"T12:00:00Z"))}: {monthCounts.total} scheduled round{monthCounts.total===1?"":"s"}</strong>
           <span>{monthCounts.assessments} assessments</span>
           <span>{monthCounts.interviews} interviews</span>
@@ -221,7 +221,7 @@ export function LearnerCareerCalendar({
       ) : null}
 
       {calendarDays.length ? (
-        <section className={"hidden p-3 md:block "+styles.gridFrame} aria-label={view + " calendar grid"}>
+        <section className={"hidden p-3 min-[768px]:block "+styles.gridFrame} aria-label={view + " calendar grid"}>
           <CalendarGrid variant="hairline" className={styles.grid}>
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label, index) => (
               <p key={label} className={styles.weekday+" "+(index===6?calendarStyles.calendarSunday:"")}>
@@ -261,8 +261,8 @@ export function LearnerCareerCalendar({
       ) : null}
 
       {dayTimeline ? (
-        <section className="border-b border-border py-4" aria-label="Selected day schedule summary">
-          <h3 className="m-0 text-base font-semibold text-foreground">{prettyDay(anchor)} · Day schedule</h3>
+        <section className="border-b border-[var(--lms-canvas-border)] py-4" aria-label="Selected day schedule summary">
+          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{prettyDay(anchor)} · Day schedule</h3>
           <p role="status" className="mt-2 text-sm text-body">
             {dayTimeline.events.length} scheduled round{dayTimeline.events.length===1?"":"s"} on this IST date.
             {dayTimeline.first ? " First: " + displayDate(dayTimeline.first.start) + "." : ""}
@@ -288,12 +288,12 @@ export function LearnerCareerCalendar({
                     <p className="text-sm font-semibold text-foreground">{event.title} · {event.companyName}</p>
                     <p className="mt-1 text-xs text-body">{displayDate(event.start)} · {event.kind}</p>
                     <div className="mt-2 flex flex-wrap gap-3">
-                      <Button className="max-md:min-h-11" variant="ghost" type="button" onClick={()=>showEventDetail(event)}
+                      <Button className="max-[767px]:min-h-11" variant="ghost" type="button" onClick={()=>showEventDetail(event)}
                         >
                         Event details
                       </Button>
                       <Link href={learnerCareerCalendarEventTarget(event)}
-                        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
+                        className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text">
                         Open exact round →
                       </Link>
                     </div>
@@ -305,9 +305,9 @@ export function LearnerCareerCalendar({
         </section>
       ) : null}
 
-      <section aria-label="Career events in selected period" className={calendarDays.length ? "hidden space-y-3 md:block" : "space-y-3"}>
+      <section aria-label="Career events in selected period" className={calendarDays.length ? "hidden space-y-3 min-[768px]:block" : "space-y-3"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="m-0 text-base font-semibold text-foreground">
+          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             {view === "agenda" ? "30-day agenda" : view === "day" ? "Day events" : "Events"} · {period.events.length}
           </h3>
           <span className="text-xs text-muted-foreground">
@@ -340,12 +340,12 @@ export function LearnerCareerCalendar({
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-3">
-              <Button variant="link" className="max-md:min-h-11 text-sm font-semibold" type="button"
+              <Button variant="link" className="max-[767px]:min-h-11 text-sm font-semibold" type="button"
                 onClick={()=>showEventDetail(event)}>
                 Event details
               </Button>
               <Link href={hrefForEvent(event)}
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
                 View application →
               </Link>
             </div>
@@ -358,10 +358,10 @@ export function LearnerCareerCalendar({
         footer={
           <>
             {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
-              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Open exact round
             </Link>:null}
-            <Button className="max-md:min-h-11" variant="secondary" type="button" onClick={()=>setSelectedKey(null)}
+            <Button className="max-[767px]:min-h-11" variant="secondary" type="button" onClick={()=>setSelectedKey(null)}
               >
               Close
             </Button>
