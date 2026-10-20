@@ -1,2 +1,2 @@
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
-export default function Loading(){return <GracefulPageLoading label="Loading round results"/>;}
+export default function Loading(){return <GracefulPageLoading label="Loading round results" shape="directory"/>;}
