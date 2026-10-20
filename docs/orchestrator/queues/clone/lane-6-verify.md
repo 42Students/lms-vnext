@@ -40,8 +40,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regres
 - [x] `src/components/college/college-person-profile-overview-modal.tsx`
 - [x] `src/components/college/college-student-import-history.tsx`
 - [x] `src/components/college/student-class-move-action.tsx`
-- [ ] `src/components/courses/admin-course-actions.tsx`
-- [ ] `src/components/courses/admin-learning-structure-actions.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-learning-structure-actions.tsx`
 - [ ] `src/components/courses/assignment-submission-control.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
 - [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
