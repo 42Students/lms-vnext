@@ -416,7 +416,7 @@ export function LearnerClassSchedule({
   }
 
   return (
-    <div className={"space-y-5 "+styles.root}>
+    <div data-learner-schedule={courseBasePath === "/learn/courses" ? "true" : undefined} className={"min-w-0 space-y-4 md:space-y-6 "+styles.root}>
       <div className={styles.summary}>
         <Metric
           label="Today"
@@ -502,7 +502,7 @@ export function LearnerClassSchedule({
             </span>
           </div>
 
-          <label className={styles.actions+" text-xs font-semibold text-body"} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className={styles.actions+" text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"}>
             View
             <Select
               value={view}
@@ -526,6 +526,7 @@ export function LearnerClassSchedule({
         </div>
 
         {courseBasePath === "/learn/courses" ? (
+          <Disclosure title="Filters" className="border-b border-border" contentClassName="pb-2">
           <div className={styles.filters}>
             <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find sessions
               <Input type="search" value={sessionSearch} maxLength={100}
@@ -561,9 +562,10 @@ export function LearnerClassSchedule({
               {filteredEvents.length} matching authorized sessions
             </span>
           </div>
+          </Disclosure>
         ) : null}
         {sections.length > 1 ? (
-          <label className="mt-4 block max-w-sm border-t border-border pt-4 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="mt-3 block max-w-sm border-t border-border pt-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Section
             <Select value={sectionId} onChange={event => setSectionId(event.target.value)}
               aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 md:min-h-9 w-full">
@@ -576,7 +578,7 @@ export function LearnerClassSchedule({
         ) : null}
         {courses.length > 1 ? (
           <div className={styles.courseFilter}>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <span className="mr-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                 Courses
               </span>
@@ -655,13 +657,13 @@ export function LearnerClassSchedule({
                   })}
                 </CalendarGrid>
                 <section className={styles.selectedAgenda} aria-label="Selected day agenda">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-sm font-semibold text-foreground">
                       {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
                     </h3>
                     {agenda.length ? <a download={"classes-"+chosenDay+".ics"}
                       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text sm:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                       Download selected day (.ics)
                     </a> : null}
                   </div>
