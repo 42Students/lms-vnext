@@ -604,7 +604,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"course",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.course,mobilePriority:"secondary" as const,
                   cell:item=><div className="min-w-0">
                     <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text hover:underline">
+                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                       {item.courseName} ({item.courseCode})
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
@@ -619,7 +619,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                       <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
                         visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
                     <Link href={collegeOfferingProgressHref(item.offeringId)}
-                      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                       View recorded course activity
                     </Link>
                   </div>},
@@ -633,12 +633,12 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"course",header:"Course / offering",mobilePriority:"primary" as const,
                   cell:item=><div className="min-w-0">
                     <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text hover:underline">
+                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                       {item.courseName} ({item.courseCode})
                     </Link>
                     <p className="text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
                     <Link href={collegeOfferingLessonsHref(item.offeringId)}
-                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                       View authored lessons
                     </Link>
                   </div>},
