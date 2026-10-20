@@ -310,6 +310,26 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
     animation: lms-micro-notification-panel-enter 200ms ease-out both;
   }
 }
+
+/* Legacy: components___notification-drawer.scss:83-102 — notification
+   backdrop enters in 150ms ease-out, opacity 0->1. The TPO mobile bell
+   renders dialog#tpo-notification-drawer (tpo-bell-panel.tsx:154-168),
+   not Dropdown's ::before. Override only this real notification backdrop;
+   preserve chat-16's Drawer backdrop colour and all dimensions. */
+@keyframes lms-micro-notification-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  dialog#tpo-notification-drawer[open]::backdrop {
+    animation: lms-micro-notification-backdrop-enter 150ms ease-out both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog#tpo-notification-drawer::backdrop {
+    animation: none !important;
+  }
+}
 /* Legacy: components___antddesign.scss:48-64 (tooltip charcoal #1a1d21,
  * 8px radius, 12px/16px text and 2px/8px shadow); already exact in
  * legacy-overlays.css. SCSS does not prescribe a mouseEnterDelay.
