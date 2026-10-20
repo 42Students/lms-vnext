@@ -682,3 +682,25 @@ All counts below came from entire current GitHub UTF-8 file blobs at the pushed 
 | `docs/design/old-lms-pages.md:4` small teal selected controls, old LMS consistent input skins | `faculty-choice-quiz-builder.tsx`: `NativeCheckbox` kept for form-inside-`label` preview choice, `Checkbox` with `label` from shared selection-controls for interactive authoring | Removed duplicate Checkbox name binding; no inferred behavior or grading change |
 
 The direct whole-blob regex equivalent is `<(button|input|select|textarea|table|dialog)\\b|window\\.confirm\\s*\\(|#[0-9a-fA-F]{3,8}\\b`. This was evaluated in GitHub connector response text on exactly the ten files above. **No `git grep` shell, no JSX parser, no responsive screenshots, no typecheck/tests/CI** were executed. The strict 94-work-item H queue remains unchecked because full visual/default/hover/focus/disabled/loading and transitive coverage conditions are not proven. These ten files are source-updated only. Next target: `src/components/courses/faculty-course-list.tsx` and `src/components/courses/faculty-assessment-overview.tsx`, followed by remaining unreviewed delegated teacher pages.
+
+
+## Full 94-item H path inventory — source-only coverage pass, 2026-10-20
+
+This inventory reads every named queued file through the connected GitHub repository branch; counts are computed over **entire returned UTF-8 file content**, not terminal `grep`. The exact query equivalent is `git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9A-Fa-f]{3,8}' -- <each-listed-path>` (shell **not run**). `sm:` count detects 640px modifiers that violate the 767px legacy phone boundary when used for a responsive switch. `Button` counts reflect source JSX opening vs closing and are **not** a JSX parser. Native hidden GET inputs are listed separately because they are semantically required, invisible, and style-free. Line examples are first 44px/13px/PageHeader visual declarations. Remaining unrendered states, full transitive dependency grep and computed-style comparisons block all strict H ticks.
+
+### Source inventory routes, part 1/4 (1–12 of 46)
+
+| Path | Lines | Native/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source value example lines |
+|---|---:|---:|---:|---:|---|
+| `src/app/(authenticated)/admin/academics/page.tsx` | 68 | 0 (0 hidden) | 0 | 0/0 | 19,24,25 |
+| `src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx` | 31 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 13,15 |
+| `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx` | 48 | 0 (0 hidden) | 0 | 0/0 | 25,41 |
+| `src/app/(authenticated)/admin/people/directory/page.tsx` | 128 | 1 (1 hidden) | 0 | 1/1 | 33,41,59 |
+| `src/app/(authenticated)/admin/people/page.tsx` | 184 | 0 (0 hidden) | 0 | 1/1 | 112,122,143 |
+| `src/app/(authenticated)/admin/people/unassigned/page.tsx` | 80 | 0 (0 hidden) | 0 | 1/1 | 22,24,39 |
+| `src/app/(authenticated)/admin/recruiters/page.tsx` | 7 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/allAssignments/page.tsx` | 26 | 0 (0 hidden) | 0 | 0/0 | 13,18 |
+| `src/app/(authenticated)/teacher/allQuizzes/page.tsx` | 30 | 0 (0 hidden) | 0 | 0/0 | 17,22 |
+| `src/app/(authenticated)/teacher/calendar/page.tsx` | 133 | 0 (0 hidden) | 0 | 1/1 | 31,32,49 |
+| `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx` | 58 | 0 (0 hidden) | 0 | 0/0 | 31,34 |
