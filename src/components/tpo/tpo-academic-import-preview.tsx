@@ -18,10 +18,10 @@ export function TpoAcademicImportPreview({activeIds}:{activeIds:readonly string[
   }catch(err){setRows(null);setError(err instanceof Error?err.message:"Invalid CSV");}
  }
  return <section className="min-w-0 space-y-3 border-y border-border py-3">
-  <h2 className="font-semibold">Preview academic CSV</h2>
+  <h2 className="text-base font-semibold text-foreground">Preview academic CSV</h2>
   <p className="text-xs text-muted-foreground print:hidden">Paste academic rows → Validate this-page preview → Review unmatched learner IDs. Nothing is saved.</p>
   <p className="text-xs text-muted-foreground">Strict studentCode,cgpa,activeBacklogs format. This checks IDs only against the 25 active learners on this page, never the whole batch. No changes are saved and no marksheets are uploaded.</p>
-  <label className="block text-sm print:hidden">CSV data<Textarea value={text} onChange={e=>{setText(e.target.value);setRows(null);}} rows={5} maxLength={50000} className="mt-1 min-h-32 w-full font-mono text-xs"/></label>
+  <label className="block text-sm print:hidden">CSV data<Textarea value={text} onChange={e=>{setText(e.target.value);setRows(null);}} rows={5} maxLength={50000} className="mt-1 min-h-32 w-full rounded-[var(--lms-control-radius)] font-mono text-sm"/></label>
   <Button variant="secondary" type="button" onClick={preview} className="min-h-11 md:min-h-9 print:hidden">Validate this-page preview</Button>
   {error?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p>:null}
   {rows?<div role="status" className="min-w-0 space-y-2 text-sm"><p>{rows.filter(row=>row.matchedOnCurrentPage).length} matched this page; {rows.filter(row=>!row.matchedOnCurrentPage).length} outside this page or not in the cohort.</p>
