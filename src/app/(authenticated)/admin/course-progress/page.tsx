@@ -50,7 +50,7 @@ export default async function SuperAdminCourseProgressPage({
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
       </label>
-      <Disclosure title="More filters" className="min-w-0 min-[768px]:col-span-2 min-[1200px]:col-span-3"
+      <Disclosure title="More filters" className="min-w-0 order-last min-[768px]:col-span-2"
         contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] min-[768px]:grid-cols-2">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Offering status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
