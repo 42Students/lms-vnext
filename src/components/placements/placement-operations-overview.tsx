@@ -42,6 +42,30 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
       <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Jobs with an unresolved operational action." />
     </div>
+    {showDriveSearch?<SuperAdminNeedsAttention items={operations.workQueue} basePath={basePath}/>:
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3">
+        <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
+        <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
+        {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+          <label className="flex items-center gap-2">Stale after
+            <Select name="staleDays" defaultValue={staleDays} className="min-w-0">
+              {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
+            </Select></label>
+          <Button type="submit" variant="secondary">Apply</Button>
+        </form>:null}
+      </div>
+      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." action={<Link href={basePath+"/lifecycle"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Drive lifecycle</Link>} /></div> :
+        <div className="min-w-0 divide-y divide-border">{operations.workQueue.map((item, index) =>
+          <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={priorityTone(item.priority)}>{item.priority}</StatusBadge><span className="text-xs font-semibold text-muted-foreground">{item.count} {item.count === 1 ? "item" : "items"}</span></div>
+              <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
+              <p className="mt-1 text-sm text-body">{item.companyName} · {item.code.toLowerCase().split("_").join(" ")}</p>
+            </div>
+            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-11 md:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
+          </div>)}</div>}
+    </section>}
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">Placement funnel</h2>
@@ -59,30 +83,6 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
           note:conversion(operations.analytics.funnel.joined,operations.analytics.funnel.accepted)+" from previous stage"},
       ]} />
     </section>
-    {showDriveSearch?<SuperAdminNeedsAttention items={operations.workQueue} basePath={basePath}/>:
-    <section className="border-b border-border pb-6">
-      <div className="border-b border-border pb-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
-        <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
-        {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-          <label className="flex items-center gap-2">Stale after
-            <Select name="staleDays" defaultValue={staleDays} className="min-w-0">
-              {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
-            </Select></label>
-          <Button type="submit" variant="secondary">Apply</Button>
-        </form>:null}
-      </div>
-      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :
-        <div className="min-w-0 divide-y divide-border">{operations.workQueue.map((item, index) =>
-          <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={priorityTone(item.priority)}>{item.priority}</StatusBadge><span className="text-xs font-semibold text-muted-foreground">{item.count} {item.count === 1 ? "item" : "items"}</span></div>
-              <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
-              <p className="mt-1 text-sm text-body">{item.companyName} · {item.code.toLowerCase().split("_").join(" ")}</p>
-            </div>
-            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-11 md:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
-          </div>)}</div>}
-    </section>}
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">Upcoming rounds</h2><p className="mt-1 text-sm text-body">Scheduled rounds across the active college.</p></div>
       {operations.upcomingRounds.length === 0 ? <p className="m-0 px-5 py-6 text-sm text-muted-foreground">No future rounds are scheduled.</p> :
