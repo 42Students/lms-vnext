@@ -33,7 +33,7 @@ export default async function CollegeProjectTemplatesPage({
     <ErrorState title="Project templates unavailable"
       description="The assigned template catalogue could not be loaded. Your filters were not changed."
       action={<Link href="/college/projects/templates"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry loading templates</Link>}/>
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry loading templates</Link>}/>
   </div>;
   const templates = templateRead.value;
 
@@ -63,7 +63,7 @@ export default async function CollegeProjectTemplatesPage({
     }},
     {key:"action",header:"Action",mobilePriority:"action",cell:template=>
       <Link href={"/college/projects/templates/"+template.templateId}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 md:min-h-9 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View template</Link>},
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View template</Link>},
   ];
   return (
     <div className="min-w-0 space-y-6">
@@ -86,7 +86,7 @@ export default async function CollegeProjectTemplatesPage({
         <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
           Search
         </Button>
-        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-h-11 md:min-h-9 inline-flex items-center lms-inline-link">
+        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline min-h-11 md:min-h-9 inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Clear search
         </Link> : null}
 
@@ -100,7 +100,7 @@ export default async function CollegeProjectTemplatesPage({
           title={templates.length===0?"No assigned project templates":"No matching project templates"}
           description={templates.length===0?"No project templates are currently assigned to this college.":"No project templates match this search."}
           action={q?<Link href="/college/projects/templates"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 md:min-h-9 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>:undefined}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear search</Link>:undefined}
         />} />
     </div>
   );
