@@ -21,8 +21,8 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   companyId:first(raw.companyId)||undefined,departmentId:first(raw.departmentId)||undefined,
   sort:first(raw.sort)??"UPCOMING",page:first(raw.page)??"1"};
  const valid=collegeInterviewFilters.safeParse(input);
- if(!valid.success)return <div className="space-y-4"><p role="alert">Invalid interview filters.</p>
-  <Link href="/college/placements/interviews" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Clear filters</Link></div>;
+ if(!valid.success)return <div className="space-y-4"><Alert tone="error">Invalid interview filters.</Alert>
+  <Link href="/college/placements/interviews" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Clear filters</Link></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data);
  const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
   const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
@@ -42,28 +42,25 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   {key:"type",header:"Type",cell:row=>row.kind},
   {key:"start",header:"Scheduled time",cell:row=>formatter.format(row.start)+" IST"},
   {key:"venue",header:"Mode / venue",cell:row=><span>{row.mode}<span className="block">{row.venue??"—"}</span></span>},
-  {key:"status",header:"Status",cell:row=><span>{row.status}{row.conflict?<span className="block text-body">Conflict: this student has overlapping interviews.</span>:null}</span>},
+  {key:"status",header:"Status",cell:row=><span><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":"neutral"}>{row.status}</StatusBadge>{row.conflict?<span className="block text-body">Conflict: this student has overlapping interviews.</span>:null}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
     <Link href={"/college/placements/jobs/"+encodeURIComponent(row.jobId)+"/applications"}
-      className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View applications</Link>
+      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View applications</Link>
     <CollegeInterviewStatusActions id={row.id} version={row.version} status={row.status}/>
   </div>},
  ];
  return <div className="space-y-5">
   <PageHeader title="Interviews"
    description="Interview appointments across drives in the selected college."/>
-  {!data.ready?<p role="status" className="rounded-[8px] border border-border p-5 text-sm text-warning-text">
+  {!data.ready?<Alert tone="warning">
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.
-   </p>:<>
-   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Interview summary">
+   </Alert>:<>
+   <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Interview summary">
     {([{label:"Scheduled",value:data.summary?.scheduled??0},{label:"Today",value:data.summary?.today??0},
       {label:"Companies",value:data.summary?.companies??0},{label:"Conflicts",value:data.summary?.conflicts??0}]
-    ).map(card=><div key={card.label} className="rounded-[8px] border border-border p-4">
-     <h2 className="text-xs font-semibold uppercase text-body">{card.label}</h2>
-     <p className="mt-2 text-2xl font-semibold">{card.value}</p>
-    </div>)}
+    ).map(card=><StatTile key={card.label} label={card.label} value={card.value}/>)}
    </div>
-   <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
+   <form method="get" className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
     <label className="grid gap-1 text-sm">Search student, company or role
      <Input name="q" defaultValue={valid.data.q} maxLength={100} />
     </label>
@@ -91,25 +88,25 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       <option value="STUDENT">Student name</option>
      </Select>
     </label>
-    <div className="flex items-end gap-3"><Button variant="secondary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply filters</Button>
-     <Link href="/college/placements/interviews" className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Clear</Link>
+    <div className="flex items-end gap-3"><Button variant="secondary" type="submit" className="min-h-11 md:min-h-9 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply filters</Button>
+     <Link href="/college/placements/interviews" className="min-h-11 md:min-h-9 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Clear</Link>
     </div>
    </form>
    <div className="flex flex-wrap items-center gap-3">
     <p role="status" className="text-sm">{data.total} matching appointments</p>
-    <a href={build(1,"ics")} className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Download .ics</a>
-    <a href={build(1,"csv")} className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Export CSV</a>
+    <a href={build(1,"ics")} className="min-h-11 md:min-h-9 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Download .ics</a>
+    <a href={build(1,"csv")} className="min-h-11 md:min-h-9 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Export CSV</a>
    </div>
    {data.limited?<p role="status" className="text-sm text-warning-text">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</p>:null}
    <section aria-label="College interview appointments">
     <DataTable caption="College interview appointments" columns={columns}
       rows={data.rows} getRowKey={row=>row.id}
-      empty={<p role="status" className="text-sm text-body">No interviews match these filters.</p>} />
+      empty={<EmptyState title="No matching interviews" description="No interviews match these filters."/>} />
    </section>
    <nav aria-label="Interview result pages" className="flex gap-4 text-sm">
-    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Previous</Link>:null}
+    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Previous</Link>:null}
     <span>Page {valid.data.page} of {data.pageCount}</span>
-    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Next</Link>:null}
+    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Next</Link>:null}
    </nav>
   </>}
  </div>;
