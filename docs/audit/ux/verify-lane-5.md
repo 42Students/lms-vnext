@@ -97,3 +97,17 @@
 - Extra clutter/alignment fixes (4): remove redundant borders/rounded mini-cards from deadline, upcoming-round and results-due rows, and unread conversation rows under their existing section dividers. All task text, relative IST dates, links, grant-scoped counts, quick-number disclosure and status badges unchanged.
 - Read full HR Today page, data model/service references, HrUnsentDriveAlert with confirmation, PageHeader/NeedsDoingChips/Badge/Alert/EmptyState/ErrorState/GracefulPageLoading, HR/recruiter loading/error, parent layouts and other lane's `polish-lane-15.md` entry; no local template/not-found/layout. 375px/768px source check, no CI or project execution.
 - Files changed: HR home page, queue and evidence.
+
+## Surface 15 — Recruiter Messages inbox
+- Surface: recruiter/messages re-export of `src/app/(authenticated)/hr/conversations/page.tsx`.
+- Regressions fixed (1): the prior polish proof claimed unread count badges aligned next to each conversation title but `mt-2` still displaced each badge below its link. Removed that stray margin, vertically centered badge without altering its aria label, and added overflow-safe wrapping for long conversation names.
+- Extra clutter/alignment fixes (1): long words in employer/drive names now wrap within the 375px title flex cell, preserving the 768px density and unread pill spacing. Filter GET query, tabs, general composer disclosure, mark-read action, inbox pagination, and error/empty recovery unchanged.
+- Inspected full HR conversations page, recruiter/HR loading/error, ReplyForm draft/leave confirmation, RecruiterDecisionReadButton, LiveRefresh, Disclosure/Tabs/ScrollCue/Badge/Banner/Input/Select/Button and recruiter/authenticated layouts; checked earlier `polish-lane-15.md` proof and local template/not-found/layout absence. Source-only, no tests/CI.
+- Files changed: HR conversation page, queue, evidence.
+
+## Surface 16 — Recruiter entrypoint
+- Surface: `src/app/(authenticated)/recruiter/page.tsx`.
+- Regressions fixed: 0. Redirect remains exactly `/hr/home`; PageHeader Today and branded graceful loading match redirect, scoped recruiter layout guards inactive actors, error recovery links to canonical Today, and in-shell not-found returns safely. Props/exports and JSX valid.
+- Extra clutter/alignment fixes: 0. Redirect-only page has no redundant navigation, canvas or form. Responsive 375/768 shared bounds and 44px recovery targets retained.
+- Inspected entrypoint, loading/error/not-found, recruiter/authenticated parent layouts, GracefulPageLoading/GracefulErrorBoundary/PageHeader and `polish-lane-15.md` evidence. No local template.
+- Files changed: queue and proof only. Source review without tests or CI.
