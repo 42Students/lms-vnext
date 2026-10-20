@@ -4,6 +4,7 @@ import {useMemo,useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 import {Disclosure} from "@/components/ui/disclosure";
 import {EmptyState} from "@/components/ui/empty-state";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Dropdown } from "@/components/ui/dropdown";
 import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
@@ -114,21 +115,21 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
      size="sm" className="min-h-11 md:min-h-9 print:hidden">Reset view</Button>
  </>);
  return <section className="space-y-3" aria-label={title}>
-  <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-  {rows.length===0?(compactControls?<EmptyState title="No report rows" description={emptyDescription}/>:<p role="status" className="border-y border-border py-4 text-sm">{emptyDescription}</p>):<>
-   <div data-report-toolbar className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-    <label className="grid min-w-48 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold">Search table
+  <h2 className="text-base font-semibold leading-6 text-foreground">{title}</h2>
+  {rows.length===0?<EmptyState title="No report rows" description={emptyDescription}/>:<>
+   <div data-report-toolbar className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-3">
+    <label className="grid min-w-0 w-full max-w-xl gap-1 text-[var(--lms-font-sm)] font-semibold">Search table
      <Input type="search" maxLength={100} value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
       className="min-h-11 md:min-h-9" placeholder="Search shown report rows"/>
     </label>
-    {compactControls ? <Disclosure title="Table tools" className="w-full min-w-0 print:hidden" contentClassName="min-w-0 pt-[var(--lms-space-2)]">
-      <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">{advancedControls}</div>
-    </Disclosure> : advancedControls}
+    <Disclosure title="Table tools" defaultOpen={!compactControls && headings.length<=3} className="min-w-0 print:hidden" contentClassName="min-w-0 pt-2">
+      <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 xl:grid-cols-4">{advancedControls}</div>
+    </Disclosure>
    </div>
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
-   <div data-report-toolbar className="flex flex-wrap items-center gap-2 min-[768px]:hidden">
+   <div data-report-toolbar className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-2 min-[768px]:hidden">
     <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Sort rows by
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
@@ -147,7 +148,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
     caption={title}
     rows={visibleRows}
     getRowKey={row=>String(row.key)}
-    empty={compactControls ? <EmptyState title="No matching report rows." description="Clear filters to view other records." action={<Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);setMessage("");}}>Reset view</Button>}/> : <p role="status" className="text-sm text-body">No matching report rows. Clear filters to view other records.</p>}
+    empty={<EmptyState title="No matching report rows." description="Clear filters to view other records." action={<Button className="min-h-11 md:min-h-9" variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);setMessage("");}}>Reset view</Button>}/>} 
     columns={displayedColumns.map((col,position)=>({
       key:String(col.index),
       sortDirection:sort===col.index?(descending?"descending" as const:"ascending" as const):"none" as const,
@@ -168,7 +169,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
    />
    {ordered.length>limit?<Button variant="secondary" type="button" onClick={()=>setLimit(n=>Math.min(ordered.length,n+500))}
     size="sm" className="min-h-11 md:min-h-9 print:hidden">Show 500 more</Button>:null}
-   {message?<p role="status" aria-live="polite" className="text-xs text-body">{message}</p>:null}
+   {message?<InlineNotice tone={message.startsWith("Could not")?"error":"success"} message={message}/>:null}
   </>}
  </section>;
 }
