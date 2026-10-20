@@ -81,18 +81,18 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="border-b border-border pb-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="flex flex-wrap items-end gap-3">
-        <label className="grid min-w-44 flex-1 gap-1 text-[13px] font-semibold text-body">Semester or program
+        <label className="grid min-w-44 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester or program
           <Input name="q" type="search" defaultValue={data.query.q} maxLength={100}
             className="w-full" />
         </label>
-        <label className="grid min-w-40 gap-1 text-[13px] font-semibold text-body">Program
+        <label className="grid min-w-40 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select name="programId" defaultValue={data.query.programId ?? ""}
             className="w-full">
             <option value="">All programs</option>
             {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-32 gap-1 text-[13px] font-semibold text-body">Status
+        <label className="grid min-w-32 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={data.query.status}
             className="w-full">
             <option value="ALL">All statuses</option>
@@ -100,7 +100,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
             <option value="INACTIVE">Inactive</option>
           </Select>
         </label>
-        <label className="grid min-w-32 gap-1 text-[13px] font-semibold text-body">Rows per page
+        <label className="grid min-w-32 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
           <Select name="pageSize" defaultValue={data.query.pageSize} className="w-full">
             {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
           </Select>

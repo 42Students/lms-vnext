@@ -64,18 +64,18 @@ export default async function TenantDirectory({searchParams}:{
     </Link>
    </div>} />
   <form className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 min-[1366px]:grid-cols-4">
-   <label className="grid gap-1 text-[13px] font-semibold text-body">College
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 md:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Organization
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Organization
     <Select name="organizationId" defaultValue={data.query.organizationId}
      className="min-h-11 md:min-h-9">
      <option value="">All permitted</option>
      {data.organizations.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-[13px] font-semibold text-body">College status
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College status
     <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
