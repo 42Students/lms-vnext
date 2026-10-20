@@ -29,11 +29,11 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-13.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
