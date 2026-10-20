@@ -570,16 +570,16 @@ function QuizCard({
       </div>
 
       {quiz.progress.status === "MISSED" ? (
-        <p className="mt-4 text-xs font-semibold text-error">
+        <Alert tone="warning" className="mt-4">
           This quiz is no longer available for an attempt.
-        </p>
+        </Alert>
       ) : quiz.progress.status ===
         "COMPLETED" ? (
-        <p className="mt-4 text-xs font-semibold text-muted-foreground">
-          Attempt recorded
+        <p className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <StatusBadge tone="success">Attempt recorded</StatusBadge>
           {quiz.resultsPublished
-            ? " · Results are published."
-            : " · Results are not published yet."}
+            ? "Results are published."
+            : "Results are not published yet."}
         </p>
       ) : null}
 
