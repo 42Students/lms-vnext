@@ -295,3 +295,27 @@
 **Problems fixed (9):** unstyled terminal status; inconsistent section/heading/label typography; date picker and action buttons cramped on phones; unchecked recipient-review label had a small tap area; invitation could submit a visibly past date; deadline clear dialog lacked explanatory copy; status/errors were plain unframed text; action groups had unpredictable wraps; primary action and secondary removal looked equally prominent. Used legacy typography/borders, full-width 44px mobile actions, touch-sized review label, consistent dismissible notices, and explicit destructive confirm while preserving invitation/reminder/clear wording, request payloads, optimistic version tokens and role gates.
 
 **Files:** `src/components/tpo/tpo-batch-invitation-control.tsx`, queue, proof. Source review only, no app runtime/screenshots/CI.
+
+## Surface 48 — TPO Company Memory workspace
+
+**Reviewed:** all load/error/not-found/migration-pending/retry states with abort guards; page header/back/create/trusted settings/team routes; people and invite statuses; private company conversation; five metrics, hiring-by-year chart and unknown counts; shared documents, spreadsheet drives search/export/open, and timeline. Also inspected shared loading, error, Dropdown/mobile sheet, PageHeader, MetricBar, and nested children at 375/768/1280 from source. No app execution or CI.
+
+**Problems fixed (10):** page lost title during load/error, retry lacked a coherent action hierarchy, detached back link, competing duplicate create actions, clipping mobile New menu, ragged last KPI in 2/3-column layouts, broken separators, overly wide chart cells on phone, long aliases/contacts/timeline wrapping poorly, and empty people/drives lacking recovery. Introduced contextual skeleton/retry, grouped header actions retaining destinations, a continuous 2/3/5 metric strip, tighter columns and empty CTAs. No changes to IDs, auth, data model, timestamps, or drive/team behavior.
+
+**Files:** `src/components/tpo/tpo-company-memory-workspace.tsx`, queue, proof. Team conversation and drive spreadsheet children source-reviewed, unchanged. No tests/CI.
+
+## Surface 49 — TPO mobile footer and More sheet
+
+**Reviewed:** Home/Engage/Drives/Students/More icon order and all 24px legacy assets, pressed/current states, mobile safe-area footer and shell padding, BottomSheet open/close/Escape/backdrop/focus restoration, all ten destination links, resize-to-768 and Back/Forward state. Read TPO layout, `legacy-mobile-footer.css` and shared BottomSheet. Source-level 375/768 comparison only, no app execution.
+
+**Problems fixed (6):** the shared ghost Button gave More a nonlegacy hovered fill; footer items lacked consistent full-height alignment; active destination was hard-coded rather than tokenized; selected sheet destination lacked a clear current-location cue; sheet row dividers were fragmented; footer links relied only on path-change effects to close the menu. Preserved all destination names/icons/ARIA/safe-area behavior and used the legacy transparent control, contiguous sheet dividers, tokenized current-page rail and explicit close-on-navigation.
+
+**Files:** `src/components/tpo/tpo-mobile-footer.tsx`, polish queue, proof. Shared shell and sheet unchanged; no tests/CI.
+
+## Surface 50 — Assign unowned placement work
+
+**Reviewed:** no-unowned-work return, drives-only/companies-only/mixed totals, empty eligible member list, staff selection and selector changes, confirmation/cancel, pending/failed/partial assignment and success, optimistic double-submit guard and refresh. Read parent Team People page, `ConfirmActionDialog`, `ConfirmDialog`, Select/Button/InlineNotice at 375/768 from source. No app execution or CI.
+
+**Problems fixed (9):** assignment confirmation inherited destructive red UI; original modal closed as soon as saving started; a failed request showed its error behind a closed modal; no-member state had a selectable empty control without explanation; selector and action wrapped irregularly on 375px; action lacked consistent full-width touch affordance; changes in assignee did not clear stale errors; empty reassignment result hid the success message on refresh; content hierarchy and text bounds were loose. Used positive primary shared confirmation, retained modal while pending, surfaced retryable errors inside the modal, added eligible-member empty feedback, a one/two-column action row and 44px phone controls. Endpoint, target ID, protected ownership semantics, existing copy and double-submit guard retained.
+
+**Files:** `src/components/tpo/tpo-team-assign-unowned.tsx`, polish queue, proof. Team People parent and shared dialog inspected, unchanged. No tests/CI.
