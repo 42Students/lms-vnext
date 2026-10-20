@@ -49,9 +49,9 @@ export default async function TpoDriveJoiningPage({
         title={tracker.job.title + " · Joining outcomes"}
         description="Record joining outcomes only for persisted accepted offers. All edits reuse the audited joining-history API."
       />
-      <section aria-label="Joining summary" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-5">
+      <section aria-label="Joining summary" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface sm:grid-cols-2 xl:grid-cols-5">
         {labels.map(([name, value]) => (
-          <div key={name} className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
+          <div key={name} className="min-w-0 border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
@@ -73,7 +73,7 @@ export default async function TpoDriveJoiningPage({
                   <p className="mt-1 text-sm text-body">{item.roleTitle}</p>
                   <Link
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}
-                    className="mt-1 inline-block text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                    className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                     Learner placement history →
                   </Link>
                 </div>
