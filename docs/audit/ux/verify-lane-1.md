@@ -246,3 +246,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** route is a one-line Next.js redirect to `/learn/courses`; checked imported `next/navigation`, role gate in nearest learner layout, route-level GracefulPageLoading and GracefulErrorBoundary with course recovery, and target course route exists. No broken tags, markup or accessible controls in a redirect-only route.
 - **Extra clutter/alignment fixes (0):** no visible content from this redirect; no source change.
 - **Files changed:** verification proof and queue only.
+
+## Surface 36 — Learner placements alias
+- **Surface:** `src/app/(authenticated)/learn/placements/page.tsx`.
+- **Originating proof:** no Surface 36 entry in `docs/audit/ux/polish-lane-11.md`.
+- **Regressions found/fixed (0):** read pure Next.js redirect `/learn/my-placements`, current learner access layout, alias loading/error fallback and target placement module gate. No markup, dropped text, broken imports, or missing props; the alias preserves the destination without duplicating dashboard UI.
+- **Extra clutter/alignment fixes (0):** redirect has no on-screen surface to polish.
+- **Files changed:** verification proof and queue only.
+
+## Surface 37 — Learner academic record
+- **Surface:** `src/app/(authenticated)/learn/profile/academic-record/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 37.
+- **Regressions found/fixed (0):** inspected membership-owned summary, optional enrollment handling, read-only definition list, PageHeader and Link props, route-specific GracefulPageLoading and GracefulErrorBoundary with Profile recovery, and learner layout; source preserves all labels/fallbacks, no JSX, import, aria, or type regressions found.
+- **Extra clutter/alignment fixes (0):** short hairline-border facts, 1/2-column mobile/tablet grid, readable overflow and limited source disclaimer fit legacy rhythm; no source change.
+- **Files changed:** proof and queue only.
