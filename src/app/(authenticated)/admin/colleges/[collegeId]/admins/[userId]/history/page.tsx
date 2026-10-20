@@ -18,7 +18,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  const {collegeId,userId}=await params;
  const raw=await searchParams;
  const page=parseAdminSessionHistoryPage(raw);
- if(page===null)return <div className="min-w-0 space-y-5">
+ if(page===null)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title="Administrator activity history" actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="College admins"/>}/>
   <ErrorState title="Invalid history page" description="Choose a valid page without repeated or unrelated filters."
    action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear history filters</Link>}/>
@@ -31,12 +31,8 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader title={data.target.name+" · History"}
    description="Recorded identity, college-admin lifecycle and platform actions concerning this administrator in this college. Cross-college and raw event metadata are excluded."
-   actions={<div className="flex flex-wrap items-center gap-2">
-    <PageBackLink href={base} label="College admins"/>
-    <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Export shown history (CSV)</a>
-   </div>}/>
-  <p role="status" className="text-sm text-body">
+   actions={<PageBackLink href={base} label="College admins"/>}/>
+  <p role="status" className="text-sm text-muted-foreground tabular-nums">
    Page {data.page} · {data.events.length} recorded event(s) shown{data.truncated?" · more available":""}.
   </p>
   <DataTable<(typeof data.events)[number]> caption="Administrator activity history" rows={data.events} getRowKey={row=>row.id}
@@ -46,7 +42,11 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
       {key:"event",header:"Event",mobilePriority:"primary",cell:row=><span className="break-all font-mono text-xs">{row.eventType}</span>},
       {key:"summary",header:"Summary",mobilePriority:"secondary",cell:row=><span className="break-words">{row.summary}</span>},
     ]}/>
-  <nav aria-label="Administrator activity pages" className="flex flex-wrap items-center gap-3 text-sm">
+  <div className="flex min-w-0 justify-start print:hidden">
+    <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Export shown history (CSV)</a>
+  </div>
+  <nav aria-label="Administrator activity pages" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
     {data.page>1?<Link href={"?page="+(data.page-1)}
      className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Previous 100</Link>:null}
     {data.truncated?<Link href={"?page="+(data.page+1)}

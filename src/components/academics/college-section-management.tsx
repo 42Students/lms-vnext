@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
+import {Disclosure} from "@/components/ui/disclosure";
 import {Select} from "@/components/ui/select";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
@@ -73,8 +74,8 @@ export function CollegeClassCreate({ cohorts, periods }: {
     });
   }
 
-  return <section aria-label="Create class" className="border-t border-border pt-4">
-    <h2 className="m-0 text-lg font-semibold text-foreground">Create class</h2>
+  return <Disclosure ariaLabel="Create class" title={<h2 className="m-0 text-lg font-semibold text-foreground">Create class</h2>}
+    className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
     {!cohorts.length || !periods.length
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
         {!cohorts.length
@@ -83,7 +84,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
             <Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
-      : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
+      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 w-full md:min-h-9">
@@ -123,14 +124,13 @@ export function CollegeClassCreate({ cohorts, periods }: {
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] md:col-span-2 lg:col-span-5 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
+        <label className="grid gap-[6px] md:col-span-2 xl:col-span-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <p className="text-xs text-muted-foreground md:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
-        <div className="md:col-span-2 lg:col-span-5">
-          <Button variant="primary" disabled={pending} type="submit"
-            >
+        <p className="text-xs text-muted-foreground md:col-span-2 xl:col-span-3">Moving a student into a full section is refused.</p>
+        <div className="md:col-span-2 xl:col-span-3">
+          <Button variant="primary" disabled={pending} type="submit" className="w-full md:w-auto">
             {pending ? "Creating…" : "Create class"}
           </Button>
         </div>
@@ -139,7 +139,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
     <p className="mt-2 text-xs text-muted-foreground">
       The server validates that the period belongs to the batch timeline and this college.
     </p>
-  </section>;
+  </Disclosure>;
 }
 
 export function CollegeClassRowActions({ row }: { row: ClassRow }) {
