@@ -74,7 +74,7 @@ export default async function CollegeGroupsPage({
   });
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-5">
       <PageHeader
         title="Student groups"
         description={`Study groups, project teams and elective groups in ${result.collegeName}.`}
@@ -85,7 +85,7 @@ export default async function CollegeGroupsPage({
         method="get"
         className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4"
       >
-        <label className="block min-w-[180px]">
+        <label className="block min-w-0 w-full md:w-auto md:min-w-44">
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Type
           </span>
@@ -98,8 +98,8 @@ export default async function CollegeGroupsPage({
             ))}
           </Select>
         </label>
-        <label className="block min-w-0 md:min-w-40">
-          <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <label className="block min-w-0 w-full md:w-auto md:min-w-40">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
           </span>
           <Select name="status" defaultValue={status ?? ""}>

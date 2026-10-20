@@ -31,18 +31,18 @@ export default async function CollegeClassesPage({
     listCollegeClasses(context, parsed.data),
     listCollegeSectionOptions(context),
   ]);
-  return <div className="min-w-0 overflow-x-clip space-y-6">
-    <div className="flex flex-wrap items-center gap-3">
+  return <div className="min-w-0 overflow-x-clip space-y-5">
+    <PageHeader title="Classes" actions={<div className="flex flex-wrap items-center gap-3">
       <a href={classesExportHref(classes.query)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         Export CSV
       </a>
-      <span className="text-xs text-muted-foreground">Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.</span>
-    </div>
-    <Link href="/college/classes/recurring-preview"
-      className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-      Preview recurring class schedule
-    </Link>
+      <Link href="/college/classes/recurring-preview"
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        Preview recurring class schedule
+      </Link>
+    </div>}/>
+    <p className="text-xs text-muted-foreground">Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.</p>
     <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
     <CollegeStructureDirectory data={classes} />
   </div>;
