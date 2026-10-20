@@ -77,7 +77,7 @@ export default async function MentorReportsPage({searchParams}:{
         </p>
       </section>
       <form method="get" action="/mentor/reports"
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
