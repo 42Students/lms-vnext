@@ -60,12 +60,14 @@ function SubmissionGradeCard({
   submission,
   maxPoints,
   onUpdated,
+  onRefresh,
   filesEnabled,
 }: {
   submission: Submission;
   maxPoints: number;
   filesEnabled: boolean;
   onUpdated: (submission: Submission) => void;
+  onRefresh: () => void;
 }) {
   const content = facultySubmissionContentView({
     id:submission.id,submissionType:submission.submissionType,
@@ -436,7 +438,7 @@ function SubmissionGradeCard({
       </form>
 
       {error ? (
-        <div className="space-y-2"><Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert><Button type="button" variant="secondary" onClick={()=>void load()} className="min-h-11 md:min-h-9">Refresh</Button></div>
+        <div className="space-y-2"><Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert><Button type="button" variant="secondary" onClick={onRefresh} className="min-h-11 md:min-h-9">Refresh</Button></div>
       ) : null}
       {needsRefresh?<Button variant="secondary" type="button" onClick={()=>onUpdated(submission)}
        className="mt-[var(--lms-space-2)] min-h-11 md:min-h-[var(--lms-control-height)]">
@@ -631,6 +633,7 @@ export function FacultyAssignmentReview({
                 submission={submission}
                 maxPoints={maxPoints}
                 filesEnabled={filesEnabled}
+                onRefresh={() => { void load(); }}
                 onUpdated={() => {
                   // Re-query filters/counts so a newly graded row leaves Needs grading.
                   void load();router.refresh();
