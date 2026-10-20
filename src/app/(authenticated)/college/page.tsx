@@ -210,7 +210,7 @@ export default async function CollegeOverviewPage() {
       {unstaffed?<>
       <section aria-label="Courses with no teacher" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold text-foreground">Courses with no teacher</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Courses with no teacher</h2>
           <Link href="/college/faculty-assignment" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">
             Manage faculty
           </Link>
@@ -236,7 +236,7 @@ export default async function CollegeOverviewPage() {
       {pendingGrades?<>
       <section aria-label="Waiting to be graded" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold text-foreground">Waiting to be graded</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Waiting to be graded</h2>
           <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">
             Review assignments
           </Link>

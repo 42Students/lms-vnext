@@ -100,7 +100,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search college notices
           <Input type="search" name="q" maxLength={100} defaultValue={queryText}
-            placeholder="Title or message" className="min-h-11 min-w-0" />
+            placeholder="Title or message" className="min-h-11 min-w-0 md:min-h-9" />
         </label>
         <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Search</Button>
         {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
@@ -114,7 +114,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {recentOnly?<Input type="hidden" name="recent" value="1"/>:null}
         {queryText?<Input type="hidden" name="q" value={queryText}/>:null}
         <label className="flex flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort college notices
-          <Select name="sort" defaultValue={sortKey} className="min-h-11">
+          <Select name="sort" defaultValue={sortKey} className="min-h-11 md:min-h-9">
             <option value="pinned">Pinned then newest</option>
             <option value="latest">Newest first</option>
             <option value="oldest">Oldest first</option>

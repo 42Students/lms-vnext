@@ -155,9 +155,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <Input type="hidden" name="collegeId" value={selectedCollege} />
       <Input type="hidden" name="view" value={query.data.view} />
       <Input type="hidden" name="page" value="1" />
-      <label className="grid min-w-[180px] flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search role
-        <Input name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="min-h-11 w-full md:min-h-9" /></label>
-      <label className="grid min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
+      <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-[180px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search role
+        <Input type="search" name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="min-h-11 w-full md:min-h-9" /></label>
+      <label className="grid min-w-0 w-full md:w-auto md:min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
         <Select name="employment" defaultValue={query.data.employment} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
         </Select></label>
