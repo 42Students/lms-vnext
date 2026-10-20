@@ -30,7 +30,7 @@ export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boole
  }
  return <form onSubmit={event=>void confirm(event)} className="mt-4 space-y-3">
   {error?<div ref={errorRef} tabIndex={-1} role="alert" className="outline-none"><InlineNotice tone="error" message={error}/></div>:null}
-  <Button type="submit" loading={pending} className="w-full sm:w-auto">
+  <Button type="submit" loading={pending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
    {pending?"Saving…":cell?"Unsubscribe":"Confirm unsubscribe"}
   </Button>
  </form>;
