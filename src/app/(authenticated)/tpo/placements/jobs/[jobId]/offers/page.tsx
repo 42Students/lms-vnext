@@ -53,7 +53,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     items={tabs.map(([value,label,count])=>({
       value,label,count,href:root+"/offers?status="+value+searchSuffix,
     }))}/>
-  <form method="get" action={root+"/offers"} className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+  <form method="get" action={root+"/offers"} className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
    <input type="hidden" name="status" value={data.status}/>
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Joining outcome
     <Select name="joining" defaultValue={parsed.data.joining} >
@@ -89,13 +89,13 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    </label>
    <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">Search learner, email, roll, batch, branch or role
     <Input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="w-full min-w-0"/>
-   </label><Button type="submit" >Search</Button>
-   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>:null}
+   </label><Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
+   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Clear filters</Link>:null}
   </form>
   <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<EmptyState title="No offers match this filter."/>:
-   <section aria-label="Recorded offers" className="grid gap-3">{data.rows.map(row=><article key={row.id} className="border-b border-border py-4">
-    <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><StatusBadge tone={row.status==="ACCEPTED"?"success":row.status==="DECLINED"||row.status==="WITHDRAWN"?"error":row.status==="EXPIRED"?"warning":"info"}>{row.status}</StatusBadge></div>
+   <section aria-label="Recorded offers" className="grid min-w-0 gap-3">{data.rows.map(row=><article key={row.id} className="border-b border-border py-4">
+    <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><strong className="text-sm">{row.status}</strong></div>
     <p className="mt-2 text-xs text-body">Fixed: {row.fixedLpa===null?"Not recorded":row.fixedLpa+" LPA"} · Variable: {row.variableLpa===null?"Not recorded":row.variableLpa+" LPA"} · Joining bonus: {row.joiningBonusLpa===null?"Not recorded":row.joiningBonusLpa+" LPA"} · Bond: {row.bondMonths===null?"Not recorded":row.bondMonths+" months"}</p>
     {row.acceptanceChannel?<p className="mt-1 text-xs text-body">
       Acceptance evidence: {row.acceptanceChannel}

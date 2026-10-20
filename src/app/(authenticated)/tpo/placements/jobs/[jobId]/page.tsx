@@ -41,10 +41,10 @@ export default async function TpoPlacementDrivePage({
     redirect(tpoDriveTabHref(jobId,tab));
   }
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <nav aria-label="Drive quick links" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
+    <div className="min-w-0 space-y-4">
+      <nav aria-label="Drive shortcuts" className="flex flex-wrap items-center gap-3">
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
-        className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-radius-control)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Discuss →</Link>
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Discuss →</Link>
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/interview-slots"}
         className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-radius-control)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Employer interview slot proposals →
