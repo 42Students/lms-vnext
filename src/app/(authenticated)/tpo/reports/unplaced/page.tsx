@@ -3,6 +3,7 @@ import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -108,8 +109,8 @@ export default async function TpoUnplacedReportPage({
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
         className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Act on them on Students</Link>
       </form>
-      {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
-      {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-link underline lms-inline-link">Clear filters</Link></p>:null}
+      {!permittedBatch?<Alert tone="error">The selected batch does not belong to this college.</Alert>:null}
+      {!permittedBranch?<Alert tone="error">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-link underline lms-inline-link">Clear filters</Link></Alert>:null}
       <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
       <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/unplaced" />
