@@ -9,6 +9,7 @@ import {
   type TrackerWorkflowIssue,
 } from "@/components/tracker/tracker-workflow-panel";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
@@ -50,7 +51,7 @@ export default async function TrackerIssueDetailPage({
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4">
         <PageHeader title={publicId} description="The tracker is temporarily unavailable." />
         <TrackerAdminNav />
         <ErrorState title="Issue details unavailable"
@@ -84,19 +85,17 @@ export default async function TrackerIssueDetailPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       <PageHeader
         title={issue.publicId}
         description={`${issue.issueType} · ${issue.page}`}
         actions={
-          <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-foreground">
-            Back to issues
-          </Link>
+          <PageBackLink href="/tracker/issues" label="Back to issues"/>
         }
       />
       <TrackerAdminNav />
 
-      <section className="space-y-4 border-b border-border pb-5">
+      <section className="min-w-0 space-y-4 border-b border-border pb-4">
         <div className="flex flex-wrap gap-2">
           <StatusBadge tone={issue.status==="CLOSED"?"success":issue.status==="NEW"?"warning":"info"}>{issue.status}</StatusBadge>
           <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":issue.severity==="MAJOR"?"warning":"neutral"}>{issue.severity}</StatusBadge>

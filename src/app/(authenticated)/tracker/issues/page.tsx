@@ -37,7 +37,7 @@ export default async function TrackerIssuesPage({
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4">
         <PageHeader
           title="Issues"
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
@@ -53,7 +53,7 @@ export default async function TrackerIssuesPage({
 
   if (!parsed) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4">
         <PageHeader title="Issues" description="Review and triage reported LMS issues." />
         <TrackerAdminNav />
         <ErrorState title="Invalid issue filter." description="Review and triage reported LMS issues."
@@ -79,7 +79,7 @@ export default async function TrackerIssuesPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       <PageHeader
         title="Issues"
         description="Private Super Admin triage. Engineering notes and attachment metadata are never exposed through a public list."
@@ -94,7 +94,7 @@ export default async function TrackerIssuesPage({
         sort:current.sort,
       }).toString()} />
 
-      <form className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-5">
+      <form className="grid min-w-0 gap-2 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-5">
         <label className="text-xs font-semibold text-body">
           Search
           <Input name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
