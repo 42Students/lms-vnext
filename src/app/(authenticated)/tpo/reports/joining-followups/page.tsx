@@ -67,7 +67,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
     description="No accepted offers remain in the selected open state."/>:
     <section className="grid gap-3" aria-label="Pending and deferred joining offers">
      {report.rows.map(o=><article key={o.offerId} className="min-w-0 border-b border-border px-1 py-4">
-       <h2 className="font-semibold text-foreground">{o.companyName} · {o.roleTitle}</h2>
+       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{o.companyName} · {o.roleTitle}</h2>
        <p className="mt-1 text-sm text-body">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
        <p className="mt-1 text-sm text-body">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>
        <Link href={"/tpo/placements/jobs/"+o.jobId+"/joining"}

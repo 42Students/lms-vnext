@@ -67,7 +67,7 @@ export default async function TpoDriveJoiningPage({
               className="border-b border-border pb-6">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h2 className="font-semibold text-foreground">{item.displayName}</h2>
+                  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{item.displayName}</h2>
                   <p className="mt-1 text-sm text-body">{item.roleTitle}</p>
                   <Link
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}

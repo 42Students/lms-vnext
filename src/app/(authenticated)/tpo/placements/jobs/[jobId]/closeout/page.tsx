@@ -53,7 +53,7 @@ export default async function TpoDriveCloseoutPage({
       No applications are persisted for this drive. Other zero counts reflect that
       source, not an assumption about off-platform recruiting.
     </Alert> : null}
-    <p className="text-sm leading-6 text-body">
+    <p className="text-sm text-body leading-[1.6]">
       Selected is unavailable because no canonical final-selection event is
       stored independently of round PASS and offer issuance. Accepted means
       a currently ACCEPTED offer; joined requires an explicit JOINED outcome.

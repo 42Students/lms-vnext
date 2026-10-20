@@ -68,7 +68,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
             <article key={row.offerId} className="min-w-0 border-b border-border px-1 py-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <h2 className="font-semibold text-foreground">
+                  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
                     {row.companyName} · {row.roleTitle}
                   </h2>
                   <p className="mt-1 text-sm text-body">

@@ -47,10 +47,10 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
   {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found."/>:
    <section aria-label="Interview rounds" className="divide-y divide-border border-y border-border">
    {data.rows.map(r=><article key={r.id} className="py-4">
-    <h2 className="font-semibold text-foreground">{r.companyName} · {r.jobTitle}</h2>
+    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{r.companyName} · {r.jobTitle}</h2>
     <p className="mt-1 text-sm text-body">{r.name} · {r.state.replaceAll("_"," ")} · {r.mode??"Mode not recorded"}</p>
     <p className="mt-1 text-sm text-body">{r.scheduledAt?new Date(r.scheduledAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Start not scheduled"} IST · {r.venue??"Venue not recorded"}</p>
-    <p className="mt-1 text-xs text-body">Duration: {r.durationMinutes??"Not recorded"} minutes</p>
+    <p className="mt-1 text-xs text-[var(--lms-muted-text)]">Duration: {r.durationMinutes??"Not recorded"} minutes</p>
     <Link href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-link hover:underline lms-inline-link">
       View round and candidate readiness →
     </Link>
@@ -58,6 +58,6 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
       <TpoInterviewRescheduleForm round={{id:r.id,updatedAt:r.updatedAt,
        scheduledAt:r.scheduledAt,mode:r.mode,venue:r.venue,meetingUrl:r.meetingUrl??null}}/>:null}
    </article>)}</section>}
-  <p className="text-xs text-body">No interviewer identities, per-candidate slots or calendar invitations are invented from the round schedule.</p>
+  <p className="text-xs text-[var(--lms-muted-text)]">No interviewer identities, per-candidate slots or calendar invitations are invented from the round schedule.</p>
  </div>;
 }

@@ -31,7 +31,7 @@ export default async function DriveDayForOneDrive({
           const done = round.status === "COMPLETED" || round.status === "CANCELLED";
           return <article key={round.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-semibold text-foreground">{round.name}</h2>
+              <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{round.name}</h2>
               <Badge  tone="neutral">
                 {done ? "Done" : round.status}
               </Badge>
