@@ -26,7 +26,7 @@ export default function HomeMarketingPage() {
     {title:"Career readiness",description:"Take learners from preparation through hiring."}
   ]}/>
   <section className="min-w-0 space-y-4"><h2 className="text-2xl font-semibold">One continuous journey</h2>
-   <ol className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">{["Learn","Build","Demonstrate","Get hired"].map((step,i)=><li className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5" key={step}><span className="text-sm text-primary-text">0{i+1}</span><p className="mt-2 font-semibold">{step}</p></li>)}</ol>
+   <ol className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">{["Learn","Build","Demonstrate","Get hired"].map((step,i)=><li className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:p-6" key={step}><span className="text-sm text-primary-text">0{i+1}</span><p className="mt-2 font-semibold">{step}</p></li>)}</ol>
   </section>
   <MarketingCta title="See how 42 LMS connects the talent journey" />
  </MarketingLayout>;
