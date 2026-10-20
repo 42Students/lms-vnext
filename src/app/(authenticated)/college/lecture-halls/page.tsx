@@ -52,7 +52,7 @@ export default async function CollegeLectureHallsPage({
   const query = parseCollegeLectureHallSearchParams(await searchParams);
   if (!query) {
     return (
-      <div className="min-w-0 overflow-x-clip space-y-6">
+      <div className="min-w-0 space-y-4">
         <PageHeader title="Lecture Halls" />
         <ErrorState
           title="Invalid lecture hall filters"
@@ -91,19 +91,17 @@ export default async function CollegeLectureHallsPage({
   const shownEnd = offset + result.items.length;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       <PageHeader
         title="Lecture Halls"
         description={"Manage registered teaching rooms at " + result.collegeName +
           ". Find rooms by name, room type, department or archive status."}
+        actions={<Link prefetch={false} download href={lectureHallsCsvHref(query)}
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</Link>}
       />
 
-      <Link prefetch={false} download href={lectureHallsCsvHref(query)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-        Export CSV
-      </Link>
-      <section aria-label="Lecture hall filters" className="border-t border-border pt-4">
-        <form action="/college/lecture-halls" method="get" className="grid min-w-0 md:grid-cols-2 xl:grid-cols-5 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:grid-cols-1">
+      <section aria-label="Lecture hall filters" className="min-w-0 border-t border-border pt-3">
+        <form action="/college/lecture-halls" method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Room name
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
@@ -137,6 +135,9 @@ export default async function CollegeLectureHallsPage({
                 <option key={dept.id} value={dept.id}>{dept.name}</option>)}
             </Select>
           </label>
+          <details className="min-w-0 border-t border-border pt-2 md:col-span-2 min-[992px]:col-span-4">
+            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filters</summary>
+            <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-3">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Minimum seats
             <Input name="minimumCapacity" type="number" min={1} max={5000} step={1}
@@ -158,20 +159,22 @@ export default async function CollegeLectureHallsPage({
               defaultValue={query.maximumCapacity ?? ""} placeholder="Any capacity"
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <div className="flex min-w-0 flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
+            </div>
+          </details>
+          <div className="flex min-w-0 flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch md:col-span-2 min-[992px]:col-span-4">
             <Button variant="primary" type="submit"
               className="min-h-11 w-full px-4 md:min-h-9 md:w-auto">
               Filter
             </Button>
             <Link href="/college/lecture-halls"
-              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Clear
             </Link>
           </div>
         </form>
       </section>
 
-      <section aria-label="Lecture hall results" className="space-y-4">
+      <section aria-label="Lecture hall results" className="min-w-0 space-y-3">
         <p className="text-sm text-muted-foreground">
           {total} matching {total === 1 ? "hall" : "halls"}
           {result.items.length ? " · Showing " + shownStart + "–" + shownEnd : ""}
@@ -194,7 +197,7 @@ export default async function CollegeLectureHallsPage({
         />
       </section>
 
-      <nav aria-label="Lecture hall pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+      <nav aria-label="Lecture hall pages" className="flex min-w-0 flex-col items-stretch gap-3 text-sm md:flex-row md:items-center md:justify-between">
         <span className="text-muted-foreground">
           Page {query.page} of {totalPages} · {COLLEGE_LECTURE_HALL_PAGE_SIZE} per page
         </span>
