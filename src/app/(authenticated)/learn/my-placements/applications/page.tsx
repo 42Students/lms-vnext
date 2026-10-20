@@ -63,7 +63,7 @@ export default async function LearnerPlacementApplicationsPage() {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader title="Applications" actions={(
-        <Link href="/learn/my-placements/offers" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+        <Link href="/learn/my-placements/offers" className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Review all official offers →
       </Link>
       )} />
@@ -71,7 +71,7 @@ export default async function LearnerPlacementApplicationsPage() {
       
       {!roundsRead.available ? <Alert tone="error">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
-        <Link href="/learn/my-placements/applications" className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry round shortcuts</Link>
+        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9">Retry round shortcuts</Link>
       </Alert> : null}
       <Suspense fallback={<PageLoading label="Loading application filters" variant="form" count={2} />}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}
