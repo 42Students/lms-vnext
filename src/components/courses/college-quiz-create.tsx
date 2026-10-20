@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ChoiceInput } from "@/components/ui/choice-input";
 import { DateInput } from "@/components/ui/date-input";
 import { Button } from "@/components/ui/button";
-import { Alert } from "@/components/ui/alert";
+import { Banner } from "@/components/ui/banner";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
@@ -206,7 +206,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     }} className="min-h-11 md:min-h-9">Cancel</Button>
    </div>
   </div>:null}
-  {error?<Alert tone="error">{error}</Alert>:null}
-  {notice?<Alert tone="success">{notice}</Alert>:null}
+  {error?<Banner tone="error">{error}</Banner>:null}
+  {notice?<Banner tone="success">{notice}</Banner>:null}
  </section>;
 }
