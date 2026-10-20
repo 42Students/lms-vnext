@@ -295,3 +295,11 @@
 **Problems fixed (9):** unstyled terminal status; inconsistent section/heading/label typography; date picker and action buttons cramped on phones; unchecked recipient-review label had a small tap area; invitation could submit a visibly past date; deadline clear dialog lacked explanatory copy; status/errors were plain unframed text; action groups had unpredictable wraps; primary action and secondary removal looked equally prominent. Used legacy typography/borders, full-width 44px mobile actions, touch-sized review label, consistent dismissible notices, and explicit destructive confirm while preserving invitation/reminder/clear wording, request payloads, optimistic version tokens and role gates.
 
 **Files:** `src/components/tpo/tpo-batch-invitation-control.tsx`, queue, proof. Source review only, no app runtime/screenshots/CI.
+
+## Surface 48 — TPO Company Memory workspace
+
+**Reviewed:** all load/error/not-found/migration-pending/retry states with abort guards; page header/back/create/trusted settings/team routes; people and invite statuses; private company conversation; five metrics, hiring-by-year chart and unknown counts; shared documents, spreadsheet drives search/export/open, and timeline. Also inspected shared loading, error, Dropdown/mobile sheet, PageHeader, MetricBar, and nested children at 375/768/1280 from source. No app execution or CI.
+
+**Problems fixed (10):** page lost title during load/error, retry lacked a coherent action hierarchy, detached back link, competing duplicate create actions, clipping mobile New menu, ragged last KPI in 2/3-column layouts, broken separators, overly wide chart cells on phone, long aliases/contacts/timeline wrapping poorly, and empty people/drives lacking recovery. Introduced contextual skeleton/retry, grouped header actions retaining destinations, a continuous 2/3/5 metric strip, tighter columns and empty CTAs. No changes to IDs, auth, data model, timestamps, or drive/team behavior.
+
+**Files:** `src/components/tpo/tpo-company-memory-workspace.tsx`, queue, proof. Team conversation and drive spreadsheet children source-reviewed, unchanged. No tests/CI.
