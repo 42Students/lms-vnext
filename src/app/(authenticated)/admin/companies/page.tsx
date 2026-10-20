@@ -54,7 +54,7 @@ export default async function SuperAdminCompaniesPage({
     </Alert>:null}
     {data.query.companyId ? <Alert tone="info">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
-      <Link href="/admin/companies" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Show all employers</Link>
+      <Link href="/admin/companies" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Show all employers</Link>
     </Alert> : null}
     <div className="flex flex-wrap gap-3 text-sm">
       <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show deleted (archived) companies →</Link>
@@ -197,7 +197,7 @@ export default async function SuperAdminCompaniesPage({
           ? <SuperAdminCompanyEdit company={{id:row.companyId,name:row.name,
               website:row.website,industry:row.industry??null,about:row.about??null,
               logoPublicUrl:row.logoPublicUrl??null,updatedAt:row.updatedAt!.toISOString()}} />:null}
-        <dl className="mt-2 grid grid-cols-2 gap-2 text-xs text-body">
+        <dl className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-body">
           <div><dt className="text-muted-foreground">Domain</dt><dd>{row.primaryDomain??"Not provided"}</dd></div>
           <div><dt className="text-muted-foreground">Linked colleges</dt><dd className="tabular-nums">{row.companyCollegeCount??0}</dd></div>
           <div><dt className="text-muted-foreground">Drives in this college</dt><dd className="tabular-nums">{row.driveCount??0}</dd></div>

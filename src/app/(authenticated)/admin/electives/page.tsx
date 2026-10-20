@@ -80,7 +80,7 @@ export default async function SuperAdminElectivesPage({
             <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge>
           </div>
           <p className="mt-1 text-sm text-body">{item.programName} · Semester {item.semesterNumber}</p>
-          <dl className="mt-3 grid grid-cols-2 gap-3 text-sm text-body">
+          <dl className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-body">
             <div><dt className="text-xs text-muted-foreground">Academic year</dt><dd>{item.academicYear ?? "Not linked"}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Credits</dt><dd>{item.credits}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Minimum picks</dt><dd>{item.minPick}</dd></div>

@@ -92,7 +92,7 @@ export default async function CollegeReadinessPage({
       actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
     <ErrorState title="Invalid readiness filter"
       description="Choose a supported check status."
-      action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"} className="hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Clear</Link>}/>
+      action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"} className="inline-flex items-center min-h-11 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Clear</Link>}/>
   </div>;
 
 

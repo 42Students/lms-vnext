@@ -41,7 +41,7 @@ export default async function SuperAdminTenantSetup({
   <ErrorState title="Invalid tenant setup step"
    description="Select a valid Tenant structure or Launch setup step."
    action={<Link href="/admin/tenants/setup"
-    className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Clear filters</Link>}/>
  </div>;
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
@@ -69,7 +69,7 @@ export default async function SuperAdminTenantSetup({
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
-    action={<Link href={tabLink(tab)} className="font-semibold text-primary-text">Retry tenant setup</Link>}/>
+    action={<Link href={tabLink(tab)} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text">Retry tenant setup</Link>}/>
   </div>;
  }
  // No creation controls are shown before the complete authorized read.
@@ -130,7 +130,7 @@ export default async function SuperAdminTenantSetup({
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {list?.items.map(item=><li key={item.id} className="border-b border-border py-2">
-       <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="font-semibold text-primary-text underline">{item.name}</Link>
+       <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">{item.name}</Link>
        {" · "}{item.code} · {item.status}
       </li>)}
      </ul>
