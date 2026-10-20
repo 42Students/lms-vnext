@@ -43,7 +43,6 @@ export function PersonOnboardDialog({
   const [lastName,setLastName]=useState("");
   const [phoneE164, setPhoneE164] = useState("");
   const [email, setEmail] = useState("");
-  const [registerAsMentor,setRegisterAsMentor]=useState(false);
   const [roles, setRoles] = useState<MembershipRole[]>(
     onboardingRoleSelection(forcedRole),
   );
@@ -52,16 +51,13 @@ export function PersonOnboardDialog({
   function reset() {
     setDisplayName("");setFirstName("");setLastName("");
     setPhoneE164("");
-    setEmail("");setRegisterAsMentor(false);
+    setEmail("");
     setRoles(onboardingRoleSelection(forcedRole));
   }
 
+  /** One account type, one purpose: choosing a role replaces the previous choice. */
   function toggleRole(role: MembershipRole) {
-    setRoles((current) =>
-      current.includes(role)
-        ? current.filter((item) => item !== role)
-        : [...current, role],
-    );
+    setRoles([role]);
   }
 
   function submit() {
@@ -75,7 +71,7 @@ export function PersonOnboardDialog({
           displayName:forcedRole?legacyPersonName(firstName,lastName):displayName,
           phoneE164:forcedRole?indianMobileToE164(phoneE164):phoneE164,
           ...(email.trim() ? { email } : {}),
-          roles:forcedRole==="FACULTY"&&registerAsMentor?["FACULTY","MENTOR"]:onboardingRoleSelection(forcedRole,roles),
+          roles:onboardingRoleSelection(forcedRole,roles),
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -204,15 +200,6 @@ export function PersonOnboardDialog({
               placeholder="name@example.com"
             />
           </div>
-          {forcedRole==="FACULTY" ? <fieldset className="md:col-span-2 space-y-2 border-b border-border py-3">
-            <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty Type</legend>
-            <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body md:min-h-9">
-              <Checkbox checked={registerAsMentor} disabled={pending}
-                onChange={event=>setRegisterAsMentor(event.target.checked)}/>
-              Mentor
-            </label>
-            <p className="text-xs text-muted-foreground">A mentor receives the Mentor membership role in addition to Faculty.</p>
-          </fieldset> : null}
           {forcedRole && forcedRole!=="FACULTY" ? <p className="md:col-span-2 text-sm text-body">
             Membership role: <strong>{roleLabel(forcedRole)}</strong>.
           </p> : !forcedRole ? <fieldset className="md:col-span-2">
@@ -238,7 +225,7 @@ export function PersonOnboardDialog({
             </div>
             {roles.length === 0 ? (
               <p className="mt-2 text-xs font-semibold text-error">
-                Select at least one membership role.
+                Select a membership role.
               </p>
             ) : null}
           </fieldset> : null}
