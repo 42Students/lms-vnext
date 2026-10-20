@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
+import {LoadingState} from "@/components/ui/loading-state";
 import {Checkbox} from "@/components/ui/checkbox";
 import {useToast} from "@/components/ui/toast";
 
@@ -102,7 +103,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
       <span>{option.displayName??option.email??"Learner"}</span>
      </label>)}
      {!options.length?<p className="text-sm text-muted-foreground">No eligible learners available.</p>:null}
-    </fieldset>:<p role="status" className="text-sm">Loading eligible learners…</p>}
+    </fieldset>:<LoadingState label="Loading eligible learners…"/>}
     <label className="grid gap-1 text-sm font-semibold">Role label (optional)
      <Input value={roleLabel} onChange={event=>setRoleLabel(event.target.value)} maxLength={120}/>
     </label>

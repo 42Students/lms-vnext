@@ -46,13 +46,13 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/projects/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/submissions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx` — source-level clone edit re-read; awaiting computed/responsive/runtime proof
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/sprints/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx` — source-level clone edit re-read; awaiting computed/responsive/runtime proof
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
@@ -98,7 +98,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/components/projects/project-admin-missing-college.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/components/projects/project-admin-nav.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-readiness-page.tsx` — source-level patch applied; Missing full statuses and keyboard/phone proof (still unticked)
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx` — source-level clone edit re-read; awaiting computed/responsive/runtime proof
 - [ ] `src/components/projects/project-admin-submission-review.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-submissions-page.tsx` — source-level patch applied; Missing complete unsubmitted table scan (still unticked)
 - [ ] `src/components/projects/project-admin-workspace-list.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
@@ -324,3 +324,18 @@ No Work queue item checked: no compiler, CI, local app, screenshots, or actual p
 
 ### Next exact file
 - [ ] `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx` — inspect wrapper and shared admin section rendering, then remaining `/admin/projects*` and `/college/projects*` routes. Do not alter shared ProjectWorkspace (owned outside this lane).
+
+
+### Further scoped corrections and direct source re-reads
+
+| File and source lines | Legacy source / vNext source facts | Strict proof still needed |
+| --- | --- | --- |
+| `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx:42-46,60-97` | Legacy: one hairline-bordered table with lifecycle pills (`old-lms-pages.md:10`); vNext `DataTable` (`data-table.tsx:95-110`) plus status badges | Computed 640/767 breakpoint mismatch and filter/action responsive screenshot |
+| `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx:45,57` | Legacy: slim information banner and true empty state (`old-lms-pages.md:10`); vNext `Banner tone=info`, `EmptyState` | Focus/scroll and 375/768px comparison; compare snapshots |
+| `src/app/(authenticated)/admin/placements/student-lookup/page.tsx:22-40,59-64` | Legacy: search, status pills, table and recoverable error (`old-lms-pages.md:6,10`); vNext `ErrorState`, `StatusBadge`, `DataTable` | Keyboard/partial-error, service error and mobile rows |
+| `src/components/projects/project-admin-reassign-mentor-page.tsx:93` | Legacy: small warning status pill (`old-lms-pages.md:10`); vNext shared `StatusBadge tone=warning` | Source-only; workload row rendering and tablet columns |
+| `src/components/projects/college-project-student-roster-dialog.tsx:106` | Legacy: shared loading state (`ui-clone-checklist.md:F4`); vNext `LoadingState` skeleton (`loading-state.tsx:4-6`) | Load/error transition and dialog 375px focus/scroll |
+
+All five complete remote file contents were re-read from the pushed branch and scanned with the same scoped control/hex/overlay patterns listed above; raw `button/select/textarea`, raw `role=tab`, visible utility hexes and custom fixed overlays are **zero** in these five. These source scans do **not** replace an actual repository-wide grep or a live responsive comparison. `DataTable` still switches at `sm=640px`, whereas the old shell's mobile threshold is 767px; shared owner must reconcile. No strict checkbox ticked.
+
+**Next source:** `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` (thin shared-subview wrapper; document absence of hand-rolled controls), then remaining last-third placement detail routes. At least one complete project template directory and tenant directory source conversion now exists, but pixel-level verification is outstanding.
