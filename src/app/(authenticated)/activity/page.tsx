@@ -213,7 +213,7 @@ export default async function ActivityPage({
           <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
           <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
             (exportParams.size ? "?" + exportParams.toString() : "")}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] md:min-h-9">
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Export
           </a>
           {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
@@ -233,7 +233,7 @@ export default async function ActivityPage({
       </p>:null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="space-y-2">
        <div className="flex flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{link.name}</Link>)}</div>
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{link.name}</Link>)}</div>
        <p className="text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important activity shows high-priority events.</p>
        <div className="flex flex-wrap gap-2">{[
         {label:"Today",href:quick(today,today)},
@@ -241,12 +241,12 @@ export default async function ActivityPage({
         {label:"30 days",href:quick(ago(29),today)},
         {label:"All time",href:quick()},
        ].map(link=><Link key={link.label} href={link.href}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{link.label}</Link>)}</div>
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{link.label}</Link>)}</div>
       </nav>:null}
       <form className="grid min-w-0 grid-cols-1 gap-4 border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
           <label>
-            <span className="mb-1 block text-xs font-semibold text-body">College</span>
+            <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College</span>
             <Select name="collegeId" defaultValue={one(params.collegeId) ?? ""} className={inputClass}>
               <option value="">Current admin safety scope</option>
               {collegeOptions.map(college => <option key={college.id} value={college.id}>
@@ -256,7 +256,7 @@ export default async function ActivityPage({
           </label>
         ) : null}
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Module
           </span>
           <Select
@@ -282,7 +282,7 @@ export default async function ActivityPage({
           </Select>
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Importance
           </span>
           <Select
@@ -308,7 +308,7 @@ export default async function ActivityPage({
           </Select>
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
           </span>
           <Input
@@ -319,7 +319,7 @@ export default async function ActivityPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
           </span>
           <Input
@@ -330,7 +330,7 @@ export default async function ActivityPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Event type
           </span>
           <Input
@@ -343,7 +343,7 @@ export default async function ActivityPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Subject type
           </span>
           <Input
@@ -356,20 +356,20 @@ export default async function ActivityPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">Subject / entity ID</span>
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Subject / entity ID</span>
           <Input className={inputClass} name="subjectId" maxLength={500}
             defaultValue={one(params.subjectId)} placeholder="Exact entity ID" />
         </label>
         {isSuperAdmin(context) ? <>
-          <label><span className="mb-1 block text-xs font-semibold text-body">Actor name</span>
+          <label><span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor name</span>
             <Input type="search" className={inputClass} name="actorName" maxLength={100}
               defaultValue={one(params.actorName)} placeholder="Name contains…" /></label>
-          <label><span className="mb-1 block text-xs font-semibold text-body">Event / entity search</span>
+          <label><span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event / entity search</span>
             <Input type="search" className={inputClass} name="q" maxLength={100}
               defaultValue={one(params.q)} placeholder="Summary, event or entity contains…" /></label>
         </> : null}
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Actor user ID
           </span>
           <Input
@@ -385,7 +385,7 @@ export default async function ActivityPage({
           <Button type="submit">Apply filters</Button>
           <Link
             href="/activity"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Reset
           </Link>

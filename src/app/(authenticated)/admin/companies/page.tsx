@@ -27,7 +27,7 @@ export default async function SuperAdminCompaniesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
-      action={<Link href="/admin/companies" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   const [data, availableColleges] = await Promise.all([
@@ -42,16 +42,16 @@ export default async function SuperAdminCompaniesPage({
     <nav aria-label="Company directory tabs" className="flex flex-wrap gap-3">
       <Link href="/admin/companies?view=GLOBAL"
        aria-current={view==="GLOBAL"?"page":undefined}
-       className="inline-flex min-h-11 items-center border-b-2 border-transparent px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+       className="inline-flex min-h-11 items-center border-b-2 border-transparent aria-[current=page]:border-primary px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
        42&apos;s company list
       </Link>
       {context.adminScope?.collegeId?<Link href="/admin/companies?view=COLLEGE"
        aria-current={view==="COLLEGE"?"page":undefined}
-       className="inline-flex min-h-11 items-center border-b-2 border-transparent px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+       className="inline-flex min-h-11 items-center border-b-2 border-transparent aria-[current=page]:border-primary px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
        This college&apos;s companies
       </Link>:null}
     </nav>
-    {view==="GLOBAL"&&context.adminScope?.collegeId?<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-surface p-3 text-sm text-warning">
+    {view==="GLOBAL"&&context.adminScope?.collegeId?<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-warning">
       A college is currently selected. The results below remain restricted to that college. Clear the college scope in the header to view 42&apos;s global company catalogue.
     </p>:null}
     {data.query.companyId ? <section role="status" className="border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm text-body">
@@ -59,8 +59,8 @@ export default async function SuperAdminCompaniesPage({
       <Link href="/admin/companies" className="font-semibold text-primary-text underline">Show all employers</Link>
     </section> : null}
     <div className="flex flex-wrap gap-3 text-sm">
-      <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle">Show deleted (archived) companies →</Link>
-      <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle">Active companies →</Link>
+      <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show deleted (archived) companies →</Link>
+      <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Active companies →</Link>
     </div>
     <form method="get" className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 min-[1366px]:grid-cols-3">
       <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
@@ -123,10 +123,10 @@ export default async function SuperAdminCompaniesPage({
           <option value="ALL">Any time</option><option value="7">Past 7 days</option><option value="30">Past 30 days</option><option value="90">Past 90 days</option>
         </Select>
       </label>
-      <Button type="submit" className="min-h-11 md:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary">Filter</Button>
+      <Button type="submit" className="min-h-11 md:min-h-9 self-end px-5">Filter</Button>
     </form>
     <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
-      className="inline-flex min-h-11 items-center border-b-2 border-transparent px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+      className="inline-flex min-h-11 items-center border-b-2 border-transparent aria-[current=page]:border-primary px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       Export matching companies as CSV →
     </Link>
     {context.adminScope?.collegeId?

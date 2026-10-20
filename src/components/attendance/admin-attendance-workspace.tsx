@@ -320,9 +320,9 @@ export function AdminAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
-      {notice?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
+      {notice?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body">{notice}</p>:null}
       <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
-      <section className="grid gap-3 sm:grid-cols-2">
+      <section className="grid gap-3 md:grid-cols-2">
         <div className="border-b border-border pb-4">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             Retroactive marking window
@@ -354,7 +354,7 @@ export function AdminAttendanceWorkspace({
         }}
         className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_auto]"
       >
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Class
           <Select className="mt-1.5" value={sectionId}
             onChange={(event) => {
@@ -369,7 +369,7 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Course
           <Select className="mt-1.5" value={courseId}
             disabled={!sectionId}
@@ -386,7 +386,7 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
-        {termDeliveries.length>1?<label className="text-xs font-semibold text-body">
+        {termDeliveries.length>1?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic term
           <Select className="mt-1.5" value={deliveryId||termDeliveries[0]?.deliveryId||""}
             onChange={event=>setDeliveryId(event.target.value)}>
@@ -475,7 +475,7 @@ export function AdminAttendanceWorkspace({
                   }{" "}
                   of {heldSessions.length} held sessions marked
                 </p>
-                <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3 lg:grid-cols-5">
+                <dl className="mt-3 grid gap-2 text-xs text-body md:grid-cols-3 lg:grid-cols-5">
                   <div><dt>Monthly attendance</dt><dd className="font-semibold">{monthPercent===null?"—":monthPercent+"%"}</dd></div>
                   <div><dt>Students</dt><dd className="font-semibold">{data.grid.roster.length}</dd></div>
                   <div><dt>Sessions held</dt><dd className="font-semibold">{heldSessions.length}</dd></div>

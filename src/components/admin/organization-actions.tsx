@@ -91,6 +91,7 @@ export function OrganizationActions({
     <>
       <div className="flex justify-end gap-2 print:hidden">
         <Button
+          type="button"
           variant="secondary"
           size="sm"
           onClick={() => {
@@ -101,6 +102,7 @@ export function OrganizationActions({
           Rename
         </Button>
         <Button
+          type="button"
           variant="ghost"
           size="sm"
           onClick={() => setArchiveOpen(true)}
@@ -138,7 +140,7 @@ export function OrganizationActions({
       >
         <label
           htmlFor={`organization-name-${organizationId}`}
-          className="mb-1.5 block text-[13px] font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           Organization name
         </label>

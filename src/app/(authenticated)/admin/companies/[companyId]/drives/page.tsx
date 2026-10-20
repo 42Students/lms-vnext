@@ -26,7 +26,7 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
         ["Total hired",data.totals.hired]] as const).map(([label,value])=>
         <div key={label} className="min-w-0 bg-surface px-3 py-4">
           <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums">{value}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{value}</p>
         </div>)}
     </section>
     <DataTable<(typeof data.items)[number]> caption="Company drive history"
@@ -34,12 +34,12 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
       empty={<EmptyState title="No drives recorded" description="This company has no placement drives in the selected college."/>}
       columns={[
         {key:"job",header:"Job",mobilePriority:"primary",cell:job=><strong>{job.title}</strong>},
-        {key:"status",header:"Status",mobilePriority:"secondary",cell:job=><StatusBadge>{job.status}</StatusBadge>},
+        {key:"status",header:"Status",mobilePriority:"secondary",cell:job=><StatusBadge tone={job.status==="ACTIVE"||job.status==="LIVE"?"success":"neutral"}>{job.status}</StatusBadge>},
         {key:"posted",header:"Posted",mobilePriority:"secondary",cell:job=>job.publishedAt?.toISOString().slice(0,10)??"—"},
         {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:job=>job.deadline?.toISOString().slice(0,10)??"—"},
         {key:"applicants",header:"Applicants",mobilePriority:"secondary",cell:job=>job.applicants},
         {key:"hired",header:"Hired",mobilePriority:"secondary",cell:job=>job.hired},
-        {key:"actions",header:"Actions",mobilePriority:"action",cell:job=><Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        {key:"actions",header:"Actions",mobilePriority:"action",cell:job=><Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
           href={`/admin/placements/jobs/${job.id}`}>Open drive →</Link>},
       ]}/>
     {data.truncated ? <p className="text-sm text-muted-foreground">
