@@ -9,24 +9,24 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-2-b with [chat-2] after every 2 surfaces.
 
-- [ ] `src/app/(authenticated)/teacher/allAssignments/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/allAssignments/page.tsx`
+- [x] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
