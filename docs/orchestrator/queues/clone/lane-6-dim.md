@@ -133,16 +133,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-6.md: file, number of i
 - [x] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
 - [x] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx`
 - [x] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/find/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/home/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/more/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/page.tsx`
+- [x] `src/app/(authenticated)/tpo/find/page.tsx`
+- [x] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/home/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx`
+- [x] `src/app/(authenticated)/tpo/more/page.tsx`
+- [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
