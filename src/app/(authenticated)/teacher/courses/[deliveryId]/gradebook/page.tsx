@@ -29,7 +29,7 @@ export default async function FacultyGradebookPage({
   const view=facultyGradebookViewQuerySchema.safeParse(
     knownKeys&&noRepeatedKeys?rawSearch:{invalid:true},
   );
-  if(!parsed.success||!view.success)return <section role="alert" className="space-y-3 p-6">
+  if(!parsed.success||!view.success)return <section role="alert" className="min-w-0 space-y-3">
     <PageHeader title={"Invalid gradebook link or filters"} />
     <Link href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
@@ -44,7 +44,7 @@ export default async function FacultyGradebookPage({
   } catch(error) {
     if(error instanceof CoursesServiceError &&
        error.code==="FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS") {
-      return <section role="alert" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+      return <section role="alert" className="min-w-0 space-y-3">
         <PageHeader title={"Gradebook report limit"} />
         <p className="text-sm text-body">
           This Section has more than 100 published assessments. Contact your college
@@ -96,7 +96,7 @@ export default async function FacultyGradebookPage({
       description="Try another name, roll number or email. Published grades were not inferred."/>
     :<div className="grid gap-3">
       {filtered.items.map(row=><article key={row.membershipId}
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        className="min-w-0 border-b border-border py-4 last:border-b-0">
         <h2 className="font-semibold text-foreground">
           {row.displayName||row.email||"Unnamed learner"}
         </h2>
@@ -125,7 +125,7 @@ export default async function FacultyGradebookPage({
       </article>)}
     </div>}
     {filtered.totalPages>1&&<nav aria-label="Gradebook pages"
-      className="flex items-center justify-between gap-3">
+      className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <span className="text-sm text-muted-foreground">
         Page {filtered.page} of {filtered.totalPages}
       </span>

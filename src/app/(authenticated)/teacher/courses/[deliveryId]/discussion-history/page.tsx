@@ -46,7 +46,7 @@ export default async function FacultyDiscussionHistoryPage({
     {data.items.length===0?<EmptyState title="No registered moderation history"
       description="No persisted moderation or Faculty reply events match this Section and filter. Records before event tracking are unavailable, not reconstructed."/>:
       <ol className="grid gap-3">{data.items.map(item=>
-        <li key={item.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <li key={item.id} className="min-w-0 border-b border-border py-4 last:border-b-0">
           <p className="font-semibold text-foreground">{item.action}</p>
           <p className="mt-2 text-xs text-muted-foreground">
             {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.occurredAt)} IST
@@ -55,7 +55,7 @@ export default async function FacultyDiscussionHistoryPage({
             {item.actorMembershipId?"Recorded member action":"System/unknown actor"}
           </p>
         </li>)}</ol>}
-    <nav aria-label="Discussion history pages" className="flex items-center justify-between gap-3">
+    <nav aria-label="Discussion history pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page>1&&<Link href={facultyDiscussionHistoryHref({...data.query,page:data.page-1})}
