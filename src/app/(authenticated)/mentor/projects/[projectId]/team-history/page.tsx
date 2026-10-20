@@ -43,11 +43,11 @@ export default async function MentorTeamHistoryPage({
   const context = await getCurrentRequestContext();
   const data = await getMentorTeamHistory(context, parsed.data);
   const back = "/mentor/projects/" + encodeURIComponent(projectId) + "?tab=team";
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Team membership history"
       description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
       actions={<Link data-unskin="" href={back}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Team workspace
       </Link>} />
     {!data.enabled
@@ -55,8 +55,9 @@ export default async function MentorTeamHistoryPage({
           Projects access is disabled. Team history cannot be displayed.
         </section>
       : <>
+        <Tabs ariaLabel="Team membership history views" renderPanel={false} value={data.query.view} items={([["ALL","All records"],["OPEN","Open membership records"],["ENDED","Ended membership records"]] as const).map(([view,label])=>({value:view,label,href:mentorTeamHistoryHref(projectId,{view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:1})}))}/>
         <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} role="search" aria-label="Team history filters"
-          className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+          className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto]">
           <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registered role
             <Select name="role" defaultValue={data.query.role}
@@ -78,33 +79,33 @@ export default async function MentorTeamHistoryPage({
               <option value="NEWEST">Most recent started first</option>
             </Select>
           </label>
-          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
+          <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
             Filter role
           </Button>
         </form></FilterBar>
-        <Tabs ariaLabel="Team membership history views" renderPanel={false} value={data.query.view} items={([["ALL","All records"],["OPEN","Open membership records"],["ENDED","Ended membership records"]] as const).map(([view,label])=>({value:view,label,href:mentorTeamHistoryHref(projectId,{view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:1})}))}/>
+
         <p className="text-sm text-body">{data.total} matching membership record{data.total === 1 ? "" : "s"}</p>
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
-              description="No registered membership rows match this project and filter. History from before migration may not be available." />
+              description="No registered membership rows match this project and filter. History from before migration may not be available." action={<Link href={back} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Team workspace</Link>} />
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
               <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{item.displayName}</h2>
+                  <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.displayName}</h2>
                   <StatusBadge tone={item.endedAt ? "neutral" : "success"}>{item.state}</StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body">
                   {item.roleLabel || item.role}
                   {item.isPrimary ? " · Primary mentor" : ""}
                 </p>
-                <dl className="mt-3 grid gap-2 text-sm md:grid-cols-2">
+                <dl className="mt-2 grid gap-2 text-sm md:grid-cols-2">
                   <div><dt className="text-muted-foreground">Joined</dt><dd>{formatDate(item.startedAt)} IST</dd></div>
                   <div><dt className="text-muted-foreground">Ended</dt>
                     <dd>{item.endedAt ? formatDate(item.endedAt) + " IST" : "No end date recorded"}</dd>
                   </div>
                 </dl>
               </article>)}</div>}
-        <Pagination label="Team history pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page})}/>
+        {data.totalPages>1?<Pagination label="Team history pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page})}/>:null}
       </>}
     <p className="text-xs text-muted-foreground leading-[1.6]">
       Open membership rows can contain deactivated accounts; those are labeled Inactive.
