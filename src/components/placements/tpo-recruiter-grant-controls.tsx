@@ -112,9 +112,9 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
       setError(caught instanceof Error ? caught.message : "Revoke failed.");
     } finally { setBusy(false); }
   }
-  return <div className="mt-2">
+  return <div className="mt-2 min-w-0 space-y-2">
     <Button type="button" variant="secondary" disabled={busy} onClick={() => setConfirmOpen(true)}
-      className="min-h-11 md:min-h-9 text-xs">
+      className="min-h-11 w-full text-xs sm:w-auto md:min-h-9">
       {busy ? "Revoking..." : "Revoke access"}
     </Button>
     {error ? <InlineNotice tone="error" message={error}/> : null}
@@ -122,7 +122,7 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
     <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
       title={"Remove "+displayName+"\'s access?"}
       description="They will no longer be able to use this college\'s recruiter workspace."
-      confirmLabel="Revoke access" pending={busy} onConfirm={()=>void revoke()}>
+      confirmLabel="Revoke access" confirmVariant="danger" pending={busy} onConfirm={()=>void revoke()}>
       {error?<InlineNotice tone="error" message={error}/>:null}
     </ConfirmDialog>
   </div>;
@@ -148,11 +148,11 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   }catch(caught){setError(caught instanceof Error?caught.message:"Access could not be extended.");}
   finally{setBusy(false);}
  }
- return <div className="mt-2 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-end">
-  <label className="text-xs">{ended?"Give access again":"Extend access"}
+ return <div className="mt-2 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+  <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">{ended?"Give access again":"Extend access"}
    <Select value={months} disabled={busy}
     onChange={e=>setMonths(Number(e.target.value) as 3|6|12)}
-    className="mt-1 min-h-11 w-full sm:ml-2 sm:mt-0 sm:w-auto md:min-h-9">
+    className="min-h-11 w-full md:min-h-9">
     <option value={3}>3 months</option><option value={6}>6 months</option><option value={12}>12 months</option>
    </Select>
   </label>
@@ -160,8 +160,8 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
    className="min-h-11 md:min-h-9 text-xs">
    {busy?"Saving…":ended?"Give access again":"Extend"}
   </Button>
-  {error?<InlineNotice tone="error" message={error}/>:null}
-  {notice?<InlineNotice tone="success" message={notice}/>:null}
+  {error?<div className="sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
+  {notice?<div className="sm:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
     title={"Extend "+displayName+"\'s access by "+months+" months?"}
     confirmLabel={ended?"Give access again":"Extend"} confirmVariant="primary"
