@@ -37,27 +37,27 @@ export default async function SuperAdminClassesPage({ searchParams }: {
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
       <section aria-label="Filter managed classes" className="border-b border-border pb-4">
         <form method="get" action="/admin/classes" className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-0 w-full md:min-w-44 gap-1 text-sm font-semibold text-body">Program
+          <label className="grid min-w-0 w-full md:min-w-44 gap-1 text-[13px] font-semibold text-body">Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 md:min-h-9">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </Select>
           </label>
-          <label className="grid min-w-0 w-full md:min-w-40 gap-1 text-sm font-semibold text-body">Batch code
+          <label className="grid min-w-0 w-full md:min-w-40 gap-1 text-[13px] font-semibold text-body">Batch code
             <Input name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-0 w-full md:min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search class, program or batch
+          <label className="grid min-w-0 w-full md:min-w-44 flex-1 gap-1 text-[13px] font-semibold text-body">Search class, program or batch
             <Input name="q" type="search" defaultValue={data.query.q}
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-0 w-full md:min-w-32 gap-1 text-sm font-semibold text-body">Status
+          <label className="grid min-w-0 w-full md:min-w-32 gap-1 text-[13px] font-semibold text-body">Status
             <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
               {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
             </Select>
           </label>
-          <label className="grid min-w-0 w-full md:min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
+          <label className="grid min-w-0 w-full md:min-w-32 gap-1 text-[13px] font-semibold text-body">Rows per page
             <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 md:min-h-9">
               {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
             </Select>
@@ -68,7 +68,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
         </form>
       </section>
       <section aria-label="Manage classes" className="space-y-3 pt-2">
-        <h2 className="text-lg font-semibold">Manage classes</h2>
+        <h2 className="text-lg font-semibold text-foreground">Manage classes</h2>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage classes" rows={data.items} getRowKey={row=>row.id}
           empty={<p role="status">No matching classes on this page.</p>}
