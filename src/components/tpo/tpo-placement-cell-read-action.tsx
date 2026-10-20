@@ -28,7 +28,7 @@ export function TpoPlacementCellReadAction({id}:{id:string}){
    setError("We could not save this read receipt. Please try again.");
   }
  }
- return <div className="mt-3 space-y-1">
+ return <div className="min-w-0 space-y-2">
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void markRead()}
    className="min-h-11 min-[768px]:min-h-9 px-3">
    {busy?"Saving…":"Mark as read for our placement cell"}
