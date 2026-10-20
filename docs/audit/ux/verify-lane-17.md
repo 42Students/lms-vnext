@@ -28,3 +28,16 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Regressions found/fixed: 0. Route `params` and optional query values feed a guarded `AdminProjectSectionPage`; section names are narrowed by the ten-section guard before being supplied to `ProjectWorkspace`. Scoped `polishAdminSection` has matching prop types, and the existing back-link is outside the PageHeader only for the flagged admin route.
 - Extra clutter/alignment fixes: 0; same route/aria/tab destinations retained. Source review of route page/loading/error, complete `AdminProjectSectionPage`, `ProjectWorkspace` outer shell and named UI/action imports, parent admin/authenticated layouts. Large nested workspace controls were not independently exercised.
 - Files changed: queue, this proof; verified, no change to route code.
+
+## Surface 5 — `src/app/(authenticated)/admin/projects/[projectId]/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 5.
+- Regressions found and fixed: 0. Page is a server-side access-checked redirect, with no rendered list or actions. Reviewed guard, ID schema, authorization check, canonical `/summary` redirect, route error boundary and loading directory skeleton; found no dropped imports, changed route parameters or brittle visual state.
+- Extra clutter/alignment fixes: 0; redirect-only route leaves presentation to the canonical summary.
+- Files changed: queue, this proof; verified, no change.
+
+## Surface 6 — `src/app/(authenticated)/admin/projects/[projectId]/readiness/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 6.
+- Regressions found and fixed: 0. Confirmed `ProjectWorkspaceReadiness` accepts the route props, narrow-scoped project validation and permission behavior, matching ten-tab links, progress counts paired with `MetricBar`, native `Disclosure` defaultOpen for manual override, form fields/confirmation/error and 375px Apply target. The null `ProjectAdminNav` does not duplicate tabs for admin.
+- Extra clutter/alignment fixes: 0; retained single readiness state summary and hairline groupings, no duplicate override heading under compactLayout.
+- Read route/loading/error, complete `ProjectWorkspaceReadiness`, `ProjectReadinessOverrideForm`, `MetricBar`, `Disclosure`, `ProjectAdminNav`, and parent layouts. Source-only; no runtime tests.
+- Files changed: queue, this proof; verified, no change.
