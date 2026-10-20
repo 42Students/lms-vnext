@@ -27,7 +27,7 @@ export default async function CollegeGroupRulePreviewPage({
         title="Rule preview unavailable"
         description="This group does not have a supported, configured rule. No learners were evaluated or changed."
         action={<Link href={"/college/groups/" + encodeURIComponent(groupId)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Back to group</Link>}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to group</Link>}
       />;
     }
     throw error;
