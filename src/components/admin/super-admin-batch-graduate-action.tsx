@@ -27,9 +27,9 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
    });
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not graduate this batch. Try again.");}
  }
- return <div className="space-y-2">
+ return <div className="space-y-2 print:hidden">
   <Button type="button" variant="secondary" disabled={pending} onClick={()=>{setError("");setOpen(true);}}
-   className="min-h-11 min-[768px]:min-h-9">Mark graduated</Button>
+   className="min-h-11 md:min-h-9">Mark graduated</Button>
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <ConfirmDialog open={open} onOpenChange={setOpen} title={"Mark "+name+" graduated?"}
