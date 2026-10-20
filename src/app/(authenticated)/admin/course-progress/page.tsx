@@ -45,11 +45,11 @@ export default async function SuperAdminCourseProgressPage({
     </p>
     
     <form className="grid gap-3 py-1 md:grid-cols-2 min-[1366px]:grid-cols-5">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course or cohort
+      <label className="grid gap-1 text-xs font-semibold leading-4 text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Offering status
+      <label className="grid gap-1 text-xs font-semibold leading-4 text-body">Offering status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
