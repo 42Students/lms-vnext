@@ -64,17 +64,17 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   </div></ScrollCue>
   <p className="text-xs text-muted-foreground" role="status">{selectedInScope.length} selected</p>
   <div className="flex flex-wrap gap-2">
-   <Button type="button" variant="secondary" disabled={!selectedInScope.length||pending}
+   <Button type="button" variant="primary" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(true)}
     className="min-h-11 md:min-h-9">
     {pending?"Updating…":"Show to students"}</Button>
-   <Button variant="primary" type="button" disabled={!selectedInScope.length||pending}
+   <Button variant="secondary" type="button" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(false)}
     className="min-h-11 md:min-h-9">
     Hide from students</Button>
   </div>
   {error?<Alert tone="error">{error}</Alert>:null}
-  {report?<div role="status" className="space-y-2 text-sm">
+  {report?<Alert tone={report.failures.length||report.matchedLessons===0?"warning":"success"} role="status">
    <p>{report.changed} updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
    {report.failures.length?<Button type="button" variant="secondary" disabled={pending||lastAction===null||!report.failedCourseIds.some(id=>currentIds.has(id))}
     onClick={()=>lastAction!==null?void apply(lastAction,report.failedCourseIds):undefined}
@@ -82,6 +82,6 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
     Retry failed
    </Button>:null}
    {report.matchedLessons===0?<p>No published lesson content is available for the selected courses.</p>:null}
-  </div>:null}
+  </Alert>:null}
  </section>;
 }

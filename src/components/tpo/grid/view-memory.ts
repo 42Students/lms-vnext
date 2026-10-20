@@ -44,7 +44,7 @@ export function serializeGridViewMemory(
   const allowed = new Set(permittedKeys);
   const used = new Set<string>();
   return JSON.stringify(columns.filter(column => {
-    if (!allowed.has(column.key) || used.has(column.key)) return false;
+    if (!allowed.has(column.key) || used.has(column.key) || !Number.isFinite(column.width)) return false;
     used.add(column.key);
     return true;
   }).map(column => ({

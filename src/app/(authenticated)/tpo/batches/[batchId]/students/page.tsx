@@ -78,10 +78,10 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    <strong>Suggested: make them eligible</strong>
    <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
    <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
-     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Show me</Link>
+     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show me</Link>
  </aside>:null}
  <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
- <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Download blank eligibility import CSV (this page)</a>
+ <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Download blank eligibility import CSV (this page)</a>
  {finished?<p role="status" className="border-l-2 border-border bg-muted px-3 py-3 text-sm">This batch is finished. Eligibility decisions and import actions are read-only.</p>:<TpoBatchEligibilityImport batchId={batchId}/>}
  {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
    target="STUDENTS" rows={visible.map(student=>({
@@ -152,12 +152,12 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  </form>
  {!result.registrationAvailable&&view.data.registration!=="ALL"?<p role="status">Registration filtering unavailable; no learners are classified without records.</p>:null}
  <Disclosure title="Export" ariaLabel="Batch student exports"
-   className="border-b border-border py-3 [&>summary]:min-h-11 md:min-h-9 [&>summary]:text-link">
+   className="border-b border-border py-3 [&>summary]:min-h-11 md:[&>summary]:min-h-9 [&>summary]:text-link">
   <div className="flex flex-wrap items-center gap-2 py-2">
    <a href={batchStudentViewExportHref(batchId,result.page,view.data)}
-    className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export filtered current page CSV</a>
+    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export filtered current page CSV</a>
    <a href={"/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/students/export?page="+result.page}
-    className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export current page CSV (unfiltered)</a>
+    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export current page CSV (unfiltered)</a>
   </div>
  </Disclosure>
  <p className="text-xs text-muted-foreground">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>

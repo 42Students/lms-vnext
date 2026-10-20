@@ -48,19 +48,19 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     offeringId:raw.offeringId,lessonId:raw.lessonId,deliveryId:raw.deliveryId,scope:raw.scope});
  const title=ADMIN_CONTENT_LABELS[kind];
  if(!parsed.success)return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin · Courses" title={title}/>
+  <PageHeader title={title}/>
   <ErrorState title="Invalid content filters" description="Review search, status and page."
-   action={<Link href={adminContentHref(kind,{})} className="font-semibold text-primary-text">Clear filters</Link>}/>
+   action={<Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin · Courses" title={title}/>
+  <PageHeader title={title}/>
   <ErrorState title="Content access denied"
    description="Your account cannot access Super Admin course content."
    action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin · Courses" title={title}/>
+  <PageHeader title={title}/>
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+"."}/>
  </div>;
  // Directory reads must remain available even when an independent
@@ -71,11 +71,11 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   listSuperAdminContentSectionOptions(context),
  ]);
  if(dataResult.status==="rejected")return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin · Courses" title={title}/>
+  <PageHeader title={title}/>
   <ErrorState title="Content directory unavailable"
    description="The selected college content could not be loaded. Your filters are unchanged."
    action={<Link href={adminContentHref(kind,parsed.data)}
-    className="font-semibold text-primary-text">Retry loading content</Link>}/>
+    className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry loading content</Link>}/>
  </div>;
  const data=dataResult.value;
  const lessons=lessonsResult.status==="fulfilled"?lessonsResult.value:[];
@@ -83,7 +83,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  const offerings=[...new Map(lessons.map(item=>[item.offeringId,{id:item.offeringId,name:item.courseCode+" · "+item.courseName}])).values()];
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Courses" title={title}
+  <PageHeader title={title}
    description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}
    actions={<PageBackLink href="/admin/courses" label="Courses" />} />
   {lessonsResult.status==="fulfilled"
@@ -121,7 +121,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       <option value="ALL">All audiences</option><option value="SHARED">All currently eligible sections</option><option value="SECTION">One specific section</option>
     </Select>
    </label>
-   <Button type="submit" className="self-end">Filter</Button>
+   <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
   </form>
   <p className="text-sm text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · up to 25 per page</p>
   {data.items.length?<div className="divide-y divide-border border-y border-border">
@@ -147,7 +147,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      <SuperAdminContentActions item={item}/>:
      <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-     className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Edit, publish or archive →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."/>}
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages}

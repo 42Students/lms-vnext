@@ -6,6 +6,7 @@ import {
   type TenantDomainClientRow,
 } from "@/components/admin/tenant-domain-manager";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { listTenantDomainsWithRuntime } from "@/modules/tenant-domains/runtime";
 
 function serializeDomains(
@@ -31,9 +32,9 @@ export default async function CollegeDomainsPage() {
     redirect("/dashboard");
   }
 
-  if(!isSuperAdmin(context))return <section className="space-y-3 p-5">
+  if(!isSuperAdmin(context))return <section className="min-w-0 space-y-3">
     <PageHeader title="Tenant domains" description="Tenant domains and sign-in host changes are managed by a Super Admin."/>
-    <p role="status" className="text-sm text-body">Ask a Super Admin to connect or verify a college hostname.</p>
+    <Alert tone="info">Ask a Super Admin to connect or verify a college hostname.</Alert>
    </section>;
 
   const domains = await listTenantDomainsWithRuntime(

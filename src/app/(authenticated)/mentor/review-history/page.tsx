@@ -52,7 +52,7 @@ export default async function MentorReviewHistoryPage({
       </section>
     : <>
       <form method="get" action="/mentor/review-history"
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <Input type="hidden" name="decision" value={data.query.decision}/>
         <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
