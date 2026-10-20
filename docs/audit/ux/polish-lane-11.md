@@ -198,3 +198,15 @@
 - **Changes:** kept horizontal legacy category filters, desktop responsive search/unread/clear controls and all URL/deep-link/read-all logic; moved Browse personal history into its own discoverable navigation next to count, keeping the page-local read-status caveat visible but subordinate; tightened gutters, made remaining Retry/empty-state/drawer actions full-width on phones, added filter-specific 404 recovery. Shared NotificationList fixed on surface 33 handles row read/open state.
 - **States:** all/category/unread, search/clear, empty/all read, personal/announcements partial source, read all confirm/pending/error, detail drawer with safe external CTA, individual mark/open failure, invalid query, 375/768/desktop, loading/error/not-found. Inspected page/inbox/NotificationList/Dialog/FilterChip, route state files and learner layout; no template/runtime/CI.
 - **Files:** `src/app/(authenticated)/learn/notifications/page.tsx`, `src/components/activity/learner-notifications-inbox.tsx`, `src/app/(authenticated)/learn/notifications/error.tsx`, `src/app/(authenticated)/learn/notifications/not-found.tsx`.
+
+## Surface 35 — Learner home redirect
+- **Problems fixed (3):** generic loader offered no destination context, full-screen generic failure broke the single authenticated canvas, and error recovery pointed outside the learner workspace.
+- **Changes:** retained exact server-only redirect from /learn to /learn/courses and existing not-found screen rather than adding flash UI. Added course-specific fallback label and in-shell error recovery returning to the course directory, preserving reporting, retry, the /learn route and all identity guards.
+- **States:** redirect and permissions, auth denial in parent layout, loading, render failure/chunk error, route-specific not-found, 375/768/desktop class/source review. Read route page/loading/error/not-found/layout and GracefulErrorBoundary; no app/CI.
+- **Files:** `src/app/(authenticated)/learn/loading.tsx`, `src/app/(authenticated)/learn/error.tsx`.
+
+## Surface 36 — Legacy learner placements alias
+- **Problems fixed (3):** generic loading lacked placement context, whole-screen error interrupted the old LMS shell, and error home navigation lost the placement destination.
+- **Changes:** preserved exact server-only redirect to /learn/my-placements and all auth behavior, gave its transient loader an explicit destination and added in-shell retry/home fallback to the real placement dashboard. No transient alias page or duplicate content introduced.
+- **States:** redirect/no redirect flash, layout auth guard, loading, error/retry/chunk recovery, 375/768/desktop class review. Read page/loading/error/layout and shared GracefulErrorBoundary, destination hierarchy; route has no local not-found/template. No runtime/CI.
+- **Files:** `src/app/(authenticated)/learn/placements/loading.tsx`, `src/app/(authenticated)/learn/placements/error.tsx`.
