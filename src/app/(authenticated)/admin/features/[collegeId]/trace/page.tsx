@@ -169,7 +169,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
       <section className="min-w-0 space-y-4 border-t border-border pt-6">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             Find a learner
           </h2>
           <p className="mt-1 text-sm leading-6 text-body">
@@ -185,7 +185,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           method="get"
           className="flex flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
         >
-          <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-60">
+          <label className="grid min-w-0 w-full flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-60">
             Name or roll number
             <Input
               type="search"
@@ -197,19 +197,19 @@ export default async function SuperAdminLearnerAccessTracePage({
             />
           </label>
 
-          <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner scope
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner scope
             <Select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 md:min-h-9">
               <option value="all">All active learners</option>
               <option value="only">Only students with stored overrides</option>
               <option value="locked">Only students with locked overrides</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored override module
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored override module
             <Select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 md:min-h-9">
               <option value="">Any module</option><option value="projects">Projects</option><option value="electives">Electives</option><option value="placements">Placements (ignored below college)</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored rule state
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored rule state
             <Select name="storedValue" defaultValue={query.storedValue} className="min-h-11 md:min-h-9">
               <option value="all">Stored On or Off</option><option value="on">Stored On only</option><option value="off">Stored Off only</option>
             </Select>
@@ -312,7 +312,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           aria-label="Selected learner module access"
         >
           <div className="border-b border-border pb-6">
-            <h2 className="m-0 text-xl font-semibold text-foreground">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               Why this learner sees these modules
             </h2>
 
@@ -337,7 +337,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </div>
 
           <section aria-label="Placement cell decision" className="border-t border-border pt-6">
-            <h3 className="font-semibold text-foreground">Placement cell decision</h3>
+            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Placement cell decision</h3>
             <p className="mt-2 text-sm text-body">{
               selected.placementParticipation.status==="NOT_DECIDED"?"Not decided yet":
               selected.placementParticipation.status==="ELIGIBLE"?"Eligible":
@@ -375,7 +375,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             Inspect membership overrides and locks →
           </Link>
           <section className="min-w-0 border-t border-border pt-6" aria-label="Student overrides and locks">
-            <h3 className="text-base font-semibold text-foreground">Student overrides and locks</h3>
+            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Student overrides and locks</h3>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
             <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-3">
               {membershipOverrideSummary(selected.modules).map(item => (
@@ -397,7 +397,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="m-0 text-lg font-semibold text-foreground">
+                  <h3 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
                     {module.label}
                   </h3>
                   <p className="mt-2 text-sm leading-6 text-body">
@@ -455,7 +455,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         </section>
       ) : (
         <section className="border-t border-border pt-6">
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             Select a learner to explain access
           </h2>
           <p className="mt-2 text-sm leading-6 text-body">

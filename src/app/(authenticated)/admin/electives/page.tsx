@@ -39,24 +39,24 @@ export default async function SuperAdminElectivesPage({
     <>
       {options ? <CollegeSlotManager options={options} /> : null}
       <form className="grid min-w-0 gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-5">
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input name="q" defaultValue={data.query.q} placeholder="Slot or program"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 md:min-h-9">
             <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select name="programId" defaultValue={data.query.programId ?? ""}
             className="min-h-11 md:min-h-9">
             <option value="">All programs</option>
             {data.programs.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
           <Select name="semesterNumber" defaultValue={data.query.semesterNumber ?? ""}
             className="min-h-11 md:min-h-9">
             <option value="">All semesters</option>
@@ -76,7 +76,7 @@ export default async function SuperAdminElectivesPage({
       {data.items.length ? <div className="grid min-w-0 gap-3 md:grid-cols-2">
         {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 border-b border-border py-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.name}</h2>
+            <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.name}</h2>
             <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge>
           </div>
           <p className="mt-1 text-sm text-body">{item.programName} · Semester {item.semesterNumber}</p>

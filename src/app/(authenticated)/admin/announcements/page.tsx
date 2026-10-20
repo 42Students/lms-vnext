@@ -184,7 +184,7 @@ export default async function AnnouncementsPage({
       }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-6">
-       <h2 className="text-lg font-semibold text-foreground">Placement-cell read receipts</h2>
+       <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Placement-cell read receipts</h2>
        <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read.</p>
        <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
         const receipt=receipts.get(row.id)!;
