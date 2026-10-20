@@ -94,7 +94,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             {key:"students",header:"Students",mobilePriority:"secondary",cell:row=>row.activeEnrolledLearners},
             {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><>
               <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="PLANNED"?"info":"neutral"}>{legacyAcademicStatus(row.status,true)}</StatusBadge>
-              {row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Date(row.inactiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>:null}
+              {row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.inactiveAt))}</span>:null}
             </>},
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeCohortRowActions row={row} periods={periods}/>},
           ]} />

@@ -7,6 +7,7 @@ import {
 } from "@/components/activity/activity-center";
 import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {sanitizeActivityMetadata} from "@/modules/activity/metadata-sanitizer";
@@ -310,10 +311,9 @@ export default async function ActivityPage({
           <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
           </span>
-          <Input
+          <DateInput mode="date"
             className={inputClass}
             name="from"
-            type="date"
             defaultValue={defaultFrom}
           />
         </label>
@@ -321,10 +321,9 @@ export default async function ActivityPage({
           <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
           </span>
-          <Input
+          <DateInput mode="date"
             className={inputClass}
             name="to"
-            type="date"
             defaultValue={one(params.to)}
           />
         </label>
