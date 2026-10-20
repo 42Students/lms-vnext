@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
 import { LearnerApplicationDetailWithdraw } from "@/components/placements/learner-application-detail-withdraw";
 import { getOwnLearnerApplicationHistory } from "@/modules/placements/learner-application-detail-service";
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
@@ -29,7 +29,7 @@ export default async function LearnerApplicationDetailPage({params}:{
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">← Applications</Link>
     <PageHeader title={record.roleTitle}
       description={record.companyName+" · Own application status and timeline"}
-      actions={<StatusBadge>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
+      actions={<StatusBadge tone={applicationStatusTone(record.currentStatus)}>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
     <section className="border-b border-border py-4 md:py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Application actions</h2>

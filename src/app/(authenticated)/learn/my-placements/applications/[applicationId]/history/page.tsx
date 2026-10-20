@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
 import { getOwnLearnerApplicationHistory } from "@/modules/placements/learner-application-detail-service";
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
 
@@ -40,7 +40,7 @@ export default async function LearnerApplicationHistoryPage({
       <PageHeader
         title={history.roleTitle}
         description={history.companyName + " · Persisted status-change timeline"}
-        actions={<StatusBadge>{history.currentStatus.replaceAll("_", " ")}</StatusBadge>}
+        actions={<StatusBadge tone={applicationStatusTone(history.currentStatus)}>{history.currentStatus.replaceAll("_", " ")}</StatusBadge>}
       />
       <section className="border-b border-border py-4 sm:py-6">
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status history</h2>
