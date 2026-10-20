@@ -146,21 +146,21 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       </nav>
       <p className="text-xs text-muted-foreground">These college-targeted announcements may include notices published by your placement cell. Only notices addressed to your membership are displayed.</p>
       {pageClamped && collegeNoticesRead.available ? (
-        <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
+        <Banner tone="info">>
           The requested notice page no longer exists in the current filtered results. Showing page {pages.page} instead.
           <Link href={noticePageUrl(pages.page)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
             Update page link
           </Link>
-        </p>
+        </Banner>
       ) : null}
       {ready && collegeNoticesRead.available && learnerNoticeMissing(filters.focus,focused.found) ? (
-        <div role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
+        <Banner tone="info">>
           That notice is not among your currently visible college notices. It may have expired or become unavailable to your membership.
           <Link href={learnerNoticeRecoveryHref(filters.focus)}
             className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
             Search all my visible notices
           </Link>
-        </div>
+        </Banner>
       ) : null}
       {!ready ? (
         <div role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-b border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
