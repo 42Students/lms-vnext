@@ -8,6 +8,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { FilterChip } from "@/components/ui/filter-chip";
 
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useRouter} from "next/navigation";
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import {buildTpoRecruiterInviteMessage} from "@/modules/placements/tpo-recruiter-invite-message-model";
@@ -104,6 +106,8 @@ async function readResponse<T>(response: Response): Promise<T> {
 export function RecruiterLeadDetailWorkspace({
   collegeId, leadId,
 }: { collegeId: string; leadId: string }) {
+  const router=useRouter();
+  const [confirmation,setConfirmation]=useState<"LEAVE"|"CLOSE_EDIT"|"CLOSE_NOT_NOW"|"SAVE_EDIT"|"MARK_NOT_NOW"|"CREATE_INVITE"|"CLOSE_INVITE"|null>(null);
   const [lead, setLead] = useState<Lead | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [companySummary,setCompanySummary]=useState<CompanySummary|null>(null);
