@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 
 export type PlacementRequestQueueItem = {
@@ -61,6 +62,8 @@ export function PlacementRequestQueue({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const [confirmation,setConfirmation]=useState<{item:PlacementRequestQueueItem;action:"APPROVE"|"REJECT"}|null>(null);
+  const [validationError,setValidationError]=useState<Record<string,string>>({});
   const [pendingId, setPendingId] =
     useState<string | null>(null);
   const [notes, setNotes] = useState<
@@ -71,9 +74,10 @@ export function PlacementRequestQueue({
     item: PlacementRequestQueueItem,
     action: "APPROVE" | "REJECT",
   ) {
-    const note =
-      notes[item.id]?.trim() ?? "";
+    if(pendingId)return;
+    const note = notes[item.id]?.trim()??"";
     if (action === "REJECT" && note.length < 3) {
+      setValidationError(prev=>({...prev,[item.id]:"Explain why this request is rejected (at least 3 characters)."}));
       showToast({
         tone: "error",
         title: "Decision note required",
@@ -82,6 +86,7 @@ export function PlacementRequestQueue({
       });
       return;
     }
+    setValidationError(prev=>({...prev,[item.id]:""}));
     setPendingId(item.id);
     try {
       const response = await fetch(
@@ -122,8 +127,10 @@ export function PlacementRequestQueue({
             ? "The approved domain effect was applied in the same transaction."
             : "The placement state was left unchanged.",
       });
+      setConfirmation(null);
       router.refresh();
     } catch (error) {
+      setValidationError(prev=>({...prev,[item.id]:error instanceof Error?humanize(error.message):"Please try again."}));
       showToast({
         tone: "error",
         title: "Decision failed",
@@ -138,7 +145,7 @@ export function PlacementRequestQueue({
   }
 
   if (requests.length === 0) {
-    return null;
+    return <section aria-label="Learner requests" className="border-b border-border py-5"><h2 className="font-semibold">Learner requests</h2><p className="mt-2 text-sm text-muted-foreground">No learner requests yet.</p></section>;
   }
 
   const openCount = requests.filter(
@@ -146,7 +153,7 @@ export function PlacementRequestQueue({
   ).length;
 
   return (
-    <section className="border-b border-border pb-5">
+    <section className="min-w-0 border-b border-border pb-5">
       <div className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -200,16 +207,16 @@ export function PlacementRequestQueue({
           return (
             <article
               key={item.id}
-              className="py-4"
+              className="min-w-0 py-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="m-0 font-semibold text-foreground">
+                  <p className="m-0 min-w-0 break-words font-semibold text-foreground">
                     {item.candidateName ??
                       "Learner"}{" "}
                     · {item.roleTitle}
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 break-all text-xs text-muted-foreground">
                     {item.candidateEmail ??
                       "No email"}{" "}
                     ·{" "}
@@ -241,7 +248,7 @@ export function PlacementRequestQueue({
 
               {item.requestType ===
               "ROUND_RESCHEDULE" ? (
-                <div className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2 text-sm text-body">
+                <div className="mt-3 min-w-0 border-l-2 border-border bg-surface-subtle px-3 py-2 text-sm text-body">
                   <p className="m-0">
                     {item.roundName ??
                       "Round"}{" "}
@@ -268,7 +275,7 @@ export function PlacementRequestQueue({
 
               {item.requestType ===
               "OFFER_EXTENSION" ? (
-                <div className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2 text-sm text-body">
+                <div className="mt-3 min-w-0 border-l-2 border-border bg-surface-subtle px-3 py-2 text-sm text-body">
                   <p className="m-0">
                     {item.offerRoleTitle ??
                       "Offer"}{" "}
@@ -286,39 +293,31 @@ export function PlacementRequestQueue({
               ) : null}
 
               {item.status === "PENDING" ? (
-                <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div className="mt-4 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
                   <label>
                     <span className="mb-1 block text-xs font-semibold text-body">
                       Decision note
                     </span>
                     <Input
+                      className="min-h-11 w-full md:min-h-9"
+                      maxLength={1000}
                       placeholder="Optional for approval, required for rejection"
                       value={
                         notes[item.id] ?? ""
                       }
-                      onChange={(event) =>
-                        setNotes(
-                          (current) => ({
-                            ...current,
-                            [item.id]:
-                              event.target.value,
-                          }),
-                        )
-                      }
+                      onChange={(event)=>{
+                        setNotes(current=>({...current,[item.id]:event.target.value}));
+                        setValidationError(current=>({...current,[item.id]:""}));
+                      }}
                     />
                   </label>
-                  <div className="flex flex-wrap gap-2">
+                  {validationError[item.id]?<p role="alert" className="text-sm text-destructive lg:col-span-2">{validationError[item.id]}</p>:null}
+                  <div className="grid grid-cols-2 gap-2 lg:flex lg:items-center">
                     <Button
                       size="sm"
-                      disabled={
-                        pendingId !== null
-                      }
-                      onClick={() =>
-                        decide(
-                          item,
-                          "APPROVE",
-                        )
-                      }
+                      className="min-h-11 w-full lg:w-auto md:min-h-9"
+                      disabled={pendingId !== null}
+                      onClick={()=>setConfirmation({item,action:"APPROVE"})}
                     >
                       {pendingId === item.id
                         ? "Saving…"
@@ -326,16 +325,18 @@ export function PlacementRequestQueue({
                     </Button>
                     <Button
                       size="sm"
+                      className="min-h-11 w-full lg:w-auto md:min-h-9"
                       variant="secondary"
                       disabled={
                         pendingId !== null
                       }
-                      onClick={() =>
-                        decide(
-                          item,
-                          "REJECT",
-                        )
-                      }
+                      onClick={()=>{
+                        if((notes[item.id]?.trim().length??0)<3){
+                          setValidationError(prev=>({...prev,[item.id]:"Explain why this request is rejected (at least 3 characters)."}));
+                          return;
+                        }
+                        setConfirmation({item,action:"REJECT"});
+                      }}
                     >
                       Reject
                     </Button>
@@ -351,6 +352,15 @@ export function PlacementRequestQueue({
           );
         })}
       </div>
+      <ConfirmDialog open={confirmation!==null} pending={pendingId!==null}
+        onOpenChange={next=>{if(!next&&!pendingId)setConfirmation(null);}}
+        title={confirmation?.action==="APPROVE"?"Approve learner request?":"Reject learner request?"}
+        description={confirmation?.action==="APPROVE"
+          ?"Approving applies the placement effect immediately."
+          :"Reject with the recorded decision note? Placement state will remain unchanged."}
+        confirmLabel={confirmation?.action==="APPROVE"?"Approve request":"Reject request"}
+        confirmVariant={confirmation?.action==="APPROVE"?"primary":"danger"}
+        onConfirm={()=>{if(confirmation)void decide(confirmation.item,confirmation.action);}}/>
     </section>
   );
 }
