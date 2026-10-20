@@ -673,3 +673,54 @@ Full contents scanned using regex equivalent of grep -nE '<(button|input|select|
 No app execution or CI/browser/screenshot verification. Global A5–A7/E8 remain unchecked; changed scoped file styles only.
 
 **Next unticked TPO page:** src/app/(authenticated)/tpo/students/page.tsx (large source file; whole-file UI and source parity, not patched/ticked in this batch).
+
+## 2026-10-20 chat-14 — authorized grid selection, sort, clipboard and indeterminate state
+
+Branch workflow: fast-forwarded `chatgpt/chat-14-b` to inspected main `9880c6d` when it was cleanly behind; merged later main `002ac31` with all lane edits retained. All commits labeled `[chat-14]` and pushed **only** to `chatgpt/chat-14-b`; `main` was not written. No application runtime, TypeScript typecheck, browser or CI invoked.
+
+### E8 exact behavior/state parity matrix (source-only)
+
+| State/property | Legacy requirement / measured basis | Updated source and precise behavior | Static result |
+|---|---|---|---|
+| Visible and authorized membership scope | `docs/design/ui-clone-checklist.md:57`: filtered select-all, hide-filtered selection, authorized rows only | `grid/grid-selection.ts:13-65` now accepts optional `allowedIds` for both click and checkbox, defaulting to visible IDs for old consumers. `selectedGridIdsWithin` strips denied keys, while authorized keys outside current filter remain available for Ctrl/Meta and checkbox operations. Both native and fallback pass `allowedIds` | Source contract aligned; actual server authorizations untouched |
+| Plain row click | Select one currently visible authorized key; anchor this row | `gridSelectionClick` returns `[rowId]` for ordinary click, fails closed if not visible or not allowed | Exact interaction algorithm, not browser-tested |
+| Shift click | Range of currently visible rows from allowed anchor | `gridSelectionClick` slices `visibleIds` between indices and filters by `allowedIds`; non-additive Shift selects the range | Source algorithm aligned |
+| Ctrl/Meta click | Toggle one row without erasing other authorized selections | `gridSelectionClick` preserves allowed IDs outside filtered page and toggles row; returns new anchor | Correctly preserves cross-filter selection |
+| Ctrl/Meta + Shift click | Add visible permitted range to existing authorized selection | `gridSelectionClick` unions prior selection and authorized range without duplicates | Source behavior aligned |
+| Checkbox / Shift checkbox | Check/uncheck current row/range; retain still-authorized rows outside current filter | `gridSelectionCheckbox` authorizes old selection and any range; native and mobile fallback pass `allowedIds` and re-filter before mutation | Correct source behavior |
+| Filter change / revoked record | Denied keys must never persist after allowed set changes | Native grid effect re-sanitizes on allowedCsv; fallback uses the same `selectedGridIdsWithin` check and resets invalid anchor | Fail-closed source check retained |
+| Header selected/partial | Exact 48px pinned selection column; partial selection visually distinct | Native `tpo-grid.tsx:193-204` pinned 48px, checked if all visible; newly `indeterminate` if some but not all. Fallback `tpo-spreadsheet-grid.tsx:72-76,187,212` newly sets `indeterminate` on desktop header and phone Select all checkbox | 48px and tri-state source contract; actual paint not browser verified |
+| Sort only number/date and sortValue | Legacy E8: numeric/date columns sortable, some date cells have human-readable localized labels but numeric comparison keys | Native `tpo-grid.tsx:206-213`: comparator uses `col.sortValue(node.data)` when present, else read value. `grid-sort.ts` fallback already uses `sortValue`. Example `tpo-company-memory-drive-grid.tsx`: displayed Year/Created sort on timestamp | Native/fallback parity corrected |
+| Clipboard order/filter | E8: copy selected/visible current authorized projection only, no hidden rows | Native `tpo-grid.tsx:174-190` reads AG Grid's filtered/sorted ID sequence, maps only authorized page rows; selected keys outside filter no longer cause copying all visible rows. `grid-workspace.tsx:144-152` now reuses `gridClipboardTsv` | Correct source behavior and clipboard header format, not runtime-tested |
+| Clipboard formula/control | TPO TSV injection safeguard | `grid-export.ts:4-6` normalizes C0/DEL, neutralizes `= + - @` with leading whitespace/control; GridWorkspace and native/fallback all share `gridClipboardTsv` | Unified safety/format; clipboard permissions can still block |
+| Save/restore layout | Per-storageKey widths/pins, permitted columns only, 100–500px | `grid/view-memory.ts` clamps widths and dedupes keys; `tpo-grid.tsx:120-140,240-253` persists and restores only allowed layout; URLs govern column visibility | Source contract preserved; browser persistence untested |
+| Quartz theme accent | `legacy-styles/components___variables.scss:10`: primary interactive `$clrThird = #26bac7` | `tpo-grid.tsx:32` now `accentColor:var(--lms-primary)`; `src/app/globals.css:21` maps to #26bac7. Header white, border #e5e9f0, ink #54505d and header muted #a9a7ae | Exact mapped legacy token values; Quartz computed paint unverified |
+| Header and row geometry | E8 current source 44px each; original `TpoGrid.jsx` unavailable through connector | `tpo-grid.tsx:41-42,238` retains 44px row/header, native selection 48px; no guessed height change | Legacy numeric match **not yet proven** |
+| Phone/tablet handoff | Legacy shell `old-lms-shell.css:23,73` mobile <=767px, desktop >=768px | `tpo-grid.tsx:228,262`: AG Grid `hidden md:block`, fallback `md:hidden`; original authorized row data / action slots pass through | Breakpoint match, viewport screenshot pending |
+
+### File-level source grep equivalence and JSX pairing
+
+| File | Post-write, complete file fetched from GitHub | Invariant |
+|---|---|---|
+| `src/components/tpo/grid/grid-selection.ts` | `allowedIds` token count 8; 2 optional allowed-argument defaults; 2 range authorization filters | No DOM/JSX; all row IDs must belong to authorized list |
+| `src/components/tpo/grid/tpo-grid.tsx` | 0 raw `<button>`, **2 Button open/2 close**, 2 self-closing Checkbox, `forEachNodeAfterFilterAndSort` 1; `sortValue` used in comparator, selection width 48 | native grid only from md; 48px selection and tri-state |
+| `src/components/tpo/tpo-spreadsheet-grid.tsx` | 0 raw `<button>`, 7 Button pairs, 1 FilterChip pair, 1 Disclosure pair, 4 self-closing Checkbox, `indeterminate` twice | fallback includes phone selection and protected cell open action |
+| `src/components/tpo/grid/grid-workspace.tsx` | 0 raw `<button>`, **14 Button open/14 close**, 1 FilterChip pair, `gridClipboardTsv` imported + invoked | Toolbar retains columns, saved views, import/export and notices |
+
+Commands for future checkout verification (provided, **not executed** through this connector):
+
+```sh
+grep -nE 'allowedIds|gridSelectionClick|gridSelectionCheckbox|selectedGridIdsWithin' src/components/tpo/grid/grid-selection.ts src/components/tpo/grid/tpo-grid.tsx src/components/tpo/tpo-spreadsheet-grid.tsx
+grep -nE 'indeterminate|width:48|minWidth:48|maxWidth:48|md:hidden|md:block|forEachNodeAfterFilterAndSort|sortValue|accentColor' src/components/tpo/grid/tpo-grid.tsx src/components/tpo/tpo-spreadsheet-grid.tsx
+grep -nE 'gridClipboardTsv|safeGridClipboardCell|replaceAll|rows on this page|onColumnResized|onColumnPinned' src/components/tpo/grid/grid-workspace.tsx src/components/tpo/grid/grid-export.ts src/components/tpo/grid/tpo-grid.tsx
+```
+
+### Responsive, empty, disabled, error, focus and authorization proof
+
+- Phone <=767px: table fallback, same selected IDs and tri-state header, card-specific actions/links and per-item checkbox; shared 44px touch choices and no new hidden columns.
+- Tablet >=768px: native Quartz, pinned 48px selection column, 44px row/header, authorized filtered range/checkbox logic, focusable checkbox/button controls. Wider screens retain current 520px bounded sheet and resizable columns.
+- Empty and error: prior `overlayNoRowsTemplate`/fallback 'No matching records.' preserved; clipboard keeps unavailable/failure notice; disabled column chooser and prior read-only cells remain unchanged.
+- Export authorization: CSV/XLSX server endpoints untouched; TSV only serializes supplied authorized row projection. Selected but filtered-out IDs result in no copied data rows rather than exposing unselected visible rows.
+- Missing proof: no native AG Grid build, row interaction test, clipboard permission test, real phone/tablet pixel screenshot, exact old grid height/hover focus measurement, or comprehensive repo-wide E8 census. `package.json` remains missing `ag-grid-community` and `ag-grid-react`, and `docs/design/legacy-grid/TpoGrid.jsx.txt` is not accessible. The manifest is explicitly out of lane scope.
+
+**E8 remains [ ]** despite this completed source-level file batch. Next exact file: `src/components/tpo/grid/view-memory.ts` for saved layout visibility/pinning behavior and corruption handling; do not mark E8 without upstream packages and rendered parity.
