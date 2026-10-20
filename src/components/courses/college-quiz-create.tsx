@@ -8,6 +8,7 @@ import { ChoiceInput } from "@/components/ui/choice-input";
 import { DateInput } from "@/components/ui/date-input";
 import { Button } from "@/components/ui/button";
 import { Banner } from "@/components/ui/banner";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
@@ -24,6 +25,7 @@ const empty=():Question=>({type:"SINGLE_CHOICE",prompt:"",points:1,
 export function CollegeQuizCreate({lessons,deliveries}:{
  lessons:readonly Lesson[];deliveries:readonly Delivery[];
 }){
+ const {askConfirm,dialog}=useConfirmFlow();
  const router=useRouter();
  const [opened,setOpened]=useState(false),[keepOpen,setKeepOpen]=useState(false),[lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [deliveryId,setDeliveryId]=useState("");
@@ -72,7 +74,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  async function create(){
   if(lock.current)return;
   const problem=valid();if(problem){setError(problem);return;}
-  if(!window.confirm("Create this quiz as a draft? Learners will not see it until published."))return;
+  if(!(await askConfirm("Create this quiz as a draft? Learners will not see it until published.")))return;
   lock.current=true;setBusy(true);setError("");setNotice("");
   try{
    const result=await fetch("/api/courses/quizzes",{method:"POST",
@@ -194,12 +196,12 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <Button variant="primary" type="button" disabled={busy} onClick={()=>void create()} className="min-h-11 md:min-h-9"
      >
      {busy?"Saving…":"Create quiz draft"}</Button>
-    <Button variant="secondary" type="button" disabled={busy} onClick={()=>{
+    <Button variant="secondary" type="button" disabled={busy} onClick={async()=>{
       const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||
        maxAttempts!=="1"||shuffleQuestions||shuffleOptions||questions.length!==1||
        questions.some(q=>q.prompt.trim()||q.type!=="SINGLE_CHOICE"||q.points!==1||
         q.options.length!==2||q.options.some(option=>option.text.trim())));
-      if(dirty&&!window.confirm("Discard unsaved quiz changes?"))return;
+      if(dirty&&!(await askConfirm("Discard unsaved quiz changes?")))return;
       setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
       setMaxAttempts("1");setShuffleQuestions(false);setShuffleOptions(false);
       setQuestions([empty()]);setError("");
@@ -208,5 +210,6 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   </div>:null}
   {error?<Banner tone="error">{error}</Banner>:null}
   {notice?<Banner tone="success">{notice}</Banner>:null}
+  {dialog}
  </section>;
 }
