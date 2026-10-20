@@ -5,7 +5,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { DataTable } from "@/components/ui/data-table";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {prepareSelectionImport,type SelectionImportCandidate,type SelectionImportEntry} from "@/modules/placements/tpo-selection-import-model";
@@ -16,6 +16,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
  const [error,setError]=useState("");const [busy,setBusy]=useState(false);const [done,setDone]=useState("");
  const [reading,setReading]=useState(false);
  const [confirmOpen,setConfirmOpen]=useState(false);
+ const recordingRef=useRef(false);
  async function read(file:File|null){
   setEntries([]);setUnmatched([]);setError("");setDone("");
   if(!file)return;
@@ -31,7 +32,8 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   finally{setReading(false);}
  }
  async function confirm(){
-  if(busy||!entries.length)return;
+  if(busy||recordingRef.current||!entries.length)return;
+  recordingRef.current=true;
 
   setBusy(true);setError("");setDone("");
   try{
@@ -47,12 +49,19 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     if(!response.ok){
      throw Error("Import batch failed. Refresh before retrying.");
     }
+    const receipt:unknown=await response.json().catch(()=>null);
+    const saved=receipt&&typeof receipt==="object"&&!Array.isArray(receipt)
+      ?receipt as Record<string,unknown>:null;
+    if(!saved||saved.recorded!==chunk.length||!Array.isArray(saved.selectionIds)||
+       saved.selectionIds.length!==chunk.length||
+       !saved.selectionIds.every(id=>typeof id==="string"))
+      throw Error("Import receipt could not be verified. Refresh before retrying.");
     count+=chunk.length;
    }
    setDone(count+" selection(s) recorded. Students have not been notified; verify and release from the selection register.");
    setEntries([]);router.refresh();
   }catch(e){setError((e instanceof Error?e.message:"Import failed")+
-   ". Already recorded rows remain saved. Refresh before retrying.");}finally{setBusy(false);setConfirmOpen(false);}
+   ". Already recorded rows remain saved. Refresh before retrying.");}finally{recordingRef.current=false;setBusy(false);setConfirmOpen(false);}
  }
  return <section className="min-w-0 space-y-3 border-b border-border pb-4">
   <h2 className="text-base font-semibold leading-6 text-foreground">Import the company&apos;s selection list</h2>
