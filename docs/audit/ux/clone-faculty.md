@@ -812,3 +812,25 @@ This inventory reads every named queued file through the connected GitHub reposi
 | `src/components/courses/faculty-lesson-video-manager.tsx` | 341 | 0 (0 hidden) | 0 | 11/11 | 218,222,225 |
 | `src/components/courses/faculty-live-class-editor.tsx` | 165 | 0 (0 hidden) | 0 | 1/1 | 108,116,124 |
 | `src/components/courses/faculty-quiz-learner-preview.tsx` | 67 | 0 (0 hidden) | 0 | 1/1 | 43,48,49 |
+
+
+### Source inventory directly related components, part 4/4 (37–48 of 48)
+
+| Path | Lines | Raw/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source token/state example lines |
+|---|---:|---:|---:|---:|---|
+| `src/components/courses/faculty-quiz-question-editor.tsx` | 687 | 0 (0 hidden) | 0 | 6/6 | 415,479,499 |
+| `src/components/courses/faculty-quiz-review.tsx` | 455 | 0 (0 hidden) | 0 | 6/6 | 206,210,220 |
+| `src/components/courses/faculty-report-csv-download.tsx` | 21 | 0 (0 hidden) | 0 | 0/0 | 14 |
+| `src/components/courses/faculty-report-download.tsx` | 64 | 0 (0 hidden) | 0 | 1/1 | 52,60 |
+| `src/components/courses/faculty-report-student-table.tsx` | 103 | 0 (0 hidden) | 0 | 2/2 | 37,51,53 |
+| `src/components/courses/faculty-submission-file-review.tsx` | 104 | 0 (0 hidden) | 0 | 1/1 | 87,94,101 |
+| `src/components/courses/faculty-video-preview.tsx` | 46 | 0 (0 hidden) | 0 | 0/0 | 43 |
+| `src/components/people/faculty-profile-editor.tsx` | 137 | 0 (0 hidden) | 0 | 1/1 | 78,80,85 |
+| `src/components/people/faculty-profile-metadata.tsx` | 80 | 0 (0 hidden) | 0 | 5/5 | 37,39,43 |
+| `src/components/people/faculty-profile-repeatable.tsx` | 163 | 0 (0 hidden) | 0 | 9/9 | 71,73,77 |
+| `src/components/people/faculty-profile-skills.tsx` | 92 | 0 (0 hidden) | 0 | 7/7 | 39,41,45 |
+| `src/components/people/faculty-profile-text-section.tsx` | 68 | 0 (0 hidden) | 0 | 2/2 | 51,57,59 |
+
+**Full named H inventory source scan complete: 46 routes/layouts + 48 direct components = 94 paths.** Across those exact files, the recorded full-content pattern detects only eight native `<input type="hidden">` GET preservation controls in three routes, with no native visible controls, native confirm or embedded hex colours. All queued files show 0 remaining `sm:` at 640px. Opening/closing shared `Button` JSX counts match in each file (source-level check only). This does **not** establish absence of hand-rolled visuals in transitive nonqueued imports, computed colors, hover/focus/disabled/loading states, responsive browser paint or side-by-side pixel equality. All 94 strict checkboxes above intentionally remain unchecked pending the stated proof rule. No tests/lint/typecheck/CI run.
+
+**Next queue continuation:** cross-reference transitive rendered components beyond this 94-file inventory; first inspect `src/components/courses/faculty-report-legacy-charts.module.css` (visual chart skin) and `src/components/courses/course-choice-control.tsx` (input treatment). The upstream legacy source of truth remains `docs/design/legacy-styles/` and `docs/design/old-lms-pages.md`.
