@@ -21,7 +21,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  if(page===null)return <div className="min-w-0 space-y-5">
   <PageHeader title="Administrator activity history" actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="College admins"/>}/>
   <ErrorState title="Invalid history page" description="Choose a valid page without repeated or unrelated filters."
-   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear history filters</Link>}/>
+   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 hover:text-primary-hover focus-visible:outline-primary md:min-h-9">Clear history filters</Link>}/>
  </div>;
  const data=await listCollegeAdminHistory(context,collegeId,userId,page);
  const base="/admin/colleges/"+encodeURIComponent(collegeId)+"/admins";
@@ -34,7 +34,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
    actions={<div className="flex flex-wrap items-center gap-2">
     <PageBackLink href={base} label="College admins"/>
     <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export shown history (CSV)</a>
+     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 hover:text-primary-hover focus-visible:outline-primary md:min-h-9">Export shown history (CSV)</a>
    </div>}/>
   <p role="status" className="text-sm text-body">
    Page {data.page} · {data.events.length} recorded event(s) shown{data.truncated?" · more available":""}.
@@ -46,11 +46,11 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
       {key:"event",header:"Event",mobilePriority:"primary",cell:row=><span className="break-all font-mono text-xs">{row.eventType}</span>},
       {key:"summary",header:"Summary",mobilePriority:"secondary",cell:row=><span className="break-words">{row.summary}</span>},
     ]}/>
-  <nav aria-label="Administrator activity pages" className="flex flex-wrap gap-3 text-sm">
+  <nav aria-label="Administrator activity pages" className="flex flex-wrap items-center gap-3 text-sm">
     {data.page>1?<Link href={"?page="+(data.page-1)}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Previous 100</Link>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 hover:text-primary-hover focus-visible:outline-primary md:min-h-9">Previous 100</Link>:null}
     {data.truncated?<Link href={"?page="+(data.page+1)}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Next 100</Link>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 hover:text-primary-hover focus-visible:outline-primary md:min-h-9">Next 100</Link>:null}
   </nav>
  </div>;
 }
