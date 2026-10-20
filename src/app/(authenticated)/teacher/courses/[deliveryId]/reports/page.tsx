@@ -102,13 +102,13 @@ export default async function FacultyReportsHubPage({
           </article>)}
         </div>}
 
-      <nav aria-label="Report pages" className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {data.health.totalPages > 1 ? <nav aria-label="Report pages" className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-sm text-muted-foreground">Page {data.health.page} of {data.health.totalPages}</span>
         <div className="grid grid-cols-2 gap-2 sm:flex">
           {data.health.page > 1 ? <Link href={facultyReportHubHref({ ...data.query, page: data.health.page - 1 })} className={reportLink}>Previous</Link> : <span aria-hidden="true" />}
           {data.health.page < data.health.totalPages ? <Link href={facultyReportHubHref({ ...data.query, page: data.health.page + 1 })} className={reportLink}>Next</Link> : null}
         </div>
-      </nav>
+      </nav> : null}
     </section>
     <p className="max-w-prose text-xs leading-5 text-muted-foreground">All counts are exact current-Section persisted records. Missing and unpublished grades remain unknown.</p>
   </div>;
