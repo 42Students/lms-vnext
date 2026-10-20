@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
@@ -114,17 +115,7 @@ export default async function FacultyAssignmentSubmissionsPage({
           </li>;
         })}
       </ol>}
-    <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3">
-      <span className="text-sm text-muted-foreground">
-        Page {data.page} of {data.totalPages}
-      </span>
-      <div className="flex gap-3">
-        {data.page>1?<Link href={facultySubmissionListHref({...query,page:data.page-1})}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Previous</Link>:null}
-        {data.page<data.totalPages?<Link href={facultySubmissionListHref({...query,page:data.page+1})}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Next</Link>:null}
-      </div>
-    </nav>
+    <Pagination label="Submission pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultySubmissionListHref({...query,page})} />
     <p className="text-xs leading-5 text-muted-foreground">
       All rows and CSV exports are recalculated with the current persisted Faculty Section scope.
       Draft private grades are never described as learner-visible. No grading mutation occurs here.

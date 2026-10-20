@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { Tabs } from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
@@ -138,7 +139,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
      </label>
     </fieldset>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST, optional)
-      <Input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+      <DateInput mode="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
     </label>
     <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4"><Checkbox name="pinned" /> Pin this notice</label>
     <TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}
@@ -213,12 +214,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
         </label>
        </fieldset>
        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Send at (IST)
-        <Input type="datetime-local" name="sendAt"
+        <DateInput mode="datetime-local" name="sendAt"
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>
        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST)
-        <Input type="datetime-local" name="showUntil"
+        <DateInput mode="datetime-local" name="showUntil"
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>

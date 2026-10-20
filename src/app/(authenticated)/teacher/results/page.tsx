@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -140,15 +141,7 @@ export default async function FacultyAssessmentResultsPage({
             </Link>
           </article>)}
       </div>}
-    <nav aria-label="Assessment result pages" className="flex items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground leading-[22px]">Page {data.page} of {data.totalPages}</p>
-      <div className="flex gap-3">
-        {data.page > 1 && <Link href={facultyResultsHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Previous</Link>}
-        {data.page < data.totalPages && <Link href={facultyResultsHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Next</Link>}
-      </div>
-    </nav>
+    <Pagination label="Assessment result pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResultsHref({...data.query,page})} />
     <p className="text-xs leading-5 text-muted-foreground">
       At most ten assessments are summarized per page to bound database work.
       Results use existing authorized Section report readers. Missing responses
