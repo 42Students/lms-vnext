@@ -40,9 +40,9 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
   }catch(error){setMessage(error instanceof Error?error.message:"Save failed");}
   finally{setBusy(false);}
  }
- return <div className="mt-4 flex flex-wrap items-end gap-3">
+ return <div className="mt-4 flex flex-wrap items-end gap-3 print:hidden">
   <label className="grid min-w-48 flex-1 gap-1 text-sm">Academic scope
-   <Select className="min-h-11 min-[768px]:min-h-9" value={scopeKey}
+   <Select className="min-h-11 md:min-h-9" value={scopeKey}
     onChange={e=>{setScopeKey(e.target.value);setStored(undefined);setMessage("");}}>
     <option value="">Select Department, Program, Batch or Class</option>
     {scopes.map(item=><option key={item.scopeType+":"+item.scopeId} value={item.scopeType+":"+item.scopeId}>
@@ -51,18 +51,18 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
    </Select>
   </label>
   <label className="grid gap-1 text-sm">Module
-   <Select className="min-h-11 min-[768px]:min-h-9" value={module}
+   <Select className="min-h-11 md:min-h-9" value={module}
     onChange={e=>{setModule(e.target.value as "projects"|"placements"|"electives");setStored(undefined);}}>
     <option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
    </Select>
   </label>
-  <Button type="button" variant="secondary" className="min-h-11 min-[768px]:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>Recheck</Button>
+  <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>Recheck</Button>
   {stored!==undefined&&<><label className="grid gap-1 text-sm">Stored rule
-   <Select value={choice} className="min-h-11 min-[768px]:min-h-9" onChange={e=>setChoice(e.target.value)}>
+   <Select value={choice} className="min-h-11 md:min-h-9" onChange={e=>setChoice(e.target.value)}>
     <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>
    </Select></label>
-   <label className="flex min-h-11 min-[768px]:min-h-9 items-center gap-2 text-sm"><Checkbox checked={locked} disabled={choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock</label>
-   <Button type="button" className="min-h-11 min-[768px]:min-h-9" disabled={busy} onClick={()=>void save()}>Save rule</Button>
+   <label className="flex min-h-11 md:min-h-9 items-center gap-2 text-sm"><Checkbox checked={locked} disabled={choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock</label>
+   <Button type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>void save()}>Save rule</Button>
   </>}
   {message&&<p role="status" className="w-full text-sm text-body">{message}</p>}
   {scopes.length>=500&&<p className="w-full text-sm text-warning-text">This page displays up to 500 academic scopes. Open the next hierarchy page to edit later scopes.</p>}
