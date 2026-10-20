@@ -134,3 +134,28 @@
 - **Regressions found/fixed:** 0. Compared lane-9 proof; read page/loading/error, parent placement/college/auth layouts, CollegeDepartmentInsights, query Zod model and scoped service, DataTable, PageHeader, Input/Button/Alert/Disclosure and empty/error handling. Checked strict query parsing, preservation of q/page in links, 25-row pagination, permission boundaries, CSV link for attendance only, no inferred placement eligibility, and mobile recovery.
 - **Extra clutter/alignment fixes:** Existing aligned mobile/desktop search, optional Clear, hairline result table, long-name wrapping and previous-page empty recovery are consistent; no changes needed.
 - **Files changed:** Queue and proof only. Source-only review; no CI.
+
+## Surface 28 — `src/app/(authenticated)/college/placements/retention/page.tsx`
+- **Regressions found/fixed:** 0 broken imports, JSX or route behavior; 1 token drift corrected: Analytics keyboard focus outline hard-coded `#1a95a1` instead of the matching legacy `--lms-primary-text` token. Compared lane-9 proof; read page/loading/error, parent college/auth layouts, retention report service and policy, shared DataTable/StatusBadge/EmptyState. Confirmed college scoping, 180-day cutoff, no disposal mutation, omission of issued/accepted offers, 200-row truncation, zero/error copy and responsive wrapping.
+- **Extra clutter/alignment fixes:** Retained calm hairline report and measured explanatory copy; token-consistent focus alignment only.
+- **Files changed:** `src/app/(authenticated)/college/placements/retention/page.tsx`; queue and proof. Source-only; no CI.
+
+## Surface 29 — `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- **Regressions found/fixed:** 0 broken imports/JSX or lost behavior; 1 token drift corrected: Analytics focus ring used raw `#1a95a1`, replaced with the identical shared legacy theme token. Compared lane-9 proof; read page/loading/error, parent layouts, student lookup service/model, DataTable, PageHeader, Input/Button/EmptyState/StatusBadge/Disclosure. Confirmed membership and college/company relationship scoping, 15-student and 100-application caps, offer/joining badge details, initial/short/zero/partial/error states, clear search and responsive rows.
+- **Extra clutter/alignment fixes:** Existing first-result disclosure, single Search primary action, 44px mobile control heights and capped long-copy presentation already fit; no structural changes.
+- **Files changed:** `src/app/(authenticated)/college/placements/student-lookup/page.tsx`; queue and proof. Static review only.
+
+## Surface 30 — `src/components/college/college-faculty-lifecycle-action.tsx`
+- **Regressions found/fixed:** 0 broken imports/JSX; 1 duplicated confirmation copy removed: Reactivate showed exactly the same "Restore access for this faculty membership?" in both ConfirmDialog description and body. Kept the existing descriptive text, conditional field, validation/error body, PATCH payload, pending guard, audit route, focus and toast semantics. Compared lane-9 proof; inspected CollegeRoleDirectoryWorkspace usage, faculty detail route/layout, facultyLifecycleConfirmation model, Button/Input/Alert/ConfirmDialog/Dialog, and confirm/cancel/reopen/suspended/active/busy/error scenarios.
+- **Extra clutter/alignment fixes:** Reactivation dialog now has only one copy of the instruction, while destructive suspension keeps its reason field and visible validation. Existing 44px mobile buttons and aligned Audit history link retained.
+- **Files changed:** `src/components/college/college-faculty-lifecycle-action.tsx`; queue/proof. Source-only, no tests or CI.
+
+## Surface 31 — `src/components/college/use-college-confirmation.tsx`
+- **Regressions found/fixed:** 0. Compared lane-9 proof; inspected full hook, ConfirmDialog/Dialog, caller usage in CollegeDriveDuplicateAction, plus identified offering, faculty reassignment and person-edit consumers. Checked one pending resolver at a time, replaced-prompt false resolution, cancel/confirm/unmount cleanup, empty prompt normalization, splitting question/detail without changing caller text, focus-managed modal and narrow copy.
+- **Extra clutter/alignment fixes:** Existing measured multi-line warning and 44px mobile dialog footer already satisfy review; no code change.
+- **Files changed:** Queue and proof only. Source-only, no CI.
+
+## Surface 32 — `src/components/people/faculty-profile-text-section.tsx`
+- **Regressions found/fixed:** 1 explicit form-safety contract regressed from lane-9 proof: Discard edits Button lacked documented `type="button"`. Although shared Button currently defaults to button, restored explicit type to prevent accidental form submission if defaults change. Compared lane-9 proof; inspected FacultyProfileEditor, teacher profile/details pages/loading/error and parent layout, shared Button/FormField/Input/Textarea/Alert/ConfirmDialog/Dialog, profile Zod schemas, draft validator, section anchor navigation and unsaved warning. Checked multiline About/Address, malformed HTTPS/date errors, pending/save/discard confirmation, parent remount, and source responsive classes at 375/768.
+- **Extra clutter/alignment fixes:** No additional structural change necessary; kept 16px section rhythm, measured helper copy, full-width phone Save/Discard, accessible field errors and concise modal wording.
+- **Files changed:** `src/components/people/faculty-profile-text-section.tsx`; queue/proof. Static review only, no tests or CI.
