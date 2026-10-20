@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:string|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [pendingIso,setPendingIso]=useState<string|null>(null);
+ const [saved,setSaved]=useState(false);
  const inFlightRef=useRef(false);
  function review(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
@@ -31,7 +32,7 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
     body:JSON.stringify({deadline:pendingIso,confirmed:true}),
    });
    if(!result.ok)throw new Error("Deadline extension failed.");
-   setPendingIso(null);router.refresh();
+   setPendingIso(null);setSaved(true);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Deadline extension failed.");}
   finally{inFlightRef.current=false;setBusy(false);}
  }
@@ -39,9 +40,10 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   <h2 className="text-base font-semibold">Extend deadline</h2>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <label className="grid w-full max-w-md gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
-   <Input name="deadline" type="datetime-local" required className="w-full"/>
+   <Input name="deadline" type="datetime-local" required className="w-full" onChange={()=>{setError("");setSaved(false);}}/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {saved?<p role="status" className="text-sm text-success">Deadline extended.</p>:null}
   <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}>
    {busy?"Saving…":"Extend deadline"}</Button>
  </form>
