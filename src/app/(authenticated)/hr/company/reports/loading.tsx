@@ -1,5 +1,5 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function Loading() {
-  return <GracefulPageLoading label="Loading company reports…" shape="card" />;
+  return <div className="min-w-0 max-w-full"><GracefulPageLoading label="Loading company reports…" shape="card" /></div>;
 }
