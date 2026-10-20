@@ -322,38 +322,13 @@ export function AdminAttendanceWorkspace({
   return (
     <div className="space-y-5">
       {notice?<Alert tone="info">{notice}</Alert>:null}
-      <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
-      <section className="grid gap-3 md:grid-cols-2">
-        <div className="border-b border-border pb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            Retroactive marking window
-          </p>
-          <p className="mt-2 text-2xl font-semibold text-foreground">
-            {data.policy.correctionWindowHours} hours
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Read-only Faculty marking window. College Admin corrections may also be made outside this window.
-          </p>
-        </div>
-        <div className="border-b border-border pb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            Minimum attendance
-          </p>
-          <p className="mt-2 text-2xl font-semibold text-foreground">
-            {data.policy.eligibilityThresholdPercent}%
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Learners below this marked-session percentage are highlighted.
-          </p>
-        </div>
-      </section>
 
       <form
         onSubmit={(event) => {
           event.preventDefault();
           navigate();
         }}
-        className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_auto]"
+        className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
       >
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Class
@@ -396,7 +371,7 @@ export function AdminAttendanceWorkspace({
             </option>)}
           </Select>
         </label>:null}
-        <Button className="self-end" type="submit" disabled={!sectionId || !courseId}>
+        <Button className="w-full self-end md:w-auto" type="submit" disabled={!sectionId || !courseId}>
           View attendance
         </Button>
         <label className="flex items-center gap-2 text-sm text-body md:col-span-2 xl:col-span-3">
@@ -412,7 +387,7 @@ export function AdminAttendanceWorkspace({
           />
           Show all college courses (including courses not taught to this class)
         </label>
-        <div className="flex flex-wrap items-center gap-2 md:col-span-2 xl:col-span-3">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)] md:col-span-2 xl:col-span-3">
           <Button size="sm" variant="secondary"
             aria-label="Previous month"
             onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
@@ -431,6 +406,33 @@ export function AdminAttendanceWorkspace({
           </Button>
         </div>
       </form>
+
+      <section className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+        <div className="border-b border-border pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            Retroactive marking window
+          </p>
+          <p className="mt-2 text-2xl font-semibold text-foreground">
+            {data.policy.correctionWindowHours} hours
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Read-only Faculty marking window. College Admin corrections may also be made outside this window.
+          </p>
+        </div>
+        <div className="border-b border-border pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            Minimum attendance
+          </p>
+          <p className="mt-2 text-2xl font-semibold text-foreground">
+            {data.policy.eligibilityThresholdPercent}%
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Learners below this marked-session percentage are highlighted.
+          </p>
+        </div>
+      </section>
+
+      <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
 
       {data.deliveries.length === 0 ? (
         <EmptyState

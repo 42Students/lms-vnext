@@ -39,7 +39,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   }catch{setMessage("Attendance settings could not be saved. Try again.");setFailed(true);}
   finally{setSaving(false);}
  }
- return <section aria-label="Attendance policy" className="space-y-3 border-b border-border pb-5">
+ return <section aria-label="Attendance policy" className="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
   <h2 className="font-semibold text-foreground">Attendance policy</h2>
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Late marking allowed for
@@ -57,7 +57,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   </div>
   <p className="hidden text-sm text-body print:block">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
   <Button variant="primary" type="button" loading={saving} disabled={saving} onClick={requestSave}
-   className="min-h-11 md:min-h-9 print:hidden">{saving?"Saving…":"Save attendance policy"}</Button>
+   className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden">{saving?"Saving…":"Save attendance policy"}</Button>
   {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance settings for this college?"
    description="Changes apply to the selected college." confirmVariant="primary" confirmLabel="Save settings"
