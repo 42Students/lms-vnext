@@ -59,7 +59,7 @@ export default async function TpoMyNotificationsPage({
 
   if (!parsed) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <TpoSettingsNav active="notifications" />
 
         <PageHeader
@@ -110,7 +110,7 @@ export default async function TpoMyNotificationsPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <TpoSettingsNav active="notifications" />
 
       <PageHeader
@@ -155,7 +155,7 @@ export default async function TpoMyNotificationsPage({
         <form
           action="/tpo/settings/notifications"
           method="get"
-          className="mt-4 flex flex-wrap items-end gap-3"
+          className="mt-4 flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4"
         >
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Read status
@@ -205,7 +205,7 @@ export default async function TpoMyNotificationsPage({
         </form>
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
