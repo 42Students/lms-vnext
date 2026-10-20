@@ -54,7 +54,7 @@ export default async function SuperAdminCompaniesPage({
     </Alert>:null}
     {data.query.companyId ? <Alert tone="info">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
-      <Link href="/admin/companies" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Show all employers</Link>
+      <Link href="/admin/companies" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Show all employers</Link>
     </Alert> : null}
     <div className="flex flex-wrap gap-3 text-sm">
       <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show deleted (archived) companies →</Link>
@@ -124,7 +124,7 @@ export default async function SuperAdminCompaniesPage({
       <Button type="submit" className="min-h-11 md:min-h-9 self-end px-4">Filter</Button>
     </form>
     <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
-      className="inline-flex min-h-11 items-center border-b-2 border-transparent aria-[current=page]:border-primary px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary)] hover:underline">
+      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Export matching companies as CSV →
     </Link>
     {context.adminScope?.collegeId?
