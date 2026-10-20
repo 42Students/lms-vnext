@@ -59,7 +59,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
       <section className="border-b border-border py-4" aria-label="Threshold context">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Attendance threshold</h2>
-          <StatusBadge tone={attendance.overall?.percentage === null ? "neutral" :
+          <StatusBadge tone={attendance.overall?.percentage == null ? "neutral" :
             attendance.overall && attendance.overall.percentage !== null &&
               attendance.overall.percentage >= attendance.thresholdPercent
               ? "success" : "warning"}>

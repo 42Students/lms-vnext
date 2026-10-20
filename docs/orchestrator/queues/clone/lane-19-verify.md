@@ -1,0 +1,43 @@
+# UI/UX polish VERIFICATION queue: lane chat-19 (surfaces polished by OTHER lanes)
+
+32 surfaces. Each was already polished by another lane. Your job is to VERIFY and improve, strictly one surface at a time.
+
+1. Regressions first (a polish pass edits many files without running code): matching tags, every import present and used, no duplicate attributes, no undeclared packages, props still match their component types, no removed export that another file imports. Fix anything broken.
+2. Behaviour kept: ids, data-testid, aria labels, routes, permissions, form fields, wording (docs/audit/legacy-copy-A.md and B.md) and legacy tokens (docs/design) must be unchanged; if the polish dropped or reworded something, restore it.
+3. Then judge the surface fresh as a senior product designer: is anything still cluttered, misaligned, duplicated or noisy? One obvious primary action? Aligned left edges and gaps on the legacy scale? Calm density? Real layouts at 375 and 768? Empty, loading, error states with a clear next step? Fix what you find.
+4. Also check the route files in the same folder (loading, error, not-found, template) and the nearest parent layout.
+
+Proof: ONE entry per surface in docs/audit/ux/verify-lane-19.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-19-b with [chat-19] after every 2 surfaces.
+
+- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/import/page.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/page.tsx`
+- [ ] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [ ] `src/app/(authenticated)/college/lessons/page.tsx`
+- [ ] `src/app/(authenticated)/college/live-classes/page.tsx`
+- [ ] `src/app/(authenticated)/college/page.tsx`
+- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [ ] `src/app/(authenticated)/college/people/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/calendar/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/new/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/retention/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [ ] `src/components/college/college-faculty-lifecycle-action.tsx`
+- [ ] `src/components/college/use-college-confirmation.tsx`
+- [ ] `src/components/people/faculty-profile-text-section.tsx`
