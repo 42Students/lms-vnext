@@ -55,25 +55,25 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
   <p className="text-xs text-body">Edits apply to future applicants. Existing applications and offer decisions remain unchanged.</p>
   {!open?<Button type="button" variant="secondary" onClick={()=>setOpen(true)}>
    Edit published drive</Button>:
-   <form className="grid gap-3 sm:grid-cols-2" onSubmit={e=>void save(e)}>
-    <label className="grid gap-1 text-sm">Title<Input name="title" required minLength={3} maxLength={100}
+   <form className="grid gap-3 md:grid-cols-2" onSubmit={e=>void save(e)}>
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title<Input name="title" required minLength={3} maxLength={100}
      defaultValue={job.title} className={cls}/></label>
-    <label className="grid gap-1 text-sm">Application deadline (IST)<Input type="datetime-local" required
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application deadline (IST)<Input type="datetime-local" required
      name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></label>
-    <label className="grid gap-1 text-sm sm:col-span-2">Description<Textarea name="description"
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description<Textarea name="description"
      maxLength={15000} defaultValue={job.description} rows={4} className={cls}/></label>
-    <label className="grid gap-1 text-sm sm:col-span-2">Locations (comma-separated)<Input name="locations"
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Locations (comma-separated)<Input name="locations"
      defaultValue={job.locations.join(", ")} className={cls}/></label>
-    <label className="grid gap-1 text-sm">Openings<Input name="openings" type="number" min={1}
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Openings<Input name="openings" type="number" min={1}
      defaultValue={job.openings??""} className={cls}/></label>
-    <label className="grid gap-1 text-sm">Minimum annual CTC (INR)<Input name="minimumAnnualCtcInr"
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum annual CTC (INR)<Input name="minimumAnnualCtcInr"
      type="number" min={0} defaultValue={job.minCtc??""} className={cls}/></label>
-    <label className="grid gap-1 text-sm">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
      type="number" min={0} defaultValue={job.maxCtc??""} className={cls}/></label>
-    <label className="grid gap-1 text-sm sm:col-span-2">Reason for edit
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Reason for edit
      <Textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></label>
-    {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
-    <div className="flex flex-wrap gap-3 sm:col-span-2">
+    {error?<p role="alert" className="text-sm text-error md:col-span-2">{error}</p>:null}
+    <div className="flex flex-wrap gap-3 md:col-span-2">
      <Button type="submit" disabled={pending}>
       {pending?"Saving…":"Review and save published changes"}</Button>
      <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>

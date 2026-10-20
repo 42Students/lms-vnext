@@ -17,7 +17,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
  requireSuperAdminSelectedCollege(context,"placements.manage");
  const job=await getPlacementJob(context,jobId);
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
- return <div className="min-w-0 space-y-4">
+ return <div className="min-w-0 space-y-6">
     
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
    actions={<PageBackLink href={base} label="Drive overview"/>}/>
@@ -62,6 +62,6 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   {job.status!=="ARCHIVED"?<SuperAdminDriveArchive jobId={jobId} title={job.title}/>:null}
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}
-  <Link href="/admin/placements" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Platform placement policy →</Link>
+  <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Platform placement policy →</Link>
  </div>;
 }
