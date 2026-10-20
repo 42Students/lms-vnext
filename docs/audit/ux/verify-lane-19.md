@@ -109,3 +109,13 @@
 - **Regressions found/fixed:** 0. Read the route redirect guard, loading/error, nested `[jobId]/layout.tsx` and its CollegeDriveLegacyNav/Tabs, shared PlacementDriveWorkspace, including scope-gated TPO-only sections, College-only primary applications link, dropdown states, draft edit, placement screening and lifecycle/offer controls. Verified source-level nesting, mapped props/IDs, confirmed write endpoints, error handling, existing legacy copy and small-screen actions; no dropped route or aria label found.
 - **Extra clutter/alignment fixes:** One inherited drive tab strip plus continuous white canvas, responsive header CTA and grouped Actions menu; no new nested chrome.
 - **Files changed:** Queue/proof only. Source review 375/768, no CI.
+
+## Surface 23 — `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- **Regressions found/fixed:** 0. Compared chat-9 polish proof; read page/loading/error, shared drive layout/tabs and role/tenant guards, job/eligibility/academic data, PlacementDraftEditForm and unsaved-change guard (disclosures, validation, two API writes, optimistic behavior), CollegeLegacyDriveSettings (close/reopen confirmation) and CollegeDriveArchiveAction (impact preview, persisted safety, confirmation and redirect). Verified server-side draft-only editing and archived state, keyboard and responsive control geometry, no lost imports/IDs/copy/routes.
+- **Extra clutter/alignment fixes:** Existing advanced draft fields are disclosed, primary Save remains identifiable, guarded delete is hidden behind a separate disclosure; no source change.
+- **Files changed:** Queue and verification proof only; 375/768 source review, no CI.
+
+## Surface 24 — `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- **Regressions found/fixed:** 0. Read page/loading/error and parent drive/college layouts, role guard, collegeShortlistedQuery and driveApplicationsQuerySchema, scoped application service, DataTable, PageHeader, StatusBadge, EmptyState and export query helper. Checked filter/clear, shortlist-only results, 1000-row safe CSV, pager, missing/zero and tablet/mobile states; no broken TSX, dropped test/ARIA or reworded copy.
+- **Extra clutter/alignment fixes:** Search, Filter and optional Clear on one aligned rail; narrow table and separate Export link avoid action clutter. No source change.
+- **Files changed:** Queue and verification proof only. No runtime/CI.
