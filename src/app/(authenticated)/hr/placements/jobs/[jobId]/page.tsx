@@ -575,8 +575,8 @@ export default async function HrPlacementJobPage({
                     value={focusedNavigation.index+1} maximum={focusedNavigation.total} unit="applicants"
                     className={funnelStyles.reviewTrack} />
                 </label>
-                {focusedNavigation.previous ? <Link className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
-                {focusedNavigation.next ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
+                {focusedNavigation.previous ? <Link className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
+                {focusedNavigation.next ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] hover:bg-[rgba(38,186,199,0.07)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
               </nav> : null}
               <dl className="mt-5 grid gap-4 text-sm">
                 <div><dt className="text-muted-foreground">Applicant</dt><dd className="font-semibold text-foreground">{selectedApplicant.name}</dd></div>
@@ -635,11 +635,11 @@ export default async function HrPlacementJobPage({
             <div className="flex gap-2">
               {filters.page > 1 ? (
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)+returnQuery}
-                  className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>
+                  className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)]">Previous</Link>
               ) : null}
               {filters.page < applicantsPage.pages ? (
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page+1)+returnQuery}
-                  className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>
+                  className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)]">Next</Link>
               ) : null}
             </div>
           </nav>
@@ -704,9 +704,9 @@ export default async function HrPlacementJobPage({
               </p>
               <nav aria-label="Selection history pages" className="flex gap-3 text-sm">
                {selectionPage.page>1?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page-1)+returnQuery}
-                className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous selections</Link>:null}
+                className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Previous selections</Link>:null}
                {selectionPage.page<selectionPage.pages?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page+1)+returnQuery}
-                className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next selections</Link>:null}
+                className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Next selections</Link>:null}
               </nav>
             </section>:null}
           {offers.length ? <HrJobOffersGrid
@@ -734,12 +734,12 @@ export default async function HrPlacementJobPage({
             <div className="flex gap-2">
               {filters.offerPage > 1 ? <Link
                 href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)+returnQuery}
-                className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)]">
                 Previous
               </Link> : null}
               {filters.offerPage < offersPage.pages ? <Link
                 href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)+returnQuery}
-                className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)]">
                 Next
               </Link> : null}
             </div>

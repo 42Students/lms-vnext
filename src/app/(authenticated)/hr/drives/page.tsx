@@ -107,7 +107,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       </Link>} />
     <nav aria-label="Recruiter proposal history">
       <Link href={hrSentProposalsHref(selectedCollege)}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)]">
        Sent discussion proposals
       </Link>
       <span className="self-center text-xs text-muted-foreground">
