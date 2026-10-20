@@ -32,10 +32,17 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify(body),
    });
-   const payload=await response.json().catch(()=>null) as {status?:string}|null;
+   const payload:unknown=await response.json().catch(()=>null);
    if(!response.ok)throw Error("Could not save change request.");
-   const publicStatus=payload?.status&&/^(OPEN|ACCEPTED|ANSWERED|DECLINED|WITHDRAWN|CANCELLED)$/i.test(payload.status)
-     ?payload.status.toLowerCase():"updated";
+   const receipt=payload&&typeof payload==="object"&&!Array.isArray(payload)
+     ?payload as Record<string,unknown>:null;
+   const statuses:Record<string,string>={CREATE:"OPEN",COMMENT:"COMMENTED",ACCEPT:"ACCEPTED",ANSWER:"ANSWERED",DECLINE:"DECLINED",WITHDRAW:"WITHDRAWN"};
+   if(!receipt||typeof receipt.id!=="string"||
+     !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(receipt.id)||
+     receipt.status!==statuses[String(body.action)]||
+     (body.action!=="CREATE"&&body.action!=="COMMENT"&&receipt.id!==body.requestId))
+     throw Error("Could not verify saved change request.");
+   const publicStatus=receipt.status==="COMMENTED"?"updated":(receipt.status as string).toLowerCase();
    setSuccess("Change request "+publicStatus+".");
    setConfirmation(null);
    if(body.action==="CREATE"){setValue("");setReason("");}
