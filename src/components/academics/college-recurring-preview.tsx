@@ -215,7 +215,7 @@ export function CollegeRecurringPreview({
           <ul className="list-inside list-disc">{skipped.map(item =>
             <li key={item.localDate}>{item.localDate}: {item.reasons.map(reason => reason.replaceAll("_", " ")).join(", ")}</li>)}</ul>
         </>}
-      </div> : null}
+      </Alert> : null}
       {result ? <section aria-label="Schedule preview results" className="space-y-3">
         <h2 className="text-lg font-semibold text-foreground">Preview · {result.ready} clear, {result.blocked} blocked</h2>
         <p className="text-sm text-muted-foreground">{result.notice}</p>
