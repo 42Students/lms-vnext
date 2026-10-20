@@ -48,11 +48,13 @@ function when(value: unknown) {
   if (typeof value !== "string") {
     return null;
   }
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return null;
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  }).format(date);
 }
 
 export function PlacementRequestQueue({
