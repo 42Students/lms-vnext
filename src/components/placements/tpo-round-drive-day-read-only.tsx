@@ -146,7 +146,7 @@ export function TpoRoundDriveDayReadOnly({
           </StatusBadge>
         </div>
 
-        <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-5 grid gap-4 text-sm md:grid-cols-2 lg:grid-cols-4">
           <div>
             <dt className="font-semibold text-muted-foreground">
               Job
@@ -192,7 +192,7 @@ export function TpoRoundDriveDayReadOnly({
           Applicant progress
         </h2>
 
-        <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
           {summary.map(([label, count]) => (
             <div
               key={label}
