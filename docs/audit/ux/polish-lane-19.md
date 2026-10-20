@@ -229,3 +229,19 @@
 **Fixed:** Kept all five native HTML input modes, calendar/time/month/week/datetime selection, min/max/step enforcement, focus recovery, keyboard navigation, native bubbling change/input events, ARIA ids and legacy styling. Converted the nonmodal popup into an inset viewport-safe bottom sheet at phone widths (scroll-contained to 70dvh) while retaining anchored popup on tablets/desktops. Tightened the seven-column phone grid to legacy 2px gaps and compact gutters so all date buttons stay 44px without horizontal scrolling at 375px; labelled Hour and Minute columns visibly and gave datetime Apply a full-width phone row. Reviewed Input, Button, PopoverPanel, CalendarGrid and every picker branch for empty, selected, disabled, invalid, bounded, opening/dismissal, Escape, 375px and 768px; source-only, no CI/runtime.
 
 **Files changed:** `src/components/ui/date-input.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 29 — `src/components/ui/drawer.tsx`
+
+**Problems found (8):** Footer peers lacked reliable mobile stacking and direct-button widths, tiny phone action targets, poor safe-area footer grouping, narrow left-panel title gutter, long description overflow, insufficient min-width guards, different footer hierarchy from Dialog, and mobile content competing with footer for width.
+
+**Fixed:** Preserved native dialog/backdrop/Escape, focus return, history state, both left/right geometry, title/close controls, inline-desktop filter behavior and all props. Added safe width/overflow, compact phone header gaps, long-description wrapping, full-width direct footer buttons and confirm-first mobile order; kept wrapped/right-aligned tablet-desktop footer with legacy spacing/borders. Inspected Button, ScrollCue and responsive filter use of Drawer across dismissal, disabled/pending, empty/tall body, left-navigation, 375px and 768px; source only, no CI/browser.
+
+**Files changed:** `src/components/ui/drawer.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 30 — `src/components/ui/searchable-select.tsx`
+
+**Problems found (9):** Dropdown opened below viewport edge; unnecessary 120px empty height; only 200px list for many options; invisible scroll affordance; overlong options clipped; weak scroll containment; tiny empty feedback; filter list could remain off-screen; narrow touch layouts were dense.
+
+**Fixed:** Added root-geometry-aware above/below placement at opening, viewport-bounded scrolling (max 18rem/half screen), no forced empty height, multiline labels with resilient breaking, readable compact empty notice and preserved 44px options. Maintained native input/selection and clearable behavior, controlled/uncontrolled props, keyboard arrows/Enter/Escape/Tab, blur validation, outside dismissal and exact ARIA roles, IDs and result text. Reviewed PopoverListbox/Input/Button for no/one/many results, disabled, validation error, focus, 375px and 768px by source; no runtime/CI.
+
+**Files changed:** `src/components/ui/searchable-select.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
