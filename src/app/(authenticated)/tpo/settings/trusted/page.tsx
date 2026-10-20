@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -32,7 +33,6 @@ export default async function TpoTrustedCompaniesPage() {
 
   return (
     <div className="min-w-0 space-y-6">
-      <TpoSettingsNav active="trusted" />
       <PageHeader
         title="Trusted Companies"
         description="Review and confirm changes to college-specific employer trust flags. Trusted email domains are explicit college-scoped entries, separate from company trust flags."
@@ -45,6 +45,7 @@ export default async function TpoTrustedCompaniesPage() {
           </Link>
         }
       />
+      <TpoSettingsNav active="trusted" compact />
 
       {!data.explicitDomainsAvailable ? (
         <Alert tone="warning">
@@ -62,7 +63,8 @@ export default async function TpoTrustedCompaniesPage() {
         </Alert>
       ) : null}
 
-      <section className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+      <Disclosure title="Trusted company totals" className="min-w-0" contentClassName="pt-3">
+      <section className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
           [
             "Linked companies",
@@ -86,6 +88,7 @@ export default async function TpoTrustedCompaniesPage() {
           <StatTile key={label} label={label} value={value} className="min-h-[104px]" />
         ))}
       </section>
+      </Disclosure>
 
       <section className="border-t border-border">
         <div className="border-b border-border py-4">
@@ -115,7 +118,7 @@ export default async function TpoTrustedCompaniesPage() {
                 <Link href={"/tpo/companies/"+encodeURIComponent(company.companyId)}
                   className="font-semibold text-link underline">{company.name}</Link>},
               {key:"trust",header:"Trust status",mobilePriority:"secondary",cell:company=>
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                   <StatusBadge tone={company.isTrusted?"success":"neutral"}>
                     {company.isTrusted?"Trusted":"Not trusted"}
                   </StatusBadge>
@@ -140,9 +143,11 @@ export default async function TpoTrustedCompaniesPage() {
          Trusted-domain editor is unavailable until the table is registered.
         </Alert>}
 
+      <Disclosure title="Trusted domain policy notes" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Explicit trusted domains are normalized and recorded by the server. Only future recruiter access decisions can use these values; prior grants are not silently expanded.
       </p>
+      </Disclosure>
     </div>
   );
 }

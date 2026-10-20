@@ -37,9 +37,9 @@ export function TpoTrustToggle({
       setError(caught instanceof Error?caught.message:"Company trust update failed.");
     }finally{setPending(false);}
   }
-  return <div className="mt-2">
+  return <div className="min-w-0 sm:mt-2">
     <Button variant="secondary" type="button" disabled={pending} onClick={()=>{setError(null);setReview(true);}}
-      >
+      className="min-h-11 w-full sm:w-auto md:min-h-9">
       {pending?"Saving...":isTrusted?"Remove company trust":"Mark company trusted"}
     </Button>
     <ConfirmDialog open={review} onOpenChange={value=>{if(!pending)setReview(value);}}
