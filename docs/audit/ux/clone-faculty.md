@@ -794,3 +794,21 @@ This inventory reads every named queued file through the connected GitHub reposi
 | `src/components/courses/faculty-contacts-table.tsx` | 66 | 0 (0 hidden) | 0 | 0/0 | 16,26 |
 | `src/components/courses/faculty-content-editor.tsx` | 183 | 0 (0 hidden) | 0 | 2/2 | 107,122,127 |
 | `src/components/courses/faculty-content-order-editor.tsx` | 205 | 0 (0 hidden) | 0 | 4/4 | 102 |
+
+
+### Source inventory directly related components, part 3/4 (25–36 of 48)
+
+| Path | Lines | Raw/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source token/state example lines |
+|---|---:|---:|---:|---:|---|
+| `src/components/courses/faculty-course-filter-auto-submit.tsx` | 42 | 0 (0 hidden) | 0 | 0/0 | shared/indirect |
+| `src/components/courses/faculty-course-home-signals.tsx` | 262 | 0 (0 hidden) | 0 | 0/0 | 38,42,83 |
+| `src/components/courses/faculty-course-list.tsx` | 230 | 0 (0 hidden) | 0 | 1/1 | 58,71,87 |
+| `src/components/courses/faculty-course-roster.tsx` | 256 | 0 (0 hidden) | 0 | 2/2 | 116,162,169 |
+| `src/components/courses/faculty-course-tab-navigation.tsx` | 92 | 0 (0 hidden) | 0 | 0/0 | 54,60,71 |
+| `src/components/courses/faculty-course-workspace.tsx` | 712 | 0 (0 hidden) | 0 | 0/0 | 250,344,384 |
+| `src/components/courses/faculty-ist-quarter-hour-picker.tsx` | 54 | 0 (0 hidden) | 0 | 0/0 | 20,22,25 |
+| `src/components/courses/faculty-item-actions.tsx` | 129 | 0 (0 hidden) | 0 | 1/1 | 90 |
+| `src/components/courses/faculty-lesson-authoring.tsx` | 1173 | 0 (0 hidden) | 0 | 11/11 | 65,600,664 |
+| `src/components/courses/faculty-lesson-video-manager.tsx` | 341 | 0 (0 hidden) | 0 | 11/11 | 218,222,225 |
+| `src/components/courses/faculty-live-class-editor.tsx` | 165 | 0 (0 hidden) | 0 | 1/1 | 108,116,124 |
+| `src/components/courses/faculty-quiz-learner-preview.tsx` | 67 | 0 (0 hidden) | 0 | 1/1 | 43,48,49 |
