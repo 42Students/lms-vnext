@@ -1,5 +1,6 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import Link from "next/link";
 import { SuperAdminDriveQuickSearch } from "@/components/placements/super-admin-drive-quick-search";
 import {SuperAdminNeedsAttention} from "@/components/placements/super-admin-needs-attention";
@@ -12,7 +13,7 @@ import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operati
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
 function Metric({ label, value, description }: { label: string; value: number; description: string }) {
-  return <StatTile label={label} value={value} detail={description} />;
+  return <StatTile className={tpoTileStyles.tile} label={label} value={value} detail={description} />;
 }
 function priorityTone(priority: string): "error" | "warning" | "info" {
   return priority === "HIGH" ? "error" : priority === "MEDIUM" ? "warning" : "info";

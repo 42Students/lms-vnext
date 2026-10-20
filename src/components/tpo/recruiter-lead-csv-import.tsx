@@ -179,7 +179,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             <a
               download="recruiter-leads-template.csv"
               href={"data:text/csv;charset=utf-8," + encodeURIComponent(template)}
-              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden"
+              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden"
             >
               Download CSV template
             </a>
@@ -213,7 +213,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                     {value:"EXISTING",label:"Already recruiters",count:existingNumbers.size},
                     {value:"INVALID",label:"To fix",count:preview.invalid},
                     {value:"SKIPPED",label:"Skipped",count:skipRows.length}]}/></div>
-                <ScrollCue axis="y" label="Recruiter import preview rows" viewportClassName="max-h-56">
+                <ScrollCue axis="y" label="Recruiter import preview rows" viewportClassName="max-h-56 print:max-h-none print:overflow-visible">
                   <DataTable rows={previewRows} getRowKey={item=>String(item.row)} caption="Recruiter import preview"
                     empty={<p>No rows in this group.</p>}
                     columns={[
@@ -222,7 +222,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"status",header:"Validation",mobilePriority:"secondary",cell:item=><span>
                         <StatusBadge tone={item.error?"error":existingNumbers.has(item.row)?"info":skipRows.includes(item.row)?"warning":"success"}>{item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}</StatusBadge>
                         {existing.find(entry=>entry.row===item.row)?
-                          <Link className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/tpo/recruiters/"+encodeURIComponent(existing.find(entry=>entry.row===item.row)!.leadId)}>Open</Link>:null}
+                          <Link className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/recruiters/"+encodeURIComponent(existing.find(entry=>entry.row===item.row)!.leadId)}>Open</Link>:null}
                       </span>},
                       {key:"include",header:"Include",mobilePriority:"action",cell:item=><label className="inline-flex min-h-11 items-center gap-2 text-sm"><Checkbox aria-label={"Include row "+item.row}
                         disabled={!item.lead||existingNumbers.has(item.row)||busy||Boolean(result)}
@@ -271,7 +271,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
                   {" "}{result.counts.invalid} invalid, {result.counts.skipped??0} skipped. {result.counts.total} rows processed.
                 </p>
-                <ScrollCue axis="y" label="Recruiter import result rows" viewportClassName="max-h-56">
+                <ScrollCue axis="y" label="Recruiter import result rows" viewportClassName="max-h-56 print:max-h-none print:overflow-visible">
                   <DataTable rows={result.results} getRowKey={item=>String(item.row)} caption="Recruiter import results"
                     empty={<p>No import results to display.</p>}
                     columns={[
@@ -279,7 +279,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="created"?"success":item.status==="duplicate"?"info":item.status==="invalid"?"error":"warning"}>{item.status}</StatusBadge>},
                       {key:"details",header:"Details",mobilePriority:"secondary",cell:item=>item.leadId?
                         <Link href={"/tpo/recruiters/"+encodeURIComponent(item.leadId)}
-                          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                           Open created lead
                         </Link>:(item.reason??"—")},
                     ]}/>

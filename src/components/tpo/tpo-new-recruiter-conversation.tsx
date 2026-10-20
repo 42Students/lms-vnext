@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
@@ -110,9 +112,8 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
      <p className="text-xs text-muted-foreground">
       This starts their General thread. Messages about a drive are best sent from that drive.
      </p>
-     {recruiters.length===0?<p role="status" className="text-sm text-body">
-      No recruiters have verified, active placement access.</p>:null}
-     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+     {recruiters.length===0?<EmptyState title="No recruiters have verified, active placement access."/>:null}
+     {error?<InlineNotice tone="error" message={error}/>:null}
      {createdThreadId?<a href={"/tpo/messages/"+encodeURIComponent(createdThreadId)}
       className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open conversation</a>:null}
      <div className="flex justify-end gap-2">

@@ -526,3 +526,88 @@ The parity assertion script gained guarded checks for header actions and the cal
 **STRICT TICK STATUS: 10/87 ticked, 77/87 open.** Source layout, markup, properties and breakpoint declarations improved, but the exact computed default/hover/active/focus/disabled/loading/error matrices and real legacy-vs-vNext 375px phone, 768px tablet, 861px breakpoint and 1280px desktop captures have not been obtained. No visual file falsely closed.
 
 **Next file:** `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx` — complete inherited link and status-pill computed hover/focus parity, timeline spacing and actual phone/tablet/desktop side-by-side evidence; then `src/app/(authenticated)/hr/company/page.tsx`.
+
+
+## 2026-10-20 — 15 whole route-loader wrappers and six tracker error recoveries
+
+Main was first fetched and the lane was fast-forwarded from `ebd68fd7` to `a98e6f50` without dropping lane work; following pushes were ONLY to `chatgpt/chat-18-b`.
+
+### Exact route-local loader contract and legacy page anatomy
+
+The source of truth for the surrounding page is `docs/design/old-lms-pages.md:3-11`: **one** white page canvas, no nested load-time card, list/table rows on the same canvas, and reports using discrete option tiles. `docs/design/old-lms-shell-spec.md:3-4,23-24` measures the canvas at white / 1px `#e5e9f0` / 12px radius / 24px padding, with ordinary controls 36px high. `old-lms-shell.css:73` establishes a 767px phone breakpoint and `legacy-styles/components___listing-page-header.scss:131-164` establishes full-width phone actions / 44px touch height.
+
+Each 15-file wrapper below renders **exactly one** `GracefulPageLoading` with no route-owned DOM, class, inline style, local card, page title, modal, link, button or breakpoint. The primitive owns all visible placeholders (which remain inside the existing one-canvas shell). The route-specific accessible label identifies the real screen; the `shape` only chooses the existing directory-like or report-like shared loading layout. The route owns zero CSS values; the complete inherited component value rows appear in the table after this inventory.
+
+| Work-queue file below `src/app/(authenticated)/` | Old-LMS content geometry (`old-lms-pages.md:3-11`) | vNext label (exact) | vNext shape | Route-local grep proof |
+| --- | --- | --- | --- | --- |
+| `hr/activity/loading.tsx` | List / hiring history | `Loading hiring activity…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `hr/company/reports/loading.tsx` | Reports / report option tiles | `Loading company reports…` | `card` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `hr/conversations/loading.tsx` | Messages / conversation list | `Loading recruiter messages…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `hr/colleges/loading.tsx` | Authorized college choices | `Loading recruiter colleges…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `hr/notifications/loading.tsx` | Grouped notification list | `Loading recruiter notifications…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `recruiter/calendar/loading.tsx` | Canonical HR calendar alias | `Loading recruiter calendar…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `recruiter/colleges/loading.tsx` | Canonical HR colleges alias | `Loading recruiter colleges…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `recruiter/company/loading.tsx` | Canonical HR company alias | `Loading company…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `recruiter/drives/[jobId]/messages/loading.tsx` | Drive message history | `Loading conversation history…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `recruiter/messages/loading.tsx` | Canonical HR messages alias | `Loading conversations…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `tracker/audit-findings/[publicId]/loading.tsx` | Audit detail / hairline sections | `Loading audit finding…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `tracker/issues/[publicId]/loading.tsx` | Issue detail / hairline sections | `Loading issue details…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `tracker/issues/loading.tsx` | Issue directory / table | `Loading tracker issues…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `tracker/loading.tsx` | Issue intake / form | `Preparing issue report…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+| `tracker/logs/loading.tsx` | Log directory / rows | `Loading tracker logs…` | `directory` | 0 own controls/colour/h1/overlay; 1 shared loader |
+
+**Inherited value/state table, with explicit ownership boundary**
+
+| State/property | Original LMS reference | vNext declaration | Comparison |
+| --- | --- | --- | --- |
+| Canvas count / nesting | `old-lms-pages.md:3-4`: one white canvas, no nested card | Each wrapper directly returns the shared loader; `graceful-page-loading.tsx:17` is `bg-transparent`, no card/border, width `min-w-0` | Matched at route ownership: zero extra canvas |
+| Loader skeleton structure | `old-lms-pages.md:6,8-9`: a compact directory for ordinary pages; separate report option tiles | `graceful-page-loading.tsx:18-26`: directory = line + form + 3 rows; card = 2 lines + 4 rows. `skeleton.tsx:13-18`: 16px line, 64px form, 48px row | Page type mapped; **no exact original loading-skeleton metric exists in the provided legacy references**, so global pixel match is not proven |
+| Text/default state | `old-lms-pages.md:3-6`: content on existing white canvas | Loader text is **screen-reader-only** in `skeleton.tsx:22-23`; every route label above is passed as `label` and no local text appears | No route-owned visible text to compare |
+| Slow/loading recovery | `old-lms-shell-spec.md:23-24`: compact outlined control 36px | `graceful-page-loading.tsx:8-13,27-30`: status after 12,000ms and shared secondary `Button` with reload; no route-specific retry or timer | Behaviour preserved; exact legacy delay unspecified |
+| Hover/focus/active/disabled | `old-lms-shell-spec.md:23-24`: shared outlined controls, teal focus; `components___button.scss:1-34`: no extra route-specific state | Every wrapper owns 0 interactive controls; shared `button.tsx` owns all these states, with no local overrides | Route-owned values/states = 0; shared primitive is a separate visual verification responsibility |
+| Responsive tablet/desktop | `old-lms-pages.md:3-6`: continuous canvas and list rows, no independent wrapper | `skeleton.tsx:15-17,24-27`: placeholders `w-full`; loader `min-w-0`, no own fixed width or breakpoint | Source-declaration comparison: no wrapper overflow |
+| Responsive phone | `old-lms-shell.css:73` and `components___listing-page-header.scss:131-164`: phone at <=767px, min 44px controls | Shared `button.tsx` uses `max-[767px]:min-h-11`; loader and skeleton are `min-w-0`, 100% width, zero route breakpoints | Exact declared width/height; **not** a device screenshot |
+| Reduced motion | Legacy source requires accessible transition; loading UI is not separately described | `skeleton.tsx:26` `motion-reduce:animate-none`; `graceful-page-loading.tsx:17-30` has no custom animated wrapper | Source handling retained |
+
+### Source-search and JSX proof for the 15 named route files
+
+A read-back of **all 15 exact branch source files** was completed. The search below is the read-only source equivalent performed against the GitHub file bodies; no shell process or TypeScript compiler was run. The results were identical for all 15, not estimated:
+
+| Search pattern (each of 15 files) | Per-file count | Sum |
+| --- | ---: | ---: |
+| `/<(button|input|select|textarea|table)\\b/g` | 0 | **0** |
+| `/<h1\\b/g` | 0 | **0** |
+| `/#[0-9a-fA-F]{6}\\b/g` | 0 | **0** |
+| `/fixed\\s+inset-0|role=["'](?:dialog|alertdialog)["']/g` | 0 | **0** |
+| `/<GracefulPageLoading\\b/g` | 1 | **15** |
+
+Each file is 6–7 lines with one valid self-closing JSX component, no own branch/conditional markup and a corresponding named import. Route labels and exact shapes were read back individually. The guards in `scripts/codemods/chat18-route-loader-aliases.cjs` cover the 12 former default wrappers. A new `scripts/codemods/chat18-route-fallback-source-proof.cjs` covers all 15, plus the six error routes, and is read-only. **Both scripts were written but not executed** (no CI).
+
+### Six tracker route error-state source repairs
+
+The shared `GracefulErrorBoundary` is deliberately retained because it still owns client-error reporting, one-time stale-chunk refresh, request references, Try again/reset and a shared header inside the canvas. Only the missing **module-relative home action target** was changed, so a tracker error no longer strands users at a generic dashboard:
+
+| File below `src/app/(authenticated)/` | Correct in-module `homeHref` | Per-file grep |
+| --- | --- | --- |
+| `tracker/audit-findings/[publicId]/error.tsx` | `/tracker/audit-findings` | 1 shared error boundary; 0 own controls, cards, headings, colours or overlays |
+| `tracker/audit-findings/error.tsx` | `/tracker` | 1 shared error boundary; 0 own controls, cards, headings, colours or overlays |
+| `tracker/issues/[publicId]/error.tsx` | `/tracker/issues` | 1 shared error boundary; 0 own controls, cards, headings, colours or overlays |
+| `tracker/issues/error.tsx` | `/tracker` | 1 shared error boundary; 0 own controls, cards, headings, colours or overlays |
+| `tracker/logs/error.tsx` | `/tracker/issues` | 1 shared error boundary; 0 own controls, cards, headings, colours or overlays |
+| `tracker/mine/[publicId]/error.tsx` | `/tracker/mine` | 1 shared error boundary; 0 own controls, cards, headings, colours or overlays |
+
+Source/behaviour comparisons: `old-lms-pages.md:3-5` calls for one workspace canvas; `graceful-error-boundary.tsx:66-85` renders one inline section with PageHeader, reference and two actions; all six pass `insideShell`, preserve `error` and `reset` and use known app routes. **A shared-component issue is still open:** the shared fallback home Link declares `min-h-9` even on phones, while the original mobile action target is 44px. That file is owned outside chat-18; do not mark these six errors visually closed until resolved by its owner.
+
+### Tick discipline
+
+**15 route-level loader migrations have their own exact source value inventory, zero-own-control grep, JSX check and responsive declaration comparison.** However, the legacy references do not give exact production *skeleton placeholder* metrics/states, and no actual 375px/768px/1280px legacy-versus-vNext images were available. Thus strict pixel-level proof for these rendered loading states is **not** asserted; their visual tick marks remain open rather than marking an unverified clone as finished. Global shared loader/button fidelity must be closed by its owning lane. Prior strict count remains **10/87 ticked, 77 open**.
+
+Reproducible checks for a local owner (not run here):
+
+```sh
+node scripts/codemods/chat18-route-fallback-source-proof.cjs
+node scripts/codemods/chat18-secondary-parity-check.cjs
+grep -rnE '<(button|input|select|textarea|table)([ >])|<h1|#[0-9a-fA-F]{6}|fixed inset-0' 'src/app/(authenticated)/hr' 'src/app/(authenticated)/recruiter' 'src/app/(authenticated)/tracker'
+```
+
+**Next file:** `src/app/(authenticated)/hr/colleges/error.tsx` — reconcile recruiter alias error fallback's normal page header, consistent module back-link and 44px phone link against original LMS; then the recruiter alias error family.

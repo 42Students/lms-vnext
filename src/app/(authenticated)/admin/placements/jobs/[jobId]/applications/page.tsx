@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Tabs } from "@/components/ui/tabs";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -10,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { Banner } from "@/components/ui/banner";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPORT_CAP } from "@/modules/placements/college-drive-applications-model";
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
@@ -45,8 +48,8 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
-      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
-    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
+      actions={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
+    <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} className="w-full" />
       </label>
@@ -103,15 +106,13 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
-      <p role="status" className="border-b border-border py-4 text-sm">
-        Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
-      </p>
+      <Banner tone="warning">Application stage actions are awaiting migration registration. You can still review the scoped applicant register.</Banner>
       <DataTable<(typeof data.items)[number]> rows={data.items} getRowKey={row=>row.id}
        caption="Drive applications" columns={[
         {key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name??"Unnamed learner"},
         {key:"roll",header:"Roll",mobilePriority:"secondary",cell:row=>row.rollNumber??"Not recorded"},
         {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
-        {key:"application",header:"Application",mobilePriority:"secondary",cell:row=>row.status},
+        {key:"application",header:"Application",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="SUBMITTED"?"info":"neutral"}>{row.status}</StatusBadge>},
         {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
        ]} empty={<EmptyState title="No matching applications" description="No applications match these filters."/>}/>
      </section>:

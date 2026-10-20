@@ -89,7 +89,7 @@ export function CollegeAssignmentReview({
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
     maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
    {status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
-    className="min-h-11 text-xs md:min-h-9">
+    className="min-h-11 md:min-h-9">
     {bulkBusy?"Publishing…":"Publish grades"}
    </Button>:null}
   </div>
@@ -97,7 +97,7 @@ export function CollegeAssignmentReview({
   {bulkStatus?<Alert tone={retryAllowed?"warning":"success"} role="status">{bulkStatus}</Alert>:null}
   {retryAllowed&&status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy}
    onClick={()=>void publishAllGrades(selected.deliveryId,failedIds.length?failedIds:null)}
-   className="min-h-11 text-xs md:min-h-9">
+   className="min-h-11 md:min-h-9">
    {failedIds.length?"Retry "+failedIds.length+" failed":"Retry failed"}
   </Button>:null}
  </div>;
