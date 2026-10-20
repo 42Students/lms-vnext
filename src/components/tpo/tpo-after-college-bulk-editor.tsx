@@ -88,11 +88,11 @@ export function TpoAfterCollegeBulkEditor({
 
   return <section aria-label="After college bulk actions"
     className="space-y-3 border-t border-border pt-5">
-    <h2 className="font-semibold">After college · Bulk update</h2>
-    <p className="text-sm text-muted-foreground">
+    <h2 className="text-lg font-semibold leading-6">After college · Bulk update</h2>
+    <details className="border-b border-border pb-3 text-sm text-muted-foreground"><summary className="cursor-pointer py-2 text-[13px] font-semibold">How bulk updates work</summary><p>
       Select students on this page, choose their outcome, preview the count and confirm.
       Changes are recorded for reporting and can be undone while no other editor has updated them.
-    </p>
+    </p></details>
     {!available && <p role="status" className="text-sm text-warning">
       After college records are unavailable until the database table is registered.</p>}
     <label className="inline-flex min-h-11 items-center gap-2 text-sm print:hidden">
@@ -100,9 +100,9 @@ export function TpoAfterCollegeBulkEditor({
         onChange={event => setSelected(event.target.checked ? rows.map(row => row.membershipId) : [])} />
       Select all {rows.length} students on this page
     </label>
-    <div className="max-h-40 min-w-0 space-y-1 overflow-auto overscroll-contain border-y border-border py-2 print:hidden">
+    <div className="max-h-56 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border print:hidden">
       {rows.map(row => <label key={row.membershipId}
-        className="flex min-h-11 min-w-0 items-center gap-2 break-words py-1 text-sm">
+        className="flex min-h-11 min-w-0 items-center gap-3 break-words px-1 py-2 text-sm">
         <Checkbox disabled={!available || busy} checked={ids.includes(row.membershipId)}
           onChange={event => setSelected(current => event.target.checked
             ? [...new Set([...current, row.membershipId])]
@@ -110,8 +110,8 @@ export function TpoAfterCollegeBulkEditor({
         <span>{row.displayName}</span>
       </label>)}
     </div>
-    <div className="flex flex-wrap items-end gap-3 print:hidden">
-      <label className="grid gap-1 text-sm font-semibold">After college
+    <div className="flex flex-col gap-3 border-t border-border pt-3 sm:flex-row sm:flex-wrap sm:items-end print:hidden">
+      <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 sm:flex-1">After college
         <Select value={outcome} onChange={event => setOutcome(event.target.value as AfterCollegeOutcome)}
           disabled={!available || busy} className="min-h-11 md:min-h-9">
           {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(outcome)?<option value={outcome} disabled>{AFTER_COLLEGE_LABELS[outcome]} · Automatic</option>:null}
@@ -121,22 +121,22 @@ export function TpoAfterCollegeBulkEditor({
       </label>
       <Button variant="primary" type="button" disabled={!available || busy || !ids.length}
         onClick={() => setConfirmation("SAVE")}
-        className="min-h-11 md:min-h-9">
+        className="min-h-11 w-full md:min-h-9 sm:w-auto">
         Update {ids.length} student(s)
       </Button>
       {undo?.length ? <Button variant="secondary" type="button" disabled={busy} onClick={() => setConfirmation("UNDO")}
-        className="min-h-11 md:min-h-9">Undo last bulk update</Button> : null}
+        className="min-h-11 w-full md:min-h-9 sm:w-auto">Undo last bulk update</Button> : null}
     </div>
     <Dialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setConfirmation(null);}}
       title={confirmation==="SAVE"?"Update after-college outcomes":"Undo bulk after-college update"}
       description={confirmation==="SAVE"?
         ids.length+" student(s) will have their recorded After college outcome changed. Continue?":
         "Restore the previous outcome for "+(undo?.length??0)+" student(s)?"}
-      footer={<><Button variant="secondary" className="min-h-11 md:min-h-9" disabled={busy||guardedPending} onClick={()=>setConfirmation(null)}>Cancel</Button>
-        <Button className="min-h-11 md:min-h-9" disabled={busy||guardedPending||(confirmation==="SAVE"?!ids.length:!undo?.length)}
+      footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end"><Button variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={busy||guardedPending} onClick={()=>setConfirmation(null)}>Cancel</Button>
+        <Button className="min-h-11 w-full md:min-h-9 sm:w-auto" loading={busy||guardedPending} disabled={busy||guardedPending||(confirmation==="SAVE"?!ids.length:!undo?.length)}
           onClick={()=>void runGuarded(async()=>{if(confirmation==="SAVE")await save();else if(confirmation==="UNDO")await reverse();})}>
           {busy||guardedPending?"Saving…":"Confirm"}
-        </Button></>}>
+        </Button></div>}>
       <p className="text-sm">Only version-matching outcomes will be updated. Your choices are kept if saving fails.</p>
     </Dialog>
     {error && <p role="alert" className="text-sm text-error">{error}</p>}

@@ -62,11 +62,11 @@ export function TpoAfterCollegeEditor({
   }
 
   return <div className="min-w-0 space-y-2" aria-label={"After college for " + learnerName}>
-    <label className="grid gap-1 text-xs font-medium">
+    <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4">
       After college
       <Select value={draft} disabled={!available || pending}
         onChange={event => setDraft(event.target.value as AfterCollegeOutcome)}
-        className="min-h-11 w-full min-w-0 text-xs md:min-h-9">
+        className="min-h-11 w-full min-w-0 md:min-h-9">
         {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(draft)?<option value={draft} disabled>{AFTER_COLLEGE_LABELS[draft]} · Automatic</option>:null}
         {afterCollegeOptions().map(option => <option value={option.value} key={option.value}>
           {option.label}
@@ -74,12 +74,12 @@ export function TpoAfterCollegeEditor({
       </Select>
     </label>
     {["ENTREPRENEURSHIP","COMPETITIVE_EXAMS"].includes(draft)?<p className="text-xs text-muted-foreground">Additional destination details are not yet stored; verify these with the learner before saving.</p>:null}
-    <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" type="button" disabled={!available || pending || draft === saved}
-        className="min-h-11 md:min-h-9 text-xs"
+    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+      <Button variant="primary" type="button" disabled={!available || pending || draft === saved}
+        className="min-h-11 w-full md:min-h-9 sm:w-auto"
         onClick={() => write(draft)}>Save</Button>
       {undo !== null && undo !== saved ? <Button variant="secondary" type="button" disabled={pending}
-        className="min-h-11 md:min-h-9 text-xs"
+        className="min-h-11 w-full md:min-h-9 sm:w-auto"
         onClick={() => write(undo, true)}>Undo</Button> : null}
     </div>
     {!available ? <p className="text-xs text-muted-foreground">Outcome storage unavailable.</p> : null}
@@ -88,8 +88,8 @@ export function TpoAfterCollegeEditor({
     <Dialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmation(null);}}
       title={confirmation?.reversing?"Restore previous outcome":"Save after-college outcome"}
       description={(confirmation?.reversing?"Restore":"Save")+" after-college outcome for "+learnerName+"?"}
-      footer={<><Button variant="secondary" disabled={pending} className="min-h-11 md:min-h-9" onClick={()=>setConfirmation(null)}>Cancel</Button>
-        <Button disabled={pending} className="min-h-11 md:min-h-9" onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button></>}>
+      footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end"><Button variant="secondary" disabled={pending} className="min-h-11 w-full md:min-h-9 sm:w-auto" onClick={()=>setConfirmation(null)}>Cancel</Button>
+        <Button disabled={pending} loading={pending} className="min-h-11 w-full md:min-h-9 sm:w-auto" onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button></div>}>
       <p className="text-sm">Your selected outcome is kept if saving does not complete.</p>
     </Dialog>
   </div>;
