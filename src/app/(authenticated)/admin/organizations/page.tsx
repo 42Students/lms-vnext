@@ -92,10 +92,10 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         description="Platform organizations are constrained by the selected Super Admin safety scope."
       />
       {canCreate ? <section aria-label="Create New Organization">
-        <h2 className="mb-3 text-lg font-semibold text-foreground">Create New Organization</h2>
+        <h2 className="mb-3 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create New Organization</h2>
         <OrganizationCreateForm />
       </section> : null}
-      <h2 className="text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Existing Organizations</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Existing Organizations</h2>
       {canCreate?<Disclosure title={`Archived organizations · ${archived.length} shown`} className="border-t border-border pt-4">
        <p className="mt-2 text-xs text-muted-foreground">Restoring an organization does not restore archived colleges. Only the first 200 records in your safety scope are shown.</p>
        <ul className="mt-3 divide-y divide-border border-y border-border">

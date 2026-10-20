@@ -56,18 +56,18 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
       description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." />
     <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Users & Roles</Link>
     <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-4">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name<Input type="search" name="q" maxLength={100}
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name<Input type="search" name="q" maxLength={100}
         defaultValue={data.query.q} className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm" /></label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
         className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{statuses.map(status => <option key={status}>{status}</option>)}</Select></label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">System role<Select name="role" defaultValue={data.query.role}
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">System role<Select name="role" defaultValue={data.query.role}
         className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{roles.map(role => <option key={role}>{role}</option>)}</Select></label>
       <Button type="submit" variant="primary" className="self-end">Filter</Button>
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
     {data.items.length ? <div className="divide-y divide-border border-y border-border">{data.items.map(row => <article key={row.id}
       className="min-w-0 py-4">
-      <h2 className="break-words text-base font-semibold text-foreground">{row.displayName ?? "Unnamed user"}</h2>
+      <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{row.displayName ?? "Unnamed user"}</h2>
       <div className="flex flex-wrap gap-2"><StatusBadge tone={row.platformStatus === "ACTIVE" ? "success" : "neutral"}>{row.platformStatus}</StatusBadge>
         {row.roles.length ? row.roles.map(role => <StatusBadge key={role}>{role}</StatusBadge>) : <StatusBadge>No system role</StatusBadge>}</div>
       <p className="mt-3 text-xs text-muted-foreground">Created {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(row.createdAt)} IST</p>

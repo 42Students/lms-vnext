@@ -69,7 +69,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   })),
  ];
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
-  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}<Select name={key} defaultValue={q[key]??""}
+  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}<Select name={key} defaultValue={q[key]??""}
    className="min-w-0">
    <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
  );
@@ -103,7 +103,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>
   <section className="border-b border-border pb-6" aria-label="Hiring Funnel">
    <div className="flex flex-wrap items-start justify-between gap-3">
-    <h2 className="text-lg font-semibold">Hiring Funnel</h2>
+    <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Hiring Funnel</h2>
     <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
    </div>
    <ol className="mt-4 grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">{funnel.map(step=>
@@ -118,15 +118,15 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   </section>
   <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
   <section aria-label="Company hiring results" className="min-w-0 space-y-4">
-   <h2 className="text-lg font-semibold">Company hiring results</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Company hiring results</h2>
    <DataTable columns={columns} rows={data.rows} getRowKey={row=>row.jobId}
      caption="Company hiring report" empty={<EmptyState title="No hiring results" description="No hiring results match these filters."/>}/>
   </section>
   {groups.length?<section aria-label="Company totals" className="space-y-3">
-   <h2 className="text-lg font-semibold">Company totals</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Company totals</h2>
    <div className="grid min-w-0 gap-3 lg:grid-cols-2">{groups.map(group=>
      <article key={group.companyName} className="min-w-0 border-b border-border py-4">
-      <h3 className="break-words text-base font-semibold">{group.companyName}</h3>
+      <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{group.companyName}</h3>
       <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
        {metricKeys.map(key=><div key={key} className="min-w-0">
         <dt className="break-words text-body">{hiringMetricLabel(key)}</dt>
