@@ -18,7 +18,7 @@ export const learnerPlacementsLegacyTabs = [
 export function LearnerPlacementsTabs({unreadPersonalAlerts=null}:{unreadPersonalAlerts?:number|null}) {
   const pathname = usePathname();
   const router=useRouter();
-  const touchStart=useRef<{x:number;y:number}|null>(null);
+  const touchStart=useRef<{x:number;y:number;scrollLeft:number;scroller:HTMLElement|null}|null>(null);
 
   const selected = learnerPlacementsLegacyTabs.find(tab =>
     pathname === tab.href || (tab.href !== "/learn/my-placements" && pathname.startsWith(tab.href + "/"))
@@ -27,7 +27,8 @@ export function LearnerPlacementsTabs({unreadPersonalAlerts=null}:{unreadPersona
   return (
     <div className="min-w-0" onTouchStart={event=>{
         const touch=event.touches[0];
-        touchStart.current=touch?{x:touch.clientX,y:touch.clientY}:null;
+        const scroller=event.currentTarget.querySelector<HTMLElement>('[data-slot="scroll-cue"][data-axis="x"] > div');
+        touchStart.current=touch?{x:touch.clientX,y:touch.clientY,scrollLeft:scroller?.scrollLeft??0,scroller}:null;
       }}
       onTouchCancel={()=>{touchStart.current=null;}}
       onTouchEnd={event=>{
@@ -35,7 +36,17 @@ export function LearnerPlacementsTabs({unreadPersonalAlerts=null}:{unreadPersona
         touchStart.current=null;
         const end=event.changedTouches[0];
         if(!start||!end)return;
-        const destination=learnerPlacementSwipeDestination(pathname,end.clientX-start.x,
+        const deltaX=end.clientX-start.x;
+        // A horizontally scrolling seven-tab strip must scroll before it can
+        // act as page-swipe navigation. Navigation remains available at edges.
+        const scroller=start.scroller;
+        if(scroller&&scroller.scrollWidth>scroller.clientWidth+2){
+          const maxScroll=scroller.scrollWidth-scroller.clientWidth;
+          if(Math.abs(scroller.scrollLeft-start.scrollLeft)>2)return;
+          if(deltaX<0&&start.scrollLeft<maxScroll-2)return;
+          if(deltaX>0&&start.scrollLeft>2)return;
+        }
+        const destination=learnerPlacementSwipeDestination(pathname,deltaX,
           end.clientY-start.y,learnerPlacementsLegacyTabs.map(tab=>tab.href));
         if(destination)router.push(destination);
       }}>
