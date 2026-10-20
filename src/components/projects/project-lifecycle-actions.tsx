@@ -91,6 +91,7 @@ export function SprintLifecycleActions({
     <Button
       size="sm"
       variant="secondary"
+      loading={pending}
       disabled={pending}
       onClick={() =>
         run(
@@ -138,9 +139,9 @@ export function TaskLifecycleActions({
   }
 
   return (
-    <div className="mt-3 flex flex-wrap items-end gap-2">
-      <label className="min-w-40">
-        <span className="mb-1 block text-xs font-semibold text-body">
+    <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-end">
+      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:min-w-40">
+        <span className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Task state
         </span>
         <Select
@@ -161,7 +162,9 @@ export function TaskLifecycleActions({
       </label>
       <Button
         size="sm"
-        variant="secondary"
+        variant="primary"
+        className="w-full sm:w-auto"
+        loading={pending}
         disabled={
           pending || nextStatus === status
         }
@@ -192,7 +195,7 @@ export function ReleaseLifecycleActions({
  const action=shipped?"unship":"ship";
  const label=shipped?"Un-ship release":"Ship release";
  return <>
-  <Button size="sm" variant="secondary" disabled={pending}
+  <Button size="sm" variant="secondary" loading={pending} disabled={pending}
    onClick={()=>setConfirmOpen(true)}>{pending?"Checking…":label}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title={shipped?"Un-ship this release?":"Ship this release?"}
@@ -263,12 +266,13 @@ export function TaskReviewActions({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(!pending)setOpen(next);}}
         title="Review task submission"
         description="Approval completes the task. Requesting changes returns it to In progress."
         footer={
-          <>
+          <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
             <Button
+              className="w-full sm:w-auto"
               variant="secondary"
               disabled={pending}
               onClick={() => setOpen(false)}
@@ -276,6 +280,8 @@ export function TaskReviewActions({
               Cancel
             </Button>
             <Button
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={
                 pending ||
                 (decision ===
@@ -290,12 +296,12 @@ export function TaskReviewActions({
                   ? "Approve task"
                   : "Request changes"}
             </Button>
-          </>
+          </div>
         }
       >
-        <div className="grid gap-4">
-          <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+          <label className="min-w-0">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Decision
             </span>
             <Select
@@ -316,8 +322,8 @@ export function TaskReviewActions({
               </option>
             </Select>
           </label>
-          <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+          <label className="min-w-0">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Feedback
             </span>
             <Textarea
