@@ -28,7 +28,6 @@ import {
 } from "./membership-domain";
 import type { MembershipManagementRepository } from "./membership-service";
 import { PeopleServiceError } from "./errors";
-import { assertCanAddRole, assertSingleRole } from "./single-role-policy";
 import {assertMutableMembershipTarget} from "./membership-protection";
 import {activeMentorProjectCount} from "./active-mentor-project-guard";
 import type {
@@ -387,10 +386,6 @@ export const drizzlePeopleRepository:
           throw new PeopleServiceError("MEMBERSHIP_NOT_ACTIVE");
         }
 
-        assertSingleRole(input.roles);
-        const existingRoleRows = await tx.select({ role: membershipRoles.role }).from(membershipRoles).where(eq(membershipRoles.membershipId, membership.id));
-        for (const role of input.roles) assertCanAddRole(existingRoleRows.map((row) => row.role), role);
-
         await tx
           .insert(membershipRoles)
           .values(
@@ -614,8 +609,6 @@ export const drizzlePeopleRepository:
       if (currentRoles.includes(role)) {
         return currentRoles;
       }
-
-      assertCanAddRole(currentRoles, role);
 
       const [inserted] = await tx
         .insert(membershipRoles)
