@@ -43,13 +43,14 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   try{localStorage.removeItem(key);setViews([]);setCopied("");setError("");}
   catch{setError("Browser storage is unavailable.");}
  }
- return <section aria-label="Saved drive views" className="border-b border-border pb-6">
-  <h2 className="font-semibold">My saved views</h2>
+ return <details aria-label="Saved drive views" className="min-w-0 border-b border-border pb-3">
+  <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">My saved views</summary>
+  <div className="min-w-0 pt-2">
   <p className="mt-1 text-xs text-body">Save up to {MAX} named filter links in this browser for your college account. They do not change records or share filters with colleagues.</p>
-  <div className="mt-3 flex flex-wrap gap-2">
+  <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row">
    <Input aria-label="Saved view name" maxLength={50} value={name}
     onChange={e=>setName(e.target.value)} placeholder="e.g. Interviews this week"
-    />
+    className="min-w-0 flex-1" />
    <Button variant="secondary" type="button" onClick={save}
     >
     Save current filters
@@ -63,8 +64,8 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   <ConfirmDialog open={confirmClear} onOpenChange={setConfirmClear}
    title="Clear saved drive views?" description={"Delete all "+views.length+" saved drive views from this browser?"}
    confirmLabel="Clear all" confirmVariant="danger" onConfirm={clearAll}/>
-  {views.length?<ul className="mt-3 flex flex-wrap gap-2">{views.map(view=>
-   <li key={view.name} className="inline-flex items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
+  {views.length?<ul className="mt-3 flex min-w-0 flex-wrap gap-2">{views.map(view=>
+   <li key={view.name} className="flex max-w-full flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
     <Button variant="ghost" type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
      >{view.name}</Button>
     <Button variant="ghost" type="button" onClick={()=>{if(!navigator.clipboard){setError("Clipboard unavailable. Open the view and copy its URL.");return;}void navigator.clipboard.writeText(window.location.origin+"/tpo/placements/lifecycle"+(view.query?"?"+view.query:"")).then(()=>{setCopied(view.name);setError("");}).catch(()=>setError("Copy failed. Open the view and copy its URL."));}}
@@ -72,5 +73,6 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
     <Button variant="ghost" type="button" onClick={()=>remove(view.name)}
      aria-label={"Delete saved view "+view.name} >×</Button>
    </li>)}</ul>:<EmptyState title="No views saved in this browser yet."/>}
- </section>;
+  </div>
+ </details>;
 }
