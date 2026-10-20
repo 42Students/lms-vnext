@@ -679,9 +679,9 @@ export function SuperAdminHrAccounts({
         Account totals are temporarily unavailable. The directory is still usable.
         <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Retry totals</Button>
       </p>}
-      <dl className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-4">{([
+      {statusSummary ? <dl className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-4">{([
         ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled",statusSummary?.disabled],
-      ] as const).map(([label,value])=><div key={label} className="min-w-0 border-r border-border pr-[var(--lms-space-4)] even:border-r-0 md:even:border-r md:last:border-r-0"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl>
+      ] as const).map(([label,value])=><div key={label} className="min-w-0 border-r border-border pr-[var(--lms-space-4)] even:border-r-0 md:even:border-r md:last:border-r-0"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl> : null}
       <form
         key={[
           filters.q,
