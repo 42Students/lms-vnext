@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import {TpoEveryoneControls} from "@/components/tpo/tpo-everyone-controls";
@@ -23,10 +24,10 @@ export default async function TpoEveryonePage({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageBackLink href="/tpo/team?tab=conversations" label="Team conversations" />
   <PageHeader title={TPO_EVERYONE_TITLE} description={TPO_EVERYONE_DESCRIPTION} />
-  {result.status==="FAILED"?<section role="alert" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
+  {result.status==="FAILED"?<Alert tone="error">
    <p>Could not load Everyone right now. Your messages were not changed.</p>
    <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline lms-inline-link">Retry Everyone</Link>
-  </section>:result.status==="NOT_REGISTERED"?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
+  </Alert>:result.status==="NOT_REGISTERED"?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
    <section className="min-w-0 space-y-3 pt-2">

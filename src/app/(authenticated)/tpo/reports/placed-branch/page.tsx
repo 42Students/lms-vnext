@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { ReportTable, reportNumber } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPlacedStudentsByBranch } from "@/modules/placements/tpo-placed-branch-service";
@@ -68,10 +69,7 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
               ["Confirmed joined learners", report.totals.joined],
               ["Accepted offer versions", report.totals.acceptedOfferVersions],
             ] as const).map(([label, count]) => (
-              <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-                <h2 className="text-xs font-semibold text-body">{label}</h2>
-                <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{reportNumber(count)}</p>
-              </div>
+              <StatTile key={label} label={label} value={reportNumber(count)} className="min-h-[104px]" />
             ))}
           </section>
           <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">{report.branchScopeNote}</p>
