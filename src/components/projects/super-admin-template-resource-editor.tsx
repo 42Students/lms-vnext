@@ -42,14 +42,13 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   }catch(e){setError(e instanceof Error?e.message:"Could not save resources");}
   finally{setPending(false);}
  }
- return <section className="space-y-3 border-b border-border pb-5">
-  <div className="flex items-center justify-between">
-   <h2 className="font-semibold text-foreground">Template resources</h2>
-   <Button type="button" variant="secondary" onClick={()=>setOpen(v=>!v)}
+ return <section className="min-w-0 space-y-3 border-b border-border pb-4">
+  <div className="flex min-w-0 justify-end">
+   <Button type="button" variant="secondary" className="min-h-11 w-full sm:min-h-9 sm:w-auto" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
     >
     {open?"Close editor":"Edit resources"}</Button>
   </div>
-  {open?<div className="space-y-4">
+  {open?<div className="min-w-0 space-y-4">
    {rows.map((row,i)=><fieldset key={row.key} className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2">
     <legend className="px-2 text-[var(--lms-font-sm)] font-semibold text-foreground">Resource {i+1}</legend>
     <label className="text-[var(--lms-font-sm)] font-semibold text-body">Key<Input value={row.key} maxLength={64}
@@ -78,18 +77,18 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
       checked={row.required} onChange={e=>change(i,{required:e.target.checked})}/>Required</label>
     <label className="flex items-center gap-2 text-xs font-semibold text-body"><Checkbox className="size-5"
       checked={row.pinned??false} onChange={e=>change(i,{pinned:e.target.checked})}/>Pinned</label>
-    <div className="flex flex-wrap gap-2 md:col-span-2">
+    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:col-span-2">
       <Button type="button" variant="secondary" disabled={i===0} onClick={()=>setRows(r=>{const n=[...r];[n[i-1],n[i]]=[n[i],n[i-1]];return n;})}
-       className="text-xs">Move up</Button>
+       className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move up</Button>
       <Button type="button" variant="secondary" disabled={i===rows.length-1} onClick={()=>setRows(r=>{const n=[...r];[n[i+1],n[i]]=[n[i],n[i+1]];return n;})}
-       className="text-xs">Move down</Button>
+       className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move down</Button>
       <Button type="button" variant="danger" onClick={()=>setRows(r=>r.filter((_,at)=>at!==i))}
-       className="text-xs">Remove</Button>
+       className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Remove</Button>
     </div>
    </fieldset>)}
-   <div className="flex gap-3">
-    <Button type="button" variant="secondary" onClick={add} >Add resource</Button>
-    <Button type="button" variant="primary" disabled={pending} onClick={()=>void save()}
+   <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+    <Button type="button" variant="secondary" disabled={pending} className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={add} >Add resource</Button>
+    <Button type="button" variant="primary" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={pending} onClick={()=>void save()}
      >
      {pending?"Saving…":"Save as new version"}</Button>
    </div>
