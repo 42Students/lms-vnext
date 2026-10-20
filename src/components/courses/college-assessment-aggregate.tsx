@@ -10,6 +10,7 @@ import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
@@ -72,7 +73,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
   const summary = collegeAssessmentSummary(data.items);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
       <PageHeader
         eyebrow=""
         title={name}
@@ -104,13 +105,27 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
         className="border-b border-border pb-5">
         <form method="get"
           action={isAssignment ? "/college/assignments" : "/college/quizzes"}
-          className="flex flex-wrap items-end gap-3">
+          className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] [&>label]:min-w-[min(100%,13rem)]">
           <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
             Search title
             <Input name="q" type="search" maxLength={100}
               defaultValue={data.query.q} placeholder="Assessment title"
               className="min-h-11 md:min-h-9" />
           </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Status
+            <Select name="status" defaultValue={data.query.status}
+              className="min-h-11 md:min-h-9">
+              <option value="ALL">All statuses</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PUBLISHED">Published</option>
+              {!isAssignment ? <option value="CLOSED">Closed</option> : null}
+              <option value="ARCHIVED">Archived</option>
+            </Select>
+          </label>
+          <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.courseCode || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
+            <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Assessment directory filters</summary>
+            <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Exact course code
             <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
@@ -163,17 +178,9 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
             <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
               className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
-            Status
-            <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 md:min-h-9">
-              <option value="ALL">All statuses</option>
-              <option value="DRAFT">Draft</option>
-              <option value="PUBLISHED">Published</option>
-              {!isAssignment ? <option value="CLOSED">Closed</option> : null}
-              <option value="ARCHIVED">Archived</option>
-            </Select>
-          </label>
+
+            </div>
+          </details>
           <Button type="submit"
             className="min-h-11 md:min-h-9">
             Filter
