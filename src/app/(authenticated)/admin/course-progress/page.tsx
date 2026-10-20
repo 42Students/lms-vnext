@@ -73,7 +73,7 @@ export default async function SuperAdminCourseProgressPage({
           <StatusBadge tone={item.offeringStatus === "ACTIVE" ? "success" : "neutral"}>{item.offeringStatus}</StatusBadge>
         </div>
         <p className="mt-1 text-sm text-body">{item.cohortName} · {item.periodName}</p>
-        <dl className="mt-3 grid grid-cols-2 gap-3 text-sm text-body">
+        <dl className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-body">
           <div><dt className="text-xs text-muted-foreground">Recorded content rows</dt><dd className="text-lg font-semibold tabular-nums">{item.recordedRows}</dd></div>
           <div><dt className="text-xs text-muted-foreground">Completed content rows</dt><dd className="text-lg font-semibold tabular-nums">{item.completedRows}</dd></div>
           <div className="col-span-2"><dt className="text-xs text-muted-foreground">Learners with recorded activity</dt><dd className="text-lg font-semibold tabular-nums">{item.learnersWithRecords}</dd></div>
