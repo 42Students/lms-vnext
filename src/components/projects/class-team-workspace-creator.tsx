@@ -156,7 +156,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       }
     }
   }
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <p className="text-sm text-body">Choose one team, split a class into teams, or give each learner a workspace.</p>
     {mode==="TEAMS" ? <p className="border-l-2 border-border pl-3 text-sm text-body">Pick a class and a team size, preview the teams, move anyone between teams, then create. Each team gets its own workspace named after the title (“Title - Team 1”, “Title - Team 2”…), with the same template and mentor.</p> : null}
     {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body">{emptyMessages.classes}</p>:null}
@@ -202,7 +202,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         </label>:null}
       </>:null}
     </div>
-    {classId?<div className="flex flex-wrap items-center gap-3">
+    {classId?<div className="flex min-w-0 flex-wrap items-center gap-3">
       <Button variant="secondary" disabled={!canRefreshClassTeamRoster(classId,rosterLoading,pending)}
         onClick={()=>setRosterRefreshKey(value=>value+1)}>Refresh class roster</Button>
       <p className="text-xs text-muted-foreground">Refresh after enrollment changes or a stale preview before retrying creation.</p>
@@ -230,12 +230,12 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       </div>
       <p className="text-xs text-muted-foreground">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
     </section>:null}
-    {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 min-[992px]:grid-cols-2" aria-label="Adjustable team preview">
+    {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2" aria-label="Adjustable team preview">
       {groups.map((team,index)=><section key={index} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
         <h2 className="font-semibold">{team.name} · {team.membershipIds.length}</h2>
         <ul className="mt-2 space-y-2">{team.membershipIds.map(id=>{
           const learner=names.get(id);
-          return <li key={id} className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
+          return <li key={id} className="flex min-w-0 flex-col gap-2 border-t border-border py-2 text-sm md:flex-row md:flex-wrap md:items-center">
             <span className="min-w-0 flex-1 break-words">{learner?.rollNumber??"—"} · {learner?.displayName??"Learner"}</span>
             {groups.length>1?<label className="min-w-24 text-xs">Team
               <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} disabled={!plannerEditable} value={index} onChange={event=>{
@@ -306,9 +306,9 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
           }
         }}>Export outcome CSV</Button>
     </section>:null}
-    <div className="flex flex-wrap justify-end gap-3">
-      <Button variant="secondary" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
-      <Button disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
+    <div className="sticky bottom-0 z-10 flex min-w-0 flex-col-reverse gap-3 border-t border-border bg-surface py-3 md:flex-row md:flex-wrap md:justify-end">
+      <Button variant="secondary" className="w-full md:w-auto" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
+      <Button className="w-full md:w-auto" disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
         {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":mode==="INDIVIDUAL"?"Create "+(currentPreflight?.toCreate??0)+" workspaces":"Create whole-class workspace"}
       </Button>
     </div>
