@@ -134,14 +134,13 @@ export async function CollegeRoleDirectoryWorkspace({
         </details>
         <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">People directory</Link>
       </nav> : null}
-      <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-1 gap-3 border-y border-border md:grid-cols-2 lg:grid-cols-4">
+      <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-1 gap-3 border-y border-border md:grid-cols-2 min-[992px]:grid-cols-4">
         {[
           [title,result.metrics.registered],
           ["Active",result.metrics.active],
           ["Suspended",result.metrics.suspended],
         ].map(([label,value])=><StatTile key={label} variant="college" label={String(label)} value={value}/>)}
-        <StatTile variant="college" label="Visible now" value="Not tracked"
-          detail="Do not infer presence from login or membership status."/>
+        <div className="flex min-w-0 flex-col justify-center gap-1 px-4 py-3 text-sm text-muted-foreground"><span>Visible now</span><span className="font-semibold text-foreground">Not tracked</span><span className="text-xs">Do not infer presence from login or membership status.</span></div>
       </section>
       <section className="min-w-0 border-t border-border pt-4" aria-label={title + " directory filters"}>
         <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
@@ -442,6 +441,14 @@ export async function CollegeRoleDirectoryWorkspace({
                       <div className="mt-2">
                         <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>
                       </div>:null}
+                    {kind==="FACULTY" ? <Disclosure title="More actions" className="mt-2 min-w-0">
+                      <div className="flex min-w-0 flex-wrap items-center gap-2 pb-2">
+                        <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
+                        <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
+                        <CollegePersonEditAction membershipId={item.membershipId} kind={kind} departments={result.departmentOptions}/>
+                        <CollegeFacultyLifecycleAction membershipId={item.membershipId} name={item.name} status={item.membershipStatus}/>
+                      </div>
+                    </Disclosure> : <>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                       <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
@@ -452,6 +459,7 @@ export async function CollegeRoleDirectoryWorkspace({
                       name={item.name} status={item.membershipStatus}/>:null}
                     {kind==="LEARNER"?<CollegeStudentLifecycleAction membershipId={item.membershipId}
                       name={item.name} status={item.membershipStatus}/>:null}
+                    </>}
                 </>},
                 {key:"joined",header:"Joined",mobilePriority:"secondary",cell:item=>joinedLabel(item.joinedAt)},
               ]}
@@ -461,7 +469,7 @@ export async function CollegeRoleDirectoryWorkspace({
         )}
       </section>
 
-      <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3">
+      <nav aria-label={title + " pagination"} className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
         <p className="text-sm text-muted-foreground">
           Page {result.filter.page} of {result.totalPages} · Showing {collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).first}–{collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).last} of {result.total} memberships
         </p>
