@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Disclosure } from "@/components/ui/disclosure";
 import { useToast } from "@/components/ui/toast";
 
 type Choice = {
@@ -267,7 +268,7 @@ export function SectionOperations({
       className: "text-right",
       cell: (row: ProgramEnrollment) =>
         row.status === "ACTIVE" ? (
-          <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
+          <div className="flex min-w-0 flex-wrap justify-start gap-[var(--lms-space-2)] md:justify-end">
             <Button
               size="md"
              
@@ -345,7 +346,7 @@ export function SectionOperations({
       className: "text-right",
       cell: (row: RosterRow) =>
         row.status === "ACTIVE" ? (
-          <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
+          <div className="flex min-w-0 flex-wrap justify-start gap-[var(--lms-space-2)] md:justify-end">
             <Button
               size="md"
              
@@ -521,7 +522,7 @@ export function SectionOperations({
   ];
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 space-y-[var(--lms-space-6)]">
       <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)] md:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -567,13 +568,10 @@ export function SectionOperations({
           </p>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="border-b border-border pb-5">
-            <p className="m-0 text-sm font-semibold text-foreground">
-              Admit learner to Program
-            </p>
-            <div className="mt-3 flex flex-col gap-3 md:flex-row">
-              <Select
+        <div className="grid min-w-0 items-start gap-[var(--lms-space-3)] xl:grid-cols-2">
+          <Disclosure id="section-admit-learner" title="Admit learner to Program" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+            <div className="mt-3 flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center">
+              <Select className="min-w-0 flex-1"
                 aria-label="Learner to admit to program"
                 value={learnerMembershipId}
                 onChange={(event) =>
@@ -628,14 +626,11 @@ export function SectionOperations({
                 Admit
               </Button>
             </div>
-          </div>
+          </Disclosure>
 
-          <div className="border-b border-border pb-5">
-            <p className="m-0 text-sm font-semibold text-foreground">
-              Place learner in this Section
-            </p>
-            <div className="mt-3 flex flex-col gap-3 md:flex-row">
-              <Select
+          <Disclosure id="section-place-learner" title="Place learner in this Section" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+            <div className="mt-3 flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center">
+              <Select className="min-w-0 flex-1"
                 aria-label="Active program enrollment to place in section"
                 value={placementEnrollmentId}
                 onChange={(event) =>
@@ -691,7 +686,7 @@ export function SectionOperations({
                 Place / move
               </Button>
             </div>
-          </div>
+          </Disclosure>
         </div>
 
         <div className="space-y-3">
@@ -727,8 +722,9 @@ export function SectionOperations({
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 border-b border-border pb-5 md:flex-row">
-          <Select
+        <Disclosure title="Faculty responsibility" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+        <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center">
+          <Select className="min-w-0 flex-1"
             aria-label="Faculty member to assign"
             value={facultyMembershipId}
             onChange={(event) =>
@@ -749,7 +745,7 @@ export function SectionOperations({
               </option>
             ))}
           </Select>
-          <Select
+          <Select className="min-w-0 flex-1"
             aria-label="Faculty responsibility"
             value={facultyRole}
             onChange={(event) =>
@@ -789,6 +785,7 @@ export function SectionOperations({
             Assign
           </Button>
         </div>
+        </Disclosure>
 
         <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
           columns={facultyColumns}
@@ -807,7 +804,8 @@ export function SectionOperations({
           </p>
         </div>
 
-        <div className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+        <Disclosure title="Add event" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
           <div>
             <label
               htmlFor="schedule-title"
@@ -980,6 +978,7 @@ export function SectionOperations({
             </Button>
           </div>
         </div>
+        </Disclosure>
 
         <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
           columns={scheduleColumns}
