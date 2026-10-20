@@ -73,12 +73,12 @@ export function ProjectList({
   }
 
   return (
-    <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-2 min-[1366px]:grid-cols-3">
+    <div className={basePath==="/learn/projects"?"min-w-0 divide-y divide-border":"grid min-w-0 gap-4 min-[992px]:grid-cols-2 min-[1366px]:grid-cols-3"}>
       {items.map((item) => (
         <Link
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
-          className="group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:bg-[rgba(38,186,199,0.045)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className={basePath==="/learn/projects"?"group flex min-w-0 flex-col py-4 first:pt-0 last:pb-0 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-5":"group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:bg-[rgba(38,186,199,0.045)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -91,7 +91,7 @@ export function ProjectList({
                   Project
                 </p>
               )}
-              <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
+              <h2 className="mt-1 line-clamp-2 break-words text-lg font-semibold text-foreground">
                 {item.title}
               </h2>
             </div>
@@ -122,16 +122,16 @@ export function ProjectList({
               {item.dueLabel ? " · " + item.dueLabel : ""}
             </p>
           ) : null}
-          <p className="mt-3 line-clamp-3 text-sm leading-6 text-body">
+          <p className="mt-2 line-clamp-2 break-words text-sm leading-6 text-body">
             {item.summary ??
               "Project workspace."}
           </p>
 
           {(item.mentorName || item.memberCount !== undefined || item.progressPercent !== undefined) ? (
-            <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border py-3 text-xs min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0 [&>*]:min-w-0 [&>*]:px-2 [&>*]:py-2 min-[768px]:[&>*]:py-0">
+            <div className="mt-3 grid min-w-0 grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-3 text-xs sm:grid-cols-3 [&>*]:min-w-0">
               <div>
                 <p className="m-0 font-semibold text-muted-foreground">Mentor</p>
-                <p className="mt-1 truncate font-semibold text-foreground">
+                <p className="mt-1 break-words font-semibold text-foreground">
                   {item.mentorName ?? "Unassigned"}
                 </p>
               </div>
@@ -167,7 +167,7 @@ export function ProjectList({
           {item.actionLine ? (
             <p className="mt-3 text-sm font-semibold text-link">{item.actionLine} →</p>
           ) : null}
-          <div className="mt-auto flex items-end justify-between gap-3 pt-5">
+          <div className="mt-auto flex items-end justify-between gap-3 pt-3">
             <p className="m-0 text-xs text-muted-foreground">
               Updated{" "}
               {new Intl.DateTimeFormat("en-IN", {
