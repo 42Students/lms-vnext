@@ -72,7 +72,7 @@ export default async function FacultyContactsPage({
     `/teacher/contacts/${contactsTab}`;
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-5">
       <PageHeader
         title={selected.label}
       />

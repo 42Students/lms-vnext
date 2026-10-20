@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getMentorTeamHistory } from "@/modules/projects/mentor-team-history-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
@@ -42,8 +43,8 @@ export default async function MentorTeamHistoryPage({
   const context = await getCurrentRequestContext();
   const data = await getMentorTeamHistory(context, parsed.data);
   const back = "/mentor/projects/" + encodeURIComponent(projectId) + "?tab=team";
-  return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Mentor · Project Team" title="Team membership history"
+  return <div className="min-w-0 max-w-full space-y-5">
+    <PageHeader title="Team membership history"
       description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
       actions={<Link data-unskin="" href={back}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
@@ -55,7 +56,7 @@ export default async function MentorTeamHistoryPage({
         </section>
       : <>
         <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
-          className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
+          className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
           <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Registered role
             <Select name="role" defaultValue={data.query.role}
@@ -90,7 +91,7 @@ export default async function MentorTeamHistoryPage({
               <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-semibold text-foreground">{item.displayName}</h2>
-                  <span className="text-xs font-semibold text-body">{item.state}</span>
+                  <StatusBadge tone="neutral">{item.state}</StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body">
                   {item.roleLabel || item.role}
