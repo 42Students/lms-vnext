@@ -47,11 +47,11 @@ export default async function MentorTaskReviewHistoryPage({
     </section> : <>
       <FilterBar title="Filters"><form role="search" aria-label="mentor task review history filters" action="/mentor/task-review-history" method="get"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task or project
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             className="min-h-11 min-[768px]:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision
           <Select name="decision" defaultValue={data.query.decision}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All reviews</option>
@@ -59,7 +59,7 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CHANGES_REQUESTED">Changes requested</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task priority
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
@@ -67,7 +67,7 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CRITICAL">Critical</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review chronology
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review chronology
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="NEWEST">Most recently reviewed</option>
@@ -81,7 +81,7 @@ export default async function MentorTaskReviewHistoryPage({
           Clear
         </Link>
       </form></FilterBar>
-      <p className="text-sm text-body">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
+      <p className="text-sm text-body leading-[22px]">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,
@@ -98,11 +98,11 @@ export default async function MentorTaskReviewHistoryPage({
       : <ol aria-label="mentor task review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-semibold text-foreground">{item.taskTitle}</h2>
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.taskTitle}</h2>
             <span className="text-sm font-semibold text-body">{taskReviewDecisionLabel(item.status)}</span>
           </div>
-          <p className="mt-2 text-sm text-body">{item.projectTitle} · Version {item.version}</p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-2 text-sm text-body leading-[22px]">{item.projectTitle} · Version {item.version}</p>
+          <p className="mt-1 text-xs text-muted-foreground leading-5">
             Reviewed {item.reviewedAt
               ? new Intl.DateTimeFormat("en-IN",{
                 dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",

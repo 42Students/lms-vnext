@@ -30,7 +30,7 @@ export default async function FacultyDiscussionHistoryPage({
         Discussions
       </Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded action
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded action
         <Select name="action" defaultValue={data.query.action}
           className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="ALL">All moderation and reply actions</option>
@@ -43,21 +43,21 @@ export default async function FacultyDiscussionHistoryPage({
       <Link href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
         className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
     </form>
-    <p className="text-sm text-body" role="status" aria-live="polite">{data.total} recorded event{data.total===1?"":"s"}</p>
+    <p className="text-sm text-body leading-[22px]" role="status" aria-live="polite">{data.total} recorded event{data.total===1?"":"s"}</p>
     {data.items.length===0?<EmptyState title="No registered moderation history"
       description="No persisted moderation or Faculty reply events match this Section and filter. Records before event tracking are unavailable, not reconstructed."/>:
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="min-w-0 bg-transparent py-4">
           <p className="font-semibold text-foreground">{item.action}</p>
-          <p className="mt-2 text-xs text-muted-foreground">
+          <p className="mt-2 text-xs text-muted-foreground leading-5">
             {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.occurredAt)} IST
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground leading-5">
             {item.actorMembershipId?"Recorded member action":"System/unknown actor"}
           </p>
         </li>)}</ol>}
     <Pagination label="Discussion history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyDiscussionHistoryHref({...data.query,page})} />
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       This is an audit of registered pin changes, deletions and Faculty replies, not a full message history.
       A learner may delete their own message; deletion events cannot prove that Faculty
       performed the action. Removed message text and personal details are not exposed.

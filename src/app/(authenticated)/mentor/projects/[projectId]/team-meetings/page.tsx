@@ -47,7 +47,7 @@ export default async function MentorTeamMeetingsPage({
       Projects access is disabled. No private team or meeting data was loaded.
     </section>:<>
       <section aria-labelledby="section-active-team-coverage" className="border-b border-border pb-5">
-        <h2 id="section-active-team-coverage" className="text-base font-semibold text-foreground">Active team coverage</h2>
+        <h2 id="section-active-team-coverage" className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Active team coverage</h2>
         <dl className="mt-4 grid gap-3 md:grid-cols-3">
           <div><dt className="text-xs text-muted-foreground">Learners</dt>
             <dd className="mt-1 text-xl font-semibold">{data.team.learners}</dd></div>
@@ -57,14 +57,14 @@ export default async function MentorTeamMeetingsPage({
             <dd className="mt-1 text-sm font-semibold">
               {data.team.primaryRecorded?"Recorded":"Not recorded"}</dd></div>
         </dl>
-        <p className="mt-3 text-xs text-muted-foreground">
+        <p className="mt-3 text-xs text-muted-foreground leading-5">
           Counts include only registered active same-college project memberships with active
           role grants. No private member identities are loaded.
         </p>
       </section>
       <FilterBar title="Filters"><form role="search" aria-label="team meetings filters" method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting status
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All</option><option value="REQUESTED">Requested</option>
@@ -73,7 +73,7 @@ export default async function MentorTeamMeetingsPage({
             <option value="CANCELLED">Cancelled</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting type
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting type
           <Select name="type" defaultValue={data.query.type}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All types</option><option value="GENERAL">General</option>
@@ -81,21 +81,21 @@ export default async function MentorTeamMeetingsPage({
             <option value="REVIEW">Review</option><option value="RETRO">Retrospective</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded outcome
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded outcome
           <Select name="outcome" defaultValue={data.query.outcome}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All meetings</option><option value="RECORDED">With written outcome</option>
             <option value="NOT_RECORDED">Without written outcome</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting order
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9">
             <option value="NEWEST">Most recent first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting title
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting title
           <Input type="search" name="search" maxLength={100}
             defaultValue={data.query.search}
             className="min-h-11 md:min-h-9"/>
@@ -106,21 +106,21 @@ export default async function MentorTeamMeetingsPage({
         <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
           className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
       </form></FilterBar>
-      <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
+      <p className="text-sm text-body leading-[22px]">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
         description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." />
         :<ol aria-label="team meetings entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
           <li key={meeting.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-semibold text-foreground">{meeting.title}</h2>
+              <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{meeting.title}</h2>
               <span className="text-xs font-semibold text-body">{mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderedAt)}</span>
             </div>
-            <p className="mt-2 text-sm text-body">
+            <p className="mt-2 text-sm text-body leading-[22px]">
               {meeting.type} · {new Intl.DateTimeFormat("en-IN",{
                 dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
               }).format(meeting.startsAt)} IST
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground leading-5">
               Source timezone: {meeting.timeZone} · Outcome:{" "}
               {meeting.hasOutcome?"Recorded":"Not recorded"}
             </p>
@@ -141,7 +141,7 @@ export default async function MentorTeamMeetingsPage({
           </li>)}</ol>}
       <Pagination label="Meeting history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamMeetingsHref({...data.query,page})}/>
     </>}
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       This list is a registered meeting log, not a recording or attendance register.
       Current assigned Mentors can open the scoped detail to read or update written
       outcomes for completed meetings. Historical overwritten note versions are not preserved.

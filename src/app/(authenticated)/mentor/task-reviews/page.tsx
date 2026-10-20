@@ -65,26 +65,26 @@ export default async function MentorTaskReviewsPage({
     </section> : <>
       <form role="search" aria-label="mentor task reviews filters" method="get" action="/mentor/task-reviews"
         className={mentorTaskReviewMobileFilters}>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Task or project
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9"
             placeholder="Search pending task reviews" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Page size
           <Select name="pageSize" defaultValue={String(data.pageSize)}
             className="min-h-11 md:min-h-9">
             <option value="20">20</option><option value="50">50</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
           <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full">
             <option value="">All assigned projects</option>
             {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All current assignments</option>
@@ -92,24 +92,24 @@ export default async function MentorTaskReviewsPage({
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 md:min-h-9">
             {(["ALL","CRITICAL","HIGH","MEDIUM","LOW"] as const).map(priority=>
               <option key={priority} value={priority}>{priority}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission version
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission version
           <Input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
             className="min-h-11 min-w-0 max-w-full md:min-h-9 w-32" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting since
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting since
           <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9">
             <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option><option value="OLDER_THAN_30_DAYS">Over 30 days old</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review order
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9">
             <option value="NEWEST">Newest first</option>
@@ -130,7 +130,7 @@ export default async function MentorTaskReviewsPage({
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching task reviews.</span>:null}
       </div>
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         {data.total === 0
           ? "No matching submissions"
           : "Showing " + data.first + "–" + data.last +
@@ -143,11 +143,11 @@ export default async function MentorTaskReviewsPage({
               : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."} />
         : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
           <article key={item.id} className="py-[var(--lms-space-3)]">
-            <p className="text-sm font-semibold text-foreground">{item.taskTitle}</p>
-            <p className="mt-1 text-sm text-body">
+            <p className="text-sm font-semibold text-foreground leading-[22px]">{item.taskTitle}</p>
+            <p className="mt-1 text-sm text-body leading-[22px]">
               {item.projectTitle} · Version {item.version} · Priority {item.priority}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground leading-5">
               Submitted {new Intl.DateTimeFormat("en-IN", {
                 dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
               }).format(item.submittedAt)} IST
@@ -163,7 +163,7 @@ export default async function MentorTaskReviewsPage({
           Return to first matching page
         </Link>:null}
       <nav aria-label="Task review pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-body">Page {data.page} of {data.totalPages}</p>
+        <p className="text-sm text-body leading-[22px]">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page > 1 && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]"
             href={mentorTaskReviewHref({...data.query, page: data.page - 1})}>Previous</Link>}

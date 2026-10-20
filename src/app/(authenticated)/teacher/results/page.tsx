@@ -42,19 +42,19 @@ export default async function FacultyAssessmentResultsPage({
       </div>} />
     <form method="get" action="/teacher/results"
       className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-3 min-[1280px]:grid-cols-4">
-      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           
           placeholder="Assessment, course code or Section" />
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
         <Select name="kind" defaultValue={data.query.kind} >
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
+      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
         <Select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""} >
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
@@ -64,13 +64,13 @@ export default async function FacultyAssessmentResultsPage({
           ))}
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={data.query.status} >
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
+      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
         <Select name="due" defaultValue={data.query.due} >
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
@@ -78,14 +78,14 @@ export default async function FacultyAssessmentResultsPage({
           <option value="UNDATED">No due date</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={data.query.sort} >
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Records per page
+      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Records per page
         <Select name="pageSize" defaultValue={data.query.pageSize} >
           <option value="5">5</option><option value="10">10</option>
         </Select>
@@ -98,7 +98,7 @@ export default async function FacultyAssessmentResultsPage({
       </Link>
     </form>
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
+      <p className="text-sm text-body leading-[22px]" role="status" aria-live="polite">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
        Export this page CSV (no learner names)
@@ -112,8 +112,8 @@ export default async function FacultyAssessmentResultsPage({
             className="min-w-0 py-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <h2 className="font-semibold text-foreground">{item.title}</h2>
-                <p className="mt-1 text-sm text-body">{item.courseName} · {item.sectionName} · {item.kind}</p>
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.title}</h2>
+                <p className="mt-1 text-sm text-body leading-[22px]">{item.courseName} · {item.sectionName} · {item.kind}</p>
               </div>
               <StatusBadge tone={item.status==="PUBLISHED"?"success":"warning"}>{item.status}</StatusBadge>
             </div>
@@ -141,7 +141,7 @@ export default async function FacultyAssessmentResultsPage({
           </article>)}
       </div>}
     <nav aria-label="Assessment result pages" className="flex items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
+      <p className="text-sm text-muted-foreground leading-[22px]">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyResultsHref({...data.query,page:data.page-1})}
           className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Previous</Link>}

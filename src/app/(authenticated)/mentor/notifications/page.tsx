@@ -93,8 +93,8 @@ export default async function MentorNotificationsPage({
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
     {failedSources.length ? <Alert tone="warning" role="alert">
-      <h2 className="font-semibold text-foreground">Some notification sources are unavailable</h2>
-      <p className="mt-1 text-sm text-body">
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Some notification sources are unavailable</h2>
+      <p className="mt-1 text-sm text-body leading-[22px]">
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
       </p>
       <Link href={MENTOR_INBOX}
@@ -107,26 +107,26 @@ export default async function MentorNotificationsPage({
         isPinned:item.isPinned,createdAt:item.createdAt,
       }))} />
     <section aria-labelledby="mentor-attention" className="space-y-3">
-      <h2 id="mentor-attention" className="text-lg font-semibold text-foreground">
+      <h2 id="mentor-attention" className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
       <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
         className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Project with recorded attention
+        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
             className="min-h-11 max-w-full min-[768px]:min-h-9">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Attention order
+        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention order
           <Select name="attentionOrder" defaultValue={attentionOrder.data}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Attention type
+        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention type
           <Select name="kind" defaultValue={kind.data}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
@@ -141,18 +141,18 @@ export default async function MentorNotificationsPage({
         <Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
       </form>
       {!projectAccess?.projects.enabled
-        ? <p role="status" className="border-b border-border pb-4 text-sm text-body">
+        ? <p role="status" className="border-b border-border pb-4 text-sm text-body leading-[22px]">
             Projects access is disabled; project attention is unavailable.
           </p>
         : visibleAlerts.length === 0
-          ? <p className="border-b border-border pb-4 text-sm text-body">
+          ? <p className="border-b border-border pb-4 text-sm text-body leading-[22px]">
               {failedSources.length ? "No project alerts are visible, but some notification sources could not be checked." : "Nothing needs your attention right now."}
             </p>
           : <div className="grid">{visibleAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
                 className="min-h-11 block border-b border-border py-4 transition hover:border-primary focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="min-w-0 break-words font-semibold text-foreground">{alert.title}</h3>
+                  <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
                     alert.kind === "REVIEW" || alert.kind === "REQUESTED" ? "warning" : "info"}>
                     {alert.kind === "MEETING_SOON" ? "Upcoming meeting" :
@@ -160,11 +160,11 @@ export default async function MentorNotificationsPage({
                       alert.kind === "REVIEW" ? "Needs review" : "Stalled"}
                   </StatusBadge>
                 </div>
-                <p className="mt-2 text-sm text-body">{alert.description}</p>
+                <p className="mt-2 text-sm text-body leading-[22px]">{alert.description}</p>
               </Link>)}</div>}
     </section>
     <section aria-labelledby="mentor-personal-notifications" className="space-y-4">
-      <h2 id="mentor-personal-notifications" className="text-lg font-semibold text-foreground">
+      <h2 id="mentor-personal-notifications" className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
         Personal notifications
       </h2>
       {inbox ? <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount}

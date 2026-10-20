@@ -42,15 +42,15 @@ export default async function FacultyCourseAssessmentHealthPage({
         Section students
       </Link>} />
     <section className="border-b border-border pb-5">
-      <h2 className="text-lg font-semibold text-foreground">Scope</h2>
-      <p className="mt-1 text-sm text-body">
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Scope</h2>
+      <p className="mt-1 text-sm text-body leading-[22px]">
         {data.rosterSize} currently enrolled learners in this authorized Section.
         Only published Assignment and Quiz responses are summarized.
       </p>
     </section>
     <form action={facultyCourseHealthHref({...data.query,page:1}).split("?")[0]}
       method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
           className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="ALL">All published assessments</option>
@@ -62,7 +62,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
         className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear</Link>
     </form>
-    <p className="text-sm text-body">
+    <p className="text-sm text-body leading-[22px]">
       {data.total} published assessment{data.total === 1 ? "" : "s"} in this Section
     </p>
     {data.items.length === 0 ? <EmptyState title="No published assessments matched"
@@ -71,7 +71,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       <article key={item.kind + ":" + item.id}
         className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="font-semibold text-foreground">{item.title}</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.title}</h2>
           <span className="text-xs font-semibold text-body">{item.kind}</span>
         </div>
         <dl className="mt-4 grid gap-3 md:grid-cols-4">
@@ -86,7 +86,7 @@ export default async function FacultyCourseAssessmentHealthPage({
               <dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd>
             </div>)}
         </dl>
-        <p className="mt-3 text-sm text-body">
+        <p className="mt-3 text-sm text-body leading-[22px]">
           Recorded response coverage: {item.coveragePercent === null
             ? "Unknown (no current eligible learners)" : item.coveragePercent + "%"}.
           Faculty-only graded average: {item.averagePercent === null
