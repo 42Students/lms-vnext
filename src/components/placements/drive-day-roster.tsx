@@ -184,7 +184,7 @@ export function DriveDayRoster({
         }
       />
 
-      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
         {[
           ["On roster", counts.total],
           ["Checked in", counts.present],

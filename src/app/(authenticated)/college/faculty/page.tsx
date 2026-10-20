@@ -5,5 +5,5 @@ export default function CollegeFacultyPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  return <CollegeRoleDirectoryWorkspace kind="FACULTY" searchParams={searchParams} />;
+  return <div className="min-w-0 space-y-6"><CollegeRoleDirectoryWorkspace kind="FACULTY" searchParams={searchParams} /></div>;
 }
