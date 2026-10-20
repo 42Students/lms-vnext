@@ -72,7 +72,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           </label>
           <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
-          <Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>
+          <Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Clear filters</Link>
         </form>
       </section>
 
