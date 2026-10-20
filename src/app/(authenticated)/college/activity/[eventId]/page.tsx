@@ -17,7 +17,7 @@ export default async function CollegeActivityDetailPage({
     <PageHeader title="Activity detail"
       description={event.summary}
       actions={<PageBackLink href="/college/activity" label="Back to Activity Log"/>} />
-    <dl className="grid min-w-0 gap-4 border-t border-border pt-4 text-sm md:grid-cols-2">
+    <dl className="grid min-w-0 gap-4 border-y border-border py-4 text-sm md:grid-cols-2">
       <div><dt className="font-semibold text-muted-foreground">Occurred (IST)</dt>
         <dd className="mt-1 text-body">{date}</dd></div>
       <div><dt className="font-semibold text-muted-foreground">Actor</dt>
@@ -33,7 +33,7 @@ export default async function CollegeActivityDetailPage({
     </dl>
     <section className="border-t border-border pt-5">
       <h2 className="m-0 text-base font-semibold text-foreground">Sanitized event metadata</h2>
-      <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words rounded-[var(--lms-control-radius,9px)] bg-muted p-4 text-xs text-body">
+      <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-xs text-body">
         {JSON.stringify(event.metadata, null, 2)}
       </pre>
     </section>
