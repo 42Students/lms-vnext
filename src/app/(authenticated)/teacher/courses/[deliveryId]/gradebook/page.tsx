@@ -72,7 +72,7 @@ export default async function FacultyGradebookPage({
       {" "}assessments with published result records
     </p>
     <form method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid min-w-56 flex-1 gap-1 text-[13px] font-semibold leading-4 text-foreground">
+      <label className="grid min-w-56 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Find learner
         <Input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
