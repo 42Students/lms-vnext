@@ -51,16 +51,16 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
   const lastShown = pageLinks[pageLinks.length - 1]?.item ?? total;
   const firstHref = showBoundaryLinks && firstShown > 1 ? safePageHref(hrefForPage, 1) : null;
   const lastHref = showBoundaryLinks && lastShown < total ? safePageHref(hrefForPage, total) : null;
-  const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] md:leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none";
+  const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-radius-control)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] md:leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none";
   return (
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center justify-center gap-1 md:justify-start md:gap-[var(--lms-space-2)]", className)}>
       {!previousHref ?
-        <span aria-disabled="true" className={cx(buttonClass, "cursor-not-allowed opacity-50")}>Previous</span> :
+        <span aria-disabled="true" className={cx(buttonClass, "pointer-events-none cursor-not-allowed border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-400)] opacity-100")}>Previous</span> :
         <Link className={buttonClass} href={previousHref} scroll={scroll} aria-label="Previous page">Previous</Link>}
       <span role="status" className="px-1 text-[12px] font-medium text-[var(--lms-neutral-500)] sr-only">Page {current} of {total}</span>
       {showBoundaryLinks && firstShown > 1 ? <>
         {firstHref ? <Link href={firstHref} scroll={scroll} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page 1 of ${total}`}>1</Link> :
-          <span aria-disabled="true" aria-label="First page unavailable" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>1</span>}
+          <span aria-disabled="true" aria-label="First page unavailable" className={cx(buttonClass, "pointer-events-none hidden cursor-not-allowed border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-400)] opacity-100 md:inline-flex")}>1</span>}
         {firstShown > 2 ? <span aria-hidden="true" className="hidden px-1 text-[var(--lms-neutral-500)] md:inline-flex">…</span> : null}
       </> : null}
       {pageLinks.map(({item,href}) => item === current ?
@@ -72,15 +72,15 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
           {item}
         </Link> :
         <span key={item} aria-disabled="true" aria-label={`Page ${item} unavailable`}
-          className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>{item}</span>
+          className={cx(buttonClass, "pointer-events-none hidden cursor-not-allowed border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-400)] opacity-100 md:inline-flex")}>{item}</span>
       )}
       {showBoundaryLinks && lastShown < total ? <>
         {lastShown < total - 1 ? <span aria-hidden="true" className="hidden px-1 text-[var(--lms-neutral-500)] md:inline-flex">…</span> : null}
         {lastHref ? <Link href={lastHref} scroll={scroll} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page ${total} of ${total}`}>{total}</Link> :
-          <span aria-disabled="true" aria-label="Last page unavailable" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>{total}</span>}
+          <span aria-disabled="true" aria-label="Last page unavailable" className={cx(buttonClass, "pointer-events-none hidden cursor-not-allowed border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-400)] opacity-100 md:inline-flex")}>{total}</span>}
       </> : null}
       {!nextHref ?
-        <span aria-disabled="true" className={cx(buttonClass, "cursor-not-allowed opacity-50")}>Next</span> :
+        <span aria-disabled="true" className={cx(buttonClass, "pointer-events-none cursor-not-allowed border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-400)] opacity-100")}>Next</span> :
         <Link className={buttonClass} href={nextHref} scroll={scroll} aria-label="Next page">Next</Link>}
     </nav>
   );
