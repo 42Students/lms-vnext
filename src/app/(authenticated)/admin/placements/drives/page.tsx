@@ -76,26 +76,26 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader title="All drives"
    description="Review and open every persisted non-archived drive in the selected college."
-   actions={<>
+   actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
     <PageBackLink href="/admin/placements" label="Placement overview" />
     <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new"
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create drive →</Link>
-   </>} />
+   </div>} />
   <form action="/admin/placements/drives" method="get"
-   className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+   className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company
     <Input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
      className="w-full"/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Status
+   <label className="grid min-w-36 flex-1 gap-1 text-sm font-semibold text-body">Status
     <Select name="status" defaultValue={parsed.data.status}
      className="w-full">
      <option value="ALL">All</option><option value="DRAFT">Draft</option>
      <option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
+   <label className="grid min-w-36 flex-1 gap-1 text-sm font-semibold text-body">Rows per page
     <Select name="pageSize" defaultValue={parsed.data.pageSize}
      className="w-full">
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
