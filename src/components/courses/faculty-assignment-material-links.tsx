@@ -67,11 +67,11 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
    </li>)}
   </ul>
   {!disabled?<div className="grid gap-2 md:grid-cols-2">
-   <label className="text-[13px] font-semibold leading-4">Resource title
+   <label className="text-xs font-semibold leading-4">Resource title
     <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
      className="mt-1 min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
    </label>
-   <label className="text-[13px] font-semibold leading-4">Secure resource link
+   <label className="text-xs font-semibold leading-4">Secure resource link
     <Input value={externalUrl} onChange={e=>setExternalUrl(e.target.value)} type="url" maxLength={2048}
      placeholder="https://" className="mt-1 min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
    </label>
