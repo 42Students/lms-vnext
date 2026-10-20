@@ -20,14 +20,14 @@ export default async function SuperAdminQuizzesPage({
   if (!query.success) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Quizzes" />
     <ErrorState title="Invalid quiz filters" description="Check search, status and page."
-      action={<Link href="/admin/quizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+      action={<Link href="/admin/quizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context)) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Quizzes" />
     <ErrorState title="Quiz access denied"
       description="Your account cannot access Super Admin quizzes."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to dashboard</Link>}/>
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to dashboard</Link>}/>
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Quizzes" />
@@ -45,12 +45,12 @@ export default async function SuperAdminQuizzesPage({
     <ErrorState title="Quizzes unavailable"
       description="The quiz directory could not be loaded. Your filters have not changed."
       action={<Link href={adminAssessmentHref("QUIZ",query.data)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry loading quizzes</Link>}/>
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading quizzes</Link>}/>
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Quizzes" actions={<a href={adminAssessmentExportHref("QUIZ",query.data)}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 print:hidden hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export quizzes.csv</a>} />
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 print:hidden hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export quizzes.csv</a>} />
     {lessonsResult.status==="fulfilled"?
       <CollegeQuizCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:
       <Alert tone="warning">

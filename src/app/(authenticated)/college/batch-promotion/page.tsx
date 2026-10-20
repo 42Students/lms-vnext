@@ -65,7 +65,7 @@ export default async function CollegeBatchPromotionPage({
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Batch promotion preview unavailable"
       description="Program, batch, promotion or faculty-readiness data could not be verified. No promotion has been applied."
-      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry promotion preview</Link>}/>
+      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry promotion preview</Link>}/>
   </div>;
   const {options,preview,facultySetup}=read.value;
   return <div className="min-w-0 space-y-6">
@@ -73,7 +73,7 @@ export default async function CollegeBatchPromotionPage({
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <section className="border-t border-border pt-4">
-      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-3 max-[767px]:[&_label]:w-full md:grid-cols-2 min-[992px]:grid-cols-4">
+      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-[var(--lms-space-2)] max-[767px]:[&_label]:w-full md:grid-cols-2 min-[992px]:grid-cols-4">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Program
           <Select name="programId" defaultValue={parsed.data.programId ?? ""}

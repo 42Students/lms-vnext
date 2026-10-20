@@ -32,7 +32,7 @@ export default async function TenantDirectory({searchParams}:{
  if(!parsed) return <div className="min-w-0 space-y-4">
   <PageHeader title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
-   action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
+   action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDirectory>>;
  try{
@@ -44,7 +44,7 @@ export default async function TenantDirectory({searchParams}:{
    <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant directory unavailable"
     description="Colleges and organizations could not be loaded. Try again with the same filters."
-    action={<Link href={tenantLifecycleHref(parsed)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry tenant directory</Link>}/>
+    action={<Link href={tenantLifecycleHref(parsed)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry tenant directory</Link>}/>
   </div>;
  }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
@@ -54,16 +54,16 @@ export default async function TenantDirectory({searchParams}:{
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
     <Link href="/admin/domains"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Domains</Link>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Domains</Link>
     <Link href="/admin/tenants/setup"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Get this college ready to go live</Link>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Get this college ready to go live</Link>
     <TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
     <Link href="/admin/tenants/create"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Create an organization and its colleges
     </Link>
    </div>} />
-  <form className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-4">
+  <form className="grid gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 md:min-h-9"/>
@@ -90,7 +90,7 @@ export default async function TenantDirectory({searchParams}:{
     columns={[
       {key:"college",header:"College",mobilePriority:"primary",cell:tenant=><>
         <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           {tenant.name}
         </Link>
         <span className="mt-1 block text-xs text-muted-foreground">{tenant.code}</span>
@@ -105,7 +105,7 @@ export default async function TenantDirectory({searchParams}:{
         [tenant.city,tenant.state,tenant.country].filter(Boolean).join(", ")||"Location not recorded"},
       {key:"action",header:"Action",mobilePriority:"action",cell:tenant=>
         <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Tenant details →</Link>},
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Tenant details →</Link>},
     ]}
     empty={<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."/>}
   />
