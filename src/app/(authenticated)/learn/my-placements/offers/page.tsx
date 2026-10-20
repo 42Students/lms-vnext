@@ -275,9 +275,9 @@ export default async function LearnerOffersPage({
       )}
       {paginated.total>0 ? <nav aria-label="Offer results pagination" className="flex flex-wrap items-center gap-3 text-sm">
         <p className="text-muted-foreground">{paginated.from}–{paginated.to} of {paginated.total} matching offers</p>
-        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Previous</Link> : null}
+        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Previous</Link> : null}
         <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
-        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Next</Link> : null}
+        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Next</Link> : null}
       </nav> : null}
       <section aria-label="How offers work at your college" className="min-w-0 border-b border-border py-4 md:py-6">
         <h2 className="font-semibold text-foreground">How offers work at your college</h2>
