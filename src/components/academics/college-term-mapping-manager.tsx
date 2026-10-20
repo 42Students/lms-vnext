@@ -8,6 +8,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
+import { Disclosure } from "@/components/ui/disclosure";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
@@ -124,21 +125,21 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       .slice().sort((a, b) => a.displayOrder - b.displayOrder || a.id.localeCompare(b.id));
   }
 
-  return <section className="space-y-4 border-t border-border pt-4">
+  return <section className="min-w-0 space-y-4 border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
     <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
-    <form onSubmit={prepare} className="grid min-w-0 gap-4 md:max-w-4xl md:grid-cols-2">
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+    <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required value={programId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
           setProgramId(event.target.value); setTermId("");
-        }} className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
+        }} className="min-h-11 w-full md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose program</option>
           {Array.from(new Map(data.terms.map(t => [t.programId, t.programName])).entries()).map(
             ([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
         <Select required value={termId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained.");
           setTermId(event.target.value);
@@ -147,23 +148,28 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber})</option>)}
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Courses to Add
+</div>
+    {termId ? <Disclosure title="Add courses" className="min-w-0 border-y border-border py-2" contentClassName="pt-3">
+      <form onSubmit={prepare} className="grid min-w-0 gap-3">
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Courses to Add
         <Select multiple size={8} value={selectedIds}
           disabled={!termId} onChange={event => setDraftByTerm(current => ({
             ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
-          }))} className="min-h-40 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
+          }))} className="min-h-40 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           {availableCourses.map(c => <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </Select>
         <span className="text-xs font-normal text-muted-foreground">
           Choose multiple courses; already-mapped courses are excluded. Selection is retained per semester.
         </span>
       </label>
-      <div className="flex items-end md:col-span-2 md:justify-end">
-        <Button className="w-full md:w-auto" type="submit" disabled={pending || !termId || !selectedIds.length}>
+      {availableCourses.length===0?<p className="text-sm text-muted-foreground">No unmapped courses available for this semester.</p>:null}
+      <div className="flex items-end sm:justify-end">
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !termId || !selectedIds.length}>
           {TERM_MAPPING_COPY.addButton}
         </Button>
       </div>
-    </form>
+      </form>
+    </Disclosure> : null}
     {!termId ? <p className="text-sm text-body">Select a program and semester to view mapped courses.</p> :
     currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester.</p> :
       <DataTable
@@ -197,7 +203,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             orderedPeers(row).findIndex(peer=>peer.id===row.id)+1},
           {key:"actions",header:TERM_MAPPING_COPY.columns.actions,mobilePriority:"action",cell:row=>
             editing?.id===row.id ? (
-              <form aria-label={"Edit mapping for "+row.courseName} className="grid gap-2"
+              <form aria-label={"Edit mapping for "+row.courseName} className="grid min-w-0 gap-2 sm:grid-cols-2"
                 onSubmit={event=>{
                   event.preventDefault();
                   updateMapping(row.id,editing.credits,Number(editing.position));
@@ -206,7 +212,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   <Input type="number" min={1} max={10} step={1} required
                     value={editing.credits}
                     onChange={event=>setEditing({...editing,credits:event.target.value})}
-                    className="block min-h-[var(--lms-control-height)] w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
+                    className="block min-h-11 w-full rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-2"/>
                 </label>
                 <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
                   <Input type="number" min={1} max={orderedPeers(row).length} step={1}
@@ -214,22 +220,22 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                     onChange={event=>setEditing({...editing,position:event.target.value})}
                     className="block min-h-[var(--lms-control-height)] w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
                 </label>
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="secondary" type="submit" disabled={pending}
+                <div className="grid min-w-0 grid-cols-2 gap-2 sm:col-span-2">
+                  <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="submit" disabled={pending}
                     >Save</Button>
-                  <Button variant="secondary" type="button" disabled={pending} onClick={()=>setEditing(null)}
+                  <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="button" disabled={pending} onClick={()=>setEditing(null)}
                     >Cancel</Button>
                 </div>
               </form>
             ) : (
-              <div className="flex flex-wrap gap-2">
-                <Button variant="secondary" type="button" disabled={pending}
+              <div className="flex min-w-0 flex-wrap gap-2">
+                <Button className="min-h-11 md:min-h-9" variant="secondary" type="button" disabled={pending}
                   
                   onClick={()=>setEditing({
                     id:row.id,credits:row.credits===null?"3":String(row.credits),
                     position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
                   })}>Edit</Button>
-                <Button variant="secondary" type="button" disabled={pending||orderedPeers(row)[0]?.id===row.id}
+                <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending||orderedPeers(row)[0]?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" up"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
@@ -239,7 +245,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   aria-label={"Move "+row.courseName+" down"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
                     orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</Button>
-                <Button size="sm" variant="danger" disabled={pending}
+                <Button className="min-h-11 md:min-h-9" size="sm" variant="danger" disabled={pending}
                   onClick={()=>{setError(null);setNotice(null);setConfirm({type:"REMOVE",id:row.id});}}>
                   {TERM_MAPPING_COPY.removeButton}
                 </Button>
