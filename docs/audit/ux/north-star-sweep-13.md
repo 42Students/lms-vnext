@@ -473,7 +473,7 @@ This pass starts from the fetched current `origin/main` branch (fast-forwarded `
 
 Source-value reference: `docs/design/legacy-styles/components___form.scss:110-142` labels 13px/600/16px/#a9a7ae, fields 14px/400/20px with radius 10px, `components___variables.scss:13,30,31,37,139` teal hover #eff8fa/border #e5e9f0/canvas shell #f1f4f9/white surface/touch 44px, `old-lms-shell.css:23,73` phone ≤767px, `src/app/globals.css:327,341-345,425-476,622-677,866` common implementation.
 
-### - [x] `src/app/(authenticated)/admin/batch-promotion/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/batch-promotion/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -486,7 +486,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/batch-promotion/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 2/2; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/batches/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/batches/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -499,7 +499,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/batches/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 2/2, Select 3/3; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/classes/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/classes/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -512,7 +512,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/classes/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 2/2, Select 3/3; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/course-progress/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/course-progress/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -525,7 +525,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/course-progress/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 1/1; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/electives/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/electives/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -538,7 +538,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/electives/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 2/2, Select 3/3; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -551,7 +551,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/lecture-halls/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 2/2, Select 4/4; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/features/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/features/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -564,7 +564,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/features/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 7/7; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/lessons/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/lessons/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -577,7 +577,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/lessons/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 1/1; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/module-access/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/module-access/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
@@ -590,7 +590,7 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/module-access/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 0/0; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
-### - [x] `src/app/(authenticated)/admin/organizations/page.tsx` — source complete (10/10 properties checked)
+### - [x] `src/app/(authenticated)/admin/organizations/page.tsx` — six source property/state groups reviewed
 
 | Visual property / state | Old LMS exact value (reference) | Current code and value |
 | --- | --- | --- |
