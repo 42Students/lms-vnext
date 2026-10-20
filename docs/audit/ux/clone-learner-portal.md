@@ -670,3 +670,19 @@ Regexes applied to fetched full strings: `/<(button|input|select|textarea)(?=\\s
 **Strict status:** LRN-05 still OPEN until project-workspace owner evidence, complete route-tree source coverage, mouse/focus/keyboard, rendered phone/tablet and old-LMS screenshot comparison exist.
 
 **Exact next file for source pass:** `src/app/(authenticated)/learn/notifications/page.tsx` (LRN-05 notifications page) and its owned route states, followed by `src/app/(authenticated)/learn/calendar/page.tsx` (calendar details).
+
+### Notifications and class schedule root source-only inspection (2026-10-20)
+
+No source modification was needed for `src/app/(authenticated)/learn/notifications/{page,error,loading}.tsx` or `src/app/(authenticated)/learn/calendar/page.tsx`. This is an **inspected but not counted as an edited file** set. Each normal route uses one PageHeader within one `min-w-0 space-y-6` canvas; notifications has shared `LearnerNotificationsInbox` in its separately owned `src/components/activity/` component, and calendar has shared `LearnerClassSchedule` in `src/components/academics/`. The latter two were not modified because of lane ownership.
+
+| Value/state | Legacy source | Inspected vNext page source | Verdict |
+|---|---|---|---|
+| Page heading | `old-lms-pages.md:5-13` one canvas/title/action | Notifications and Class Schedule each one PageHeader, no extra nested card | Source structure matches |
+| Error | `old-lms-pages.md` inline alert + visible retry | `notifications/error.tsx`: shared Alert, one PageHeader, shared Button retry and 44px mobile back to Home | Source structure matches |
+| Loading | `old-lms-pages.md`: directory-state skeleton, no nested card | `notifications/loading.tsx`: `GracefulPageLoading shape="directory"` | Source match |
+| Calendar action | `components___learn-notifications.scss:9-11`: >=44px mobile | `calendar/page.tsx`: attendance calendar action link `min-h-11 md:min-h-9` in `PageHeader.actions` | Source match |
+| Data/identity | Owner retains existing vNext content/access | Notifications service requires persisted learner membership; academic calendar filters validated, rendered by owned component | No source logic changed |
+
+**Source scan for those four inspected pages:** raw input/select/button/textarea: 0 each; `sm:` inappropriate breakpoint tokens: 0 each; hard-coded six-digit hex: 0 each. Phone at 375px and 700px stays in the mobile layout, 768px flips `md:` where present, desktop stays in existing authenticated canvas. Computed values, mobile screenshots and keyboard traversal remain unverified. LRN-05/06 remain open.
+
+**Next exact file:** `src/app/(authenticated)/learn/attendance/calendar/page.tsx` (LRN-05), then the learner attendance history and profile subpages requiring source proofs. Do not change shared `src/components/academics/**` or `src/components/activity/**` owned by other lanes.
