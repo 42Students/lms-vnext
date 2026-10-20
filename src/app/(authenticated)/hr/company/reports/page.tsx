@@ -325,7 +325,7 @@ export default async function RecruiterCompanyReportsPage({
             Page {page} of {Math.max(1, totalPages)}
           </p>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {page > 1 ? (
               <Link
                 href={recruiterCompanyReportsHref({
