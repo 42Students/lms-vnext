@@ -108,3 +108,12 @@
 ## Verify2 surface 10 — `src/components/placements/tpo-mark-own-notification-read.tsx`
 - Regressions fixed: 0. Inspected notification unread CAS request, scoped POST, pending guarded confirmation, success toast, inline error and useToast/ConfirmDialog contract against polish-lane-2 and overlay evidence. Repository search returned no direct current caller; component remains an exported, syntactically valid optional control.
 - Extra clutter/alignment: verified, no change; full-width 44px phone trigger and responsive error region intact. Files: queue/proof only; source review, no CI.
+
+
+## Verify2 surface 11 — `src/components/tpo/tpo-batch-rule-editor.tsx`
+- Regressions fixed: 0. Read TpoBatchRuleEditor in TPO batch workspace; reviewed college baseline, all five overrides, typed numeric/select fields, inherited reset, guarded save/version, read-only mode, error/notice and unsaved navigation ConfirmDialog. Compared lane-2 polish evidence; service and form names, modal copy and href behavior preserved.
+- Extra clutter/alignment: verified, no change; 375px single column, 768px label/control wrap, 44px phone actions and hairline separated rules already match legacy. Files: queue/proof only; no CI.
+
+## Verify2 surface 12 — `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- Regressions fixed: 0. Reviewed query parser/strict membership UUID, selected college access trace model/service shapes, resolved winner and scope-chain DataTable, CopyFindingForClaude, FilterBar, StatusBadge/Disclosure, pagination and authorization, parent Admin layout, trace loading/error/not-found and prior lane-19 page verification; no JSX/import/route/copy regression.
+- Extra alignment fixes: 2 related source changes — root and invalid-filter page rhythm 16px on phone/24px on tablet, also mirrored in route loading; previously mobile always used 24px. No behavior, field name or copy change. Files: `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`, `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`, queue, proof. Source review only, no CI/browser.

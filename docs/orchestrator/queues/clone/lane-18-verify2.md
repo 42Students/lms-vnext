@@ -20,8 +20,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-18.md: surface | regre
 - [x] `src/app/(authenticated)/error.tsx`
 - [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
 - [x] `src/components/placements/tpo-mark-own-notification-read.tsx`
-- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
 - [ ] `src/components/admin/college-branding-form.tsx`
 - [ ] `src/components/admin/super-admin-college-company-actions.tsx`
 - [ ] `src/components/courses/college-assignment-create.tsx`
