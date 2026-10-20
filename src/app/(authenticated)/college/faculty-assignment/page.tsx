@@ -11,6 +11,8 @@ import { listCollegeTeachingOptions } from "@/modules/courses/college-teaching-o
 import {CollegeFacultyReassignAction} from "@/components/college/college-faculty-reassign-action";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyAssignmentQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeFacultyAssignments } from "@/modules/academics/college-mapping-service";
 import { facultyAssignmentCsvHref } from "@/modules/academics/college-faculty-assignment-export-model";
@@ -40,7 +42,7 @@ export default async function CollegeFacultyAssignmentPage({
       <ErrorState title="Invalid assignment filters"
         description="The status, page or search is invalid; no assignments were loaded."
         action={<Link href="/college/faculty-assignment"
-          className="font-semibold text-link">Clear filters</Link>} />
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>} />
     </div>
   );
 
@@ -58,16 +60,16 @@ export default async function CollegeFacultyAssignmentPage({
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
         actions={<Link href="/college/faculty"
-          className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Faculty directory</Link>}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Faculty directory</Link>}
       />
       <Link prefetch={false} download href={facultyAssignmentCsvHref(query)}
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Export filtered faculty assignments CSV
       </Link>
       <CollegeFacultyAssignmentCreate {...options} />
       <section className="border-t border-border pt-4">
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-0 sm:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 md:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Faculty, course or class
             <Input name="q" type="search" defaultValue={query.q} maxLength={100}
               />
@@ -109,9 +111,9 @@ export default async function CollegeFacultyAssignmentPage({
               <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
             </Select>
           </label>
-          <Button type="submit" >Filter</Button>
+          <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
           <Link href="/college/faculty-assignment"
-            className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Clear</Link>
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear</Link>
         </form>
       </section>
       <section className="min-w-0" aria-label="Teaching assignment roster">
@@ -119,24 +121,21 @@ export default async function CollegeFacultyAssignmentPage({
           {total} matching teaching assignment{total === 1 ? "" : "s"}
         </p>
         {items.length === 0 ? (
-          <p className="p-6 text-sm text-body">
-            {total === 0
-              ? "No persisted teaching assignments match these filters. Unassigned faculty are listed separately in the Faculty directory."
-              : "No assignments on this page. Choose an earlier page."}
-          </p>
+          <EmptyState title={total===0?"No matching assignments":"No assignments on this page"}
+            description={total===0?"No persisted teaching assignments match these filters. Unassigned faculty are listed separately in the Faculty directory.":"No assignments on this page. Choose an earlier page."}/>
         ) : (
           <DataTable
             caption="Teaching assignment roster"
             rows={items}
             getRowKey={item => item.id}
-            empty={<p className="text-sm text-body">No persisted teaching assignments match these filters. Unassigned faculty are listed separately in the Faculty directory.</p>}
+            empty={<EmptyState title="No matching assignments" description="No persisted teaching assignments match these filters. Unassigned faculty are listed separately in the Faculty directory."/>}
             columns={[
               { key: "faculty", header: FACULTY_ASSIGNMENT_COPY.columns.faculty,
                 mobilePriority: "primary", cell: item => item.facultyName },
               { key: "course", header: FACULTY_ASSIGNMENT_COPY.columns.course,
                 mobilePriority: "secondary", cell: item => <>
                   <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                    className="font-semibold text-link hover:underline">
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">
                     {item.courseName}
                   </Link>
                   <p className="mt-1 text-xs text-muted-foreground">{item.courseCode}</p>
@@ -148,7 +147,7 @@ export default async function CollegeFacultyAssignmentPage({
               { key: "role", header: FACULTY_ASSIGNMENT_COPY.columns.role,
                 mobilePriority: "secondary", cell: item => facultyAssignmentRoleLabel(item.role) },
               { key: "active", header: FACULTY_ASSIGNMENT_COPY.columns.active,
-                mobilePriority: "secondary", cell: item => item.state === "ACTIVE" ? FACULTY_ASSIGNMENT_COPY.yes : FACULTY_ASSIGNMENT_COPY.no },
+                mobilePriority: "secondary", cell: item => <StatusBadge tone={item.state==="ACTIVE"?"success":"neutral"}>{item.state === "ACTIVE" ? FACULTY_ASSIGNMENT_COPY.yes : FACULTY_ASSIGNMENT_COPY.no}</StatusBadge> },
               { key: "actions", header: FACULTY_ASSIGNMENT_COPY.columns.actions,
                 mobilePriority: "action", cell: item => item.state === "ACTIVE" ? (
                   <div className="flex flex-wrap gap-2">
@@ -171,9 +170,9 @@ export default async function CollegeFacultyAssignmentPage({
       <nav aria-label="Faculty assignment pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
-          {query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link lms-inline-link"
+          {query.page > 1 ? <Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page - 1 })}>Previous</Link> : null}
-          {query.page < totalPages ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link lms-inline-link"
+          {query.page < totalPages ? <Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page + 1 })}>Next</Link> : null}
         </div>
       </nav>
