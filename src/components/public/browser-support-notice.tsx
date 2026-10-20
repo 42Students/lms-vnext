@@ -19,7 +19,9 @@ export function BrowserSupportNotice() {
     return () => clearTimeout(timer);
   }, []);
   if (!unsupported) return null;
-  return <p role="alert" className="border-b border-warning bg-warning-subtle p-4 text-center text-sm font-medium text-foreground">
-    This browser is not supported. Please update your browser and try again.
-  </p>;
+  return <div role="alert" className="w-full min-w-0 border-b border-warning-border bg-warning-subtle px-4 py-3 text-[13px] leading-5 text-body">
+    <p className="mx-auto max-w-3xl break-words text-center">
+      This browser is not supported. Please update your browser and try again.
+    </p>
+  </div>;
 }
