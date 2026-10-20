@@ -122,3 +122,9 @@ Read other-lane polish-lane-6.md, college bulk-import component, CSV parsing/con
 
 ## 41. src/components/admin/college-signin-method-form.tsx
 Compared polish-lane-6.md proof with signin method component, Zod enum/version, Radio and ConfirmDialog props, associated college signin route, loading/error, parent admin layout and API save shape. Read active/saved/disabled policy and stale-version error, confirmation, success and keyboard radio/375-768 row states. No JSX/import/prop mismatch, rewording, dropped id/permission or further alignment issue found. Source only, no CI. Files: queue/proof.
+
+## 42. src/components/admin/scoped-membership-lifecycle-actions.tsx
+Read other-lane polish-lane-6.md proof, lifecycle action, ConfirmDialog and membership lifecycle mutation. Fixed duplicate role=alert: previous modal error also rendered behind the open dialog; outside alert now appears only when dialog is closed. No status, reason validation, identity/scope, route, copy or button behaviour changed. Checked 375/768 spacing and disabled/pending/cancel/success states in source only; no CI. Files: scoped-membership-lifecycle-actions.tsx, queue/proof.
+
+## 43. src/components/admin/super-admin-batch-graduate-action.tsx
+Verified polish-lane-6.md, graduate action, useGuardedAction, ConfirmDialog and POST graduation route. Fixed second simultaneous error announcement outside the modal; dialog alert stays visible in confirm, outside alert appears after close only. Pending/stale/not-ready/reopen/confirm and 375/768 controls retain original semantics and copy. Source-only; no CI. Files: super-admin-batch-graduate-action.tsx, queue/proof.
