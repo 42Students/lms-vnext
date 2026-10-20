@@ -49,7 +49,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
    {data.rows.map(r=><article key={r.id} className="py-4">
     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{r.companyName} · {r.jobTitle}</h2>
     <p className="mt-1 text-sm text-body">{r.name} · {r.state.replaceAll("_"," ")} · {r.mode??"Mode not recorded"}</p>
-    <p className="mt-1 text-sm text-body">{r.scheduledAt?new Date(r.scheduledAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Start not scheduled"} IST · {r.venue??"Venue not recorded"}</p>
+    <p className="mt-1 text-sm text-body">{r.scheduledAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(r.scheduledAt)) + " IST":"Start not scheduled"} · {r.venue??"Venue not recorded"}</p>
     <p className="mt-1 text-xs text-[var(--lms-muted-text)]">Duration: {r.durationMinutes??"Not recorded"} minutes</p>
     <Link href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-link hover:underline lms-inline-link">
       View round and candidate readiness →

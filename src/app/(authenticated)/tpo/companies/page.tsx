@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import {TpoCompaniesSpreadsheet} from "@/components/tpo/tpo-companies-spreadsheet";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -269,43 +270,7 @@ export default async function TpoCompanyMemoryPage({
           <TpoCompaniesSpreadsheet rows={page.items}/>
         )}
 
-        <nav
-          aria-label="Companies pagination"
-          className="flex flex-wrap items-center justify-between gap-3"
-        >
-          <p className="text-sm text-body leading-[22px]">
-            Page {page.page} of {Math.max(1, page.totalPages)}
-          </p>
-          <div className="flex gap-2">
-            {page.page > 1 ? (
-              <Link
-                href={companiesHref({
-                  search: query.search,
-                  pageSize: query.pageSize,
-                sort: query.sort,
-                  page: page.page - 1,
-                })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              >
-                Previous
-              </Link>
-            ) : null}
-
-            {page.page < page.totalPages ? (
-              <Link
-                href={companiesHref({
-                  search: query.search,
-                  pageSize: query.pageSize,
-                sort: query.sort,
-                  page: page.page + 1,
-                })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              >
-                Next
-              </Link>
-            ) : null}
-          </div>
-        </nav>
+        <Pagination label="Companies pagination" page={page.page} pageCount={Math.max(1, page.totalPages)} hrefForPage={target=>companiesHref({search:query.search,pageSize:query.pageSize,sort:query.sort,page:target})}/>
 
         <p className="text-xs leading-5 text-muted-foreground">
           Offer counts represent persisted offer records, including
