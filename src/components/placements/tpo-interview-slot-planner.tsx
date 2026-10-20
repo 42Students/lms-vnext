@@ -48,7 +48,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   <div className="border-t border-border pt-5">
    <h2 className="font-semibold text-foreground">Generate interview day</h2>
    <p className="mt-1 text-sm text-body">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
-   <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+   <div className="mt-3 grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-5">
     <label className="grid gap-1 text-sm">Start time (IST)<Input type="datetime-local" required value={date} onChange={e=>setDate(e.target.value)}
       className="min-h-11 md:min-h-9 "/></label>
     <label className="grid gap-1 text-sm">Room names (comma-separated)<Input value={rooms} onChange={e=>setRooms(e.target.value)}
@@ -74,7 +74,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   <div className="border-t border-border pt-5">
    <h2 className="font-semibold">Assign rooms by roll range</h2>
    <p className="mt-1 text-sm text-body">Preview the affected roll range, then assign a room. Overlapping room bookings are skipped and reported.</p>
-   <div className="mt-3 grid gap-3 sm:grid-cols-3">
+   <div className="mt-3 grid gap-3 min-[768px]:grid-cols-3">
     <label className="grid gap-1 text-sm">From roll<Input value={fromRoll} onChange={e=>setFromRoll(e.target.value)}
      className="min-h-11 md:min-h-9 "/></label>
     <label className="grid gap-1 text-sm">To roll<Input value={toRoll} onChange={e=>setToRoll(e.target.value)}
@@ -120,7 +120,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   </section>:null}
   {recruiterProposals.length?<div className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
    <h2 className="font-semibold">Recruiter-proposed interview slots</h2>
-   {recruiterProposals.map(p=><div key={p.id} className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-2">
+   {recruiterProposals.map(p=><div key={p.id} className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 min-[768px]:grid-cols-2">
     <p className="text-sm">{format(p.startsAt)} · {p.mode} · {p.panelLabel??"Recruiter panel"}</p>
     <label className="grid gap-1 text-sm">Venue or meeting link
      <Input value={venue[p.id]??p.meetingLocation??""} onChange={e=>setVenue(v=>({...v,[p.id]:e.target.value}))}
