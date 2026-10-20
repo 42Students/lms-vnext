@@ -87,7 +87,7 @@ export default async function CollegeReadinessPage({
   const parsed=parseSuperAdminReadinessParams(raw);
   // A malformed filter is a recoverable URL error. Avoid expensive scoped
   // readiness queries until both the tenant ID and filters are valid.
-  if(!parsed)return <div className="min-w-0 space-y-5">
+  if(!parsed)return <div className="min-w-0 space-y-6">
     <PageHeader title="Readiness Gate"
       actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
     <ErrorState title="Invalid readiness filter"
@@ -178,11 +178,11 @@ export default async function CollegeReadinessPage({
         ].map(metric => <StatTile className={collegeStyles.tile} key={metric.label} label={metric.label} value={metric.count}/>)}
       </section>
 
-      <section aria-label="Must fix before launch" className="min-w-0 space-y-3 border-t border-border pt-5">
+      <section aria-label="Must fix before launch" className="min-w-0 space-y-3 border-t border-border pt-6">
         <h2 className="m-0 text-lg font-semibold text-foreground">Must fix before launch</h2>
         {mustFix.length===0
           ?<p role="status" className="text-sm text-body">All persisted readiness checks pass. Runtime DNS, login, teaching and placement verification are still required before launch.</p>
-          :<ul className="list-disc space-y-2 pl-5 text-sm text-body">
+          :<ul className="list-disc space-y-2 pl-6 text-sm text-body">
             {mustFix.map(check=><li key={check.id}>
               <span className="font-semibold">{check.label} — {check.status==="FAIL"?"Not ready":"Unverified"}</span>
               <p className="mt-1">{check.remediation}</p>
@@ -191,14 +191,14 @@ export default async function CollegeReadinessPage({
             </li>)}
           </ul>}
       </section>
-      <section aria-label="Recommended setup" className="border-t border-border pt-5">
+      <section aria-label="Recommended setup" className="border-t border-border pt-6">
         <h2 className="m-0 text-lg font-semibold text-foreground">Recommended setup</h2>
-        {recommended.length?<ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-body">
+        {recommended.length?<ul className="mt-3 list-disc space-y-2 pl-6 text-sm text-body">
           {recommended.map(item=><li key={item}>{item}</li>)}
         </ul>:<p role="status" className="mt-2 text-sm text-body">No additional configuration suggestions were detected from the two optional persisted sources.</p>}
         <p className="mt-2 text-xs text-muted-foreground">These suggestions are not extra checklist pass criteria. A runtime launch decision still requires separate operational verification.</p>
       </section>
-      <section className="border-t border-border pt-5">
+      <section className="border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Go-live checks
@@ -238,7 +238,7 @@ export default async function CollegeReadinessPage({
         {shownChecks.length===0 ? (
           <EmptyState title="No readiness checks match" description="No readiness checks match the selected status and area. The overall tenant readiness verdict above still uses all ten checks."/>
         ) : null}
-        <ol className="mt-5 space-y-3">
+        <ol className="mt-6 space-y-3">
           {shownChecks.map(
             (check, index) => (
               <li
@@ -278,7 +278,7 @@ export default async function CollegeReadinessPage({
         </ol>
       </section>
 
-      <section className="border-t border-border pt-5">
+      <section className="border-t border-border pt-6">
         <h2 className="m-0 text-lg font-semibold text-foreground">
           Additional setup evidence
         </h2>
@@ -320,7 +320,7 @@ export default async function CollegeReadinessPage({
         </dl>
       </section>
 
-      <section className="border-t border-border pt-5">
+      <section className="border-t border-border pt-6">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Readiness interpretation
         </h2>
