@@ -37,7 +37,7 @@ export default async function CollegeFacultyAssignmentPage({
     }).filter(([, value]) => value !== undefined && value !== "")),
   );
   if (!parsed.success) return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-[16px]">
       <PageHeader title="Faculty Assignment" />
       <ErrorState title="Invalid assignment filters"
         description="The status, page or search is invalid; no assignments were loaded."
@@ -55,7 +55,7 @@ export default async function CollegeFacultyAssignmentPage({
     new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
   ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-[16px]">
       <PageHeader
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
@@ -68,8 +68,8 @@ export default async function CollegeFacultyAssignmentPage({
       </Link>
       <CollegeFacultyAssignmentCreate {...options} />
       <section className="border-b border-border pb-4">
-        <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-0 md:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
+        <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-[8px]">
+          <label className="grid min-w-0 md:min-w-[220px] flex-1 gap-1 text-sm font-semibold text-body">
             Faculty, course or class
             <Input name="q" type="search" defaultValue={query.q} maxLength={100}
               />
@@ -167,7 +167,7 @@ export default async function CollegeFacultyAssignmentPage({
           />
         )}
       </section>
-      <nav aria-label="Faculty assignment pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+      <nav aria-label="Faculty assignment pagination" className="flex flex-wrap items-center justify-between gap-[8px] text-sm">
         <span className="text-muted-foreground">Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
           {query.page > 1 ? <Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"

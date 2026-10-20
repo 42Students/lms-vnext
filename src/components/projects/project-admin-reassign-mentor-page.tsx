@@ -33,7 +33,7 @@ export async function ProjectAdminReassignMentorPage({
   >;
 }) {
   const parsed=parseProjectAdminReassignMentorQuery(searchParams);
-  if(!parsed.success)return <div className="min-w-0 space-y-6">
+  if(!parsed.success)return <div className="min-w-0 space-y-[16px]">
     <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
     <ProjectAdminNav basePath={basePath} active="workspaces" />
     <ErrorState title="Invalid mentor reassignment filters"
@@ -54,7 +54,7 @@ export async function ProjectAdminReassignMentorPage({
   ]);
   if(projectsRead.status==="rejected"||
      mentorsRead.status==="rejected"||workloadRead.status==="rejected")
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-[16px]">
       <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
       <ProjectAdminNav basePath={basePath} active="workspaces"/>
       <ErrorState title="Mentor reassignment unavailable"
@@ -68,22 +68,22 @@ export async function ProjectAdminReassignMentorPage({
 
   const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-[16px]">
       <PageHeader
         title="Bulk mentor reassignment"
         description="Move selected non-archived project workspaces to a new primary mentor."
         actions={<PageBackLink href={basePath} label="Back to workspaces" />}
       />
       <ProjectAdminNav basePath={basePath} active="workspaces" />
-      <section className="border-b border-border pb-5">
+      <section className="border-b border-border pb-[16px]">
         <h2 className="text-base font-semibold text-foreground">Mentor workload</h2>
-        <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-[8px] grid gap-[8px] md:grid-cols-2 xl:grid-cols-3">
           {workload.map(row => {
             const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
             const filter = row.mentorMembershipId ?? "UNASSIGNED";
             return <Link key={filter}
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="block min-h-11 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="block min-h-11 border-b border-border py-[12px] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
@@ -93,7 +93,7 @@ export async function ProjectAdminReassignMentorPage({
           })}
         </div>
       </section>
-      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
+      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-[16px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
         aria-label="Search all eligible mentors">
         {query.q?<Input type="hidden" name="q" value={query.q}/>:null}
         {query.status?<Input type="hidden" name="status" value={query.status}/>:null}
@@ -109,7 +109,7 @@ export async function ProjectAdminReassignMentorPage({
         <p className="min-w-0 text-xs text-muted-foreground md:col-span-full">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <ProjectAdminFilters query={query} />
-      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-[16px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}

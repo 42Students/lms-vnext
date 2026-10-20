@@ -65,8 +65,8 @@ export function ProjectTemplateView({
       : {};
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
-      <section className="border-b border-border pb-5">
+    <div className="min-w-0 max-w-full space-y-[16px]">
+      <section className="border-b border-border pb-[16px]">
         <h2 className="m-0 text-lg font-semibold text-foreground">
           Overview
         </h2>
@@ -74,7 +74,7 @@ export function ProjectTemplateView({
           {data.overview?.goal?.trim() ||
             "No project goal recorded."}
         </p>
-        <div className="mt-4 grid min-w-0 grid-cols-1 gap-4 min-[992px]:grid-cols-2">
+        <div className="mt-[16px] grid min-w-0 grid-cols-1 gap-[16px] min-[992px]:grid-cols-2">
           <div>
             <h3 className="mb-2 text-sm font-semibold text-foreground">
               Deliverables
@@ -128,7 +128,7 @@ function TemplateRows({
     | undefined;
 }) {
   return (
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-border pb-[16px]">
       <div className="flex items-center justify-between gap-3">
         <h2 className="m-0 text-base font-semibold text-foreground">
           {title}
