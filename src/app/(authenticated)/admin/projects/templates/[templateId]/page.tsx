@@ -48,11 +48,12 @@ export default async function SuperAdminProjectTemplateDetailPage({
   }
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-5">
       <ProjectAdminNav
         basePath="/admin/projects"
         active="templates"
       />
+      <PageBackLink href="/admin/projects/templates" label="Back to templates" />
       <PageHeader
         title={detail.template.title}
         description={
@@ -60,8 +61,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
           "Global project template."
         }
         actions={
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <PageBackLink href="/admin/projects/templates" label="Back to templates" />
+          <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <StatusBadge
               tone={
                 detail.template.status === "PUBLISHED"
@@ -124,16 +124,17 @@ export default async function SuperAdminProjectTemplateDetailPage({
           Version history
         </h2>
         <div className="mt-3 space-y-2">
+          {detail.versions.length === 0 ? <p className="text-sm text-muted-foreground">No version history recorded.</p> : null}
           {detail.versions.map((version) => (
             <div
               key={version.id}
               className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border py-3 last:border-0"
             >
-              <div>
-                <p className="m-0 text-sm font-semibold text-foreground">
+              <div className="min-w-0 flex-1">
+                <p className="m-0 break-words text-sm font-semibold text-foreground">
                   Version {version.version} · {version.title}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 break-words text-xs text-muted-foreground">
                   {version.changeNote ||
                     "No change note recorded."}
                 </p>
