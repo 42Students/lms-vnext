@@ -35,7 +35,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
     <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
     <ul className="divide-y divide-border border-y border-border">
       {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
-        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9"
+        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           href={"/learn/allAssignments/" + encodeURIComponent(path.assignmentId) + "?deliveryId=" + encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -69,7 +69,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       {materials.links.length>0 ? <ul className="mt-3 space-y-2" aria-label="Instructor resources">
         {materials.links.map(link=><li key={link.id} className="text-sm">
           <a href={link.href} rel="noopener noreferrer"
-            className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Open link: {link.title}
           </a>
         </li>)}
@@ -84,7 +84,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
           learnerAssessmentSubmittedLinkHref(item.submissionUrl) ? (
             <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
-              className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-primary-hover md:min-h-9">{item.submissionUrl}</a>
+              className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{item.submissionUrl}</a>
           ) : (
             <p role="status" className="break-all text-body">Saved link unavailable. Open the original submission from a trusted HTTPS source.</p>
           )

@@ -7,6 +7,8 @@ import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -40,11 +42,10 @@ export default async function LearnerAttendanceCalendarPage({
     deliveryId:first(raw.deliveryId)??undefined,
     status:first(raw.status)??undefined,
   });
-  if(!parsed.success) return <section role="alert" className="min-w-0 space-y-4">
-    <PageHeader title="Invalid attendance calendar filters" />
-    <Link href="/learn/attendance/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
-      Clear filters
-    </Link>
+  if(!parsed.success) return <section className="min-w-0 space-y-4">
+    <PageHeader title="Attendance calendar" />
+    <ErrorState title="Invalid attendance calendar filters" description="Check the month, course and status filters or clear them to continue."
+      action={<Link href="/learn/attendance/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getOwnLearnerAttendanceCalendar(context,parsed.data);
@@ -71,7 +72,7 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">
         Attendance detail
       </Link>} />
     <form action="/learn/attendance/calendar" method="get"
@@ -103,7 +104,7 @@ export default async function LearnerAttendanceCalendarPage({
           Apply filters
         </Button>
         <Link href="/learn/attendance/calendar"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear</Link>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>
       </div>
     </form>
     <div className="grid gap-3 md:grid-cols-4" aria-label="Filtered attendance totals">
@@ -117,8 +118,8 @@ export default async function LearnerAttendanceCalendarPage({
     </div>
     <p className="text-sm text-body">
       {data.summary.total} recorded class{data.summary.total===1?"":"es"} match the filters.
-      {" "}Attendance percentage: {data.summary.percentage===null
-        ?"Unknown (no marked classes)" : data.summary.percentage+"%"}.
+      {" "}Attendance percentage: <Badge tone="neutral">{data.summary.percentage===null
+        ?"Unknown (no marked classes)" : data.summary.percentage+"%"}</Badge>.
     </p>
     <section aria-label={monthLabel+" attendance calendar"} className={monthStyles.calendarCard}>
       <div className={monthStyles.toolbar}>
@@ -160,7 +161,7 @@ export default async function LearnerAttendanceCalendarPage({
               :"Your authorized Course sessions have no registered attendance records yet. This does not mean you were absent."} />
         : <ol className="grid gap-3 md:grid-cols-2">
           {data.rows.map(row=><li key={row.id}
-            className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-none motion-reduce:transition-none md:p-6">
+            className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-none transition-colors duration-150 hover:border-primary motion-reduce:transition-none md:p-6">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <h3 className="font-semibold text-foreground">{row.title}</h3>
               <StatusBadge tone={statusTone[row.status]??"neutral"}>
@@ -176,7 +177,7 @@ export default async function LearnerAttendanceCalendarPage({
             <Link href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,
             }).toString()}
-              className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
               View Course attendance →
             </Link>
           </li>)}

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offering-delivery-model";
 import { getMyQuizAttempts } from "@/modules/courses/quiz-attempt-service";
@@ -60,7 +61,8 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
           <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={attempt.resultsVisible?"success":"neutral"}>{attempt.resultsVisible?"Results published":"Results pending"}</StatusBadge>{learnerAttemptResultLabel(attempt)}</p>
           <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
-            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            aria-current={selected?.id===attempt.id?"page":undefined}
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             {attempt.resultsVisible ? "View result" : "View attempt"}
           </Link>
         </li>)}
@@ -73,7 +75,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
       </div>
       <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
       {selected.resultsVisible ? selected.answers.length===0 ? (
-        <p className="mt-4 text-sm text-body">No question-level review was recorded for this attempt.</p>
+        <Alert tone="info" role="status" className="mt-4">No question-level review was recorded for this attempt.</Alert>
       ) : <div className="mt-4 divide-y divide-border border-y border-border">
         {selected.answers.map((answer,index)=><article key={answer.id}
           className="py-4">
@@ -93,9 +95,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
             </p>
           ) : null}
         </article>)}
-      </div> : <p className="mt-4 text-sm text-body">
-        Question review and scores are withheld until results are published.
-      </p>}
+      </div> : <Alert tone="info" role="status" className="mt-4">Question review and scores are withheld until results are published.</Alert>}
     </section> : null}
   </div>;
 }
