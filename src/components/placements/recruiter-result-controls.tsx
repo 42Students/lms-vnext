@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
+import {RecruiterResultReviewGrid} from "@/components/placements/recruiter-result-review-grid";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -456,6 +457,24 @@ export function RecruiterResultControls({
                 ) : null}
               </div>
 
+              {evaluative&&round.participants.length>0?<div className="hidden min-w-0 md:block">
+                <RecruiterResultReviewGrid scopeKey={round.id}
+                  rows={round.participants.map(person=>{
+                    const draft=drafts[round.id+":"+person.applicationId];
+                    return {
+                      id:person.applicationId,
+                      applicant:person.displayName??"Candidate",
+                      email:person.email??"No email shared",
+                      outcome:person.result?.status==="APPLIED"?person.result.outcome:(draft?.outcome??"Not set"),
+                      score:person.result?.status==="APPLIED"?person.result.scorePercent:
+                        (draft?.scorePercent.trim()?Number(draft.scorePercent):null),
+                      waitlistRank:person.result?.status==="APPLIED"?person.result.waitlistRank:
+                        (draft?.outcome==="HOLD"&&draft.waitlistRank.trim()?Number(draft.waitlistRank):null),
+                      resultStatus:person.result?.status??"Not submitted",
+                      editHref:"#result-editor-"+round.id+"-"+person.applicationId,
+                    };
+                  })}/>
+              </div>:null}
               {!evaluative ? (
                 <p className="m-0 py-4 text-sm text-muted-foreground">
                   Informational rounds do not collect candidate outcomes.
@@ -491,6 +510,7 @@ export function RecruiterResultControls({
 
                       return (
                         <div
+                          id={"result-editor-"+round.id+"-"+participant.applicationId}
                           key={
                             participant.applicationId
                           }
