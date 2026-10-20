@@ -23,26 +23,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-9.md: file, number of i
 - [x] `src/components/academics/academics-actions.tsx`
 - [x] `src/components/academics/academics-create-panel.tsx`
 - [x] `src/components/academics/college-archived-programs.tsx`
-- [ ] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/admin/academic-module-scope-inventory.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/admin/college-archive-button.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/department-directory.tsx`
-- [ ] `src/components/admin/descendant-feature-rule-editor.tsx`
-- [ ] `src/components/admin/inbound-mail-list.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/admin/academic-module-scope-inventory.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/admin/college-archive-button.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/department-actions.tsx`
+- [x] `src/components/admin/department-directory.tsx`
+- [x] `src/components/admin/descendant-feature-rule-editor.tsx`
+- [x] `src/components/admin/inbound-mail-list.tsx`
 - [ ] `src/components/admin/learner-module-access-drawer.tsx`
 - [ ] `src/components/admin/lecture-hall-manager.tsx`
 - [ ] `src/components/admin/managed-college-subdomain.tsx`

@@ -141,7 +141,7 @@ export function AdminProgramDirectory({
         </p>
         {departments.length === 0 ? (
           <p role="status" className="mt-3 text-sm text-muted-foreground">
-            No departments in this college yet. <Link href="/admin/departments" className="font-semibold text-primary-text underline">Go to Departments</Link>
+            No departments in this college yet. <Link href="/admin/departments" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Go to Departments</Link>
           </p>
         ) : null}
         <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">

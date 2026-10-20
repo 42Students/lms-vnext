@@ -37,13 +37,13 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  if(!parsed.success || !statuses.includes(parsed.data.status))
  return <div className="space-y-5">{heading("Super Admin")}
   <ErrorState title="Invalid directory filters" description="Check the search, status or page."
-   action={<Link href={path} className="font-semibold text-primary-text">Clear filters</Link>}/></div>;
+   action={<Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>}/></div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="space-y-5">
   {heading("Super Admin")}
   <ErrorState title="Directory access denied"
    description="Your account cannot access Super Admin directory records."
-   action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+   action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to dashboard</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   {heading("Super Admin")}
@@ -57,7 +57,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <ErrorState title="Directory unavailable"
    description="The selected college's directory could not be loaded. Your filters have not changed."
    action={<Link href={superAdminReadHref(path,parsed.data)}
-    className="font-semibold text-primary-text underline">Retry loading directory</Link>}/>
+    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry loading directory</Link>}/>
  </div>;
  const data=directory.value;
  const summaries=peopleFilters?await Promise.allSettled([
@@ -174,7 +174,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
     </Select>
    </label>
-   <Button type="submit" variant="primary" className="min-h-11 self-end md:min-h-9">Filter</Button>
+   <Button type="submit" variant="primary" className="min-h-11 w-full self-end md:min-h-9">Filter</Button>
   </form>
 
   {applicationFilters?<p role="status" className="text-sm text-body">
