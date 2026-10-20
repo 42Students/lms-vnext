@@ -51,7 +51,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | probl
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/announcements/super-admin-college-broadcast-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/verification/SuperAdminVerificationPanel.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [ ] `src/components/auth/portal-access-notice.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [ ] `src/components/hr/recruiter-designation-editor.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [ ] `src/components/projects/college-project-summary-editor.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)

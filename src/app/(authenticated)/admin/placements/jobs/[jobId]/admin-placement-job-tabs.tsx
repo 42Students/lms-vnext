@@ -14,7 +14,7 @@ export function AdminPlacementJobTabs({ basePath }: { basePath: string }) {
   const active = segment === "applications" || segment === "schedule" || segment === "settings"
     ? segment : "";
 
-  return <Tabs ariaLabel="Drive workspace" value={active} renderPanel={false}
+  return <Tabs ariaLabel="Drive workspace" value={active} renderPanel={false} className="min-w-0 w-full"
     items={[
       { value: "", label: "Overview", href: basePath },
       { value: "applications", label: "Applications", href: basePath + "/applications" },
