@@ -2,6 +2,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {redirect} from "next/navigation";
 import {isSuperAdmin} from "@/modules/identity/context";
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {TeachingAssignmentActions} from "@/components/courses/admin-course-actions";
 import {SuperAdminFacultyAssignmentCreate,SuperAdminTeachingRoleEdit} from "@/components/admin/super-admin-faculty-assignment-create";
@@ -21,10 +22,9 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
  ]);
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <AdminScopedReadPage
-  headerActions={<Link href="/admin/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create teaching assignment →</Link>}
-  intro={workspace?<section aria-label="Create faculty assignment" className="space-y-3 border-b border-border pb-6">
-   <h2 className="text-lg font-semibold text-foreground">Current teaching assignments</h2>
+  intro={workspace?<section aria-label="Create faculty assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
    <SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries} faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>
+   <Link href="/admin/courses" className="inline-flex min-h-11 items-center self-start rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create teaching assignment →</Link>
   </section>:null}
   classOptions={classes} title="Faculty Assignments" path="/admin/faculty-assignment" statuses={statuses}
   exportPath="/api/admin/faculty-assignment/export" exportFilename="faculty-assignments.csv"
@@ -34,12 +34,13 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
     if(row.status!=="ACTIVE")return null;
     const rawRole=row.details.find(detail=>detail.startsWith("Teaching role: "))?.slice("Teaching role: ".length);
     const role=COURSE_TEACHING_ROLES.find(value=>value===rawRole);
-    return <div className="min-w-0 flex flex-wrap gap-2">
+    return <Disclosure title="Manage assignment" className="min-w-0"
+      contentClassName="flex min-w-0 flex-col items-start gap-2 pb-2 pt-2 sm:flex-row sm:flex-wrap">
       {role&&row.revision?<SuperAdminTeachingRoleEdit assignmentId={row.id} role={role} revision={row.revision}/>:null}
       <TeachingAssignmentActions legacyCopy assignment={{
         id:row.id,facultyDisplayName:row.title,courseName:row.subtitle,sectionName:row.details[0]??"Selected class",
       }}/>
-    </div>;
+    </Disclosure>;
   }}
   loader={query=>listAdminFacultyAssignments(context,query)}/></div>;
 }

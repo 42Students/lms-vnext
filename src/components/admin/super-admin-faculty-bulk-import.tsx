@@ -84,12 +84,12 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   try { element.click(); }
   finally { element.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
  };
- return <section className="space-y-3 border-t border-border pt-4">
+ return <section className="min-w-0 space-y-3 pb-2">
   {dialog}
-  <h2 className="font-semibold text-foreground">Bulk register faculty</h2>
+  <h3 className="font-semibold text-foreground">Bulk register faculty</h3>
   <p className="text-sm text-body">Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional). Existing identities are verified by the server.</p>
-  <div className="flex flex-wrap items-center gap-3 print:hidden">
-   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" onClick={downloadSample}>Download sample CSV</Button>
+  <div className="flex min-w-0 flex-col items-stretch gap-3 print:hidden sm:flex-row sm:flex-wrap sm:items-center">
+   <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9 print:hidden" onClick={downloadSample}>Download sample CSV</Button>
    <FileUpload label="Choose CSV" accept=".csv,text/csv" maxBytes={1_500_000} disabled={busy}
      className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9"
      onFiles={files=>void fileSelected(files?.[0]??null)}/>
@@ -97,7 +97,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   {filename?<p className="text-xs text-muted-foreground print:hidden">File: {filename}</p>:null}
   {count>0?<p role="status" className="text-sm text-body">{count} rows validated locally; review before creating.</p>:null}
   {(issue||error)?<Alert tone="error">{error||issue}</Alert>:null}
-  <Button type="button" className="min-h-11 md:min-h-9 print:hidden" loading={busy} onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}>
+  <Button type="button" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9 print:hidden" loading={busy} onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}>
     {busy?"Importing…":"Validate and Create"}
   </Button>
   {results.length>0?<div className="space-y-2">

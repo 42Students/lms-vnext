@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
 import { TpoRoundCheckIn } from "./tpo-round-check-in";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -99,27 +100,16 @@ export function TpoRoundDriveDayReadOnly({
         }
       />
 
-      <nav aria-label="Round operational actions" className="flex flex-wrap gap-3">
-        <Link href={destinations.results} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Review round results →</Link>
-        <Link href={destinations.schedule} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Candidate schedule →</Link>
-      </nav>
-      <p className="text-sm text-body">
-        <a
-          href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] hover:bg-primary-hover text-primary-foreground"
-        >
+      <nav aria-label="Round operational actions" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-center">
+        <Link href={destinations.results} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review round results →</Link>
+        <Link href={destinations.schedule} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>
+        <Link href={destinations.noShows} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review explicit no-shows →</Link>
+        <a href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Export round attendance (CSV)
         </a>
-        <span className="ml-3">
-          Current roster only; waiting and unmarked states remain explicit.
-        </span>
-        <Link
-          href={destinations.noShows}
-          className="ml-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link hover:underline"
-        >
-          Review explicit no-shows →
-        </Link>
-      </p>
+      </nav>
+      <p className="text-xs leading-5 text-muted-foreground">Current roster only; waiting and unmarked states remain explicit.</p>
 
       <section className="border-b border-border pb-6">
         <h2 className="text-base font-semibold text-foreground">
@@ -193,10 +183,14 @@ export function TpoRoundDriveDayReadOnly({
         </h2>
 
         <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
-          {summary.map(([label, count]) => (
+          {summary.map(([label, count], index) => (
             <div
               key={label}
-              className="border-b border-border p-4 last:border-b-0 md:border-r md:last:border-r-0 lg:border-b-0"
+              className={"min-w-0 p-3 sm:p-4 " +
+                (index < 6 ? "border-b border-border " : "") +
+                (index % 2 === 0 ? "border-r border-border " : "") +
+                (index < 4 ? "lg:border-b " : "lg:border-b-0 ") +
+                (index % 4 !== 3 ? "lg:border-r " : "lg:border-r-0 ")}
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {label}
@@ -229,12 +223,6 @@ export function TpoRoundDriveDayReadOnly({
         </p>
       </section>
 
-      <TpoBulkRoundResultRecorder
-        roundId={data.round.id}
-        round={{ kind: data.round.kind, status: data.round.status }}
-        rows={data.rows}
-      />
-
       <section
         aria-label="Round applicant roster"
         className="overflow-hidden border-t border-border"
@@ -255,7 +243,8 @@ export function TpoRoundDriveDayReadOnly({
           caption="Applicants in this round"
           rows={data.rows}
           getRowKey={student=>student.applicationId}
-          empty={<EmptyState title="No eligible applicants currently appear in this round’s roster."/>}
+          empty={<EmptyState title="No eligible applicants currently appear in this round’s roster."
+            action={<Link href={destinations.schedule} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>} />}
           columns={[
             {key:"student",header:"Student",mobilePriority:"primary" as const,
               cell:(student:(typeof data.rows)[number])=>student.displayName},
@@ -298,15 +287,25 @@ export function TpoRoundDriveDayReadOnly({
         />
       </section>
 
-      <p className="text-xs leading-5 text-muted-foreground">
-        TPO operators can stage a PASS (shortlisted), FAIL (not selected),
-        HOLD (waitlisted) or ABSENT outcome here. Staging is not publication:
-        only completed rounds permit explicit, audited apply. Existing
-        coordinator attendance controls remain separate. Bulk initial-result
-        staging processes entries in individual audited transactions and may
-        partly succeed; neither stage nor bulk stage implies an offer or
-        final hiring selection.
-      </p>
+      <Disclosure title="Bulk stage round results" contentClassName="pt-3">
+        <TpoBulkRoundResultRecorder
+          roundId={data.round.id}
+          round={{ kind: data.round.kind, status: data.round.status }}
+          rows={data.rows}
+        />
+      </Disclosure>
+      <details className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
+        <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">About round results</summary>
+        <p className="max-w-3xl pb-2">
+          TPO operators can stage a PASS (shortlisted), FAIL (not selected),
+          HOLD (waitlisted) or ABSENT outcome here. Staging is not publication:
+          only completed rounds permit explicit, audited apply. Existing
+          coordinator attendance controls remain separate. Bulk initial-result
+          staging processes entries in individual audited transactions and may
+          partly succeed; neither stage nor bulk stage implies an offer or
+          final hiring selection.
+        </p>
+      </details>
     </div>
   );
 }
