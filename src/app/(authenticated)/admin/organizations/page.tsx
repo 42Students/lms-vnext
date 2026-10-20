@@ -107,11 +107,11 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
        {!archived.length?<p role="status" className="mt-3 text-sm text-body">No archived organizations in this scope.</p>:null}
       </Disclosure>:null}
       <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
-       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search organizations
+       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search organizations
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="w-full" />
        </label>
-       <label className="flex flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+       <label className="flex flex-col gap-1 text-sm font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)} className="w-full">
          {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
