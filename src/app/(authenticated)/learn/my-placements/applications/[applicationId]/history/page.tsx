@@ -33,7 +33,7 @@ export default async function LearnerApplicationHistoryPage({
       <Link
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(history.applicationId)}
-        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         ← Back to application
       </Link>

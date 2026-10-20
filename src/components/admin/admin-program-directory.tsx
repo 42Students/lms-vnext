@@ -159,18 +159,18 @@ export function AdminProgramDirectory({
             </Select>
           </div>
           <div>
-            <label htmlFor="admin-program-name" className="mb-1 block text-xs font-semibold text-body">Program Name</label>
+            <label htmlFor="admin-program-name" className="mb-1 block text-[13px] font-semibold text-body">Program Name</label>
             <Input className="min-h-11 md:min-h-9" id="admin-program-name" value={name} maxLength={255} required
               onChange={(event) => setName(event.target.value)}
               placeholder="e.g. Computer Science Engineering" />
           </div>
           <div>
-            <label htmlFor="admin-program-code" className="mb-1 block text-xs font-semibold text-body">Program code (optional)</label>
+            <label htmlFor="admin-program-code" className="mb-1 block text-[13px] font-semibold text-body">Program code (optional)</label>
             <Input className="min-h-11 md:min-h-9" id="admin-program-code" value={code} maxLength={64}
               onChange={(event) => setCode(event.target.value)} placeholder="CSE" />
           </div>
           <div>
-            <label htmlFor="admin-program-duration" className="mb-1 block text-xs font-semibold text-body">Duration (Years)</label>
+            <label htmlFor="admin-program-duration" className="mb-1 block text-[13px] font-semibold text-body">Duration (Years)</label>
             <Input className="min-h-11 md:min-h-9" id="admin-program-duration" type="number" value={durationYears}
               onChange={(event) => setDurationYears(event.target.value)}
               min={1} max={10} step={1} required />
@@ -185,7 +185,7 @@ export function AdminProgramDirectory({
       <section className="space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
         <div className="flex flex-wrap items-end justify-between gap-3 print:hidden">
           <div className="w-full min-w-0 flex-1 md:min-w-56">
-            <label htmlFor="admin-program-search" className="mb-1 block text-xs font-semibold text-body">Search programs or departments</label>
+            <label htmlFor="admin-program-search" className="mb-1 block text-[13px] font-semibold text-body">Search programs or departments</label>
             <Input className="min-h-11 md:min-h-9" id="admin-program-search" value={search}
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search program, code or department" />

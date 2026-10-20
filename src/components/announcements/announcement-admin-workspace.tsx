@@ -270,7 +270,7 @@ export function AnnouncementAdminWorkspace({
             const safeLink = safeAnnouncementLink(item.message);
             return (
               <article key={item.id} className="border-t border-border py-5">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
                       <span>{item.receiverType} · {targetLabel}</span>
