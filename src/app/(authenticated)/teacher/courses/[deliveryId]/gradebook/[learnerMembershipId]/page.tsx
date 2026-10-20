@@ -27,7 +27,7 @@ export default async function FacultyLearnerGradebookPage({
     <PageHeader eyebrow="Faculty · Published learner scores"
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
       description={data.delivery.courseName+" · "+data.delivery.sectionName}
-      actions={<Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Published gradebook</Link>} />
+      actions={<Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)]">← Published gradebook</Link>} />
     <section className="border-b border-border pb-5" aria-label="Recorded score totals">
       <div className="grid gap-3 md:grid-cols-3">
         <p className="text-sm text-body">Published scores: {data.learner.gradedCount}/{data.learner.publishedAssessments}</p>
