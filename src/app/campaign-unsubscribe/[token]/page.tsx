@@ -20,7 +20,7 @@ export default async function CampaignUnsubscribe({
   }
   const cell = kind === "PLACEMENT_CELL";
   return (
-    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-lg min-w-0 flex-col justify-center gap-6 px-4 py-8 min-[768px]:py-12`}>
+    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center gap-4 px-4 pb-8 pt-24 min-[768px]:gap-6 min-[768px]:py-12`}>
       <PageHeader eyebrow="42Students" title={cell ? "Stop these emails?" : "Campaign email preferences"} />
       {unavailable ? (
         <Card as="section" role="alert">
@@ -33,10 +33,8 @@ export default async function CampaignUnsubscribe({
         </Card>
       ) : (
         <Card as="section">
-          <h2 className="font-semibold text-foreground">
-            {cell ? "Stop these emails?" : "Stop campaign emails?"}
-          </h2>
-          <p className="mt-2 text-sm text-body">
+          {!cell ? <h2 className="text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Stop campaign emails?</h2> : null}
+          <p className="mt-2 max-w-prose break-words text-sm leading-6 text-body">
             {cell
               ? "The placement cell that wrote to you will not email you again."
               : "Opening this link does not unsubscribe you. Confirm to add this address to the global email suppression list."}
