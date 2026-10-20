@@ -26,11 +26,11 @@ export default async function CollegeQuizzesPage({
   );
   if (!validation.success) {
     return (
-      <div className="min-w-0 space-y-4">
+      <div className="min-w-0 max-w-full space-y-6">
         <PageHeader title="Quizzes" />
         <ErrorState title="Invalid assessment filters"
           description="The requested search, status or page is invalid. No records were loaded."
-          action={<Link href="/college/quizzes" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
+          action={<Link href="/college/quizzes" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 lms-inline-link">Clear filters</Link>} />
       </div>
     );
   }

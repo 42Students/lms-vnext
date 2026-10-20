@@ -29,7 +29,7 @@ type Student = {
   room: string | null;
 };
 
-const inputClass = "min-h-11 max-[767px]:min-h-11";
+const inputClass = "min-h-11 md:min-h-9";
 
 export function DriveDayRoster({
   round,
@@ -184,7 +184,7 @@ export function DriveDayRoster({
         }
       />
 
-      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
+      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 xl:grid-cols-4">
         {[
           ["On roster", counts.total],
           ["Checked in", counts.present],

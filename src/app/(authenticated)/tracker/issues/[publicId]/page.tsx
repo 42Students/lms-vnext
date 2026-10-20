@@ -50,7 +50,7 @@ export default async function TrackerIssueDetailPage({
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader title={publicId} description="The tracker is temporarily unavailable." />
         <TrackerAdminNav />
         <ErrorState title="Issue details unavailable"
@@ -89,7 +89,7 @@ export default async function TrackerIssueDetailPage({
         title={issue.publicId}
         description={`${issue.issueType} · ${issue.page}`}
         actions={
-          <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-foreground">
+          <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-foreground">
             Back to issues
           </Link>
         }
@@ -105,7 +105,7 @@ export default async function TrackerIssueDetailPage({
         </div>
         <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-body">{issue.description}</p>
         <TrackerIssueCopyActions publicId={issue.publicId} description={issue.description} page={issue.page}/>
-        <dl className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+        <dl className="grid gap-3 text-sm md:grid-cols-2 xl:grid-cols-3">
           <div><dt className="font-semibold text-muted-foreground">Reporter</dt><dd className="m-0">{issue.reporterName} · {issue.accountRole}</dd></div>
           <div><dt className="font-semibold text-muted-foreground">Location</dt><dd className="m-0">{[issue.page, issue.screen, issue.section].filter(Boolean).join(" · ")}</dd></div>
           <div><dt className="font-semibold text-muted-foreground">Created</dt><dd className="m-0">{when(issue.createdAt)}</dd></div>
@@ -148,7 +148,7 @@ export default async function TrackerIssueDetailPage({
             ...(cursor.activityBeforeCreatedAt && cursor.activityBeforeId ? {
               activityBeforeCreatedAt:cursor.activityBeforeCreatedAt,activityBeforeId:cursor.activityBeforeId,
             }:{}),
-          }).toString()} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">
+          }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-link">
             Older screenshot metadata
           </Link>
         ) : null}
@@ -181,7 +181,7 @@ export default async function TrackerIssueDetailPage({
               attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
             }:{}),
           }).toString()}
-            className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-link">
             Older audit events
           </Link>
         ) : null}

@@ -80,7 +80,7 @@ export default async function TpoCtcReportPage({
 
       <section
         aria-label="Compensation metrics"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+        className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3"
       >
         {metrics.map(([label, value]) => (
           <div
