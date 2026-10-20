@@ -46,7 +46,7 @@ export default async function MentorTeamMeetingsPage({
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No private team or meeting data was loaded.
     </section>:<>
-      <section aria-labelledby="section-active-team-coverage" className="border-b border-border pb-5">
+      <section aria-labelledby="section-active-team-coverage" className="border-b border-border pb-6">
         <h2 id="section-active-team-coverage" className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Active team coverage</h2>
         <dl className="mt-4 grid gap-3 md:grid-cols-3">
           <div><dt className="text-xs text-muted-foreground">Learners</dt>

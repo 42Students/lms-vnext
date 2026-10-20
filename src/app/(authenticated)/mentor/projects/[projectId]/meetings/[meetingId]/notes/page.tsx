@@ -12,7 +12,7 @@ export default async function MentorMeetingNotesPage({params}:{
   const data=await getMentorMeetingNotes(await getCurrentRequestContext(),path);
   const m=data.meeting;
   const editable=meetingNotesEditable(data.projectStatus,m.status);
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project meeting" title={m.title}
       description={data.projectTitle+" · "+m.status}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(path.projectId)+"/team-meetings"}
@@ -27,7 +27,7 @@ export default async function MentorMeetingNotesPage({params}:{
       {m.outcome?.trim()?
         <p className="mt-4 whitespace-pre-wrap break-words text-sm text-body">{m.outcome}</p>:
         <p className="mt-4 text-sm text-muted-foreground">No written outcome is recorded.</p>}
-      {editable?<div className="mt-5">
+      {editable?<div className="mt-6">
         <MentorMeetingNotesEditor projectId={path.projectId} meetingId={m.id}
           initialNotes={m.outcome} updatedAt={m.updatedAt.toISOString()}/>
       </div>:<p className="mt-4 text-xs text-muted-foreground">
