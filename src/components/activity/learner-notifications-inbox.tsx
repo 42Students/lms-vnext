@@ -127,7 +127,10 @@ export function LearnerNotificationsInbox({
               type="button"
               aria-pressed={active === key}
               onClick={() => selectCategory(key)}
-              className="!min-h-11 shrink-0 rounded-[8px] px-4 text-center text-sm font-medium whitespace-nowrap"
+              className={"!min-h-11 shrink-0 rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] whitespace-nowrap focus-visible:!outline-offset-2 focus-visible:!outline-[var(--lms-primary)] "+
+                (active===key
+                  ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-white enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-white"
+                  : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[rgba(38,186,199,0.4)] enabled:hover:!bg-[rgba(38,186,199,0.05)] enabled:hover:!text-[var(--lms-primary)]")}
             >
               {label}
             </FilterChip>
@@ -191,7 +194,7 @@ export function LearnerNotificationsInbox({
       <div className="min-w-0 [&_article]:min-w-0 [&_article]:break-words [&_article_a]:max-w-full">
       {visible.length === 0 ? (
         <div className="space-y-3">
-          <NotificationList items={[]} emptyText={
+          <NotificationList items={[]} readEndpoint="/api/learn/notifications" emptyText={
             learnerInboxEmptyLabel({total:combined.length,category:active,unread,search})
           } />
           {filtered ? (
@@ -225,6 +228,7 @@ export function LearnerNotificationsInbox({
         open={selected !== null}
         onOpenChange={(open) => { if (!open) setSelected(null); }}
         title={selected?.title ?? "Notification"}
+        className="shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
           <>
@@ -242,16 +246,16 @@ export function LearnerNotificationsInbox({
                 className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
                 {selected.externalCta.label} ↗
               </a>:null}
-            <Button onClick={() => setSelected(null)}>Got it</Button>
+            <Button className="w-full min-[768px]:w-auto max-[767px]:min-h-11" onClick={() => setSelected(null)}>Got it</Button>
           </>
         }
       >
         {selected ? (
           <div className="space-y-4">
-            <p className="whitespace-pre-wrap break-words text-sm leading-6 text-body">
+            <p className="whitespace-pre-wrap break-words text-[16px] leading-[1.6] text-[var(--lms-neutral-900)]">
               {selected.body}
             </p>
-            <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+            <div className="flex flex-wrap gap-2 text-[14px] leading-[1.4] text-muted-foreground">
               <span>{selected.source === "ANNOUNCEMENT" ? "Announcement" : selected.module}</span>
               {selected.pinned ? <span>Pinned</span> : null}
               <time dateTime={selected.createdAt}>
