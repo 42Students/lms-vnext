@@ -7,14 +7,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatTile } from "@/components/ui/stat-tile";
 import {
   ReportFilters,
   ReportScopeNote,
   ReportNavigation,
   ReportTable,
   reportCurrency,
-  reportHref,
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPerformanceIntelligence } from "@/modules/placements/tpo-intelligence-service";
