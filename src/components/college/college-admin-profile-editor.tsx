@@ -90,7 +90,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} />
             <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} />
-            <label className="grid min-w-0 gap-1 text-sm font-semibold text-body md:col-span-2">About
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">About
               <Textarea rows={3} maxLength={1000} className={fieldStyle}
                 value={profile.about} onChange={e => top("about", e.target.value)} />
             </label>
