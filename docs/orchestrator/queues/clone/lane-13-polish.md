@@ -46,7 +46,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-13.md: surface | probl
 - [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx` (Mentor page)
 - [x] `src/app/(authenticated)/mentor/task-reviews/page.tsx` (Mentor page)
 - [x] `src/app/(authenticated)/mentor/team-coverage/page.tsx` (Mentor page)
-- [ ] `src/components/projects/learner-task-progress-control.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/components/projects/learner-task-progress-control.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/projects/mentor-lane-board.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/projects/mentor-product-backlog.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/projects/mentor-project-closeout-control.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
