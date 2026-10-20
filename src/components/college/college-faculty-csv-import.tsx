@@ -48,17 +48,13 @@ export function CollegeFacultyCsvImport(){
   const csvResult=report?.results.map(item=>[item.row,item.status,item.detail,item.membershipId??""]
     .map(neutralStudentCsvCell).join(",")).join("\r\n")??"";
   return <div className="min-w-0 space-y-[16px]">
-    <section className="space-y-3 border-t border-border pt-[16px]">
+    <section className="min-w-0 space-y-3">
       <h2 className="text-lg font-semibold">Bulk register faculty</h2>
       <p className="text-sm text-muted-foreground">
         Choose CSV (up to 500 rows, 1 MB). Validate before creating faculty.
         Each row reports its own result; successful registrations are not rolled back.
       </p>
-      <p className="break-words font-mono text-xs">{header}</p>
-      <a download="faculty-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(header+"\n")}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
-        Download CSV template
-      </a>
+
       <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose CSV" maxBytes={1_000_000} accept=".csv,text/csv" disabled={pending} onFiles={async files=>{
           const file=files?.[0];
           if(!file)return;
@@ -72,19 +68,26 @@ export function CollegeFacultyCsvImport(){
             if(facultyCsvResponseBelongsToDraft(version,csvRevision.current))setError("Unable to read CSV. Choose the file again.");
           }
         }}/>
-      <label className="grid gap-[6px] text-[13px] font-semibold print:hidden text-[var(--lms-neutral-400)] leading-4">CSV contents
+      <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center md:justify-between print:hidden">
+        <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" loading={pending} disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}>{pending?"Validating…":"Validate CSV"}</Button>
+        <a download="faculty-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(header+"\n")}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Download CSV template</a>
+      </div>
+      <details className="min-w-0 border-t border-border pt-3 print:hidden">
+        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">CSV contents</summary>
+        <div className="min-w-0 space-y-3 pt-3">
+          <p className="break-words font-mono text-xs">{header}</p>
+          <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">CSV contents
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);
         }} className="font-mono text-xs"/>
-      </label>
-      <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" loading={pending} disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
-        >
-        {pending?"Validating…":"Validate CSV"}
-      </Button>
+          </label>
+        </div>
+      </details>
       {error&&<Alert tone="error">{error}</Alert>}
     </section>
-    {report&&<section className="space-y-4 border-t border-border pt-[16px]">
+    {report&&<section className="min-w-0 space-y-4 border-t border-border pt-[16px]">
       <h2 className="text-lg font-semibold">{report.preview?"Preview":"Faculty registration results"}</h2>
       <Alert tone="info">{report.valid} valid; {report.invalid} invalid.</Alert>
       {report.structuralErrors.length>0&&<Alert tone="error">{report.structuralErrors.join(", ")}</Alert>}
@@ -93,6 +96,16 @@ export function CollegeFacultyCsvImport(){
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Download row report
       </a>
+      {report.preview&&report.valid>0&&report.structuralErrors.length===0&&
+      <div className="space-y-3">
+        <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
+          <Checkbox checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/>
+          I understand valid rows create real faculty memberships; partial failures require manual review.
+        </label>
+        <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" loading={pending} disabled={pending||!confirmed} onClick={()=>run("IMPORT")}>
+          {pending?"Registering…":"Confirm faculty registration"}
+        </Button>
+      </div>}
       <DataTable<Row> caption="Faculty CSV import row results" rows={report.results}
         getRowKey={item=>String(item.row)}
         columns={[
@@ -102,17 +115,6 @@ export function CollegeFacultyCsvImport(){
         ]}
         empty={<EmptyState title="No row results" description="No row-level results are available."/>}/>
 
-      {report.preview&&report.valid>0&&report.structuralErrors.length===0&&
-      <div className="space-y-3">
-        <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
-          <Checkbox checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/>
-          I understand valid rows create real faculty memberships; partial failures require manual review.
-        </label>
-        <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" loading={pending} disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
-          >
-          {pending?"Registering…":"Confirm faculty registration"}
-        </Button>
-      </div>}
     </section>}
   </div>;
 }
