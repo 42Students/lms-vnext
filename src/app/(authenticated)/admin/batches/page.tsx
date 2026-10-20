@@ -34,8 +34,8 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     : [];
   const periods = periodRows.filter(row => row.status !== "CLOSED")
     .map(row => ({ id: row.id, name: row.name, code: row.code, startDate:row.startDate, endDate:row.endDate }));
-  return <div className="min-w-0 space-y-6">
-    <PageHeader eyebrow="Super Admin · Academic Setup" title="Batches"/>
+  return <div className="min-w-0 space-y-5">
+    <PageHeader title="Batches"/>
       {data ? <AcademicSetupSteps step={5} /> : null}
     {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
     {data ? <>
@@ -98,7 +98,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             </>},
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeCohortRowActions row={row} periods={periods}/>},
           ]} />
-        <nav aria-label="Batch pages" className="flex items-center justify-between gap-3 text-sm">
+        <nav aria-label="Batch pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
             {data.query.page>1?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}

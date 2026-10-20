@@ -31,13 +31,13 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
  const action="/api/placements/recruiter/drives/"+jobId+"/interview-slots";
  const when=(d:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
   dateStyle:"medium",timeStyle:"short"}).format(d)+" IST";
- return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader eyebrow="Recruiter · Interview coordination" title="Interview slots"
+ return <div className="min-w-0 max-w-full space-y-5">
+  <PageHeader title="Interview slots"
    description={workspace.job.title+" · This schedules employer time blocks only. No learner invitation or candidate booking is created here."}/>
   <Alert tone="info">
     Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
   </Alert>
-  <nav className="flex flex-wrap gap-3">
+  <nav aria-label="Interview coordination destinations" className="flex flex-wrap gap-3">
    <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Drive rounds"/>
    <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm font-medium text-primary-text md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
   </nav>

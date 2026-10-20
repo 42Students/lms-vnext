@@ -104,7 +104,7 @@ export default async function LearnerOffersPage({
   })), Date.parse(snapshotNowIso));
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5"
       <Link
         href="/learn/my-placements/applications"
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
@@ -139,7 +139,7 @@ export default async function LearnerOffersPage({
           <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
             placeholder="Employer or role" className="min-h-11 min-w-0" />
         </label>
-        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Search</Button>
+        <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
@@ -158,7 +158,7 @@ export default async function LearnerOffersPage({
             <option value="company">Company A–Z</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Apply sort</Button>
+        <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Apply sort</Button>
       </form>
       {hasActiveFacets ? (
         <Link href={learnerOfferClearFiltersHref(view)}
