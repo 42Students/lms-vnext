@@ -15,13 +15,13 @@ import { createCourseTeachingAssignment, endCourseTeachingAssignment,
   listCourseTeachingAssignments } from "@/modules/courses/teaching-assignment-service";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
-import {Button} from "@/components/ui/button";
-import {Select} from "@/components/ui/select";
-import {Input} from "@/components/ui/input";
-import {Checkbox} from "@/components/ui/checkbox";
-import {Alert} from "@/components/ui/alert";
-import {EmptyState} from "@/components/ui/empty-state";
-import {StatusBadge} from "@/components/ui/status-badge";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 const uuid = z.string().uuid();
 const href = (slotId: string, offeringId: string) =>
@@ -116,13 +116,13 @@ export default async function ElectiveRoster({
     }
     redirect(back + (error ? "?error=" + encodeURIComponent(error) : "?updated=faculty"));
   }
-  return <div className="min-w-0 max-w-full space-y-[16px]">
+  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
     <PageHeader 
       title={"Offering roster · " + slot.name}
       description="Student state, source, joining date and confirmed movement between offerings."
       actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Back to Electives</Link>} />
-    <div className="flex min-w-0 flex-wrap gap-[8px] border-y border-border py-[12px] text-sm">
+    <div className="flex min-w-0 flex-wrap items-center gap-x-[var(--lms-space-4)] gap-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm leading-5">
       <span>Seats: {offering.capacity ?? "Unlimited"}</span>
       <span>Enrolled: {detail.counts.active}</span>
       <span>Waitlisted: {detail.counts.waitlisted}</span>
@@ -131,38 +131,7 @@ export default async function ElectiveRoster({
     {feedback.updated && <Alert tone="success">Roster updated.</Alert>}
     {feedback.error && <Alert tone="error">{feedback.error}</Alert>}
     {archived && <Alert tone="warning">Archived offerings are read-only.</Alert>}
-    <section className="space-y-3 border-t border-border pt-4">
-      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Faculty</h2>
-      <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
-      {assignments.length === 0 && <EmptyState title="No faculty assigned" description="Assign an eligible faculty member to this elective offering."/>}
-      {assignments.map(item => <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
-        <span>{item.displayName ?? item.membershipId} · {item.role}</span>
-        {!archived && <form action={changeFaculty}>
-          <Input type="hidden" name="action" value="END" />
-          <Input type="hidden" name="assignmentId" value={item.id} />
-          <Button type="submit" variant="danger" className="min-h-11 md:min-h-9">Remove faculty</Button>
-        </form>}
-      </div>)}
-      {!archived && <form action={changeFaculty} className="flex min-w-0 flex-wrap items-end gap-[8px] max-[767px]:flex-col max-[767px]:items-stretch">
-        <Input type="hidden" name="action" value="ASSIGN" />
-        <label className="grid min-w-0 gap-[6px] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
-          <Select name="membershipId" required defaultValue="" className="w-full max-w-full">
-            <option value="" disabled>Choose faculty</option>
-            {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
-          </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
-          <Select name="role" className="w-full max-w-full">
-            <option value="PRIMARY">Primary</option>
-            <option value="CO_TEACHER">Co-teacher</option>
-          </Select>
-        </label>
-        <Button type="submit" disabled={faculty.length === 0} className="min-h-11 w-full md:min-h-9 md:w-auto">
-          Assign faculty
-        </Button>
-      </form>}
-    </section>
-    <section className="min-w-0 space-y-3" aria-label="Elective offering roster">
+    <section className="min-w-0 space-y-[var(--lms-space-3)]" aria-label="Elective offering roster">
       <DataTable
         caption="Elective offering roster"
         rows={detail.members}
@@ -180,10 +149,10 @@ export default async function ElectiveRoster({
           { key: "actions", header: "Actions", mobilePriority: "action",
             cell: member => !archived && ["ACTIVE", "WAITLISTED"].includes(member.state)
               ? <div className="grid gap-2">
-                {targets.length > 0 && <form action={mutate} className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
+                {targets.length > 0 && <form action={mutate} className="grid min-w-0 gap-[var(--lms-space-2)] sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center">
                   <Input type="hidden" name="action" value="MOVE" />
                   <Input type="hidden" name="membershipId" value={member.membershipId} />
-                  <Select name="targetOfferingId" required defaultValue="" className="max-w-full max-[767px]:w-full"
+                  <Select name="targetOfferingId" required defaultValue="" className="min-w-0 w-full max-w-full"
                     aria-label="Move to another offering"
                     >
                     <option value="" disabled>Move to another offering</option>
@@ -193,20 +162,52 @@ export default async function ElectiveRoster({
                   <label className="inline-flex min-h-11 items-center gap-2">
                     <Checkbox name="confirm" value="yes" required /> Confirm
                   </label>
-                  <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Move</Button>
+                  <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Move</Button>
                 </form>}
-                <form action={mutate} className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
+                <form action={mutate} className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
                   <Input type="hidden" name="action" value="REMOVE" />
                   <Input type="hidden" name="membershipId" value={member.membershipId} />
                   <label className="inline-flex min-h-11 items-center gap-2">
                     <Checkbox name="confirm" value="yes" required /> Confirm removal
                   </label>
-                  <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Remove</Button>
+                  <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Remove</Button>
                 </form>
               </div> : "—" },
         ]}
       />
       {detail.members.length >= 500 && <p className="text-xs text-muted-foreground">Showing first 500 members.</p>}
     </section>
+    <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+      <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Faculty</h2>
+      <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
+      {assignments.length === 0 && <EmptyState title="No faculty assigned" description="Assign an eligible faculty member to this elective offering."/>}
+      {assignments.map(item => <div key={item.id} className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
+        <span>{item.displayName ?? item.membershipId} · {item.role}</span>
+        {!archived && <form action={changeFaculty}>
+          <Input type="hidden" name="action" value="END" />
+          <Input type="hidden" name="assignmentId" value={item.id} />
+          <Button type="submit" variant="danger" className="min-h-11 md:min-h-9">Remove faculty</Button>
+        </form>}
+      </div>)}
+      {!archived && <form action={changeFaculty} className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+        <Input type="hidden" name="action" value="ASSIGN" />
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
+          <Select name="membershipId" required defaultValue="" className="w-full max-w-full">
+            <option value="" disabled>Choose faculty</option>
+            {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
+          </Select>
+        </label>
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+          <Select name="role" className="w-full max-w-full">
+            <option value="PRIMARY">Primary</option>
+            <option value="CO_TEACHER">Co-teacher</option>
+          </Select>
+        </label>
+        <Button type="submit" disabled={faculty.length === 0} className="min-h-11 w-full md:min-h-9 md:w-auto">
+          Assign faculty
+        </Button>
+      </form>}
+    </section>
+
   </div>;
 }

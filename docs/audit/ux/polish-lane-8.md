@@ -157,3 +157,21 @@
 **8 problems fixed:** Root 24px vertical rhythm was looser than legacy; Create title occupied a separate flex column alongside controls at 768px and crushed the editable name field; results/options/clear control wrapped unpredictably; arbitrary 6px gutters on labels; action controls in the list squeezed at 375px; department row dialogs retained small fixed footer buttons; success/errors could overrun the input grid; pagination row alignment became uneven on 768px. Made Create a two-column 920px-wide responsive editor with a full-width title above controls and primary 44px phone CTA; aligned the search and options with a two-column tablet grid, normalized 8/12/16px spacing, stacked row actions on phones and aligned confirmation footers with full-width actions at 375px. Reviewed archive dependencies/count unavailable, empty/search/no matches, sort/pagination, duplicate name, edit/dirty/discard, rename/archive error/retry, route loading/error, inherited not-found/college layout. No API, ids, labels, permission, CSV or behavior changes; static source inspection only (no CI/browser).
 
 **Files:** `college/departments/page.tsx`, `department-create-form.tsx`, `department-directory.tsx`, `department-actions.tsx`; proof and queue tick.
+
+## Surface 25 — src/app/(authenticated)/college/domains/page.tsx
+
+8 UI issues addressed: inconsistent page spacing, double borders, wide read-only notice, unconstrained form, brittle host wrapping, dense DNS detail text, crowded action controls and narrow mobile taps. Aligned page and panel spacing to legacy 8/12/16px scale, constrained the editable area to 920px, made action groups stack at 375px and align at 768px, improved address wrapping and normalized label gutters. Reviewed the read-only, empty, pending, verified, error and confirmation states; loading/error files and parent college layout were inspected. Source review only; no tests or CI.
+
+Files: college/domains/page.tsx; components/admin/tenant-domain-manager.tsx; audit proof and queue.
+
+## Surface 26 — Elective allocation
+
+**6 issues fixed:** Inconsistent page spacing, overly tight field labels, redundant form separators, a short scroll viewport, small row hover feedback and cramped mobile filtering. Aligned 8/12/16px legacy rhythm, removed a duplicate border, expanded the scrollable learner list, and made each 44px checkbox target visibly interactive. Inspected selection/form-submit, capacity and partial outcome states, invalid identifiers, empty options, server redirects, role gates, 375px/768px, loading/error and nearest parent layout. Source-based review only; no test, build or CI.
+
+**Files:** src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx, this proof and the queue.
+
+## Surface 27 — Elective offering roster
+
+**8 issues fixed:** Roster rows appeared below the secondary faculty workflow, density and summary borders competed with the main work, label gutters used nonstandard measurements, the section editor flex-wrapped unpredictably at 375/768px, member movement fields could overflow, removal actions became cramped, faculty action rows lacked mobile alignment, and heading hierarchy was oversized. Moved the existing roster before faculty, preserved all forms and confirmation checkboxes, aligned 8/12/16px gutters, made form grids fluid, standardized 44px controls and narrow mobile action widths. Reviewed active, waitlisted, archived, no offering/faculty, assignment/movement/removal outcomes, empty roster, 500 row cap, loading/error/not-found and college layout. Static source review only; no CI.
+
+**Files:** elective roster page, proof and queue.
