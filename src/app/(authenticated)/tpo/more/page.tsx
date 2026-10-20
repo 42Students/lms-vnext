@@ -45,7 +45,7 @@ export default async function TpoMorePage() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group block min-h-11 py-4 transition-colors hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+                  className="group block min-h-11 py-4 transition-colors hover:bg-[rgba(38,186,199,0.045)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="text-base font-semibold text-link">
