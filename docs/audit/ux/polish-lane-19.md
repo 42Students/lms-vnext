@@ -51,3 +51,11 @@
 **Fixed:** Kept existing shortcuts, server-backed search, ARIA combobox/option IDs, result order, recent records, keyboard navigation, route pushes and wording. Made launcher and input fluid; flattened the nested listbox surface without changing its shared keyboard functionality; made recent heading presentational, result labels wrap while retaining their group; showed error without a simultaneous misleading empty state; stacked footer hint/link with a full-width 44px mobile action, aligned in one row at 768px. Reviewed Dialog, PopoverListbox, Button, Input and Alert states including loading, no recent, no results, error, focus, active option and closed/open; source inspection only, no CI or browser run.
 
 **Files changed:** `src/components/tpo/tpo-find-shortcut.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 7 — `src/components/tpo/tpo-keyboard-shortcuts.tsx`
+
+**Problems found (8):** Navigation shortcuts were bare text with inconsistent spacing; plain keyboard labels did not form recognizable keycaps; ten Go to items could be difficult to scan; four section headings and content had uneven gaps; text was not aligned against a stable left edge; longer role labels could crowd key pairs on 375px; shortcut trigger needed a reliable touch width; miscellaneous shortcuts used inconsistent presentation.
+
+**Fixed:** Preserved all G/N, Ctrl-K, ?, applicant keys and their original labels/route mapping. Rendered shortcuts as simple accessible lists with uniform keycaps using existing canvas-border, neutral surface, radius and typography tokens, 44px-high hairline-separated rows, consistent section dividers, one-column phone/two-column tablet navigation, wrapping labels and an 44px mobile trigger. Did not introduce decorative cards or new interaction; inspected shared Drawer and Button for open/dismiss, focus, scroll, touch and responsive behavior. Source-only verification; no CI/browser run.
+
+**Files changed:** `src/components/tpo/tpo-keyboard-shortcuts.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
