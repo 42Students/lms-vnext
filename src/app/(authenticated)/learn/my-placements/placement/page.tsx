@@ -34,9 +34,7 @@ export default async function LearnerPlacementCellPage({
     <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Placement cell" />
 
-      <section id="registration" className="scroll-mt-24" aria-label="Registration">
-        <LearnerPlacementRegistration registration={registration}/>
-      </section>
+      <LearnerPlacementRegistration registration={registration}/>
       <section className="border-b border-border pb-4">
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
