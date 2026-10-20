@@ -603,3 +603,142 @@ Source-value reference: `docs/design/legacy-styles/components___form.scss:110-14
 
 **Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/organizations/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 1/1; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
 
+
+## 2026-10-20 — Super Admin whole-file parity batch B (10 complete pages/components)
+
+Same measured sources: `components___form.scss:110-142` (13px/600/16px muted gray labels #a9a7ae; 10px radius, 14px field text, 2px teal focus and error), `components___variables.scss:13,30,31,37,139` (teal hover #eff8fa, borders #e5e9f0, 44px phone touch), `old-lms-shell.css:73` (≤767px phone) and common `globals.css:327,341-345,425-476,628,638-677,866`. No page text, data, mutations, route, permission or form semantics changed.
+
+### - [x] `src/app/(authenticated)/admin/people/page.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| 3 form labels (size, weight, line, color) | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | `src/app/(authenticated)/admin/people/page.tsx:153` uses `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | shared Input/Select at `src/app/(authenticated)/admin/people/page.tsx:154`; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | shared Button 1 at `src/app/(authenticated)/admin/people/page.tsx:167`; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | PageHeader + authenticated canvas; DataTable directly on canvas; remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | EmptyState, DataTable, StatusBadge, Pagination; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 7 explicit mobile 44px targets, 6 tablet-size overrides, 0 stray 640px breakpoints; flex-wrap |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/app/(authenticated)/admin/people/page.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 1/1, Select 2/2; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| 3 form labels (size, weight, line, color) | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | `src/app/(authenticated)/admin/inbound-mail/page.tsx:56` uses `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | shared Input/Select at `src/app/(authenticated)/admin/inbound-mail/page.tsx:57`; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | shared Button 1 at `src/app/(authenticated)/admin/inbound-mail/page.tsx:64`; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | PageHeader + authenticated canvas; remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | semantic role/status messages and ordinary links; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 6 explicit mobile 44px targets, 5 tablet-size overrides, 0 stray 640px breakpoints; flex-wrap |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/app/(authenticated)/admin/inbound-mail/page.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 1/1, Select 1/1; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/app/(authenticated)/admin/semesters/page.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| 4 form labels (size, weight, line, color) | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | `src/app/(authenticated)/admin/semesters/page.tsx:84` uses `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | shared Input/Select at `src/app/(authenticated)/admin/semesters/page.tsx:85`; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | shared Button 2 at `src/app/(authenticated)/admin/semesters/page.tsx:108`; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | PageHeader + authenticated canvas; DataTable directly on canvas; remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | ErrorState, EmptyState, DataTable, StatusBadge, Pagination; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 3 explicit mobile 44px targets, 3 tablet-size overrides, 0 stray 640px breakpoints; flex-wrap |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/app/(authenticated)/admin/semesters/page.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 2/2, Select 3/3; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/app/(authenticated)/admin/colleges/page.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| 2 form labels (size, weight, line, color) | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | `src/app/(authenticated)/admin/colleges/page.tsx:147` uses `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | shared Input/Select at `src/app/(authenticated)/admin/colleges/page.tsx:148`; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | shared Button 1 at `src/app/(authenticated)/admin/colleges/page.tsx:155`; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | PageHeader + authenticated canvas; DataTable directly on canvas; remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | ErrorState, EmptyState, DataTable, Pagination; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 7 explicit mobile 44px targets, 4 tablet-size overrides, 0 stray 640px breakpoints; flex-wrap |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/app/(authenticated)/admin/colleges/page.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 1/1, Select 1/1; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/app/(authenticated)/admin/settings/page.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| 2 form labels (size, weight, line, color) | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | `src/app/(authenticated)/admin/settings/page.tsx:135` uses `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | shared Input/Select at `src/app/(authenticated)/admin/settings/page.tsx:136`; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | shared Button 1 at `src/app/(authenticated)/admin/settings/page.tsx:143`; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | PageHeader + authenticated canvas; DataTable directly on canvas; remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | ErrorState, EmptyState, DataTable; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 6 explicit mobile 44px targets, 5 tablet-size overrides, 0 stray 640px breakpoints; flex-wrap |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/app/(authenticated)/admin/settings/page.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 1/1, Select 1/1; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/app/(authenticated)/admin/tenants/page.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| 3 form labels (size, weight, line, color) | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | `src/app/(authenticated)/admin/tenants/page.tsx:67` uses `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | shared Input/Select at `src/app/(authenticated)/admin/tenants/page.tsx:68`; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | shared Button 1 at `src/app/(authenticated)/admin/tenants/page.tsx:83`; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | PageHeader + authenticated canvas; DataTable directly on canvas; remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | ErrorState, EmptyState, DataTable, StatusBadge, Pagination; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 8 explicit mobile 44px targets, 8 tablet-size overrides, 0 stray 640px breakpoints; flex-wrap |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/app/(authenticated)/admin/tenants/page.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 1/1, Select 2/2; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/components/admin/inbound-mail-list.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| Display-only content/caption hierarchy | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | No local editable form labels; delegate headings/text to semantic tokens and shared kit |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | No direct text fields; delegated/shared controls only; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | shared Button 2 at `src/components/admin/inbound-mail-list.tsx:53`; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | flat divide-y list; remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | StatusBadge, Drawer; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 2 explicit mobile 44px targets, 2 tablet-size overrides, 0 stray 640px breakpoints; flex-wrap |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/components/admin/inbound-mail-list.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 2/2, Select 0/0; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/components/admin/admin-scoped-live-search.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| Display-only content/caption hierarchy | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | No local editable form labels; delegate headings/text to semantic tokens and shared kit |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | shared Input/Select at `src/components/admin/admin-scoped-live-search.tsx:20`; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | Shared pagination/links or noninteractive read-only text; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | semantic role/status messages and ordinary links; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 1 explicit mobile 44px targets, 1 tablet-size overrides, 0 stray 640px breakpoints; shared component responsive defaults |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/components/admin/admin-scoped-live-search.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 0/0, Select 0/0; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/components/admin/college-archive-button.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| Display-only content/caption hierarchy | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | No local editable form labels; delegate headings/text to semantic tokens and shared kit |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | No direct text fields; delegated/shared controls only; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | shared Button 3 at `src/components/admin/college-archive-button.tsx:116`; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | semantic role/status messages and ordinary links; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 3 explicit mobile 44px targets, 3 tablet-size overrides, 0 stray 640px breakpoints; shared component responsive defaults |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/components/admin/college-archive-button.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 3/3, Select 0/0; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+### - [x] `src/components/admin/people-pagination.tsx` — complete source parity
+
+| Property / interactive state | Exact old LMS source | Current implementation |
+| --- | --- | --- |
+| Display-only content/caption hierarchy | Form `components___form.scss:110-114`: 13px/600/16px/#a9a7ae; normal captions use semantic muted tokens | No local editable form labels; delegate headings/text to semantic tokens and shared kit |
+| Fields (including focused, hover, disabled/error) | `form.scss:120-142`: 10px field radius, 14px/400/20px, #fbfcfd fill, teal 2px focus/error variants | No direct text fields; delegated/shared controls only; no bespoke literal color/radius |
+| Primary, outlined and disabled/loading actions | `globals.css:341-343,638-677`: primary #0a7c88/#fff, hover #086873, radius 9, 36px desktop /44px phone | Shared pagination/links or noninteractive read-only text; any ConfirmDialog/Drawer continue existing open/close behavior |
+| White canvas, page head and hairline rows | `old-lms-pages.md:5-9`: one #fff canvas, radius 12, #e5e9f0 border, padding 24 on #f1f4f9; compact table/rows, no outer wrapper | remaining section roots are spacing/flat border, not nested page canvas |
+| Error/empty/status/confirm/selected and focus states | `form.scss:131-142`, shared component palette and focus ring; no direct inline style overrides | Pagination; existing handlers retained |
+| Responsive breakpoints and tap geometry | `variables.scss:139` touch 44px for phone ≤767px, `globals.css:341,628` control 36px ≥768px | 0 explicit mobile 44px targets, 0 tablet-size overrides, 0 stray 640px breakpoints; flex-wrap |
+
+**Grep proof** `rg -o '<(button|input|select|textarea)\\b' 'src/components/admin/people-pagination.tsx' | wc -l` = **0**; hardcoded hex grep = **0**; `style=\{` grep = **0**. Shared JSX Button opens/closes 0/0, Select 0/0; other shared components are self-closing or ordinary fragments. Source-only check, no build or screenshot.
+
+**Batch A+B completed:** 20 full files individually assessed against legacy label values, shared field/button states, single-canvas rule and phone/tablet classes; grep counts raw=0, hardcoded hex=0, inline styles=0 in all 20. Existing API/data behavior preserved as written; it has not been exercised here.
+
+- [ ] Visual screenshot pixel comparison, browser-computed CSS, TypeScript/build, live interaction/keyboard QA, tests and CI **not performed** (owner no-CI/no-runtime requirement).
+- [ ] **Next exact file:** `src/app/(authenticated)/admin/students/page.tsx` (then `src/app/(authenticated)/admin/semester-courses/page.tsx`).
