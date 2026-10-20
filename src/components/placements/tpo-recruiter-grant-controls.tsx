@@ -40,7 +40,7 @@ export function TpoRecruiterGrantForm({ companies }: {
     } finally { setBusy(false); }
   }
   return (
-    <section className="space-y-3 border-t border-border pt-5">
+    <section className="min-w-0 space-y-3 border-t border-border pt-4">
       <h3 className="text-base font-semibold text-foreground">Grant recruiter college access</h3>
       <p className="text-sm text-body">
         Choose an active linked company and an existing active user email. Duplicate
@@ -50,26 +50,26 @@ export function TpoRecruiterGrantForm({ companies }: {
         <EmptyState title="No active linked companies are available for recruiter grants."/>
       ) : (
         <>
-          <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            <label className="grid gap-1 text-sm font-semibold text-body">Company
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Company
               <Select value={relationshipId} disabled={busy}
-                onChange={(event) => setRelationshipId(event.target.value)}
-                className="min-h-11 md:min-h-9">
+                onChange={(event) => {setRelationshipId(event.target.value);setError(null);setSuccess(null);}}
+                className="min-h-11 w-full md:min-h-9">
                 {companies.map((company) => <option key={company.relationshipId} value={company.relationshipId}>{company.name}</option>)}
               </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Existing user email
               <Input type="email" value={email} disabled={busy}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) => {setEmail(event.target.value);setError(null);setSuccess(null);}}
                 className="min-h-11 md:min-h-9" required />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Recruiter title (optional)
               <Input type="text" value={title} maxLength={160} disabled={busy}
-                onChange={(event) => setTitle(event.target.value)}
+                onChange={(event) => {setTitle(event.target.value);setError(null);setSuccess(null);}}
                 className="min-h-11 md:min-h-9" />
             </label>
           </div>
-          <Button variant="primary" type="button" disabled={busy || !email.trim()} onClick={() => setConfirmOpen(true)}
+          <Button variant="primary" type="button" disabled={busy || !relationshipId || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())} onClick={() => setConfirmOpen(true)}
             className="min-h-11 w-full sm:w-auto md:min-h-9">
             {busy ? "Saving..." : "Review and confirm grant"}
           </Button>
