@@ -309,3 +309,43 @@
 **Fixed:** No source change warranted. Preserved 404/500 codes, title ID, messages, logo, privacy/terms links, recovery callbacks and exact branded copy. Inspected `ErrorRecoveryActions`, `public-screen.module.css`, live root error/not-found files and shared PageHeader for the compact, failure, recovery, 375px and 768px states by source; no runtime/CI.
 
 **Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit-only).
+
+## Surface 38 — `src/components/tpo/tpo-academic-import-preview.tsx`
+
+**Reachability:** Code search found the component definition, legacy batches audit and an associated unit test, but no imported live page. Prepared it for any later route wiring without changing import/validation semantics.
+
+**Problems found (8):** Instructions repeated 'not saved' in adjacent paragraphs; strict schema dominated the initial action; neutral Validate CTA was visually weak despite being the only action; CSV data and button competed for width on phone; arbitrary textarea radius departed from shared Input family; invalid CSV had mixed warning/error colors; live status wrapped an entire result table and could announce every cell; table wrapper scrolled in both axes despite DataTable owning horizontal scrolling.
+
+**Fixed:** Kept exact CSV schema, accepted IDs, 25-learner-page limits, preview-only/no-save policy, error texts, parser/row IDs and action behavior. Moved detailed schema copy into native keyboard-operable disclosure, promoted Validate as the one full-width phone CTA, used shared Textarea chrome and InlineNotice error surface, localized role=status to the short matched-count line and gave the table wrapper y-only bounded scrolling. Read DataTable, StatusBadge, Button, Textarea and parser for empty/invalid/valid/unmatched, 375px and 768px; source only, no runtime/CI.
+
+**Files changed:** `src/components/tpo/tpo-academic-import-preview.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 39 — `src/components/ui/date-range-picker.tsx`
+
+**Reachability:** Code search for `DateRangePicker` found the definition and a legacy form audit, but no route import; this is currently a dormant shared field combination.
+
+**Problems found (0):** No unsafe layout or interaction defect discovered in source. Two properly associated labels, shared DateInput calendar controls and legacy form tokens already use one column at 375px and aligned two-column fields at 768px. It derives start/end bounds from existing min/max restrictions, marks required fields, preserves controlled values and per-field native validation, and shows the invalid order as one full-row accessible message, without extra cards, actions or popovers beyond the audited DateInput. A speculative rewrite would risk changing protected form/ARIA semantics.
+
+**Fixed:** No source change necessary. Reviewed DateInput's five modes/mobile sheet, focus/dismiss, native events, error bounds, external per-input overrides, disabled/required, 375px and 768px by source only; no runtime/CI.
+
+**Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit-only).
+
+## Surface 40 — `src/components/ui/long-text.tsx`
+
+**Reachability:** GitHub code search for `LongText` finds the primitive and tests/coverage ledger but no page import; presently dormant. Inspected `safeDisplayText` and existing uses referenced in tests.
+
+**Problems found (0):** This text primitive already uses `min-w-0`, `max-w-full`, `break-words`, `overflow-wrap:anywhere`, safe unknown-value conversion, bidirectional `dir=auto`, and inherited typography/number glyphs. It adds neither redundant decoration nor interactive behavior. At 375px and 768px it wraps unbroken student/provider labels without forcing parent overflow; empty/non-finite data falls back to the existing em dash. A speculative change could alter the title tooltip, text semantics, or the safe fallback behavior.
+
+**Fixed:** No source mutation necessary. Retained `data-slot`, title, fallback, responsive wrapping, aria-independent semantics and legacy inherited tokens; source-level audit only (no browser/CI).
+
+**Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit only).
+
+## Surface 41 — `src/components/ui/permission-action.tsx`
+
+**Reachability:** Code search for `PermissionAction` identified the exported implementation, UX-PLAYBOOK and authorization/overlay unit test but no live production page import. This is a policy-sensitive reusable primitive, not a live overlay.
+
+**Problems found (0):** Source review found no safely correctable UI defect. Authorized children render without extra wrapper or chrome. Denied states follow the audited A2-05 rule: caller fallback if provided, privacy-scoped hide-sensitive as opt-in, otherwise a readable persistent reason with `role=note` in one modest legacy-token-bordered strip. Its min-width, long-message wrapping and typography remain usable at 375px and 768px. No duplicate button, modal, incorrect density or unguarded API mutation.
+
+**Fixed:** No source mutation; retained `can(context, permission, resource)` as the central permission decision, denial wording and cross-tenant safety, `data-slot` and fallback precedence. Inspected UX-PLAYBOOK §19.4 and the matching authorization test by source; no runtime or CI.
+
+**Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit-only).
