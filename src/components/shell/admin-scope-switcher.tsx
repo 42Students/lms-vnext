@@ -29,8 +29,13 @@ export function AdminScopeSwitcher({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [search,setSearch]=useState("");
-  const visibleColleges=choices.colleges.filter(college=>
-    (college.name+" "+college.organizationName).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN")));
+  const matchingColleges = choices.colleges.filter((college) =>
+    (college.name + " " + college.organizationName).toLocaleLowerCase("en-IN")
+      .includes(search.trim().toLocaleLowerCase("en-IN")));
+  // A controlled select must keep its selected option mounted while searching.
+  // Otherwise the browser shows a different scope from the one still active.
+  const visibleColleges = choices.colleges.filter((college) =>
+    college.id === scope?.collegeId || matchingColleges.includes(college));
   const [pending, startTransition] = useTransition();
 
   function switchScope(value: string) {
@@ -103,7 +108,7 @@ export function AdminScopeSwitcher({
             ))}
           </optgroup>
         ) : null}
-        {choices.colleges.length > 0 ? (
+        {visibleColleges.length > 0 ? (
           <optgroup label="Colleges">
             {visibleColleges.map((college) => (
               <option
@@ -118,7 +123,7 @@ export function AdminScopeSwitcher({
       </Select>
       {pending ? <p role="status" className="min-w-0 break-words text-xs text-muted-foreground">Switching workspace…</p> : null}
       {!scope?.collegeId && !scope?.organizationId ? <p className="mt-1 text-xs text-muted-foreground">Showing all colleges — data may be large.</p> : null}
-      {search.trim() && visibleColleges.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">No matching colleges.</p>:null}
+      {search.trim() && matchingColleges.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">No matching colleges.</p>:null}
       {error ? (
         <p role="alert" className="min-w-0 break-words text-xs font-medium text-error">
           {error}

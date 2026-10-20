@@ -76,7 +76,7 @@ export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[
       setUnread(response.notifications.filter(row=>row.notification.readAt===null).length);
     }).catch(()=>{ /* Count failure must not block navigation. */ });
     return ()=>{active=false;};
-  }, [learner]);
+  }, [learner, pathname]);
 
   if (!learner && !faculty && !recruiter && !college && !mentor) return null;
   const all = learner ? learnerLinks : faculty ? facultyLinks :

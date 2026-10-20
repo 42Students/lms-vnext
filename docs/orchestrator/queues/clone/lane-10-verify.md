@@ -9,10 +9,10 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-10-b with [chat-10] after every 2 surfaces.
 
-- [ ] `src/components/shell/account-actions.tsx`
-- [ ] `src/components/shell/admin-scope-switcher.tsx`
-- [ ] `src/components/shell/app-shell.tsx`
-- [ ] `src/components/shell/learner-faculty-mobile-footer.tsx`
+- [x] `src/components/shell/account-actions.tsx`
+- [x] `src/components/shell/admin-scope-switcher.tsx`
+- [x] `src/components/shell/app-shell.tsx`
+- [x] `src/components/shell/learner-faculty-mobile-footer.tsx`
 - [ ] `src/components/shell/learner-notification-bell.tsx`
 - [ ] `src/components/shell/learner-topbar-tools.tsx`
 - [ ] `src/components/shell/membership-switcher.tsx`
