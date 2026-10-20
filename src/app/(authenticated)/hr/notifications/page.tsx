@@ -24,10 +24,11 @@ export default async function HrMessagesPage({searchParams}:{
   collegeId:raw.collegeId,unreadOnly:raw.unreadOnly,page:raw.page,q:raw.q,
  });
  if(!query.success)return <div className="min-w-0 max-w-full space-y-4">
-  <PageHeader title="Notifications"/>
-  <Link href="/hr/conversations" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter conversations</Link>
+  <PageHeader title="Notifications"
+   actions={<Link href="/hr/conversations"
+     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">Recruiter conversations</Link>}/>
   <ErrorState title="Invalid inbox filter." description="Review the college, search and unread options."
-   action={<Link href="/hr/notifications" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/>
+   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Reset</Link>}/>
  </div>;
  const result=await listHrNotifications(context,query.data);
  const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
