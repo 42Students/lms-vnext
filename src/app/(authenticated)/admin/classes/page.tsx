@@ -64,7 +64,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           </label>
           <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
-          <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>
+          <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>
         </form>
       </section>
       <section aria-label="Manage classes" className="space-y-3 pt-2">
@@ -75,8 +75,8 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           columns={[
             {key:"class",header:"Class",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
-              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Manage students →</Link>
-              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Schedule →</Link>
+              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Manage students →</Link>
+              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Schedule →</Link>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
             {key:"batch",header:"Batch",mobilePriority:"secondary",cell:row=>row.cohortName},
@@ -91,11 +91,11 @@ export default async function SuperAdminClassesPage({ searchParams }: {
         <nav aria-label="Class pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
-            {data.query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
-            {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
+            {data.query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
+            {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
           </div>
         </nav>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">
           Batch Promotion →
         </Link>
       </section>
