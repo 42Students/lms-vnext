@@ -54,73 +54,109 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
       setError(cause instanceof Error ? cause.message : friendlyApiError({}));
     } finally { setSaving(false); }
   }
-  return <form onSubmit={event => void submit(event)} className="space-y-5">
-    <div className="border-b border-border pb-5">
-      <p className="text-lg font-semibold text-foreground">{profile.displayName}</p>
-      <p className="text-sm text-muted-foreground">{profile.roleTitle || "College Admin"} · {college || "Your college"}</p>
-      {profile.photoUrl?<div className="mt-3 flex flex-wrap items-center gap-3">
-        {/* The signed-in administrator supplied this HTTPS image URL. No private document URL is synthesized. */}
-        <img src={profile.photoUrl} alt={profile.displayName+" profile photo"} referrerPolicy="no-referrer"
-          className="h-16 w-16 rounded-lg border border-border bg-muted object-cover"/>
-        <a href={profile.photoUrl} rel="noreferrer"
-          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View profile photo</a>
-      </div>:null}
-    </div>
-    <nav aria-label="Profile sections" className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0">
-      {[
-        ["personal", "Personal Details"], ["social", "Social Profiles"],
-        ["address", "Address"], ["contacts", "Contacts"],
-      ].map(([key, label]) => <a key={key} href={"#" + key}
-        className="inline-flex min-h-11 md:min-h-9 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-medium text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{label}</a>)}
-    </nav>
-    <div className="grid gap-5 md:grid-cols-2">
-      <section id="personal" className="scroll-mt-24 space-y-3 border-t border-border pt-5">
-        <h2 className="font-semibold text-foreground">Personal Details</h2>
-        <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} />
-        <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} />
-        <label className="grid gap-1 text-sm font-semibold text-body">About
-          <Textarea rows={3} maxLength={1000} className={fieldStyle}
-            value={profile.about} onChange={e => top("about", e.target.value)} />
-        </label>
-        <Field label="Profile photo (HTTPS link)" value={profile.photoUrl}
-          onChange={v => top("photoUrl", v)} hint="Paste a secure image link. Direct photo upload requires the storage service." />
-      </section>
-      <section id="social" className="scroll-mt-24 space-y-3 border-t border-border pt-5">
-        <h2 className="font-semibold text-foreground">Social Profiles</h2>
-        <Field label="LinkedIn" type="url" value={profile.social.linkedIn}
-          onChange={v => detail("social", "linkedIn", v)} />
-        <Field label="GitHub" type="url" value={profile.social.github}
-          onChange={v => detail("social", "github", v)} />
-        <Field label="Website" type="url" value={profile.social.website}
-          onChange={v => detail("social", "website", v)} />
-        <Field label="Instagram" type="url" value={profile.social.instagram}
-          onChange={v => detail("social", "instagram", v)} />
-      </section>
-      <section id="address" className="scroll-mt-24 space-y-3 border-t border-border pt-5">
-        <h2 className="font-semibold text-foreground">Address</h2>
-        {([
-          ["line1", "Address line 1"], ["line2", "Address line 2"],
-          ["city", "City"], ["state", "State"], ["postalCode", "Postal code"], ["country", "Country"],
-        ] as const).map(([key, label]) =>
-          <Field key={key} label={label} value={profile.address[key]}
-            onChange={v => detail("address", key, v)} />)}
-      </section>
-      <section id="contacts" className="scroll-mt-24 space-y-3 border-t border-border pt-5">
-        <h2 className="font-semibold text-foreground">Contacts</h2>
-        <p className="text-xs text-muted-foreground">Primary login contacts remain read-only for account security.</p>
-        <p className="text-sm text-body">Email: {email || "Not provided"} · Mobile: {phone || "Not provided"}</p>
-        <Field label="Additional email" type="email" value={profile.contacts.alternateEmail}
-          onChange={v => detail("contacts", "alternateEmail", v)} />
-        <Field label="Additional phone" value={profile.contacts.alternatePhone}
-          onChange={v => detail("contacts", "alternatePhone", v)} />
-        <Field label="Contact person" value={profile.contacts.contactPerson}
-          onChange={v => detail("contacts", "contactPerson", v)} />
-      </section>
-    </div>
-    {error && <Alert tone="error">{error}</Alert>}
-    {saved && <Alert tone="success">Profile updated successfully.</Alert>}
-    <Button variant="primary" type="submit" disabled={saving} loading={saving} className="min-h-11 md:min-h-9">
-      {saving ? "Saving…" : "Save profile"}
-    </Button>
-  </form>;
+  return (
+    <form onSubmit={event => void submit(event)} className="min-w-0 space-y-6">
+      <div className="flex min-w-0 flex-wrap items-center gap-4 border-b border-border pb-4">
+        {profile.photoUrl ? (
+          <img src={profile.photoUrl} alt={profile.displayName + " profile photo"} referrerPolicy="no-referrer"
+            className="h-16 w-16 shrink-0 rounded-lg border border-border bg-muted object-cover" />
+        ) : null}
+        <div className="min-w-0 flex-1 space-y-1">
+          <p className="break-words text-lg font-semibold text-foreground">{profile.displayName}</p>
+          <p className="break-words text-sm text-muted-foreground">{profile.roleTitle || "College Admin"} · {college || "Your college"}</p>
+          {profile.photoUrl ? (
+            <a href={profile.photoUrl} rel="noreferrer"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">View profile photo</a>
+          ) : null}
+        </div>
+      </div>
+
+      <nav aria-label="Profile sections"
+        className="grid min-w-0 grid-cols-2 gap-2 border-b border-border pb-4 md:flex md:flex-wrap">
+        {[
+          ["personal", "Personal Details"], ["contacts", "Contacts"],
+          ["social", "Social Profiles"], ["address", "Address"],
+        ].map(([key, label]) => (
+          <a key={key} href={"#" + key}
+            className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-medium text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            {label}
+          </a>
+        ))}
+      </nav>
+
+      <div className="min-w-0 space-y-6">
+        <section id="personal" className="min-w-0 scroll-mt-24 space-y-4">
+          <h2 className="font-semibold text-foreground">Personal Details</h2>
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+            <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} />
+            <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} />
+            <label className="grid min-w-0 gap-1 text-sm font-semibold text-body md:col-span-2">About
+              <Textarea rows={3} maxLength={1000} className={fieldStyle}
+                value={profile.about} onChange={e => top("about", e.target.value)} />
+            </label>
+            <div className="min-w-0 md:col-span-2">
+              <Field label="Profile photo (HTTPS link)" value={profile.photoUrl}
+                onChange={v => top("photoUrl", v)} hint="Paste a secure image link. Direct photo upload requires the storage service." />
+            </div>
+          </div>
+        </section>
+
+        <section id="contacts" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5">
+          <h2 className="font-semibold text-foreground">Contacts</h2>
+          <div className="min-w-0 space-y-1">
+            <p className="text-xs text-muted-foreground">Primary login contacts remain read-only for account security.</p>
+            <p className="break-words text-sm leading-6 text-body [overflow-wrap:anywhere]">Email: {email || "Not provided"} · Mobile: {phone || "Not provided"}</p>
+          </div>
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+            <Field label="Additional email" type="email" value={profile.contacts.alternateEmail}
+              onChange={v => detail("contacts", "alternateEmail", v)} />
+            <Field label="Additional phone" value={profile.contacts.alternatePhone}
+              onChange={v => detail("contacts", "alternatePhone", v)} />
+            <Field label="Contact person" value={profile.contacts.contactPerson}
+              onChange={v => detail("contacts", "contactPerson", v)} />
+          </div>
+        </section>
+
+        <section id="social" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5">
+          <h2 className="font-semibold text-foreground">Social Profiles</h2>
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+            <Field label="LinkedIn" type="url" value={profile.social.linkedIn}
+              onChange={v => detail("social", "linkedIn", v)} />
+            <Field label="GitHub" type="url" value={profile.social.github}
+              onChange={v => detail("social", "github", v)} />
+            <Field label="Website" type="url" value={profile.social.website}
+              onChange={v => detail("social", "website", v)} />
+            <Field label="Instagram" type="url" value={profile.social.instagram}
+              onChange={v => detail("social", "instagram", v)} />
+          </div>
+        </section>
+
+        <section id="address" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5">
+          <h2 className="font-semibold text-foreground">Address</h2>
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+            {([
+              ["line1", "Address line 1"], ["line2", "Address line 2"],
+              ["city", "City"], ["state", "State"], ["postalCode", "Postal code"], ["country", "Country"],
+            ] as const).map(([key, label]) => (
+              <Field key={key} label={label} value={profile.address[key]}
+                onChange={v => detail("address", key, v)} />
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <div className="sticky bottom-0 z-10 flex min-w-0 flex-col justify-end gap-3 border-t border-border bg-surface py-3 md:flex-row md:items-center">
+        {error || saved ? (
+          <div className="min-w-0 flex-1 space-y-2">
+            {error && <Alert tone="error">{error}</Alert>}
+            {saved && <Alert tone="success">Profile updated successfully.</Alert>}
+          </div>
+        ) : null}
+        <Button variant="primary" type="submit" disabled={saving} loading={saving}
+          className="min-h-11 w-full md:min-h-9 md:w-auto md:shrink-0">
+          {saving ? "Saving…" : "Save profile"}
+        </Button>
+      </div>
+    </form>
+  );
 }
