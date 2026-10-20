@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -116,7 +117,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
       <Textarea rows={3} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
        disabled={saving} className={field}/>
      </label>
-     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+     {error?<InlineNotice tone="error" message={error}/>:null}
      <div className="flex justify-end gap-2">
       <Button variant="secondary" type="button" disabled={saving} onClick={dismiss}
        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm md:min-h-9">Cancel</Button>
