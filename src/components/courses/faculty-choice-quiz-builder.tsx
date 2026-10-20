@@ -205,7 +205,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   finally{mutationInFlight.current=false;setPending(false);}
  }
  return <section className="min-w-0 w-full max-w-full space-y-4 max-[767px]:[&_button]:min-h-11">
-  <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Choice-question quiz builder</h2>
+  <h2 className="text-base font-semibold text-[var(--lms-heading)]">Choice-question quiz builder</h2>
   <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Find a quiz
    <Input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
@@ -267,7 +267,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
        onChange={e=>setPreviewAnswers(e.target.checked)}/>
     {!questions.length?<EmptyState title="No questions yet." />:null}
     {questions.map((question,index)=><fieldset key={index}
-     className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+     className="min-w-0 space-y-2 border-b border-border py-3">
      <legend className="text-sm font-semibold">Question {index+1} · {question.points} point(s)</legend>
      <p className="whitespace-pre-wrap break-words text-sm text-body">{question.prompt||"Question prompt not entered"}</p>
      {question.options.map((option,i)=><label key={i}
@@ -289,7 +289,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      onChange={e=>setInvalidOnly(e.target.checked)}/>
   {matchingQuestions.length===0?<EmptyState title="No questions match these review filters" description="Clear the search or invalid-only filter to view the entire bank."/>:null}
   {matchingQuestions.map(({q,i})=><fieldset key={i} disabled={!editable}
-   className="min-w-0 max-w-full space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 sm:p-4">
+   className="min-w-0 max-w-full space-y-3 border-b border-border py-4">
    <legend className="text-sm font-semibold">Question {i+1}</legend>
    {facultyQuizQuestionIssue(q)?<p role="status" className="text-xs text-error">Review question {i+1}: {facultyQuizQuestionIssue(q)}</p>:
     <p className="text-xs text-body">Question {i+1} is ready to save.</p>}
@@ -297,7 +297,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     <Textarea value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>updateQuestion(i,old=>({...old,prompt:e.target.value}))}
      className="min-w-0 max-w-full"/></label>
-   <div className="flex flex-wrap gap-3">
+   <div className="grid min-w-0 grid-cols-2 gap-3">
     <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Type
      <Select value={q.type}
       onChange={e=>updateQuestion(i,old=>({...old,...facultyChangeQuizChoiceType(old,e.target.value as Question["type"])}))}
@@ -389,7 +389,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center [&_button]:w-full sm:[&_button]:w-auto">
    {facultyQuizMayResetDraft(dirtyDraft,pending)?<Button variant="secondary" type="button" onClick={resetDraft}
     className="text-sm">Discard unsaved edits</Button>:null}
-   {!chosen?<div className="flex flex-wrap items-center gap-3">
+   {!chosen?<div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center">
     <Checkbox label="Publish now" checked={publishNow} disabled={pending}
         onChange={event=>setPublishNow(event.target.checked)}/>
     <Button variant="primary" type="button" disabled={pending||!lessonId}
