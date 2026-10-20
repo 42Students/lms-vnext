@@ -24,7 +24,8 @@ const columns:readonly TpoGridColumn<CompanyMemoryDriveRow>[]=[
  {key:"role",label:"Role",read:row=>row.jobTitle},
  {key:"status",label:"Status",read:row=>statusLabel(row.status)},
  {key:"year",label:"Year",read:row=>year(row.createdAt),sortKind:"date",sortValue:row=>new Date(row.createdAt).getTime()},
- {key:"applied",label:"Applied",read:row=>row.applied+" · "+row.offers+" offers"},
+ {key:"applied",label:"Applied",sortKind:"number",sortValue:row=>row.applied,
+  read:row=>row.applied+" · "+row.offers+" offers"},
  {key:"created",label:"Created",read:row=>date(row.createdAt),sortKind:"date",sortValue:row=>new Date(row.createdAt).getTime()},
 ];
 /** Quartz sheet mounts in the browser; rows remain the server-scoped company's drives. */
