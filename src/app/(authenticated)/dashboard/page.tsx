@@ -60,7 +60,7 @@ function MetricCard({
       <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
         {value}
       </p>
-      <p className="mt-2 text-sm leading-6 text-body">
+      <p className="mt-2 text-sm text-body leading-[1.6]">
         {description}
       </p>
     </>
@@ -154,10 +154,10 @@ async function SuperAdminDashboard({
       {collegeId?<CollegeAtGlancePanel collegeId={collegeId} initial={glance}/>:null}
       {collegeId?<SuperAdminTodayBoard data={today}/>:null}
       <section className="border-b border-[var(--lms-canvas-border)] py-[16px]">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Safety scope
         </h2>
-        <p className="mt-2 text-sm leading-6 text-body">
+        <p className="mt-2 text-sm text-body leading-[1.6]">
           {scopeLabel}. Use the selector in the top bar before
           college-specific administration. Global system-role
           management remains available only when the scope is cleared.

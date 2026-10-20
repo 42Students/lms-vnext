@@ -43,7 +43,7 @@ export default async function LearnerApplicationHistoryPage({
         actions={<StatusBadge>{history.currentStatus.replaceAll("_", " ")}</StatusBadge>}
       />
       <section className="border-b border-border py-4 sm:py-6">
-        <h2 className="text-base font-semibold text-foreground">Status history</h2>
+        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status history</h2>
         <p className="mt-2 text-sm text-body">
           Only recorded application status changes are shown. Screening
           and round decisions remain in your application details.
