@@ -1,6 +1,14 @@
 "use client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void}){
-return <section role="alert" className="min-w-0 border-b border-border bg-transparent py-[var(--lms-space-5)]"><PageHeader title={"Unable to load discussion history"} /><p className="mt-2 text-sm text-body">The read failed; missing events cannot be assumed.</p><Button type="button" variant="secondary" onClick={reset} className="mt-4 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold">Retry</Button></section>;
+ return <section role="alert" className="min-w-0 space-y-4">
+  <PageHeader title="Unable to load discussion history" />
+  <p className="max-w-xl text-sm leading-6 text-body">The read failed; missing events cannot be assumed.</p>
+  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+   <Button onClick={reset}>Retry</Button>
+   <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to courses</Link>
+  </div>
+ </section>;
 }

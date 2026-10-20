@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
 import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {FacultyAttendanceScheduleEditor} from "@/components/attendance/faculty-attendance-schedule-editor";
@@ -72,8 +73,8 @@ export default async function FacultyCourseAttendancePage({
   );
 
   return (
-    <div className="min-w-0 max-w-full space-y-5">
-      <nav aria-label="Course attendance shortcuts" className="flex min-w-0 flex-wrap items-center gap-3">
+    <div className="min-w-0 max-w-full space-y-4">
+      <nav aria-label="Course attendance shortcuts" className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
       <Link
         href={`/teacher/courses/${deliveryId}/home`}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text md:min-h-[var(--lms-control-height)] hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -86,6 +87,12 @@ export default async function FacultyCourseAttendancePage({
         Review session coverage →
       </Link>
       </nav>
+      <FacultyAttendanceWorkspace
+        key={`${deliveryId}:${initialSessionId ?? "report"}`}
+        workspace={workspace}
+        initialSessionId={initialSessionId}
+      />
+      <Disclosure title="Advanced attendance session scheduling" className="border-t border-border" contentClassName="min-w-0 pb-4">
       <FacultyAttendanceScheduleEditor
         deliveryId={deliveryId}
         sessions={data.sessions.flatMap(session=>
@@ -98,11 +105,7 @@ export default async function FacultyCourseAttendancePage({
             updatedAt:session.updatedAt.toISOString(),
           }]:[])}
       />
-      <FacultyAttendanceWorkspace
-        key={`${deliveryId}:${initialSessionId ?? "report"}`}
-        workspace={workspace}
-        initialSessionId={initialSessionId}
-      />
+      </Disclosure>
     </div>
   );
 }
