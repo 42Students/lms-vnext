@@ -85,11 +85,15 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   }
  }
  const cls="mt-2 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-foreground";
- return <><form onSubmit={submit} className="space-y-4 border-b border-border pb-5">
+ return <><form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-5">
   <label className="block text-sm font-semibold text-body">Title<Input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
-  <label className="block text-sm font-semibold text-body">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={5} className={cls}/></label>
+  <label className="block text-sm font-semibold text-body">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={4} className={cls}/></label>
   <label className="block text-sm font-semibold text-body">Locations (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
-  <div className="grid gap-4 sm:grid-cols-3">
+  <details className="group min-w-0 border-y border-border py-3">
+   <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+    Compensation and openings <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
+   </summary>
+   <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 xl:grid-cols-3">
    <label className="block text-sm font-semibold text-body">Openings<Input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></label>
    <label className="block text-sm font-semibold text-body">Minimum annual CTC (INR)<Input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></label>
    <label className="block text-sm font-semibold text-body">Maximum annual CTC (INR)<Input type="number" min={0} max={100000000} name="maximumAnnualCtcInr" defaultValue={job.maximumAnnualCtcInr??""} className={cls}/></label>
@@ -101,6 +105,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <Input name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}
       defaultValue={job.stipendPerMonthInr??""} className={cls}/></label>
   </div>
+  </details>
   <label className="flex items-center gap-3 text-sm font-semibold text-body">
     <Checkbox name="isDream" defaultChecked={job.isDream} className="h-4 w-4 accent-primary"/>
     Dream drive — held-offer limit exception
@@ -119,18 +124,20 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <label className="block text-sm font-semibold text-body">Reason for edit (audited)<Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
   <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited; choose whether to notify existing applicants. A changed version must be refreshed before another save.</p>
   {error?<InlineNotice tone="error" message={error}/>:null}
-  <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 px-5">{pending?"Saving…":"Save changes"}</Button>
-  <Link className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline"
-   href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
+  <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+   <Button variant="primary" type="submit" disabled={pending} className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">{pending?"Saving…":"Save changes"}</Button>
+   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline sm:w-auto md:min-h-9"
+    href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
+  </div>
  </form>
  {job.status==="PUBLISHED"?
   <Dialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Save changes to a live drive?"
    description={"Choose whether to notify "+job.applicantCount+" existing applicants. Both choices audit the change."}
    dismissible={!pending}
-   footer={<div className="flex flex-wrap gap-2">
-    <Button variant="secondary" disabled={pending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-    <Button variant="secondary" disabled={pending} onClick={()=>void save(false)}>Save without telling anyone</Button>
-    <Button disabled={pending} onClick={()=>void save(true)}>Save and notify {job.applicantCount} applicants</Button>
+   footer={<div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
+    <Button variant="secondary" disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+    <Button variant="secondary" disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void save(false)}>Save without telling anyone</Button>
+    <Button disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void save(true)}>Save and notify {job.applicantCount} applicants</Button>
    </div>}>
    <p className="text-sm text-body">Changes to dates, compensation or eligibility may affect an applicant&apos;s next action.</p>
   </Dialog>:
