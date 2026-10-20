@@ -105,7 +105,7 @@ export function TpoAcademicImportWorkspace() {
       Import academic details
     </Button>
     {open && <section id={id} aria-label="Import academic details"
-      className="mt-3 max-w-4xl space-y-3">
+      className="mt-3 w-full min-w-0 max-w-4xl space-y-3 border-y border-border py-4">
       <h2 className="text-lg font-semibold">Import academic details</h2>
       <p className="text-sm text-muted-foreground">
         One row per student, matched by student membership ID. Upload a CSV with
@@ -118,7 +118,7 @@ export function TpoAcademicImportWorkspace() {
       </p>
       <a download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
-        className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+        className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">
         Download a template
       </a>
       <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Drop a CSV file here, or click to choose" accept=".csv,text/csv" maxBytes={200_000}
@@ -127,7 +127,7 @@ export function TpoAcademicImportWorkspace() {
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
         }} rows={5} maxLength={200000}
-          className="mt-1 font-mono text-xs" />
+          className="mt-1 min-h-32 w-full min-w-0 font-mono text-xs" />
       </label>
       <Button variant="secondary" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} type="button" onClick={() => void validate()}
         >
@@ -176,7 +176,7 @@ export function TpoAcademicImportWorkspace() {
           <Button disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></>}>
         <p className="text-sm">Your academic import choices are kept below if the import cannot be completed.</p>
       </Dialog>
-      {error && <p role="alert" className="text-sm text-error">{error}</p>}
+      {error && <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p>}
       {notice && <p role="status" className="text-sm text-body">{notice}</p>}
     </section>}
   </div>;
