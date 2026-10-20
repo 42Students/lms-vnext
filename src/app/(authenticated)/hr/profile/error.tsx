@@ -1,6 +1,4 @@
 "use client";
-import { Alert } from "@/components/ui/alert";
-
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
