@@ -63,10 +63,10 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
   }catch{setError("Could not save verified guardian consent. Check the contact, consent evidence and try again.");}
   finally{lock.current=false;setPending(false);}
  }
- return <section aria-label="Verified guardian absence SMS" className="space-y-2 rounded-lg border border-border bg-surface p-3">
+ return <section aria-label="Verified guardian absence SMS" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)]">
   <Button variant="secondary" type="button" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
-   >Guardian attendance SMS</Button>
-  {open?<div className="grid gap-3 text-sm sm:grid-cols-2">
+   className="w-full md:w-auto">Guardian attendance SMS</Button>
+  {open?<div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] text-sm sm:grid-cols-2">
    <p className="sm:col-span-2">Only record a separately verified parent or guardian phone with documented consent. Never use the learner&apos;s alternate contact as a parent number.</p>
    <label>Student<Select className="mt-1 block w-full"
     value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
@@ -93,11 +93,11 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
     Parent phone verified independently
    </label>
    <Button variant="primary" type="button" loading={pending} disabled={!valid||pending} onClick={()=>void save()}
-    className="min-h-11 px-3 md:min-h-9">Save verified contact</Button>
+    className="min-h-11 w-full px-3 md:min-h-9">Save verified contact</Button>
    <Button variant="secondary" type="button" disabled={pending||retrying} onClick={()=>void retry()}
-    className="min-h-11 px-3 md:min-h-9">Retry queued guardian SMS (up to 25)</Button>
+    className="min-h-11 w-full px-3 md:min-h-9">Retry queued guardian SMS (up to 25)</Button>
    <Button variant="secondary" type="button" disabled={pending||retrying||!membershipId} onClick={()=>void revoke()}
-    className="min-h-11 px-3 md:min-h-9">Disable guardian SMS for selected learner</Button>
+    className="min-h-11 w-full px-3 md:min-h-9">Disable guardian SMS for selected learner</Button>
    {success?<p role="status" className="sm:col-span-2">{success}</p>:null}
    {error?<p role="alert" className="sm:col-span-2">{error}</p>:null}
   </div>:null}
