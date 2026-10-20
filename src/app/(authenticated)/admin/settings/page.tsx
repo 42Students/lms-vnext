@@ -32,7 +32,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     await getCurrentRequestContext();
 
   if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-    return <div className="min-w-0 max-w-full space-y-6">
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings access denied"
         description="Your account cannot access privileged tenant settings."
@@ -40,7 +40,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     </div>;
   const raw=await searchParams;
   const parsed=parseAdminInventoryQuery(raw);
-  if(!parsed) return <div className="min-w-0 max-w-full space-y-6">
+  if(!parsed) return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
     <PageHeader title="Tenant Settings"/>
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
       action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
@@ -53,7 +53,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     .then(value=>({ok:true as const,value}))
     .catch(()=>({ok:false as const}));
   if(!platform.ok)
-    return <div className="min-w-0 max-w-full space-y-6">
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings unavailable"
         description="The settings inventory could not be loaded. Your filters have not changed."
@@ -80,19 +80,19 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
       <PageHeader
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
         actions={<Link href="/admin/settings/auth"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Authentication and privileged access checklist →</Link>}
+          className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Authentication and privileged access checklist →</Link>}
       />
 
-      <section aria-label="Tenant Settings overview" className="border-b border-border pb-6">
+      <section aria-label="Tenant Settings overview" className="min-w-0 border-b border-border pb-4">
         <p className="text-sm font-semibold text-body">Runtime configuration · {scopeLabel}</p>
-        <h2 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Settings with explicit execution scope</h2>
+        <h2 className="mt-1 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Settings with explicit execution scope</h2>
         <dl className="mt-3 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 md:grid-cols-3 md:divide-x md:divide-y-0">
-          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Documented controls</dt><dd className="mt-2 font-semibold tabular-nums text-[24px] leading-[1.3] text-[var(--lms-heading)]">{documentedControls} visible inventory settings</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Documented controls</dt><dd className="mt-2 break-words text-xl font-semibold tabular-nums leading-7 text-[var(--lms-heading)]">{documentedControls} visible inventory settings</dd></div>
           <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored keys</dt><dd className="mt-2 font-semibold tabular-nums text-[24px] leading-[1.3] text-[var(--lms-heading)]">{editorData?.ready?editorData.entries.length:"Unavailable"} in this scope</dd></div>
           <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Editing</dt><dd className="mt-2 break-words font-semibold text-[var(--lms-body-text)]">{editorData?.ready?scopeLabel:"Select an authorized scope"}</dd></div>
         </dl>
@@ -100,7 +100,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <section
         role="status"
         aria-label="Settings scope"
-        className="text-sm leading-6 text-body border-t border-border pt-6"
+        className="break-words text-sm leading-6 text-body border-t border-border pt-4"
       >
         <p className="font-semibold text-foreground">
           {selectedCollegeName
@@ -140,10 +140,11 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+        <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+        <Link href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
       </form>
-      {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."/> : null}
+      {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."
+        action={<Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/> : null}
       <nav
         aria-label="Settings sections"
         className="flex min-w-0 gap-[var(--lms-tab-gap)] min-[1600px]:gap-[40px] overflow-x-auto border-b border-[var(--lms-canvas-border)] pb-0"
@@ -169,7 +170,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <div>
             <h2
               id={`${section.id}-heading`}
-              className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]"
+              className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]"
             >
               {section.title}
             </h2>
