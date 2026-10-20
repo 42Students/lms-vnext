@@ -45,26 +45,26 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
   }catch{setMessage("Network error while saving name.");}
   finally{setSaving(false);}
  }
- return <div>
-  <form onSubmit={event=>void save(event)} className="grid gap-2">
-   <label htmlFor="hr-first-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span></label>
+ return <div className="min-w-0">
+  <form onSubmit={event=>void save(event)} className="grid min-w-0 gap-3 sm:grid-cols-2">
+   <label htmlFor="hr-first-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-start-1 sm:row-start-1">First name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span></label>
    <Input id="hr-first-name" value={firstName} maxLength={100} required
     onChange={event=>setFirstName(event.target.value)}
-    className="w-full"/>
-   <label htmlFor="hr-last-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last name</label>
+    className="min-w-0 w-full sm:col-start-1 sm:row-start-2"/>
+   <label htmlFor="hr-last-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-start-2 sm:row-start-1">Last name</label>
    <Input id="hr-last-name" value={lastName} maxLength={100}
     onChange={event=>setLastName(event.target.value)}
-    className="w-full"/>
+    className="min-w-0 w-full sm:col-start-2 sm:row-start-2"/>
    <Button type="submit" loading={saving} disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)||!hrRecruiterNameFieldsSchema.safeParse({firstName,lastName}).success}
-    className="min-h-11 min-[768px]:min-h-9">
+    className="min-h-11 w-full sm:col-start-1 sm:w-auto md:min-h-9">
     {saving?"Saving…":"Save name"}
    </Button>
    <Button type="button" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)}
      onClick={()=>{setFirstName(savedName.firstName);setLastName(savedName.lastName);setMessage("");}}
-     variant="secondary" className="min-h-11 min-[768px]:min-h-9">
+     variant="secondary" className="min-h-11 w-full sm:col-start-2 sm:w-auto md:min-h-9">
      Cancel unsaved changes
    </Button>
-   {message?<p role="status" className="text-xs text-body">{message}</p>:null}
+   {message?<p role={message==="Display name saved."?"status":"alert"} className="min-w-0 break-words text-sm text-body sm:col-span-2">{message}</p>:null}
   </form>
  </div>;
 }
