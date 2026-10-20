@@ -72,7 +72,7 @@ export default async function FacultyContactsPage({
     `/teacher/contacts/${contactsTab}`;
 
   return (
-    <div className="min-w-0 max-w-full space-y-5">
+    <div className="min-w-0 max-w-full space-y-4">
       <PageHeader
         title={selected.label}
       />
@@ -82,8 +82,8 @@ export default async function FacultyContactsPage({
           value:key,label:tab.label,href:`/teacher/contacts/${key}`,
         }))} />
 
-      <section className="min-w-0 border-b border-border pb-5">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      <section className="min-w-0 border-b border-border pb-4">
+        <div className="flex min-w-0 flex-col gap-3">
           <div>
             <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
             <p className="mt-1 text-sm text-body" role="status" aria-live="polite">
@@ -96,9 +96,9 @@ export default async function FacultyContactsPage({
           <form
             key={result.search + ":" + result.pageSize}
             action={baseHref}
-            className="flex w-full max-w-2xl flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch"
+            className="grid w-full min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]"
           >
-            <label className="grid min-w-0 w-full flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Search contacts
               <Input
                 className="mt-1.5"
@@ -109,7 +109,7 @@ export default async function FacultyContactsPage({
                 placeholder="Name or department"
               />
             </label>
-            <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Contacts per page
               <Select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
@@ -119,7 +119,7 @@ export default async function FacultyContactsPage({
                 <option value="50">50</option>
               </Select>
             </label>
-            <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">
+            <Button type="submit" variant="primary" className="min-h-11 w-full sm:col-span-2 lg:col-span-1 lg:w-auto lg:min-h-9">
               Search
             </Button>
           </form>
