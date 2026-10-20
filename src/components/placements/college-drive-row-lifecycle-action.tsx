@@ -36,14 +36,14 @@ export function CollegeDriveRowLifecycleAction({jobId,title,status}:{
   {!preview?<Button variant="secondary" type="button" onClick={()=>void perform(false)} disabled={busy}
     >
     {action==="CLOSE"?"Close":"Open"}</Button>:<div role="group" aria-label={"Confirm "+action.toLowerCase()+" "+title}
-    className="space-y-2 rounded border border-border bg-surface p-3">
+    className="min-w-0 max-w-64 space-y-2 border-t border-border bg-transparent pt-3">
    <p className="text-xs font-semibold">{action==="CLOSE"?"Close":"Reopen"} {title}?</p>
    {action==="CLOSE"?<p className="text-xs">{preview.pendingLettersWithdrawn} issued offers may be withdrawn. Audit and application history remain.</p>:
     <p className="text-xs">Previously withdrawn offers will not be reissued.</p>}
-   <Button type="button" disabled={busy||!preview.eligible} onClick={()=>void perform(true)}
-    >Confirm</Button>
-   <Button variant="secondary" type="button" disabled={busy} onClick={()=>setPreview(null)}
-    className="ml-2">Cancel</Button>
+   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+    <Button type="button" disabled={busy||!preview.eligible} onClick={()=>void perform(true)} className="min-h-11 w-full sm:w-auto md:min-h-9">Confirm</Button>
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setPreview(null)} className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel</Button>
+   </div>
   </div>}
   {error?<p role="alert" className="max-w-48 text-xs text-error">{error}</p>:null}
   {message?<p role="status" className="text-xs">{message}</p>:null}
