@@ -7,5 +7,5 @@ export default function RouteError({ error, reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <GracefulErrorBoundary error={error} reset={reset} homeHref="/tpo/team" />;
+  return <GracefulErrorBoundary error={error} reset={reset} homeHref="/tpo/team" insideShell />;
 }
