@@ -29,3 +29,13 @@
 - Regressions found/fixed: 0. Inspected authorized thread page, route error/loading, parent HR layout and 404; compared lane-14 proof. Read reply form, read control, live-refresh, ConfirmActionDialog, Alert, ScrollCue, StatusBadge and thread page-link model. Existing draft protection, receipt checks, message/order links, change-request disclosure, and authorization remain.
 - Extra clutter/alignment: 1 — remove duplicate empty-state description and provide a return-to-conversations next step, without changing the empty title.
 - Files changed: `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`. No CI or runtime.
+
+## 7. `src/app/(authenticated)/hr/conversations/page.tsx`
+- Regressions found/fixed: 0. Read page and route error/loading, HR parent layout, lane-14 evidence; inspected Disclosure, NeedsDoingChips, Tabs, Input, Select, Button, Badge, ErrorState, Banner, ScrollCue, live refresh, reply form, decision read action and inbox/URL models. Filters, POST read/open routes, thread metadata and authorization unchanged.
+- Extra clutter/alignment: 1 — hide empty Conversation pages navigation when only one page is present.
+- Files changed: `src/app/(authenticated)/hr/conversations/page.tsx`. Static only; no CI.
+
+## 8. `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
+- Regressions found/fixed: 0. Read page and route error/loading, HR/parent layout, lane-14 proof; inspected recruiter slot form/actions, Alert, EmptyState, PageBackLink, shared Select/Input/InlineNotice/ConfirmDialog and the API POST route. Verified expected redirect path and form field/action contracts including IST parsing and versioned slot actions. Existing disclosure opens on empty and error/retry paths remain.
+- Extra clutter/alignment: 0; time blocks, propose recovery, disabled permissions and responsive actions already have appropriate hierarchy.
+- Files changed: verified, no change. Static only; no CI.
