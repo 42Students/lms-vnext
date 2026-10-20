@@ -43,7 +43,7 @@ export default async function CollegeBatchPromotionPage({
       value !== undefined && value !== "",
     )),
   );
-  if (!parsed.success) return <div className="min-w-0 space-y-5">
+  if (!parsed.success) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
@@ -61,14 +61,14 @@ export default async function CollegeBatchPromotionPage({
     return {options,preview,facultySetup};
   })().then(value=>({ok:true as const,value}))
      .catch(()=>({ok:false as const}));
-  if(!read.ok)return <div className="min-w-0 space-y-5">
+  if(!read.ok)return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Batch promotion preview unavailable"
       description="Program, batch, promotion or faculty-readiness data could not be verified. No promotion has been applied."
       action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Retry promotion preview</Link>}/>
   </div>;
   const {options,preview,facultySetup}=read.value;
-  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<PageBackLink href="/college/batches" label="Batches" />} />
