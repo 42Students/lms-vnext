@@ -3,8 +3,8 @@ import { cx } from "@/lib/class-names";
 
 /**
  * Authenticated portal surface: exactly one continuous white old-LMS canvas.
- * AuthenticatedLayout owns its placement inside AppShell's grey page area.
- * Page screens should not nest another PageCanvas or change their own content.
+ * The shared stylesheet owns desktop 24px and phone 16px inset rules.
+ * AuthenticatedLayout positions it inside the grey AppShell background.
  */
 export type PageCanvasProps = HTMLAttributes<HTMLDivElement>;
 
@@ -17,9 +17,7 @@ export function PageCanvas({ children, className, style, ...props }: PageCanvasP
         "relative min-w-0 w-full rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)] text-foreground shadow-none",
         className,
       )}
-      // The legacy canvas stays at 24px even where older global mobile rules
-      // otherwise reset [data-slot="page-canvas"] to 16px.
-      style={{ ...style, padding: "var(--lms-canvas-padding)" }}
+      style={style}
     >
       {children}
     </div>
