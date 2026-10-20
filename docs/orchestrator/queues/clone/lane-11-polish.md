@@ -41,7 +41,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-11.md: surface | probl
 - [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx` (Learner page)
 - [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx` (Learner page)
 - [x] `src/app/(authenticated)/learn/my-placements/page.tsx` (Learner page)
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/page.tsx` (Learner page)
+- [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx` (Learner page)
 - [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx` (Learner page)
 - [ ] `src/app/(authenticated)/learn/my-placements/rules/page.tsx` (Learner page)
 - [ ] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx` (Learner page)
