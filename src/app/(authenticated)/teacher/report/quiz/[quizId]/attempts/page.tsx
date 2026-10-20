@@ -82,7 +82,7 @@ export default async function FacultyQuizAttemptPage({
       <Input type="hidden" name="deliveryId" value={data.query.deliveryId} />
       {data.query.order!=="NEWEST"?<Input type="hidden" name="order" value={data.query.order}/>:null}
       {data.query.view!=="ALL"?<Input type="hidden" name="view" value={data.query.view}/>:null}
-      <label className="grid min-w-0 flex-1 basis-56 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 w-full flex-1 basis-full gap-[6px] md:w-auto md:basis-56 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Search learner attempts
         <Input type="search" name="q" defaultValue={data.query.q} maxLength={120}
           placeholder="Learner name" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] w-full" />
