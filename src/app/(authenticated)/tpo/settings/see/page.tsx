@@ -67,7 +67,7 @@ export default async function TpoWhatCompaniesSeePage() {
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="m-0 text-base font-semibold text-foreground">
+            <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
               College sharing policy
             </h3>
             <p className="mt-1 text-sm leading-6 text-body">
@@ -88,7 +88,7 @@ export default async function TpoWhatCompaniesSeePage() {
           </StatusBadge>
         </div>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        <div className="mt-5 grid gap-3 min-[768px]:grid-cols-2">
           <div className="border-b border-border px-1 py-4">
             <p className="text-xs font-semibold text-muted-foreground">
               Sharing flags enabled
@@ -128,7 +128,7 @@ export default async function TpoWhatCompaniesSeePage() {
           </p>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 min-[768px]:grid-cols-2">
           {settings.fields.map((field) => (
             <article
               key={field.key}
