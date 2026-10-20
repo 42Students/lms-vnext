@@ -49,17 +49,17 @@ export default async function TenantDirectory({searchParams}:{
  }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
  const statuses = ["ACTIVE", "ARCHIVED", "ALL"] as const;
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-4 md:space-y-5">
   <PageHeader title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
-   actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+   actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
     <Link href="/admin/domains"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Domains</Link>
+      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Domains</Link>
     <Link href="/admin/tenants/setup"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Get this college ready to go live</Link>
+      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Get this college ready to go live</Link>
     <TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
     <Link href="/admin/tenants/create"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-primary bg-primary px-4 text-sm font-[650] text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Create an organization and its colleges
     </Link>
    </div>} />
@@ -80,9 +80,9 @@ export default async function TenantDirectory({searchParams}:{
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
    </label>
-   <Button type="submit" className="self-end min-h-11 min-[768px]:min-h-9">Filter</Button>
+   <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
   </form>
-  <p className="text-xs text-muted-foreground">{data.total} matching colleges · page {data.query.page} of {data.totalPages}</p>
+  <p className="m-0 break-words text-xs text-muted-foreground">{data.total} matching colleges · page {data.query.page} of {data.totalPages}</p>
   <DataTable<(typeof data.items)[number]>
     caption="Tenant directory"
     rows={data.items}
@@ -90,10 +90,10 @@ export default async function TenantDirectory({searchParams}:{
     columns={[
       {key:"college",header:"College",mobilePriority:"primary",cell:tenant=><>
         <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 min-w-0 items-center break-words font-semibold text-primary-text underline md:min-h-9 underline-offset-4 hover:text-primary-hover active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           {tenant.name}
         </Link>
-        <span className="mt-1 block text-xs text-muted-foreground">{tenant.code}</span>
+        <span className="mt-1 block break-all text-xs text-muted-foreground">{tenant.code}</span>
       </>},
       {key:"organization",header:"Organization",mobilePriority:"secondary",cell:tenant=>tenant.organizationName},
       {key:"status",header:"Lifecycle",mobilePriority:"secondary",cell:tenant=>
@@ -107,7 +107,8 @@ export default async function TenantDirectory({searchParams}:{
         <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Tenant details →</Link>},
     ]}
-    empty={<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."/>}
+    empty={<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."
+      action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>}
   />
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={url} label="Tenant pages" />
  </div>;

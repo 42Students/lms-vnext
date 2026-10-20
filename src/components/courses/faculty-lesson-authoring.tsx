@@ -597,8 +597,8 @@ export function FacultyLessonAuthoring({
   }
 
   return (
-    <div className="mt-4 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-4 max-md:[&_button]:min-h-11">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <div className="mt-4 min-w-0 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-3 sm:p-4 max-md:[&_button]:min-h-11">
+      <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div>
           <p className="m-0 text-sm font-semibold text-foreground">
             {audience === "OFFERING"
@@ -683,7 +683,7 @@ export function FacultyLessonAuthoring({
           onSubmit={submit}
         >
           <fieldset disabled={submitting}>
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid min-w-0 gap-3 lg:grid-cols-2">
               <label className="block">
                 <FieldLabel>
                   Title
@@ -798,7 +798,7 @@ export function FacultyLessonAuthoring({
             ) : null}
 
             {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
-              <label className="mt-4 flex min-h-10 items-center gap-2 text-sm text-body">
+              <label className="mt-4 flex min-h-11 items-center gap-3 text-sm leading-5 text-body">
                 <Checkbox  checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
                 Publish now — make this learning item visible to eligible students
               </label>:null}
