@@ -43,7 +43,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   if(!parsed) return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Tenant Settings"/>
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
-      action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Clear filters</Link>}/>
+      action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
   </div>;
   const retryParams=new URLSearchParams();
   if(parsed.q)retryParams.set("q",parsed.q);
@@ -57,7 +57,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings unavailable"
         description="The settings inventory could not be loaded. Your filters have not changed."
-        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Retry loading settings</Link>}/>
+        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry loading settings</Link>}/>
     </div>;
   const {selectedCollegeName,sections:allSections}=platform.value;
   const sections=filterPlatformInventory(allSections,parsed);
@@ -85,7 +85,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
         actions={<Link href="/admin/settings/auth"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Authentication and privileged access checklist →</Link>}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Authentication and privileged access checklist →</Link>}
       />
 
       <section aria-label="Tenant Settings overview" className="border-b border-border pb-6">
@@ -141,7 +141,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           </Select>
         </label>
         <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
       </form>
       {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."/> : null}
       <nav
@@ -152,7 +152,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] border-transparent px-3 text-sm font-semibold text-[var(--lms-neutral-400)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary)] focus-visible:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+            className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] border-transparent px-3 text-sm font-semibold text-[var(--lms-neutral-400)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary)] focus-visible:border-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           >
             {section.title}
           </a>
