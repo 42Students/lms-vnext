@@ -15,16 +15,16 @@
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
 - [x] `src/app/(authenticated)/learn/calendar/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/details/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/maintenance/page.tsx`
+- [x] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/details/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx`
+- [x] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/maintenance/page.tsx`
