@@ -57,7 +57,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  return <div className="min-w-0 space-y-4">
   <PageHeader title={result.thread.topic}
    description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}
-   actions={<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-link lms-inline-link min-[768px]:min-h-9">All conversations</Link>}/>
+   actions={<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 w-full items-center justify-center text-link lms-inline-link sm:w-auto min-[768px]:min-h-9">All conversations</Link>}/>
   <TpoLiveRefresh intervalMs={30000}/>
   <TpoTeamOpenRead threadId={result.thread.id}/>
   <Disclosure title="Conversation tools" className="min-w-0 border-b border-border" contentClassName="space-y-3 py-3">
