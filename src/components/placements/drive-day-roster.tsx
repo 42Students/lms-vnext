@@ -29,7 +29,7 @@ type Student = {
   room: string | null;
 };
 
-const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
+const inputClass = "min-h-11 md:min-h-9";
 
 export function DriveDayRoster({
   round,
@@ -160,7 +160,7 @@ export function DriveDayRoster({
   }
 
   return (
-    <div className="min-w-0 space-y-4">
+    <div className="space-y-6">
       <PageHeader
         eyebrow="Drive day"
         title={
@@ -177,14 +177,14 @@ export function DriveDayRoster({
         actions={
           <Link
             href="/tpo/drive-day"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground sm:w-auto transition hover:bg-muted md:min-h-9"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:bg-muted md:min-h-9"
           >
             Back
           </Link>
         }
       />
 
-      <section className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-4">
+      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 xl:grid-cols-4">
         {[
           ["On roster", counts.total],
           ["Checked in", counts.present],
@@ -195,20 +195,20 @@ export function DriveDayRoster({
             key={String(label)}
             className={"min-w-0 p-3 sm:p-4 " + (index < 2 ? "border-b border-border xl:border-b-0 " : "") +
               (index % 2 === 0 ? "border-r border-border " : "") +
-              (index < 3 ? "xl:border-r xl:border-border " : "xl:border-r-0 ")}
+              (index === 1 || index === 2 ? "xl:border-r " : "xl:border-r-0 ")}
           >
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
               {label}
             </p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
+            <p className="mt-1 text-2xl font-semibold text-foreground">
               {value}
             </p>
           </div>
         ))}
       </section>
 
-      <section aria-label="Drive-day roster and attendance" className="min-w-0">
-        <div className="border-b border-border pb-3">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
+        <div className="border-b border-border p-4">
           <Input
             className={inputClass}
             value={query}
@@ -221,20 +221,20 @@ export function DriveDayRoster({
         </div>
 
         {rows.length === 0 ? (
-          <div role="status" className="flex min-w-0 flex-col items-start gap-3 border-b border-border py-4">
+          <div className="flex min-w-0 flex-col items-start gap-3 p-4 sm:p-6">
             <p className="m-0 text-sm text-muted-foreground">No student matches your search.</p>
-            {query.trim() ? <Button type="button" variant="secondary" className="min-h-11 w-full px-4 sm:w-auto md:min-h-9" onClick={() => setQuery("")>Clear search</Button> : null}
+            {query.trim() ? <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => setQuery("")}>Clear search</Button> : null}
           </div>
         ) : (
-          <div className="divide-y divide-border border-b border-border">
+          <div className="divide-y divide-border">
             {rows.map((student) => (
               <article
                 key={student.applicationId}
-                className="grid min-w-0 gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+                className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center"
               >
-                <div className="min-w-0">
-                  <div className="flex min-w-0 flex-wrap items-center gap-2">
-                    <p className="m-0 min-w-0 break-words text-base font-semibold leading-6 text-foreground">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="m-0 font-semibold text-foreground">
                       {student.displayName}
                     </p>
                     <StatusBadge
@@ -251,17 +251,17 @@ export function DriveDayRoster({
                       {student.attendance}
                     </StatusBadge>
                   </div>
-                  <p className="mt-1 break-words text-sm leading-5 text-body">
+                  <p className="mt-1 text-sm text-body">
                     {student.rollNumber ??
                       "No roll number"}{" "}
                     · {student.roleTitle}
                   </p>
                 </div>
 
-                <div className="grid min-w-0 grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                <div className="grid min-w-0 grid-cols-2 gap-2 md:flex md:flex-wrap">
                   <Button
                     size="sm"
-                    className="min-h-11 w-full min-w-0 px-3 sm:w-auto md:min-h-9"
+                    className="w-full min-w-0 md:w-auto"
                     disabled={
                       pendingId !== null ||
                       student.attendance ===
@@ -278,7 +278,7 @@ export function DriveDayRoster({
                   </Button>
                   <Button
                     size="sm"
-                    className="min-h-11 w-full min-w-0 px-3 sm:w-auto md:min-h-9"
+                    className="w-full min-w-0 md:w-auto"
                     variant="danger"
                     disabled={
                       pendingId !== null ||
@@ -292,7 +292,6 @@ export function DriveDayRoster({
                     Absent
                   </Button>
                 </div>
-                {pendingId === student.applicationId ? <p role="status" className="text-xs text-[var(--lms-muted-text)] sm:col-span-2">Saving attendance…</p> : null}
               </article>
             ))}
           </div>
