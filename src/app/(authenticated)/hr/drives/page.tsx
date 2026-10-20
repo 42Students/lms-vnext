@@ -155,8 +155,8 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <Input type="hidden" name="collegeId" value={selectedCollege} />
       <Input type="hidden" name="view" value={query.data.view} />
       <Input type="hidden" name="page" value="1" />
-      <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-[180px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search role
-        <Input type="search" name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="min-h-11 w-full md:min-h-9" /></label>
+      <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-[180px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role
+        <Input type="search" name="q" defaultValue={query.data.q} maxLength={100} placeholder="Search by role" className="min-h-11 w-full md:min-h-9" /></label>
       <label className="grid min-w-0 w-full md:w-auto md:min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
         <Select name="employment" defaultValue={query.data.employment} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
@@ -212,7 +212,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     </section>:null}
     {query.data.view==="WAITING" && requestView.length===0
       ? <div className="space-y-2">
-          <EmptyState title="No Sent for review drives" description="Choose another drive stage to see more."/>
+          <EmptyState title="No drives sent for review" description="Choose another drive stage to see more."/>
           <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">View all drives</Link>
         </div>
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0

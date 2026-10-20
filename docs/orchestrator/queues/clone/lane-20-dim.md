@@ -83,16 +83,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-20.md: file, number of 
 - [x] `src/app/(authenticated)/dashboard/page.tsx`
 - [x] `src/app/(authenticated)/hr/activity/page.tsx`
 - [x] `src/app/(authenticated)/hr/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/new/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/hr/home/page.tsx`
-- [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/reports/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/new/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/hr/home/page.tsx`
+- [x] `src/app/(authenticated)/hr/notifications/page.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/hr/round-results/page.tsx`
 - [ ] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`

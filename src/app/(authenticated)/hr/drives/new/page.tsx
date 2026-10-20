@@ -100,7 +100,7 @@ export default async function RecruiterRequestDrivePage({
     <PageHeader title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
     <nav className="flex flex-wrap items-center gap-3" aria-label="Recruiter drive links">
-      <PageBackLink href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)} label="Back to drives"/>
+      <PageBackLink href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)} label="Back to Drives"/>
     <Link href={hrSentProposalsHref(collegeId)}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       View previously sent discussion proposals
