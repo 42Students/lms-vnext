@@ -41,8 +41,8 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
   }catch(error){setError(error instanceof Error?error.message:"Class move failed.");}
   finally{pendingRef.current=false;setMoving(null);}
  }
- return <section className="space-y-4 border-b border-border pb-5" aria-label="Batch student roster">
-  <div className="grid gap-3 md:grid-cols-2 print:hidden">
+ return <section className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-5)]" aria-label="Batch student roster">
+  <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2 print:hidden">
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search name, roll no. or email
     <Input type="search" maxLength={120} value={search} onChange={e=>setSearch(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/>
@@ -68,10 +68,10 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
     {key:"class",header:"Current class",mobileLabel:"Current class",mobilePriority:"secondary",
      cell:row=>row.classId?labels.get(row.classId)??"Unknown":"Not assigned"},
     {key:"move",header:"Move to",mobileLabel:"Move to",mobilePriority:"action",cell:row=>
-     <div className="flex min-w-0 flex-wrap items-center gap-2 print:hidden">
+     <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-2)] print:hidden min-[768px]:grid-cols-[minmax(0,1fr)_auto]">
       <Select aria-label={"Destination class for "+(row.name??"student")} value={destinations[row.learnerEnrollmentId]??""}
        onChange={event=>setDestinations(current=>({...current,[row.learnerEnrollmentId]:event.target.value}))}
-       disabled={Boolean(moving)} className="min-h-11 min-w-0 flex-1 md:min-h-9">
+       disabled={Boolean(moving)} className="min-h-11 w-full min-w-0 md:min-h-9">
        <option value="">Select class</option>
        {options.filter(choice=>!row.classId||choice.academicPeriodId===classes.find(item=>item.id===row.classId)?.academicPeriodId)
         .map(choice=><option key={choice.id} value={choice.id}
