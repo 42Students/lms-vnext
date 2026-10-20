@@ -11,9 +11,9 @@ export type TableProps = ComponentPropsWithRef<"table"> & {
 
 /** Hairline row table for simple static collections; use DataTable for mobile row details. */
 export function Table({ className, children, striped = false, scrollLabel, containerClassName, ...props }: TableProps) {
-  return <div data-slot="table" className={cx("min-w-0 overflow-hidden rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface", containerClassName)}>
+  return <div data-slot="table" className={cx("min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface", containerClassName)}>
     <ScrollCue axis="x" label={scrollLabel ?? (typeof props["aria-label"] === "string" ? props["aria-label"] : "Scrollable table columns")} className="min-w-0">
-      <table {...props} className={cx(striped && "[&_tbody_tr:nth-child(odd)]:bg-[#f8fbff]", "min-w-full border-collapse text-left text-[13px] leading-5 tabular-nums text-[var(--lms-body-text)] [&_thead]:bg-[var(--lms-white)] [&_th]:border-b [&_th]:border-[var(--lms-canvas-border)] [&_th]:px-[var(--lms-space-4)] [&_th]:py-[11px] [&_th]:text-[12px] [&_th]:leading-[18px] [&_th]:font-semibold [&_th]:text-[var(--lms-neutral-400)] [&_td]:border-b [&_td]:border-[var(--lms-canvas-border)] [&_td]:px-[var(--lms-space-4)] [&_td]:py-[12px] [&_td]:align-middle [&_tbody_tr:last-child_td]:border-b-0 [&_tbody_tr:hover_td]:bg-[var(--lms-white)] [&_tbody_tr:focus-within]:bg-[var(--lms-primary-subtle)]", className)}>{children}</table>
+      <table {...props} className={cx(striped && "[&_tbody_tr:nth-child(odd)]:bg-[#f8fbff]", "min-w-full border-collapse text-left text-[13px] leading-5 tabular-nums text-[var(--lms-body-text)] [&_thead]:bg-[var(--lms-neutral-50)] [&_th]:border-b [&_th]:border-[var(--lms-canvas-border)] [&_th]:px-[var(--lms-space-4)] [&_th]:py-[11px] [&_th]:text-[12px] [&_th]:leading-[18px] [&_th]:font-semibold [&_th]:text-[var(--lms-neutral-400)] [&_td]:border-b [&_td]:border-[var(--lms-canvas-border)] [&_td]:px-[var(--lms-space-4)] [&_td]:py-[12px] [&_td]:align-middle [&_tbody_tr:last-child_td]:border-b-0 [&_tbody_tr:hover_td]:bg-[rgba(38,186,199,0.045)] [&_tbody_tr:focus-within]:bg-[rgba(38,186,199,0.045)]", className)}>{children}</table>
     </ScrollCue>
   </div>;
 }
