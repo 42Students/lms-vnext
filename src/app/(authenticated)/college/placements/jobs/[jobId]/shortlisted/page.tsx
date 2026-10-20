@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { ErrorState } from "@/components/ui/error-state";
 import { listCollegeDriveApplications } from "@/modules/placements/college-drive-applications-service";
@@ -40,13 +41,13 @@ export default async function CollegeDriveShortlistedPage({
     <PageHeader title="Shortlisted"
       description={data.drive.title}
       actions={<Link href={driveApplicationsHref(jobId,{...query,screening:"ALL"})}
-        className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Applications</Link>} />
-    <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border p-4">
+        className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Applications</Link>} />
+    <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Student
         <Input type="search" name="q" maxLength={100} defaultValue={query.q}
           />
       </label>
-      <Button type="submit" >Filter</Button>
+      <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
     </form>
     <p role="status" className="text-sm">{data.total} shortlisted</p>
     {query.q&&data.total===0?<Link href={collegeShortlistedHref(jobId,{q:"",page:1})}
@@ -57,11 +58,11 @@ export default async function CollegeDriveShortlistedPage({
     }>Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     <DataTable caption="Shortlisted students" rows={data.items} columns={columns}
       getRowKey={item=>item.id}
-      empty={<p role="status" className="text-sm text-body">No shortlisted students</p>} />
+      empty={<EmptyState title="No shortlisted students" description="No shortlisted students match these filters."/>} />
     <nav aria-label="Shortlisted pages" className="flex flex-wrap items-center gap-4 text-sm">
       <span>Page {query.page} of {data.totalPages}</span>
-      {query.page>1 ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page-1})}>Previous</Link>:null}
-      {query.page<data.totalPages ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page+1})}>Next</Link>:null}
+      {query.page>1 ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous</Link>:null}
+      {query.page<data.totalPages ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next</Link>:null}
     </nav>
   </div>;
 }
