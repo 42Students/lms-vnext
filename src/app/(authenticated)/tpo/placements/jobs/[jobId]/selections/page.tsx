@@ -21,16 +21,16 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Selections"}
    description="Record the company's selections, verify placement rules, and release the offers."/>
-  <div className="flex flex-wrap gap-4 text-sm font-semibold">
+  <nav aria-label="Selection related pages" className="flex min-w-0 flex-wrap items-center gap-3 text-[13px] font-semibold leading-5">
    <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
    <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/offers"}>Open offer register</Link>
-  </div>
+  </nav>
   {!data.storageReady?<Alert tone="warning">
     <strong>Selections are not available yet.</strong> {data.pendingMessage}
     No selections can be recorded or released until the migration is registered.
   </Alert>:data.job.status!=="PUBLISHED"?<Alert tone="warning">
     Selections can be recorded and released only on a published drive.
-  </Alert>:<div className="space-y-6"><TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>
+  </Alert>:<div className="min-w-0 space-y-6"><TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>
     <TpoSelectionImport jobId={jobId} candidates={data.candidates}/></div>}
  </div>;
 }
