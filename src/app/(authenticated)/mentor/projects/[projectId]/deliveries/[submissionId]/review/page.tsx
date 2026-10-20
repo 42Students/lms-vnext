@@ -35,6 +35,9 @@ export default async function MentorDeliveryVersionPage({params}:{
           <dd className="mt-1 text-sm">{data.submittedByName??"Not submitted"}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Submitted</dt>
           <dd className="mt-1 text-sm">{v.submittedAt?format(v.submittedAt):"Not submitted"}</dd></div>
+      </dl>
+      <Disclosure title="Additional review details" className="min-w-0 border-t border-border py-2" contentClassName="pt-3">
+        <dl className="grid min-w-0 gap-3 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Draft created</dt>
           <dd className="mt-1 text-sm">{v.createdAt?format(v.createdAt):"Not recorded"}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Locked</dt>
@@ -45,7 +48,8 @@ export default async function MentorDeliveryVersionPage({params}:{
           <dd className="mt-1 text-sm">{data.reviewedByName??"Not reviewed"}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Reviewed</dt>
           <dd className="mt-1 text-sm">{v.reviewedAt?format(v.reviewedAt):"No review date recorded"}</dd></div>
-      </dl>
+        </dl>
+      </Disclosure>
       <h3 className="mt-6 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Learner submission summary</h3>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{v.summary||"No summary recorded"}</p>
       <h3 className="mt-6 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Recorded reviewer feedback</h3>

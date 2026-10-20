@@ -43,7 +43,7 @@ export function MentorMeetingNotesEditor(props:{
     }finally{setPending(false);}
   }
   return <div className={styles.legacy+" "+styles.contents}>
-    <Button variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
+    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
       setNotes(props.initialNotes??"");setError(null);setOpen(true);
     }}>{props.initialNotes?"Edit outcome notes":"Record outcome notes"}</Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Meeting outcome notes"
@@ -52,18 +52,18 @@ export function MentorMeetingNotesEditor(props:{
         className="grid gap-3">
         <label className="grid gap-1 text-sm font-semibold text-body">Notes
           <Textarea value={notes} rows={7} maxLength={4000} required
-            onChange={event=>setNotes(event.target.value)}
+            onChange={event=>{setNotes(event.target.value);setError(null);}}
             className="min-h-32 w-full min-w-0 max-w-full"/>
         </label>
         <p className="text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-        <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={guard.requestClose}>Cancel</Button>
-          <Button type="submit" className="min-h-11 md:min-h-9" disabled={!valid||pending}>Review notes</Button>
+        <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={guard.requestClose}>Cancel</Button>
+          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!valid||pending}>Review notes</Button>
         </div>
       </form>
     </Dialog>
-    <ConfirmDialog open={confirm} onOpenChange={next=>{setConfirm(next);if(!next&&!pending)setOpen(true);}}
+    <ConfirmDialog open={confirm} onOpenChange={next=>{if(pending)return;setConfirm(next);if(!next)setOpen(true);}}
       title="Save meeting outcome notes?" confirmLabel="Save notes"
       description="The current outcome will be replaced for this meeting. The change is audited without exposing note contents in activity history."
       pending={pending} onConfirm={submit}>
