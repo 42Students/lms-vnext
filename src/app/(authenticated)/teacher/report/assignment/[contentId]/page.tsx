@@ -47,7 +47,7 @@ export default async function FacultyAssignmentReportPage({
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title={assignment.title} description={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
         actions={<div className="flex flex-wrap items-center gap-3">
-          <Link href="/teacher/allAssignments" className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <Link href="/teacher/allAssignments" className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         ← My Assignments
       </Link>
           <FacultyReportCsvDownload
@@ -105,8 +105,8 @@ export default async function FacultyAssignmentReportPage({
           </div>
         ))}
       </div>
-      <section className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      <section aria-labelledby="section-score-distribution" className="border-b border-[var(--lms-canvas-border)] py-4">
+        <h2 id="section-score-distribution" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Score distribution
         </h2>
         {metrics.graded===0?<p role="status" className="mt-3 text-sm text-muted-foreground leading-[22px]">
@@ -144,8 +144,8 @@ export default async function FacultyAssignmentReportPage({
         </div>
       </section>
 
-      <section className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      <section aria-labelledby="section-submission-timing" className="border-b border-[var(--lms-canvas-border)] py-4">
+        <h2 id="section-submission-timing" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Submission timing
         </h2>
         <div className={"mt-4 "+styles.timing}>
@@ -184,8 +184,8 @@ export default async function FacultyAssignmentReportPage({
         };
       })} />
 
-      <section className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      <section aria-labelledby="section-not-submitted" className="border-b border-[var(--lms-canvas-border)] py-4">
+        <h2 id="section-not-submitted" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Not submitted
         </h2>
         {missingLearners.length === 0 ? (
@@ -208,9 +208,9 @@ export default async function FacultyAssignmentReportPage({
         )}
       </section>
 
-      <section id="submissions" className="scroll-mt-16 border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">View submissions</h2>
-        <p className="mt-1 text-sm text-body leading-[22px]">See who submitted and grade their work.</p>
+      <section aria-labelledby="section-view-submissions" id="submissions" className="scroll-mt-16 border-b border-[var(--lms-canvas-border)] py-4">
+        <h2 id="section-view-submissions" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">View submissions</h2>
+        <p className="mt-1 text-sm text-body">See who submitted and grade their work.</p>
         <FacultyAssignmentReview
         filesEnabled={assignmentFilesRuntimeEnabled()}
           assignmentId={assignment.id}

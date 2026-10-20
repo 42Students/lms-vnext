@@ -227,12 +227,12 @@ export default async function TpoAuditPage({
        </Link>)}
       </nav>
       <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,count:item.count??undefined,href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
-      <section className="min-w-0 border-b border-border pb-5">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      <section aria-labelledby="section-audit-filters" className="min-w-0 border-b border-border pb-5">
+        <h2 id="section-audit-filters" className="m-0 text-base font-semibold text-foreground">
           Audit filters
         </h2>
 
-        <form
+        <form role="search" aria-label="tpo audit filters"
           method="get"
           action="/tpo/audit"
           className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5"
