@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -56,7 +57,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       actions={<Link href="/college/placements" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link">Operations workspace</Link>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title or company
-        <Input name="q" defaultValue={query.q} maxLength={100}
+        <Input type="search" name="q" defaultValue={query.q} maxLength={100}
           />
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
@@ -78,11 +79,11 @@ export default async function CollegeDrivesPage({ searchParams }: {
         </Select>
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline from
-        <Input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
+        <DateInput mode="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
           />
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline on or before
-        <Input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
+        <DateInput mode="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
           />
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">At least N applicants
