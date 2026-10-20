@@ -11,6 +11,7 @@ import { getCollegeHallAvailability, CollegeHallAvailabilityNotFoundError }
   from "@/modules/academics/college-hall-availability-service";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {StatusBadge} from "@/components/ui/status-badge";
 
 type Query = Record<string, string | string[] | undefined>;
 
@@ -60,7 +61,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
       : !result ? <p className="border-b border-border pb-5 text-sm text-body">
         Select an IST date range to inspect persisted sessions and configured capacity.
       </p> : <>
-        <section className="grid gap-3 - sm:grid-cols-3 border-t border-border pt-5">
+        <section className="grid gap-3 border-t border-border pt-5 md:grid-cols-3">
           <p className="text-sm text-body"><span className="font-semibold">Capacity:</span> {result.hall.capacity} seats</p>
           <p className="text-sm text-body"><span className="font-semibold">Status:</span> {result.hall.status}</p>
           <p className="text-sm text-body"><span className="font-semibold">Scheduled:</span> {result.sessions.length}{result.truncated ? "+" : ""} sessions</p>
@@ -73,12 +74,12 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
           {result.truncated ? <p role="status" className="text-sm text-warning">More than 500 sessions match. This is a truncated read; conflict counts may be incomplete. Select a shorter range.</p> : null}
           {result.sessions.length === 0 ? <p className="border-b border-border pb-5 text-sm text-body">
             No persisted scheduled sessions overlap this date range. This is not confirmation that the hall is free for booking.
-          </p> : <ul className="space-y-3">{result.sessions.map(item =>
-            <li key={item.id} className="rounded-[8px] border border-border bg-surface p-4">
+          </p> : <ul className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{result.sessions.map(item =>
+            <li key={item.id} className="min-w-0 py-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <h3 className="font-semibold text-foreground">{item.title}</h3>
-                {item.hasConflict ? <strong className="text-sm text-error">Potential conflict</strong> :
-                  <span className="text-sm text-muted-foreground">Scheduled</span>}
+                {item.hasConflict ? <StatusBadge tone="warning">Potential conflict</StatusBadge> :
+                  <StatusBadge tone="neutral">Scheduled</StatusBadge>}
               </div>
               <p className="mt-2 text-sm text-body">{when(item.startsAt)} – {when(item.endsAt)} · {item.sectionName}</p>
               <p className="mt-1 text-xs text-muted-foreground">Class configured capacity: {item.sectionCapacity ?? "Unknown"}; hall capacity: {result.hall.capacity}</p>

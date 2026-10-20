@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
+import {Alert} from "@/components/ui/alert";
 import {useSearchParams} from "next/navigation";
 import {PORTAL_PERMISSION_DENIED} from "@/modules/identity/unauthorized-portal-home";
 /** PUB-auth-public-29: screen-reader accessible global 403 notice.
@@ -20,7 +21,7 @@ export function PortalAccessNotice(){
     if(timer.current)clearTimeout(timer.current);};
  },[]);
  return apiDenied||search.get("access")==="denied"?
-  <p role="alert" aria-live="assertive" className="mx-4 my-2 rounded-[9px] border border-border bg-surface px-4 py-3 text-sm text-foreground">
+  <Alert tone="error" aria-live="assertive" className="mx-4 my-2">
    {PORTAL_PERMISSION_DENIED}
-  </p>:null;
+  </Alert>:null;
 }

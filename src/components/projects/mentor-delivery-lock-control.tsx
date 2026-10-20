@@ -26,13 +26,13 @@ export function MentorDeliveryLockControl({projectId,submissionId,status,lockedA
   finally{setBusy(false);}
  }
  return <section className="mt-3 space-y-2 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
-  <Button variant="secondary" type="button" onClick={()=>setOpen(v=>!v)}
+  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
    >Lock submission</Button>
   {open?<div className="space-y-2">
     <label className="block text-sm font-semibold">Why are you locking this delivery?
      <Textarea required maxLength={4000} value={reason} onChange={e=>setReason(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-    <Button type="button" disabled={busy||!reason.trim()} onClick={()=>void lock()}
+      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[var(--lms-font-base)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
+    <Button type="button" className="min-h-11 md:min-h-9" disabled={busy||!reason.trim()} onClick={()=>void lock()}
      >
       {busy?"Locking…":"Confirm lock"}</Button>
    </div>:null}
