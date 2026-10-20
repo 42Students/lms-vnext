@@ -2157,3 +2157,238 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 ```
 
 **Responsive proof, limited to source:** all explicit `min-h-11` are 44px min on mobile through 767px, `md:min-h-9` corresponds to 36px min at 768px+, with the old-LMS SCSS numeric references above. Flex-wrap and table overflow are preserved in existing layouts. Actual phone, tablet, paper margins/page breaks, active/focus/disabled/hover pixel matching and component computed CSS remain to be tested by orchestrator. **Do not tick G4 or G5 category**. No app, TypeScript, lint, tests, CI or printer run.
+
+## chat-6 follow-on — fifteen G4/G5 import, review, export and confidential-print screens
+
+**Work completed on branch `chatgpt/chat-6-b`:**
+- [x] **Scoped source pass** `src/components/admin/super-admin-student-import-history.tsx` — Student bulk history modal: scrolling DataTable, keyboard focus, paper overflow; keeps read-only empty and import row status.
+- [x] **Scoped source pass** `src/components/admin/super-admin-faculty-bulk-import.tsx` — Faculty CSV: sample download/file upload 44px→36px, error and row count preserved, expanded printable per-faculty outcomes.
+- [x] **Scoped source pass** `src/components/admin/college-bulk-import.tsx` — College CSV: 44px→36px actions, protected editable CSV/organization controls and draft actions omitted from paper, DataTable remains.
+- [x] **Scoped source pass** `src/components/tpo/recruiter-bulk-invite-controls.tsx` — Recruiter invitation: never print one-time private tokens; review, retry, failure, copy and textarea all screen-only and shared-sized.
+- [x] **Scoped source pass** `src/components/tpo/recruiter-bulk-owner-controls.tsx` — Recruiter bulk owner: hide selection/review/undo controls on paper, retain updated/unchanged/ineligible audit summary.
+- [x] **Scoped source pass** `src/components/tpo/recruiter-bulk-stage-controls.tsx` — Recruiter bulk stages: selection/preset/date controls screen-only, printing keeps per-lead results, teal focus corrected.
+- [x] **Scoped source pass** `src/components/tpo/recruiter-lead-csv-import.tsx` — Recruiter CSV wizard: 2px teal/3px links, printable unclipped result DataTable; CSV button/selection still print-hidden.
+- [x] **Scoped source pass** `src/components/tpo/tpo-academic-import-preview.tsx` — Academic CSV current-page validation: 14px monospace text and radius token, 44px→36px validate action, paper view has full preview table.
+- [x] **Scoped source pass** `src/components/tpo/tpo-academic-import-workspace.tsx` — Academic CSV import: template/back links legacy keyboard focus, guarded confirmation Buttons 44px→36px, readable text preview.
+- [x] **Scoped source pass** `src/components/tpo/tpo-batch-eligibility-import.tsx` — Eligibility wizard: template focus, paginator and acknowledgement omitted on print, paging/clipboard buttons 44px→36px.
+- [x] **Scoped source pass** `src/components/tpo/tpo-after-college-bulk-editor.tsx` — After-college bulk: 44px→36px confirmation footer, screen-only selection/undo actions, status feedback survives print.
+- [x] **Scoped source pass** `src/components/tpo/tpo-batch-student-bulk-notes.tsx` — Batch-private note editor: entire selected student note panel excluded from paper output; ensures confidential selections are not printed.
+- [x] **Scoped source pass** `src/components/tpo/tpo-bulk-action-preview.tsx` — Bulk preview: action CTA excluded from paper and data list allowed to expand beyond max-height, grouped skip rationale preserved.
+- [x] **Scoped source pass** `src/components/tpo/tpo-roster-verification-bulk.tsx` — Profile verification batch: selection and reason editors omitted on paper, teal 2px/3px checkbox focus, review outcomes remain.
+- [x] **Scoped source pass** `src/components/tpo/tpo-bulk-action-panel.tsx` — Bulk action panel: placement selection/presets/controls not printed, teal 2px/3px on review link, existing action counts preserved.
+
+- [ ] **Next exact file:** `src/components/tpo/tpo-students-bulk-add.tsx`; then `src/components/tpo/tpo-students-bulk-debar.tsx`.
+- [ ] **G4/G5 strict checklist remains open**. These 15 source passes are completed, but pixel-perfect legacy parity requires original per-screen old LMS records, provider-hosted mail and certificate/offer PDF templates, global grep and actual phone/tablet/browser print screenshots. Do not count a source checkbox as a category completion.
+
+**Numeric source reference**: `docs/design/legacy-styles/pages___admin-list-pages.scss:193-214` sets the mobile media maximum at 767px with `$admin-list-touch-min` controls; `docs/design/ui-clone-checklist.md:46-47` records **44px touch**, **36px desktop**, **9px radius**, **14px/650** Button typography. `docs/design/legacy-styles/components___accessibility.scss:18-22` specifies **2px teal focus outline / 3px offset / 4px focus radius**; `docs/design/legacy-styles/components___form.scss:110-125` specifies **13px/600/16px label** and **14px/20px body input**. VNext shared controls own the remaining background, hover, disabled, loading and pressed variants; their *actual computed pixels were not measured in this source-only pass*.
+
+### Per-file legacy comparison and responsive/state proof
+
+#### `src/components/admin/super-admin-student-import-history.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/admin/super-admin-student-import-history.tsx:14`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/admin/super-admin-student-import-history.tsx:14`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/admin/super-admin-student-import-history.tsx:20`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/admin/super-admin-student-import-history.tsx:none` role alert; `:24` status; `:21` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/admin/super-admin-student-import-history.tsx:14`: 1 paper-hidden lines; `:20` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Student bulk history modal: scrolling DataTable, keyboard focus, paper overflow; keeps read-only empty and import row status | Source read back, no test, browser or CI |
+
+#### `src/components/admin/super-admin-faculty-bulk-import.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/admin/super-admin-faculty-bulk-import.tsx:92, 94, 100`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/admin/super-admin-faculty-bulk-import.tsx:92, 100`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/admin/super-admin-faculty-bulk-import.tsx:none`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/admin/super-admin-faculty-bulk-import.tsx:none` role alert; `:98, 104` status; `:106` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/admin/super-admin-faculty-bulk-import.tsx:91, 92, 94, 97, 100`: 5 paper-hidden lines; `:105` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Faculty CSV: sample download/file upload 44px→36px, error and row count preserved, expanded printable per-faculty outcomes | Source read back, no test, browser or CI |
+
+#### `src/components/admin/college-bulk-import.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/admin/college-bulk-import.tsx:49, 54, 61, 68, 71`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/admin/college-bulk-import.tsx:49, 54, 68, 71`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/admin/college-bulk-import.tsx:none`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/admin/college-bulk-import.tsx:none` role alert; `:none` status; `:75` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/admin/college-bulk-import.tsx:49, 53, 58, 64, 67, 71`: 6 paper-hidden lines; `:none` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | College CSV: 44px→36px actions, protected editable CSV/organization controls and draft actions omitted from paper, DataTable remains | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/recruiter-bulk-invite-controls.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/recruiter-bulk-invite-controls.tsx:57, 74, 76, 84, 86, 89, 92`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/recruiter-bulk-invite-controls.tsx:57, 76, 86, 89, 92`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/recruiter-bulk-invite-controls.tsx:74`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/recruiter-bulk-invite-controls.tsx:80` role alert; `:72, 79, 91, 95` status; `:none` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/recruiter-bulk-invite-controls.tsx:56`: 1 paper-hidden lines; `:none` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Recruiter invitation: never print one-time private tokens; review, retry, failure, copy and textarea all screen-only and shared-sized | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/recruiter-bulk-owner-controls.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/recruiter-bulk-owner-controls.tsx:25, 214, 232, 236`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/recruiter-bulk-owner-controls.tsx:25, 236`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/recruiter-bulk-owner-controls.tsx:232`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/recruiter-bulk-owner-controls.tsx:248` role alert; `:178, 186, 208, 229, 255, 267` status; `:none` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/recruiter-bulk-owner-controls.tsx:173, 256`: 2 paper-hidden lines; `:273` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Recruiter bulk owner: hide selection/review/undo controls on paper, retain updated/unchanged/ineligible audit summary | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/recruiter-bulk-stage-controls.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/recruiter-bulk-stage-controls.tsx:26, 177, 233, 245`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/recruiter-bulk-stage-controls.tsx:26, 177, 233`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/recruiter-bulk-stage-controls.tsx:245`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/recruiter-bulk-stage-controls.tsx:253` role alert; `:170, 242, 260, 271` status; `:none` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/recruiter-bulk-stage-controls.tsx:169, 261`: 2 paper-hidden lines; `:282` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Recruiter bulk stages: selection/preset/date controls screen-only, printing keeps per-lead results, teal focus corrected | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/recruiter-lead-csv-import.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/recruiter-lead-csv-import.tsx:159, 174, 182, 186, 199, 204, 225, 227, 241 (+3 more)`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/recruiter-lead-csv-import.tsx:159, 174, 182, 199, 204, 241, 251, 262`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/recruiter-lead-csv-import.tsx:182, 225, 282`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/recruiter-lead-csv-import.tsx:189` role alert; `:192, 197, 233, 268` status; `:217, 275` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/recruiter-lead-csv-import.tsx:159, 174, 182, 186, 198, 209, 241, 251, 262`: 9 paper-hidden lines; `:216, 274` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Recruiter CSV wizard: 2px teal/3px links, printable unclipped result DataTable; CSV button/selection still print-hidden | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/tpo-academic-import-preview.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/tpo-academic-import-preview.tsx:25`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/tpo-academic-import-preview.tsx:25`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/tpo-academic-import-preview.tsx:none`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/tpo-academic-import-preview.tsx:26` role alert; `:27` status; `:28` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/tpo-academic-import-preview.tsx:22, 24, 25`: 3 paper-hidden lines; `:28` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Academic CSV current-page validation: 14px monospace text and radius token, 44px→36px validate action, paper view has full preview table | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/tpo-academic-import-workspace.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/tpo-academic-import-workspace.tsx:102, 121, 124, 132, 158, 166, 175, 176`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/tpo-academic-import-workspace.tsx:102, 121, 132, 166, 175, 176`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/tpo-academic-import-workspace.tsx:121`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/tpo-academic-import-workspace.tsx:179` role alert; `:137, 180` status; `:142` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/tpo-academic-import-workspace.tsx:102, 116, 121, 124, 126, 132, 158, 166`: 8 paper-hidden lines; `:none` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Academic CSV import: template/back links legacy keyboard focus, guarded confirmation Buttons 44px→36px, readable text preview | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/tpo-batch-eligibility-import.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/tpo-batch-eligibility-import.tsx:94, 102, 108, 112, 118, 142, 145, 151, 153 (+5 more)`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/tpo-batch-eligibility-import.tsx:94, 102, 112, 118, 142, 151, 153, 156, 157 (+2 more)`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/tpo-batch-eligibility-import.tsx:112`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/tpo-batch-eligibility-import.tsx:121, 170` role alert; `:120, 171` status; `:127` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/tpo-batch-eligibility-import.tsx:94, 102, 108, 112, 114, 118, 122, 142, 150 (+4 more)`: 13 paper-hidden lines; `:none` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Eligibility wizard: template focus, paginator and acknowledgement omitted on print, paging/clipboard buttons 44px→36px | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/tpo-after-college-bulk-editor.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/tpo-after-college-bulk-editor.tsx:98, 105, 116, 124, 128, 135, 136`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/tpo-after-college-bulk-editor.tsx:116, 124, 128, 135, 136`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/tpo-after-college-bulk-editor.tsx:none`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/tpo-after-college-bulk-editor.tsx:142` role alert; `:96, 143` status; `:none` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/tpo-after-college-bulk-editor.tsx:98, 103, 113`: 3 paper-hidden lines; `:none` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | After-college bulk: 44px→36px confirmation footer, screen-only selection/undo actions, status feedback survives print | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/tpo-batch-student-bulk-notes.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/tpo-batch-student-bulk-notes.tsx:15, 21`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/tpo-batch-student-bulk-notes.tsx:none`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/tpo-batch-student-bulk-notes.tsx:none`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/tpo-batch-student-bulk-notes.tsx:none` role alert; `:27` status; `:none` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/tpo-batch-student-bulk-notes.tsx:12`: 1 paper-hidden lines; `:20` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Batch-private note editor: entire selected student note panel excluded from paper output; ensures confidential selections are not printed | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/tpo-bulk-action-preview.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/tpo-bulk-action-preview.tsx:37`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/tpo-bulk-action-preview.tsx:37`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/tpo-bulk-action-preview.tsx:none`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/tpo-bulk-action-preview.tsx:none` role alert; `:24` status; `:none` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/tpo-bulk-action-preview.tsx:37`: 1 paper-hidden lines; `:25` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Bulk preview: action CTA excluded from paper and data list allowed to expand beyond max-height, grouped skip rationale preserved | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/tpo-roster-verification-bulk.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/tpo-roster-verification-bulk.tsx:66, 72`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/tpo-roster-verification-bulk.tsx:none`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/tpo-roster-verification-bulk.tsx:72`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/tpo-roster-verification-bulk.tsx:119` role alert; `:65, 114` status; `:none` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/tpo-roster-verification-bulk.tsx:66, 71, 78, 94`: 4 paper-hidden lines; `:none` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Profile verification batch: selection and reason editors omitted on paper, teal 2px/3px checkbox focus, review outcomes remain | Source read back, no test, browser or CI |
+
+#### `src/components/tpo/tpo-bulk-action-panel.tsx`
+
+| Property or state | Exact old LMS source/value | Current vNext source/value | Result |
+|---|---|---|---|
+| Mobile touch size | `pages___admin-list-pages.scss:193-214`: 44px minimum at widths ≤767px | `src/components/tpo/tpo-bulk-action-panel.tsx:208, 215, 311, 340`: `min-h-11` where present | Token comparison only; computed hit box not measured |
+| Tablet/desktop size | `ui-clone-checklist.md:46-47`: 36px control, 9px radius, 14px/650 | `src/components/tpo/tpo-bulk-action-panel.tsx:311`: `md:min-h-9` where present; shared radius | Source breakpoint at 768px, rendered skin not measured |
+| Keyboard focus | `components___accessibility.scss:18-22`: 2px solid teal, offset 3px, radius 4px | `src/components/tpo/tpo-bulk-action-panel.tsx:311`: explicit 3px focus rule where applied; otherwise shared Button/field focus | Explicit CSS source matched, global inherited/hover/active OPEN |
+| Validation/loading/empty | `old-lms-pages.md:9` legacy compact hairline, status badges and error surfaces | `src/components/tpo/tpo-bulk-action-panel.tsx:383` role alert; `:179, 185, 188, 204, 240, 244, 284, 338, 349` status; `:none` DataTable | Existing handlers and live states preserved, not executed |
+| Paper CSV/PDF | Original authenticated receipt/certificate/offer PDF layouts and hosted email templates unavailable | `src/components/tpo/tpo-bulk-action-panel.tsx:192, 221, 245, 285, 364`: 5 paper-hidden lines; `:none` print overflow reset | Static source treatment only, not an actual print-output comparison |
+| Functional scope | No matched legacy row fixture for all states | Bulk action panel: placement selection/presets/controls not printed, teal 2px/3px on review link, existing action counts preserved | Source read back, no test, browser or CI |
+
+### Scoped grep proof and Button JSX balance
+
+| Full source file | Lowercase native `button/input/select/textarea/table` | Hex literals | Shared Button open/close | Print-hide source lines |
+|---|---|---:|---:|---:|
+| `src/components/admin/super-admin-student-import-history.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1 |
+| `src/components/admin/super-admin-faculty-bulk-import.tsx` | 0/0/0/0/0 | 0 | 2/2 | 5 |
+| `src/components/admin/college-bulk-import.tsx` | 0/0/0/0/0 | 0 | 3/3 | 6 |
+| `src/components/tpo/recruiter-bulk-invite-controls.tsx` | 0/0/0/0/0 | 0 | 6/6 | 1 |
+| `src/components/tpo/recruiter-bulk-owner-controls.tsx` | 0/0/0/0/0 | 0 | 8/8 | 2 |
+| `src/components/tpo/recruiter-bulk-stage-controls.tsx` | 0/0/0/0/0 | 0 | 6/6 | 2 |
+| `src/components/tpo/recruiter-lead-csv-import.tsx` | 0/0/0/0/0 | 0 | 7/7 | 9 |
+| `src/components/tpo/tpo-academic-import-preview.tsx` | 0/0/0/0/0 | 0 | 1/1 | 3 |
+| `src/components/tpo/tpo-academic-import-workspace.tsx` | 0/0/0/0/0 | 0 | 5/5 | 8 |
+| `src/components/tpo/tpo-batch-eligibility-import.tsx` | 0/0/0/0/0 | 0 | 10/10 | 13 |
+| `src/components/tpo/tpo-after-college-bulk-editor.tsx` | 0/0/0/0/0 | 0 | 4/4 | 3 |
+| `src/components/tpo/tpo-batch-student-bulk-notes.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/tpo/tpo-bulk-action-preview.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1 |
+| `src/components/tpo/tpo-roster-verification-bulk.tsx` | 0/0/0/0/0 | 0 | 4/4 | 4 |
+| `src/components/tpo/tpo-bulk-action-panel.tsx` | 0/0/0/0/0 | 0 | 18/18 | 5 |
+
+Results are exact *lexical* counts from complete connected GitHub file reads **for these fifteen files only**: total native controls/table tags **0**, hardcoded hex color literals **0**, and all fifteen `<Button>` opener/closer counts equal. This is not a project-global grep and not a TSX parse.
+
+Checkout reproduction (**recorded, not executed**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+  'src/components/admin/super-admin-student-import-history.tsx' \
+  'src/components/admin/super-admin-faculty-bulk-import.tsx' \
+  'src/components/admin/college-bulk-import.tsx' \
+  'src/components/tpo/recruiter-bulk-invite-controls.tsx' \
+  'src/components/tpo/recruiter-bulk-owner-controls.tsx' \
+  'src/components/tpo/recruiter-bulk-stage-controls.tsx' \
+  'src/components/tpo/recruiter-lead-csv-import.tsx' \
+  'src/components/tpo/tpo-academic-import-preview.tsx' \
+  'src/components/tpo/tpo-academic-import-workspace.tsx' \
+  'src/components/tpo/tpo-batch-eligibility-import.tsx' \
+  'src/components/tpo/tpo-after-college-bulk-editor.tsx' \
+  'src/components/tpo/tpo-batch-student-bulk-notes.tsx' \
+  'src/components/tpo/tpo-bulk-action-preview.tsx' \
+  'src/components/tpo/tpo-roster-verification-bulk.tsx' \
+  'src/components/tpo/tpo-bulk-action-panel.tsx'
+```
+
+**Responsive source proof:** each `min-h-11` minimum maps to 44px at 0–767px; `md:min-h-9` maps to a 36px minimum at 768px and larger. Existing flex-wrap grids, shared DataTable and row status/empty/error markup were preserved. Interactive CSV/selection screens are omitted from paper while their results, where present and safe, are retained. Invite token results and private notes are intentionally *never printed*. **Not yet proven:** tablet screenshots, side-by-side pixel match, computed focus/disabled/hover styles, all-state print page breaking and provider-hosted email visual parity. G4/G5 strict ticks remain `[ ]`. No app, TypeScript compile, lint, tests, or CI performed.
