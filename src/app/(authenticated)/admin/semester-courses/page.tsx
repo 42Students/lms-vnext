@@ -34,7 +34,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
  return <div className="min-w-0 space-y-4 md:space-y-5">
  <AdminScopedReadPage
   intro={<section aria-label="Semester curriculum tools" className="min-w-0 space-y-3">
-   <AcademicSetupSteps step={4}/>
+   <AcademicSetupSteps step={4} showRefresh={false}/>
    {!curriculumResult.ok?<Banner tone="warning">
     Semester mapping editor is temporarily unavailable. The directory remains accessible.
    </Banner>:null}
