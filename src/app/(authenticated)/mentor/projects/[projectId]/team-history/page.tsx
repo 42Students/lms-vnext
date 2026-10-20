@@ -43,6 +43,7 @@ export default async function MentorTeamHistoryPage({
   const context = await getCurrentRequestContext();
   const data = await getMentorTeamHistory(context, parsed.data);
   const back = "/mentor/projects/" + encodeURIComponent(projectId) + "?tab=team";
+  const filtered=data.query.view!=="ALL"||data.query.role!=="ALL"||data.query.primary!=="ALL"||data.query.order!=="OLDEST";
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Team membership history"
       description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
@@ -82,12 +83,13 @@ export default async function MentorTeamHistoryPage({
           <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
             Filter role
           </Button>
+          {filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>:null}
         </form></FilterBar>
 
         <p className="text-sm text-body">{data.total} matching membership record{data.total === 1 ? "" : "s"}</p>
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
-              description="No registered membership rows match this project and filter. History from before migration may not be available." action={<Link href={back} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Team workspace</Link>} />
+              description="No registered membership rows match this project and filter. History from before migration may not be available." action={filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>:<Link href={back} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Team workspace</Link>} />
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
               <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
