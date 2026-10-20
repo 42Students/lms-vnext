@@ -10,6 +10,6 @@ export default function CollegeGroupDetailError({ reset }: {
   return <ErrorState
     title="Student group detail unavailable"
     description="The group could not be loaded. No membership or group status is inferred."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>}
   />;
 }
