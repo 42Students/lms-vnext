@@ -38,7 +38,7 @@ export default async function HrMessagesPage({searchParams}:{
   <PageHeader title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."
    actions={<>
-     <Link href="/hr/conversations" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
+     <Link href="/hr/conversations" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
        Open recruiter conversations
      </Link>
      {result.status==="READY"?<Link

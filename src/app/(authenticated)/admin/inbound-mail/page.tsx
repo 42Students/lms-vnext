@@ -5,6 +5,7 @@ import {Tabs} from "@/components/ui/tabs";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
 import {requirePermission} from "@/modules/permissions/policy";
 import {listInboundMailForAdmin} from "@/modules/inbound-mail/admin-service";
 import {inboundMailListQuerySchema} from "@/modules/inbound-mail/message-model";
@@ -23,13 +24,13 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    Array.isArray(params[key]));
  const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status)??"NEW",q:one(params.q),recipient:one(params.recipient),page:one(params.page)});
  if(repeated||!parsed.success)return <div className="min-w-0 space-y-4">{header}
-   <div role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-primary-text">Reset</Link></div></div>;
+   <Alert tone="warning">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-primary-text underline">Reset</Link></Alert></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
  if(!data.available)return <div className="min-w-0 space-y-4">{header}
-  <div role="status" className="space-y-3 border-b border-border pb-5">
+  <Alert tone="warning">
    <p>Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.</p>
    <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>
-  </div></div>;
+  </Alert></div>;
  const totalPages=data.total===null?null:Math.max(1,Math.ceil(data.total/50));
  const pageNumbers=totalPages===null?[]:Array.from(
   {length:Math.min(totalPages,7)},(_,i)=>Math.max(1,Math.min(data.page-3,totalPages-6))+i);

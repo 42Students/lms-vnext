@@ -29,9 +29,9 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  const raw=await searchParams;
  const query=parseSuperAdminTemplateDirectoryQuery(raw);
  if(!query.success)return <div className="min-w-0 space-y-5">
-  <PageHeader title="Templates" />
+  <PageHeader title="Project templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
-   action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Clear filters</Link>}/>
+   action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
@@ -51,7 +51,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates unavailable"
     description="The template catalogue could not be loaded. Your search and status filters are unchanged; try again."
-    action={<Link href={templateDirectoryHref(query.data)} className="font-semibold text-primary-text">Retry loading templates</Link>}/>
+    action={<Link href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9">Retry loading templates</Link>}/>
   </div>;
  }
  return <div className="min-w-0 space-y-5">
