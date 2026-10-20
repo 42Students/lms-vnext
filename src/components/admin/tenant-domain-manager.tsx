@@ -2,6 +2,7 @@
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -49,6 +50,9 @@ export function TenantDomainManager({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const createInFlightRef = useRef(false);
+  const actionInFlightRef = useRef(false);
+  const [modalError, setModalError] = useState("");
   const [host, setHost] = useState("");
   const [deleteHostConfirmation, setDeleteHostConfirmation] = useState("");
   const [primaryTarget, setPrimaryTarget] = useState<TenantDomainClientRow | null>(null);
@@ -59,6 +63,8 @@ export function TenantDomainManager({
   const [creating, startCreate] = useTransition();
 
   function createDomain() {
+    if (createInFlightRef.current || !host.trim()) return;
+    createInFlightRef.current = true;
     startCreate(async () => {
       try {
       const response = await fetch("/api/tenant-domains", {
@@ -97,6 +103,8 @@ export function TenantDomainManager({
           title: "Domain could not be added",
           description: "The domain action could not be completed.",
         });
+      } finally {
+        createInFlightRef.current = false;
       }
     });
   }
@@ -105,7 +113,10 @@ export function TenantDomainManager({
     domain: TenantDomainClientRow,
     action: "verify" | "primary" | "delete",
   ) {
+    if (actionInFlightRef.current) return;
+    actionInFlightRef.current = true;
     const key = `${domain.id}:${action}`;
+    setModalError("");
     setPendingAction(key);
 
     try {
@@ -138,20 +149,17 @@ export function TenantDomainManager({
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
+        const failure = payload?.error === "DOMAIN_NOT_VERIFIED"
+          ? "Only a verified domain can become primary."
+          : payload?.error === "PRIMARY_HOST_CONFIRMATION_REQUIRED"
+            ? "The primary hostname confirmation is missing or stale. Reload and confirm the current primary address."
+            : "The domain action could not be completed.";
+        if (action !== "verify") setModalError(failure);
         showToast({
           tone: "error",
-          title:
-            action === "verify"
-              ? "Verification failed"
-              : action === "primary"
-                ? "Primary domain not changed"
-                : "Domain not deleted",
-          description:
-            payload?.error === "DOMAIN_NOT_VERIFIED"
-              ? "Only a verified domain can become primary."
-              : payload?.error === "PRIMARY_HOST_CONFIRMATION_REQUIRED"
-                ? "The primary hostname confirmation is missing or stale. Reload and confirm the current primary address."
-              : "The domain action could not be completed.",
+          title: action === "verify" ? "Verification failed"
+            : action === "primary" ? "Primary domain not changed" : "Domain not deleted",
+          description: failure,
         });
         return;
       }
@@ -183,6 +191,7 @@ export function TenantDomainManager({
 
       router.refresh();
     } catch {
+      if (action !== "verify") setModalError("The domain action could not be completed.");
       showToast({
         tone: "error",
         title: action === "verify" ? "Verification failed" :
@@ -190,6 +199,7 @@ export function TenantDomainManager({
         description: "The domain action could not be completed.",
       });
     } finally {
+      actionInFlightRef.current = false;
       setPendingAction(null);
     }
   }
@@ -311,7 +321,7 @@ export function TenantDomainManager({
                         size="sm"
                         className="min-h-11 w-full sm:w-auto md:min-h-9"
                         disabled={busy}
-                        onClick={() => setPrimaryTarget(domain)}
+                        onClick={() => { setModalError(""); setPrimaryTarget(domain); }}
                       >
                         {pendingAction === primaryKey
                           ? "Updating…"
@@ -324,9 +334,7 @@ export function TenantDomainManager({
                       size="sm"
                       className="min-h-11 w-full sm:w-auto md:min-h-9"
                       disabled={busy}
-                      onClick={() =>
-                        setDeleteTarget(domain)
-                      }
+                      onClick={() => { setModalError(""); setDeleteTarget(domain); }}
                     >
                       {pendingAction === deleteKey
                         ? "Deleting…"
@@ -382,7 +390,7 @@ export function TenantDomainManager({
 
       <ConfirmDialog
         open={Boolean(primaryTarget)}
-        onOpenChange={(open) => { if (!open && !pendingAction) setPrimaryTarget(null); }}
+        onOpenChange={(open) => { if (!open && !pendingAction) { setPrimaryTarget(null); setModalError(""); } }}
         title={primaryTarget ? `Make ${primaryTarget.host} the primary address?` : "Change primary address?"}
         description={primaryTarget ? describePrimaryDomainSwitch(
           domains.find(domain => domain.isPrimary)?.host ?? null,
@@ -392,12 +400,14 @@ export function TenantDomainManager({
         confirmVariant="primary"
         pending={Boolean(pendingAction)}
         onConfirm={() => { if (primaryTarget) void runAction(primaryTarget, "primary"); }}
-      />
+      >
+        {modalError ? <p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{modalError}</p> : null}
+      </ConfirmDialog>
 
       <ConfirmDialog
         open={Boolean(deleteTarget)}
         onOpenChange={(open) => {
-          if (!open && !pendingAction) { setDeleteTarget(null); setDeleteHostConfirmation(""); }
+          if (!open && !pendingAction) { setDeleteTarget(null); setDeleteHostConfirmation(""); setModalError(""); }
         }}
         title={
           deleteTarget
@@ -424,6 +434,7 @@ export function TenantDomainManager({
             disabled={Boolean(pendingAction)} onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label> : null}
+        {modalError ? <p role="alert" className="mt-[var(--lms-space-2)] break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{modalError}</p> : null}
       </ConfirmDialog>
     </div>
   );

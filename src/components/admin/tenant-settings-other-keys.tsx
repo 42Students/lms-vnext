@@ -83,7 +83,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
     onClick={()=>void apply("POST")} className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Saving…":"Add setting"}</Button>
   </fieldset>
-  {message?<Alert tone={messageTone}>{message}</Alert>:null}
+  {message&&!(pendingRemoval&&messageTone==="error")?<Alert tone={messageTone}>{message}</Alert>:null}
   <ConfirmDialog open={pendingRemoval!==null} onOpenChange={open=>{if(!open)setPendingRemoval(null);}}
    title={pendingRemoval?'Remove "'+pendingRemoval.key+'"?':"Remove setting?"}
    description="The stored value is deleted and the backend falls back to its built-in default. This does not remove a runtime configuration."
