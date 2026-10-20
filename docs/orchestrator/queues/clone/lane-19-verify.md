@@ -17,10 +17,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-19.md: surface | regre
 - [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
 - [x] `src/app/(authenticated)/college/groups/page.tsx`
 - [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/college/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/lessons/page.tsx`
+- [x] `src/app/(authenticated)/college/live-classes/page.tsx`
 - [ ] `src/app/(authenticated)/college/page.tsx`
 - [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
 - [ ] `src/app/(authenticated)/college/people/page.tsx`
