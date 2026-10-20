@@ -1,7 +1,7 @@
 "use client";
 import {Button} from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
 import {apiFetch} from "@/lib/api-fetch";
@@ -18,6 +18,15 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const names=new Map(lessons.map(row=>[row.id,row.name]));
+ // Adopt confirmed server order after refresh; never overwrite an in-flight drag.
+ useEffect(()=>{
+  if(busy)return;
+  const frame=window.requestAnimationFrame(()=>{
+   const saved=lessons.map(row=>row.id);
+   setOrder(current=>current.length===saved.length&&current.every((id,i)=>id===saved[i])?current:saved);
+  });
+  return ()=>window.cancelAnimationFrame(frame);
+ },[busy,lessons]);
  async function move(from:string,to:string){
   if(busy||from===to)return;
   const previous=order;
@@ -39,7 +48,7 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
     description:error instanceof Error?error.message:"Refresh and try again."});
   }finally{setBusy(false);setDragging(null);}
  }
- return <section aria-label="Reorder shared lessons" className="border-b border-border pb-4">
+ return <section aria-label="Reorder shared lessons" aria-busy={busy} className="min-w-0 border-b border-border pb-4">
   <h3 className="font-semibold text-foreground">Reorder Lessons</h3>
   <p className="mt-1 text-xs text-muted-foreground">Drag a lesson onto another to change its place, or use Move up and Move down. Changes affect every section sharing this offering.</p>
   <ol className="mt-3 divide-y divide-border border-y border-border">
@@ -48,16 +57,18 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
       onDragOver={event=>event.preventDefault()}
       onDrop={event=>{event.preventDefault();void move(dragging??event.dataTransfer.getData("text/plain"),id);}}
       onDragEnd={()=>setDragging(null)}
-      className="flex min-w-0 flex-wrap items-center gap-3 py-3">
-      <span aria-hidden="true" className="cursor-grab text-muted-foreground">⠿</span>
-      <span className="min-w-0 flex-1 break-words text-sm text-body">{index+1}. {names.get(id)??"Lesson"}</span>
+      className="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2 py-3 sm:items-center">
+      <span aria-hidden="true" className="shrink-0 cursor-grab select-none pt-1 text-muted-foreground sm:pt-0">⠿</span>
+      <span className="min-w-0 flex-1 basis-[calc(100%-2rem)] break-words text-sm leading-6 text-body sm:basis-auto">{index+1}. {names.get(id)??"Lesson"}</span>
+      <div className="flex w-full min-w-0 gap-2 sm:w-auto sm:shrink-0">
       <Button type="button" variant="secondary" disabled={busy||index===0} onClick={()=>void move(id,order[index-1]!)}
-        className="min-h-11 md:min-h-9">Move up</Button>
+        className="min-h-11 min-w-0 flex-1 sm:flex-none md:min-h-9">Move up</Button>
       <Button type="button" variant="secondary" disabled={busy||index===order.length-1} onClick={()=>void move(id,order[index+1]!)}
-        className="min-h-11 md:min-h-9">Move down</Button>
+        className="min-h-11 min-w-0 flex-1 sm:flex-none md:min-h-9">Move down</Button>
+      </div>
    </li>)}
   </ol>
-  {busy?<Alert tone="info" className="mt-2">Saving lesson order…</Alert>:null}
+  {busy?<Alert tone="info" className="mt-2" role="status">Saving lesson order…</Alert>:null}
   {error?<Alert tone="error" className="mt-2">{error}</Alert>:null}
  </section>;
 }

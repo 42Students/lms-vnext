@@ -63,21 +63,20 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
      setConfirmAction(null);
    }finally{inFlight.current=false;setPending(null);}
  }
- return <div className="min-w-0 space-y-3">
-   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center" aria-label={kind+" lifecycle actions"}>
-     {actions.map(action=><Button key={action} type="button" size="md"
-       className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
-       variant={action==="PUBLISH"?"primary":action==="ARCHIVE"?"ghost":"secondary"}
-       disabled={pending!==null||saved}
-       onClick={()=>{setError(null);setConfirmAction(action);}}>
-       {pending===action?"Saving…":action==="CLOSE"?"Close quiz":
-         action==="PUBLISH"?"Publish":"Delete"}
-     </Button>)}
-   </div>
-   {saved?<div role="status"><Alert tone="success">
+ return <>
+ <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center" aria-label={kind+" lifecycle actions"}>
+   {actions.map(action=><Button key={action} type="button" size="md" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
+     variant={action==="ARCHIVE"?"ghost":"secondary"}
+     disabled={pending!==null||saved}
+     onClick={()=>{setError(null);setConfirmAction(action);}}>
+     {pending===action?"Saving…":action==="CLOSE"?"Close quiz":
+       action==="PUBLISH"?"Publish":"Delete"}
+   </Button>)}
+ </div>
+ {saved?<div role="status" className="mt-2 min-w-0"><Alert tone="success">
      {lastAction==="ARCHIVE"?(kind==="QUIZ"?"Quiz deleted successfully.":"Assignment deleted."):"Change saved. Refreshing Section state…"}
    </Alert></div>:null}
-   {error?<div role="alert"><Alert tone="error">{error}</Alert></div>:null}
+ {error?<div role="alert" className="mt-2 min-w-0 break-words"><Alert tone="error">{error}</Alert></div>:null}
  <ConfirmDialog
    open={confirmAction!==null}
    onOpenChange={open=>{if(!open && pending===null)setConfirmAction(null);}}
