@@ -34,10 +34,10 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   finally{pending.current=false;setBusy(false);}
  }
  return <div className="mt-2 flex flex-wrap gap-2">
-  {canDone?<Button variant="secondary" type="button" disabled={busy}
+  {canDone?<Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy}
    
    onClick={()=>setConfirmation("DONE")}>Mark done</Button>:null}
-  {canCancel?<Button variant="secondary" type="button" disabled={busy}
+  {canCancel?<Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy}
    
    onClick={()=>setConfirmation("CANCEL")}>Cancel ask</Button>:null}
   {<Dialog open={Boolean(confirmation)} onOpenChange={next=>{if(!next&&!busy)setConfirmation(null);}} dismissible={!busy} role="alertdialog"
@@ -100,8 +100,8 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
      onChange={event=>{setDue(event.target.value);key.current=null;}}
      className="min-h-11 md:min-h-9 w-full"/>
    </label>
-   {error?<InlineNotice tone="error" message={error}/>:null}
-   <Button type="submit" disabled={busy||!title.trim()||!recipientId}
+   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+   <Button type="submit" className="min-h-11 md:min-h-9" disabled={busy||!title.trim()||!recipientId}
     >
     {busy?"Sending…":"Ask someone"}</Button>
   </form>
