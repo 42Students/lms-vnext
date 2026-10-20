@@ -2,6 +2,7 @@
 import {Radio} from "@/components/ui/radio";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -69,7 +70,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
     </label>
   </div>
   <p role="status" className="text-xs text-muted-foreground">{visible.length} of {types.length} custom job types</p>
-  {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{tpoJobTypesEmptyMessage(types.length,search,status)}</p>:
+  {visible.length===0?<EmptyState title={tpoJobTypesEmptyMessage(types.length,search,status)}/>:
    <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border py-3">
     <div className="min-w-0 space-y-2"><span className="block break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>
      <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
@@ -81,6 +82,6 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
       {item.active?"Switch off":"Reactivate"}
     </Button></li>)}</ul>}
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
-  {message?<p role="status" className="text-sm">{message}</p>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;
 }
