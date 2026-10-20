@@ -55,7 +55,7 @@ export async function PlacementOperationsWorkspace({
   ]);
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PlacementOperationsOverview
         operations={operations}
         basePath={basePath}
