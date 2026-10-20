@@ -13,6 +13,7 @@ import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-adm
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { ListToolbar } from "@/components/ui/list-toolbar";
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import {parseCollegeProjectsQuery,canonicalCollegeProjectsPageHref} from "@/modules/projects/college-projects-query-model";
@@ -100,7 +101,7 @@ export default async function CollegeProjectsPage({
    ...(query.pageSize?{pageSize:String(query.pageSize)}:{}),view,
   }).toString();
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <ProjectAdminNav
         basePath="/college/projects"
         active="workspaces"
@@ -109,14 +110,19 @@ export default async function CollegeProjectsPage({
         title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">
           Create workspace
         </Link>}
       />
 
-      <nav aria-label="Project workspace tools" className="flex min-w-0 flex-wrap gap-2">
-      <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold hover:bg-[rgba(38,186,199,0.07)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-[rgba(38,186,199,0.07)] lms-inline-link active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
+      <details className="group min-w-0 border-b border-border pb-3">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">
+          <span>Project workspace tools</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
+        </summary>
+        <nav aria-label="Project workspace tools" className="flex min-w-0 flex-col items-stretch gap-2 pt-3 md:flex-row md:flex-wrap md:items-center">
+      <Link className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold hover:bg-[rgba(38,186,199,0.07)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
+      <Link className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-link hover:bg-[rgba(38,186,199,0.07)] md:min-h-9 lms-inline-link active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
+      </details>
 
       <div className="min-w-0 space-y-2">
        <Tabs ariaLabel="Workspace display and archive" renderPanel={false}
@@ -128,7 +134,7 @@ export default async function CollegeProjectsPage({
         ]}/>
       </div>
       {!templatesResult.ok && <Banner tone="warning">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</Banner>}
-      <ProjectAdminFilters query={query} />
+      <FilterBar title="Filters"><ProjectAdminFilters query={query} /></FilterBar>
       <ListToolbar label="College project workspaces" viewCount={result.total}
         exportAction={<ProjectAdminWorkspacePageExport items={items}/>} />
 
@@ -140,7 +146,6 @@ export default async function CollegeProjectsPage({
         emptyDescription="Clear the filters, or create a Project from an assigned published template."
       />
 
-      <p role="status" className="text-sm tabular-nums text-muted-foreground">{result.total===0?"0 of 0 workspaces":`${((result.page-1)*(query.pageSize??25)+1).toLocaleString("en-IN")}–${Math.min(result.page*(query.pageSize??25),result.total).toLocaleString("en-IN")} of ${result.total.toLocaleString("en-IN")} workspaces`}</p>
       <ProjectAdminPagination
         basePath="/college/projects"
         query={query}
