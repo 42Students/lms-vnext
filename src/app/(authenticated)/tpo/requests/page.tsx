@@ -89,14 +89,14 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           >{status==="PENDING"?"Waiting":status.charAt(0)+status.slice(1).toLowerCase()} · {statusCounts[status]}</FilterChipLink>)}
     </nav>
     </Disclosure>
-    <form method="get" action="/tpo/requests" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_auto]">
+    <form method="get" action="/tpo/requests" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] min-[768px]:grid-cols-[auto_minmax(0,1fr)_auto]">
       <Input type="hidden" name="status" value={data.query.status}/>
       <label className="flex min-h-11 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:min-h-9"><Checkbox name="urgentOnly" value="true" defaultChecked={data.query.urgentOnly===true}/> Urgent only</label>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student number, student, job or company
         <Input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9" />
       </label>
       <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Apply</Button>
-      <Disclosure title="Advanced request filters" className="min-w-0 min-[768px]:col-span-2" contentClassName="min-w-0 pt-[var(--lms-space-3)]">
+      <Disclosure title="Advanced request filters" className="min-w-0 min-[768px]:col-span-3" contentClassName="min-w-0 pt-[var(--lms-space-3)]">
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind<Select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</Select></label>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive<Select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9">
