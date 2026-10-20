@@ -98,3 +98,9 @@ Read polish-lane-6.md entry and root placements route, PlacementOperationsWorksp
 
 ## 33. src/app/(authenticated)/admin/placements/retention/page.tsx
 Read polish-lane-6.md evidence, retention report route and selected-college service (stage/activity cutoff, 201-row truncation), shared DataTable/Banner/StatusBadge/PageBackLink, loading/error/admin layout. Confirmed warning stays before report/table; long applicant/drive names wrap; count, cutoff and explicit not-deletion safety note remain legible at 375/768, selected-college/empty/not-found/denied states preserved. No missing JSX/props, dropped ids or copy, duplicate attrs or extra alignment defect verified. Source only, no CI. Files: queue/proof.
+
+## 34. src/app/(authenticated)/admin/placements/screenings/[applicationId]/page.tsx
+Inspected polish-lane-6.md proof, screening detail route, its scoped service, SuperAdminPlacementDetailView and shared header/status/navigation, route loading/error/not-found and parent admin layout. Verified PENDING/HOLD/REJECTED facts and 404 recovery, no internal notes, no missing export/JSX/aria or role/rewording drift. Long identifier, joined badge/actions and fact grid source-check at 375/768. No new fix confirmed. No CI. Files: queue/proof.
+
+## 35. src/app/(authenticated)/admin/placements/screenings/page.tsx
+Reviewed other-lane polish-lane-6.md proof, screenings directory page, selected-college screening queue service and AdminScopedReadPage including LiveSearch, status Select, compact rows, pagination, empty/invalid-filter/error and route boundaries. Status list, search and detail links correctly match scoped query; notes remain excluded. Checked no lost field/control/test-id, bad JSX/import, inconsistent tablet/phone wrapping or clutter needing a change. Source-only, no CI. Files: queue/proof.
