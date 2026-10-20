@@ -123,46 +123,46 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-1.md: file, number of i
 - [x] `src/app/(authenticated)/college/domains/page.tsx`
 - [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
 - [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/import/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/page.tsx`
-- [ ] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/college/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/not-found.tsx`
-- [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/retention/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/college/profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/programs/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/create/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
-- [ ] `src/app/(authenticated)/college/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/college/resources/page.tsx`
-- [ ] `src/app/(authenticated)/college/semester-courses/page.tsx`
-- [ ] `src/app/(authenticated)/college/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty/import/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/page.tsx`
+- [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/lessons/page.tsx`
+- [x] `src/app/(authenticated)/college/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/college/not-found.tsx`
+- [x] `src/app/(authenticated)/college/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/retention/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/college/profile/page.tsx`
+- [x] `src/app/(authenticated)/college/programs/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/create/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/college/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/college/resources/page.tsx`
+- [x] `src/app/(authenticated)/college/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/college/semesters/page.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/students/import/page.tsx`
 - [ ] `src/app/(authenticated)/college/students/register/page.tsx`
 - [ ] `src/app/(authenticated)/college/verification/loading.tsx`
