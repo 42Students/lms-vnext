@@ -221,7 +221,7 @@ function RecruiterCalendarEventCard({
       {href ? (
         <Link
           href={href}
-          className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold md:min-h-9 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Open hiring drive →
         </Link>
@@ -339,7 +339,7 @@ export default async function HrCalendarPage({
 
           <Link
             href="/hr/home"
-            className="mt-4 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold md:min-h-9 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           >
             Return to Today →
           </Link>
@@ -360,7 +360,7 @@ export default async function HrCalendarPage({
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {calendar.resultsDue.map(item => (
                 <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                  className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                  className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                   <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
                   <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
                   <span className="mt-2 block text-xs text-muted-foreground">Due {eventDateTime(item.dueAt)} IST · {item.status}</span>
@@ -460,7 +460,7 @@ export default async function HrCalendarPage({
           </section>
 
           {nextVisible ? (
-            <section className="rounded-[var(--lms-radius-card)] border border-border bg-muted p-4">
+            <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Next event in this period
               </p>
