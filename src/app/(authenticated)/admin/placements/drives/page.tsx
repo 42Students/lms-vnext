@@ -73,7 +73,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
     Open drive →</Link>},
  ];
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title="All drives"
    description="Review and open every persisted non-archived drive in the selected college."
    actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">

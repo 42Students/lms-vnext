@@ -26,7 +26,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   const context = await getCurrentRequestContext();
   const id = projectTemplateIdSchema.safeParse((await params).templateId);
   if (!id.success) notFound();
-  if (!can(context,"project-template.read")) return <div className="min-w-0 space-y-5">
+  if (!can(context,"project-template.read")) return <div className="min-w-0 space-y-6">
     <PageHeader title="College availability" />
     <ErrorState title="College availability access denied"
       description="Only an active Super Admin can read global project template assignments."
@@ -34,7 +34,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   </div>;
   const raw = await searchParams;
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
-  if (!parsed.success) return <div className="min-w-0 space-y-5">
+  if (!parsed.success) return <div className="min-w-0 space-y-6">
     <PageHeader title="College availability" />
     <ErrorState title="Invalid college filters" description="Review the search, status and page."
       action={<Link href={templateCollegeAvailabilityHref(id.data,{})}
@@ -46,7 +46,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND") notFound();
     // A failed college/template read must never be interpreted as an empty
     // assignment list. Keep the filters for an explicit retry instead.
-    return <div className="min-w-0 space-y-5">
+    return <div className="min-w-0 space-y-6">
       <PageHeader title="College availability" />
       <ErrorState title="College availability unavailable"
         description="Template assignments could not be loaded. No availability is shown until the read succeeds."
@@ -54,7 +54,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     </div>;
   }
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
     <PageHeader title={data.template.title}
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
       actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Template catalogue</Link>} />
