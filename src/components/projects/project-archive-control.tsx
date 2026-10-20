@@ -90,13 +90,13 @@ export function ProjectArchiveControl({
           title="Restore this workspace?"
           description="Restore workspace, members, meetings, tasks, sprints and resources with their edits."
           footer={
-            <>
-              <Button variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
-              <Button disabled={pending} onClick={() => void restore()}>Restore</Button>
-            </>
+            <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+              <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
+              <Button className="w-full sm:w-auto" loading={pending} disabled={pending} onClick={() => void restore()}>Restore</Button>
+            </div>
           }
         >
-          <p className="m-0 text-sm leading-6 text-body">
+          <p className="m-0 max-w-prose break-words border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
             Archived workspaces can be reopened with all of their content.
           </p>
         </Dialog>
@@ -119,24 +119,15 @@ export function ProjectArchiveControl({
         title="Archive project?"
         description={`${projectTitle} will be marked archived. The workspace remains accessible for review, but execution mutations are blocked.`}
         footer={
-          <>
-            <Button
-              variant="secondary"
-              disabled={pending}
-              onClick={() => onDialogOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={pending}
-              onClick={() => void archive()}
-            >
+          <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+            <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
+            <Button className="w-full sm:w-auto" loading={pending} disabled={pending} onClick={() => void archive()}>
               {pending ? "Archiving…" : "Archive project"}
             </Button>
-          </>
+          </div>
         }
       >
-        <p className="m-0 text-sm leading-6 text-body">
+        <p className="m-0 max-w-prose break-words border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
           This is an archive action, not the separate recoverable-delete workflow.
         </p>
       </Dialog>

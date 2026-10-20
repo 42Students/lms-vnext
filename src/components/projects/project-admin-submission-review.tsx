@@ -44,33 +44,33 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  }
  if(!(["SUBMITTED","APPROVED"].includes(status))||locked||projectStatus==="ARCHIVED"||
    (status==="APPROVED"&&!allowLock))return null;
- return <section aria-label="Review final submission" className="mt-3">
+ return <section aria-label="Review final submission" className="mt-[var(--lms-space-3)] min-w-0">
   <Button type="button" variant="secondary" onClick={()=>setOpen(true)}
    className="">
    Review
   </Button>
   {message?<Banner tone="success">{message}</Banner>:null}
-  <Dialog open={open} onOpenChange={setOpen} title={"Review — "+(workspaceTitle??"project submission")}
+  <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} title={"Review — "+(workspaceTitle??"project submission")}
    description="Review the current submission and record feedback for the learner."
-   footer={<>
-    <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
+   footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:justify-end">
+    <Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
      >Cancel</Button>
     {canAdminSettleDelivery(status,locked,projectStatus,"CHANGES_REQUESTED")?
-     <Button type="button" variant="secondary" disabled={pending||!feedback.trim()} onClick={()=>{void decide("CHANGES_REQUESTED")}}
+     <Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending||!feedback.trim()} onClick={()=>{void decide("CHANGES_REQUESTED")}}
       >Request changes</Button>:null}
     {canAdminSettleDelivery(status,locked,projectStatus,"APPROVED")?
-     <Button type="button" variant="primary" disabled={pending} onClick={()=>{void decide("APPROVED")}}
-      className="text-sm">Accept submission</Button>:null}
-    {allowLock&&canAdminSettleDelivery(status,locked,projectStatus,"LOCK")?
-     <Button type="button" variant="secondary" disabled={pending} onClick={()=>setConfirmLock(true)}
-      >Lock submission</Button>:null}
-   </>}>
-   <label className="block text-[var(--lms-font-sm)] font-semibold text-body">Feedback for the learner
+     <Button className="w-full sm:w-auto" type="button" variant="primary" loading={pending} disabled={pending} onClick={()=>{void decide("APPROVED")}}>Accept submission</Button>:null}
+   </div>}>
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Feedback for the learner
     <Textarea maxLength={6000} value={feedback} disabled={pending}
       onChange={event=>setFeedback(event.target.value)} rows={4}
-      className="mt-2 w-full"
+      className="w-full"
       placeholder="Optional for Accept/Lock — required for Request changes"/>
    </label>
+   {allowLock&&canAdminSettleDelivery(status,locked,projectStatus,"LOCK")?<details className="mt-[var(--lms-space-4)] min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]">
+     <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Lock submission</summary>
+     <div className="mt-[var(--lms-space-2)] flex"><Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending} onClick={()=>setConfirmLock(true)}>Lock submission</Button></div>
+   </details>:null}
    {error?<Banner tone="error">{error}</Banner>:null}
    {!feedback.trim()?<p className="mt-2 text-xs text-muted-foreground">
      Add feedback explaining what needs to change before requesting changes.</p>:null}
