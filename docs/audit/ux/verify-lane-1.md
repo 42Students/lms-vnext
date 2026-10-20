@@ -274,3 +274,31 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** independently read data-access source and current-membership academic service, permitted-reader disclosure, scoped change history, date-only records and IST formatting, non-audit disclaimer, PageHeader and local loading/error/learner layout. No missing markup, props, aria labels, import/export mismatches or lost navigation.
 - **Extra clutter/alignment fixes (0):** existing 16px section headings, thin separators, wrapped read-only facts and bounded warning copy follow the old LMS rhythm at phone/tablet.
 - **Files changed:** proof and queue only.
+
+## Surface 40 — Learner profile workspace
+- **Surface:** `src/app/(authenticated)/learn/profile/page.tsx`.
+- **Originating proof:** no matching Surface 40 in `docs/audit/ux/polish-lane-11.md`; inspected independently.
+- **Regressions found/fixed (0):** reviewed membership-only access and profile/runtime reads, profile section query recovery, LearnerProfileWorkspace's typed document, edit/dirty navigation guards and Dialog interfaces, verification live refresh, pending document notices, academic recovery and safe coding links, loading/error/learner layout. No duplicate attribute, missing route ID, import/export mismatch or broken component prop found in scope.
+- **Extra clutter/alignment fixes (0):** one Profile header, mobile stacked resources, bordered verification and academic identity summaries, and overflow-wrap responsive details remain coherent with the legacy shell.
+- **Files changed:** proof and queue only.
+
+## Surface 41 — Learner profile verification
+- **Surface:** `src/app/(authenticated)/learn/profile/verification/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 41.
+- **Regressions found/fixed (3):** proof promised actionable Education/Identity status first but evidence receipt inventory still preceded it; moved receipts below two review sections. Proof promised two-column cards only on desktop but page used `md:grid-cols-2`; deferred to lg. Proof promised slim withdraw warning confirmation but the child still used a second rounded card; flattened to border-left warning strip. Read verification state/receipt counts, versioned submit and withdraw actions, feedback, live refresh, relevant shared Badge/Banner/Button, loading/error and learner layout; maintained all copy and handlers.
+- **Extra clutter/alignment fixes (2):** enlarged submit/withdraw/refresh/Retry actions to full-width on phones, and aligned confirmation actions in a vertical phone stack with side-by-side desktop grouping. No new deps.
+- **Files changed:** `src/app/(authenticated)/learn/profile/verification/page.tsx`, `src/app/(authenticated)/learn/profile/verification/error.tsx`, `src/components/profile/learner-verification-submit.tsx`, `src/components/profile/learner-verification-withdraw.tsx`; proof and queue.
+
+## Surface 42 — Learner project workspace detail
+- **Surface:** `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 42.
+- **Regressions found/fixed (3):** Board search and own-task controls retained 36px minimums at phone widths; normalized filters, create form, Apply and Add task to 44px on phones. Task dialog retained two forced columns at 375 instead of the claimed 1/2/3 pattern; corrected responsive grid and span semantics. Error and 404 recovery still wrapped mobile controls horizontally; restored vertical 44px full-width phone actions. Reviewed account/project read gate, tasks/filters, BoardInteractive drag/status/CAS, tabs, selected task/dialog, goals, delivery/activity, ProjectWorkspace dependencies and route fallback. Preserved handlers, copy, deep links and ARIA labels.
+- **Extra clutter/alignment fixes (1):** removed centering from project not-found explanation, keeping one canvas line length and single responsive Back action.
+- **Files changed:** `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`, `src/app/(authenticated)/learn/projects/[projectId]/not-found.tsx`, `src/components/projects/learner-project-board-search.tsx`, `src/components/projects/learner-own-task-controls.tsx`, `src/components/projects/learner-board-task-detail-dialog.tsx`; proof and queue.
+
+## Surface 43 — Learner projects directory
+- **Surface:** `src/app/(authenticated)/learn/projects/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 43.
+- **Regressions found/fixed (0):** read access/module-enabled conditional, role-appropriate list/attention/services, query validation, ProjectParticipantListControls/Pagination, learner mobile disclosure filters, ProjectList and load/error fallback. Existing text, filter GET names, 25/10/50 page sizes, archive state, list links and shared types align.
+- **Extra clutter/alignment fixes (0):** learner rows remain hairline dividers, summary facts compact, mobile filters and pagination hit areas accessible; no extra source changes.
+- **Files changed:** proof and queue only.
