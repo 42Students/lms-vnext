@@ -1,0 +1,27 @@
+/*
+ * Upload progress chrome from original LMS progress families:
+ * lms2-fe@prod-2026/_learn-courses.scss:2857-2868 (8px, rounded rail)
+ * and docs/design/legacy-styles/components___variables.scss:10,14
+ * (primary #26bac7 / light-cyan #9ee4e8).
+ * No old upload-specific bar selector is asserted; preserve upload logic.
+ */
+.upload {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 8px !important;
+  border-radius: 999px !important;
+  overflow: hidden;
+  background: #9ee4e8 !important;
+}
+.upload > div {
+  height: 100%;
+  border-radius: inherit;
+  background: #26bac7 !important;
+}
+@media (max-width: 767px) {
+  .upload { width: 100%; min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .upload > div { transition: none !important; }
+}
