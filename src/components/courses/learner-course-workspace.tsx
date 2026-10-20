@@ -160,7 +160,7 @@ function ContentCard({
   return (
     <article
       id={`item-CONTENT-${content.id}`}
-      className="scroll-mt-28 rounded-lg border border-border bg-surface p-4"
+      className="min-w-0 scroll-mt-28"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
@@ -220,10 +220,6 @@ function ContentCard({
         </div>
       ) : null}
 
-      {(content.type==="VIDEO"||content.type==="YOUTUBE") && content.progress.durationSeconds>0
-        ? <p className="mt-2 text-xs font-semibold text-body">
-            {content.progress.percentComplete}% watched
-          </p>:null}
       {content.type==="LIVE_CLASS"&&content.startsAt&&content.endsAt
         ? <LearnerLiveSessionStatus startsAt={new Date(content.startsAt).toISOString()}
             endsAt={new Date(content.endsAt).toISOString()}/>:null}
@@ -240,7 +236,7 @@ function ContentCard({
       ) : null}
 
       {scheduled ? (
-        <div className="mt-4 rounded-lg border border-border bg-surface-subtle px-3 py-3 text-sm text-body">
+        <div className="mt-4 border-l-[3px] border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm leading-6 text-body">
           {content.type==="LIVE_CLASS"
             ? start
               ? "Live session starts "+start+". Join and Copy are available now when the meeting link is published."
@@ -251,7 +247,7 @@ function ContentCard({
         {content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?<LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!} endsAt={content.endsAt?new Date(content.endsAt).toISOString():null}/>:null}
          </div>
       ) : content.type === "LIVE_CLASS" && ended ? (
-        <div className="mt-4 rounded-lg border border-border bg-surface-subtle px-3 py-3 text-sm text-body">
+        <div className="mt-4 border-l-[3px] border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm leading-6 text-body">
           This live session has ended.
         </div>
       ) : content.type === "VIDEO" &&
@@ -314,13 +310,13 @@ function ContentCard({
         <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text sm:w-auto"
           >
             Open resource ↗
           </a>
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text sm:w-auto"
           >
             Download
           </a>
@@ -371,7 +367,7 @@ function AssignmentCard({
   return (
     <article
       id={`item-ASSIGNMENT-${assignment.id}`}
-      className="scroll-mt-28 rounded-lg border border-border bg-surface p-4"
+      className="min-w-0 scroll-mt-28"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
@@ -513,7 +509,7 @@ function QuizCard({
   return (
     <article
       id={`item-QUIZ-${quiz.id}`}
-      className="scroll-mt-28 rounded-lg border border-border bg-surface p-4"
+      className="min-w-0 scroll-mt-28"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
@@ -693,7 +689,7 @@ export function LearnerCourseWorkspace({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       {workspace.stateWarnings.length>0 ? (
         <Alert tone="warning" role="alert" title="Some course state could not be loaded">
           <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Your progress has not been changed.</p>
@@ -750,8 +746,8 @@ export function LearnerCourseWorkspace({
         </div>
       </section>
 
-      <details className="border-b border-border pb-3">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Learning progress breakdown</summary>
+      <Disclosure title="Learning progress breakdown"
+        className="border-b border-border pb-3" contentClassName="pt-3">
         <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
@@ -774,7 +770,7 @@ export function LearnerCourseWorkspace({
           detail="Closed quizzes remain visible in the learning path."
         />
         </div>
-      </details>
+      </Disclosure>
 
       <Tabs
         ariaLabel="Learning path content filter"
@@ -883,26 +879,6 @@ export function LearnerCourseWorkspace({
                     <Badge tone="neutral">
                       {lessonProgress.completed} of {lessonProgress.total} complete
                     </Badge>
-                    {contentCounts.lectures > 0 ? (
-                      <Badge tone="neutral">
-                        {contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}
-                      </Badge>
-                    ) : null}
-                    {contentCounts.resources > 0 ? (
-                      <Badge tone="neutral">
-                        {contentCounts.resources} resource{contentCounts.resources === 1 ? "" : "s"}
-                      </Badge>
-                    ) : null}
-                    {contentCounts.assessments > 0 ? (
-                      <Badge tone="neutral">
-                        {contentCounts.assessments} assessment{contentCounts.assessments === 1 ? "" : "s"}
-                      </Badge>
-                    ) : null}
-                    {contentCounts.liveSessions > 0 ? (
-                      <Badge tone="neutral">
-                        {contentCounts.liveSessions} live
-                      </Badge>
-                    ) : null}
                     <span aria-hidden="true" className="text-primary-text group-open:rotate-90">
                       ›
                     </span>
@@ -910,9 +886,23 @@ export function LearnerCourseWorkspace({
                 </div>
               
               </>}
-              className="group rounded-xl border border-border bg-[var(--lms-neutral-50)]">
+              className="group min-w-0 border-b border-border bg-surface">
 
               <div className="border-t border-border bg-surface p-4 md:p-5">
+                <div className="mb-3 flex min-w-0 flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                  {contentCounts.lectures > 0 ? (
+                    <span>{contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}</span>
+                  ) : null}
+                  {contentCounts.resources > 0 ? (
+                    <span>{contentCounts.resources} resource{contentCounts.resources === 1 ? "" : "s"}</span>
+                  ) : null}
+                  {contentCounts.assessments > 0 ? (
+                    <span>{contentCounts.assessments} assessment{contentCounts.assessments === 1 ? "" : "s"}</span>
+                  ) : null}
+                  {contentCounts.liveSessions > 0 ? (
+                    <span>{contentCounts.liveSessions} live</span>
+                  ) : null}
+                </div>
                 {focusLessonId===lesson.id?<nav aria-label="Lesson navigation"
                    className="mb-4 flex flex-wrap items-center gap-3 text-sm">
                   <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
@@ -1015,6 +1005,12 @@ export function LearnerCourseWorkspace({
         <EmptyState
           title={`No ${filters.find((item) => item.key === activeFilter)?.label ?? "content"} in this course`}
           description="Choose another content filter to continue browsing the learning path."
+          action={
+            <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=all`}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+              Show all
+            </Link>
+          }
         />
       ) : null}
     </div>
