@@ -268,7 +268,7 @@ export function SectionOperations({
       className: "text-right",
       cell: (row: ProgramEnrollment) =>
         row.status === "ACTIVE" ? (
-          <div className="flex min-w-0 flex-wrap justify-start gap-[var(--lms-space-2)] md:justify-end">
+          <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] md:flex md:flex-wrap md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               size="md"
              
@@ -346,7 +346,7 @@ export function SectionOperations({
       className: "text-right",
       cell: (row: RosterRow) =>
         row.status === "ACTIVE" ? (
-          <div className="flex min-w-0 flex-wrap justify-start gap-[var(--lms-space-2)] md:justify-end">
+          <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] md:flex md:flex-wrap md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               size="md"
              
@@ -522,8 +522,8 @@ export function SectionOperations({
   ];
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-6)]">
-      <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-4">
+    <div className="min-w-0 space-y-[var(--lms-space-5)]">
+      <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Program
@@ -558,7 +558,7 @@ export function SectionOperations({
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
           <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
             Learner progression
@@ -568,9 +568,9 @@ export function SectionOperations({
           </p>
         </div>
 
-        <div className="grid min-w-0 items-start gap-[var(--lms-space-3)] xl:grid-cols-2">
+        <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] xl:grid-cols-2">
           <Disclosure id="section-admit-learner" title="Admit learner to Program" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
-            <div className="mt-3 flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center">
+            <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center [&>button]:w-full lg:[&>button]:w-auto">
               <Select className="min-w-0 flex-1"
                 aria-label="Learner to admit to program"
                 value={learnerMembershipId}
@@ -629,7 +629,7 @@ export function SectionOperations({
           </Disclosure>
 
           <Disclosure id="section-place-learner" title="Place learner in this Section" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
-            <div className="mt-3 flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center">
+            <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center [&>button]:w-full lg:[&>button]:w-auto">
               <Select className="min-w-0 flex-1"
                 aria-label="Active program enrollment to place in section"
                 value={placementEnrollmentId}
@@ -689,7 +689,7 @@ export function SectionOperations({
           </Disclosure>
         </div>
 
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-[var(--lms-space-3)]">
           <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Program enrollments
           </h3>
@@ -700,7 +700,7 @@ export function SectionOperations({
           />
         </div>
 
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-[var(--lms-space-3)]">
           <h3 id="section-roster" className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Section roster history
           </h3>
@@ -712,7 +712,7 @@ export function SectionOperations({
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
           <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
             Faculty responsibilities
@@ -723,7 +723,7 @@ export function SectionOperations({
         </div>
 
         <Disclosure title="Faculty responsibility" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
-        <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center">
+        <div className="grid min-w-0 items-center gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] [&>button]:w-full xl:[&>button]:w-auto">
           <Select className="min-w-0 flex-1"
             aria-label="Faculty member to assign"
             value={facultyMembershipId}
@@ -794,7 +794,7 @@ export function SectionOperations({
         />
       </section>
 
-      <section className="space-y-4">
+      <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
           <h2 id="section-schedule" className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
             Section schedule
@@ -805,11 +805,11 @@ export function SectionOperations({
         </div>
 
         <Disclosure title="Add event" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
-        <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] pt-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
           <div>
             <label
               htmlFor="schedule-title"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Title
             </label>
@@ -825,7 +825,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-start"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Starts
             </label>
@@ -841,7 +841,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-end"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Ends
             </label>
@@ -857,7 +857,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-location"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Location
             </label>
@@ -875,7 +875,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-course"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Course · optional
             </label>
@@ -904,7 +904,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-faculty"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Faculty · optional
             </label>
@@ -930,7 +930,7 @@ export function SectionOperations({
               ))}
             </Select>
           </div>
-          <div className="min-w-0 md:col-span-2 xl:col-span-3 2xl:col-span-6">
+          <div className="flex min-w-0 justify-stretch md:col-span-2 md:justify-end xl:col-span-3 [&>button]:w-full md:[&>button]:w-auto">
             <Button
               disabled={
                 pending ||
