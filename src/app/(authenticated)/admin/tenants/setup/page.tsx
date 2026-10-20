@@ -102,12 +102,12 @@ export default async function SuperAdminTenantSetup({
   {tab==="STRUCTURE"?<>
    <section aria-label="Create organization and college" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
-     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Create an organization</h2>
+     <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create an organization</h2>
      {orgCreate?<OrganizationCreateForm/>:
       <Banner tone="warning">Organization creation is not permitted in your selected administrative scope.</Banner>}
     </div>
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
-     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Create a college</h2>
+     <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create a college</h2>
      {creatable.length?<CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
       <Banner tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Banner>}
     </div>
@@ -115,7 +115,7 @@ export default async function SuperAdminTenantSetup({
    <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Organizations</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Organizations</h2>
       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
@@ -125,7 +125,7 @@ export default async function SuperAdminTenantSetup({
     </div>
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Colleges</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Colleges</h2>
       <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
@@ -140,7 +140,7 @@ export default async function SuperAdminTenantSetup({
    </section>
    <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 md:min-h-9  items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
   </>:college?<>
-   <h2 className="text-lg font-semibold">{college.name} · Launch setup</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{college.name} · Launch setup</h2>
    <Banner tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
     Persisted readiness: {summary.label}. {summary.detail}
    </Banner>
@@ -152,20 +152,20 @@ export default async function SuperAdminTenantSetup({
     ].map(card=><Card key={card.label} as="article" className="min-w-0 hover:border-[var(--lms-primary)]">
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
       className="block min-h-11 rounded-[var(--lms-control-radius)] font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-      <h3 className="font-semibold">{card.label}</h3>
+      <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{card.label}</h3>
       <p className="mt-2 text-sm font-normal text-body">{card.description}</p>
      </Link>
     </Card>)}
    </div>
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
-     <h2 className="text-lg font-semibold">Launch checklist</h2>
+     <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Launch checklist</h2>
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-x-5 gap-y-2 md:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
-      <h3 className="mt-1 break-words font-semibold text-foreground">{step.title}</h3>
+      <h3 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>
       <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9  items-center text-sm font-semibold text-primary-text underline">Open workspace →</Link>
      </li>)}
