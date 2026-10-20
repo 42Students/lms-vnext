@@ -102,6 +102,7 @@ export default async function FacultyContactsPage({
               Search contacts
               <Input
                 className="mt-1.5"
+                type="search"
                 name="q"
                 maxLength={200}
                 defaultValue={result.search}
