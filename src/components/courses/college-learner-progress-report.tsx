@@ -1,15 +1,15 @@
 "use client";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import {Select} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
-import {useState} from "react";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
-import {DataTable} from "@/components/ui/data-table";
+import { DataTable } from "@/components/ui/data-table";
 import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "./college-learner-progress-report.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
-import {EmptyState} from "@/components/ui/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
 
@@ -23,22 +23,22 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
  }
  const courses=choices.filter(option=>option.sectionId===sectionId);
  const deliveryId=courses.find(option=>option.offeringId===offeringId)?.deliveryId??"";
- return <section className="space-y-4 border-b border-border pb-5">
+ return <section className="min-w-0 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
   <div>
-   <h2 className="text-lg font-semibold text-foreground">Course Progress</h2>
-   <p className="text-sm text-muted-foreground">
+   <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Course Progress</h2>
+   <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">
     See measured completion for a class and course, then focus on the students furthest behind.
    </p>
   </div>
-  <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3 print:hidden">
-   <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Class
+  <form action="/college/course-progress" method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] print:hidden md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+   <label className="grid min-w-0 w-full flex-1 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Class
     <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
      className="min-h-11 md:min-h-9">
      <option value="">Select Class</option>
      {[...sections].map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
    </label>
-   <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Course
+   <label className="grid min-w-0 w-full flex-1 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Course
     <Select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
      name="offeringId" disabled={!sectionId}
      className="min-h-11 md:min-h-9">
@@ -50,18 +50,18 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    </label>
    <Input type="hidden" name="deliveryId" value={deliveryId}/>
    <Button type="submit" disabled={!deliveryId}
-    className="min-h-11 md:min-h-9">
+    className="min-h-11 w-full md:min-h-9">
     Show progress
    </Button>
    <Link href="/college/course-progress"
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     Clear
    </Link>
   </form>
   {!report?<p className="text-sm text-muted-foreground">
    Select a Class and Course to see each enrolled learner’s progress.
   </p>:<>
-   <div className="grid gap-3 md:grid-cols-4" role="group" aria-label="Class course progress summary">
+   <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] lg:grid-cols-4" role="group" aria-label="Class course progress summary">
     {[
      ["Average completion",report.averageCompletion+"%"],
      ["Students",String(report.students)],
@@ -93,7 +93,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
      {key:"quizzes",header:"Quizzes",mobilePriority:"secondary" as const,cell:(row)=>row.quizDone+"/"+report.totalQuizzes},
     ]}
    />
-   <p className="text-xs text-muted-foreground">
+   <p className="max-w-[90ch] text-xs leading-5 text-muted-foreground">
     Published, visible videos and published assignments/quizzes are measured.
     Completion uses recorded video progress, assignment submissions and quiz attempts.
     {" "}Measured work only: videos watched to the end, assignments submitted, and quizzes attempted.
