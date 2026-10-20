@@ -31,7 +31,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
-   action={<Link href="/admin/placements/drives" className="font-semibold text-link underline">Clear filters</Link>}/>
+   action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline">Clear filters</Link>}/>
  </div>;
  // Keep an unavailable college reporting backend from crashing the entire
  // Super Admin drive directory; preserve the validated filter on Retry.
@@ -46,7 +46,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     ?"Your account cannot manage drives in this college."
     :"This college's drives could not be loaded. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
-    className="font-semibold text-link underline">
+    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline">
     {loaded.denied?"Back to dashboard":"Retry loading drives"}
    </Link>}
   />

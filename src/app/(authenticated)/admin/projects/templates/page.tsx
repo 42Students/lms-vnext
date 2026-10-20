@@ -81,7 +81,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     columns={[
       {key:"template",header:"Template",mobilePriority:"primary",cell:item=><>
         <Link href={"/admin/projects/templates/"+encodeURIComponent(item.id)}
-          className="break-words font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{item.title}</Link>
+          className="inline-flex items-center min-h-11 md:min-h-9 break-words font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{item.title}</Link>
         <span className="mt-1 block break-all text-xs text-muted-foreground">{item.slug}</span>
         {item.summary?<p className="mt-2 break-words text-sm text-body">{item.summary}</p>:null}
       </>},
