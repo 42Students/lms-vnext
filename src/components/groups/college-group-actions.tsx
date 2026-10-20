@@ -3,7 +3,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Alert } from "@/components/ui/alert";
@@ -34,6 +34,7 @@ function draftOf(group: ManagedStudyGroup | null): Draft {
 
 export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
   const router = useRouter();
+  const editorFormId = useId();
   const [pending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState<"ACTIVATE" | "CLOSE" | "ARCHIVE" | null>(null);
@@ -139,8 +140,12 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
     )}
     <Dialog open={open} onOpenChange={(value) => { if (!pending) setOpen(value); }}
       title={group ? "Edit study group" : "New study group"}
-      description="This form manages college-owned study groups only.">
-      <form onSubmit={(event) => { event.preventDefault(); save(); }} className="space-y-4">
+      description="This form manages college-owned study groups only."
+      footer={<>
+        <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
+        <Button type="submit" form={editorFormId} loading={pending} className="min-h-11 md:min-h-9" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
+      </>}>
+      <form id={editorFormId} onSubmit={(event) => { event.preventDefault(); save(); }} className="space-y-4">
         <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group name
           <Input required maxLength={150} value={draft.name}
             onChange={(event) => update("name", event.target.value)} className={inputClass} />
@@ -155,10 +160,6 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
             onChange={(event) => update("capacity", event.target.value)} className={inputClass} />
         </label>
         {error ? <Alert tone="error">{error}</Alert> : null}
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
-          <Button type="submit" loading={pending} className="min-h-11 md:min-h-9" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
-        </div>
       </form>
     </Dialog>
     <ConfirmDialog open={confirm !== null} onOpenChange={(value) => { if (!value && !pending) setConfirm(null); }}
@@ -167,7 +168,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
         ? "Archiving is permanent in this workflow. It is blocked while active, waitlisted or requested members remain."
         : "The status change will affect member access and group visibility."}
       confirmLabel={confirm === "ARCHIVE" ? "Archive group" : "Confirm status"}
-      confirmVariant={confirm === "ARCHIVE" ? "danger" : "primary"}
+      confirmVariant={confirm === "ACTIVATE" ? "primary" : "danger"}
       pending={pending} onConfirm={changeStatus} />
     {!open && !confirm && error ? <Alert tone="error">{error}</Alert> : null}
   </>;

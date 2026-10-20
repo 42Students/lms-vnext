@@ -441,11 +441,11 @@ export function LearnerQuizAttempt() {
           try { window.sessionStorage.setItem(storageKey, JSON.stringify({ answers, step })); } catch { /* browser storage unavailable */ }
           router.replace("/learn/allQuizzes");
         }} />
-      <ConfirmDialog open={submitOpen} onOpenChange={setSubmitOpen} pending={submitting || !attemptable}
+      <ConfirmDialog open={submitOpen} onOpenChange={setSubmitOpen} pending={submitting} confirmDisabled={!attemptable}
         title="Submit quiz attempt?" description={answerProgress.total > answerProgress.answered
           ? `You have ${answerProgress.total-answerProgress.answered} unanswered question${answerProgress.total-answerProgress.answered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
-        confirmLabel="Submit" onConfirm={() => void submit()} />
+        confirmLabel="Submit" confirmVariant="primary" onConfirm={() => void submit()} />
       <div className={styles.header+" pb-4"}>
         <p className="mb-2 text-xs font-semibold text-muted-foreground">
           Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
