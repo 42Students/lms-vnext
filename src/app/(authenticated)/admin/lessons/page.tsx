@@ -17,6 +17,7 @@ import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Pagination } from "@/components/ui/pagination";
 import { listCollegeLessons } from "@/modules/courses/college-learning-directory-service";
 import { adminLearningHref, adminLessonStats } from "@/modules/courses/admin-learning-read-model";
 import {parseSuperAdminLearningQuery} from "@/modules/admin-ui/super-admin-learning-query-model";
@@ -89,7 +90,7 @@ export default async function SuperAdminLessonsPage({
         </div>
         <p className="mt-1 text-sm text-body">{lesson.courseName} ({lesson.courseCode})</p>
         <p className="mt-1 text-xs text-muted-foreground">{lesson.cohortName} · {lesson.periodName} · Order {lesson.sequence + 1}</p>
-        <p className="mt-3 text-sm text-body">Learning path: {lesson.pathStatus} · Offering: {lesson.offeringStatus}</p>
+        <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-body">Learning path: <StatusBadge tone={lesson.pathStatus==="PUBLISHED"?"success":"neutral"}>{lesson.pathStatus}</StatusBadge> Offering: <StatusBadge tone={lesson.offeringStatus==="ACTIVE"?"success":"neutral"}>{lesson.offeringStatus}</StatusBadge></p>
         <p className="mt-2 text-sm text-body">{lesson.publishedContentCount} published / {lesson.contentCount} authored content records</p>
         {lesson.status==="ACTIVE"?<div className="mt-3 flex flex-wrap items-center gap-3">
           <LessonActions lesson={{id:lesson.id,name:lesson.name,description:lesson.description,sequence:lesson.sequence}}/>
@@ -104,15 +105,12 @@ export default async function SuperAdminLessonsPage({
         </Link>
       </article>)}
     </div> : <EmptyState title="No lessons found" description="The current college and filters have no recorded lessons." />}
-    <nav aria-label="Lesson pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-      <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
-      <div className="flex gap-2">
-        {data.query.page > 1 ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page - 1 })}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text md:min-h-9">Previous</Link> : null}
-        {data.query.page < data.totalPages ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page + 1 })}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text md:min-h-9">Next</Link> : null}
-      </div>
-    </nav>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <span className="text-sm text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
+      <Pagination page={data.query.page} pageCount={data.totalPages}
+        hrefForPage={page=>adminLearningHref("LESSONS",{...data.query,page})}
+        label="Lesson pages" showBoundaryLinks={false}/>
+    </div>
     <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
   </div>;
 }
