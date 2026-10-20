@@ -148,14 +148,14 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/error.tsx`
 - [ ] `src/app/(authenticated)/tracker/issues/[publicId]/error.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/loading.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/[publicId]/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/issues/error.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/loading.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/loading.tsx`
 - [ ] `src/app/(authenticated)/tracker/logs/error.tsx`
-- [ ] `src/app/(authenticated)/tracker/logs/loading.tsx`
+- [x] `src/app/(authenticated)/tracker/logs/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/mine/[publicId]/error.tsx`
 - [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
@@ -631,3 +631,10 @@ For each route listed below, complete fetched source shows exactly one shared `G
 - `src/app/(authenticated)/recruiter/profile/loading.tsx`: all local value classes (font, color, padding, radius, border, hover, focus, disabled, active, loading, error, phone/tablet) N/A; one unchanged shared GracefulPageLoading. Source grep counts native/hex/h1/overlay = 0/0/0/0; legacy `old-lms-pages.md:6-12`, `components___listing-page-header.scss:131-158`; no local JSX tags.
 - `src/app/(authenticated)/tracker/audit-findings/[publicId]/loading.tsx`: all local value classes (font, color, padding, radius, border, hover, focus, disabled, active, loading, error, phone/tablet) N/A; one unchanged shared GracefulPageLoading. Source grep counts native/hex/h1/overlay = 0/0/0/0; legacy `old-lms-pages.md:6-12`, `components___listing-page-header.scss:131-158`; no local JSX tags.
 - `src/app/(authenticated)/tracker/audit-findings/loading.tsx`: all local value classes (font, color, padding, radius, border, hover, focus, disabled, active, loading, error, phone/tablet) N/A; one unchanged shared GracefulPageLoading. Source grep counts native/hex/h1/overlay = 0/0/0/0; legacy `old-lms-pages.md:6-12`, `components___listing-page-header.scss:131-158`; no local JSX tags.
+
+
+#### Delegated loading-only audit (3 files)
+
+- `src/app/(authenticated)/tracker/issues/[publicId]/loading.tsx`: all local value classes (font, color, padding, radius, border, hover, focus, disabled, active, loading, error, phone/tablet) N/A; one unchanged shared GracefulPageLoading. Source grep counts native/hex/h1/overlay = 0/0/0/0; legacy `old-lms-pages.md:6-12`, `components___listing-page-header.scss:131-158`; no local JSX tags.
+- `src/app/(authenticated)/tracker/issues/loading.tsx`: all local value classes (font, color, padding, radius, border, hover, focus, disabled, active, loading, error, phone/tablet) N/A; one unchanged shared GracefulPageLoading. Source grep counts native/hex/h1/overlay = 0/0/0/0; legacy `old-lms-pages.md:6-12`, `components___listing-page-header.scss:131-158`; no local JSX tags.
+- `src/app/(authenticated)/tracker/logs/loading.tsx`: all local value classes (font, color, padding, radius, border, hover, focus, disabled, active, loading, error, phone/tablet) N/A; one unchanged shared GracefulPageLoading. Source grep counts native/hex/h1/overlay = 0/0/0/0; legacy `old-lms-pages.md:6-12`, `components___listing-page-header.scss:131-158`; no local JSX tags.
