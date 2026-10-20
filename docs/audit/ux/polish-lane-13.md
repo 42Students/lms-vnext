@@ -155,3 +155,23 @@
 **Changes:** prioritize task/project and decision, disclose priority and chronology with active auto-open, keep original GET field names and options, align full-width phone Filter and compact tablet grid, demote export and pending-review links, combine count/export, compact record titles and wrap both authorized Board/feedback actions, add conditional clear-or-pending empty action and hide one-page pager. Preserve all query semantics, security copy, permissions, roles, URLs and original labels. Existing GracefulPageLoading needed no change; error Retry realigned to 44px on phone. Checked source semantics at 375/768/1280; no browser/CI.
 
 **Files:** page, error, queue, proof.
+
+## 31. Mentor pending task reviews
+
+**Surface:** `src/app/(authenticated)/mentor/task-reviews/page.tsx`; inspected full query/export models, inherited Mentor/authenticated layout, loading/error, absent not-found/template, shared Input/Select/Button/Disclosure/EmptyState/Pagination.
+
+**Problems fixed (11):** two competing bordered navigation links, eight flat controls before reviews, page-size filter overemphasized, card-inside-canvas filter border, uneven 375px and 768px wrapping, Filter weak at phone width, export competing as a CTA, result count detached, no zero-result recovery, duplicated manual pagination, and loading/error inconsistent.
+
+**Changes:** preserve search/project as primary fields and all six infrequent filters in auto-open native disclosure inside the same GET form; use legacy field/control styles and one hairline; responsive 375 single-column and 768 two-column grid; demote both nav links/export; align count/export; preserve exact Board task href, submitted timestamps, all sort/priority/assignment/page-size semantics and out-of-range recovery; use shared Pagination only for multiple pages and shared graceful loading. Add clear/history empty recovery, align route Retry. Source-inspected state variations at 375/768/1280; no code execution, CI or screenshots.
+
+**Files:** page, loading, error, queue, proof.
+
+## 32. Mentor team coverage
+
+**Surface:** `src/app/(authenticated)/mentor/team-coverage/page.tsx`; inspected rendered FilterBar/ResponsiveFilterDrawer, Select/Input/Button, Disclosure, StatTile, Pagination/EmptyState, route loading/error, absent not-found/template, parent Mentor/authenticated layouts.
+
+**Problems fixed (10):** five undifferentiated selectors, dense mobile wrapping, filter action misalignment, large Projects button competing with Filter, triple cards nested in one legacy canvas, oversized project heading, redundant oversized member metrics, empty assignment/filtered results without recovery, inert one-page pager, unaligned route Retry.
+
+**Changes:** keep search and Team coverage quick filter visible, disclose state/assignment/order and auto-expand when advanced filter active; one GET form with exact original names/options/behavior in mobile filter drawer; responsive two-column tablet alignment and full-width phone Filter; demote navigation, flatten summary tiles into an unboxed metric strip, compact project row headings and metric grid, add Projects/Clear recovery for empty, hide one-page pager, realign Retry. No role, data, metrics, links, labels or status semantics changed. Shared GracefulPageLoading already conforms. Source inspection includes 375/768/1280, no browser/CI.
+
+**Files:** page, error, queue, proof.
