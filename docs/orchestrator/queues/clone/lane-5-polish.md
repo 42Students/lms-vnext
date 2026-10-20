@@ -49,7 +49,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-5.md: surface | proble
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx` (Admin page)
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx` (Admin page)
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx` (Admin page)
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx` (Admin page)
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx` (Admin page)
 - [ ] `src/app/(authenticated)/admin/features/page.tsx` (Admin page)
 - [ ] `src/app/(authenticated)/admin/hr/page.tsx` (Admin page)
 - [ ] `src/components/admin/admin-program-directory.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
