@@ -324,6 +324,7 @@ export async function ProjectAdminAuditPage({
       }))}/>
       </div>
       <ActivityCenter
+        emptyActionHref={basePath + "/audit"}
         groups={groups}
         nextRemaining={result.remainingCount}
         nextHref={

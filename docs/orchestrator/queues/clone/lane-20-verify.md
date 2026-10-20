@@ -13,10 +13,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-20.md: surface | regre
 - [x] `src/app/(authenticated)/college/programs/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/at-risk/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/audit/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/create/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/at-risk/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/audit/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/create/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/readiness/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/reassign-mentor/page.tsx`
