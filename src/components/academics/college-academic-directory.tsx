@@ -22,10 +22,11 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
   | Awaited<ReturnType<typeof listCollegeBatches>>;
 
-export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend }: {
+export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, actions }: {
   data: DirectoryData;
   batchPeriods?: { id: string; name: string; code: string }[];
   prepend?: ReactNode;
+  actions?: ReactNode;
 }) {
   const semesters = data.kind === "SEMESTERS";
   const title = semesters ? "Semesters" : "Batches";
@@ -34,16 +35,16 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend }: {
     <div className="space-y-6">
       <PageHeader
         title={title}
-        actions={
+        actions={<>
+          {actions}
           <Link href="/college/academics"
             className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)]">
             Academic workspace
           </Link>
-        }
+        </>}
       />
       {prepend ? <section aria-label="Batch actions" className="min-w-0 border-b border-border pb-4">{prepend}</section> : null}
       {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
-      {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
       <FilterBar title="Filters"><section aria-label={title + " filters"} className="border-t border-border pt-4">
         <form action={path} method="get" className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
           <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -234,7 +235,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend }: {
         </form>
       </section></FilterBar>
 
-      <section aria-label={title + " results"} role="region" tabIndex={0} className="max-w-full overflow-x-auto border-y border-border">
+      <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full border-y border-[var(--lms-canvas-border)]">
         <p className="px-4 pt-3 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all semester or batch columns.</p>
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching {semesters ? "program terms" : "cohorts"}
