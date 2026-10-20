@@ -91,7 +91,7 @@ export default async function TpoCompanyDetailPage({
     <div className="space-y-6">
       <Link
         href="/tpo/companies"
-        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
       >
         ← All companies
       </Link>
@@ -107,7 +107,7 @@ export default async function TpoCompanyDetailPage({
               Create drive
             </Link>
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Add contact
             </Link>
           </div>
@@ -143,13 +143,13 @@ export default async function TpoCompanyDetailPage({
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/manage"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Edit / archive relationship
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/people"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Manage contact people
         </Link>
@@ -161,7 +161,7 @@ export default async function TpoCompanyDetailPage({
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/feedback"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Internal recruiter feedback
         </Link>
@@ -334,7 +334,7 @@ export default async function TpoCompanyDetailPage({
                   {key:"drive",header:"Drive",mobileLabel:"Drive",mobilePriority:"primary",
                    cell:drive=><div className="min-w-0">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}
-                     className="lms-inline-link inline-flex min-h-11 items-center break-words font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{drive.title}</Link>
+                     className="lms-inline-link inline-flex min-h-11 items-center break-words font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{drive.title}</Link>
                     <p className="mt-1 text-xs text-muted-foreground">{drive.employmentType.replaceAll("_"," ")}</p>
                    </div>},
                   {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",
@@ -386,7 +386,7 @@ export default async function TpoCompanyDetailPage({
                  cell:offer=>dateLabel(offer.issuedAt)},
                 {key:"drive",header:"Drive",mobileLabel:"Drive",mobilePriority:"action",
                  cell:offer=><Link href={"/tpo/placements/jobs/"+encodeURIComponent(offer.jobId)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open drive</Link>},
+                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open drive</Link>},
               ]}
             />
           </div>
