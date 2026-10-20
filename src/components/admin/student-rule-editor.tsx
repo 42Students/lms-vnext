@@ -78,7 +78,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
     disabled={blocked||pending||choice==="INHERIT"}/>
    Lock this membership rule
   </label>
-  <div className="flex flex-wrap gap-2">
+  <div className="flex flex-col gap-[var(--lms-space-2)] min-[768px]:flex-row [&>button]:w-full min-[768px]:[&>button]:w-auto">
    <Button className="min-h-11 md:min-h-9" disabled={!canReviewStudentRule(choice,blocked,pending,noChange)} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
    <Button className="min-h-11 md:min-h-9" disabled={pending} variant="ghost" onClick={()=>{void reload();}}>Recheck stored rule</Button>
   </div>
