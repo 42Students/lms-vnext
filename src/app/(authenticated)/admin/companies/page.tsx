@@ -67,7 +67,7 @@ export default async function SuperAdminCompaniesPage({
         <Input type="search" name="q" defaultValue={data.query.q} placeholder="Search company name or domain"
           className="min-h-11 md:min-h-9" />
       </label>
-      <Disclosure title="More filters" className="min-w-0 md:col-span-2 md:order-last"
+      <Disclosure title="More filters" className="min-w-0 order-last md:col-span-2"
         contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[1366px]:grid-cols-3">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search in
         <Select name="searchField" defaultValue={data.query.searchField} className="min-h-11 md:min-h-9">
