@@ -674,99 +674,53 @@ No app execution or CI/browser/screenshot verification. Global A5–A7/E8 remain
 
 **Next unticked TPO page:** src/app/(authenticated)/tpo/students/page.tsx (large source file; whole-file UI and source parity, not patched/ticked in this batch).
 
-## chat-15 HR recruiter results — desktop summary sheet continuation (2026-10-20)
+## 2026-10-20 chat-14 — authorized grid selection, sort, clipboard and indeterminate state
 
-- [ ] `src/components/placements/recruiter-result-review-grid.tsx`: new read-only `TpoGrid` sheet of authorized recruiter candidate result rows. No independent client fetch, no mutating cell editor, no release/grading API. `rowActions` links to existing editor row ID.
-- [ ] `src/components/placements/recruiter-result-controls.tsx`: authorized page already passes round/participant metadata; a `hidden md:block` sheet per evaluative round lists Candidate, Contact, Outcome, Score %, Waitlist #, Result status. All original inline result forms, validation, optimistic workflow and bulk selection remain below it. No duplication of input controls across viewports.
-  
-| Property / state | Old LMS reference and value | New vNext source and value | Result |
-| --- | --- | --- | --- |
-| Canvas structure | `docs/design/old-lms-pages.md:6` single white 12px-radius bordered canvas, no nested per-row cards | `recruiter-result-controls.tsx:385,393` per-round `article` with `border-b`, no card-specific bg/radius; grid inherited canvas | Structural match; outer shared canvas unmodified |
-| Sheet columns | `old-lms-pages.md:10` bordered compact cells, row navigation | `recruiter-result-review-grid.tsx:22-30` six read-only columns plus Review row; no custom table markup | Uses shared `TpoGrid`; runtime/pixel not verified |
-| Read-only sort | `docs/design/ui-clone-checklist.md:66` numeric/date-only sort | `recruiter-result-review-grid.tsx:26-29` Score % and Waitlist # sortKind number; text no sortKind | Source match |
-| Row click / review action | `old-lms-pages.md:10` row action; `components___common.scss` shared hover/focus rules | `recruiter-result-review-grid.tsx:39-43` Review row goes to in-page anchor; `recruiter-result-controls.tsx:513+` matching ID plus scroll margin | Source reachability; actual focus/scroll still pending |
-| Phone and tablet | `components___listing-page-header.scss:131-158` mobile <=767px | `recruiter-result-controls.tsx:460` sheet `hidden md:block`, editable stacked row controls persist in phone; editor fields `md:grid-cols-2` | Source threshold matches; physical widths untested |
-| Busy/disabled | Shared `Button` loading/disabled tokens, legacy form guard | Bulk Send `loading={bulkPending===round.id}`, Stage `loading={pendingKey===key}`, guarded writes left unchanged | Source busy-state behavior preserved; keyboard runtime missing |
-| Empty and error | `old-lms-pages.md:11-12` shared empty/error panels | `EmptyState` for no rounds/no participants; mutation error remains existing `useToast` | Shared semantics, pixel comparison incomplete |
+Branch workflow: fast-forwarded `chatgpt/chat-14-b` to inspected main `9880c6d` when it was cleanly behind; merged later main `002ac31` with all lane edits retained. All commits labeled `[chat-14]` and pushed **only** to `chatgpt/chat-14-b`; `main` was not written. No application runtime, TypeScript typecheck, browser or CI invoked.
 
-**Post-write source scans** for `recruiter-result-controls.tsx` (829 lines), `recruiter-result-review-grid.tsx` (46 lines), `known-errors-workspace.tsx` (274 lines): native control/table, inline 3–8-digit hex, authored `h1`, custom overlay counts **0/0/0/0 for each**. Result editor tag pairs: `div` 11/11, `article` 1/1, `label` 6/6. New grid has no intrinsic JSX row/control element (one shared TpoGrid and row-action Link only). Source proves `md:` starts at 768px, with single-column candidates and form controls below 768px. **No CI, TypeScript compile, Playwright, screenshots, or old-LMS measured states were run. E8 stays unticked.**
+### E8 exact behavior/state parity matrix (source-only)
 
-**Remaining dependency:** `src/components/tpo/grid/tpo-grid.tsx` imports ag-grid 36.x, while `package.json` has no declared `ag-grid-react` or `ag-grid-community` dependency as read on this lane. This is an upstream integration blocker; no package manifest or shared UI file was modified.
-
-
-
-## chat-12 2026-10-20 — Whole batch pages (classes, rules, overview, students, registrations and histories)
-
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
-
-### Legacy/vNext CSS value comparison
-Old references: docs/design/old-lms-pages.md:6-10 one white canvas, separated row actions, continuous funnel/metrics, teal links; docs/design/old-lms-shell.css:23,31-32,73 44px phone, 768px tablet; docs/design/old-lms-shell-spec.md:24-25 compact desktop 36px actions; legacy-styles/components___common.scss:68-75 teal link and hover underline.
-| File | Legacy layout/interaction property | Exact current VNext source anchor/property | Result |
+| State/property | Legacy requirement / measured basis | Updated source and precise behavior | Static result |
 |---|---|---|---|
-| src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 14: <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center font-sem; 24: className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline  | Source checked, browser pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 35: <Link href="/tpo/settings/rules" className="lms-inline-link inline-flex min-h-11 items-center r | Source checked, browser pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 40: <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center text-sm text; 50: className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link under; 54: className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link under; 56: Suggested: remind them to register <Link href="#batch-reminder" className="lms-inline-link ml-2; 96: <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-co | Source checked, browser pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 35: if(!parsed.success)return <p role="alert">Invalid page number. <Link className="lms-inline-link; 81: className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link under; 84: <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inli; 108: className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border bor; 117: className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-bo | Source checked, browser pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 39: className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-bo; 43: className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-bo; 52: <Button type="submit" className="min-h-11 md:min-h-9 justify-self-start">Filter</Button>; 60: }).toString()} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-; 81: className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link u | Source checked, browser pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 26: <a href={tpoCohortHistoryCsvHref(batchId,filters.data)} className="lms-inline-link inline-flex  | Source checked, browser pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus |  | Source checked, browser pending |
+| Visible and authorized membership scope | `docs/design/ui-clone-checklist.md:57`: filtered select-all, hide-filtered selection, authorized rows only | `grid/grid-selection.ts:13-65` now accepts optional `allowedIds` for both click and checkbox, defaulting to visible IDs for old consumers. `selectedGridIdsWithin` strips denied keys, while authorized keys outside current filter remain available for Ctrl/Meta and checkbox operations. Both native and fallback pass `allowedIds` | Source contract aligned; actual server authorizations untouched |
+| Plain row click | Select one currently visible authorized key; anchor this row | `gridSelectionClick` returns `[rowId]` for ordinary click, fails closed if not visible or not allowed | Exact interaction algorithm, not browser-tested |
+| Shift click | Range of currently visible rows from allowed anchor | `gridSelectionClick` slices `visibleIds` between indices and filters by `allowedIds`; non-additive Shift selects the range | Source algorithm aligned |
+| Ctrl/Meta click | Toggle one row without erasing other authorized selections | `gridSelectionClick` preserves allowed IDs outside filtered page and toggles row; returns new anchor | Correctly preserves cross-filter selection |
+| Ctrl/Meta + Shift click | Add visible permitted range to existing authorized selection | `gridSelectionClick` unions prior selection and authorized range without duplicates | Source behavior aligned |
+| Checkbox / Shift checkbox | Check/uncheck current row/range; retain still-authorized rows outside current filter | `gridSelectionCheckbox` authorizes old selection and any range; native and mobile fallback pass `allowedIds` and re-filter before mutation | Correct source behavior |
+| Filter change / revoked record | Denied keys must never persist after allowed set changes | Native grid effect re-sanitizes on allowedCsv; fallback uses the same `selectedGridIdsWithin` check and resets invalid anchor | Fail-closed source check retained |
+| Header selected/partial | Exact 48px pinned selection column; partial selection visually distinct | Native `tpo-grid.tsx:193-204` pinned 48px, checked if all visible; newly `indeterminate` if some but not all. Fallback `tpo-spreadsheet-grid.tsx:72-76,187,212` newly sets `indeterminate` on desktop header and phone Select all checkbox | 48px and tri-state source contract; actual paint not browser verified |
+| Sort only number/date and sortValue | Legacy E8: numeric/date columns sortable, some date cells have human-readable localized labels but numeric comparison keys | Native `tpo-grid.tsx:206-213`: comparator uses `col.sortValue(node.data)` when present, else read value. `grid-sort.ts` fallback already uses `sortValue`. Example `tpo-company-memory-drive-grid.tsx`: displayed Year/Created sort on timestamp | Native/fallback parity corrected |
+| Clipboard order/filter | E8: copy selected/visible current authorized projection only, no hidden rows | Native `tpo-grid.tsx:174-190` reads AG Grid's filtered/sorted ID sequence, maps only authorized page rows; selected keys outside filter no longer cause copying all visible rows. `grid-workspace.tsx:144-152` now reuses `gridClipboardTsv` | Correct source behavior and clipboard header format, not runtime-tested |
+| Clipboard formula/control | TPO TSV injection safeguard | `grid-export.ts:4-6` normalizes C0/DEL, neutralizes `= + - @` with leading whitespace/control; GridWorkspace and native/fallback all share `gridClipboardTsv` | Unified safety/format; clipboard permissions can still block |
+| Save/restore layout | Per-storageKey widths/pins, permitted columns only, 100–500px | `grid/view-memory.ts` clamps widths and dedupes keys; `tpo-grid.tsx:120-140,240-253` persists and restores only allowed layout; URLs govern column visibility | Source contract preserved; browser persistence untested |
+| Quartz theme accent | `legacy-styles/components___variables.scss:10`: primary interactive `$clrThird = #26bac7` | `tpo-grid.tsx:32` now `accentColor:var(--lms-primary)`; `src/app/globals.css:21` maps to #26bac7. Header white, border #e5e9f0, ink #54505d and header muted #a9a7ae | Exact mapped legacy token values; Quartz computed paint unverified |
+| Header and row geometry | E8 current source 44px each; original `TpoGrid.jsx` unavailable through connector | `tpo-grid.tsx:41-42,238` retains 44px row/header, native selection 48px; no guessed height change | Legacy numeric match **not yet proven** |
+| Phone/tablet handoff | Legacy shell `old-lms-shell.css:23,73` mobile <=767px, desktop >=768px | `tpo-grid.tsx:228,262`: AG Grid `hidden md:block`, fallback `md:hidden`; original authorized row data / action slots pass through | Breakpoint match, viewport screenshot pending |
 
-### Scoped regex/JSX and responsive proof
-Complete files inspected using regex equivalents of `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`, and `grep -nE 'sm:|md:' FILE`; JSX Button/Link open-close and curly counts compared, no app running.
-| File | Raw/SVG/hex | Button; Link pairs | Curly | sm/md tokens |
-|---|---|---|---|---|
-| src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx | 0/0/0 | 0/0; 2/2 | 34/34 | 0/3 |
-| src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx | 0/0/0 | 0/0; 1/1 | 34/34 | 0/1 |
-| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | 0/0/0 | 0/0; 9/9 | 90/90 | 0/6 |
-| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | 0/0/0 | 1/1; 6/6 | 122/122 | 0/20 |
-| src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx | 0/0/0 | 1/1; 4/4 | 68/68 | 0/14 |
-| src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx | 0/0/0 | 1/1; 1/1 | 43/43 | 0/2 |
-| src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx | 0/0/0 | 1/1; 3/3 | 34/34 | 0/2 |
+### File-level source grep equivalence and JSX pairing
 
-Global A5/A6/A7/E8 remain [ ] per strict tick rule: no full icon/page link/visited-external audit, avatar/wordmark/title states and no browser phone/tablet/desktop screenshot or disabled/focus regression proof. Shared controls unmodified and CI not run.
+| File | Post-write, complete file fetched from GitHub | Invariant |
+|---|---|---|
+| `src/components/tpo/grid/grid-selection.ts` | `allowedIds` token count 8; 2 optional allowed-argument defaults; 2 range authorization filters | No DOM/JSX; all row IDs must belong to authorized list |
+| `src/components/tpo/grid/tpo-grid.tsx` | 0 raw `<button>`, **2 Button open/2 close**, 2 self-closing Checkbox, `forEachNodeAfterFilterAndSort` 1; `sortValue` used in comparator, selection width 48 | native grid only from md; 48px selection and tri-state |
+| `src/components/tpo/tpo-spreadsheet-grid.tsx` | 0 raw `<button>`, 7 Button pairs, 1 FilterChip pair, 1 Disclosure pair, 4 self-closing Checkbox, `indeterminate` twice | fallback includes phone selection and protected cell open action |
+| `src/components/tpo/grid/grid-workspace.tsx` | 0 raw `<button>`, **14 Button open/14 close**, 1 FilterChip pair, `gridClipboardTsv` imported + invoked | Toolbar retains columns, saved views, import/export and notices |
 
-Next possible TPO-owned target: src/components/tpo/tpo-student-outcome-pill.tsx then unreviewed small TPO recruiter/companies controls; avoid other lanes' shell/UI files.
+Commands for future checkout verification (provided, **not executed** through this connector):
 
-## chat-12 2026-10-20 — Batch detail, students, registrations and history routes
+```sh
+grep -nE 'allowedIds|gridSelectionClick|gridSelectionCheckbox|selectedGridIdsWithin' src/components/tpo/grid/grid-selection.ts src/components/tpo/grid/tpo-grid.tsx src/components/tpo/tpo-spreadsheet-grid.tsx
+grep -nE 'indeterminate|width:48|minWidth:48|maxWidth:48|md:hidden|md:block|forEachNodeAfterFilterAndSort|sortValue|accentColor' src/components/tpo/grid/tpo-grid.tsx src/components/tpo/tpo-spreadsheet-grid.tsx
+grep -nE 'gridClipboardTsv|safeGridClipboardCell|replaceAll|rows on this page|onColumnResized|onColumnPinned' src/components/tpo/grid/grid-workspace.tsx src/components/tpo/grid/grid-export.ts src/components/tpo/grid/tpo-grid.tsx
+```
 
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
-- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
+### Responsive, empty, disabled, error, focus and authorization proof
 
-### Legacy/vNext value table
-Legacy baseline: docs/design/old-lms-pages.md:6-10: one white canvas, 1px hairline row separators and contiguous KPI strip; docs/design/old-lms-shell.css:23,31-32,73: phone max767px and 44px tap; docs/design/old-lms-shell-spec.md:24-25: 36px desktop action and 9px radius; docs/design/legacy-styles/components___common.scss:68-75: teal underline/focusable links.
-| VNext file | Legacy property | VNext authored source | Result |
-|---|---|---|---|
-| src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx:14,24, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx:32,35, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/page.tsx:40,50,96, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx:35,81,108,155, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx:39,43,52,60, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx:18,26, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
-| src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx:15,21,23, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
+- Phone <=767px: table fallback, same selected IDs and tri-state header, card-specific actions/links and per-item checkbox; shared 44px touch choices and no new hidden columns.
+- Tablet >=768px: native Quartz, pinned 48px selection column, 44px row/header, authorized filtered range/checkbox logic, focusable checkbox/button controls. Wider screens retain current 520px bounded sheet and resizable columns.
+- Empty and error: prior `overlayNoRowsTemplate`/fallback 'No matching records.' preserved; clipboard keeps unavailable/failure notice; disabled column chooser and prior read-only cells remain unchanged.
+- Export authorization: CSV/XLSX server endpoints untouched; TSV only serializes supplied authorized row projection. Selected but filtered-out IDs result in no copied data rows rather than exposing unselected visible rows.
+- Missing proof: no native AG Grid build, row interaction test, clipboard permission test, real phone/tablet pixel screenshot, exact old grid height/hover focus measurement, or comprehensive repo-wide E8 census. `package.json` remains missing `ag-grid-community` and `ag-grid-react`, and `docs/design/legacy-grid/TpoGrid.jsx.txt` is not accessible. The manifest is explicitly out of lane scope.
 
-### Per-file grep, JSX and responsive evidence
-Whole file source inspected. Equivalent `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE` and `grep -nE 'sm:|md:' FILE`. Counts correspond to raw controls/inline svg/hex; JSX Button/Link open-close and brace counts are static source checks.
-| File | Raw/svg/hex | Button pairs | Link pairs | Braces | sm/md |
-|---|---|---|---|---|---|
-| src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx | 0/0/0 | 0/0 | 2/2 | 34/34 | 0/3 |
-| src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx | 0/0/0 | 0/0 | 1/1 | 34/34 | 0/1 |
-| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | 0/0/0 | 0/0 | 9/9 | 90/90 | 0/6 |
-| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | 0/0/0 | 1/1 | 6/6 | 122/122 | 0/20 |
-| src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx | 0/0/0 | 1/1 | 4/4 | 68/68 | 0/14 |
-| src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx | 0/0/0 | 1/1 | 1/1 | 43/43 | 0/2 |
-| src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx | 0/0/0 | 1/1 | 3/3 | 34/34 | 0/2 |
-
-A5/A6/A7/E8 remain unticked: complete icon/avatar/link inventories, shared renderer measurements, actual phone/tablet screenshots and hover/focus/disabled interaction proof not available. No app/CI/typecheck executed.
-
-Exact next file for scoped TPO source sweep: `src/components/tpo/tpo-student-outcome-pill.tsx`.
+**E8 remains [ ]** despite this completed source-level file batch. Next exact file: `src/components/tpo/grid/view-memory.ts` for saved layout visibility/pinning behavior and corruption handling; do not mark E8 without upstream packages and rendered parity.
