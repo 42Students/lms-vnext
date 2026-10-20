@@ -175,15 +175,15 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           </Link>
         </Banner>
       ) : notices.length === 0 ? (
-        <p role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
+        <p role="status" className="flex min-h-[180px] min-w-0 flex-col items-center justify-center gap-4 px-6 py-12 text-center text-sm leading-[1.5] text-[var(--lms-neutral-500)]">
           {learnerNoticeEmptyLabel(allNotices.length,pinnedOnly,source,{
              search:queryText,recent:recentOnly,matchingTotal:notices.length,
            })}
         </p>
       ) : (
-        <ul className="min-w-0 space-y-3">
+        <ul className="min-w-0 space-y-4">
           {pages.items.map((notice) => (
-            <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-none focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:p-6">
+            <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none md:p-6">
               <div className="flex flex-wrap items-center gap-2">
                 {notice.isPinned ? <Badge  tone="info">Pinned</Badge> : null}
                 {notice.updatedAt ? <Badge  tone="info">Updated</Badge> : null}

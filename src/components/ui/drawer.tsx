@@ -22,7 +22,7 @@ export type DrawerProps = {
   /** Left-side navigation uses the legacy 82vw / 300px mobile drawer geometry. */
   side?: "right" | "left";
   headerLeading?: ReactNode;
-  /** Inline filter controls at sm+ use the same DOM subtree as the mobile modal. */
+  /** Inline filter controls at 768px+ use the same DOM subtree as the mobile modal. */
   inlineDesktop?: boolean;
   id?: string;
 };
@@ -91,7 +91,7 @@ export function ResponsiveFilterDrawer({
   return <Drawer id={id} open={open} onOpenChange={onOpenChange}
     inlineDesktop title={title} description={undefined}
     className="lms-responsive-filter-drawer"
-    bodyClassName="sm:!p-0">
+    bodyClassName="md:!p-0">
     {children}
   </Drawer>;
 }
