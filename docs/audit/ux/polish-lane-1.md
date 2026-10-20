@@ -303,3 +303,11 @@
 **Problems fixed (10):** page lost title during load/error, retry lacked a coherent action hierarchy, detached back link, competing duplicate create actions, clipping mobile New menu, ragged last KPI in 2/3-column layouts, broken separators, overly wide chart cells on phone, long aliases/contacts/timeline wrapping poorly, and empty people/drives lacking recovery. Introduced contextual skeleton/retry, grouped header actions retaining destinations, a continuous 2/3/5 metric strip, tighter columns and empty CTAs. No changes to IDs, auth, data model, timestamps, or drive/team behavior.
 
 **Files:** `src/components/tpo/tpo-company-memory-workspace.tsx`, queue, proof. Team conversation and drive spreadsheet children source-reviewed, unchanged. No tests/CI.
+
+## Surface 49 — TPO mobile footer and More sheet
+
+**Reviewed:** Home/Engage/Drives/Students/More icon order and all 24px legacy assets, pressed/current states, mobile safe-area footer and shell padding, BottomSheet open/close/Escape/backdrop/focus restoration, all ten destination links, resize-to-768 and Back/Forward state. Read TPO layout, `legacy-mobile-footer.css` and shared BottomSheet. Source-level 375/768 comparison only, no app execution.
+
+**Problems fixed (6):** the shared ghost Button gave More a nonlegacy hovered fill; footer items lacked consistent full-height alignment; active destination was hard-coded rather than tokenized; selected sheet destination lacked a clear current-location cue; sheet row dividers were fragmented; footer links relied only on path-change effects to close the menu. Preserved all destination names/icons/ARIA/safe-area behavior and used the legacy transparent control, contiguous sheet dividers, tokenized current-page rail and explicit close-on-navigation.
+
+**Files:** `src/components/tpo/tpo-mobile-footer.tsx`, polish queue, proof. Shared shell and sheet unchanged; no tests/CI.

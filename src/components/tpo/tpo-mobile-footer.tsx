@@ -40,31 +40,32 @@ export function TpoMobileFooter() {
   },[]);
   const moreActive = moreLinks.some(([,href])=>pathname===href||pathname.startsWith(href+"/"));
   return <>
-    <nav aria-label="TPO mobile footer" className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 md:hidden">
+    <nav aria-label="TPO mobile footer" className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid min-w-0 grid-cols-5 md:hidden">
       {links.map(link=>{
         const active=pathname===link.href||pathname.startsWith(link.href+"/")||
           (link.label==="Engage"&&pathname.startsWith("/tpo/companies"));
         if(link.label==="More")return <Button key="more" variant="ghost" type="button"
           aria-label="More TPO workspaces" aria-expanded={moreOpen} aria-pressed={moreOpen}
           aria-current={moreActive?"page":undefined} onClick={()=>setMoreOpen(open=>!open)}
-          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 min-w-0 w-full flex-col items-center justify-center rounded-none px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(moreOpen||moreActive?"active":"")}>
+          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 min-w-0 w-full flex-col items-center justify-center rounded-none border-0 bg-transparent px-1 py-1 text-center shadow-none hover:bg-transparent active:bg-transparent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(moreOpen||moreActive?"active":"")}>
           <Image src={link.icon} alt="" width={24} height={24} className="lms-tpo-mobile-footer-icon"/>
-          <span className="lms-tpo-mobile-footer-label">More</span>
+          <span className="lms-tpo-mobile-footer-label">{link.label}</span>
         </Button>;
-        return <Link key={link.label} href={link.href}
+        return <Link key={link.label} href={link.href} title={link.label}
+          onClick={() => setMoreOpen(false)}
           aria-current={active?"page":undefined}
-          className={"lms-tpo-mobile-footer-item flex min-h-16 min-w-0 flex-col items-center justify-center px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"active":"")}>
+          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 min-w-0 flex-col items-center justify-center px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"active":"")}>
           <Image src={link.icon} alt="" width={24} height={24} className="lms-tpo-mobile-footer-icon"/>
           <span className="lms-tpo-mobile-footer-label">{link.label}</span>
         </Link>;
       })}
     </nav>
     <BottomSheet open={moreOpen} onOpenChange={setMoreOpen} title="More TPO workspaces">
-      <nav aria-label="More TPO destinations" className="grid min-w-0 grid-cols-1">
+      <nav aria-label="More TPO destinations" className="grid min-w-0 grid-cols-1 divide-y divide-border">
         {moreLinks.map(([label,href])=><Link key={href} href={href}
           onClick={()=>setMoreOpen(false)}
           aria-current={pathname===href||pathname.startsWith(href+"/")?"page":undefined}
-          className={"flex min-h-11 min-w-0 items-center break-words border-b border-[var(--lms-canvas-border)] px-3 py-3 text-sm font-semibold leading-5 text-[var(--lms-body-text)] last:border-b-0 hover:bg-[var(--lms-neutral-100)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary "+(pathname===href||pathname.startsWith(href+"/")?"bg-[#eff8fa] text-link":"")}>{label}</Link>)}
+          className={"flex min-h-11 min-w-0 items-center break-words border-l-[3px] border-l-transparent px-3 py-3 text-sm font-semibold leading-5 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary "+(pathname===href||pathname.startsWith(href+"/")?"border-l-primary bg-primary-subtle text-link":"")}>{label}</Link>)}
       </nav>
     </BottomSheet>
   </>;
