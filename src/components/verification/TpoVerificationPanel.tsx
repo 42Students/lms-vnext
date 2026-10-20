@@ -69,7 +69,7 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
      <option value="WAITING_OVER_WEEK">Waiting over a week</option>
     </Select>
    </label>
-   <p className="text-xs text-muted-foreground md:col-span-2">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
+   <p className="text-xs text-muted-foreground sm:col-span-2">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
   </section>
   {serverTab==="WAITING"&&visible.length>0?
    <details className="border-b border-border pb-3">
