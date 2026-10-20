@@ -72,11 +72,11 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
       ) : (
-        <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
           <label className="grid gap-1 text-sm font-medium text-body">
             {SEMESTER_COPY.programLabel}
             <Select required value={programId} onChange={e => setProgramId(e.target.value)}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               {programs.map(program => <option key={program.id} value={program.id}>
                 {program.name} ({program.code})
               </option>)}
@@ -86,12 +86,12 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
             {SEMESTER_COPY.numberLabel}
             <Input required type="number" min={1} max={12} step={1} value={termNumber} placeholder={SEMESTER_COPY.numberPlaceholder}
               onChange={e => setTermNumber(e.target.value)}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid gap-1 text-sm font-medium text-body">
             {SEMESTER_COPY.nameLabel}
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)} placeholder={SEMESTER_COPY.namePlaceholder}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <p className="self-center text-xs text-body">
             Total credits are calculated from courses mapped to this semester.
@@ -191,7 +191,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
           <label className="grid gap-1 text-xs font-semibold text-body">
             {SEMESTER_COPY.nameLabel}
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
+              className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
           </label>
           <p className="text-xs text-body">Credits come from mapped courses and cannot be edited here.</p>
           <div className="flex flex-wrap items-center gap-2 text-xs text-body">

@@ -47,7 +47,7 @@ export default async function CollegeProjectsPage({
       <PageHeader title="Workspaces" description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/college/projects" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>}
+        action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link md:min-h-9">Clear filters</Link>}
       />
     </div>;
   }
@@ -81,7 +81,7 @@ export default async function CollegeProjectsPage({
       <ErrorState title="Project workspaces unavailable"
         description="The workspace list could not be loaded. Your search and filters were not changed."
         action={<Link href={"/college/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline">Retry loading workspaces</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry loading workspaces</Link>}/>
     </div>;
   }
   const result=snapshotsResult.value;

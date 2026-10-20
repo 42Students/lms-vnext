@@ -16,19 +16,19 @@ export default async function SuperAdminQuizzesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
   const query = parseSuperAdminQuizQuery(raw);
-  if (!query.success) return <div className="space-y-4">
+  if (!query.success) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Invalid quiz filters" description="Check search, status and page."
       action={<Link href="/admin/quizzes" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
-  if(!isSuperAdmin(context)) return <div className="space-y-4">
+  if(!isSuperAdmin(context)) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Quiz access denied"
       description="Your account cannot access Super Admin quizzes."
       action={<Link href="/dashboard" className="font-semibold text-primary-text">Back to dashboard</Link>}/>
   </div>;
-  if (!context.adminScope?.collegeId) return <div className="space-y-4">
+  if (!context.adminScope?.collegeId) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its quizzes." />
   </div>;
@@ -39,7 +39,7 @@ export default async function SuperAdminQuizzesPage({
     listCollegeAssessmentAggregate(context, "QUIZ", query.data),
     getCollegeQuizAuthoringOptions(context),
   ]);
-  if(dataResult.status==="rejected")return <div className="space-y-4">
+  if(dataResult.status==="rejected")return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Quizzes unavailable"
       description="The quiz directory could not be loaded. Your filters have not changed."
@@ -47,15 +47,14 @@ export default async function SuperAdminQuizzesPage({
         className="font-semibold text-primary-text">Retry loading quizzes</Link>}/>
   </div>;
   const data=dataResult.value;
-  return <div className="space-y-4">
-    <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
-    <a href={adminAssessmentExportHref("QUIZ",query.data)}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">Export quizzes.csv</a>
+  return <div className="min-w-0 max-w-full space-y-4">
+    <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" actions={<a href={adminAssessmentExportHref("QUIZ",query.data)}
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">Export quizzes.csv</a>} />
     {lessonsResult.status==="fulfilled"?
       <CollegeQuizCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:
       <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
         Quiz creation options are temporarily unavailable. Existing quizzes remain visible.
       </p>}
-    <AdminAssessmentDirectory data={data} />
+    <AdminAssessmentDirectory data={data} showHeader={false} />
   </div>;
 }

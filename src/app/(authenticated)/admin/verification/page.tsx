@@ -15,7 +15,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 export default async function AdminVerificationEntry() {
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title="Profile verification"/>
       <ErrorState title="Verification access denied"
         description="Your account cannot access Super Admin verification."
@@ -28,7 +28,7 @@ export default async function AdminVerificationEntry() {
   }
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title="Profile verification"
         description="Students' education and identity, checked against their documents."
