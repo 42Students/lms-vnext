@@ -55,30 +55,30 @@ export default async function MentorBoardReviewPage({
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-2"/>
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2"/>
         </label>
         <label className="grid gap-1 text-sm">Status
           <Select name="status" defaultValue={data.query.status}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-2">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
             {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm">Priority
           <Select name="priority" defaultValue={data.query.priority??"ALL"}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-2">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
             {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm">Sprint
           <Select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-2">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
             <option value="ALL">All sprints</option>
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
@@ -141,8 +141,8 @@ export default async function MentorBoardReviewPage({
         description={data.count===0?
           "This project has no stored tasks. No workload or assignment is inferred.":
           "The stored tasks do not match your filters. Clear filters to view the whole board."}/>:
-        <ol className="divide-y divide-border">{data.items.map(row=><li key={row.id}
-          className="py-4">
+        <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=><li key={row.id}
+          className="py-[var(--lms-space-3)]">
           <h2 className="break-words font-semibold">{row.title}</h2>
           <p className="mt-2 text-sm text-body">{row.status.replaceAll("_"," ")} ·
             {row.priority} priority · {row.sprintTitle}</p>

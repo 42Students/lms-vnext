@@ -6,6 +6,8 @@ import {
   type AnnouncementTarget,
 } from "@/components/announcements/announcement-admin-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import {
   listAnnouncementsForAdmin,
   listAnnouncementTargetOptions,
@@ -41,24 +43,23 @@ export default async function AnnouncementsPage({
             <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
             <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
           </div>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link lms-inline-link">
+          <Link href={unreadHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
-        {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">{params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}</p>
+        {ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
           : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="border-b border-border py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
-            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link">Open related page</Link> : null}
+            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open related page</Link> : null}
           </li>)}</ul>}
-        <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline lms-inline-link">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+        <Link href="/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
-        <div role="status" className="border-b border-border py-5">
-          <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
-          <p className="mt-2 text-sm text-body">The college-wide announcements table is not registered; no broadcast announcement reads or writes are attempted. Personal notifications above are stored separately in the registered inbox.</p>
-        </div>
+        <Alert tone="warning" title="Announcements database is not enabled.">
+          The college-wide announcements table is not registered; no broadcast announcement reads or writes are attempted. Personal notifications above are stored separately in the registered inbox.
+        </Alert>
       </div>
     );
   }
@@ -127,7 +128,7 @@ export default async function AnnouncementsPage({
         actions={
           <Link
             href={includeDeleted ? "/college/announcements" : "/college/announcements?deleted=1"}
-            className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
@@ -136,24 +137,24 @@ export default async function AnnouncementsPage({
       <section aria-label="Personal college notifications" className="space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link lms-inline-link">
+          <Link href={unreadHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
-        {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">{params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}</p>
+        {ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
           : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="border-b border-border py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
-            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link">Open related page</Link> : null}
+            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open related page</Link> : null}
           </li>)}</ul>}
-        <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline lms-inline-link">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+        <Link href="/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
       <AnnouncementAdminWorkspace items={items} targets={targets} />
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-foreground">
+          <Link href={next} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
             Older announcements
           </Link>
         </div>

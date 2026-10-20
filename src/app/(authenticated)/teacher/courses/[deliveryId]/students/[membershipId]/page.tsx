@@ -22,11 +22,11 @@ export default async function FacultyStudentDetailPage({
   const root = "/teacher/courses/" + encodeURIComponent(data.course.deliveryId);
   return <div className="min-w-0 max-w-full space-y-6">
     <Link href={root + "/students"}
-      className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Students</Link>
+      className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Students</Link>
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")} />
-    <section aria-label="Student details" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <section aria-label="Student details" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
       {[
         ["Roll number", data.student.rollNumber ?? "Not assigned"],
         ["Email", data.student.email ?? "Not available"],
@@ -41,7 +41,7 @@ export default async function FacultyStudentDetailPage({
     </section>
     <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
       <h2 className="text-lg font-semibold text-foreground">Course attendance</h2>
-      <div className="mt-4 grid gap-3 sm:grid-cols-4">
+      <div className="mt-4 grid gap-3 md:grid-cols-4">
         {[
           ["Present", data.summary.present], ["Absent", data.summary.absent],
           ["Unmarked", data.summary.unmarked], ["Upcoming", data.summary.upcoming],
@@ -80,7 +80,7 @@ export default async function FacultyStudentDetailPage({
                 cell:row=>row.markedAt?dateText(row.markedAt):"Not recorded" },
             ]}/>}
       <Link href={root + "/attendanceDetail"}
-        className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View monthly class attendance →
       </Link>
     </section>

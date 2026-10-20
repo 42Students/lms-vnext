@@ -170,7 +170,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  }
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
-   className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   className="min-w-0 space-y-4 border-y border-border py-4">
   <div><h2 className="font-semibold text-foreground">Actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
    <p className="mt-1 text-sm text-body">
     Select eligible rows or act on all matching records in this filtered view (in verified batches of up to 200 per preview).
@@ -189,7 +189,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     {safeSelected.length} selected. Preview and confirm the next {Math.min(200,safeSelected.length)} rows;
     remaining rows stay selected for the following batch. Each batch must be reviewed and confirmed separately.
    </p>:null}
-  {target==="STUDENTS"?<div className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+  {target==="STUDENTS"?<div className="min-w-0 space-y-2 border-t border-border pt-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Paste roll numbers (comma, whitespace or line separated)
      <Textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
       rows={2} maxLength={40000} placeholder="23CS001, 23CS002" />
@@ -204,7 +204,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    {rollFeedback?<p role="status" className="text-xs text-muted-foreground">{rollFeedback}</p>:null}
    <p className="text-xs text-muted-foreground">Rolls outside these loaded rows cannot be selected by pasting. Use whole-batch search to locate them first.</p>
   </div>:null}
-  <ScrollCue axis="y" label="Select applicants" className="rounded-[var(--lms-control-radius)] border border-border" viewportClassName="max-h-64 space-y-1 p-2">
+  <ScrollCue axis="y" label="Select applicants" className="border-y border-border" viewportClassName="max-h-64 space-y-1 p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
     <Checkbox  disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
      onChange={e=>{const pageIds=rows.map(row=>row.id);setSelected(current=>e.target.checked?
@@ -242,7 +242,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    
    onClick={()=>void runGuarded(undoLastRun)}>Undo last student batch (five minutes)</Button>:null}
   {undoNotice?<p role="status" aria-live="polite" className="text-sm">{undoNotice}</p>:null}
-  <div className="grid gap-3 sm:grid-cols-2">
+  <div className="grid gap-3 md:grid-cols-2">
    <label className="text-sm font-semibold text-body">Action
     <Select value={action} disabled={busy}
       onChange={e=>{setAction(e.target.value as Action);invalidate();}}
@@ -263,7 +263,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       />
    </label>:null}
   </div>
-  <section aria-label="Actions window" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4">
+  <section aria-label="Actions window" className="min-w-0 space-y-3 border-t border-border pt-4">
    <h3 className="font-semibold">Actions</h3>
    <p className="text-sm text-body">Check how many selected rows can receive each action before you confirm any change.</p>
    {target==="STUDENTS"&&note.trim().length<3?<p className="text-xs text-muted-foreground">To include “Make ineligible” in the action counts, enter an ineligibility reason of at least 3 characters. No eligibility is changed while checking counts.</p>:null}
@@ -272,7 +272,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      >
      Check action counts
    </Button>
-   {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<div className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+   {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<div className="min-w-0 space-y-2 border-b border-border py-3">
      <h4 className="font-semibold">Other actions</h4>
      <p className="text-xs text-muted-foreground">Share only this selection using an expiring link. Every selected application is rechecked for a current shortlist before issuance. Review one by one opens each candidate&apos;s authorized detail.</p>
      <label className="flex flex-wrap items-center gap-2 text-sm">Link expires in
@@ -297,7 +297,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
          onClick={()=>void runGuarded(shareSelected)}>Confirm share</Button></>}>
         <p className="text-sm">Each application is checked again by the server. The private URL is shown only after sharing succeeds.</p>
       </Dialog>
-      {companyShareUrl?<div className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+      {companyShareUrl?<div className="min-w-0 space-y-2 border-b border-border py-3">
       <p className="text-xs font-semibold">Copy this URL now. The secret cannot be recovered later.</p>
       <Input aria-label="Selected applicant share URL" readOnly value={companyShareUrl}
        onFocus={e=>e.currentTarget.select()} />
@@ -308,16 +308,16 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      {safeSelected.length>1?<Disclosure title={`Review selected applicants individually (${safeSelected.length})`} className="text-sm">
        <ScrollCue axis="y" label="Selected applicant review links" viewportClassName="max-h-40"><ol className="mt-2 space-y-2">
          {safeSelected.map((id,index)=><li key={id}>
-           <Link href={tpoReviewOneByOneHref(jobId,id)} className="text-link underline">
+           <Link href={tpoReviewOneByOneHref(jobId,id)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
              Applicant {index+1}
            </Link>
          </li>)}
        </ol></ScrollCue>
      </Disclosure>:null}
    </div>:null}
-   {actionCounts.length>0?<div className="grid gap-2 sm:grid-cols-2">
+   {actionCounts.length>0?<div className="grid min-w-0 gap-0 overflow-hidden border-y border-border md:grid-cols-2">
      {safeSelected.length>200?<p className="col-span-full text-xs text-muted-foreground">Action counts apply to the next 200 selected records. Recheck each subsequent batch.</p>:null}
-     {actionCounts.map(count=><div key={count.action} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
+     {actionCounts.map(count=><div key={count.action} className="min-w-0 border-b border-r border-border px-3 py-3 text-sm last:border-r-0">
        <p className="font-semibold">{count.label}</p>
        <p>{count.ready} ready · {count.skipped} left out</p>
        {count.reasonSamples.map(reason=><p key={reason} className="mt-1 text-xs text-muted-foreground">{reason}</p>)}
@@ -337,7 +337,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
   {preview&&plan&&["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)?(
-    <label className="flex items-start gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-surface-subtle p-4 text-sm">
+    <label className="flex min-h-11 items-start gap-3 border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
      <Checkbox  checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}
       disabled={busy||outcomes.length>0} className="mt-1"/>
      I understand this bulk action may change eligibility, reject applications, advance applicants to a scheduled round or notify students. I have reviewed the preview and left-out rows.
@@ -345,12 +345,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
     busy={busy||guardedPending||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void runGuarded(confirm)}/>:null}
-  {outcomes.length>0?<div className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+  {outcomes.length>0?<div className="min-w-0 space-y-2 border-b border-border py-3">
     <p role="status" className="text-sm font-semibold">
      {outcomes.filter(item=>item.status==="updated").length} updated ·
      {" "}{outcomes.filter(item=>item.status!=="updated").length} not applied
     </p>
-    {exceptionGroups.length>0?<div aria-label="Not applied by reason" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+    {exceptionGroups.length>0?<div aria-label="Not applied by reason" className="min-w-0 space-y-2 border-b border-border py-3">
      <h3 className="text-sm font-semibold">Not applied by reason</h3>
      <ul className="space-y-2 text-sm">{exceptionGroups.map(group=><li key={group.reason}>
       <p className="font-semibold">{group.reason} ({group.count})</p>

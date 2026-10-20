@@ -89,7 +89,7 @@ export function CollegeEditDialog({
       <Button
         variant="secondary"
         size="sm"
-        className="min-h-11 md:min-h-9"
+        className="min-h-11 md:min-h-9 print:hidden"
         onClick={() => {
           setName(college.name);
           setCity(college.city ?? "");
@@ -137,7 +137,7 @@ export function CollegeEditDialog({
            ["Pin Code",postalCode,setPostalCode,32],
           ] as const).map(([field,value,setter,maxLength])=><label key={field}
            className="grid gap-1 text-[13px] font-semibold text-body">{field}
-           <Input value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
+           <Input className="min-h-11 md:min-h-9" value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
           </label>)}
 
           <div className="md:col-span-2">
@@ -148,7 +148,7 @@ export function CollegeEditDialog({
               College name
             </label>
             <Input
-              id={`college-name-${college.id}`}
+              className="min-h-11 md:min-h-9" id={`college-name-${college.id}`}
               autoComplete="organization"
               disabled={pending}
               value={name}
@@ -166,7 +166,7 @@ export function CollegeEditDialog({
               City
             </label>
             <Input
-              id={`college-city-${college.id}`}
+              className="min-h-11 md:min-h-9" id={`college-city-${college.id}`}
               autoComplete="address-level2"
               disabled={pending}
               value={city}
@@ -184,7 +184,7 @@ export function CollegeEditDialog({
               State
             </label>
             <Input
-              id={`college-state-${college.id}`}
+              className="min-h-11 md:min-h-9" id={`college-state-${college.id}`}
               autoComplete="address-level1"
               disabled={pending}
               value={state}
@@ -202,7 +202,7 @@ export function CollegeEditDialog({
               Country
             </label>
             <Input
-              id={`college-country-${college.id}`}
+              className="min-h-11 md:min-h-9" id={`college-country-${college.id}`}
               disabled={pending}
               value={country}
               onChange={(event) =>

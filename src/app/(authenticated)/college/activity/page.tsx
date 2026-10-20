@@ -7,10 +7,13 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref, collegeActivityTodayHref, collegeActivityAllTimeHref } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
 import {collegeActivityActor,collegeActivityItem,collegeActivityAction} from "@/modules/activity/college-activity-presentation";
+import {Button} from "@/components/ui/button";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -24,7 +27,7 @@ export default async function CollegeActivityPage({
   searchParams,
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <div className="space-y-3"><PageHeader title="Activity Log"/><p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-4">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</p></div>;
+  if (!context.membership) return <div className="space-y-3"><PageHeader title="Activity Log"/><Alert tone="error">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</Alert></div>;
   const parsed = collegeActivityQuerySchema.safeParse(
     activitySearchParams(await searchParams),
   );
@@ -32,7 +35,7 @@ export default async function CollegeActivityPage({
     <PageHeader title="Activity Log" />
     <ErrorState title="Invalid activity filters"
       description="The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."
-      action={<Link href="/college/activity" className="font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link">Clear filters</Link>} />
+      action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
@@ -43,9 +46,9 @@ export default async function CollegeActivityPage({
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
-      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link">View project activity</Link><a href={"/api/activity/college-export" +
+      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View project activity</Link><a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Export filtered CSV (max 1,000)
       </a></div>} />
     <nav aria-label="Activity feed categories" className="flex flex-wrap gap-2">
@@ -78,22 +81,22 @@ export default async function CollegeActivityPage({
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <span className="text-muted-foreground">IST date shortcuts:</span>
       <Link href={collegeActivityTodayHref(data.query,new Date())}
-        className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Today</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Today</Link>
       <Link href={collegeActivityRecentHref(data.query,7,new Date())}
-        className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Last 7 days</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Last 7 days</Link>
       <Link href={collegeActivityRecentHref(data.query,30,new Date())}
-        className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Last 30 days</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Last 30 days</Link>
       <Link href={collegeActivityAllTimeHref(data.query)}
-        className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">All time</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">All time</Link>
       <Link href={collegeActivityHref({...data.query})}
-        className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Refresh</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Refresh</Link>
     </div>
     <section className="border-t border-border pt-4" aria-label="Activity log filters">
-      <form action="/college/activity" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <form action="/college/activity" method="get" className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
           Module
           <Select name="module" defaultValue={data.query.module ?? ""}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 md:min-h-9">
             <option value="">All modules</option>
             {ACTIVITY_MODULES.map(v =>
               <option key={v} value={v}>{v}</option>)}
@@ -102,7 +105,7 @@ export default async function CollegeActivityPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Importance
           <Select name="importance" defaultValue={data.query.importance ?? ""}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 md:min-h-9">
             <option value="">All importance levels</option>
             {ACTIVITY_IMPORTANCE.map(v =>
               <option key={v} value={v}>{v}</option>)}
@@ -112,68 +115,68 @@ export default async function CollegeActivityPage({
           Event type
           <Input name="eventType" defaultValue={data.query.eventType ?? ""}
             maxLength={120} placeholder="identity.membership.suspended"
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Search audit summary or entity
           <Input name="q" defaultValue={data.query.q ?? ""} maxLength={100}
             placeholder="Summary, entity or action text"
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Actor user UUID
           <Input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
             placeholder="Optional actor UUID"
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Actor display name
           <Input name="actorName" defaultValue={data.query.actorName ?? ""} maxLength={100}
             placeholder="Search recorded actor name"
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Entity type
           <Input name="subjectType" defaultValue={data.query.subjectType ?? ""}
             maxLength={80} placeholder="course_lesson"
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Entity identifier
           <Input name="subjectId" defaultValue={data.query.subjectId ?? ""}
             maxLength={500} placeholder="Persisted entity identifier"
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           From date (IST)
           <DateInput name="from" mode="date" defaultValue={data.query.from ?? ""}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           To date (IST)
           <DateInput name="to" mode="date" defaultValue={data.query.to ?? ""}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Events per page
           <Select name="pageSize" defaultValue={data.query.pageSize ?? "25"}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 md:min-h-9">
             <option value="10">10 events</option>
             <option value="25">25 events</option>
             <option value="50">50 events</option>
           </Select>
         </label>
-        <div className="flex flex-wrap items-end gap-2 sm:col-span-2 lg:col-span-4">
-          <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">
+        <div className="flex flex-wrap items-end gap-2 md:col-span-2 lg:col-span-4">
+          <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">
             Apply filters
           </Button>
-          <Link href="/college/activity" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
+          <Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">
             Clear
           </Link>
         </div>
       </form>
     </section>
-    <section className="min-w-0 rounded-[8px] border border-border bg-surface" aria-label="College activity events">
+    <section className="min-w-0" aria-label="College activity events">
       <DataTable rows={data.items} getRowKey={item=>item.event.id} caption="College activity events"
         columns={[
           {key:"occurred",header:"Occurred (IST)",mobilePriority:"secondary",cell:item=>when(item.event.occurredAt)},
@@ -185,16 +188,14 @@ export default async function CollegeActivityPage({
           </>},
           {key:"details",header:"Details",mobilePriority:"action",cell:item=>
             <Link href={"/college/activity/" + encodeURIComponent(item.event.id)}
-              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">View event</Link>},
+              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">View event</Link>},
         ]}
-        empty={<p className="p-2 text-sm text-body">
-          No persisted activity events match these filters. This is not a statement that no changes have ever occurred.
-        </p>}/>
+        empty={<EmptyState title="No matching activity" description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred."/>}/>
     </section>
     <nav aria-label="Activity history pagination" className="flex items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
       {data.nextCursor ? <Link href={collegeActivityHref(data.query, data.nextCursor)}
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">
         Older activity
       </Link> : <span className="text-muted-foreground">No older matching events</span>}
     </nav>

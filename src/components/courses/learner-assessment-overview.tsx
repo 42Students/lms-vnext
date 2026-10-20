@@ -283,13 +283,13 @@ export function LearnerAssessmentOverview({
           <Input type="search" value={search} maxLength={100}
             onChange={event => {setSearch(event.target.value);setPage(1);}}
             placeholder="Title, lesson or course"
-            className="min-h-11" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Course
           </span>
-          <Select
+          <Select className="min-h-11 md:min-h-9"
             value={activeCourseId}
             onChange={(event) => {
               setCourseId(event.target.value);
@@ -312,7 +312,7 @@ export function LearnerAssessmentOverview({
         </label>
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">State</span>
-          <Select value={stateFilter}
+          <Select className="min-h-11 md:min-h-9" value={stateFilter}
             onChange={event => {
               setStateFilter(event.target.value as LearnerAssessmentStateFilter);
               setPage(1);
@@ -324,7 +324,7 @@ export function LearnerAssessmentOverview({
         </label>
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">Sort</span>
-          <Select value={sort} onChange={event => {
+          <Select className="min-h-11 md:min-h-9" value={sort} onChange={event => {
             setSort(event.target.value as LearnerAssessmentSort);setPage(1);
           }}>
             {LEARNER_ASSESSMENT_SORT_OPTIONS.map(option => (
@@ -338,7 +338,7 @@ export function LearnerAssessmentOverview({
         <Button type="button" onClick={() => {
           setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
           if(initialCourseId)router.push(learnerAssessmentCourseHref(kind,null));
-        }} variant="secondary" className="min-h-11">
+        }} variant="secondary" className="min-h-11 md:min-h-9">
           Clear assessment filters
         </Button>
       ) : null}

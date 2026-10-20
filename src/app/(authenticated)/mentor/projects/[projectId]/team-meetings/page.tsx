@@ -65,7 +65,7 @@ export default async function MentorTeamMeetingsPage({
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting status
           <Select name="status" defaultValue={data.query.status}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All</option><option value="REQUESTED">Requested</option>
             <option value="SCHEDULED">Scheduled</option>
             <option value="COMPLETED">Completed</option>
@@ -74,7 +74,7 @@ export default async function MentorTeamMeetingsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting type
           <Select name="type" defaultValue={data.query.type}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All types</option><option value="GENERAL">General</option>
             <option value="PLANNING">Planning</option><option value="STANDUP">Standup</option>
             <option value="REVIEW">Review</option><option value="RETRO">Retrospective</option>
@@ -82,14 +82,14 @@ export default async function MentorTeamMeetingsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded outcome
           <Select name="outcome" defaultValue={data.query.outcome}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All meetings</option><option value="RECORDED">With written outcome</option>
             <option value="NOT_RECORDED">Without written outcome</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting order
           <Select name="order" defaultValue={data.query.order}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Most recent first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
@@ -97,9 +97,9 @@ export default async function MentorTeamMeetingsPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting title
           <Input type="search" name="search" maxLength={100}
             defaultValue={data.query.search}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
@@ -108,8 +108,8 @@ export default async function MentorTeamMeetingsPage({
       <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
         description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." />
-        :<ol className="divide-y divide-border">{data.items.map(meeting=>
-          <li key={meeting.id} className="py-4">
+        :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
+          <li key={meeting.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{meeting.title}</h2>
               <span className="text-xs font-semibold text-body">{mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderedAt)}</span>
