@@ -21,17 +21,17 @@ export default async function HrRoundRemovalConfirm({params}:{
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}
  const round=rounds.find(row=>row.id===roundId);
  if(!round||!round.editable)notFound();
- return <div className="min-w-0 max-w-full space-y-4">
+ return <div className="min-w-0 max-w-3xl space-y-4 md:space-y-6">
   <PageHeader title="Confirm unused round removal"
    description="Only an unused, pending recruiter-created round can be cancelled. The record remains in audit history."/>
-  <section aria-label="Round being removed" className="min-w-0 border-b border-border pb-4">
+  <section aria-label="Round being removed" className="min-w-0 max-w-2xl border-b border-border pb-4">
    <p className="break-words font-semibold text-foreground">{round.sequence}. {round.name}</p>
-   <p className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone="warning">{round.status}</StatusBadge> · No recorded candidate results.</p>
+   <p className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-sm leading-6 text-body">{round.kind} · <StatusBadge tone="warning">{round.status}</StatusBadge> · No recorded candidate results.</p>
   </section>
-  <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:gap-2">
+  <div className="flex min-w-0 flex-col-reverse gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:gap-3">
    <PageBackLink href={"/recruiter/drives/"+encodeURIComponent(jobId)+"/rounds/editor"} label="Keep round"
     className="min-h-11 w-full justify-center border border-border px-4 text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto [&_span]:!inline"/>
-   <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"} className="w-full min-[768px]:w-auto">
+   <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"} className="min-w-0 w-full min-[768px]:w-auto">
     <Input type="hidden" name="action" value="REMOVE"/>
     <Input type="hidden" name="roundId" value={round.id}/>
     <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
