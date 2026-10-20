@@ -33,7 +33,7 @@ export function OtpInput({ digits = 6, error = false, className, ...props }: Otp
       minLength={minLength}
       maxLength={count}
       error={error}
-      className={cx("tabular-nums tracking-[0.3em] text-center max-[767px]:min-h-11", className)}
+      className={cx("tabular-nums tracking-[0.2px] text-center max-[767px]:min-h-11", className)}
     />
   );
 }
