@@ -68,11 +68,11 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
     finally{setPending(false);}
   }
   function decide(){if(!mode||!valid||guardedPending)return;void runGuarded(()=>decideWith(mode,decisionNote));}
-  return <div className="flex flex-col gap-2 text-sm">
-    <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" type="button" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
+  return <div className="min-w-0 text-sm">
+    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
         >Approve</Button>
-      <Button variant="secondary" type="button" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
+      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
         >Reject</Button>
     </div>
     {!mode&&error?<InlineNotice tone="error" message={error}/>:null}
