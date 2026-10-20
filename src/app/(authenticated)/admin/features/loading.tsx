@@ -9,7 +9,7 @@ export default function SuperAdminFeaturesLoading() {
         title="Feature Controls"
         description="Reading persisted college module access rules."
       />
-      <GracefulPageLoading label="Loading college feature matrix…" />
+      <GracefulPageLoading label="Loading college feature matrix…" shape="directory" />
     </div>
   );
 }

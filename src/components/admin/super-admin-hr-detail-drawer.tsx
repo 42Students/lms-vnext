@@ -224,7 +224,7 @@ export function SuperAdminHrDetailDrawer({
                 {account.grants.map((grant) => (
                   <li
                     key={grant.id}
-                    className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3"
+                    className="flex min-w-0 flex-col items-start gap-3 border-b border-border py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="min-w-0">
                       <p className="m-0 font-semibold text-foreground">
@@ -235,7 +235,7 @@ export function SuperAdminHrDetailDrawer({
                         {" · "}{grant.validUntil && Date.parse(grant.validUntil)<=currentTimeMs()?"Expired":grant.verificationStatus}
                       </p>
                     </div>
-                    <Button className="min-h-11 md:min-h-9"
+                    <Button className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
                       variant="secondary"
                       size="sm"
                       disabled={pending}
