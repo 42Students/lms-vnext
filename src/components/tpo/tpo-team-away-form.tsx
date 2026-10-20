@@ -22,7 +22,7 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
   }catch(reason){setError(reason instanceof Error?reason.message:"Could not save away status. Try again.");}
   finally{pending.current=false;setBusy(false);}
  }
- return <form className="mt-3 min-w-0 space-y-2 border-t border-border pt-3"
+ return <form className="mt-3 min-w-0 space-y-2 pt-3"
   onSubmit={event=>{event.preventDefault();
    if(!date)return;const parsed=new Date(date+"+05:30");
    if(!Number.isFinite(parsed.getTime())){setError("Choose when you will be back.");return;}
