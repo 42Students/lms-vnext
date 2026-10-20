@@ -80,9 +80,9 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     </Link>
    </form>
    <div className="flex flex-wrap items-center gap-3">
-    <Link href={"/api/projects/"+encodeURIComponent(projectId)+
+    <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
       "/mentor-resources-export"+filters}
-      download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
      Export resource metadata CSV (max 200)
     </Link>
     {data.exportOmitted>0?<p role="status" className="text-xs text-body">

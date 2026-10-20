@@ -89,8 +89,8 @@ export default async function MentorReviewsPage({
         <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={mentorReviewExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <Link data-unskin="" href={mentorReviewExportHref(data.query)} download
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
           Export filtered delivery review metadata CSV (max 200)
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching reviews.</span>:null}

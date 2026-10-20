@@ -129,14 +129,14 @@ export default async function MentorReportsPage({searchParams}:{
         <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={"/api/mentor/reports/export?"+
+        <Link data-unskin="" href={"/api/mentor/reports/export?"+
           new URLSearchParams({
             taskCoverage:data.query.taskCoverage,
             status:data.query.status,attention:data.query.attention,
             assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,
           }).toString()} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
           Export filtered project report CSV (max 100)
         </Link>
         {data.exportOmitted>0?<span role="status">
