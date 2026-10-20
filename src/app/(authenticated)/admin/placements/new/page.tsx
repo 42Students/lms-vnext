@@ -23,7 +23,6 @@ export default async function AdminNewPlacementPage() {
     <PlacementJobCreateWorkspace
       context={context}
       collegeId={collegeId}
-      eyebrow="Super Admin"
       basePath="/admin/placements"
     />
   );
