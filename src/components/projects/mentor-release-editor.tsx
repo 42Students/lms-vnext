@@ -56,24 +56,24 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
  }
  return <div className="space-y-2">
   {(!release||release.status!=="SHIPPED")?<Button variant="secondary" type="button"
-   className="min-h-10 px-3"
+   className="min-h-11 px-3 md:min-h-9"
    onClick={()=>{if(open)requestClose();else setOpen(true);}}>{release?"Edit release":"Add release"}</Button>:null}
   {open?<div className="space-y-3 border-t border-border pt-3">
    <p className="text-sm font-semibold">{release?"Edit release":"New release"}</p>
    <label className="block text-sm font-semibold">Title
-    <Input className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px]" maxLength={200}
+    <Input className="mt-1 min-h-11 w-full md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[var(--lms-font-base)]" maxLength={200}
      required value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="block text-sm font-semibold">What ships in this release?
-    <Textarea className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px]"
+    <Textarea className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[var(--lms-font-base)]"
      maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
    <div className="flex flex-wrap gap-2">
     <Button variant="primary" type="button" disabled={pending||!title.trim()} onClick={()=>void save()}
-     className="min-h-9 px-3 py-2">
+     className="min-h-11 px-3 py-2 md:min-h-9">
      {pending?"Saving…":"Save release"}</Button>
     <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}
-     className="px-3 py-2">Cancel</Button>
+     className="min-h-11 px-3 py-2 md:min-h-9">Cancel</Button>
     {canRemove?<Button variant="danger" type="button" disabled={pending} onClick={()=>setConfirmDelete(true)}
-     className="px-3 py-2">Delete release</Button>:null}
+     className="min-h-11 px-3 py-2 md:min-h-9">Delete release</Button>:null}
    </div>
    {release&&linkedSprints>0?<p className="text-xs text-muted-foreground">
     Release cannot be deleted until its {linkedSprints} linked sprint(s) are removed.
