@@ -34,7 +34,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
   {students:[],recruiters:[],companies:[]};
  const jobs=operations?operations.jobs.filter(r=>[r.job.title,r.job.company.name].some(v=>v.toLocaleLowerCase().includes(text))).slice(0,5):[];
  const hasMatches=foundBatches.length+named.students.length+named.recruiters.length+named.companies.length+jobs.length>0;
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader eyebrow="TPO" title="Find a student, recruiter or company" description="Search your college records. Search does not execute actions or navigate to arbitrary pages."/>
   <form action="/tpo/find" method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
    <label className="min-w-0 w-full flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Record name

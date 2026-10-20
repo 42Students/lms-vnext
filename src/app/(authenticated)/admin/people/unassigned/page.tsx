@@ -18,7 +18,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
 }) {
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) redirect("/dashboard");
-  if (!unassignedIdentityScopeAllowed(context.adminScope)) return <div className="space-y-4">
+  if (!unassignedIdentityScopeAllowed(context.adminScope)) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader eyebrow="Super Admin" title="Users without college memberships" />
     <EmptyState title="Clear the admin scope" description="These users have no college membership. Clear the organization and college selection in the header to inspect global identities." />
     <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Users & Roles</Link>
@@ -35,7 +35,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   const loaded = await listSuperAdminUnassignedUsers(context, parsed.data)
     .then(value => ({ok:true as const,value}))
     .catch(error => ({ok:false as const,denied:error instanceof AuthorizationError}));
-  if (!loaded.ok) return <div className="min-w-0 space-y-4">
+  if (!loaded.ok) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader eyebrow="Super Admin" title="Users without college memberships" />
     <ErrorState
       title={loaded.denied ? "Directory access denied" : "Unassigned users unavailable"}
@@ -51,7 +51,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   const data = loaded.value;
   const statuses = ["ALL", "ACTIVE", "DISABLED"] as const;
   const roles = ["ALL", "SUPER_ADMIN", "NONE"] as const;
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader eyebrow="Super Admin · Global identities" title="Users without college memberships"
       description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." />
     <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Users & Roles</Link>

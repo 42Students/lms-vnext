@@ -115,7 +115,7 @@ export default async function TpoStudentRequestsPage({
 
   if (tpoStudentRequestsHasInvalidUrlFilters(raw) || !parsed.success) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4 md:space-y-6">
         <PageHeader
           eyebrow="TPO · Students"
           title="Student Requests"
@@ -168,7 +168,7 @@ export default async function TpoStudentRequestsPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
         eyebrow="TPO · Students"
         title="Student Requests"

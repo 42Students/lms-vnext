@@ -23,10 +23,10 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const repeated=["status","q","recipient","page"].some(key=>
    Array.isArray(params[key]));
  const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status)??"NEW",q:one(params.q),recipient:one(params.recipient),page:one(params.page)});
- if(repeated||!parsed.success)return <div className="min-w-0 space-y-4">{header}
-   <Alert tone="warning">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-primary-text underline">Reset</Link></Alert></div>;
+ if(repeated||!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
+   <Alert tone="warning">Invalid filters. <Link href="/admin/inbound-mail" className="lms-inline-link font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Reset</Link></Alert></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
- if(!data.available)return <div className="min-w-0 space-y-4">{header}
+ if(!data.available)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
   <Alert tone="warning">
    <p>Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.</p>
    <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>
@@ -45,7 +45,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const base=new URLSearchParams({...parsed.data.q?{q:parsed.data.q}:{},...parsed.data.recipient?{recipient:parsed.data.recipient}:{}});
  const tabs=[{value:"NEW",label:"To read",count:data.toReadCount},{value:"TRIAGED",label:"Being handled",count:null},
   {value:"RESOLVED",label:"Done",count:null},{value:"ALL",label:"All",count:null}] as const;
- return <div className="min-w-0 space-y-4">{header}
+ return <div className="min-w-0 space-y-4 md:space-y-6">{header}
   <Tabs ariaLabel="Inbound mail views" value={parsed.data.status} renderPanel={false}
     items={tabs.map(tab=>{
      const url=new URLSearchParams(base);url.set("status",tab.value);

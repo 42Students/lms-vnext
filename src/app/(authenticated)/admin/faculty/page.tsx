@@ -16,7 +16,7 @@ export default async function SuperAdminFacultyPage({searchParams}:{
  const context=await getCurrentRequestContext();
  const peopleFilters=context.adminScope?.collegeId?await getSuperAdminPeopleFilterOptions(context):null;
  const facultyPicker=context.adminScope?.collegeId?await listCollegeFacultyPicker(context,context.adminScope.collegeId):null;
- return <div className="min-w-0 space-y-4">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <AdminScopedReadPage
     headerActions={context.adminScope?.collegeId?<PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="FACULTY"/>:null}
     intro={context.adminScope?.collegeId?<section aria-label="Faculty registration tools" className="min-w-0 space-y-3 border-b border-border pb-4">

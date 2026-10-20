@@ -17,14 +17,14 @@ export default async function TpoPreparationCoursePlan(){
   ready:settings.ready&&parsed.success,
   courseIds:parsed.success?parsed.data.courseIds:[],minimumCompleted:parsed.success?parsed.data.minimumCompleted:0,catalog,
  });
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Preparation course plan" description="Course readiness settings and the current active catalog." />
   <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to learners needing support</Link>
   <p className="text-sm text-body">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
   {!plan.ready?<Alert tone="warning">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</Alert>:<>
     <p role="status" className="text-sm">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
     {plan.unresolved>0?<Alert tone="warning">{plan.unresolved} configured course reference(s) are not in this bounded active catalog; their availability is unknown.</Alert>:null}
-    {plan.courses.length===0?<EmptyState title="No active preparation courses in the configured subset."/>:<ul className="min-w-0 space-y-2">{plan.courses.map(course=><li key={course.id} className="border-b border-border py-4">
+    {plan.courses.length===0?<EmptyState title="No active preparation courses in the configured subset."/>:<ul className="min-w-0 divide-y divide-border border-y border-border">{plan.courses.map(course=><li key={course.id} className="py-4">
       <h2 className="font-semibold">{course.name}</h2><p className="text-xs text-muted-foreground">{course.code}</p>
     </li>)}</ul>}
   </>}
