@@ -6,19 +6,30 @@ import type {PublicNetworkNotice} from "@/modules/auth/public-network-notice-mod
 export function ConnectionFailureNotice(){
  const [message,setMessage]=useState<PublicNetworkNotice|null>(null);
  const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const lastMessage=useRef<PublicNetworkNotice|null>(null);
  useEffect(()=>{
+  function schedule() {
+   if(timer.current)clearTimeout(timer.current);
+   timer.current=null;
+   // A notice triggered in a background tab must still be readable on return.
+   if(!document.hidden&&lastMessage.current) timer.current=setTimeout(()=>{
+    lastMessage.current=null;setMessage(null);timer.current=null;
+   },10000);
+  }
   const show=(event:Event)=>{
    const detail=(event as CustomEvent<PublicNetworkNotice>).detail;
    if(!["Request timed out","Connection problem","Server Error","Your session has not been cleared."].includes(detail))return;
-   if(timer.current)clearTimeout(timer.current);
+   lastMessage.current=detail;
    setMessage(detail);
-   timer.current=setTimeout(()=>setMessage(null),10000);
+   schedule();
   };
   window.addEventListener("lms:network-notice",show);
+  document.addEventListener("visibilitychange",schedule);
   return ()=>{window.removeEventListener("lms:network-notice",show);
+   document.removeEventListener("visibilitychange",schedule);
    if(timer.current)clearTimeout(timer.current);};
  },[]);
- return message?<div role="status" aria-live="polite" className="mx-4 my-2">
-  <InlineNotice tone="error" message={message} onDismiss={()=>setMessage(null)}/>
+ return message?<div className="mx-4 my-2 min-w-0">
+  <InlineNotice tone="error" message={message} onDismiss={()=>{lastMessage.current=null;if(timer.current)clearTimeout(timer.current);timer.current=null;setMessage(null);}}/>
  </div>:null;
 }

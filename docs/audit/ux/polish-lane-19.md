@@ -269,3 +269,43 @@
 **Fixed:** Reviewed VerificationWorkspace, VerificationFilterPanel, VerificationExportControl, TpoVerificationSwitch, VerificationReviewDrawer and selection/bulk guards. Moved occasional placement-cell verification setting to the end of the page; paired batch selection and preview commands just before the actionable queue (instead of below all rows); hid irrelevant Clear and Preview actions with no selection, made Preview verify primary only when selected, promoted the one-by-one launcher and kept preview/cancel/send-back behavior. Kept URL sorting/pagination/filters, existing text, 20-item safety cap, guard and all API calls. Added equal-width 44px export/refresh tools on phone, sensible responsive queue select widths, scrolling preview confinement, hairline dividers and min-width safe status copy. Source-inspected empty/selection/preview/ack/error/outcome/pending, 375px and 768px; runtime/CI not run.
 
 **Files changed:** `src/components/verification/CollegeVerificationPanel.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 34 — `src/components/auth/connection-failure-notice.tsx`
+
+**Reachability:** Confirmed live in `src/app/(authenticated)/layout.tsx`; referenced by the auth-network notice regression checks.
+
+**Problems found (6):** Duplicate status/alert live region for one error; background-tab timer erased unread warnings; no min-width guard on a 375px page; manual dismiss left a stale timeout; tab return offered no time to read; repeated events could collide with expiry.
+
+**Fixed:** Preserved the exact four event texts, 10-second visible-time duration, original event name and dismissal, and session/draft safety. Kept InlineNotice as the single assertive alert; paused auto-dismiss when hidden, restarted a complete reading interval upon return, and cleared timeout/reference on manual dismissal. Checked InlineNotice, authenticated layout and its event users for mount/unmount, repeated events, focus/dismiss, 375px and 768px by source; no browser/CI.
+
+**Files changed:** `src/components/auth/connection-failure-notice.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 35 — `src/components/courses/course-detail-anchor-tabs.tsx`
+
+**Reachability:** GitHub code search for `CourseDetailAnchorTabs` found its definition but no import or rendered use in the current application. This is a presently dormant utility, not a live route surface.
+
+**Problems found (0):** Source audit found no independent layout or accessibility defects to change safely. The component already passes four named in-page targets to the shared `Tabs` navigation branch, preserves the familiar underlined active tab, listens for hashchange, and uses the shared `ScrollCue` horizontal tab affordance. No redundant controls or card nesting; at 375px the shared strip scrolls, and at 768px it uses legacy token gaps. Making speculative visual changes to unreachable code would introduce unnecessary divergence.
+
+**Fixed:** No source mutation warranted. Kept route hashes, four exact labels, active value, ariaLabel and native-link behavior. Inspected `Tabs`'s navigation/selected/disabled, focus states and 375px/768px behavior by source; runtime/CI not run.
+
+**Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit-only).
+
+## Surface 36 — `src/components/placements/learner-placements-tabs.tsx`
+
+**Reachability:** Mounted by `src/app/(authenticated)/learn/my-placements/layout.tsx`. All seven legacy tab destinations and the notice count are active.
+
+**Problems found (7):** The parent touch-end route gesture could intercept horizontal scrolling of the seven-tab strip at 375px; a long swipe could navigate to another page while the reader only intended to reveal hidden tabs; scroll affordance and swipe navigation had no precedence; scrolling could reset context unexpectedly; the mobile active tab could be missed behind horizontally clipped neighbors; the 60px swipe threshold alone didn't distinguish scrolling; and tablet drag behavior could also accidentally change routes.
+
+**Fixed:** Preserved every Home/Drives/Applications/Schedule/Offers/Notices/Placement cell label and href, unread count, URL-derived selection, shared legacy underlined Tabs/ScrollCue and navigation helper. Now captures the ScrollCue viewport's scroll position on touch start; if the tab strip moved or there is more horizontal tab content in the gesture direction, it lets native scroll finish; only at horizontal edges does the existing deliberate 60px route swipe execute. Kept touchcancel reset, vertical gestures, all seven destinations, 375px/768px native scrolling and keyboard link focus. Inspected Tabs, ScrollCue, swipe helper and learner placement layout; source only, no runtime/CI.
+
+**Files changed:** `src/components/placements/learner-placements-tabs.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 37 — `src/components/public/error-page-view.tsx`
+
+**Reachability:** GitHub code search for `ErrorPageView` found the component definition, but no runtime import. Both live root boundaries (`src/app/error.tsx` and `src/app/not-found.tsx`) use `GracefulErrorBoundary`/`GracefulScreen` instead; this is a dormant public-screen alternative.
+
+**Problems found (0 live):** The component is not reached from any route. Its shared CSS already stacks brand, centered legacy-white canvas, PageHeader, concise message, action row and footer, with 44px phone targets, 375px/768px gutters, focus outlines and Inter fallback. There is no active overlay, loading, state mutation or modal to adjust here; modifying a dormant alternative would introduce churn without making the live boundaries better.
+
+**Fixed:** No source change warranted. Preserved 404/500 codes, title ID, messages, logo, privacy/terms links, recovery callbacks and exact branded copy. Inspected `ErrorRecoveryActions`, `public-screen.module.css`, live root error/not-found files and shared PageHeader for the compact, failure, recovery, 375px and 768px states by source; no runtime/CI.
+
+**Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit-only).
