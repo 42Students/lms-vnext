@@ -8,7 +8,9 @@ import {
   CollegeFacultyAssignmentEnd,
 } from "@/components/college/college-faculty-assignment-actions";
 import { listCollegeTeachingOptions } from "@/modules/courses/college-teaching-options-service";
-import {CollegeFacultyReassignAction} from "@/components/college/college-faculty-reassign-action";
+import { CollegeFacultyReassignAction } from "@/components/college/college-faculty-reassign-action";
+import { FilterBar } from "@/components/ui/filter-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -16,9 +18,9 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyAssignmentQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeFacultyAssignments } from "@/modules/academics/college-mapping-service";
 import { facultyAssignmentCsvHref } from "@/modules/academics/college-faculty-assignment-export-model";
-import {Input} from "@/components/ui/input";
-import {Select} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -37,7 +39,7 @@ export default async function CollegeFacultyAssignmentPage({
     }).filter(([, value]) => value !== undefined && value !== "")),
   );
   if (!parsed.success) return (
-    <div className="min-w-0 space-y-[16px]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader title="Faculty Assignment" />
       <ErrorState title="Invalid assignment filters"
         description="The status, page or search is invalid; no assignments were loaded."
@@ -55,7 +57,7 @@ export default async function CollegeFacultyAssignmentPage({
     new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
   ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
   return (
-    <div className="min-w-0 max-w-full space-y-[16px]">
+    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
       <PageHeader
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
@@ -66,23 +68,25 @@ export default async function CollegeFacultyAssignmentPage({
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)]">
         Export filtered faculty assignments CSV
       </Link>
-      <CollegeFacultyAssignmentCreate {...options} />
-      <section className="border-b border-border pb-4">
-        <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
-          <label className="grid min-w-0 md:min-w-[220px] flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Faculty, course or class
-            <Input name="q" type="search" defaultValue={query.q} maxLength={100}
-              />
-          </label>
-          <label className="grid min-w-40 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <Disclosure title={FACULTY_ASSIGNMENT_COPY.createTitle} className="min-w-0 border-y border-[var(--lms-canvas-border)]" contentClassName="pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
+        <CollegeFacultyAssignmentCreate {...options} />
+      </Disclosure>
+      <FilterBar title="Filters" activeCount={Number(Boolean(query.q)) + Number(Boolean(query.courseCode)) + Number(Boolean(query.sectionCode)) + Number(query.status !== "ACTIVE") + Number(query.role !== "ALL")}
+        search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          Faculty, course or class
+          <Input name="q" type="search" form="college-faculty-assignment-filters"
+            defaultValue={query.q} maxLength={100} className="min-h-11 min-w-0 md:min-h-9"/>
+        </label>}
+        action={<Button type="submit" form="college-faculty-assignment-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
+        <form id="college-faculty-assignment-filters" action="/college/faculty-assignment" method="get"
+          className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Exact course code
-            <Input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}
-              />
+            <Input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}/>
           </label>
-          <label className="grid min-w-40 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Class
-            <Select name="sectionCode" defaultValue={query.sectionCode ?? ""}
-              >
+            <Select name="sectionCode" defaultValue={query.sectionCode ?? ""}>
               <option value="">All classes</option>
               {query.sectionCode&&!classChoices.some(item=>item.code===query.sectionCode)?
                 <option value={query.sectionCode}>Selected class ({query.sectionCode})</option>:null}
@@ -92,32 +96,30 @@ export default async function CollegeFacultyAssignmentPage({
               First 200 active deliveries shown; a selected class outside this list is retained.
             </span>:null}
           </label>
-          <label className="grid min-w-40 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Assignment lifecycle
-            <Select name="status" defaultValue={query.status}
-              >
-              <option value="ACTIVE">Active</option>
-              <option value="ENDED">Ended</option>
-              <option value="ALL">All</option>
+            <Select name="status" defaultValue={query.status}>
+              <option value="ACTIVE">Active</option><option value="ENDED">Ended</option><option value="ALL">All</option>
             </Select>
           </label>
-          <label className="grid min-w-40 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {FACULTY_ASSIGNMENT_COPY.roleLabel}
-            <Select name="role" defaultValue={query.role}
-              >
+            <Select name="role" defaultValue={query.role}>
               <option value="ALL">All roles</option>
               <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
               <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
               <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
             </Select>
           </label>
-          <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
-          <Link href="/college/faculty-assignment"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear</Link>
+          <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap xl:col-span-4">
+            <Button type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
+            <Link href="/college/faculty-assignment"
+              className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear</Link>
+          </div>
         </form>
-      </section>
+      </FilterBar>
       <section className="min-w-0" aria-label="Teaching assignment roster">
-        <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
+        <p className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm text-muted-foreground">
           {total} matching teaching assignment{total === 1 ? "" : "s"}
         </p>
         {items.length === 0 ? (
@@ -150,7 +152,7 @@ export default async function CollegeFacultyAssignmentPage({
                 mobilePriority: "secondary", cell: item => <StatusBadge tone={item.state==="ACTIVE"?"success":"neutral"}>{item.state === "ACTIVE" ? FACULTY_ASSIGNMENT_COPY.yes : FACULTY_ASSIGNMENT_COPY.no}</StatusBadge> },
               { key: "actions", header: FACULTY_ASSIGNMENT_COPY.columns.actions,
                 mobilePriority: "action", cell: item => item.state === "ACTIVE" ? (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
                     <CollegeFacultyAssignmentEnd
                       assignmentId={item.id} facultyName={item.facultyName}
                       courseName={item.courseName} role={item.role}
@@ -167,7 +169,7 @@ export default async function CollegeFacultyAssignmentPage({
           />
         )}
       </section>
-      <nav aria-label="Faculty assignment pagination" className="flex flex-wrap items-center justify-between gap-[8px] text-sm">
+      <nav aria-label="Faculty assignment pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
         <span className="text-muted-foreground">Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
           {query.page > 1 ? <Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"

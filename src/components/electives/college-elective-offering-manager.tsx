@@ -110,7 +110,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
       Manage offerings
     </Button>
     {opened && <section aria-label="Elective course offerings"
-      className="mt-2 min-w-0 w-full max-w-xl space-y-3 border-t border-border pt-3">
+      className="mt-[var(--lms-space-3)] min-w-0 w-full max-w-[920px] space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
       {loading && <p role="status">Loading eligible courses and groups…</p>}
       {data && <>
         <h3 className="text-sm font-semibold text-foreground">Courses in this elective slot</h3>
@@ -119,7 +119,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
         {data.offerings.map(offering => <div key={offering.offeringId}
           className="flex min-w-0 flex-col items-start gap-2 border-b border-border py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
           <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers} · Waitlist: {offering.waitlistedCount} · {offering.status}</span>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 w-full flex-col items-stretch gap-[var(--lms-space-2)] sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
               encodeURIComponent(offering.offeringId) + "/roster"}
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
@@ -135,7 +135,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
         <div className="border-t border-border pt-3">
           <h4 className="text-sm font-semibold">{editing ? "Edit offering" : "Add offering"}</h4>
           <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
-            <Select className="mt-1 w-full"
+            <Select className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9"
               value={deliveryId} onChange={event => setDeliveryId(event.target.value)}>
               <option value="">Select course and class</option>
               {selectable.map(row => <option key={row.id} value={row.id}>
@@ -143,7 +143,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
             </Select>
           </label>
           {!editing && <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group (optional)
-            <Select className="mt-1 w-full"
+            <Select className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9"
               value={groupId} onChange={event => setGroupId(event.target.value)}>
               <option value="">Create elective group automatically</option>
               {data.groups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
@@ -152,11 +152,11 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity
             <Input type="number" min="1" max="100000" required
               value={capacity} onChange={event => setCapacity(event.target.value)}
-              className="mt-1 w-full" />
+              className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9" />
           </label>
           {selectable.length === 0 && <p role="status" className="mt-2 text-sm">
             Create an active elective course delivery for this program before adding an offering.</p>}
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
             <Button variant="primary" type="button" loading={busy} disabled={busy || loading || !deliveryId || selectable.length === 0}
               onClick={() => void save()} >
               {busy ? "Saving…" : editing ? "Save offering" : "Add offering"}
