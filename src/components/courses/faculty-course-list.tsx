@@ -198,8 +198,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
       ))}
       </div>
       )}
-      <Pagination label="Faculty Courses pages" page={pagination.page} pageCount={pagination.totalPages}
-        hrefForPage={page=>facultyCourseListHref({...query,page})} />
+      {pagination.totalPages > 1 ? <Pagination label="Faculty Courses pages" page={pagination.page} pageCount={pagination.totalPages}
+        hrefForPage={page=>facultyCourseListHref({...query,page})} /> : null}
     </div>
   );
 }
