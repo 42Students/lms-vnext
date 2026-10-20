@@ -30,35 +30,35 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary md:min-h-9">
      Download all matching CSV</a>}/>
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-   <label className="min-w-40 flex-1 text-sm text-body">Stage
-    <Select name="stage" defaultValue={result.stage} className="mt-1 w-full">
+   <label className="min-w-40 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
+    <Select name="stage" defaultValue={result.stage} className="w-full mt-[6px] block">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
     </Select></label>
-   <label className="min-w-40 flex-1 text-sm text-body">Applicant flags
-    <Select name="flag" defaultValue={result.flag} className="mt-1 w-full">
+   <label className="min-w-40 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
+    <Select name="flag" defaultValue={result.flag} className="w-full mt-[6px] block">
      <option value="ALL">Any flag</option><option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option><option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
-   <label className="min-w-40 flex-1 text-sm text-body">Name, roll, branch, batch, email, phone or role
-    <Input name="search" defaultValue={result.search} maxLength={100} className="mt-1 w-full"/>
+   <label className="min-w-40 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
+    <Input name="search" defaultValue={result.search} maxLength={100} className="w-full mt-[6px] block"/>
    </label>
-   <label className="min-w-32 flex-1 text-sm text-body">Channel
-    <Select name="channel" defaultValue={result.channel} className="mt-1 w-full">
+   <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
+    <Select name="channel" defaultValue={result.channel} className="w-full mt-[6px] block">
      <option value="ALL">All</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
     </Select></label>
-   <label className="min-w-40 flex-1 text-sm text-body">Eligibility evidence
-    <Select name="eligibility" defaultValue={result.eligibility} className="mt-1 w-full">
+   <label className="min-w-40 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
+    <Select name="eligibility" defaultValue={result.eligibility} className="w-full mt-[6px] block">
      <option value="ALL">All</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · missing evidence</option>
     </Select></label>
-   <label className="min-w-32 flex-1 text-sm text-body">Order by
-    <Select name="sort" defaultValue={result.sort} className="mt-1 w-full">
+   <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
+    <Select name="sort" defaultValue={result.sort} className="w-full mt-[6px] block">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
     </Select></label>
-   <label className="min-w-36 flex-1 text-sm text-body">Submitted window
-    <Select name="submittedWithin" defaultValue={result.submittedWithin} className="mt-1 w-full">
+   <label className="min-w-36 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
+    <Select name="submittedWithin" defaultValue={result.submittedWithin} className="w-full mt-[6px] block">
      <option value="ALL">Any date</option><option value="LAST_7_DAYS">Last 7 × 24h</option>
      <option value="LAST_30_DAYS">Last 30 × 24h</option>
     </Select></label>

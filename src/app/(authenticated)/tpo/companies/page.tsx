@@ -180,7 +180,7 @@ export default async function TpoCompanyMemoryPage({
           method="get"
           className="grid gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search companies
             <Input
               type="search"
@@ -188,26 +188,26 @@ export default async function TpoCompanyMemoryPage({
               maxLength={150}
               defaultValue={query.search ?? ""}
               placeholder="Company name or website"
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)]"
+              className="min-h-11 md:min-h-9"
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Sort by
             <Select name="sort" defaultValue={query.sort}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)]">
+              className="min-h-11 md:min-h-9">
               <option value="NAME">Company name</option>
               <option value="CONTACTS">Most contacts</option>
               <option value="DRIVES">Most drives</option>
               <option value="JOINS">Most confirmed joins</option>
             </Select>
           </label>
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)]"
+              className="min-h-11 md:min-h-9"
             >
               <option value="25">25</option>
               <option value="50">50</option>
