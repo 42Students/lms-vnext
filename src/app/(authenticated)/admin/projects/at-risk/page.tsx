@@ -52,7 +52,6 @@ export default async function SuperAdminProjectAtRiskRoute({
     <ProjectAdminAtRiskPage
       collegeId={collegeId}
       basePath="/admin/projects"
-      eyebrow="Super Admin Projects"
       searchParams={await searchParams}
     />
   );

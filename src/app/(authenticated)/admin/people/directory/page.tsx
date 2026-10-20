@@ -31,7 +31,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   tab:raw.tab,q:raw.q,role:raw.role,membershipStatus:raw.membershipStatus,
   platformStatus:raw.platformStatus,page:raw.page,
  }:{invalid:true});
- if(!query.success) return <div className="space-y-4"><PageHeader eyebrow="Super Admin" title="People Directory"/>
+ if(!query.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
    action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] hover:underline">Clear filters</Link>}/>
  </div>;
@@ -39,7 +39,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   .then(value=>({ok:true as const,value}))
   .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
  if(!loaded.ok) return <div className="min-w-0 space-y-4">
-  <PageHeader eyebrow="Super Admin" title="People Directory"/>
+  <PageHeader title="People Directory"/>
   <ErrorState
    title={loaded.denied?"Directory access denied":"People Directory unavailable"}
    description={loaded.denied
@@ -57,7 +57,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  const platformOptions = ["ALL", ...USER_PLATFORM_STATUSES] as const;
  const tabForm=adminPeopleSearchState(data.query);
  return <div className="min-w-0 space-y-6">
-  <PageHeader eyebrow="Super Admin · People" title="People Directory"
+  <PageHeader title="People Directory"
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?

@@ -30,7 +30,7 @@ export default async function SuperAdminLectureHallAvailability({
 }) {
   const context=await getCurrentRequestContext();
   if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader eyebrow="Super Admin · Lecture halls" title="Room availability"/>
+    <PageHeader title="Room availability"/>
     <EmptyState title="Select a college to continue"
       description="Choose a college in the Super Admin scope selector before viewing private room schedules."/>
   </div>;
@@ -51,7 +51,7 @@ export default async function SuperAdminLectureHallAvailability({
   }
 
   return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader eyebrow="Super Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
+    <PageHeader title={result?.hall.name ?? "Room availability"}
       description="Read-only scheduled bookings. An empty schedule is not proof of a free room."
       actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">Back to Lecture Halls</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
