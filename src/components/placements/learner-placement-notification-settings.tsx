@@ -82,7 +82,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!changed || pending} onClick={()=>setConfirm(true)}>
         Review changes
       </Button>
-      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Reload saved choices</Button>
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>{setMatching(initial.notifyMatchingJobs);setUpdates(initial.notifyApplicationUpdates);setConfirm(false);router.refresh();}}>Reload saved choices</Button>
       {changed ? <span className="text-xs text-body">Unsaved changes</span>
         : <span className="text-xs text-muted-foreground">No changes to save</span>}
     </div>
