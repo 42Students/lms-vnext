@@ -20,6 +20,7 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
  const [membershipId,setMembershipId]=useState("");
  const [result,setResult]=useState<Result>("PARTICIPATED");
  const [message,setMessage]=useState("");
+ const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  async function save(id:string,outcome:Result){
   if(!available||pending)return;
   setMessage("");
@@ -29,9 +30,11 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
     body:JSON.stringify({membershipId:id,result:outcome}),
    }));
    setMembershipId("");
+   setMessageTone("success");
    setMessage("Historical participation recorded. No application or offer was created.");
    router.refresh();
   }catch{
+   setMessageTone("error");
    setMessage("The record could not be saved. Your existing evidence has not changed.");
   }
  }
@@ -56,12 +59,12 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
     Record participation
    </Button>
   </div>
-  {message?<InlineNotice tone="info" message={message}/>:null}
+  {message?<InlineNotice tone={messageTone} message={message}/>:null}
   {participants.length?<ul className="space-y-2">
    {participants.map(person=><li key={person.id} className="grid min-w-0 gap-2 border-b border-border py-3 sm:grid-cols-[minmax(0,1fr)_minmax(12rem,auto)] sm:items-center">
     <span className="min-w-0 flex-1 text-sm">{person.name??"Unnamed learner"} · {outsideDriveResultLabel(person.result)}</span>
     <label className="grid min-w-0 gap-1 text-xs">Change recorded result
-     <Select defaultValue={person.result} disabled={pending}
+     <Select value={person.result} disabled={pending}
       onChange={e=>void save(person.membershipId,e.target.value as Result)}
       className="min-h-11 w-full md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
       {outcomes.map(code=><option key={code} value={code}>{outsideDriveResultLabel(code)}</option>)}

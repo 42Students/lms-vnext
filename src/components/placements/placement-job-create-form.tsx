@@ -709,17 +709,12 @@ export function PlacementJobCreateForm({
         </div>
         </nav>
       </details>
-      <details className="min-w-0 border-b border-border pb-3">
+      <details open={!activeSeason} className="min-w-0 border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Placement season</summary>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-        <div className="border-b border-border pb-[var(--lms-space-3)]">
-          <h2 className="m-0 text-base font-semibold text-foreground">
-            Placement season
-          </h2>
-          <p className="mt-1 text-sm text-body">
-            Every drive belongs to the current operating season. Historical seasons remain read-only.
-          </p>
-        </div>
+        <p className="pb-[var(--lms-space-3)] text-sm text-body">
+          Every drive belongs to the current operating season. Historical seasons remain read-only.
+        </p>
         <div className="pt-4">
           {activeSeason ? (
             <>
