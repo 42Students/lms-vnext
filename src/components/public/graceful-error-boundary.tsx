@@ -68,20 +68,20 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
 
   if (insideShell) {
     const reference = friendlyReference(requestId);
-    return <section role="alert" className="min-w-0 space-y-5">
+    return <section role="alert" className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader title={title} />
-      <p className="text-sm text-body">{message}</p>
-      {reference ? <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <p className="max-w-prose break-words text-sm text-body">{message}</p>
+      {reference ? <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] break-words text-xs text-muted-foreground">
         <span>{reference}</span>
         <Button type="button" variant="ghost" size="sm"
           onClick={() => { if (requestId) void navigator.clipboard?.writeText(requestId).catch(() => {}); }}>
           Copy reference
         </Button>
       </div> : null}
-      <div className="flex flex-wrap items-center gap-3">
-        <Button type="button" onClick={reset}>Try again</Button>
+      <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
+        <Button type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={reset}>Try again</Button>
         <Link href={homeHref}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Go to home
         </Link>
       </div>
