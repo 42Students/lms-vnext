@@ -97,39 +97,37 @@ export function MentorSprintDetailsEdit({
     <Button size="sm" variant="secondary" onClick={begin}>Edit sprint</Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit sprint details"
       description="Edit sprint goals and dates. Dates are locked once a sprint is active.">
-      <form onSubmit={review} className="grid gap-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">
+      <form onSubmit={review} className="grid min-w-0 gap-[var(--lms-space-4)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Sprint title
           <Input required maxLength={200} value={title}
             onChange={event=>setTitle(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Sprint description (optional)
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
         {estimationUnit?<p className="m-0 text-xs text-muted-foreground">Project estimation unit: {estimationUnit==="HOURS"?"Hours":estimationUnit==="POINTS"?"Points":estimationUnit}</p>:null}
-        <label className="grid gap-1 text-sm font-semibold text-body">Sprint goal
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint goal
           <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
-        <label className="grid gap-1 text-sm font-semibold text-body">What does done look like?
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
-        {estimationUnit ? <p className="m-0 text-xs text-body">
-          Project estimation unit: {estimationUnit==="HOURS"?"Hours":estimationUnit==="POINTS"?"Points":estimationUnit}
-        </p> : null}
-        <div className="grid gap-3 sm:grid-cols-3">
+        
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-3">
           {([{label:"Start date",value:start,set:setStart},
              {label:"End date",value:end,set:setEnd},
              {label:"Due date",value:due,set:setDue}]).map(row=>
-              <label key={row.label} className="grid gap-1 text-sm font-semibold text-body">{row.label}
+              <label key={row.label} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{row.label}
                 <Input type="date" value={row.value} disabled={status==="ACTIVE"}
                   onChange={e=>row.set(e.target.value)}/></label>)}
         </div>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={guard.requestClose}>
+        <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
+          <Button className="w-full sm:w-auto" type="button" variant="secondary" onClick={guard.requestClose}>
             Cancel
           </Button>
-          <Button type="submit" disabled={!changed||!title.trim()}>
+          <Button className="w-full sm:w-auto" type="submit" disabled={!changed||!title.trim()}>
             Review changes
           </Button>
         </div>
@@ -140,11 +138,17 @@ export function MentorSprintDetailsEdit({
       description="The revised sprint details will be visible to its project team."
       confirmLabel="Save sprint details" confirmVariant="primary"
       pending={pending} onConfirm={save}>
-      <dl className="grid gap-2 text-sm text-body">
+      <dl className="grid min-w-0 gap-[var(--lms-space-2)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
         <dt className="font-semibold text-foreground">Title</dt>
         <dd className="break-words">{title.trim()}</dd>
         <dt className="font-semibold text-foreground">Description</dt>
         <dd className="break-words">{description.trim()||"No description"}</dd>
+        <dt className="font-semibold text-foreground">Sprint goal</dt>
+        <dd className="break-words">{goal.trim()||"Not provided"}</dd>
+        <dt className="font-semibold text-foreground">What does done look like?</dt>
+        <dd className="break-words">{done.trim()||"Not provided"}</dd>
+        <dt className="font-semibold text-foreground">Start date · End date · Due date</dt>
+        <dd className="break-words">{start||"Not set"} · {end||"Not set"} · {due||"Not set"}</dd>
       </dl>
       {error?<p role="alert" className="mt-3 text-sm font-semibold text-error">{error}</p>:null}
     </ConfirmDialog>

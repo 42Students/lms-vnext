@@ -44,20 +44,20 @@ export function TpoFindSuggestions({
 
   if (needle.length < 2) return null;
   const ready = state.forQuery === needle && !state.loading;
-  return <section aria-label="Matching TPO records">
+  return <section aria-label="Matching TPO records" className="min-w-0 max-w-full border-t border-[var(--lms-canvas-border)]">
     <p className="px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Matching records</p>
-    {!ready ? <p role="status" className="p-2 text-xs text-muted-foreground">Searching…</p> : null}
-    {ready && state.error ? <p role="alert" className="p-2 text-xs text-error">{state.error}</p> : null}
+    {!ready ? <p role="status" className="min-w-0 break-words p-2 text-xs text-muted-foreground">Searching…</p> : null}
+    {ready && state.error ? <p role="alert" className="min-w-0 break-words p-2 text-xs text-error">{state.error}</p> : null}
     {ready && !state.error && state.results.map(result =>
       <Button type="button" variant="ghost" role="option" aria-selected={false}
-        data-tpo-result="" key={result.href} className={style.suggestion}
+        data-tpo-result="" key={result.href} className={style.suggestion+" min-w-0 max-w-full"}
         onClick={() => onOpen(result.href)}>
         <SearchIcon/>
         <span className="min-w-0 flex-1 truncate">{result.label}</span>
-        <span className="shrink-0 text-[length:var(--lms-topbar-caption-size,11px)] text-muted-foreground">{result.group}</span>
+        <span className="max-w-[36%] shrink-0 truncate text-[length:var(--lms-topbar-caption-size,11px)] text-muted-foreground">{result.group}</span>
       </Button>
     )}
     {ready && !state.error && state.results.length === 0
-      ? <p role="status" className="p-2 text-xs text-muted-foreground">No matching records.</p> : null}
+      ? <p role="status" className="min-w-0 break-words p-2 text-xs text-muted-foreground">No matching records.</p> : null}
   </section>;
 }

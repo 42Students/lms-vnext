@@ -59,16 +59,16 @@ export function MentorSprintCreate({
     </Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Create sprint"
       description="Create a planned sprint with goal, dates and definition of done in this release."
-      footer={<>
-        <Button variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
-        <Button disabled={busy||!title.trim()||title.trim().length>200||
+      footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+        <Button className="w-full sm:w-auto" variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
+        <Button className="w-full sm:w-auto" loading={busy} disabled={busy||!title.trim()||title.trim().length>200||
           description.length>4000||!datesValid||!chosenReleaseId||
           chosenRelease?.status==="SHIPPED"} onClick={()=>void create()}>
           {busy?"Creating…":"Confirm create"}
         </Button>
-      </>}>
-      <div className="grid gap-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">Ships in release
+      </div>}>
+      <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ships in release
           <Select value={chosenReleaseId} disabled={busy}
             onChange={event=>setChosenReleaseId(event.target.value)}
             className="min-h-11 w-full min-[768px]:min-h-9">
@@ -77,25 +77,25 @@ export function MentorSprintCreate({
               <option value={releaseId}>Current release</option>}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Sprint title
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint title
           <Input maxLength={200} value={title}
             onChange={e=>setTitle(e.target.value)} required />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Description
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
           <Textarea value={description} maxLength={4000}
             onChange={e=>setDescription(e.target.value)}
             placeholder="Optional description" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Sprint goal
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint goal
           <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
-        <label className="grid gap-1 text-sm font-semibold text-body">What does done look like?
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
-        <div className="grid gap-2 min-[768px]:grid-cols-3">
-          <label className="grid gap-1 text-sm font-semibold text-body">Start date
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] min-[768px]:grid-cols-3">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start date
             <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
-          <label className="grid gap-1 text-sm font-semibold text-body">End date
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End date
             <Input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Due date
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
             <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label>
         </div>
         {!datesValid?<p role="alert" className="text-sm font-semibold text-error">
@@ -143,7 +143,7 @@ export function MentorSprintTransition({
     } finally {setBusy(false);}
   }
   return <>
-    <Button size="sm" variant="secondary" disabled={busy} onClick={()=>setConfirming(true)}>
+    <Button size="sm" variant="secondary" loading={busy} disabled={busy} onClick={()=>setConfirming(true)}>
       {busy?"Saving…":label}
     </Button>
     <ConfirmDialog open={confirming} onOpenChange={setConfirming}
