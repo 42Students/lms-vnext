@@ -54,39 +54,39 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  return <section className="space-y-4 border-t border-border pt-5">
   <h2 className="m-0 text-lg font-semibold text-foreground">New announcement to placement cells</h2>
   <p className="text-sm text-body">Send an in-app announcement from 42 to selected placement cells. Immediate announcements also create a bell for active TPO members; scheduled announcements appear at their planned time. No SMS or email is sent.</p>
-  <label className="grid gap-1 text-sm font-semibold text-body">Audience
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
    <Select value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11">
     <option value="SELECTED_COLLEGES">Selected placement cells</option>
     <option value="ALL_COLLEGES">Every placement cell in current scope ({colleges.length})</option>
    </Select>
   </label>
-  {mode==="SELECTED_COLLEGES"?<fieldset className="space-y-2 rounded-md border border-border p-3">
-   <legend className="text-sm font-semibold">Select placement cells</legend>
-   {colleges.map(item=><label key={item.id} className="flex min-h-10 items-center gap-3 text-sm text-body">
+  {mode==="SELECTED_COLLEGES"?<fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+   <legend className="text-[13px] font-semibold text-foreground">Select placement cells</legend>
+   {colleges.map(item=><label key={item.id} className="flex min-h-11 items-center gap-3 text-sm text-body md:min-h-9">
     <Checkbox checked={selected.includes(item.id)} onChange={e=>setSelected(prev=>e.target.checked?[...prev,item.id]:prev.filter(id=>id!==item.id))}/>{item.label}
    </label>)}
   </fieldset>:null}
   <p className="text-xs text-muted-foreground">Placement-cell messages use the legacy 200-character title and 8,000-character body limits.</p>
-  <label className="grid gap-1 text-sm font-semibold text-body">Title<Input value={title} maxLength={200} onChange={e=>setTitle(e.target.value)}/></label>
-  <label className="grid gap-1 text-sm font-semibold text-body">Message<Textarea value={message} maxLength={8000} onChange={e=>setMessage(e.target.value)}/></label>
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title<Input value={title} maxLength={200} onChange={e=>setTitle(e.target.value)}/></label>
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message<Textarea value={message} maxLength={8000} onChange={e=>setMessage(e.target.value)}/></label>
   <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Message {message.length}/8000</p>
-  <fieldset className="space-y-2 rounded-md border border-border p-3">
-   <legend className="text-sm font-semibold">Button (optional)</legend>
-   <label className="grid gap-1 text-sm font-semibold text-body">Button label
+  <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+   <legend className="text-[13px] font-semibold text-foreground">Button (optional)</legend>
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
     <Input value={buttonLabel} maxLength={60} onChange={e=>setButtonLabel(e.target.value)} placeholder="View details"/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">HTTPS link
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">HTTPS link
     <Input type="url" value={buttonUrl} maxLength={500} onChange={e=>setButtonUrl(e.target.value)} placeholder="https://example.com"/>
    </label>
    <p className="text-xs text-muted-foreground">Provide both fields or leave both blank. Label must be 60 characters or fewer.</p>
    <p role="status" className="text-xs text-muted-foreground">Button label {buttonLabel.length}/60 · HTTPS link {buttonUrl.length}/500</p>
    {!buttonValid?<p role="alert" className="text-sm text-danger-text">Provide a button label and a valid HTTPS link.</p>:null}
   </fieldset>
-  <div className="grid gap-3 sm:grid-cols-2">
-   <label className="grid gap-1 text-sm font-semibold text-body">Schedule (local)<Input type="datetime-local" value={scheduledAt} onChange={e=>setScheduledAt(e.target.value)}/></label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Show until (local)<Input type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
+  <div className="grid gap-3 md:grid-cols-2">
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Schedule (local)<Input type="datetime-local" value={scheduledAt} onChange={e=>setScheduledAt(e.target.value)}/></label>
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (local)<Input type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
   </div>
-  <label className="flex items-center gap-2 text-sm font-semibold text-body">
+  <label className="flex min-h-11 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-h-9">
    <Checkbox checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin for recipients
   </label>
   {!timing.valid?<p role="alert" className="text-sm text-danger-text">Enter valid local schedule and expiry values; expiry must follow the schedule.</p>:null}

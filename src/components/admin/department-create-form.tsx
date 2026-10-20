@@ -58,7 +58,7 @@ export function DepartmentCreateForm({
       <div className="min-w-48 flex-1">
         <label
           htmlFor="department-name"
-          className="mb-1.5 block text-[13px] font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           {DEPARTMENT_COPY.nameLabel}
         </label>
@@ -76,7 +76,7 @@ export function DepartmentCreateForm({
       </Button>
       {notice ? <p role="status" className="m-0 w-full text-sm text-body">{notice}</p> : null}
       {error ? (
-        <p role="alert" className="m-0 text-xs font-semibold text-error sm:w-full">
+        <p role="alert" className="m-0 w-full text-xs font-semibold text-error">
           {error}
         </p>
       ) : null}

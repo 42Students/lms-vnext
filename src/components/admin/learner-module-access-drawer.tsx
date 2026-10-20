@@ -52,7 +52,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  function close(){seq.current++;setDetail(null);setMessage("");}
  return <section aria-label="Why a learner sees a module" className="border-b border-border pb-5">
   <h2 className="font-semibold text-foreground">Why can&apos;t a student see a module?</h2>
-  <label className="mt-3 grid gap-1 text-[13px] font-semibold text-body">
+  <label className="mt-3 grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
    Why can&apos;t a student see a module? Search…
    <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Name or roll number" autoComplete="off"
@@ -64,7 +64,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
   {suggestions.length>0?<ul aria-label="Matching learners" className="mt-2 max-h-60 overflow-auto rounded-[var(--lms-control-radius)] border border-border">
    {suggestions.map(student=><li key={student.membershipId} className="border-b border-border last:border-0">
     <Button type="button" variant="ghost" onClick={()=>void lookup(search,student.membershipId)}
-     className="min-h-11 w-full px-3 py-2 text-left text-sm hover:bg-primary-subtle">
+     className="min-h-11 w-full justify-start rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
      {student.displayName||"Unnamed learner"} · {student.rollNumber||"No roll number"}
     </Button>
    </li>)}
@@ -102,7 +102,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      Recheck access after a change
     </Button>
     <p className="text-xs text-body">This reads persisted learner access. It does not sign in as the student.</p>
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
      href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(detail.membershipId)}>
      Open full access trace →
     </Link>
