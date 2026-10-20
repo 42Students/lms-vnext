@@ -30,7 +30,7 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
   <ConfirmDialog open={confirm} onOpenChange={setConfirm}
    title={verified?"Remove global company verification?":"Verify company globally?"}
    description={(verified?"Unverify ":"Verify ")+name+" globally for 42?"}
-   confirmLabel={verified?"Confirm unverify":"Confirm verify"} pending={busy}
+   confirmLabel={verified?"Confirm unverify":"Confirm verify"} confirmVariant={verified?"danger":"primary"} pending={busy}
    onConfirm={()=>void save()}/>
   {error?<Alert tone="error">{error}</Alert>:null}
  </div>;
