@@ -6,25 +6,25 @@ type Journey=NonNullable<Awaited<ReturnType<typeof getOwnLearnerDriveJourney>>>;
  */
 export function LearnerOwnDriveJourney({journey}:{journey:Journey}){
  const stopped=journey.jobStatus==="CANCELLED"||journey.jobStatus==="CLOSED";
- return <div className="space-y-4" aria-label="Own application journey">
-  {stopped?<aside role="status" className="rounded-lg border border-warning bg-surface-subtle p-4">
+ return <div className="min-w-0 space-y-4" aria-label="Own application journey">
+  {stopped?<aside role="status" className="min-w-0 border-b border-warning bg-surface-subtle p-4 md:p-6">
    <h2 className="text-base font-semibold">{journey.jobStatus==="CANCELLED"?
     "This drive was cancelled":"This drive is closed"}</h2>
    {journey.reason?<p className="mt-2 text-sm text-body">{journey.reason}</p>:null}
    <p className="mt-2 text-sm">Your application history remains available.</p>
-   <Link className="font-semibold text-primary-text underline"
+   <Link className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9"
     href={"/learn/my-placements/applications/"+journey.applicationId}>View my application</Link>
   </aside>:null}
-  <section aria-label="Your progress" className="rounded-lg border border-border bg-surface p-4">
+  <section aria-label="Your progress" className="min-w-0 border-b border-border py-4 md:py-6">
    <h2 className="font-semibold">Your progress</h2>
    <p className="mt-1 text-sm">Application status: {journey.applicationStatus.replaceAll("_"," ").toLowerCase()}</p>
-   <Link className="text-sm font-semibold text-primary-text underline"
+   <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9"
     href={"/learn/my-placements/applications/"+journey.applicationId}>See where your application stands</Link>
   </section>
-  <section aria-label="Selection process" className="rounded-lg border border-border bg-surface p-4">
+  <section aria-label="Selection process" className="min-w-0 border-b border-border py-4 md:py-6">
    <h2 className="font-semibold">Selection process</h2>
-   {journey.rounds.length?<ol className="mt-3 space-y-2">
-    {journey.rounds.map(round=><li key={round.id} className="border-t border-border py-2 text-sm">
+   {journey.rounds.length?<ol className="mt-3 min-w-0 space-y-2">
+    {journey.rounds.map(round=><li key={round.id} className="min-w-0 break-words border-t border-border py-3 text-sm">
      <strong>{round.sequence}. {round.name}</strong>
      <p>Round status: {round.status.replaceAll("_"," ").toLowerCase()}</p>
      {round.scheduledAt?<p>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",
