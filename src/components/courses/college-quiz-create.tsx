@@ -94,17 +94,17 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create quiz.");}
   finally{lock.current=false;setBusy(false);}
  }
- return <section className="space-y-3 border-b border-border pb-4">
-  <div className="flex flex-wrap items-center justify-between gap-2">
-   <div><h2 className="font-semibold text-foreground">Quizzes</h2>
+ return <section className="min-w-0 space-y-3">
+  <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
+   <div className="min-w-0"><p className="font-semibold text-foreground">Quizzes</p>
     <p className="text-xs text-muted-foreground">Author questions for all eligible Sections or a specific Section.</p></div>
    <Button variant="secondary" type="button" disabled={!lessons.length||busy} onClick={()=>{setError("");setNotice("");setOpened(true);}}
-    className="min-h-11 md:min-h-9">
+    className="min-h-11 w-full md:min-h-9 md:w-auto">
     Create New Quiz</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create an active course lesson before adding quizzes.</p>:null}
-  {opened?<div className="space-y-3">
-   <div className="grid gap-3 md:grid-cols-2">
+  {opened?<div className="min-w-0 max-w-4xl space-y-4">
+   <div className="grid min-w-0 gap-4 md:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Course / Lesson
      <Select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
       className="min-h-11 md:min-h-9">
@@ -143,7 +143,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     {questions.reduce((sum,question)=>sum+question.points,0)} total points · Max 100 questions and 10,000 points.</p>
    {questions.map((question,i)=><fieldset key={i} className="space-y-2 border-t border-border py-3">
     <legend className="text-sm font-semibold">Question {i+1}</legend>
-    <div className="flex flex-wrap gap-2">
+    <div className="flex min-w-0 flex-wrap gap-2">
      <Select value={question.type} disabled={busy} onChange={e=>{
       const type=e.target.value as Question["type"];
       replaceQuestion(i,{...question,type,options:question.options.map((o,j)=>({...o,correct:j===0}))});
@@ -158,7 +158,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <Textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
      className="min-h-24 w-full"/>
-    {question.options.map((option,j)=><label key={j} className="flex min-h-11 items-center gap-2 text-sm">
+    {question.options.map((option,j)=><label key={j} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2 text-sm">
      <ChoiceInput type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
       name={"quiz-correct-"+i} checked={option.correct} disabled={busy}
       aria-label={"Correct answer "+(j+1)} onChange={e=>replaceQuestion(i,{...question,
@@ -192,8 +192,8 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <Checkbox disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
     Create another quiz after saving
    </label>
-   <div className="flex flex-wrap gap-2">
-    <Button variant="primary" type="button" loading={busy} disabled={busy} onClick={()=>void create()} className="min-h-11 md:min-h-9"
+   <div className="sticky bottom-0 z-10 flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 md:flex-row md:items-center">
+    <Button variant="primary" type="button" loading={busy} disabled={busy} onClick={()=>void create()} className="min-h-11 w-full md:min-h-9 md:w-auto"
      >
      {busy?"Saving…":"Create quiz draft"}</Button>
     <Button variant="secondary" type="button" disabled={busy} onClick={async()=>{
@@ -205,7 +205,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
       setMaxAttempts("1");setShuffleQuestions(false);setShuffleOptions(false);
       setQuestions([empty()]);setError("");
-    }} className="min-h-11 md:min-h-9">Cancel</Button>
+    }} className="min-h-11 w-full md:min-h-9 md:w-auto">Cancel</Button>
    </div>
   </div>:null}
   {error?<Banner tone="error">{error}</Banner>:null}
