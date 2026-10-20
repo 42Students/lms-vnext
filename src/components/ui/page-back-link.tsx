@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { cx } from "@/lib/class-names";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
 
@@ -24,7 +23,7 @@ export function PageBackLink({ href, label, className }: PageBackLinkProps) {
         className,
       )}
     >
-      <ArrowLeft aria-hidden="true" className="size-4 shrink-0" />
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 shrink-0"><path d="M19 12H5" /><path d="m12 19-7-7 7-7" /></svg>
       <span className="hidden md:inline">{label}</span>
     </Link>
   );
