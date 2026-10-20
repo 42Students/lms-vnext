@@ -407,7 +407,7 @@ export function LearnerQuizAttempt() {
             return (
               <article key={question.id} className="border-b border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)]">
                 <div className="flex items-start justify-between gap-3">
-                  <h2 className="m-0 text-sm font-semibold text-foreground">Question {index + 1}. {question.prompt}</h2>
+                  <h2 className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] text-sm font-semibold text-foreground">Question {index + 1}. {question.prompt}</h2>
                   <span className="shrink-0 text-xs font-semibold text-muted-foreground">{question.points} pts</span>
                 </div>
                 <div className="mt-3 space-y-2">
@@ -496,7 +496,7 @@ export function LearnerQuizAttempt() {
           {current ? (
             <>
               <div className="flex items-start justify-between gap-4">
-                <h2 className="m-0 text-lg font-semibold leading-7 text-foreground">{current.prompt}</h2>
+                <h2 className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] text-lg font-semibold leading-7 text-foreground">{current.prompt}</h2>
                 <span className="shrink-0 text-xs font-semibold text-muted-foreground">{current.points} pts</span>
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
@@ -514,7 +514,7 @@ export function LearnerQuizAttempt() {
                         onChange={() => choose(current.id, option.id, current.type === "MULTIPLE_CHOICE")}
                         className="mt-1"
                       />
-                      <span className="text-sm leading-6 text-body">{option.text}</span>
+                      <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{option.text}</span>
                     </label>
                   );
                 })}
