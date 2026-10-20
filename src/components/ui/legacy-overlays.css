@@ -191,8 +191,8 @@
   transition: background-color .2s ease, box-shadow .2s ease;
 }
 [data-slot="popover"]:focus-visible {
-  outline: 2px solid var(--lms-primary);
-  outline-offset: 2px;
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
 }
 [data-slot="popover"] {
   border-radius: 6px;
@@ -223,7 +223,7 @@
 [data-slot="popover-listbox"] a[href] { display: block; min-height: 44px; }
 [data-slot="popover-listbox"] a[href]:hover { background: rgba(0,0,0,.035); }
 [data-slot="popover-listbox"] a[href]:active { background: rgba(0,0,0,.06); }
-[data-slot="popover-listbox"] a[href]:focus-visible { outline: 2px solid var(--lms-primary); outline-offset: 2px; }
+[data-slot="popover-listbox"] a[href]:focus-visible { outline: 2px solid var(--lms-primary-text); outline-offset: 3px; }
 @media (prefers-reduced-motion: no-preference) {
   [data-slot="popover-listbox"] { animation: lms-legacy-popup-enter .2s ease-out both; }
 }
@@ -244,9 +244,9 @@
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:hover { background: rgba(0,0,0,.035); }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:active { background: rgba(0,0,0,.06); }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"] { min-width: 44px; min-height: 44px; }
-[data-slot="toast-stack"] button[aria-label^="Dismiss"]:focus-visible { outline: 2px solid var(--lms-primary); outline-offset: 2px; }
+[data-slot="toast-stack"] button[aria-label^="Dismiss"]:focus-visible { outline: 2px solid var(--lms-primary-text); outline-offset: 3px; }
 [data-slot="toast-action"] button { min-height: 44px; }
-[data-slot="toast-action"] :is(a, button):focus-visible { outline: 2px solid var(--lms-primary); outline-offset: 2px; }
+[data-slot="toast-action"] :is(a, button):focus-visible { outline: 2px solid var(--lms-primary-text); outline-offset: 3px; }
 @media (max-width: 420px) { [data-slot="toast-action"] { flex-direction: column; align-items: stretch; } [data-slot="toast-action"] > div:last-child { width: 100%; } }
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
