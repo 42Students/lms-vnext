@@ -635,3 +635,19 @@ The only raw `<input>` instances in these 11 files are **4 invisible query-prese
 **Coverage proof scope:** Whole-file GitHub reads and exact regex counts recorded in three preceding tables (12 + 12 + 11 = **35 changed TSX files**). The scripted query equivalent is `git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9A-Fa-f]{3,8}' -- <35-listed-paths>`, not executed as a shell command; entire H portal/transitive coverage remains incomplete. **No lint/typecheck/tests/CI or browser run** per owner direction. 94 strict work-queue items remain unchecked; do not tick solely from source values. The 35 files are source-migrated, not pixel-certified.
 
 **Next exact queue file:** `src/components/courses/faculty-assignment-review.tsx`; thereafter `src/components/courses/faculty-quiz-question-editor.tsx` and Faculty/Teacher delegated routes with newly discovered exception cases, before demanding full-category strict tick proof.
+
+
+### 2026-10-20 supplemental four component passes
+
+| Full source file | Representative changed source lines | Native controls/confirm/hex (whole-blob regex) | `sm:` variants | Button opening/closing |
+|---|---|---:|---:|---:|
+| `src/components/courses/faculty-assignment-review.tsx` | 351,394,401,408,439 | 0 | 0 | 11/11 |
+| `src/components/courses/faculty-quiz-question-editor.tsx` | 414,440,460,497,616 | 0 | 0 | 6/6 |
+| `src/components/courses/faculty-item-actions.tsx` | 89,114 | 0 | 0 | 1/1 |
+| `src/components/courses/faculty-quiz-review.tsx` | 206,209,219,234,276 | 0 | 0 | 6/6 |
+
+In `faculty-assignment-review.tsx`, all ten `size="sm"` 13px review and pagination actions were converted to `size="md"` 14px shared buttons; the file's single 40px phone link is now 44px until 767px and 40px at 768px+. Its student-picker label maps to legacy 13px/600/16px. `faculty-quiz-question-editor.tsx` replaces the last browser-native replacement `window.confirm` with shared `ConfirmDialog`, and substitutes shared `LoadingState` and `Alert`; its four small action Buttons use the shared 14px size, with the two-column numeric edit starting at 768px. `faculty-item-actions.tsx` has a 14px Button and phone/tablet height boundary; `faculty-quiz-review.tsx` uses 14px shared Buttons in review actions/navigation. No old value was guessed; the source rules use `components___variables.scss:139,148,183` and `components___form.scss:110-114`.
+
+**Bounded turn total so far: 39 distinct TSX files plus this audit**, all pushed only to `chatgpt/chat-3-b`. Visible source scans recorded 0 unexempted native controls/confirm/hex, 0 640px `sm:` variants in those 39 touched files; the seven invisible GET preservation input tags on two report routes, and one on the Super Admin directory, are explicitly exempt. The scan does not cover every descendant outside these files. Responsive **source-code** mapping is checked; rendered 375/767/768/991/1024 widths and default/hover/focus/loading/error state comparison remain unexecuted. No typecheck/tests/CI, per owner.
+
+**Exact next file after this turn:** `src/components/courses/faculty-assessment-create.tsx` (revisit its entire rendered form state against the current global skin and legacy SCSS), followed by `src/components/academics/academics-section-page.tsx`. Work queue H remains strictly unchecked pending full portal grep and rendered property proof.
