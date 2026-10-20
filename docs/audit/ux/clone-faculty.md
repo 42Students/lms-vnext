@@ -758,3 +758,21 @@ This inventory reads every named queued file through the connected GitHub reposi
 | `src/app/(authenticated)/teacher/results/page.tsx` | 163 | 0 (0 hidden) | 0 | 1/1 | 26,27,34 |
 
 **All 46 queued route/layout files are now covered by a whole-file static scan.** The only raw control tags in the four route tables are `type="hidden"` GET-state fields; no visible native form controls, no native `window.confirm`, no hard-coded hex and no remaining 640px `sm:` variants in these route blobs. Delegation/redirects are marked, not misrepresented as missing page heads. A full transitive component scan follows. This is source-only evidence: no owner-safe runtime pixel comparison, no interactive keyboard/hover/disabled validation and no claim of strict H closure.
+
+
+### Source inventory directly related components, part 1/4 (1–12 of 48)
+
+| Path | Lines | Raw/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source token/state example lines |
+|---|---:|---:|---:|---:|---|
+| `src/components/academics/academics-actions.tsx` | 947 | 0 (0 hidden) | 0 | 21/21 | 144,152,215 |
+| `src/components/academics/academics-create-panel.tsx` | 685 | 0 (0 hidden) | 0 | 4/4 | 58,302,400 |
+| `src/components/academics/academics-overview.tsx` | 399 | 0 (0 hidden) | 0 | 0/0 | 342,358,374 |
+| `src/components/academics/academics-section-page.tsx` | 90 | 0 (0 hidden) | 0 | 0/0 | 42 |
+| `src/components/academics/section-operations.tsx` | 992 | 0 (0 hidden) | 0 | 10/10 | 272,291,350 |
+| `src/components/admin/super-admin-attendance-settings-editor.tsx` | 68 | 0 (0 hidden) | 0 | 1/1 | 45,51,59 |
+| `src/components/admin/super-admin-faculty-assignment-create.tsx` | 174 | 0 (0 hidden) | 0 | 5/5 | 58,62,68 |
+| `src/components/admin/super-admin-faculty-bulk-import.tsx` | 119 | 0 (0 hidden) | 0 | 2/2 | 92,94,99 |
+| `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx` | 87 | 0 (0 hidden) | 0 | 3/3 | 56,60,68 |
+| `src/components/admin/super-admin-people-csv-control.tsx` | 32 | 0 (0 hidden) | 0 | 1/1 | 25,29 |
+| `src/components/attendance/faculty-attendance-schedule-editor.tsx` | 146 | 0 (0 hidden) | 0 | 1/1 | 98,105,112 |
+| `src/components/attendance/faculty-attendance-workspace.tsx` | 1284 | 0 (0 hidden) | 0 | 14/14 | 491,493,549 |
