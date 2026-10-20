@@ -43,7 +43,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-15.md: surface | probl
 - [x] `src/app/campaign-unsubscribe/[token]/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/app/campaign-unsubscribe/confirmed/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/app/college-join/[token]/page.tsx` (Other page (super admin, public, auth, misc))
-- [ ] `src/app/company-join/[token]/page.tsx` (Other page (super admin, public, auth, misc))
+- [x] `src/app/company-join/[token]/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/company-share/[token]/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/e2e/chat17-ui-kit/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/e2e/superadmin-login/page.tsx` (Other page (super admin, public, auth, misc))
