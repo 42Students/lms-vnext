@@ -38,24 +38,21 @@ export default async function TpoCalendarExportPage({
     ? await getTpoCalendarRoundExport(context, parsed.data)
     : null;
   const params = parsed.success ? new URLSearchParams(parsed.data) : null;
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
-      description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." />
-    <Link href="/tpo/calendar" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link hover:underline">
-      ← TPO calendar
-    </Link>
-    <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-      <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">From (IST)
+      description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center justify-center font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← TPO calendar</Link>}/>
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">From (IST)
         <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
-          className="mt-[6px] block w-full min-h-11 min-[768px]:w-auto min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+          className="mt-[6px] block min-h-11 w-full md:min-h-9" />
       </label>
-      <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">Through (IST)
+      <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Through (IST)
         <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
-          className="mt-[6px] block w-full min-h-11 min-[768px]:w-auto min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+          className="mt-[6px] block min-h-11 w-full md:min-h-9" />
       </label>
-      <Button type="submit" className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
+      <Button type="submit" className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
         Preview range
       </Button>
     </form>
@@ -68,9 +65,9 @@ export default async function TpoCalendarExportPage({
           ? " More than 500 matched: this export is truncated, narrow the range."
           : ""}
       </p>
-      {result.rows.length === 0 ? <EmptyState title="No future scheduled rounds were found in this college for the chosen dates." description="Unscheduled, cancelled, completed and non-published drives are not inferred."/> : null}
+      {result.rows.length === 0 ? <EmptyState title="No future scheduled rounds were found in this college for the chosen dates." description="Unscheduled, cancelled, completed and non-published drives are not inferred." action={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline">← TPO calendar</Link>}/> : null}
       <a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 sm:w-auto">
         Download rounds CSV
       </a>
     </section> : null}
