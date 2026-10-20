@@ -28,7 +28,7 @@ type Props = {
 type Sprint = ProjectTemplateBlueprint["sprints"][number];
 type Task = ProjectTemplateBlueprint["tasks"][number];
 const field = "mt-1 w-full";
-const label = "block text-[13px] font-semibold text-body";
+const label = "block text-[var(--lms-font-sm)] font-semibold text-body";
 
 export function SuperAdminTemplatePlanEditor(props: Props) {
   const {askConfirm,dialog}=useConfirmFlow();
@@ -161,8 +161,8 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             }],
           }))}>Add release</Button>
         {draft.sprints.map((sprint, index) => <fieldset key={index}
-          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
-          <legend className="px-1 text-[13px] font-semibold text-foreground">Sprint {index + 1}</legend>
+          className="grid min-w-0 gap-3 border-b border-border py-4">
+          <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Sprint {index + 1}</legend>
           <div className="grid gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} required maxLength={64} value={sprint.key}
@@ -215,8 +215,8 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             href={"/admin/projects/templates/" + props.templateId + "/sprints"}>Add sprints first</Link>.
         </p> : null}
         {draft.tasks.map((task, index) => <fieldset key={index}
-          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
-          <legend className="px-1 text-[13px] font-semibold text-foreground">Task {index + 1}</legend>
+          className="grid min-w-0 gap-3 border-b border-border py-4">
+          <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Task {index + 1}</legend>
           <div className="grid gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} required maxLength={64} disabled={pending}
