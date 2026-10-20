@@ -88,7 +88,7 @@ export default async function TpoUnplacedReportPage({
         eyebrow="TPO · Reports"
         title="Unplaced students"
         description="Current registered placement-pool learners with no accepted offer in the selected reporting scope."
-        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Download filtered CSV</a>:null}
+        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Download filtered CSV</a>:null}
       />
 
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/unplaced" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
@@ -98,18 +98,18 @@ export default async function TpoUnplacedReportPage({
        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
        <label className="grid gap-1 text-sm">Batch
-        <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9">
+        <Select name="batchId" defaultValue={batchId??""} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
          <option value="">All current batches</option>
          {batches.batches.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
         </Select></label>
        <label className="grid gap-1 text-sm">Branch
-        <Select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9">
+        <Select name="branchId" defaultValue={branchId??""} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </Select></label>
-       <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
-       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">Clear batch and branch</Link>:null}
+       <Button type="submit" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Filter</Button>
+       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-link underline lms-inline-link">Clear batch and branch</Link>:null}
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Act on them on Students</Link>
+        className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-link underline">Act on them on Students</Link>
       </form>
       {!permittedBatch?<Alert tone="error">The selected batch does not belong to this college.</Alert>:null}
       {!permittedBranch?<Alert tone="error">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-link underline lms-inline-link">Clear filters</Link></Alert>:null}
@@ -125,9 +125,9 @@ export default async function TpoUnplacedReportPage({
       ]}/>
 
       <ReportScopeNote note={workspace.detailScopeNote} />
-      <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <div className="border-b border-border py-4">
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
-        className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-link underline">
+        className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline">
         Act on them on Students
        </Link>
        <p className="mt-2 text-xs text-muted-foreground">

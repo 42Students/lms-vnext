@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
@@ -91,7 +92,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <form method="get" action="/tpo/announcements"
      className="mt-3 flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border border-border p-3"
      aria-label="Announcement audience preview">
-     <input type="hidden" name="tab" value="yours"/>
+     <Input type="hidden" name="tab" value="yours"/>
      <TpoNoticeAudiencePicker
       initialAudience={query.success?query.data.audience:"COLLEGE"}
       initialTarget={first(raw.targetId)??""}
@@ -115,11 +116,11 @@ export default async function TpoAnnouncements({searchParams}:Props){
     </Alert>:null}
    <TpoNoticeDraftGuard formId="tpo-notice-create" actorId={context.user.id}/>
    <form id="tpo-notice-create" action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
-    <input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
-    {query.success&&query.data.targetId?<input type="hidden" name="targetId" value={query.data.targetId}/>:null}
-    {query.success?query.data.targetIds?.map(id=><input key={id} type="hidden" name="targetIds" value={id}/>):null}
+    <Input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
+    {query.success&&query.data.targetId?<Input type="hidden" name="targetId" value={query.data.targetId}/>:null}
+    {query.success?query.data.targetIds?.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>):null}
     <label className="grid gap-1 text-sm font-semibold">Title
-     <Input name="title" required maxLength={200} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+     <Input name="title" required maxLength={200} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
     </label>
     <label className="grid gap-1 text-sm font-semibold">Message
      <Textarea name="message" required maxLength={8000} rows={5} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" />
@@ -128,16 +129,16 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <legend className="text-sm font-semibold">Button (optional)</legend>
      <label className="grid gap-1 text-sm">Button label
       <Input name="buttonLabel" maxLength={60} placeholder="Register"
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
      </label>
      <label className="grid gap-1 text-sm">Button link
       <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
        placeholder="https://forms.gle/…" title="The link has to start with https://"
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
      </label>
     </fieldset>
     <label className="grid gap-1 text-sm">Show until (IST, optional)
-      <Input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+      <Input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
     </label>
     <label className="flex items-center gap-2 text-sm"><Checkbox name="pinned" /> Pin this notice</label>
     <TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}
@@ -145,18 +146,16 @@ export default async function TpoAnnouncements({searchParams}:Props){
        canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady))}/>
    </form>
   </section></TpoNoticeComposerDialog>:null}
-  <nav aria-label="Announcement tabs" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
-   {([["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]] as const).map(([value,label])=><Link
-    key={value} href={"/tpo/announcements?tab="+value} aria-current={value===tab.data?"page":undefined}
-    className={value===tab.data?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-on-primary":
-    "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-body"}>{label}{value==="from-42"&&from42Unread!==null?` (${from42Unread})`:""}</Link>)}
-  </nav>
-  {tab.data!=="from-42"?<nav aria-label="Announcement author scope" className="flex flex-wrap items-center gap-3 text-sm">
-   <Link href={"/tpo/announcements?tab="+tab.data} aria-current={!showTeam?"page":undefined}
-    className={!showTeam?"font-semibold underline underline-offset-4":"text-primary-text"}>Your notices</Link>
-   <Link href={"/tpo/announcements?tab="+tab.data+"&mine=0"} aria-current={showTeam?"page":undefined}
-    className={showTeam?"font-semibold underline underline-offset-4":"text-primary-text"}>All team notices</Link>
-  </nav>:null}
+  <Tabs ariaLabel="Announcement tabs" renderPanel={false} value={tab.data} items={([
+    ["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]
+  ] as const).map(([value,label])=>({
+    value,label:value==="from-42"&&from42Unread!==null?label+" ("+from42Unread+")":label,
+    href:"/tpo/announcements?tab="+value,
+  }))}/>
+  {tab.data!=="from-42"?<Tabs ariaLabel="Announcement author scope" renderPanel={false}
+    value={showTeam?"team":"mine"}
+    items={[{value:"mine",label:"Your notices",href:"/tpo/announcements?tab="+tab.data},
+      {value:"team",label:"All team notices",href:"/tpo/announcements?tab="+tab.data+"&mine=0"}]}/>:null}
   {result.status==="NOT_REGISTERED"?<Alert tone="warning">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
@@ -184,7 +183,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     </p>
     {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl} rel="noopener noreferrer"
      
-      className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">
+      className="mt-3 inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">
       {row.buttonLabel} ↗
     </a>:null}
     {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
@@ -192,10 +191,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
     {tab.data==="yours" ?
      <TpoNoticeComposerDialog mode="EDIT">
       <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="mt-3 grid gap-3">
-       <input type="hidden" name="expectedVersion" value={row.version}/>
+       <Input type="hidden" name="expectedVersion" value={row.version}/>
        <label className="grid gap-1 text-sm text-body">Title
         <Input name="title" required maxLength={200} defaultValue={row.title}
-         className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
        </label>
        <label className="grid gap-1 text-sm text-body">Message
         <Textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
@@ -205,23 +204,23 @@ export default async function TpoAnnouncements({searchParams}:Props){
         <legend className="text-sm font-semibold">Button (optional)</legend>
         <label className="grid gap-1 text-sm">Button label
          <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">Button link
          <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
           defaultValue={row.buttonUrl??""} title="The link has to start with https://"
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
        </fieldset>
        <label className="grid gap-1 text-sm text-body">Send at (IST)
         <Input type="datetime-local" name="sendAt"
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
-         className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
        </label>
        <label className="grid gap-1 text-sm text-body">Show until (IST)
         <Input type="datetime-local" name="showUntil"
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
-         className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
        </label>
        <label className="flex items-center gap-2 text-sm text-body">
         <Checkbox name="pinned" defaultChecked={row.isPinned}/> Pinned
@@ -248,15 +247,15 @@ export default async function TpoAnnouncements({searchParams}:Props){
           initialTargets={[]} options={targetOptions}/>
         </fieldset>:null}
        <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
-       <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Save notice edits</Button>
+       <Button type="submit" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Save notice edits</Button>
       </form>
      </TpoNoticeComposerDialog>:null}
     {tab.data==="yours"?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}
     {tab.data==="deleted"?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
       className="mt-4 flex flex-wrap gap-2">
-      <input type="hidden" name="expectedVersion" value={row.version}/>
-      <input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
+      <Input type="hidden" name="expectedVersion" value={row.version}/>
+      <Input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
       <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">
        {tab.data==="deleted"?"Undo removal":"Remove notice"}
       </Button>
@@ -265,8 +264,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
      canUndoTpoAnnouncementSend(row.createdAt,new Date())?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
       className="mt-2">
-      <input type="hidden" name="expectedVersion" value={row.version}/>
-      <input type="hidden" name="action" value="UNDO_SEND"/>
+      <Input type="hidden" name="expectedVersion" value={row.version}/>
+      <Input type="hidden" name="action" value="UNDO_SEND"/>
       <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">
        Undo send (30 seconds)
       </Button>
@@ -280,9 +279,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex gap-2">
     {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-primary-text">Previous</Link>:null}
+      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-primary-text">Previous</Link>:null}
     {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-primary-text">Show older</Link>:null}
+      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-primary-text">Show older</Link>:null}
    </div>
   </nav>:null}
  </div>;
