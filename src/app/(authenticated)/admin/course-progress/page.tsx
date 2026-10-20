@@ -44,7 +44,7 @@ export default async function SuperAdminCourseProgressPage({
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
     </p>
     
-    <form className="grid gap-3 py-1 md:grid-cols-2 min-[1366px]:grid-cols-5">
+    <form className="grid gap-3 py-1 md:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-xs font-semibold leading-4 text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
