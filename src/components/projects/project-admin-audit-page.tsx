@@ -196,7 +196,7 @@ export async function ProjectAdminAuditPage({
         action={basePath + "/audit"}
       >
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold text-body">
             Action
           </span>
           <Select className={inputClass} name="action" defaultValue={eventType??""}>
@@ -209,7 +209,7 @@ export async function ProjectAdminAuditPage({
           </Select>
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold text-body">
             Importance
           </span>
           <Select
@@ -233,7 +233,7 @@ export async function ProjectAdminAuditPage({
           </Select>
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold text-body">
             Subject
           </span>
           <Input
@@ -244,12 +244,12 @@ export async function ProjectAdminAuditPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">Entity ID</span>
+          <span className="mb-1 block text-[13px] font-semibold text-body">Entity ID</span>
           <Input className={inputClass} name="subjectId" defaultValue={subjectId??""}
             placeholder="Exact project or task UUID"/>
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold text-body">
             From (IST)
           </span>
           <Input
@@ -260,7 +260,7 @@ export async function ProjectAdminAuditPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-xs font-semibold text-body">
+          <span className="mb-1 block text-[13px] font-semibold text-body">
             To (IST)
           </span>
           <Input

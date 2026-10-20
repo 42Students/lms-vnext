@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -32,7 +33,7 @@ export function TpoPlacementCellReadAction({id}:{id:string}){
    className="min-h-11 min-[768px]:min-h-9 px-3">
    {busy?"Saving…":"Mark as read for our placement cell"}
   </Button>
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
  </div>;
 }

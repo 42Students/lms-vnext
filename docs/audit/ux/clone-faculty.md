@@ -558,3 +558,96 @@ The *printed shell command is not claimed as executed*, and its broad globs may 
 **Strict H status:** The original 94 Work queue checkboxes remain `[ ]` because rendered computed-style comparison for default/hover/focus/disabled/empty/error/loading and portal-wide transitive coverage proof are not yet available. Do **not** claim pixel parity complete or tick them based on only source inspection.
 
 **Next exact source file:** `src/components/academics/academics-overview.tsx`, then the 46 owned teacher/Super Admin route pages starting `src/app/(authenticated)/admin/academics/page.tsx` and their directly rendered components; preserve ownership boundaries.
+
+
+## 2026-10-20 route sweep · part 1/3 — source proof, not strict parity
+
+Fast-forwarded `chatgpt/chat-3-b` from `52a9f8e096c45e3e4767f833c84a27f64226df62` to fetched main `a7616350ee830c5e187533defabafb477a27172e` (branch compare: ahead 0, behind 1133 before fast-forward), then committed only to the lane branch. No local execution, lint, typecheck, tests, CI, browser, or screenshots.
+
+| Full source file | Line examples for tokens/shared UI | Raw controls / native confirm / hex | `sm:` 640px variants after edit | JSX `Button` open/close |
+|---|---|---:|---:|---:|
+| `src/components/academics/academics-overview.tsx` | 342,358,374,390 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/admin/academics/page.tsx` | 19,24,25,28 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx` | 25,34,41 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/admin/people/directory/page.tsx` | 33,41,59,63 | 1 (78:<input) | 0 | 1/1 |
+| `src/app/(authenticated)/admin/people/page.tsx` | 112,117,122,143 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/admin/people/unassigned/page.tsx` | 22,23,24,39 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx` | 30,31,37,41 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx` | 15,18,20,31 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx` | 27,30,34,48 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx` | 33,36,48,54 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx` | 15,16,21,22 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx` | 13,14,15,25 | 0 | 0 | 0/0 |
+
+**Source regex actually evaluated on every full fetched blob above:** `<(button|input|select|textarea|table|dialog)\\b|window\\.confirm\\s*\\(|#[0-9a-fA-F]{3,8}\\b`. The audit table is generated from the whole UTF-8 content returned by GitHub. A shell `git grep` was not executed; the counts do not claim whole-portal coverage. Line examples show where shared elements or responsive rules were inspected; they are not rendered measurements. `sm:` is explicitly counted to distinguish the legacy phone (up to 767px) from tablet (768px+).
+
+
+### Route sweep part 2/3 — faculty student, contacts, profile, reports and scheduling
+
+| Full source file | Line examples for shared UI / value declarations | Raw control / confirm / hex hits | 640px `sm:` hits | Shared Button JSX open/close |
+|---|---|---:|---:|---:|
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx` | 25,26,29,44 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx` | 53,55,76,80 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/profile/contacts/page.tsx` | 9,11,14,25 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/profile/page.tsx` | 21,25,27,31 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/profile/teaching/page.tsx` | 25,26,33,36 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/results/page.tsx` | 24,25,32,36 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/response-followups/page.tsx` | 23,24,31,34 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` | 48,51,63,128 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` | 50,53,56,63 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/allAssignments/page.tsx` | 13,18 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/allQuizzes/page.tsx` | 17,22 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/calendar/page.tsx` | 31,32,49,52 | 0 | 0 | 1/1 |
+
+Source query identical to part 1, applied to complete fetched GitHub files. Interactive contact pills replaced by shared linked `Tabs` (active value and original route href retained). `results` and `response-followups` previously referenced `Input` (both) and `Select` (results) without imports; imports were supplied. All recorded `Button` opening/closing counts balance. No browser parity claimed.
+
+
+### Route/component sweep part 3/3 — remaining pages and assessment editor
+
+| Full source file | Line examples for shared UI / value declarations | Raw control / confirm / hex hits | 640px `sm:` hits | Shared Button JSX open/close |
+|---|---|---:|---:|---:|
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx` | 19,20,25,28 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx` | 15,21 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx` | 37,41 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/courses/page.tsx` | 15,19,32 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/live-classes/page.tsx` | 20,24,38,40 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/notifications/page.tsx` | 73,95,98,112 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` | 27,28,45,49 | 4 (53:<input, 54:<input, 55:<input, 56:<input) | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx` | 27,28,41,44 | 3 (82:<input, 83:<input, 84:<input) | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx` | 31,34,46 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx` | 13,15,24 | 0 | 0 | 0/0 |
+| `src/components/courses/faculty-assessment-editor.tsx` | 207,273,286,301 | 0 | 0 | 3/3 |
+
+The only raw `<input>` instances in these 11 files are **4 invisible query-preservation inputs** in assignment submissions and **3 invisible query-preservation inputs** in Quiz attempts; no inline class/style. These intentionally retain native GET semantics and are exempted from a visible form-control audit. Two hand-built attempt navigation pill strips were replaced with the shared href-based `Tabs`. `faculty-assessment-editor.tsx` no longer calls `window.confirm`: save, archive and discard are guarded by a single shared `ConfirmDialog`, with explicit confirmed action dispatch and pending states. It preserves prior form values, unsaved-beforeunload guard, original REST requests and confirmed receipts. Only source verification—not executed interaction testing—is claimed.
+
+### Legacy value proof matrix for this bounded turn
+
+| Visual property and state | Legacy authoritative value | vNext mapped value and representative file:line | Source conclusion / gap |
+|---|---|---|---|
+| Primary/secondary button height on phone | `docs/design/legacy-styles/components___variables.scss:139` = 44px touch min; `pages___admin-list-pages.scss:193-213` phone max 767px | `min-h-11` = 44px applied to affected links/forms; `teacher/report/quiz/[quizId]/attempts/page.tsx` and `teacher/results/page.tsx` | Source declaration matches; default/hover/active/focus must still be rendered |
+| Control desktop baseline | Owner's `docs/orchestrator/queues/master-queue.md:5`: 36px, text 14px/650, 9px radius | `md:min-h-[var(--lms-control-height)]`; shared Button where action is a button; `admin/academics/page.tsx`, `teacher/calendar/page.tsx` | Source resolves through shared token; token's computed value pending |
+| 767px phone boundary | `components___variables.scss:148`: `$ssm:767px`; `pages___admin-list-pages.scss:193` max 767px | All changed grid/form rows shifted `sm:` (640px) to `md:` (768px); all **35** changed TSX files re-fetched have 0 remaining `sm:` | Responsive source mapping only; actual 375/767/768/991/1024px not rendered |
+| Field labels | `components___form.scss:110-114`: 600, 13px, 16px line-height | `text-[13px] font-semibold leading-4` in `teacher/results/page.tsx`, `teacher/response-followups/page.tsx`, `admin/people/directory/page.tsx` | Applied to touched labels; all other labels/shared tokens require computed check |
+| Canvas/list panels | `components___variables.scss:30,134`: #e5e9f0 border and 12px radius | `border-border`, `rounded-[var(--lms-canvas-radius)]` in `academics-overview.tsx` and report Disclosures | Token-based source match; inherited computed border/radius not verified |
+| Active tabs | `docs/design/old-lms-pages.md:4`: teal underline directly on canvas | `<Tabs renderPanel={false} ...>` in Contacts tabs and Quiz attempt filters | Shared Tab skin now in charge; actual active/hover focus pending |
+| Empty/error/confirm | Legacy shared skin; modal state requires disabled/loading/focus | `EmptyState` in four AcademicsOverview tables and membership audit; `Alert` in notifications and assessment editor; `ConfirmDialog` in assessment editor | Shared components used, but side-by-side rendered states and interaction testing pending |
+
+**Coverage proof scope:** Whole-file GitHub reads and exact regex counts recorded in three preceding tables (12 + 12 + 11 = **35 changed TSX files**). The scripted query equivalent is `git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9A-Fa-f]{3,8}' -- <35-listed-paths>`, not executed as a shell command; entire H portal/transitive coverage remains incomplete. **No lint/typecheck/tests/CI or browser run** per owner direction. 94 strict work-queue items remain unchecked; do not tick solely from source values. The 35 files are source-migrated, not pixel-certified.
+
+**Next exact queue file:** `src/components/courses/faculty-assignment-review.tsx`; thereafter `src/components/courses/faculty-quiz-question-editor.tsx` and Faculty/Teacher delegated routes with newly discovered exception cases, before demanding full-category strict tick proof.
+
+
+### 2026-10-20 supplemental four component passes
+
+| Full source file | Representative changed source lines | Native controls/confirm/hex (whole-blob regex) | `sm:` variants | Button opening/closing |
+|---|---|---:|---:|---:|
+| `src/components/courses/faculty-assignment-review.tsx` | 351,394,401,408,439 | 0 | 0 | 11/11 |
+| `src/components/courses/faculty-quiz-question-editor.tsx` | 414,440,460,497,616 | 0 | 0 | 6/6 |
+| `src/components/courses/faculty-item-actions.tsx` | 89,114 | 0 | 0 | 1/1 |
+| `src/components/courses/faculty-quiz-review.tsx` | 206,209,219,234,276 | 0 | 0 | 6/6 |
+
+In `faculty-assignment-review.tsx`, all ten `size="sm"` 13px review and pagination actions were converted to `size="md"` 14px shared buttons; the file's single 40px phone link is now 44px until 767px and 40px at 768px+. Its student-picker label maps to legacy 13px/600/16px. `faculty-quiz-question-editor.tsx` replaces the last browser-native replacement `window.confirm` with shared `ConfirmDialog`, and substitutes shared `LoadingState` and `Alert`; its four small action Buttons use the shared 14px size, with the two-column numeric edit starting at 768px. `faculty-item-actions.tsx` has a 14px Button and phone/tablet height boundary; `faculty-quiz-review.tsx` uses 14px shared Buttons in review actions/navigation. No old value was guessed; the source rules use `components___variables.scss:139,148,183` and `components___form.scss:110-114`.
+
+**Bounded turn total so far: 39 distinct TSX files plus this audit**, all pushed only to `chatgpt/chat-3-b`. Visible source scans recorded 0 unexempted native controls/confirm/hex, 0 640px `sm:` variants in those 39 touched files; the seven invisible GET preservation input tags on two report routes, and one on the Super Admin directory, are explicitly exempt. The scan does not cover every descendant outside these files. Responsive **source-code** mapping is checked; rendered 375/767/768/991/1024 widths and default/hover/focus/loading/error state comparison remain unexecuted. No typecheck/tests/CI, per owner.
+
+**Exact next file after this turn:** `src/components/courses/faculty-assessment-create.tsx` (revisit its entire rendered form state against the current global skin and legacy SCSS), followed by `src/components/academics/academics-section-page.tsx`. Work queue H remains strictly unchecked pending full portal grep and rendered property proof.

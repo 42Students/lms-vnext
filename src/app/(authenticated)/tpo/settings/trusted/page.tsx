@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -45,10 +46,7 @@ export default async function TpoTrustedCompaniesPage() {
       />
 
       {!data.explicitDomainsAvailable ? (
-        <section
-          role="status"
-          className="border-t border-border pt-5"
-        >
+        <Alert tone="warning">
           <h2 className="font-semibold text-foreground">
             Trusted-domain allowlist unavailable
           </h2>
@@ -60,7 +58,7 @@ export default async function TpoTrustedCompaniesPage() {
             primary domain is not automatically an approved
             recruiter email domain.
           </p>
-        </section>
+        </Alert>
       ) : null}
 
       <section className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
@@ -147,9 +145,9 @@ export default async function TpoTrustedCompaniesPage() {
 
       {data.explicitDomainsAvailable?
         <TpoTrustedDomainEditor domains={data.trustedDomains.map(entry=>entry.domain)}/>:
-        <p role="status" className="border-t border-border pt-4 text-sm">
+        <Alert tone="warning">
          Trusted-domain editor is unavailable until the table is registered.
-        </p>}
+        </Alert>}
 
       <p className="text-xs leading-5 text-muted-foreground">
         Explicit trusted domains are normalized and recorded by the server. Only future recruiter access decisions can use these values; prior grants are not silently expanded.

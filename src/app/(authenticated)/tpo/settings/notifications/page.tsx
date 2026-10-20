@@ -8,6 +8,7 @@ import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
@@ -330,27 +331,21 @@ export default async function TpoMyNotificationsPage({
         </div>
 
         {preferences.source === "UNAVAILABLE" ? (
-          <div
-            role="status"
-            className="py-4 text-sm leading-6 text-body"
-          >
+          <Alert tone="warning">
             The TPO notification-preference table is not
             registered in the current database. Saved
             preferences cannot be read. No preference value
             is asserted from this missing source.
-          </div>
+          </Alert>
         ) : (
           <>
             {preferences.source === "SOURCE_DEFAULT" ? (
-              <p
-                role="status"
-                className="border-b border-border py-4 text-sm leading-6 text-body"
-              >
+              <Alert tone="info">
                 No saved preference row exists for your user
                 account in this college. The values below
                 are the declared database source defaults,
                 not persisted personal selections.
-              </p>
+              </Alert>
             ) : null}
 
             <TpoMyNotificationPreferencesEditor key={context.user.id+":"+data.collegeId}

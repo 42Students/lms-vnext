@@ -673,3 +673,22 @@ Full contents scanned using regex equivalent of grep -nE '<(button|input|select|
 No app execution or CI/browser/screenshot verification. Global A5–A7/E8 remain unchecked; changed scoped file styles only.
 
 **Next unticked TPO page:** src/app/(authenticated)/tpo/students/page.tsx (large source file; whole-file UI and source parity, not patched/ticked in this batch).
+
+## chat-15 HR recruiter results — desktop summary sheet continuation (2026-10-20)
+
+- [ ] `src/components/placements/recruiter-result-review-grid.tsx`: new read-only `TpoGrid` sheet of authorized recruiter candidate result rows. No independent client fetch, no mutating cell editor, no release/grading API. `rowActions` links to existing editor row ID.
+- [ ] `src/components/placements/recruiter-result-controls.tsx`: authorized page already passes round/participant metadata; a `hidden md:block` sheet per evaluative round lists Candidate, Contact, Outcome, Score %, Waitlist #, Result status. All original inline result forms, validation, optimistic workflow and bulk selection remain below it. No duplication of input controls across viewports.
+  
+| Property / state | Old LMS reference and value | New vNext source and value | Result |
+| --- | --- | --- | --- |
+| Canvas structure | `docs/design/old-lms-pages.md:6` single white 12px-radius bordered canvas, no nested per-row cards | `recruiter-result-controls.tsx:385,393` per-round `article` with `border-b`, no card-specific bg/radius; grid inherited canvas | Structural match; outer shared canvas unmodified |
+| Sheet columns | `old-lms-pages.md:10` bordered compact cells, row navigation | `recruiter-result-review-grid.tsx:22-30` six read-only columns plus Review row; no custom table markup | Uses shared `TpoGrid`; runtime/pixel not verified |
+| Read-only sort | `docs/design/ui-clone-checklist.md:66` numeric/date-only sort | `recruiter-result-review-grid.tsx:26-29` Score % and Waitlist # sortKind number; text no sortKind | Source match |
+| Row click / review action | `old-lms-pages.md:10` row action; `components___common.scss` shared hover/focus rules | `recruiter-result-review-grid.tsx:39-43` Review row goes to in-page anchor; `recruiter-result-controls.tsx:513+` matching ID plus scroll margin | Source reachability; actual focus/scroll still pending |
+| Phone and tablet | `components___listing-page-header.scss:131-158` mobile <=767px | `recruiter-result-controls.tsx:460` sheet `hidden md:block`, editable stacked row controls persist in phone; editor fields `md:grid-cols-2` | Source threshold matches; physical widths untested |
+| Busy/disabled | Shared `Button` loading/disabled tokens, legacy form guard | Bulk Send `loading={bulkPending===round.id}`, Stage `loading={pendingKey===key}`, guarded writes left unchanged | Source busy-state behavior preserved; keyboard runtime missing |
+| Empty and error | `old-lms-pages.md:11-12` shared empty/error panels | `EmptyState` for no rounds/no participants; mutation error remains existing `useToast` | Shared semantics, pixel comparison incomplete |
+
+**Post-write source scans** for `recruiter-result-controls.tsx` (829 lines), `recruiter-result-review-grid.tsx` (46 lines), `known-errors-workspace.tsx` (274 lines): native control/table, inline 3–8-digit hex, authored `h1`, custom overlay counts **0/0/0/0 for each**. Result editor tag pairs: `div` 11/11, `article` 1/1, `label` 6/6. New grid has no intrinsic JSX row/control element (one shared TpoGrid and row-action Link only). Source proves `md:` starts at 768px, with single-column candidates and form controls below 768px. **No CI, TypeScript compile, Playwright, screenshots, or old-LMS measured states were run. E8 stays unticked.**
+
+**Remaining dependency:** `src/components/tpo/grid/tpo-grid.tsx` imports ag-grid 36.x, while `package.json` has no declared `ag-grid-react` or `ag-grid-community` dependency as read on this lane. This is an upstream integration blocker; no package manifest or shared UI file was modified.

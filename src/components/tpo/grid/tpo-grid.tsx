@@ -29,7 +29,7 @@ import {gridClipboardTsv} from "./grid-export";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const quartz=themeQuartz.withParams({
- accentColor:"var(--lms-button-primary)",
+ accentColor:"var(--lms-primary)",
  backgroundColor:"var(--lms-white)",
  foregroundColor:"var(--lms-neutral-700)",
  borderColor:"var(--lms-canvas-border)",
@@ -154,7 +154,7 @@ export function TpoGrid<Row>({
  const selectOne=(row:Row,checked:boolean,shift=false)=>{
   if(!selection)return;
   const id=rowKey(row);
-  const result=gridSelectionCheckbox(currentVisibleIds(),selection.selected,id,checked,anchor.current,shift);
+  const result=gridSelectionCheckbox(currentVisibleIds(),selection.selected,id,checked,anchor.current,shift,allowedIds);
   anchor.current=result.anchor;
   changeSelected(result.selected);
  };
@@ -167,7 +167,7 @@ export function TpoGrid<Row>({
    shiftKey:native.shiftKey,ctrlKey:native.ctrlKey,metaKey:native.metaKey,
   }:{};
   const id=rowKey(event.data);
-  const result=gridSelectionClick(currentVisibleIds(),selection.selected,id,anchor.current,modifiers);
+  const result=gridSelectionClick(currentVisibleIds(),selection.selected,id,anchor.current,modifiers,allowedIds);
   anchor.current=result.anchor;
   changeSelected(result.selected);
  };
@@ -181,7 +181,7 @@ export function TpoGrid<Row>({
   });
   const selectedIds=new Set(selection?.selected??[]);
   const selectedVisible=visible.filter(row=>selectedIds.has(rowKey(row)));
-  const copied=selectedVisible.length?selectedVisible:visible;
+  const copied=selection?.selected.length?selectedVisible:visible;
   if(!navigator.clipboard?.writeText){setNotice("Clipboard unavailable. Use Export CSV instead.");return;}
   void navigator.clipboard.writeText(gridClipboardTsv(display,copied,true))
    .then(()=>setNotice("Copied "+copied.length+" authorized row(s) as TSV."))
@@ -194,6 +194,8 @@ export function TpoGrid<Row>({
    pinned:"left",lockPinned:true,suppressMovable:true,resizable:false,sortable:false,
    headerComponent:()=> <Checkbox aria-label="Select all filtered students"
     checked={currentVisibleIds().length>0&&currentVisibleIds().every(id=>selection.selected.includes(id))}
+    indeterminate={currentVisibleIds().some(id=>selection.selected.includes(id))&&
+      !currentVisibleIds().every(id=>selection.selected.includes(id))}
     onChange={event=>selectAll(event.target.checked)}/>,
    cellRenderer:(p:{data?:Row})=>p.data?<Checkbox
     aria-label={"Select "+(openPrimary?.ariaLabel(p.data)??rowKey(p.data))}
@@ -204,7 +206,11 @@ export function TpoGrid<Row>({
    colId:col.key,headerName:col.label,field:undefined,
    minWidth, maxWidth, width:160,resizable:true,sortable:Boolean(col.sortKind),
    valueGetter:p=>p.data?col.read(p.data):null,
-   comparator:col.sortKind?(a,b)=>compareNumberDate(col.sortKind!,a,b):undefined,
+   comparator:col.sortKind?(a,b,nodeA,nodeB)=>compareNumberDate(
+    col.sortKind!,
+    col.sortValue&&nodeA.data?col.sortValue(nodeA.data):a,
+    col.sortValue&&nodeB.data?col.sortValue(nodeB.data):b,
+   ):undefined,
    tooltipValueGetter:p=>p.data?col.tooltip?.(p.data):undefined,
    cellRenderer:openPrimary?.columnKey===col.key
     ?(p:{data?:Row})=>p.data?<Button variant="ghost" className="px-0 text-left underline"

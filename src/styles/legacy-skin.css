@@ -134,6 +134,24 @@
   font-size: 14px !important;
 }
 
+/* Native number chrome
+ * Old components___form.scss:13-20 removes Chromium/WebKit spin arrows, while
+ * retaining keyboard increments, wheel events and native validity semantics.
+ * Only style controls inside the authenticated canvas; [data-unskin] escapes.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input[type="number"]):not(:where([data-unskin], [data-unskin] *)) {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input[type="number"]):not(:where([data-unskin], [data-unskin] *))::-webkit-inner-spin-button,
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input[type="number"]):not(:where([data-unskin], [data-unskin] *))::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* FORM INTERACTIONS
  * Legacy: components___form.scss:130-143 (2px teal 15% focus halo,
  * invalid #ef4444 border and 6% fill, invalid focus 20% red halo);
@@ -270,6 +288,7 @@
   color: var(--lms-neutral-900) !important;
   font-family: inherit !important;
   font-size: 20px !important;
+  line-height: 30px !important;
   font-weight: 600 !important;
 }
 /* Legacy: components___typo.scss:28-40 (.h3 sizes 16/18/20);
@@ -281,6 +300,7 @@
   color: var(--lms-neutral-900) !important;
   font-family: inherit !important;
   font-size: 16px !important;
+  line-height: 26px !important;
   font-weight: 600 !important;
 }
 /* Legacy: components___variables.scss:24,176-189
@@ -319,6 +339,7 @@
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h1):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 24px !important;
+    line-height: 32px !important;
   }
 }
 @media (min-width: 768px) {
@@ -326,11 +347,13 @@
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h2):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 22px !important;
+    line-height: 32px !important;
   }
   /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h3):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 18px !important;
+    line-height: 28px !important;
   }
 }
 @media (min-width: 992px) {
@@ -338,12 +361,30 @@
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h2):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 30px !important;
+    line-height: 40px !important;
   }
   /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h3):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 20px !important;
+    line-height: 30px !important;
   }
+}
+
+/* The legacy baseline is a white canvas. The tracker-only opt-in dark
+ * palette replaces its neutral ink; leave the original light LMS unchanged.
+ * globals.css:164-181 sets --lms-foreground and --lms-body-text for tracker.
+ * Without this exception h2-h6 would be forced to light-mode neutral-900
+ * (almost black) by the legacy typography declarations above. */
+:root[data-tracker-theme="dark"]
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h2, h3, h4, h5):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-foreground) !important;
+}
+:root[data-tracker-theme="dark"]
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h6):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-body-text) !important;
 }
 
 /* LINKS

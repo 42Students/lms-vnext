@@ -49,7 +49,7 @@ export default async function TpoLearnerPlacementHistoryPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/tpo/students" className="text-sm font-semibold text-link hover:underline">
+      <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Back to Students
       </Link>
       <PageHeader
@@ -60,13 +60,13 @@ export default async function TpoLearnerPlacementHistoryPage({
           <Link
             href={"/tpo/students/" +
               encodeURIComponent(history.learner.membershipId) + "/participation"}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
           >
             Participation decision
           </Link>
         }
       />
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Placement history totals">
+      <section className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 xl:grid-cols-4" aria-label="Placement history totals">
         {[
           ["Applications (all seasons)", history.total],
           ["Offer versions (this page)", history.pageFacts.offerVersions],
@@ -75,7 +75,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           ["Accepted offer versions (this page)", history.pageFacts.acceptedOfferVersions],
           ["Confirmed joins (this page)", history.pageFacts.confirmedJoins],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+          <div key={label} className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0">
             <p className="text-sm font-medium text-body">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
@@ -91,7 +91,7 @@ export default async function TpoLearnerPlacementHistoryPage({
       ) : (
         <div className="space-y-4">
           {history.items.map((item) => (
-            <article key={item.id} className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+            <article key={item.id} className="min-w-0 space-y-4 border-b border-border py-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text-foreground">{item.jobTitle}</h2>
@@ -100,7 +100,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   </p>
                   {item.addedByCollege?<p className="mt-1 text-sm font-semibold">Added by the college</p>:null}
                   {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
-                    className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">Open drive</Link>:null}
+                    className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open drive</Link>:null}
                 </div>
                 <span className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
                   {item.applicationStatus}
@@ -139,13 +139,13 @@ export default async function TpoLearnerPlacementHistoryPage({
                   ) : (
                     <ul className="space-y-2">
                       {item.appliedRounds.map((round) => (
-                        <li key={round.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+                        <li key={round.id} className="border-b border-border py-3 text-sm">
                           {round.name}: <strong>{round.outcome}</strong>
                         </li>
                       ))}
                     </ul>
                   )}
-                  <Disclosure title={"All recorded round result versions ("+item.resultVersions.length+")"} className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3">
+                  <Disclosure title={"All recorded round result versions ("+item.resultVersions.length+")"} className="mt-4 border-y border-border py-3">
                     {item.resultVersions.length === 0 ? (
                       <p className="mt-2 text-sm text-body">
                         No staged, superseded or applied result versions are recorded.
@@ -153,7 +153,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                     ) : (
                       <ul className="mt-3 space-y-2 text-sm">
                         {item.resultVersions.map((version) => (
-                          <li key={version.id} className="rounded-[var(--lms-control-radius)] bg-surface-secondary p-3">
+                          <li key={version.id} className="border-b border-border py-3">
                             {version.name} · version {version.version}:{" "}
                             <strong>{version.status}</strong> · {version.outcome}
                             <p className="mt-1 text-xs text-muted-foreground">
@@ -177,7 +177,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   ) : (
                     <ul className="space-y-2">
                       {item.offers.map((offer) => (
-                        <li key={offer.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+                        <li key={offer.id} className="border-b border-border py-3 text-sm text-body">
                           <p className="font-semibold text-foreground">
                             {offer.roleTitle} · {offer.status}
                           </p>
@@ -216,12 +216,12 @@ export default async function TpoLearnerPlacementHistoryPage({
         <span>Page {history.page} of {history.totalPages} · {history.total} application(s)</span>
         <div className="flex gap-4">
           {history.page > 1 ? (
-            <Link href={href(history.page - 1)} className="font-semibold text-link hover:underline">
+            <Link href={href(history.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
               ← Previous
             </Link>
           ) : null}
           {history.page < history.totalPages ? (
-            <Link href={href(history.page + 1)} className="font-semibold text-link hover:underline">
+            <Link href={href(history.page + 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
               Next →
             </Link>
           ) : null}

@@ -1090,16 +1090,21 @@ export function RecruiterLeadsWorkspace({
                            </span>:null}
                            {lead.ownerName?<span className="text-xs text-muted-foreground">Owner: {lead.ownerName}</span>:null}
                          </div>
-                         <Dropdown mobileSheet align="end" label={"Actions for "+lead.name} trigger="Move to… / Actions" className="mt-2 text-xs">
-                           <p className="mt-1 text-muted-foreground">
+                         <Dropdown mobileSheet align="end" label={"Actions for "+lead.name} trigger="Move to… / Actions" className="mt-2 max-w-full text-xs">
+                           <p className="mt-1 text-xs leading-5 text-muted-foreground">
                              Invited, Joined, Drive planned and Recruited update automatically.
                              Not now requires a reason.
                            </p>
-                           <div className="mt-2 space-y-2">
+                           <div role="group" aria-label={"Update "+(lead.name||"recruiter")} className="mt-2 min-w-0 space-y-2 break-words [overflow-wrap:anywhere]">
                              <RecruiterInlineStage lead={lead} onUpdated={()=>void load()} />
                              <RecruiterInlineOwner lead={lead} onUpdated={()=>void load()} />
-                             <Link className="inline-block text-[var(--lms-teal-deep)] underline"
+                             <Link className="inline-flex min-h-11 max-w-full items-center rounded-[8px] px-3 text-[var(--lms-teal-deep)] underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                                href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
+                             <Button variant="ghost" type="button" className="min-h-11 w-full justify-center md:min-h-9"
+                               onClick={event=>{
+                                 const root=event.currentTarget.closest("details");
+                                 if(root){root.open=false;root.querySelector("summary")?.focus();}
+                               }}>Close actions</Button>
                            </div>
                          </Dropdown>
                          {!lead.recruiterUserId&&!lead.unsubscribedAt?

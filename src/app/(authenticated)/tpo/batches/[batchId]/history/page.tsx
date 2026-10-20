@@ -15,7 +15,7 @@ export default async function BatchHistory({params,searchParams}:{params:Promise
  const {batchId}=await params;
  const raw=await searchParams;
  const filters=batchHistoryViewSchema.safeParse({kind:Array.isArray(raw.kind)?raw.kind[0]:raw.kind,after:Array.isArray(raw.after)?raw.after[0]:raw.after});
- if(!filters.success)return <div role="alert">Invalid history filter. <Link href={"/tpo/batches/"+batchId+"/history"}>Reset</Link></div>;
+ if(!filters.success)return <div role="alert">Invalid history filter. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/batches/"+batchId+"/history"}>Reset</Link></div>;
  const {batch,events,ready}=await listTpoBatchHistory(await getCurrentRequestContext(),batchId);
  const annotated=batchHistoryDecisionTimeline(events,filters.data.kind);
  const visible=filterTpoBatchHistoryOutcome(annotated,filters.data.after);

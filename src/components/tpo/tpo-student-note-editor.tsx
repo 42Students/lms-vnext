@@ -1,5 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -39,7 +40,7 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
    onClick={()=>void runGuarded(save)} >
    {busy?"Saving…":"Add note"+(membershipIds.length>1?" to "+membershipIds.length+" students":"")}</Button>
   <p className="text-xs text-muted-foreground">Ctrl+Enter to save</p>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm">{message}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;
 }

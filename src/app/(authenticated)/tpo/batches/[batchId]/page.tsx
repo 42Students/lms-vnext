@@ -37,7 +37,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    invited:Boolean(lifecycle?.invitedAt),deadline:lifecycle?.registrationDeadline??null,
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
  return <div className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
- <Link href={backHref} className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Placement eligibility</Link>
+ <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Placement eligibility</Link>
  {undoable?<Disclosure title="Undo last decision"
     summaryTitle={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}
     className="border-b border-border py-3 [&>summary]:min-h-11 [&>summary]:text-link">
@@ -47,13 +47,13 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
  {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
-   className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Do it</Link>
+   className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" data-testid="batch.suggest-do">Do it</Link>
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
    className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
-    className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
+    className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
   </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
-   Suggested: remind them to register <Link href="#batch-reminder" className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
+   Suggested: remind them to register <Link href="#batch-reminder" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
  {own?<Link href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -93,11 +93,11 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm text-muted-foreground">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
    "Partial snapshot: only the first "+eligibility.limit+" learners were assessed. Do not treat these counts as batch totals."}</p>
-  <dl className="grid grid-cols-2 gap-2 md:grid-cols-4">
+  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
    {[
     ["Eligible",summary.eligible],["Ineligible",summary.ineligible],
     ["Not decided",summary.undecided],["Needs review",summary.needsReview],
-   ].map(([label,value])=><div key={label} className="min-w-0 border-l-2 border-border px-3 py-2 text-sm [overflow-wrap:anywhere]">
+   ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-border px-3 py-3 text-sm [overflow-wrap:anywhere] last:border-r-0">
     <dt>{label}</dt><dd className="font-semibold tabular-nums">{value}</dd>
    </div>)}
   </dl>
@@ -110,7 +110,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
-  <Link href={"/tpo/batches/"+batchId+"/students"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open Students</Link>
+  <Link href={"/tpo/batches/"+batchId+"/students"} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open Students</Link>
  </section>
 
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}

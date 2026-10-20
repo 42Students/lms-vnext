@@ -1,6 +1,7 @@
 "use client";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -34,7 +35,7 @@ export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:strin
   </label>
   <Button variant="secondary" type="button" disabled={busy||!changed||name.trim().length<2} onClick={()=>void save()}
    className="min-h-11 min-[768px]:min-h-9 text-xs">Rename</Button>
-  {error?<p role="alert" className="max-w-xs text-xs text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
   {dialog}
  </div>;
 }

@@ -38,7 +38,7 @@ export default async function FacultyTeachingProfilePage({
       </Link>} />
     <section className="border-b border-border py-5">
       <h2 className="text-base font-semibold text-foreground">College-managed employment details</h2>
-      <dl className="mt-3 grid gap-3 sm:grid-cols-2">
+      <dl className="mt-3 grid gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Academic title</dt>
           <dd className="mt-1 text-sm font-semibold">{data.academicTitle||"Not provided"}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Employment type</dt>
@@ -50,7 +50,7 @@ export default async function FacultyTeachingProfilePage({
     </section>
     <form method="get" action="/teacher/profile/teaching"
       className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-1 text-sm font-semibold text-body">Search current teaching
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Search current teaching
         <Input name="search" type="search" defaultValue={data.query.search}
           placeholder="Course, Section or academic period" maxLength={120}
           className="min-h-11 min-[768px]:min-h-9 w-full"/>

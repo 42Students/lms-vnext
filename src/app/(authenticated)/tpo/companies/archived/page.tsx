@@ -14,7 +14,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
   await requireTpoBatchActor(context);
   const { rows, truncated } = await listArchivedTpoCompanyRelationships(context);
   return <div className="space-y-5">
-    <Link href="/tpo/companies" className="font-semibold text-link hover:underline lms-inline-link">
+    <Link href="/tpo/companies" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       ← Companies directory
     </Link>
     <PageHeader eyebrow="TPO · Companies" title="Archived company relationships"
@@ -24,11 +24,11 @@ export default async function ArchivedCompanyRelationshipsPage() {
     </p> : null}
     {rows.length === 0 ? <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
       No archived college-company relationships are recorded.
-    </p> : <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-      {rows.map((row) => <li key={row.companyId} className="flex flex-wrap justify-between gap-3 p-4 text-sm">
+    </p> : <ul className="divide-y divide-border border-y border-border bg-surface">
+      {rows.map((row) => <li key={row.companyId} className="flex flex-wrap items-center justify-between gap-3 py-4 text-sm">
         <span className="font-semibold text-foreground">{row.name}</span>
         <Link href={"/tpo/companies/" + encodeURIComponent(row.companyId) + "/manage"}
-          className="font-semibold text-link hover:underline">Review / restore →</Link>
+          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review / restore →</Link>
       </li>)}
     </ul>}
   </div>;
