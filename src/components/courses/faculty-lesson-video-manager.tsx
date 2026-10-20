@@ -236,7 +236,7 @@ export function FacultyLessonVideoManager({
           onChange={event=>{setFile(event.target.files?.[0]??null);event.currentTarget.value="";}}/>
       </label>
     </div>
-    <Button type="button" size="md" loading={busy&&Boolean(activeName)} disabled={busy||loading||!title.trim()||!file} onClick={()=>upload()>
+    <Button type="button" size="md" disabled={busy||loading||!title.trim()||!file} onClick={()=>upload()}>
       Upload video
     </Button>
     {busy&&activeName?<div className="space-y-2" role="status">
