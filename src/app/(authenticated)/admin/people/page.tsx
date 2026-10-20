@@ -147,7 +147,7 @@ export default async function SuperAdminPeoplePage({
           <PersonOnboardDialog collegeId={collegeId} />
         </div>}
       />
-      <form method="get" role="search" aria-label="Search people" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[1366px]:grid-cols-4">
+      <form method="get" role="search" aria-label="Search people" className="grid min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[1366px]:grid-cols-4">
        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search contacts
         <Input type="search" name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 w-full md:min-h-9"/>
        </label>
