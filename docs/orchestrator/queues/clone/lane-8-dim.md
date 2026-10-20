@@ -23,16 +23,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-8.md: file, number of i
 - [x] `src/components/academics/college-recurring-preview.tsx`
 - [x] `src/components/academics/college-section-lifecycle-action.tsx`
 - [x] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/admin/admin-revoke-sessions.tsx`
-- [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
-- [ ] `src/components/admin/college-archive-button.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/college-feature-rule-editor.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/admin/admin-revoke-sessions.tsx`
+- [x] `src/components/admin/college-admin-lifecycle-action.tsx`
+- [x] `src/components/admin/college-archive-button.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/college-feature-rule-editor.tsx`
 - [ ] `src/components/admin/college-logo-uploader.tsx`
 - [ ] `src/components/admin/college-signin-method-form.tsx`
 - [ ] `src/components/admin/department-actions.tsx`

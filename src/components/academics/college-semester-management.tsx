@@ -214,12 +214,12 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
       <ConfirmDialog open={confirming} onOpenChange={setConfirming}
         title={SEMESTER_COPY.deleteTitle}
         description={SEMESTER_COPY.deleteBlocked}
-        confirmLabel="Confirm delete" pending={pending}
+        confirmLabel="Confirm delete" confirmVariant="danger" pending={pending}
         confirmDisabled={row.mappedCourses>0} onConfirm={remove}/>
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
         title="Discard semester changes?"
         description="Unsaved semester name and status changes will be lost."
-        confirmLabel="Discard changes" pending={pending} onConfirm={discardEditor}/>
+        confirmLabel="Discard changes" confirmVariant="danger" pending={pending} onConfirm={discardEditor}/>
       {notice ? <p role="status" className="text-xs text-body">{notice}</p> : null}
     </div>
   );
