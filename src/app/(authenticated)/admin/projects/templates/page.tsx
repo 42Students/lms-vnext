@@ -28,14 +28,14 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
 }){
  const raw=await searchParams;
  const query=parseSuperAdminTemplateDirectoryQuery(raw);
- if(!query.success)return <div className="min-w-0 space-y-6">
+ if(!query.success)return <div className="min-w-0 space-y-4 md:space-y-5">
   <PageHeader title="Project templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
    action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-4 md:space-y-5">
    <PageHeader title="Project templates"/>
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates access denied"
@@ -46,7 +46,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  try {
   data=await listSuperAdminTemplateDirectory(context,query.data);
  } catch {
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-4 md:space-y-5">
    <PageHeader title="Project templates"/>
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates unavailable"
@@ -54,10 +54,10 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     action={<Link href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading templates</Link>}/>
   </div>;
  }
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-4 md:space-y-5">
   <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
-   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">New template →</Link>:undefined}/>
+   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">New template →</Link>:undefined}/>
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Template title or slug
@@ -69,11 +69,11 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
      {statuses.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
+   <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
   </form>
   <ListToolbar label="Global project templates" viewCount={data.total}
     exportAction={<SuperAdminTemplatePageExport items={data.items}/>} />
-  <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
+  <p className="m-0 break-words text-xs text-muted-foreground">Page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   <DataTable<(typeof data.items)[number]>
     caption="Global project template catalogue"
     rows={data.items}
@@ -99,14 +99,15 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
       {key:"assignments",header:"Assignments",mobilePriority:"secondary",cell:item=>
         <span className="tabular-nums text-sm text-body">{item.activeAssignments} active in scope</span>},
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <Link href={"/admin/projects/templates/"+encodeURIComponent(item.id)}
             className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary)]">Inspect template →</Link>
           {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
             templateId={item.id} title={item.title} status={item.status}/>:null}
         </div>},
     ]}
-    empty={<EmptyState title="No matching templates" description="No global template metadata matches these filters."/>}
+    empty={<EmptyState title="No matching templates" description="No global template metadata matches these filters."
+      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>}
   />
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateDirectoryHref({...data.query,page})} label="Template pages" />
  </div>;
