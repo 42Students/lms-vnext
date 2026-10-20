@@ -1,5 +1,3 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
-
-export default function Loading() {
-  return <GracefulPageLoading label="Loading export…" shape="directory" />;
-}
+import { PageHeader } from "@/components/ui/page-header";
+export default function Loading(){return <div className="min-w-0 space-y-4"><PageHeader title="Export upcoming placement rounds"/><GracefulPageLoading label="Loading export…" shape="directory"/></div>}
