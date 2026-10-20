@@ -31,10 +31,10 @@ export function SuperAdminCompanyEdit({company}:{company:Company}){
    }catch(e){setError(e instanceof Error?e.message:"Cannot update company. Retry.");}
   });
  }
- if(!open)return <Button type="button" variant="secondary" className="mt-2"
+ if(!open)return <Button type="button" variant="secondary" className="mt-2 min-h-11 md:min-h-9 print:hidden"
   onClick={()=>setOpen(true)}>Edit global company</Button>;
- const cls="w-full";
- return <form onSubmit={e=>void save(e)} className="mt-3 space-y-3 border-b border-border pb-5">
+ const cls="min-h-11 w-full md:min-h-9";
+ return <form onSubmit={e=>void save(e)} className="mt-3 space-y-3 border-b border-border pb-5 print:hidden">
   <h3 className="font-semibold text-foreground">Edit company</h3>
   <label className="grid gap-1 text-[13px] font-semibold text-body">Name<Input required minLength={2} maxLength={150}
    name="name" defaultValue={company.name} className={cls}/></label>
@@ -47,9 +47,9 @@ export function SuperAdminCompanyEdit({company}:{company:Company}){
   <label className="grid gap-1 text-[13px] font-semibold text-body">Public logo URL (HTTPS)<Input name="logoPublicUrl"
    type="url" defaultValue={company.logoPublicUrl??""} className={cls}/></label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <Button type="submit" disabled={pending}>
+  <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending}>
    {pending?"Saving…":"Save company"}</Button>
   <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
-   className="ml-2">Cancel</Button>
+   className="ml-2 min-h-11 md:min-h-9">Cancel</Button>
  </form>;
 }

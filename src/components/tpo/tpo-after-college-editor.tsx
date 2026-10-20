@@ -6,6 +6,7 @@ import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { useRouter } from "next/navigation";
 import {
   afterCollegeOptions,AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES, type AfterCollegeOutcome,
@@ -82,8 +83,8 @@ export function TpoAfterCollegeEditor({
         onClick={() => write(undo, true)}>Undo</Button> : null}
     </div>
     {!available ? <p className="text-xs text-muted-foreground">Outcome storage unavailable.</p> : null}
-    {message ? <p role="status" className="text-xs">{message}</p> : null}
-    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+    {message ? <InlineNotice tone="success" message={message}/> : null}
+    {error?<InlineNotice tone="error" message={error}/>:null}
     <Dialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmation(null);}}
       title={confirmation?.reversing?"Restore previous outcome":"Save after-college outcome"}
       description={(confirmation?.reversing?"Restore":"Save")+" after-college outcome for "+learnerName+"?"}

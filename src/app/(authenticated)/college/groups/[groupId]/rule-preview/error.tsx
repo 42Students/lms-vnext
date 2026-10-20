@@ -7,5 +7,5 @@ export default function CollegeGroupRulePreviewError({ reset }: {
 }) {
   return <ErrorState title="Rule preview failed"
     description="The read-only rule preview could not be computed. No changes were made."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>} />;
 }

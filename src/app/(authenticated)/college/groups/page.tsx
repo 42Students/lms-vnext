@@ -55,7 +55,7 @@ export default async function CollegeGroupsPage({
     <PageHeader title="Student groups" />
     <ErrorState title="Invalid group filters"
       description="Choose a supported group type, status and page. Remove repeated or unrelated filters."
-      action={<Link href="/college/groups" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold underline">Clear filters</Link>}/>
+      action={<Link href="/college/groups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>}/>
   </div>;
   const { kind, status, offset } = filters;
 
@@ -111,13 +111,13 @@ export default async function CollegeGroupsPage({
             ))}
           </Select>
         </label>
-        <Button type="submit" variant="secondary">
+        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">
           Apply
         </Button>
         {kind || status ? (
           <Link
             href="/college/groups"
-            className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link hover:underline"
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
           >
             Clear filters
           </Link>
@@ -135,7 +135,7 @@ export default async function CollegeGroupsPage({
         />
       ) : (
         <>
-          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+          <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
             columns={[
               {
                 key: "name",
@@ -143,7 +143,7 @@ export default async function CollegeGroupsPage({
                 cell: (row: GroupListRow) => (
                   <Link
                     href={`/college/groups/${row.id}`}
-                    className="font-semibold text-link hover:underline"
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                   >
                     {row.name}
                   </Link>
@@ -195,15 +195,15 @@ export default async function CollegeGroupsPage({
 
           <nav
             aria-label="Pagination"
-            className="flex items-center justify-between text-sm text-muted-foreground"
+            className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"
           >
             <span>
               Showing {offset + 1}–{Math.min(offset + limit, total)} of {total}
             </span>
-            <span className="flex gap-3">
+            <span className="flex flex-wrap gap-3">
               {offset > 0 ? (
                 <Link
-                  className="font-semibold text-link hover:underline"
+                  className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                   href={query(Math.max(0, offset - limit))}
                 >
                   Previous
@@ -211,7 +211,7 @@ export default async function CollegeGroupsPage({
               ) : null}
               {offset + limit < total ? (
                 <Link
-                  className="font-semibold text-link hover:underline"
+                  className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                   href={query(offset + limit)}
                 >
                   Next

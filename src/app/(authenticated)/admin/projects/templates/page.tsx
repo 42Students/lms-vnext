@@ -36,8 +36,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
   return <div className="min-w-0 space-y-5">
-   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <PageHeader title="Project templates"/>
+   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates access denied"
     description="This account cannot read the global project template catalogue. Check the active Super Admin session."
     action={<PageBackLink href="/dashboard" label="Return to dashboard" />}/>
@@ -47,18 +47,18 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   data=await listSuperAdminTemplateDirectory(context,query.data);
  } catch {
   return <div className="min-w-0 space-y-5">
-   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <PageHeader title="Project templates"/>
+   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates unavailable"
     description="The template catalogue could not be loaded. Your search and status filters are unchanged; try again."
     action={<Link href={templateDirectoryHref(query.data)} className="font-semibold text-primary-text">Retry loading templates</Link>}/>
   </div>;
  }
  return <div className="min-w-0 space-y-5">
-  <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">New template →</Link>:undefined}/>
+  <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}

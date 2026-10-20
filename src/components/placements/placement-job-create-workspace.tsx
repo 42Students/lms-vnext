@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -6,6 +5,7 @@ import {placementJobs,sections,cohorts,programs as programsTable,departments} fr
 import { PlacementJobCreateForm } from "./placement-job-create-form";
 import {TpoDriveCloneAction} from "./tpo-drive-clone-action";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { listCohorts } from "@/modules/academics/cohort-service";
 import { listPrograms } from "@/modules/academics/program-service";
 import type { RequestContext } from "@/modules/identity/context";
@@ -93,11 +93,11 @@ export async function PlacementJobCreateWorkspace({
 
   return (
     <div className="space-y-6">
-      <Link href="/tpo/placements/lifecycle" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to drives</Link>
       <PageHeader
         eyebrow={eyebrow}
         title="Create drive"
         description="Build the opportunity students will see"
+        actions={<PageBackLink href={basePath} label="Back to drives" />}
       />
       {pastDrives.length>0?<Disclosure title="Clone a past drive" className="border-y border-border py-4">
         <p className="my-2 text-xs text-body">Shows up to 20 recent completed drives. Cloning makes a new draft; dates, learners, rounds, outcomes, offers and external links are never carried over.</p>

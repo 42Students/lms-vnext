@@ -3,6 +3,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -90,8 +91,8 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
    className="min-h-11 md:min-h-9">
    {busy?"Saving…":"Save decision"}</Button>
-  {error?<p role="alert" className="w-full text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="w-full text-sm">{notice}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
   {actionId?<div className="w-full"><TpoBatchUndoControl batchId={batchId} actionId={actionId}/></div>:null}
  </div>;
 }
