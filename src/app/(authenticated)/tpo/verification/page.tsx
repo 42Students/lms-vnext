@@ -26,10 +26,12 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const queue=await getTpoVerificationQueue(context,query);
  const directory=queue.available&&queue.enabled&&queue.permitted?await listTpoBatches(context):null;
  const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department] as const)??[])];
- return <div className="min-w-0 space-y-5">
-  <PageHeader title="Verification" description="Review learner education and identity verification requests." />
-  <nav className="flex flex-wrap items-center gap-3">
-    <Link href="/tpo/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to students</Link>
+ return <div className="min-w-0 space-y-4">
+  <PageHeader title="Verification" description="Review learner education and identity verification requests."
+    actions={<Link href="/tpo/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to students</Link>} />
+  <nav className="min-w-0" aria-label="Verification exports">
+   <details className="border-b border-border pb-3"><summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Export verification records</summary>
+   <div className="flex min-w-0 flex-wrap gap-2 py-2">
     {queue.available&&queue.enabled&&queue.permitted?
      <div className="flex flex-wrap gap-2">
        {([["WAITING","Waiting"],["SENT_BACK","Sent back"],["VERIFIED","Verified"]] as const).map(([tab,label])=>
@@ -39,8 +41,10 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
          ...(query.branchId?{branchId:query.branchId}:{}),
         }).toString()} filename={"tpo-verification-"+tab.toLowerCase()+".csv"} label={label+" CSV"} />)}
      </div>:null}
+   </div>
+   </details>
   </nav>
-  <form method="get" action="/tpo/verification" className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-4">
+  <form method="get" action="/tpo/verification" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="tab" defaultValue={query.tab} className="min-h-11">
      <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
@@ -51,6 +55,12 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
      <option value="ALL">All sections</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
     </Select>
    </label>
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student or roll number
+    <Input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 min-w-0 w-full md:min-h-9" />
+   </label>
+   <details className="min-w-0 sm:col-span-2 lg:col-span-4">
+    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">More filters</summary>
+    <div className="grid min-w-0 grid-cols-1 gap-3 py-3 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind
     <Select name="waitingState" defaultValue={query.waitingState} className="min-h-11">
      <option value="ALL">First check or update</option><option value="SUBMITTED">First check</option><option value="UPDATE_PENDING">Update</option>
@@ -78,16 +88,15 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
      {branches.map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
    </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student or roll number
-    <Input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 min-w-0 w-full md:min-h-9" />
-   </label>
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Page size
     <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11">
      <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="1000">First 1,000 (legacy view)</option>
     </Select>
    </label>
-   <Button type="submit" className="min-h-11 md:min-h-9">Apply filters</Button>
-   <Link href="/tpo/verification" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Reset filters</Link>
+    </div>
+   </details>
+   <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply filters</Button>
+   <Link href="/tpo/verification" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline md:min-h-9">Reset filters</Link>
   </form>
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
    <p role="status" className="text-sm text-body">

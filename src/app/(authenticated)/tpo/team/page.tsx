@@ -19,6 +19,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Alert} from "@/components/ui/alert";
+import {Disclosure} from "@/components/ui/disclosure";
 import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
@@ -75,7 +76,7 @@ export default async function TpoTeamPage({searchParams}:{
  const filter=parsed.success?(parsed.data.filter??"FOLLOWING"):"FOLLOWING";
  const conversationCounts=conversations?.status==="READY"?tpoTeamConversationCounts(conversations.items):null;
  const visibleConversations=conversations?.status==="READY"?filterTpoTeamConversations(conversations.items,filter):[];
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-4">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader title={TPO_OWNER_PAGE_COPY.team}
    description="Who does what, and what you decided. Recruiters and students never see this." />
@@ -83,12 +84,14 @@ export default async function TpoTeamPage({searchParams}:{
    items={(["conversations","people"] as const).map(item=>({
      value:item, label:item==="people"?"People":"Conversations", href:"/tpo/team?tab="+item,
    }))} />
-  {tab==="people"?<section className="space-y-4">
+  {tab==="people"?<section className="min-w-0 space-y-4">
     <p role="status" className="text-sm text-body">{people.length} people</p>
     {unowned?.ready?<TpoTeamAssignUnowned drives={unowned.drives} companies={unowned.companies}
       members={activeTeam.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
        .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
-    <p className="text-xs text-muted-foreground">The college&apos;s TPO and college-admin accounts are always in the team. Everyone in it can do everything in placements.</p>
+    <Disclosure title="About placement team" className="border-b border-border" contentClassName="py-3">
+      <p className="text-xs text-muted-foreground">The college&apos;s TPO and college-admin accounts are always in the team. Everyone in it can do everything in placements.</p>
+    </Disclosure>
     <nav aria-label="Sort team people" className="flex min-w-0 flex-wrap items-center gap-2 text-[13px]">
       <span className="font-semibold">Sort:</span>
       {([["WORK","Most assigned duties"],["OVERDUE","Overdue first"],["NAME","Name"]] as const).map(([value,label])=>
@@ -112,7 +115,9 @@ export default async function TpoTeamPage({searchParams}:{
          .format(awayByMember.get(member.membershipId)!)} IST
        </p>:null}
        {member.membershipId===context.membership?.id&&awayState?.ready?
-        <TpoTeamAwayForm until={awayByMember.get(member.membershipId)?.toISOString()??null}/>:null}
+        <Disclosure title="Away status" className="mt-3 border-t border-border" contentClassName="pb-3">
+         <TpoTeamAwayForm until={awayByMember.get(member.membershipId)?.toISOString()??null}/>
+        </Disclosure>:null}
        <p className="mt-2 text-sm text-body">{member.roles.filter(role=>role==="TPO"||role==="TPO_ADMIN"||role==="COLLEGE_ADMIN").map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
        {workload?.ready?<p className="mt-2 text-xs text-muted-foreground">
         {member.openAsks} open {member.openAsks===1?"ask":"asks"} · {member.overdueAsks} overdue
@@ -134,17 +139,19 @@ export default async function TpoTeamPage({searchParams}:{
        </dl>:null}
        {ownerWorkload?.drivesReady&&member.membershipId!==context.membership?.id&&
         (member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))?
+        <Disclosure title="Hand over work" className="mt-3 border-t border-border" contentClassName="pb-3">
         <TpoTeamHandover sourceMembershipId={member.membershipId}
          sourceName={member.displayName}
          members={activeTeam.filter(candidate=>(candidate.roles.includes("TPO")||candidate.roles.includes("COLLEGE_ADMIN"))&&
           candidate.membershipId!==member.membershipId)
-          .map(candidate=>({membershipId:candidate.membershipId,displayName:candidate.displayName}))}/>:null}
+          .map(candidate=>({membershipId:candidate.membershipId,displayName:candidate.displayName}))}/>
+        </Disclosure>:null}
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
          {member.studentDuties.length} recorded drive-day duties
        </p>:null}
       </li>)}
     </ul>:<EmptyState title="No active team assignments" description="No members match this college's currently active role evidence." />}
-  </section>:<section className="border-b border-border py-5">
+  </section>:<section className="min-w-0 border-b border-border py-4">
     <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Internal conversations</h2>
     <div className="mt-3"><TpoTeamSearch value={search}/></div>
     {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the conversations on this page.</p>:null}
@@ -157,10 +164,10 @@ export default async function TpoTeamPage({searchParams}:{
      </Link>)}
     </nav>:null}
     <Link href="/tpo/team/everyone" className="mt-3 block border-b border-border py-4 font-semibold text-link lms-inline-link">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
-    {conversations?.status==="READY"?<TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
+    {conversations?.status==="READY"?<Disclosure title="Start a private placement team conversation" className="mt-3 border-b border-border" contentClassName="pb-3"><TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
       member=>member.membershipId!==context.membership?.id&&
       (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
-      .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
+      .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/></Disclosure>:null}
     {conversations?.status==="FAILED"?<Alert tone="error">
      Could not load conversations right now. Your search has been kept.
      <Link className="ml-2 font-semibold text-link underline lms-inline-link" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
@@ -168,8 +175,8 @@ export default async function TpoTeamPage({searchParams}:{
     {conversations?.status==="NOT_REGISTERED"?
       <Alert tone="warning">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</Alert>:
       conversations?.status==="FAILED"?null:
-      visibleConversations.length?<ul className="mt-3 space-y-2">{visibleConversations.map(row=>
-       <li key={row.id} className="border-b border-border py-3">
+      visibleConversations.length?<ul className="mt-3 divide-y divide-border">{visibleConversations.map(row=>
+       <li key={row.id} className="min-w-0 py-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
          <Link className="min-w-0 break-words font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
          {row.unreadCount>0 ? <Badge aria-label={row.unreadCount+" unread updates"}
@@ -193,7 +200,7 @@ export default async function TpoTeamPage({searchParams}:{
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page+1)}).toString()}>Show older</Link>:null}
      </nav>:null}
-    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link lms-inline-link">
+    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 items-center text-link lms-inline-link min-[768px]:min-h-9">
       Open existing recruiter communications
     </Link>
   </section>}
