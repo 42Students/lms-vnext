@@ -84,16 +84,11 @@ export default async function TpoDriveJoiningPage({
                 Current joining date: {item.joiningDate ?? "Not recorded"}
                 {item.reason ? " · Reason: " + item.reason : ""}
               </p>
-              <details className="group mt-3 min-w-0">
-                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
-                  New joining outcome <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-                </summary>
-                <TpoJoiningUpdateForm
-                  offerId={item.offerId}
-                  initialStatus={item.joiningStatus}
-                  initialJoiningDate={item.joiningDate}
-                />
-              </details>
+              <TpoJoiningUpdateForm
+                offerId={item.offerId}
+                initialStatus={item.joiningStatus}
+                initialJoiningDate={item.joiningDate}
+              />
             </section>
           ))}
         </div>
