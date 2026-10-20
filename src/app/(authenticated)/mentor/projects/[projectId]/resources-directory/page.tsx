@@ -20,7 +20,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  if(!parsed)return <section role="alert" className="space-y-3">
   <PageHeader title="Invalid resource filters" />
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
-   className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear invalid filters</Link>
+   className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear invalid filters</Link>
  </section>;
  const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed);
  const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -76,7 +76,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
      Filter
     </Button>
-    <Link href={base+"/resources-directory" } className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    <Link href={base+"/resources-directory" } className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
      Clear
     </Link>
    </form></FilterBar>
@@ -107,7 +107,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      {resource.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
       {resource.description}</p>:null}
      {resource.safeUrl?<Link href={resource.safeUrl} target="_blank" rel="noopener noreferrer"
-      className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
       Open HTTPS resource
      </Link>:<p className="mt-2 text-xs text-muted-foreground">
       No safe HTTPS link recorded.
