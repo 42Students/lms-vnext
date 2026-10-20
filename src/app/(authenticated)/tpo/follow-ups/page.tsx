@@ -22,6 +22,13 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
     redirect("/dashboard");
   }
   const raw=await searchParams;
+  // Reject ambiguous repeated keys rather than choosing an arbitrary value.
+  if ([raw.scope, raw.window, raw.q, raw.page].some(Array.isArray)) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Follow-ups due" />
+      <Alert tone="error">Invalid follow-up filters. <Link href="/tpo/follow-ups">Clear filters</Link></Alert>
+    </div>;
+  }
   const scope=(Array.isArray(raw.scope)?raw.scope[0]:raw.scope)==="MINE"?"MINE":"TEAM";
   const window=(Array.isArray(raw.window)?raw.window[0]:raw.window)==="NEXT_7_DAYS"?"NEXT_7_DAYS":"DUE";
   const q=(Array.isArray(raw.q)?raw.q[0]:raw.q)?.trim().slice(0,100)??"";
