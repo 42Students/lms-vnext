@@ -10,9 +10,9 @@ export default async function FacultySessionCoveragePage({
   const data=await getFacultySessionCoverage(await getCurrentRequestContext(),{deliveryId});
   const base="/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail";
   return <div className="min-w-0 max-w-full space-y-5">
-    <Link href={base} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Attendance</Link>
+    <Link href={base} className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Attendance</Link>
     <PageHeader title="Attendance session coverage"/>
-    <section aria-label="Session state counts" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <section aria-label="Session state counts" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
       {([["Scheduled sessions",data.total],["Marked",data.marked],
         ["Ended without marks",data.completedUnmarked],["Upcoming",data.upcoming]] as const)
         .map(([name,value])=><div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
