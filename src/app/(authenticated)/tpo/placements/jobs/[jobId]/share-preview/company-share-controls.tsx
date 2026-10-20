@@ -105,14 +105,14 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   finally{setPending(false);setRevokeTarget(null);}
  }
  return <section aria-label="Company applicant sharing"
-   className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
-  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Share shortlisted applicants with a company</h2>
+   className="min-w-0 space-y-4 border-b border-border pb-4">
+  <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Share shortlisted applicants with a company</h2>
   <p className="text-sm text-body">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum 90-day lifetime, use a separate six-digit code, and may be revoked immediately. Private notes stay excluded.</p>
   {!ready?<Alert tone="warning">
    External sharing is unavailable until its audited database migration is registered.
   </Alert>:<>
-   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-4)] min-[768px]:grid-cols-2">
+   <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2">
     <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expires in days
      <Select value={days} onChange={event=>changeExpiry(event.target.value)}
       className="w-full">
@@ -123,8 +123,8 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
      <Input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
       />
     </label>
-    <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)] min-[768px]:col-span-2">
-      <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Columns to share ({selectedColumns.length} of 11 maximum)</summary>
+    <details className="group min-w-0 border-t border-border pt-3 sm:col-span-2">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Columns to share ({selectedColumns.length} of 11 maximum) <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
       <fieldset className="min-w-0"><legend className="sr-only">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
      <div className="grid min-w-0 gap-2 min-[768px]:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
       <label key={key} className="inline-flex min-h-11 items-center gap-2 text-sm">
@@ -154,9 +154,9 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     {copyState==="COPIED"?<InlineNotice tone="success" message="Copied to clipboard."/>:null}
     {copyState==="MANUAL_COPY"?<InlineNotice tone="info" message="Clipboard unavailable. Select the URL field above and copy it manually."/>:null}
    </div>:null}
-   {links.length>0?<ul className="min-w-0 divide-y divide-border">{links.map(link=><li key={link.id}
-    className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-t border-border py-[var(--lms-space-3)] text-sm min-[768px]:flex-row min-[768px]:items-center">
-    <span className="min-w-0 break-words">Link {link.id.slice(0,8)} · Expiry {link.expiresAt.slice(0,10)} ·
+   {links.length>0?<ul className="min-w-0 divide-y divide-border border-y border-border">{links.map(link=><li key={link.id}
+    className="flex min-w-0 flex-col items-stretch gap-2 py-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
+    <span className="min-w-0 flex-1 break-words">Link {link.id.slice(0,8)} · Expiry {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(link.expiresAt))} ·
      {companyShareLifecycleLabel(companyShareLifecycleStatus(link,asOf))}</span>
     <span className="text-xs text-muted-foreground">
      {link.audit.views} views · {link.audit.exports} CSV downloads

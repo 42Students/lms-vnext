@@ -43,34 +43,33 @@ export default async function TpoDriveShortlistPage({
 
   const pathname = "/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist";
   return (
-    <div className="min-w-0 space-y-6">
-      <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-        ← Drive workspace
-      </Link>
+    <div className="min-w-0 space-y-4">
+
       <PageHeader
         eyebrow="TPO · Applicants"
         title={data.job.title + " · Current shortlist"}
         description="Current SHORTLISTED screening decisions for submitted applications belonging to active college learners."
-        actions={
+        actions={<>
+          <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">← Drive workspace</Link>
           <a href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist/export"}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-            Export shortlist CSV
-          </a>
-        }
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Export shortlist CSV</a>
+        </>}
       />
       <Link
         href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto hover:underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
       >
         Recruiter-visible shortlist report →
       </Link>
-      <p className="text-sm text-body">
+      <p className="text-sm leading-6 text-body">
         {data.total} shortlisted application(s). This is an application-level count:
         one learner may have multiple role-option applications. Withdrawn or
         subsequently rejected applications are not counted. Private screening
         comments are not exported.
       </p>
+      <section aria-label="Current shortlist entries" className="min-w-0 space-y-3">
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Current shortlist</h2>
       <DataTable<(typeof data.rows)[number]> caption="Current shortlist"
         rows={data.rows} getRowKey={item=>item.applicationId}
         empty={<EmptyState title="No currently shortlisted submitted applications appear on this page. A previously shortlisted learner may have withdrawn or changed screening state." />}
@@ -81,6 +80,7 @@ export default async function TpoDriveShortlistPage({
           {key:"when",header:"Shortlisted at (IST)",mobilePriority:"secondary",cell:item=>item.shortlistedAtIso
             ?dateLabel.format(new Date(item.shortlistedAtIso))+" IST":"Decision timestamp unavailable"},
         ]}/>
+      </section>
       <Pagination label="Shortlist pagination" page={data.page} pageCount={data.totalPages} hrefForPage={target=>pathname+"?page="+target}/>
     </div>
   );
