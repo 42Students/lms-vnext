@@ -22,4 +22,4 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-3.md: surface | proble
 - [x] `src/components/placements/tpo-trust-toggle.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/courses/faculty-assessment-lifecycle.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/courses/resource-progress-control.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
-- [ ] `src/app/(authenticated)/teach/not-found.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [x] `src/app/(authenticated)/teach/not-found.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
