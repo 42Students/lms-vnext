@@ -59,3 +59,13 @@
 **Files changed:** queue and proof only. Preserved original route and redirect behavior.
 
 **Verification boundary:** source inspection, no runtime tests or CI.
+
+## 07 · Teacher / Course home and Blueprint route
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx`  
+**Problems found (9):** content and assignment item cards nested inside bordered lesson cards and the global canvas, unusually dense authoring/video/order forms exposed for every expanded lesson, action links compressed on phone, five stat tiles overly separated from content, double border treatments on empty lessons, heavy lesson-card padding drifting from global gutter, generic loading title, generic route error, and generic missing-lesson state without a recovery path.
+
+**Fix:** retain Course Workspace and all query parsing/filter/lesson navigation but use native Disclosure for less-frequent lesson authoring, video and reorder controls; unfold these automatically for a selected lesson; render lesson and assessment items as hairline-separated rows rather than cards within cards; align the lesson heading to the shared canvas, make header actions stack at phone widths, and provide route-specific loading, retry/back, and safe not-found states. Existing faculty ownership, video permission, edit/delete confirmations, quiz attempts, content links, assessment state, class links, and learner preview behaviours remain wired.
+
+**Files changed:** `src/components/courses/faculty-course-workspace.tsx`, `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/error.tsx`, `loading.tsx`, new `not-found.tsx`, queue and proof. Teacher parent layout, lesson authoring, video manager, content order editor, quiz editor/review, item lifecycle, and home signals inspected.
+
+**Verification boundary:** source-only review; no runtime/test/CI.
