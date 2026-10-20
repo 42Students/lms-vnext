@@ -14,8 +14,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regres
 - [x] `src/components/placements/tpo-interview-slot-planner.tsx`
 - [x] `src/components/tpo/tpo-batch-class-decision.tsx`
 - [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
-- [ ] `src/components/placements/tpo-round-check-in.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/placements/tpo-round-check-in.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
 - [ ] `src/components/public/browser-support-notice.tsx`
 - [ ] `src/components/ui/password-input.tsx`
 - [ ] `src/app/(authenticated)/loading.tsx`
