@@ -167,7 +167,7 @@ export function SuperAdminHrDetailDrawer({
               <StatusBadge
                 tone={hrStatusTone(account.status)}
               >
-                {account.status}
+                {account.status === "ARCHIVED" ? "Suspended" : account.status === "ACTIVE" ? "Active" : "Disabled"}
               </StatusBadge>
             </div>
 
@@ -194,7 +194,7 @@ export function SuperAdminHrDetailDrawer({
                 <dt className="text-xs font-semibold text-muted-foreground">
                   Company
                 </dt>
-                <dd className="mt-1 text-body">
+                <dd className="mt-1 min-w-0 break-words [overflow-wrap:anywhere] text-body">
                   {account.companyName}
                 </dd>
               </div>
@@ -227,7 +227,7 @@ export function SuperAdminHrDetailDrawer({
                     className="flex min-w-0 flex-col items-start gap-3 border-b border-border py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="min-w-0">
-                      <p className="m-0 font-semibold text-foreground">
+                      <p className="m-0 min-w-0 break-words [overflow-wrap:anywhere] font-semibold text-foreground">
                         {grant.collegeName}
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
