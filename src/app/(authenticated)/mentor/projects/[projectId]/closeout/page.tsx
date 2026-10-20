@@ -21,7 +21,7 @@ export default async function MentorProjectCloseoutPage({
     <PageHeader eyebrow="Mentor · Project" title="Project closeout"
       description={data.title+" · Current state "+data.status}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-surface hover:bg-primary-subtle hover:border-primary hover:text-primary-text transition-colors duration-150 motion-reduce:transition-none">
         Delivery workspace
       </Link>} />
     <section className="border-b border-border pb-5">

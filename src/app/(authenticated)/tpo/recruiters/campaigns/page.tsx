@@ -1,3 +1,5 @@
+import { Alert } from "@/components/ui/alert";
+import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -19,23 +21,16 @@ export default async function CampaignHistory({searchParams}:PageProps){
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const params=await searchParams;
  const query=messagingHistoryQuerySchema.safeParse({page:first(params.page),purpose:first(params.purpose)});
- if(!query.success)return <div className="min-w-0 space-y-4"><PageHeader title="Emails"/><p role="alert">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></p></div>;
+ if(!query.success)return <div className="min-w-0 space-y-4"><PageHeader title="Emails"/><Alert tone="error">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></Alert></div>;
  const result=await listTpoMessagingHistory(context,query.data);
  const drafts=await listTpoCampaignDrafts(context);
  const deliveryReady=await tpoCampaignDispatchReady();
  return <div className="min-w-0 space-y-6">
   <PageHeader title="Emails"
    description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."/>
-  <nav aria-label="Engage views" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
-   {([["table","Table"],["board","Board"],["companies","Companies"],["campaigns","Emails"]] as const)
-     .map(([value,label])=><Link key={value} href={"/tpo/recruiters?view="+value}
-       aria-current={value==="campaigns"?"page":undefined}
-       className={value==="campaigns"
-         ?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary"
-         :"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body"}>
-       {label}
-     </Link>)}
-  </nav>
+  <Tabs ariaLabel="Engage views" renderPanel={false} value="campaigns"
+    items={([["table","Table"],["board","Board"],["companies","Companies"],["campaigns","Emails"]] as const)
+      .map(([value,label])=>({value,label,href:"/tpo/recruiters?view="+value}))}/>
   <p className="text-sm text-body">
    To send one, select recruiters in the table and choose Act, then Send an email.
   </p>
@@ -97,7 +92,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
         <div><dt>Skipped</dt><dd>{row.suppressed}</dd></div>
       </dl>
     </li>)}
-  </ol>:<p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">No emails sent from Engage yet.</p>}
+  </ol>:<p className="border-y border-border bg-transparent py-[var(--lms-space-5)] text-sm text-body">No emails sent from Engage yet.</p>}
   <nav className="flex flex-wrap gap-3" aria-label="Campaign history pagination">
     {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link">Previous</Link>:null}
     {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link">Next</Link>:null}
