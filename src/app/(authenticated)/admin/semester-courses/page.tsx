@@ -31,12 +31,15 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
   .catch(()=>({ok:false as const}));
  const curriculum=curriculumResult.ok?curriculumResult.value:null;
  return <div className="min-w-0 space-y-5">
-      <AcademicSetupSteps step={4} />
- {!curriculumResult.ok?<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body">
-  Semester mapping editor is temporarily unavailable. The directory remains accessible.
- </p>:null}
- {curriculum?<CollegeTermMappingManager data={curriculum}/>:null}
- <AdminScopedReadPage title="Semester–Course Mapping" path="/admin/semester-courses" statuses={statuses}
+ <AdminScopedReadPage
+  intro={<section aria-label="Semester curriculum tools" className="min-w-0 space-y-4">
+   <AcademicSetupSteps step={4}/>
+   {!curriculumResult.ok?<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body">
+    Semester mapping editor is temporarily unavailable. The directory remains accessible.
+   </p>:null}
+   {curriculum?<CollegeTermMappingManager data={curriculum}/>:null}
+  </section>}
+  title="Semester–Course Mapping" path="/admin/semester-courses" statuses={statuses}
   exportPath="/api/admin/semester-courses/export" exportFilename="super-admin-semester-courses-ist.csv"
   description="Registered semester curriculum, course credits and order in your selected college."
   searchParams={searchParams} loader={query=>listAdminTermCourseMappings(context,query)}/>
