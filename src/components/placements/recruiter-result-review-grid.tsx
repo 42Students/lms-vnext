@@ -35,7 +35,7 @@ export function RecruiterResultReviewGrid({rows,scopeKey}:{
 }){
  return <TpoGrid<RecruiterResultReviewRow>
    rows={rows} columns={columns} rowKey={row=>row.id}
-   mobilePrimaryKeys={["applicant","outcome","status"]}
+   mobilePrimaryKeys={["applicant","outcome","status","score"]}
    storageKey={"recruiter-result-review:"+scopeKey}
    rowActions={row=><Link href={row.editHref}
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
