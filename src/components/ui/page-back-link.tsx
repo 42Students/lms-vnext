@@ -19,7 +19,7 @@ export function PageBackLink({ href, label, className }: PageBackLinkProps) {
       aria-label={label}
       data-slot="page-back-link"
       className={cx(
-        "inline-flex min-h-11 min-w-11 shrink-0 self-start items-center justify-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-muted-text)] transition-colors duration-150 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
+        "inline-flex min-h-11 min-w-11 shrink-0 self-start items-center justify-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-muted-text)] transition-colors duration-150 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
         className,
       )}
     >
