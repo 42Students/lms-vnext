@@ -6,6 +6,7 @@ import {
   type AnnouncementTarget,
 } from "@/components/announcements/announcement-admin-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import {
@@ -121,7 +122,7 @@ export default async function AnnouncementsPage({
     : null;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
       <PageHeader
         title="Announcements"
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
@@ -134,9 +135,12 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
-      <section aria-label="Personal college notifications" className="space-y-3 border-t border-border pt-5">
+
+      <AnnouncementAdminWorkspace items={items} targets={targets} />
+      <Disclosure title="Your college notifications" className="min-w-0" contentClassName="min-w-0 pb-[var(--lms-space-4)]">
+      <section aria-label="Personal college notifications" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Your college notifications</h2>
+          
           <Link href={unreadHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
@@ -151,7 +155,7 @@ export default async function AnnouncementsPage({
           </li>)}</ul>}
         <Link href="/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
-      <AnnouncementAdminWorkspace items={items} targets={targets} />
+      </Disclosure>
       {next ? (
         <div className="flex justify-center">
           <Link href={next} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
