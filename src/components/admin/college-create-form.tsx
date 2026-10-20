@@ -170,7 +170,7 @@ export function CollegeCreateForm({
       </div>
       <Button
         type="submit"
-        className="min-h-11 md:min-h-9"
+        className="min-h-11 w-full md:min-h-9 md:w-auto"
         loading={pending}
         disabled={
           pending ||
