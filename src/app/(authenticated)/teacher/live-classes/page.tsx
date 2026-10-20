@@ -34,7 +34,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       expectedUpdatedAt:item.updatedAt?.toISOString()??null,
     }))}
   />
-  <form action="/teacher/live-classes" method="get"
+  <form role="search" aria-label="teacher live classes filters" action="/teacher/live-classes" method="get"
    className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">When
     <Select name="view" defaultValue={data.query.view}
