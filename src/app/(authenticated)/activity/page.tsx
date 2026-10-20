@@ -212,7 +212,7 @@ export default async function ActivityPage({
           <div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
           <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
             (exportParams.size ? "?" + exportParams.toString() : "")}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Export
           </a>
           {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
@@ -232,7 +232,7 @@ export default async function ActivityPage({
       </p>:null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="space-y-2">
        <div className="flex flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">{link.name}</Link>)}</div>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{link.name}</Link>)}</div>
        <p className="text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important activity shows high-priority events.</p>
        <div className="flex flex-wrap gap-2">{[
         {label:"Today",href:quick(today,today)},
@@ -240,7 +240,7 @@ export default async function ActivityPage({
         {label:"30 days",href:quick(ago(29),today)},
         {label:"All time",href:quick()},
        ].map(link=><Link key={link.label} href={link.href}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">{link.label}</Link>)}</div>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{link.label}</Link>)}</div>
       </nav>:null}
       <form className="grid min-w-0 grid-cols-1 gap-4 border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
