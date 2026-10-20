@@ -66,7 +66,7 @@ export default async function RecruiterRequestDrivePage({
   if (collegeId && !grants.some((grant) => grant.collegeId === collegeId)) notFound();
 
   if (!collegeId) {
-    return <div className="min-w-0 max-w-full space-y-6">
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader title="Request a drive"
         description="Choose an authorized college before drafting a hiring request." />
       {grants.length === 0 ? (
@@ -96,20 +96,19 @@ export default async function RecruiterRequestDrivePage({
     ? hrDraftFromAuthorizedJob(fromJob.job, fromJob.rounds)
     : emptyHrDriveDraft();
 
-  return <div className="min-w-0 max-w-full space-y-4">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
-    <nav className="flex min-w-0 flex-col gap-2 border-b border-border pb-4 min-[768px]:flex-row min-[768px]:items-center" aria-label="Recruiter drive links">
+    <nav className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:flex-col max-[767px]:items-stretch" aria-label="Recruiter drive links">
       <PageBackLink href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)} label="Back to Drives"/>
-    <details className="min-w-0"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text min-[768px]:min-h-9">View previously sent discussion proposals</summary>
-    <div className="mt-2 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:items-center"><Link href={hrSentProposalsHref(collegeId)}
+    <Link href={hrSentProposalsHref(collegeId)}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       View previously sent discussion proposals
     </Link>
     <Link href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Record an outside-platform drive
-    </Link></div></details>
+    </Link>
     </nav>
     <HrDriveDraftForm
       key={hrDriveDraftFormStateKey(context.user.id,collegeId,
