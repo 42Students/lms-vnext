@@ -186,8 +186,8 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
           title={SEMESTER_COPY.editTitle}
           description={SEMESTER_COPY.promotionNote}>
         <form onSubmit={save} className="space-y-2">
-          <h3 className="m-0 text-sm font-semibold text-foreground">{SEMESTER_COPY.editTitle}</h3>
-          <p className="text-xs text-muted-foreground">{SEMESTER_COPY.promotionNote}</p>
+          
+          
           <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
