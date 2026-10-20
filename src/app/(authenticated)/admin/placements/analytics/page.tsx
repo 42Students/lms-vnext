@@ -8,6 +8,7 @@ import {getSuperAdminHiringReportFilters} from "@/modules/admin-ui/super-admin-h
 import {superAdminHiringReportQuery,hiringCompanyRollups,COMPANY_HIRING_COLUMNS} from "@/modules/admin-ui/super-admin-hiring-report-model";
 import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
+import {DateInput} from "@/components/ui/date-input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -80,16 +81,16 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     Export report (CSV) →</a>}/>
   <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
-   <label className="grid gap-1 text-sm font-semibold">Drive or company
-    <Input name="q" defaultValue={q.q} maxLength={100} className="min-w-0"/></label>
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive or company
+    <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="min-w-0"/></label>
    {select("jobId","Job",filters.jobs)}
    {select("departmentId","Department",filters.departments)}
    {select("programId","Program",filters.programs)}
    {select("cohortId","Batch",filters.batches)}
-   <label className="grid gap-1 text-sm font-semibold">Applied from
-    <Input type="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-w-0"/></label>
-   <label className="grid gap-1 text-sm font-semibold">Applied through
-    <Input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-w-0"/></label>
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied from
+    <DateInput mode="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-w-0"/></label>
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied through
+    <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-w-0"/></label>
    <div className="flex flex-wrap items-end gap-3"><Button type="submit">Refresh</Button>
     <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear all</Link></div>
   </form>
