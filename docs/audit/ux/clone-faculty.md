@@ -834,3 +834,19 @@ This inventory reads every named queued file through the connected GitHub reposi
 **Full named H inventory source scan complete: 46 routes/layouts + 48 direct components = 94 paths.** Across those exact files, the recorded full-content pattern detects only eight native `<input type="hidden">` GET preservation controls in three routes, with no native visible controls, native confirm or embedded hex colours. All queued files show 0 remaining `sm:` at 640px. Opening/closing shared `Button` JSX counts match in each file (source-level check only). This does **not** establish absence of hand-rolled visuals in transitive nonqueued imports, computed colors, hover/focus/disabled/loading states, responsive browser paint or side-by-side pixel equality. All 94 strict checkboxes above intentionally remain unchecked pending the stated proof rule. No tests/lint/typecheck/CI run.
 
 **Next queue continuation:** cross-reference transitive rendered components beyond this 94-file inventory; first inspect `src/components/courses/faculty-report-legacy-charts.module.css` (visual chart skin) and `src/components/courses/course-choice-control.tsx` (input treatment). The upstream legacy source of truth remains `docs/design/legacy-styles/` and `docs/design/old-lms-pages.md`.
+
+
+### Imported Faculty-only CSS module scan: exact source color parity (2026-10-20)
+
+The 94 source queue is not the full rendered dependency tree. Found and migrated the two Faculty-only report CSS modules imported by the course home signals and assignment/quiz reports, retaining original chart spacing, height, geometry, accuracy threshold bands, 767px breakpoint and reduced-motion rules. These are transitive stylesheet files outside the 94-item TSX inventory.
+
+| File | Remaining hardcoded hex declarations | LMS token references | Explicit legacy ≤767px media rules | Reduced-motion rules |
+|---|---:|---:|---:|---:|
+| `src/components/courses/faculty-report-legacy-charts.module.css` | 0 | 18 | 1 | 1 |
+| `src/components/courses/faculty-course-home-signals.module.css` | 0 | 4 | 1 | 1 |
+
+**Verified exact color values:** In `src/app/globals.css` the concrete values are `--lms-neutral-900:#1a1d21` (line 34), `--lms-neutral-700:#54505d` (35), `--lms-neutral-500:#6b7280` (36), `--lms-neutral-400:#a9a7ae` (37), `--lms-neutral-200:#e5e9f0` (39), `--lms-neutral-100:#f1f4f9` (40), `--lms-surface:var(--lms-white)` (79, with white line 44), `--lms-success:#059669` (47), `--lms-warning:#d97706` (49), `--lms-error:#ef4444` (51). Those values match `docs/design/legacy-styles/components___variables.scss` lines 14–52 and the original literal chart CSS. **22 exact color literal occurrences replaced** by matching `var(--lms-*)` references, without any visual color substitution. The original report CSS's 12px stat-card radius, 6px accuracy-row radius, 8px/6px track heights, 12px gaps and 767px narrow-grid rules remain unchanged; all chart label/count wording and percentage/threshold logic preserved.
+
+**Source-only grep proof:** Full fetched stylesheet contents scanned for `#[0-9a-fA-F]{3,8}\\b` => **0** for each CSS file. Exact `@media (max-width: 767px)` count 1 per file and reduced-motion CSS remains 1 per file. Global token definitions were read but never edited by chat-3. No CSS build, typecheck, CI, runtime computed-style or side-by-side screenshots; these remain strict visual-parity blockers.
+
+**Next exact owner file:** `src/components/courses/faculty-course-list.tsx` — inspect the rendered course tile badge/summary strip skins and inter-card rhythm against old LMS, then continue to faculty assessment overview and additional delegated/transitive surfaces. The previously inventoried 94 strict H source items remain unchecked pending every-property/state and rendered responsive proof, not because source-level migration failed.
