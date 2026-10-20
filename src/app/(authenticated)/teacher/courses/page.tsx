@@ -13,7 +13,7 @@ export default async function TeacherCoursesPage({searchParams}: {
   const query=parseFacultyCourseListLocation(await searchParams);
   if(!query)return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="My Courses" />
-    <div role="alert" className="border-b border-border py-5">
+    <div role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
       The Course filters could not be understood. No other Section has been loaded.
       <Link href="/teacher/courses"
         className="ml-2 font-semibold text-primary-text underline inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">

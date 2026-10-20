@@ -35,7 +35,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     }))}
   />
   <form action="/teacher/live-classes" method="get"
-   className="flex flex-wrap items-end gap-3">
+   className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid gap-1 text-[13px] font-semibold leading-4">When
     <Select name="view" defaultValue={data.query.view}
      className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
@@ -51,14 +51,14 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       {c.courseName} · {c.sectionName}
      </option>)}
     </Select></label>
-   <Button type="submit" >Filter</Button>
+   <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="grid gap-3">{data.items.map(s=><li key={s.deliveryId+":"+s.id}
-     className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+     className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary motion-reduce:transition-none md:p-6">
     <h2 className="font-semibold text-foreground">{s.title}</h2>
     <p className="text-sm text-body">{s.courseName} · {s.sectionName}</p>
     <p className="text-sm text-body">
