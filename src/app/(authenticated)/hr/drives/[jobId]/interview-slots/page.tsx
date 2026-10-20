@@ -31,19 +31,22 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
  const action="/api/placements/recruiter/drives/"+jobId+"/interview-slots";
  const when=(d:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
   dateStyle:"medium",timeStyle:"short"}).format(d)+" IST";
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Interview slots"
    description={workspace.job.title+" · This schedules employer time blocks only. No learner invitation or candidate booking is created here."}/>
-  <Alert tone="info">
-    Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
-  </Alert>
   <nav aria-label="Interview coordination destinations" className="flex flex-wrap gap-3">
    <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Drive rounds"/>
    <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm font-medium text-primary-text md:min-h-9 hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
   </nav>
+  <Alert tone="info">
+    Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
+  </Alert>
+
   <>
-   <section className="space-y-3 border-b border-border pb-4">
-    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Propose an interviewer time block</h2>
+   <section id="propose-time-block" className="min-w-0 border-b border-border pb-4">
+    <details open={slots.items.length===0} className="min-w-0">
+     <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Propose an interviewer time block</summary>
+     <div className="mt-3 min-w-0 space-y-3">
     {rounds.length===0?<Alert tone="warning">
      No pending or scheduled interview round is available for this drive.{" "}
      <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
@@ -53,11 +56,13 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     <RecruiterInterviewSlotForm action={action} rounds={rounds.map(row=>({
       id:row.id,name:row.name,sequence:row.sequence,
     }))}/>
+     </div>
+    </details>
    </section>
-   <section className="space-y-3">
+   <section className="min-w-0 space-y-3">
     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Time blocks ({slots.items.length})</h2>
-    {slots.items.map(slot=><article key={slot.id} className="min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0">
-     <p className="font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
+    {slots.items.map(slot=><article key={slot.id} className="min-w-0 space-y-2 border-b border-border py-4">
+     <p className="break-words font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
      <p className="text-sm text-body">
       {slot.status==="OFFERED"?"Waiting for the placement cell":
         slot.status==="BOOKED"?"Reserved internally; confirm with placement cell":
@@ -74,7 +79,8 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
        "This time block was created by another recruiter and is read-only for your account."}
      </p>}
     </article>)}
-    {!slots.items.length?<EmptyState title="No persisted employer time blocks for this drive."/>:null}
+    {!slots.items.length?<EmptyState title="No persisted employer time blocks for this drive."
+      action={<Link href="#propose-time-block" className="inline-flex min-h-11 items-center text-primary-text underline min-[768px]:min-h-9">Propose an interviewer time block</Link>} />:null}
    </section>
   </>
  </div>;
