@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import {Alert} from "@/components/ui/alert";
 type Audience="COLLEGE"|"PLACEMENTS"|"BATCHES"|"BRANCHES"|"DRIVE";
 type Option={id:string;label:string};
 export type TpoNoticeTargetOptions={
@@ -69,8 +70,6 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
    </label>
    {!available.length?<span role="status" className="text-xs text-muted-foreground">{emptyText}</span>:null}
   </div>:null}
-  {targetKind&&!options?<p role="alert" className="text-xs">
-   Options could not load. Refresh to try again. Targeted sending is unavailable.
-  </p>:null}
+  {targetKind&&!options?<Alert tone="error">Options could not load. Refresh to try again. Targeted sending is unavailable.</Alert>:null}
  </div>;
 }
