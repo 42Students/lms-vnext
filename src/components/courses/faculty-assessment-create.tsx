@@ -1,6 +1,5 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
-import { EmptyState } from "@/components/ui/empty-state";
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Drawer} from "@/components/ui/drawer";
@@ -38,13 +37,13 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
  }
  function start(){if(!course||!lesson){setError("Select a course and lesson first.");return;}setContinued(true);setError(null);}
  return <>
-  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+  <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
    <div><h2 className="font-semibold text-foreground">Create {name}</h2>
     <p className="mt-1 text-sm text-body">Quizzes and assignments are attached to lessons in your assigned courses.</p>
    </div>
-   <Button className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
+   <Button className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
   </div>
-  {!courses.length?<EmptyState title="No assigned courses found" description={`Assign yourself to a course before creating a ${name.toLowerCase()}.`}/>:null}
+  {!courses.length?<Alert tone="info">No assigned courses found. Assign yourself to a course before creating a {name.toLowerCase()}.</Alert>:null}
   <Drawer open={open} onOpenChange={closeDrawer}
    title={kind==="QUIZ"?"Create quiz":"Create Assignment"}
    description="Choose your assigned course and lesson before opening the assessment builder."

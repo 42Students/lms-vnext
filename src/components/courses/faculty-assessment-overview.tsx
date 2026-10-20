@@ -99,7 +99,7 @@ export function FacultyAssessmentOverview({
             </li>)}
         </ul>
       </Disclosure>
-      <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-3">
+      <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">
         <label className="text-[13px] font-semibold leading-4 text-body">
           Course / Section
           <Select
@@ -135,7 +135,7 @@ export function FacultyAssessmentOverview({
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
-        <label className="text-[13px] font-semibold leading-4 text-body">
+        <label className="min-w-0 text-[13px] font-semibold leading-4 text-body sm:col-span-2 lg:col-span-1">
           Search assessments
           <Input
             className="mt-1.5"
@@ -160,13 +160,13 @@ export function FacultyAssessmentOverview({
           description="Change Course / Section or Status to see other assessments."
         />
       ) : (
-        <div className="space-y-4" aria-label={kind === "QUIZ" ? "All quizzes" : "All assignments"}>
+        <div className="min-w-0 divide-y divide-border" aria-label={kind === "QUIZ" ? "All quizzes" : "All assignments"}>
           {rows.map((item) => (
             <article
               key={`${item.deliveryId}:${item.id}`}
-              className="min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:p-6"
+              className="min-w-0 py-5 first:pt-2 last:pb-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary-text)]"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge tone={item.status === "PUBLISHED" ? "success" : item.status === "DRAFT" ? "warning" : "neutral"}>
@@ -177,15 +177,11 @@ export function FacultyAssessmentOverview({
                     </StatusBadge>
                   </div>
                   <h2 className="mt-2 text-base font-semibold text-foreground">{item.title}</h2>
-                  <p className="mt-1 text-sm text-body">
-                    {item.courseName} · {item.sectionName} · {item.lessonName} · {item.dueAt?`Due date: ${formatDate(item.dueAt)}`:"Needs due date"}
+                  <p className="mt-1 break-words text-sm leading-5 text-body">
+                    {item.courseName} · {item.sectionName} · {item.lessonName}
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
                     {item.academicPeriodName} · {item.dueAt?`Due ${formatDate(item.dueAt)}`:`Created: ${formatDate(item.createdAt)}`}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Course: {item.courseName} · Lesson: {item.lessonName}
-                    {" · "}{item.dueAt?`Due date: ${formatDate(item.dueAt)}`:"Needs due date"}
                   </p>
                   {item.status==="DRAFT"?<p className="mt-1 text-xs font-semibold text-warning">
                     Draft · hidden from students
@@ -194,7 +190,8 @@ export function FacultyAssessmentOverview({
                     <p className="mt-2 line-clamp-2 text-sm text-body">{item.description}</p>
                   ) : null}
                 </div>
-                <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:flex md:w-auto md:flex-wrap">
+                <div className="w-full min-w-0 lg:w-auto lg:max-w-[27rem]">
+                  <Disclosure title="Actions" className="border-0" summaryClassName="min-h-11 md:min-h-9" contentClassName="grid min-w-0 gap-2 pt-2 sm:grid-cols-2 lg:grid-cols-1">
                   {item.facultyOwned ? (
                     <>
                       <FacultyAssessmentEditor
@@ -253,6 +250,7 @@ export function FacultyAssessmentOverview({
                   >
                     Open Course
                   </Link>
+                  </Disclosure>
                 </div>
               </div>
               {item.kind === "QUIZ" ? (
