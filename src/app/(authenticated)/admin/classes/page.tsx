@@ -45,7 +45,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             </Select>
           </label>
           <label className="grid min-w-0 w-full md:min-w-40 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
-            <Input name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
+            <Input type="search" name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
               className="min-h-11 md:min-h-9" />
           </label>
           <label className="grid min-w-0 w-full md:min-w-44 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search class, program or batch

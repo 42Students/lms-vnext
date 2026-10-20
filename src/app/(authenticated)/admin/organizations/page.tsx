@@ -109,7 +109,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       </Disclosure>:null}
       <FilterBar title="Organization filters"><form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search organizations
-        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
+        <Input type="search" name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="w-full" />
        </label>
        <label className="flex flex-col gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
