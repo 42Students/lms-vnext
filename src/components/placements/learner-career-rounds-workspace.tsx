@@ -291,7 +291,7 @@ export function LearnerCareerRoundsWorkspace({
   const personalReminderAt = selectedReminderId ? reminders[selectedReminderId] ?? null : null;
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       <section aria-label={kind === "ASSESSMENT" ? "Assessment filters" : "Interview filters"}
         className="space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -302,7 +302,7 @@ export function LearnerCareerRoundsWorkspace({
             {urgencyCount} within seven days
           </StatusBadge>
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap" role="group" aria-label="Filter by schedule">
+        <div className="flex gap-2 overflow-x-auto pb-2 md:flex-wrap" role="group" aria-label="Filter by schedule">
           {timeChoices.map(({ value, label }) => (
             <FilterChip
               type="button"
@@ -360,7 +360,7 @@ export function LearnerCareerRoundsWorkspace({
             </p>
           </div>
         ) : null}
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid min-w-0 gap-3 md:grid-cols-3">
           <label className="text-xs font-semibold text-body">
             Search employers or rounds
             <Input
@@ -406,20 +406,20 @@ export function LearnerCareerRoundsWorkspace({
 
       {kind==="ASSESSMENT"&&dueBucket==="past"&&pastReview&&pastReview.count>0 ? (
         <aside role="status" aria-label="Past scheduled assessments"
-          className="rounded-xl border border-border bg-surface p-4">
+          className="min-w-0 border-b border-border py-4 md:py-6">
           <h3 className="text-sm font-semibold text-foreground">
             {pastReview.count} assessment schedule{pastReview.count===1?"":"s"} passed
           </h3>
           <p className="mt-2 text-sm text-body">{pastReview.notice}</p>
           <Link href="/learn/my-placements/assessments/results"
-            className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             Check officially applied results →
           </Link>
         </aside>
       ):null}
       {kind==="ASSESSMENT"&&dueBucket==="unscheduled"&&missingSchedule&&missingSchedule.count>0 ? (
         <aside role="status" aria-label="Assessments without a recorded date"
-          className="rounded-xl border border-border bg-surface p-4">
+          className="min-w-0 border-b border-border py-4 md:py-6">
           <h3 className="text-sm font-semibold text-foreground">{missingSchedule.count} assessment round{missingSchedule.count===1?"":"s"} without a recorded schedule</h3>
           <p className="mt-2 text-sm text-body">{missingSchedule.notice}</p>
           {missingSchedule.missingLinkCount>0 ? (
@@ -442,7 +442,7 @@ export function LearnerCareerRoundsWorkspace({
         </aside>
       ) : null}
       {visibleRows.length === 0 && relevant.length > 0 ? (
-        <div role="status" className="rounded-xl border border-border bg-surface p-6 text-center">
+        <div role="status" className="flex min-h-[180px] flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
           <p className="text-sm font-semibold text-foreground">No rounds match your filters</p>
           <p className="mt-2 text-sm text-body">Try a different date range or employer.</p>
           <Button type="button"
@@ -471,14 +471,14 @@ export function LearnerCareerRoundsWorkspace({
             href={selected
               ? "/learn/my-placements/applications?applicationId=" + encodeURIComponent(selected.applicationId)
               : "/learn/my-placements/applications"}
-            className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
+            className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
           >View application</Link>
           {kind === "INTERVIEW" && selected ? (
             <Link
               href={"/learn/my-placements/interviews?applicationId=" +
                 encodeURIComponent(selected.applicationId) +
                 "&roundId=" + encodeURIComponent(selected.roundId)}
-              className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
+              className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
             >
               Direct link
             </Link>
@@ -487,12 +487,12 @@ export function LearnerCareerRoundsWorkspace({
             <Link
               href={"/learn/my-placements?requestRoundId=" +
                 encodeURIComponent(selected.roundId) + "#round-reschedule"}
-              className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
+              className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
             >
               Request reschedule
             </Link>
           ) : null}
-          <Button className="min-h-11 sm:min-h-9 w-full sm:w-auto" onClick={() => setSelectedKey(null)}>Close</Button>
+          <Button className="min-h-11 md:min-h-9 w-full md:w-auto" onClick={() => setSelectedKey(null)}>Close</Button>
         </>}
       >
         {selected ? (
@@ -506,11 +506,11 @@ export function LearnerCareerRoundsWorkspace({
               </p>
             ) : null}
             {mobileInterviewSummary ? (
-              <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm font-semibold text-foreground sm:hidden">
+              <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm font-semibold text-foreground md:hidden">
                 {mobileInterviewSummary}
               </p>
             ) : null}
-            <dl className="grid gap-4 text-sm sm:grid-cols-2">
+            <dl className="grid gap-4 text-sm md:grid-cols-2">
               <div><dt className="text-xs font-semibold text-muted-foreground">Date & time (IST)</dt>
                 <dd className="mt-1 text-foreground">
                   {date === null ? "Schedule pending" :
@@ -533,7 +533,7 @@ export function LearnerCareerRoundsWorkspace({
               <section className="space-y-3 rounded-lg border border-primary bg-primary-subtle p-4"
                 aria-label="Approved reschedule summary">
                 <h3 className="text-sm font-semibold text-foreground">Approved schedule change</h3>
-                <dl className="grid gap-3 text-sm sm:grid-cols-2">
+                <dl className="grid gap-3 text-sm md:grid-cols-2">
                   <div><dt className="font-semibold text-body">Previous (IST)</dt>
                     <dd className="mt-1 text-foreground">{rescheduleSummary.previous}</dd></div>
                   <div><dt className="font-semibold text-body">Approved (IST)</dt>
@@ -542,7 +542,7 @@ export function LearnerCareerRoundsWorkspace({
                     <dd className="mt-1 text-foreground">{rescheduleSummary.location}</dd></div>
                 </dl>
                 <Button type="button" onClick={()=>void copyRescheduleSummary()}
-                  variant="secondary" className="min-h-11 w-full sm:w-auto">
+                  variant="secondary" className="min-h-11 w-full md:w-auto">
                   Copy schedule summary
                 </Button>
                 {copyStatus?<p role="status" className="text-xs text-body">{copyStatus}</p>:null}
@@ -561,7 +561,7 @@ export function LearnerCareerRoundsWorkspace({
               ) : null}
               {meeting ? (
                 <a href={meeting} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
                   Open meeting ↗
                 </a>
               ) : null}
@@ -579,11 +579,11 @@ export function LearnerCareerRoundsWorkspace({
                 {interviewCalendar ? <div className="mt-3 flex flex-wrap gap-3">
                   <a download={interviewCalendar.filename}
                     href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(interviewCalendar.ics)}
-                    className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text sm:w-auto">
+                    className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto">
                     Download .ics
                   </a>
                   <a href={interviewCalendar.googleUrl} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+                    className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
                     Add to Google Calendar ↗
                   </a>
                 </div> : <p className="mt-2 text-sm text-muted-foreground">
@@ -631,7 +631,7 @@ export function LearnerCareerRoundsWorkspace({
           <Button variant="secondary" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
           {confirmExternalTest ? <a href={confirmExternalTest} target="_blank" rel="noopener noreferrer"
             onClick={()=>setConfirmExternalTest(null)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
             Open external assessment ↗
           </a>:null}
         </>}>
