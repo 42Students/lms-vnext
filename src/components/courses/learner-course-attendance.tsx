@@ -258,7 +258,7 @@ export function LearnerCourseAttendance({
             </p>
           </div>
 
-          <div className="flex w-full flex-wrap items-end gap-2 md:w-auto">
+          <div className="flex w-full min-w-0 flex-wrap items-end gap-2 sm:w-auto">
             <Button
               size="sm"
               className="min-h-11 min-w-11 md:min-h-9 md:min-w-9"
@@ -268,7 +268,7 @@ export function LearnerCourseAttendance({
             >
               ←
             </Button>
-            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:flex-initial">
               Month
               <Input
                 type="month"
@@ -297,11 +297,11 @@ export function LearnerCourseAttendance({
                     navigateMonth(new Date(year,monthIndex,1));
                   }
                 }}
-                className="mt-1.5 min-h-11 md:min-h-9"
+                className="mt-1.5 min-h-11 w-full md:min-h-9"
               />
             </label>
             {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),currentMonth) ? (
-              <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9"
+              <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
                 onClick={() => {
                   const [year,nextMonth]=currentMonth.split("-").map(Number);
                   navigateMonth(new Date(year,nextMonth-1,1));
