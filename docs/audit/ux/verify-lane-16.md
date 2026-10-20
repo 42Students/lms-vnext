@@ -110,3 +110,9 @@ Compared polish-lane-6.md proof with detail route and selected-college season de
 
 ## 37. src/app/(authenticated)/admin/placements/seasons/page.tsx
 Inspected polish-lane-6.md entry, seasons list page and scoped query/list service, shared AdminScopedReadPage with status/search/result/pagination and UI components, loading/error and parent admin layout. No invalid statuses, scope leakage, broken tags/props, lost fields/labels or mobile row overflow confirmed. Empty, invalid filter, read-only active/closed periods and 375/768 controls remain aligned. No source edit. No CI. Files: queue/proof.
+
+## 38. src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx
+Verified polish-lane-6.md proof, shortlisted detail route, scoped permission and service query, SuperAdminPlacementDetailView, route loading/error/not-found/denied recovery and parent admin layout. No broken JSX/imports/ids, missing permission guard, role text or stage copy; confidential notes stay omitted. Long applicant/job/role values and 375/768 actions remain within compact fact layout. No extra source edit; no CI. Files: queue/proof.
+
+## 39. src/components/admin/admin-revoke-sessions.tsx
+Read polish-lane-6.md, AdminRevokeSessions, ConfirmDialog/Dialog contracts, useGuardedAction flight lock and POST sessions endpoint validation. Double-submit/pending/zero-count/confirm cancel/error/reopen/success states retain audited cross-college scope and accessible status/live messages; no missing imports, invalid props, duplicate fields, altered userId or route. 375/768 touch targets and warning text fit. No confirmed further change, source-only no CI. Files: queue/proof.
