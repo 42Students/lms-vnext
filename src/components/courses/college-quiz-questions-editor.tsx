@@ -94,21 +94,21 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
      <Input value={o.text} maxLength={2000} disabled={busy} aria-label={"Option "+(j+1)}
       onChange={e=>update(i,{...q,options:q.options.map((option,k)=>k===j?{...option,text:e.target.value}:option)})}
       className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
-     {q.options.length>2?<Button variant="secondary" type="button" className="min-h-11 text-error md:min-h-9" disabled={busy}
+     {q.options.length>2?<Button variant="danger" type="button" className="min-h-11 md:min-h-9" disabled={busy}
       onClick={()=>update(i,{...q,options:q.options.filter((_,k)=>k!==j)})}>Remove</Button>:null}
     </label>)}
     <div className="flex flex-wrap gap-3 text-xs">
      <Button variant="ghost" type="button" disabled={busy||q.options.length>=20}
       onClick={()=>update(i,{...q,options:[...q.options,{text:"",correct:false}]})}
       className="min-h-11 md:min-h-9">+ Option</Button>
-     {questions.length>1?<Button variant="secondary" type="button" disabled={busy} className="min-h-11 text-error md:min-h-9"
+     {questions.length>1?<Button variant="danger" type="button" disabled={busy} className="min-h-11 md:min-h-9"
       onClick={()=>{setDirty(true);setQuestions(prev=>prev.filter((_,k)=>k!==i));}}>Remove question</Button>:null}
     </div>
    </fieldset>)}
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={busy||questions.length>=100} onClick={()=>{setDirty(true);setQuestions(rows=>[...rows,empty()]);}}
      className="min-h-11 md:min-h-9">+ Add question</Button>
-    <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 md:min-h-9"
+    <Button variant="primary" type="button" loading={busy} disabled={busy} onClick={()=>void save()} className="min-h-11 md:min-h-9"
      >
      {busy?"Saving…":"Save questions"}</Button>
    </div>

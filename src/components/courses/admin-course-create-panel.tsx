@@ -331,7 +331,7 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending || !courseDepartmentId || !courseName.trim() || (superAdmin?!shortTitle.trim():!courseCode.trim())}>Create Course</Button>
+          <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending || !courseDepartmentId || !courseName.trim() || (superAdmin?!shortTitle.trim():!courseCode.trim())}>Create Course</Button>
         </div>
       </form>
 
@@ -377,7 +377,7 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending || !offeringCourseId || !offeringCohortId || !offeringAcademicPeriodId}>Create Offering</Button>
+          <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending || !offeringCourseId || !offeringCohortId || !offeringAcademicPeriodId}>Create Offering</Button>
         </div>
       </form>
 
@@ -401,7 +401,7 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending || !deliveryOfferingId || !deliverySectionId}>Add Section Delivery</Button>
+          <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending || !deliveryOfferingId || !deliverySectionId}>Add Section Delivery</Button>
         </div>
       </form>
 
@@ -436,7 +436,7 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending || !teacherDeliveryId || !teacherMembershipId}>Assign Faculty</Button>
+          <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending || !teacherDeliveryId || !teacherMembershipId}>Assign Faculty</Button>
         </div>
       </form>
       <ConfirmDialog

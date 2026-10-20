@@ -201,7 +201,7 @@ export function AssignmentFileSubmissionControl({
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
           {file.status === "VERIFYING" || file.status === "UPLOADING" ? <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy} onClick={() => retry(file.id)}>Check file</Button> : null}
-          {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy} onClick={() => remove(file.id)} aria-label="Remove this file">Remove</Button> : null}
+          {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={busy} onClick={() => remove(file.id)} aria-label="Remove this file">Remove</Button> : null}
         </li>;
       })}
     </ul>
@@ -216,7 +216,7 @@ export function AssignmentFileSubmissionControl({
           onChange={event => setConfirmed(event.target.checked)} />
         <span>I confirm this is my final assignment submission and cannot be replaced after it is recorded.</span>
       </label>
-      <Button type="button" disabled={busy || loading || !confirmed || !maySubmit} onClick={submit} className="min-h-11 md:min-h-9">
+      <Button type="button" loading={busy&&!activeName} disabled={busy || loading || !confirmed || !maySubmit} onClick={submit} className="min-h-11 md:min-h-9">
         {busy && !activeName ? "Submitting…" : "Submit Your Work"}
       </Button>
     </div> : null}

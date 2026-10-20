@@ -214,9 +214,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Remove existing resource link
    </label>:null}
    <div className="flex gap-2 md:col-span-2">
-    <Button type="button" variant="primary" disabled={busy} onClick={()=>void save()}>
+    <Button type="button" variant="primary" loading={busy} disabled={busy} onClick={()=>void save()}>
      {busy?"Saving…":"Save"}</Button>
-    <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
+    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
    </div>
   </div>}
   {existing.length>0&&<div className="space-y-2">
@@ -271,8 +271,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      {kind==="RESOURCE"&&materialsEnabled?<Button type="button" className="underline"
       aria-expanded={openMaterialsId===item.id} disabled={busy}
       onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</Button>:null}
-     <Button type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</Button>
-     {item.status==="DRAFT"&&<Button type="button" className="underline" disabled={busy}
+     <Button type="button" variant="link" disabled={busy} onClick={()=>select(item)}>Edit</Button>
+     {item.status==="DRAFT"&&<Button type="button" variant="primary" disabled={busy}
        onClick={()=>void transition(item,"PUBLISH")}>Publish</Button>}
      <Button type="button" variant="danger" disabled={busy}
        onClick={()=>void transition(item,"ARCHIVE")}>Delete</Button>
