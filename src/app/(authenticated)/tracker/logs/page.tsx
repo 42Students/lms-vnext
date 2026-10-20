@@ -40,14 +40,6 @@ export default async function TrackerLogsPage({
         description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
       />
       <TrackerAdminNav />
-      {!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
-        <TrackerLiveLogsExplorer initialQuery={liveQuery}/>:null}
-      {!cloudLogPollConfigured() ? (
-        <Alert tone="warning">Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.</Alert>
-      ) : null}
-      {!telegramAlertsConfigured() ? (
-        <Alert tone="warning">Telegram alerts are not configured</Alert>
-      ) : null}
     </>
   );
 
@@ -93,10 +85,28 @@ export default async function TrackerLogsPage({
         items={(["PRODUCTION","UAT","DEVELOPMENT"] as const).map(value=>({
           value, label:value, href:"/tracker/logs?environment="+value,
         }))} />
+      <KnownErrorsWorkspace items={items} lastViewedAt={state.adminLastViewedAt} />
+      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4" open={Boolean(liveQuery)}>
+        <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold text-[var(--lms-heading)] md:min-h-9">Live logging tools</summary>
+        <div className="min-w-0 space-y-4 pt-3">
+      {!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
+        <TrackerLiveLogsExplorer initialQuery={liveQuery}/>:null}
+      {!cloudLogPollConfigured() ? (
+        <Alert tone="warning">Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.</Alert>
+      ) : null}
+      {!telegramAlertsConfigured() ? (
+        <Alert tone="warning">Telegram alerts are not configured</Alert>
+      ) : null}
+        </div>
+      </details>
+      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+        <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold text-[var(--lms-heading)] md:min-h-9">Telegram alert tools</summary>
+        <div className="min-w-0 pt-3">
       <TrackerTelegramManualPanel items={items} configured={telegramAlertsConfigured()}
         deploy={/^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT??"")
           ?process.env.DEPLOY_COMMIT??null:null} />
-      <KnownErrorsWorkspace items={items} lastViewedAt={state.adminLastViewedAt} />
+        </div>
+      </details>
       {items.length === 40 ? (
         <p className="text-xs text-muted-foreground">
           Showing the most recent 40 signatures. Historical pagination is not yet implemented.

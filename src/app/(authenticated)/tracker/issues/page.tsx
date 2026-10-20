@@ -94,11 +94,21 @@ export default async function TrackerIssuesPage({
         sort:current.sort,
       }).toString()} />
 
-      <form className="grid min-w-0 gap-2 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">
+      <form className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search
           <Input className="min-h-11 w-full md:min-h-9" name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
         </label>
+        <div className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:[&>button]:flex-1">
+          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
+          <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            Reset
+          </Link>
+        </div>
+        <details open={Boolean(current.reporter || current.status || current.severity || current.environment || current.sort!=="newest")}
+          className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2 md:col-span-2">
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
+          <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Reporter
           <Input className="min-h-11 w-full md:min-h-9" name="reporter" defaultValue={current.reporter??""} maxLength={100} placeholder="Reporter name"/>
@@ -131,12 +141,8 @@ export default async function TrackerIssuesPage({
             <option value="oldest">Oldest first</option>
           </Select>
         </label>
-        <div className="flex items-end gap-2 min-[768px]:col-span-2 min-[992px]:col-span-5">
-          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
-          <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-            Reset
-          </Link>
-        </div>
+          </div>
+        </details>
       </form>
 
       <TrackerIssueBulkActions rows={page.items.map(issue=>({publicId:issue.publicId,version:issue.version,status:issue.status}))} />
@@ -148,29 +154,25 @@ export default async function TrackerIssuesPage({
         <div className="divide-y divide-[var(--lms-canvas-border)]">
           {page.items.map((issue) => (
             <article key={issue.id} className="min-w-0 py-4">
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div className="flex min-w-0 flex-col gap-2">
                 <div className="min-w-0">
-                  <div className="flex flex-wrap gap-2">
-                    <StatusBadge tone={issue.status==="CLOSED"?"success":issue.status==="NEW"||issue.status==="READY_FOR_RETEST"?"warning":"info"}>{issue.status.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
-                    <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":issue.severity==="MAJOR"?"warning":"neutral"}>{issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
-                    <StatusBadge>{issue.environment}</StatusBadge>
-                  </div>
+
                   <h2 className="mt-3 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                     <Link className="inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
                       {issue.publicId} · {issue.issueType}
                     </Link>
                   </h2>
-                  <p className="mt-1 line-clamp-2 text-sm text-body">{issue.description}</p>
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <div className="flex flex-wrap gap-2">
+                    <StatusBadge tone={issue.status==="CLOSED"?"success":issue.status==="NEW"||issue.status==="READY_FOR_RETEST"?"warning":"info"}>{issue.status.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
+                    <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":issue.severity==="MAJOR"?"warning":"neutral"}>{issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
+                    <StatusBadge>{issue.environment}</StatusBadge>
+                  </div>
+                  <p className="mt-1 line-clamp-2 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{issue.description}</p>
+                  <p className="mt-2 max-w-3xl break-words [overflow-wrap:anywhere] text-xs text-muted-foreground">
                     {issue.reporterName} · {issue.accountRole} · {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")} · {issue.createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
                   </p>
                 </div>
-                <Link
-                  href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}
-                  className="inline-flex min-h-11 md:min-h-9 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                >
-                  Open issue
-                </Link>
+
               </div>
             </article>
           ))}
