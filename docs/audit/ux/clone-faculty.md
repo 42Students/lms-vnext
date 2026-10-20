@@ -776,3 +776,21 @@ This inventory reads every named queued file through the connected GitHub reposi
 | `src/components/admin/super-admin-people-csv-control.tsx` | 32 | 0 (0 hidden) | 0 | 1/1 | 25,29 |
 | `src/components/attendance/faculty-attendance-schedule-editor.tsx` | 146 | 0 (0 hidden) | 0 | 1/1 | 98,105,112 |
 | `src/components/attendance/faculty-attendance-workspace.tsx` | 1284 | 0 (0 hidden) | 0 | 14/14 | 491,493,549 |
+
+
+### Source inventory directly related components, part 2/4 (13–24 of 48)
+
+| Path | Lines | Raw/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source token/state example lines |
+|---|---:|---:|---:|---:|---|
+| `src/components/courses/faculty-assessment-create.tsx` | 88 | 0 (0 hidden) | 0 | 2/2 | 45,47,52 |
+| `src/components/courses/faculty-assessment-editor.tsx` | 368 | 0 (0 hidden) | 0 | 3/3 | 207,273,286 |
+| `src/components/courses/faculty-assessment-lifecycle.tsx` | 90 | 0 (0 hidden) | 0 | 1/1 | 66,73,76 |
+| `src/components/courses/faculty-assessment-overview.tsx` | 316 | 0 (0 hidden) | 0 | 2/2 | 73,103,121 |
+| `src/components/courses/faculty-assignment-editor.tsx` | 219 | 0 (0 hidden) | 0 | 4/4 | 156,158,166 |
+| `src/components/courses/faculty-assignment-material-links.tsx` | 100 | 0 (0 hidden) | 0 | 2/2 | 58,61,62 |
+| `src/components/courses/faculty-assignment-method-picker.tsx` | 29 | 0 (0 hidden) | 0 | 0/0 | 9,15 |
+| `src/components/courses/faculty-assignment-review.tsx` | 668 | 0 (0 hidden) | 0 | 11/11 | 343,394,401 |
+| `src/components/courses/faculty-choice-quiz-builder.tsx` | 442 | 0 (0 hidden) | 0 | 26/26 | 207,209,211 |
+| `src/components/courses/faculty-contacts-table.tsx` | 66 | 0 (0 hidden) | 0 | 0/0 | 16,26 |
+| `src/components/courses/faculty-content-editor.tsx` | 183 | 0 (0 hidden) | 0 | 2/2 | 107,122,127 |
+| `src/components/courses/faculty-content-order-editor.tsx` | 205 | 0 (0 hidden) | 0 | 4/4 | 102 |
