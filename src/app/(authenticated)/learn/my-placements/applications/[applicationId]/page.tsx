@@ -32,7 +32,7 @@ export default async function LearnerApplicationDetailPage({params}:{
       actions={<StatusBadge>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
     <section className="border-b border-border py-4 md:py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold text-foreground">Application actions</h2>
+        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Application actions</h2>
         {record.currentStatus==="SUBMITTED"
           ? <LearnerApplicationDetailWithdraw applicationId={record.applicationId} requiresRequest={requiresRequest}/>
           : <p className="text-sm text-muted-foreground">Withdrawal unavailable in the current status.</p>}
@@ -46,7 +46,7 @@ export default async function LearnerApplicationDetailPage({params}:{
       </Link>
     </section>
     <section className="border-b border-border py-4 md:py-6" aria-label="Recorded application timeline">
-      <h2 className="text-base font-semibold text-foreground">Status timeline</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status timeline</h2>
       <p className="mt-2 text-sm text-body">
         Only persisted application status changes are listed. Internal notes and actor IDs are withheld.
         Screening and interview decisions appear in your placement journey.
@@ -54,7 +54,7 @@ export default async function LearnerApplicationDetailPage({params}:{
       {record.events.length?<ol className="mt-4 space-y-3">
         {record.events.map(event=><li key={event.id} className="border-b border-border py-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="text-sm font-semibold text-foreground">{event.label}</h3>
+            <h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{event.label}</h3>
             <time className="text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>{when(event.occurredAt)}</time>
           </div>
           <p className="mt-2 text-sm text-body">
