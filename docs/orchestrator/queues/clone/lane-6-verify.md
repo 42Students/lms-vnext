@@ -42,16 +42,16 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regres
 - [x] `src/components/college/student-class-move-action.tsx`
 - [x] `src/components/courses/admin-course-actions.tsx`
 - [x] `src/components/courses/admin-learning-structure-actions.tsx`
-- [ ] `src/components/courses/assignment-submission-control.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
-- [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx`
-- [ ] `src/components/auth/portal-access-notice.tsx`
-- [ ] `src/components/hr/recruiter-designation-editor.tsx`
-- [ ] `src/components/projects/college-project-summary-editor.tsx`
-- [ ] `src/components/public/graceful-error-boundary.tsx`
-- [ ] `src/components/tpo/tpo-header-indicators.tsx`
+- [x] `src/components/courses/assignment-submission-control.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
+- [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx`
+- [x] `src/components/auth/portal-access-notice.tsx`
+- [x] `src/components/hr/recruiter-designation-editor.tsx`
+- [x] `src/components/projects/college-project-summary-editor.tsx`
+- [x] `src/components/public/graceful-error-boundary.tsx`
+- [x] `src/components/tpo/tpo-header-indicators.tsx`
 - [ ] `src/components/ui/form-grid.tsx`
 - [ ] `src/components/ui/otp-input.tsx`
 - [ ] `src/components/ui/search-field.tsx`

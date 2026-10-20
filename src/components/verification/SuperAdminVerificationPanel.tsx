@@ -32,6 +32,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const [bulkBusy,setBulkBusy]=useState(false);
  const inFlightRef=useRef(false);
  const [bulkMessage,setBulkMessage]=useState("");
+ const [bulkFailed,setBulkFailed]=useState(false);
  const candidates=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const inSequence=selected&&sequence.length>0&&sequence[sequenceIndex]&&
   verificationSelectionKey(selected)===verificationSelectionKey(sequence[sequenceIndex]);
@@ -47,7 +48,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
   if(!bulkAction||bulkBusy||inFlightRef.current||applicable.length===0||bulkAction==="VERIFY"&&!acknowledged||
     bulkAction==="SEND_BACK"&&reason.trim().length<3)return;
   inFlightRef.current=true;
-  setBulkBusy(true);setBulkMessage("");
+  setBulkBusy(true);setBulkMessage("");setBulkFailed(false);
   try{
    const payload=collegeBulkReviewPayload(applicable,bulkAction,reason);
    const response=await fetch("/api/admin/verification/bulk-review",{method:"POST",credentials:"same-origin",
@@ -56,12 +57,14 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    const result=await response.json() as {summary:{succeeded:number;failed:number;attempted:number}};
    setBulkMessage(result.summary.succeeded+" verified or sent back; "+result.summary.failed+" not applied. Refresh for current row states.");
    setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);router.refresh();
-  }catch(error){setBulkMessage(error instanceof Error?error.message:"Could not finish bulk review.");}
+  }catch(error){setBulkFailed(true);setBulkMessage(error instanceof Error?error.message:"Could not finish bulk review.");}
   finally{inFlightRef.current=false;setBulkBusy(false);}
  }
 
  const base=`/admin/colleges/${encodeURIComponent(collegeId)}/verification`;
  const navigate=(changes:Record<string,string>)=>{
+  if(bulkBusy||inFlightRef.current)return;
+  stopSequence();setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);
   const params=new URLSearchParams(query);
   for(const [k,v] of Object.entries(changes)){if(v)params.set(k,v);else params.delete(k);}
   router.push(base+"?"+params.toString());
@@ -83,7 +86,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
   {activeTab==="WAITING"&&candidates.length>0?<Disclosure ariaLabel="Super Admin bulk verification" title={<h2 className="font-semibold">Act on selected verification requests</h2>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
-   <div className="flex flex-wrap gap-2">
+   <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:grid-cols-2 lg:flex lg:flex-wrap [&>button]:w-full lg:[&>button]:w-auto">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Select first 20 waiting</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
@@ -95,7 +98,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    </div>
    <ul className="max-h-44 space-y-2 overflow-y-auto">
     {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>
-      <label className="flex items-center gap-2 text-sm">
+      <label className="flex min-h-11 items-center gap-[var(--lms-space-2)] text-sm">
        <Checkbox disabled={bulkBusy||(!selectedKeys.includes(verificationSelectionKey(row))&&selectedKeys.length>=20)}
         checked={selectedKeys.includes(verificationSelectionKey(row))}
         onChange={e=>{const key=verificationSelectionKey(row);setSelectedKeys(current=>e.target.checked?[...current,key]:current.filter(k=>k!==key));setBulkAction(null);}}/>
@@ -103,7 +106,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
       </label>
     </li>)}
    </ul>
-   {bulkAction?<div className="space-y-2 rounded-md border border-border p-3">
+   {bulkAction?<div className="space-y-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-3)]">
     <p className="text-sm">{applicable.length} ready, {skipped.length} left out because proof is missing. Decisions are individually rechecked by the server.</p>
     {skipped.length?<p className="text-xs text-warning-text">Skipped: {skipped.map(r=>r.learnerName).join(", ")}</p>:null}
     {bulkAction==="SEND_BACK"?<label className="block text-sm">Reason for sending back
@@ -118,13 +121,13 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
      {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}
     </Button>
    </div>:null}
-   {bulkMessage?<p role="status" className="text-sm">{bulkMessage}</p>:null}
+   {bulkMessage?<p role={bulkFailed?"alert":"status"} className="text-sm">{bulkMessage}</p>:null}
   </Disclosure>:null}
   <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)]">
    <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
    <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Refresh</Button>
   </div>
-  <nav aria-label="Verification pages" className="flex flex-wrap gap-3 text-sm">
+  <nav aria-label="Verification pages" className="flex flex-wrap items-center gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] text-sm">
    <span>Showing {rows.length} of {total} in this status</span>
    {page>1?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="min-h-[var(--lms-control-height)] underline">Previous</Button>:null}
    {hasMore?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="min-h-[var(--lms-control-height)] underline">Next</Button>:null}
