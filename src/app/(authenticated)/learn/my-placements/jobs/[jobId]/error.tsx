@@ -19,7 +19,7 @@ export default function LearnerJobDetailError({
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <Button className="max-md:min-h-11" onClick={reset}>Retry</Button>
         <Link href="/learn/my-placements/jobs"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9">
           Back to Drives
         </Link>
       </div>
