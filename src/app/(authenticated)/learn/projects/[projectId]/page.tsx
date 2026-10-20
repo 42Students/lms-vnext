@@ -152,7 +152,7 @@ export default async function LearnerProjectPage({
       {activeSection === "tasks" ? <section className="flex flex-wrap items-center gap-3">
         {workspace.readiness.finalSubmission.canSubmitDraft?
           <Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-primary-text">
             Submit final work
           </Link>:
           <p className="text-xs text-body">Submission available after completion.</p>}
@@ -164,11 +164,11 @@ export default async function LearnerProjectPage({
           readOnly={workspace.project.status!=="ACTIVE"}/>
       ) : null}
       {selectionNotice ? (
-        <div role="status" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3 text-sm leading-[1.5] text-body">
+        <Alert tone="info" className="!flex-row flex-wrap items-center justify-between gap-3">
           <span>{selectionNotice}</span>
           <Link href={learnerBoardTaskHref(projectId, boardFilters)}
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline">Return to Board</Link>
-        </div>
+            className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Board</Link>
+        </Alert>
       ) : null}
       {selectedTask ? (
         <LearnerBoardTaskDetailDialog projectId={projectId} filters={boardFilters}
