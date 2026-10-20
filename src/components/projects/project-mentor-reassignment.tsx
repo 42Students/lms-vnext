@@ -182,21 +182,21 @@ export function ProjectMentorReassignment({
   }
 
   return (
-    <div className="min-w-0 space-y-4">
+    <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <section className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Select workspaces
         </h2>
-        <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
+        <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
           <Button variant="secondary" type="button" disabled={pending || !matchingWorkspaces.length}
             onClick={() => setSelected(matchingWorkspaces.map(row => row.id))}
-            className="">
+            className="w-full sm:w-auto">
             {matchingCapped?"Select first "+matchingWorkspaces.length+" matching workspaces":
               "Select all "+matchingWorkspaces.length+" matching workspaces"}
           </Button>
           <Button variant="secondary" type="button" disabled={pending || !selected.length}
             onClick={() => setSelected([])}
-            className="">
+            className="w-full sm:w-auto">
             Clear selection
           </Button>
           <span className="text-sm text-body">{selected.length} selected across pages</span>
@@ -210,11 +210,11 @@ export function ProjectMentorReassignment({
             No non-archived workspaces are available.
           </p>
         ) : (
-          <div className="mt-3 min-w-0 border-t border-border">
+          <div role="group" aria-label="Workspaces to reassign" className="mt-[var(--lms-space-3)] max-h-[22rem] min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)]">
             {workspaces.map((workspace) => (
               <label
                 key={workspace.id}
-                className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-3 border-b border-border px-2 py-3 motion-safe:transition-colors motion-reduce:transition-none hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+                className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-[var(--lms-space-3)] px-[var(--lms-space-2)] py-[var(--lms-space-3)] motion-safe:transition-colors motion-reduce:transition-none hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
               >
                 <Checkbox
                   checked={selected.includes(
@@ -249,8 +249,8 @@ export function ProjectMentorReassignment({
         <h2 className="m-0 text-base font-semibold text-foreground">
           Reassign to mentor
         </h2>
-        <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
-          <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-body">
+        <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search mentors
             <Input
               type="search"
@@ -262,7 +262,7 @@ export function ProjectMentorReassignment({
               className="w-full"
             />
           </label>
-          <label className="grid gap-1 text-[13px] font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             New primary mentor
             <Select
               value={mentorMembershipId}
@@ -285,7 +285,7 @@ export function ProjectMentorReassignment({
               ))}
             </Select>
           </label>
-          <label className="grid gap-1 text-[13px] font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Role label
             <Input
               value={roleLabel}
@@ -298,7 +298,9 @@ export function ProjectMentorReassignment({
           </label>
         </div>
 
-        <p className="mt-4 text-sm leading-6 text-body">
+        <details className="mt-[var(--lms-space-4)] min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]">
+         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Reassignment impact</summary>
+        <p className="mt-[var(--lms-space-2)] text-sm leading-6 text-body">
           The previous primary mentor is removed from
           each changed workspace. Existing co-mentors
           remain. Scheduled meetings owned by the
@@ -308,6 +310,7 @@ export function ProjectMentorReassignment({
           Tasks assigned to the outgoing mentor will become unassigned. Both mentors
           and project learners receive a project notification.
         </p>
+        </details>
 
         {selected.length > 0 && mentorMembershipId ?
           <p className="mt-3 text-sm text-body">
@@ -316,6 +319,7 @@ export function ProjectMentorReassignment({
         {!selected.length ? <p role="status" className="mt-3 text-sm text-body">Select at least one workspace to reassign.</p> : null}
         <div className="mt-4">
           <Button className="w-full sm:w-auto"
+            loading={pending}
             disabled={
               pending ||
               !selected.length ||
@@ -367,14 +371,14 @@ export function ProjectMentorReassignment({
       <Dialog open={failureOpen} onOpenChange={setFailureOpen}
         title="Some workspaces were not reassigned"
         description="The successful workspaces were saved. Review the failed workspaces and retry only those that failed.">
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-[var(--lms-space-4)]">
           <p role="status" className="text-sm text-body">{result?.reassignedCount ?? 0} reassigned · {result?.failures.length ?? 0} failed</p>
-          <ul className="max-h-64 overflow-y-auto list-disc space-y-2 pl-5 text-sm text-body">
+          <ul className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] pl-[var(--lms-space-5)] text-sm text-body [&_li]:py-[var(--lms-space-2)]">
             {result?.failures.map(failure=><li key={failure.projectId}>
               {workspaces.find(row=>row.id===failure.projectId)?.title ?? "Unavailable workspace"} — could not reassign. Review access or refresh before retrying.
             </li>)}
           </ul>
-          <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
             <Button variant="secondary" className="w-full md:w-auto" onClick={()=>setFailureOpen(false)}>Close</Button>
             <Button className="w-full md:w-auto" disabled={pending || !result?.failures.length}
               onClick={()=>{setFailureOpen(false);setConfirmOpen(true);}}>Retry failed workspaces</Button>

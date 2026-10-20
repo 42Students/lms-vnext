@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -65,9 +66,9 @@ function ResourceForm({
   isLearner?: boolean;
 }) {
   return (
-    <div className="grid gap-4">
-      <label>
-        <span className="mb-1.5 block text-xs font-semibold text-body">
+    <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+      <label className="min-w-0">
+        <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Title
         </span>
         <Input
@@ -80,7 +81,7 @@ function ResourceForm({
         />
       </label>
       <label>
-        <span className="mb-1.5 block text-xs font-semibold text-body">
+        <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           URL
         </span>
         <Input
@@ -95,7 +96,7 @@ function ResourceForm({
         />
       </label>
       <label>
-        <span className="mb-1.5 block text-xs font-semibold text-body">
+        <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Description
         </span>
         <Textarea
@@ -107,8 +108,10 @@ function ResourceForm({
           }
         />
       </label>
-      {!isLearner ? <>
-        <label className="grid gap-1 text-sm font-semibold text-body">Type
+      {!isLearner ? <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]" defaultOpen={metadata.status!=="ACTIVE"||metadata.resourceType!=="LINK"||metadata.pinned||Boolean(metadata.accessNotes||metadata.sprintId||metadata.taskId)}>
+        <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Resource details</summary>
+        <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
           <Select value={metadata.resourceType}
             onChange={event=>onMetadata({...metadata,resourceType:event.target.value as ResourceMetadata["resourceType"]})}
             className="w-full">
@@ -116,7 +119,7 @@ function ResourceForm({
               <option key={value} value={value}>{value[0]+value.slice(1).toLowerCase()}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Status
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select value={metadata.status}
             onChange={event=>onMetadata({...metadata,status:event.target.value as ResourceMetadata["status"]})}
             className="w-full">
@@ -124,7 +127,7 @@ function ResourceForm({
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Related sprint
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Related sprint
           <Select value={metadata.sprintId}
             onChange={event=>onMetadata({...metadata,sprintId:event.target.value,taskId:""})}
             className="w-full">
@@ -132,7 +135,7 @@ function ResourceForm({
             {sprints.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Related task
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Related task
           <Select value={metadata.taskId}
             onChange={event=>onMetadata({...metadata,taskId:event.target.value})}
             className="w-full">
@@ -141,15 +144,16 @@ function ResourceForm({
           </Select>
         </label>
         <label className="flex items-center gap-2 text-sm font-semibold text-body">
-          <input className="size-4 accent-[var(--lms-button-primary)]" type="checkbox" checked={metadata.pinned}
+          <Checkbox checked={metadata.pinned}
             onChange={event=>onMetadata({...metadata,pinned:event.target.checked})}/> Pinned
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Access notes
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Access notes
           <Textarea maxLength={4000} value={metadata.accessNotes}
             onChange={event=>onMetadata({...metadata,accessNotes:event.target.value})}/>
         </label>
-      </> : null}
-      {!isLearner ? <label className="grid gap-1 text-sm font-semibold text-body">
+        </div>
+      </details> : null}
+      {!isLearner ? <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Visible to
         <Select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}
           className="w-full">
@@ -158,8 +162,7 @@ function ResourceForm({
         </Select>
       </label> : null}
       {!isLearner ? <label className="flex items-center gap-2 text-sm font-semibold text-body">
-        <input className="size-4 accent-[var(--lms-button-primary)]"
-          type="checkbox"
+        <Checkbox
           checked={required}
           onChange={(event) =>
             onRequired(event.target.checked)
@@ -277,7 +280,7 @@ export function CreateProjectResourceControl({
       >
         <form
           onSubmit={submit}
-          className="grid gap-4"
+          className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
           <ResourceForm
             isLearner={isLearner}
@@ -301,10 +304,11 @@ export function CreateProjectResourceControl({
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={requestClose}
             >
@@ -312,6 +316,8 @@ export function CreateProjectResourceControl({
             </Button>
             <Button
               type="submit"
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={
                 pending ||
                 !title.trim() ||
@@ -463,7 +469,7 @@ export function ProjectResourceActions({
 
   return (
     <>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap gap-[var(--lms-space-2)]">
         <Button
           size="sm"
           variant="secondary"
@@ -502,7 +508,7 @@ export function ProjectResourceActions({
       >
         <form
           onSubmit={save}
-          className="grid gap-4"
+          className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
           <ResourceForm
             title={title}
@@ -525,10 +531,11 @@ export function ProjectResourceActions({
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={requestEditClose}
             >
@@ -536,6 +543,8 @@ export function ProjectResourceActions({
             </Button>
             <Button
               type="submit"
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={
                 pending ||
                 !title.trim() ||

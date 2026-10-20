@@ -76,9 +76,9 @@ function MeetingFields({
   onTimeZone: (value: string) => void;
 }) {
   return (
-    <div className="grid gap-4">
-      <label>
-        <span className="mb-1.5 block text-xs font-semibold text-body">
+    <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+      <label className="min-w-0">
+        <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {isRequest?"Title":"Title"}
         </span>
         <Input
@@ -91,7 +91,7 @@ function MeetingFields({
         />
       </label>
       <label>
-        <span className="mb-1.5 block text-xs font-semibold text-body">
+        <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {isRequest?"Agenda / reason":"Agenda"}
         </span>
         <Textarea
@@ -102,9 +102,9 @@ function MeetingFields({
           }
         />
       </label>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
         <label>
-          <span className="mb-1.5 block text-xs font-semibold text-body">
+          <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {isRequest?"Preferred start time":"Start"}
           </span>
           <Input
@@ -118,7 +118,7 @@ function MeetingFields({
           />
         </label>
         <label>
-          <span className="mb-1.5 block text-xs font-semibold text-body">
+          <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {isRequest?"Preferred end time":"End"}
           </span>
           <Input
@@ -237,7 +237,7 @@ export function RequestProjectMeetingControl({
       >
         <form
           onSubmit={submit}
-          className="grid gap-4"
+          className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
           <MeetingFields
             isRequest
@@ -262,10 +262,11 @@ export function RequestProjectMeetingControl({
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={guard.requestClose}
             >
@@ -273,6 +274,8 @@ export function RequestProjectMeetingControl({
             </Button>
             <Button
               type="submit"
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={
                 pending ||
                 !title.trim() ||
@@ -506,7 +509,7 @@ export function ScheduleProjectMeetingControl({
         <form
           noValidate
           onSubmit={submit}
-          className="grid gap-4"
+          className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
           <MeetingFields
             title={title}
@@ -521,7 +524,7 @@ export function ScheduleProjectMeetingControl({
             onEndsAt={setEndsAt}
             onTimeZone={setTimeZone}
           />
-          <label className="grid gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select value={meetingStatus} onChange={event=>
               setMeetingStatus(event.target.value as "DRAFT"|"SCHEDULED"|"RESCHEDULED")}>
@@ -537,7 +540,7 @@ export function ScheduleProjectMeetingControl({
             </span>:null}
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Ceremony
             </span>
             <Select
@@ -565,7 +568,7 @@ export function ScheduleProjectMeetingControl({
             </Select>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Meeting link
             </span>
             <Input
@@ -583,7 +586,7 @@ export function ScheduleProjectMeetingControl({
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label>
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Linked sprint
               </span>
               <Select
@@ -608,7 +611,7 @@ export function ScheduleProjectMeetingControl({
               </Select>
             </label>
             <label>
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Linked task
               </span>
               <Select
@@ -640,29 +643,30 @@ export function ScheduleProjectMeetingControl({
               </Select>
             </label>
           </div>
-          <fieldset className="grid gap-3 border-t border-border pt-3">
-            <legend className="px-1 text-sm font-semibold">Meeting notes and follow-up</legend>
+          <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
+            <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Meeting notes and follow-up</summary>
+            <fieldset className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             {([
               ["notes","Notes"],["actionItems","Action items"],
               ["wentWell","What went well?"],["improve","What didn't go well?"],
               ["nextTime","Actions for next sprint"],["followUpNotes","Follow-up notes"],
             ] as const).filter(([field])=>meetingType==="RETRO" ||
               !["wentWell","improve","nextTime"].includes(field)).map(([field,label])=>
-              <label key={field} className="grid gap-1 text-xs font-semibold text-body">
+              <label key={field} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 {label}
                 <Textarea value={facilitation[field]} maxLength={4000}
                   onChange={event=>setFacilitation(prev=>({...prev,[field]:event.target.value}))}/>
               </label>)}
-            <label className="grid gap-1 text-xs font-semibold text-body">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Outcome
               <Textarea value={outcome} maxLength={4000} onChange={event=>setOutcome(event.target.value)}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Follow-up at (IST)
               <Input type="datetime-local" value={followUpAt}
                 onChange={event=>setFollowUpAt(event.target.value)}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Follow-up status
               <Select value={facilitation.followUpStatus}
                 onChange={event=>setFacilitation(prev=>({...prev,
@@ -674,7 +678,8 @@ export function ScheduleProjectMeetingControl({
                 <option value="BLOCKED">Blocked</option>
               </Select>
             </label>
-          </fieldset>
+            </fieldset>
+          </details>
           {error ? (
             <p
               role="alert"
@@ -683,10 +688,11 @@ export function ScheduleProjectMeetingControl({
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={guard.requestClose}
             >
@@ -694,6 +700,8 @@ export function ScheduleProjectMeetingControl({
             </Button>
             <Button
               type="submit"
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={pending}
             >
               {pending
@@ -794,7 +802,7 @@ export function ProjectMeetingTransitionActions({
 
   return (
     <>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row">
         {mayComplete ? (
           <Button
             size="sm"
@@ -835,15 +843,18 @@ export function ProjectMeetingTransitionActions({
             : withdrawing?"Your mentor will no longer see this request.":draftDiscard?"This draft was never shared with learners. Discarding keeps an internal record only.":"Cancellation keeps the meeting record and its history visible."
         }
         footer={
-          <>
+          <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
             <Button
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={guard.requestClose}
             >
               Back
             </Button>
             <Button
+              className="w-full sm:w-auto"
+              loading={pending}
               variant={
                 open === "CANCEL"
                   ? "danger"
@@ -862,11 +873,11 @@ export function ProjectMeetingTransitionActions({
                   ? "Complete"
                   : withdrawing?"Withdraw request":draftDiscard?"Discard draft":"Cancel meeting"}
             </Button>
-          </>
+          </div>
         }
       >
         {!withdrawing?<label>
-          <span className="mb-1.5 block text-xs font-semibold text-body">
+          <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {open === "COMPLETE"
               ? "Outcome"
               : "Cancellation note"}
