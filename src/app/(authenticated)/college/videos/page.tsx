@@ -16,7 +16,7 @@ export default async function CollegeVideosPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
+  if(!context.membership)return <CollegeCourseMissingScope area="Video"/>;
   const raw = collegeContentSearchParams(await searchParams);
   const parsed = collegeContentQuerySchema.safeParse(raw);
   if (!parsed.success) {
