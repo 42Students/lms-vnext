@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TpoCompanyFeedbackForm } from "@/components/placements/tpo-company-feedback-form";
@@ -39,16 +40,13 @@ export default async function TpoCompanyFeedbackPage({
 
   const base = "/tpo/companies/" + encodeURIComponent(companyId) + "/feedback";
   return (
-    <div className="min-w-0 space-y-5">
-      <Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-        ← Company details
-      </Link>
-      <PageHeader
-        
-        title={data.companyName + " · Internal feedback"}
+    <div className="min-w-0 space-y-4">
+      <PageHeader title={data.companyName + " · Internal feedback"}
         description="Recorded TPO recruiter notes for contacts explicitly linked to this college-company relationship."
-      />
+        actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
+          className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          ← Company details
+        </Link>}/>
       {!data.available ? (
         <Alert tone="warning">
           Registered recruiter note storage is unavailable in this database. No
@@ -67,19 +65,19 @@ export default async function TpoCompanyFeedbackPage({
               a contact before recording company feedback.
             </Alert>
           ) : (
-            <TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} />
+            <Disclosure title="Record recruiter feedback" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3"><TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} /></Disclosure>
           )}
           <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
             <h2 className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
             {data.notes.length === 0 ? (
-              <EmptyState title="No saved NOTE-type CRM activities appear on this page." description="Calls, meetings, external communications and unstored feedback are not inferred."/>
+              <EmptyState title="No saved NOTE-type CRM activities appear on this page." description="Calls, meetings, external communications and unstored feedback are not inferred." action={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">← Company details</Link>}/>
             ) : (
-              <ul className="divide-y divide-border">
+              <ul className="divide-y divide-[var(--lms-canvas-border)]">
                 {data.notes.map((item) => (
                   <li key={item.id} className="space-y-2 py-[var(--lms-space-4)]">
-                    <div className="flex flex-wrap justify-between gap-2">
+                    <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                       <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
                         className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                         {item.contactName}
@@ -94,7 +92,7 @@ export default async function TpoCompanyFeedbackPage({
               </ul>
             )}
           </section>
-          <nav aria-label="Feedback pages" className="flex items-center justify-between gap-3 text-sm">
+          {(data.page>1||(data.totalPages!==null&&data.page<data.totalPages))?<nav aria-label="Feedback pages" className="flex items-center justify-between gap-3 text-sm">
             <span>Page {data.page} of {data.totalPages}</span>
             <div className="flex gap-3">
               {data.page > 1 ? (
@@ -106,7 +104,7 @@ export default async function TpoCompanyFeedbackPage({
                   className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Next →</Link>
               ) : null}
             </div>
-          </nav>
+          </nav>:null}
         </>
       )}
       <p className="text-xs text-muted-foreground">
