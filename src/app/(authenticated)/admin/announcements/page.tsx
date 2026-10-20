@@ -139,7 +139,7 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
-      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
+      <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
         <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1">
