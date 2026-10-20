@@ -7,11 +7,12 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {EmptyState} from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {Disclosure} from "@/components/ui/disclosure";
 type StudentApplication = NonNullable<Awaited<ReturnType<typeof lookupCollegeStudentPlacement>>>["students"][number]["applications"][number];
 const columns:DataTableColumn<StudentApplication & {uiKey:string}>[]=[
-  {key:"drive",header:"Company / drive",mobilePriority:"primary",cell:row=>row.company+" · "+row.job},
-  {key:"application",header:"Application",cell:row=>row.applicationStatus},
-  {key:"offer",header:"Offer",cell:row=>row.offerStatus??"None"},
+  {key:"drive",header:"Company / drive",mobilePriority:"primary",cell:row=><span className="break-words [overflow-wrap:anywhere]">{row.company+" · "+row.job}</span>},
+  {key:"application",header:"Application",cell:row=><StatusBadge tone={row.applicationStatus==="SUBMITTED"?"info":"neutral"}>{row.applicationStatus}</StatusBadge>},
+  {key:"offer",header:"Offer",cell:row=>row.offerStatus?<StatusBadge tone="info">{row.offerStatus}</StatusBadge>:"None"},
   {key:"joining",header:"Joining",cell:row=>row.joining??"Not recorded"},
 ];
 export default async function CollegePlacementStudentLookup({searchParams}:{
@@ -22,27 +23,27 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Student placement lookup"
    actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">Analytics</Link>}/>
-  <form action="/college/placements/student-lookup" role="search" aria-label="Student placement search" className="min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+  <form action="/college/placements/student-lookup" role="search" aria-label="Student placement search" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-[minmax(0,2fr)_auto_auto]">
    <label className="grid min-w-0 w-full max-w-xl gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
       placeholder="Find one student in this college"
       />
    </label>
-   <Button className="mt-3 min-h-11 w-full md:w-auto md:min-h-9">Search students</Button>
+   <Button className="min-h-11 w-full sm:w-auto md:min-h-9">Search students</Button>
+   {q ? <Link href="/college/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear</Link> : null}
   </form>
+  {!data ? <p role="status" className="max-w-[70ch] text-sm leading-6 text-body">{q.length>0?"Enter at least three characters to search student placements.":"Search by name, roll number or email to review a student’s recorded applications, offers and joining outcomes."}</p> : null}
   {data&&!data.students.length?<EmptyState title="No matching students" description="No matching college students."/>:null}
-  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-t border-border pt-4">
-   <div className="flex flex-wrap items-center justify-between gap-2">
-    <div><h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{person.name??person.roll??"Student"}</h2>
-     <p className="text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>
-    <StatusBadge tone={person.placed?"success":"neutral"}>{person.placed?"Joined (confirmed)":"No confirmed joining recorded"}</StatusBadge>
-   </div>
+  {data?.students.map((person,index)=><section key={person.membershipId} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
+   <Disclosure defaultOpen={index===0} title={<span className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]"><strong className="break-words [overflow-wrap:anywhere]">{person.name??person.roll??"Student"}</strong><StatusBadge tone={person.placed?"success":"neutral"}>{person.placed?"Joined (confirmed)":"No confirmed joining recorded"}</StatusBadge></span>}>
+    <p className="min-w-0 break-words [overflow-wrap:anywhere] pb-[var(--lms-space-3)] text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p>
    <DataTable caption={`${person.name??person.roll??"Student"} placement applications`} columns={columns}
     rows={person.applications.map((row,i)=>({...row,uiKey:row.jobId+":"+i}))}
     getRowKey={row=>row.uiKey}
     empty={<EmptyState title="No applications" description="No applications found."/>}/>
-   {person.truncated?<p className="text-xs text-muted-foreground">Showing newest 100 application/offer records.</p>:null}
+   {person.truncated?<p className="max-w-[70ch] py-[var(--lms-space-2)] text-xs text-muted-foreground">Showing newest 100 application/offer records.</p>:null}
+   </Disclosure>
   </section>)}
-  {data?.truncated?<p className="text-xs text-muted-foreground">Showing first 15 matching students; narrow the search.</p>:null}
+  {data?.truncated?<p role="status" className="max-w-[70ch] text-xs leading-5 text-muted-foreground">Showing first 15 matching students; narrow the search.</p>:null}
  </div>;
 }
