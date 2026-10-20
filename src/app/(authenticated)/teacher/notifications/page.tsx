@@ -7,6 +7,7 @@ import {
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
 import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import {
@@ -91,13 +92,13 @@ export default async function FacultyNotificationsPage({
         <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
           markAllEndpoint="/api/notifications/faculty/read-all" />
         {invalid ? (
-          <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-foreground">
+          <Alert tone="error">
             The notification filters or page link are invalid.{" "}
             <Link href={FACULTY_INBOX + "?view=" + view}
               className="font-semibold text-primary-text underline inline-flex min-h-11 min-[768px]:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Return to the newest notifications
             </Link>
-          </div>
+          </Alert>
         ) : (
           <>
             <NotificationList
