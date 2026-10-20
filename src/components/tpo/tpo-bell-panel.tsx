@@ -137,7 +137,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   <Button ref={trigger} variant="secondary" size="sm" type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending}
    aria-controls={open ? (mobile ? "tpo-notification-drawer" : "tpo-notification-popover") : undefined} disabled={pending} onClick={()=>changeOpen(!open)}
    className={compact
-    ? "relative inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center md:h-9 md:w-9 md:min-h-9 md:min-w-9 rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    ? "relative inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center md:h-9 md:w-9 md:min-h-9 md:min-w-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-header-border)] bg-surface p-0 text-[var(--lms-topbar-ink)] hover:text-[var(--lms-button-primary)] hover:bg-[var(--lms-topbar-search)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"}>
    {compact ? <>
     <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none"

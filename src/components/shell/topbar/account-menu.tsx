@@ -109,7 +109,7 @@ export function TopbarAccountMenu({
       const next = event.relatedTarget;
       if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
     }}>
-    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={`${style.avatar} !min-h-11 !min-w-11`}
+    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={`${style.avatar} max-[767px]:!min-h-11 max-[767px]:!min-w-11`}
       aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
