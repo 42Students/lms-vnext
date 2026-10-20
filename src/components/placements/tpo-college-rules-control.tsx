@@ -7,6 +7,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Disclosure} from "@/components/ui/disclosure";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -52,6 +53,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
   // A ref closes the gap before React renders disabled after a rapid double-click.
   const inFlight = useRef(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice,setNotice]=useState("");
   async function save() {
     if (inFlight.current) return;
     const values = {
@@ -76,24 +78,25 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       });
       if (!response.ok) throw new Error("Rules were changed elsewhere or could not be saved. Refresh and review.");
       setSaved({...form});
+      setNotice("Placement rules saved.");
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not save rules.");
     } finally { inFlight.current = false; setBusy(false); }
   }
   return (
-    <section className="border-b border-border pb-6">
+    <section className="min-w-0 border-b border-border pb-5">
       <h3 className="text-base font-semibold text-foreground">Offers and placed</h3>
       <p className="mt-2 text-sm text-body">
         The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
       </p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
         {dirty?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="info" message="Unsaved changes"/></div>:null}
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
           A student counts as placed when the offer is
           <Select value={form.countsAsPlacedAt} disabled={busy}
-            onChange={(event) => setForm((current) => ({ ...current, countsAsPlacedAt: event.target.value }))}
-            className="min-h-11 md:min-h-9">
+            onChange={(event) => {setError(null);setNotice("");setForm(current=>({...current,countsAsPlacedAt:event.target.value}));}}
+            className="min-h-11 w-full md:min-h-9">
             <option value="OFFER_RELEASED">released</option>
             <option value="OFFER_ACCEPTED">accepted</option>
           </Select>
@@ -103,23 +106,23 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
             {key === "maxHeldOffers" ? "Maximum held offers" : key === "upliftPct" ? "Offer uplift %" : "Minimum response hours"}
             <Input type="number" min={TPO_RULE_LIMITS[key].min} max={TPO_RULE_LIMITS[key].max} step={1}
               value={form[key]} disabled={busy}
-              onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-              className="min-h-11 md:min-h-9" />
+              onChange={(event) => {setError(null);setNotice("");setForm(current=>({...current,[key]:event.target.value}));}}
+              className="min-h-11 w-full md:min-h-9" />
           </label>
         ))}
       </div>
-      <section role="status" className="mt-4 min-w-0 text-sm text-body border-t border-border pt-5">
+      <section role="status" className="mt-4 min-w-0 space-y-1 border-t border-border pt-4 text-sm text-body">
         <p>A student may hold {Number.isFinite(held)?held:0} offers (released or accepted) before the next rule applies.</p>
         <p className="mt-1">After that, another offer needs a CTC at least {form.upliftPct}% higher than their best offer, or a Dream drive. Internships never count.</p>
-        <p className="mt-2 font-semibold">For example</p>
-        <p>A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
+        <Disclosure title="For example" className="mt-3 border-t border-border py-2"><p className="pt-2">A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p></Disclosure>
       </section>
       <Button type="button" disabled={busy} onClick={() => void save()}
         className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
         {busy ? "Saving..." : "Review and confirm rules"}
       </Button>
+      {notice?<InlineNotice tone="success" message={notice}/>:null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
-      <ConfirmDialog open={confirmSave} onOpenChange={setConfirmSave}
+      <ConfirmDialog open={confirmSave} onOpenChange={next=>{if(!busy)setConfirmSave(next);}}
         title="Save college-wide placement rules?"
         description="Save college-wide placement rules? These settings may affect future offer eligibility. Continue?"
         confirmLabel="Save rules" confirmVariant="primary" pending={busy}
