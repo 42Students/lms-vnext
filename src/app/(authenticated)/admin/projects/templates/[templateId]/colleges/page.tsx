@@ -57,9 +57,9 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   return <div className="min-w-0 space-y-6">
     <PageHeader title={data.template.title}
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
-      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Template catalogue</Link>} />
+      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Template catalogue</Link>} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
-    <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
+    <form method="get" className="grid min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 lg:grid-cols-3">
       <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">College name or code
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="w-full" /></label>
       <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Availability
