@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,7 @@ export default async function LearnerAttendanceCalendarPage({
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
       className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
       <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month
-        <Input name="month" type="month" defaultValue={data.query.month}
+        <DateInput mode="month" name="month" defaultValue={data.query.month}
           className="min-h-11 md:min-h-9" />
       </label>
       <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
