@@ -12,7 +12,7 @@ Polish checklist (apply every point to the surface and to every component it ren
 
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-4.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-4-b with [chat-4], ticking [x] in this queue in the same push.
 
-- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/requests/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/settings/after-college/page.tsx` (TPO page)
@@ -43,3 +43,19 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-4.md: surface | proble
 - [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/team/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/verification/page.tsx` (TPO page)
+- [ ] `src/components/placements/learner-placement-preferences.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/placement-draft-edit-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/placement-job-create-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/placement-role-options.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/recruiter-result-controls.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/super-admin-drive-duplicate.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/tpo-drive-deadline-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/tpo-interview-slot-planner.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/tpo-round-calendar-control.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/placements/tpo-season-controls.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/tpo/grid/grid-workspace.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/tpo/tpo-batch-class-decision.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/tpo/tpo-campaign-send-control.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)

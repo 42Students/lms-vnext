@@ -273,11 +273,11 @@ export function ReportCsvLink({
 }
 
 export function ReportTable({
- title,headings,rows,emptyDescription,
+ title,headings,rows,emptyDescription,compactControls=false,
 }:{
  title:string;headings:readonly string[];
  rows:readonly (readonly (string|number|null)[])[];
- emptyDescription:string;
+ emptyDescription:string;compactControls?:boolean;
 }){
- return <ReportInteractiveTable title={title} headings={headings} rows={rows} emptyDescription={emptyDescription}/>;
+ return <ReportInteractiveTable title={title} headings={headings} rows={rows} emptyDescription={emptyDescription} compactControls={compactControls}/>;
 }

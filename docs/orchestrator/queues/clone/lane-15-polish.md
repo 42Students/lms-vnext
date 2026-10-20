@@ -50,3 +50,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-15.md: surface | probl
 - [ ] `src/app/home/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/hr-invite/[token]/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/login/page.tsx` (Other page (super admin, public, auth, misc))
+- [ ] `src/components/tracker/audit-finding-status-action.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/tracker/independent-finding-actions.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/tracker/tracker-workflow-panel.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
