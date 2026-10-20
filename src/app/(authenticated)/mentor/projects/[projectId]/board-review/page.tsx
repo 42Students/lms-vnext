@@ -40,7 +40,7 @@ export default async function MentorBoardReviewPage({
       <section role="status" className="border-b border-border pb-4">
         Projects access is disabled; no tasks were loaded.
       </section>:<>
-      <section aria-label="Registered task counts" className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+      <section aria-label="Registered task counts" className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-5">
         {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
           <article key={status} className="rounded-xl border border-border bg-surface p-3">
             <h2 className="text-xs font-semibold text-muted-foreground">{status.replaceAll("_"," ")}</h2>
