@@ -35,7 +35,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     {key:"time",header:"Time",cell:item=>driveRoundTime(item.scheduledAt,item.timezone)},
     {key:"venue",header:"Venue",cell:item=>item.venue??"Not recorded"},
     {key:"mode",header:"Mode",cell:item=>item.mode??"Not recorded"},
-    {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="CANCELLED"?"neutral":"info"}>{item.status}</StatusBadge>},
+    {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="CANCELLED"?"neutral":"info"}>{item.status==="SCHEDULED"?"Scheduled":item.status==="COMPLETED"?"Completed":item.status==="CANCELLED"?"Cancelled":item.status}</StatusBadge>},
     {key:"slots",header:"Candidate slots",cell:()=>"See candidate interviews above"},
   ];
   return <div className="space-y-6">
@@ -54,7 +54,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
             <option key={status} value={status}>{status}</option>)}
         </Select>
       </label>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+      <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}
