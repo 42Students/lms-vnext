@@ -3,6 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
 import {getCollegeDriveOverview} from "@/modules/placements/college-drive-overview-service";
 import {CollegeLegacyDriveSettings} from "@/components/placements/college-legacy-drive-settings";
 import {CollegeDriveArchiveAction} from "@/components/placements/college-drive-archive-action";
@@ -34,7 +35,7 @@ export default async function CollegeDriveSettingsPage({
   ):[];
   return <div className="space-y-6">
     <PageHeader title="Settings" description={drive.title}
-      actions={<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      actions={<Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         href={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>Overview</Link>}/>
     {job.status==="DRAFT"&&eligibilityPolicy?
       <section aria-label="Edit drive" className="min-w-0 space-y-3">
@@ -74,10 +75,10 @@ export default async function CollegeDriveSettingsPage({
           missingEvidencePolicy:eligibilityPolicy.missingEvidencePolicy as "ALLOW_WITH_FLAG"|"REQUIRE_COMPLETE",
         }}}/>
       </section>:
-      <p role="status" className="rounded-[8px] border border-border bg-muted p-4 text-sm text-body">
+      <Alert tone="info">
         This drive is read-only. Only drafts in an active placement season are editable.
         Published-drive changes use the guarded lifecycle and deadline actions.
-      </p>}
+      </Alert>}
     <section aria-label="Legacy drive settings" className="min-w-0 space-y-4">
       <CollegeLegacyDriveSettings jobId={jobId} status={drive.status as CollegeLegacyDriveStatus}/>
     </section>
