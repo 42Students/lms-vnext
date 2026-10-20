@@ -124,7 +124,7 @@ export function CourseActions({
   return (
     <>
       <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
-        {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Duplicate</Link>:null}
+        
         <Button
           size="sm"
           className="min-h-11 md:min-h-9"
@@ -133,7 +133,11 @@ export function CourseActions({
         >
           Edit
         </Button>
-        <Dropdown trigger="More" label="Course actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu><MenuItem disabled={pending} onClick={()=>setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown>
+        <Dropdown trigger="More" label="Course actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu>
+          {duplicateHref ? <Link href={duplicateHref} role="menuitem"
+            className="flex min-h-11 min-w-0 w-full items-center rounded-[var(--lms-control-radius)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-left text-[14px] leading-5 text-body hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Duplicate</Link> : null}
+          <MenuItem disabled={pending} onClick={()=>setArchiveOpen(true)}>Archive</MenuItem>
+        </Menu></Dropdown>
       </div>
 
       <Dialog
