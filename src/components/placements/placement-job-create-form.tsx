@@ -682,18 +682,19 @@ export function PlacementJobCreateForm({
           ||fields.get("requireVerifiedEvidence")==="on"
           ||fields.get("missingEvidencePolicy")==="REQUIRE_COMPLETE");
       }}
-      className="space-y-6"
+      className="min-w-0 space-y-6"
     >
       <p role="status" aria-live="polite" className="text-xs text-body">
         {pending?"Saving changes…":lastLocalSaveAt?
           "Local draft saved at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST — not yet submitted to the server.":
           "Draft form changes are saved locally on this device. Create draft to save them to the server."}
       </p>
-      <nav aria-label="Drive setup review" className="border-b border-border pb-6">
-        <h2 className="text-base font-semibold text-foreground">Setup review</h2>
-        <ol className="mt-3 grid gap-3 border-y border-border md:grid-cols-4">
+      <details className="border-b border-border pb-4">
+        <summary className="min-h-11 cursor-pointer text-base font-semibold text-foreground md:min-h-9">Setup review</summary>
+        <nav aria-label="Drive setup review" className="min-w-0 pt-3">
+        <ol className="grid gap-3 border-y border-border sm:grid-cols-2 lg:grid-cols-4">
           {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
-            <li key={label} className="border-l-2 border-border py-3 pl-3 text-sm">
+            <li key={label} className="min-w-0 border-l-2 border-border py-3 pl-3 text-sm">
               <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
               <span className="mt-1 block font-semibold text-foreground">{label}</span>
             </li>
@@ -706,7 +707,8 @@ export function PlacementJobCreateForm({
             <p role="status">No eligibility rules set - every registered student will see this drive</p>:null}
           <p>These are warnings, not publication blockers. Review the drive and invite the recruiter before confirming publication.</p>
         </div>
-      </nav>
+        </nav>
+      </details>
       <section className="border-b border-border pb-6">
         <div className="border-b border-border pb-3">
           <h2 className="m-0 text-base font-semibold text-foreground">
@@ -830,7 +832,7 @@ export function PlacementJobCreateForm({
             {companySearch.trim()&&!companies.some(company=>
               (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
-              {selectedEmployer?.memory?<section aria-label="Company Memory" className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 text-sm">
+              {selectedEmployer?.memory?<aside aria-label="Company Memory" className="border-t border-border pt-3 text-sm">
                 <h3 className="font-semibold text-foreground">Company Memory</h3>
                 <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
                 <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
@@ -840,10 +842,10 @@ export function PlacementJobCreateForm({
                     A drive for {selectedEmployer.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).{" "}
                     <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline">Open it</Link> before creating another.
                   </p>:null}
-              </section>:null}
+              </aside>:null}
             </div>
           ) : (
-            <div className="grid gap-4 min-[992px]:grid-cols-2">
+            <div className="grid min-w-0 gap-4 sm:grid-cols-2">
               <label>
                 <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Company name
@@ -908,7 +910,7 @@ export function PlacementJobCreateForm({
             Create the learner-facing job opportunity and application window.
           </p>
         </div>
-        <div className="grid gap-4 pt-4 min-[992px]:grid-cols-2">
+        <div className="grid min-w-0 gap-4 pt-4 sm:grid-cols-2">
           <label className="lg:col-span-2">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job title
@@ -1120,9 +1122,10 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <section className="border-b border-border pb-6">
-        <div className="border-b border-border pb-3">
-          <h2 className="text-base font-semibold">Additional job details</h2>
+      <details className="min-w-0 border-b border-border pb-6">
+        <summary className="min-h-11 cursor-pointer text-base font-semibold text-foreground md:min-h-9">Additional job details</summary>
+        <div className="pt-3">
+          <h2 className="sr-only">Additional job details</h2>
           <p className="mt-1 text-sm text-body">Responsibilities, dates and preferences are informational. Only the eligibility policy below governs learner eligibility.</p>
         </div>
         <div className="grid gap-4 pt-4 sm:grid-cols-2">
@@ -1190,7 +1193,7 @@ export function PlacementJobCreateForm({
           </label>
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
-      </section>
+      </details>
       <section className="border-b border-border pb-6">
         <div className="border-b border-border pb-3">
           <h2 className="m-0 text-base font-semibold text-foreground">
@@ -1215,7 +1218,7 @@ export function PlacementJobCreateForm({
             </span>
           </label>
           <div className="grid gap-4 min-[992px]:grid-cols-2">
-            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+            <fieldset className="min-w-0 border-t border-border px-0 py-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
               </legend>
@@ -1262,7 +1265,7 @@ export function PlacementJobCreateForm({
               )}
             </fieldset>
 
-            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+            <fieldset className="min-w-0 border-t border-border px-0 py-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible cohorts
               </legend>
@@ -1311,7 +1314,7 @@ export function PlacementJobCreateForm({
             </fieldset>
           </div>
 
-          <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+          <fieldset className="min-w-0 border-t border-border px-0 py-4">
             <legend className="px-1 text-xs font-semibold text-body">Classes (sections)</legend>
             <p className="mb-3 text-xs text-muted-foreground">
               Leave unselected to include all classes in the selected programs and batches.
@@ -1448,10 +1451,10 @@ export function PlacementJobCreateForm({
         <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>
 
-      <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
+      <section className="flex min-w-0 flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
-        <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={pending || !activeSeason || uncertainCreate}>
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+          <Button className="w-full sm:w-auto" type="submit" disabled={pending || !activeSeason || uncertainCreate}>
             {pending ? "Creating…" : "Create draft"}
           </Button>
           <Button variant="secondary"
@@ -1459,7 +1462,7 @@ export function PlacementJobCreateForm({
             value="review-publish"
             aria-label="Publish after reviewing the drive"
             disabled={pending || !activeSeason || uncertainCreate}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50 md:min-h-9"
+            className="w-full min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9"
           >
             Publish
           </Button>
