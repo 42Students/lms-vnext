@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
+import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { facultyGradebookPrivateNotFound } from "@/modules/courses/faculty-gradebook-model";
@@ -23,19 +25,17 @@ export default async function FacultyLearnerGradebookPage({
     throw error;
   }
   const root="/teacher/courses/"+encodeURIComponent(query.deliveryId)+"/gradebook";
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Faculty · Published learner scores"
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
       description={data.delivery.courseName+" · "+data.delivery.sectionName}
-      actions={<Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)]">← Published gradebook</Link>} />
+      actions={<Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Published gradebook</Link>} />
     <section className="border-b border-border pb-5" aria-label="Recorded score totals">
-      <div className="grid gap-3 md:grid-cols-3">
-        <p className="text-sm text-body">Published scores: {data.learner.gradedCount}/{data.learner.publishedAssessments}</p>
-        <p className="text-sm text-body">Recorded points: {data.learner.earned===null?
-          "Unknown":data.learner.earned+" / "+data.learner.possible}</p>
-        <p className="text-sm text-body">Recorded percentage: {data.learner.percent===null?
-          "Unknown":data.learner.percent+"%"}</p>
-      </div>
+      <dl className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-3">
+        <div><dt className="text-xs text-muted-foreground">Published scores</dt><dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{data.learner.gradedCount}/{data.learner.publishedAssessments}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Recorded points</dt><dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{data.learner.earned===null?"Unknown":data.learner.earned+" / "+data.learner.possible}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Recorded percentage</dt><dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{data.learner.percent===null?"Unknown":data.learner.percent+"%"}</dd></div>
+      </dl>
       {data.learner.hasUnknown&&<p className="mt-2 text-xs text-muted-foreground">
         Some published assessments have no published score for this learner.
       </p>}
@@ -45,10 +45,10 @@ export default async function FacultyLearnerGradebookPage({
       {data.assessments.length===0?
         <EmptyState title="No released assessment results"
           description="There are no published assignment or quiz result records for this Section."/>:
-        <ul className="grid gap-3">
+        <ul className="divide-y divide-border border-y border-border">
           {data.assessments.map(item=><li key={item.kind+":"+item.assessmentId}
-            className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
-            <p className="text-xs font-semibold text-muted-foreground">{item.kind==="QUIZ"?"Quiz":"Assignment"}</p>
+            className="min-w-0 py-4">
+            <Badge tone="neutral">{item.kind==="QUIZ"?"Quiz":"Assignment"}</Badge>
             <h3 className="mt-1 break-words font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{item.title}</h3>
             <p className="mt-2 text-sm text-body">{item.status==="UNKNOWN"?
               "Score unknown — no published learner grade":
@@ -56,9 +56,8 @@ export default async function FacultyLearnerGradebookPage({
           </li>)}
         </ul>}
     </section>
-    <p className="text-xs text-muted-foreground leading-[1.6]">
-      Only scores explicitly released to learners are displayed. Unknown is not
-      zero; recorded percentages are not weighted final course grades.
-    </p>
+    <Disclosure title="About published scores" className="border-t border-border">
+      <p className="max-w-3xl px-2 pb-2 text-xs leading-5 text-muted-foreground">Only scores explicitly released to learners are displayed. Unknown is not zero; recorded percentages are not weighted final course grades.</p>
+    </Disclosure>
   </div>;
 }

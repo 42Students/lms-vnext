@@ -1,5 +1,5 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function Loading() {
-  return <GracefulPageLoading label={"Loading Section notices"} shape="card" />;
+  return <GracefulPageLoading label="Verifying Section notice access…" shape="directory" />;
 }
