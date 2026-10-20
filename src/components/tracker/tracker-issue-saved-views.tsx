@@ -52,9 +52,9 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
     const next=[...views.filter(view=>view.name!==trimmed),{name:trimmed,filters:filterOnlyIssuesView(filters)}];
     persist(next);setName("");
   }
-  return <section aria-label="Saved issue views"
-    className="border-b border-border pb-4">
-    <h2 className="mb-2 font-semibold">Saved views</h2>
+  return <details aria-label="Saved issue views" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
+    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Saved views</summary>
+    <div className="min-w-0 space-y-3 pt-2">
     <div className="flex min-w-0 flex-wrap items-end gap-2">
       <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold md:w-[220px] md:basis-auto">View name
         <Input value={name} onChange={event=>setName(event.target.value)}
@@ -80,5 +80,6 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
       </li>)}
     </ul>:<p className="mt-2 text-sm text-body">No saved views yet.</p>}
     {notice?<InlineNotice tone="error" message={notice}/>:null}
-  </section>;
+    </div>
+  </details>;
 }
