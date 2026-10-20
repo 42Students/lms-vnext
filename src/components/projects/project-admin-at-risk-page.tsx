@@ -163,7 +163,7 @@ export async function ProjectAdminAtRiskPage({
               </dl>
               <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold">
                 <Link href={basePath + "/" + project.id + "/summary?from=at-risk&reason=" +
-                  encodeURIComponent(project.riskReasons.join(", "))}
+                  encodeURIComponent(project.riskReasons.some(reason => reason.startsWith("No activity in ")) ? "STALLED" : project.riskReasons.includes("Active blocker") || project.blockerReason ? "BLOCKER" : "REVIEW")}
                   className="inline-flex min-h-11 items-center text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open</Link>
                 <Link href={basePath + "/reassign-mentor?fromMentorId=" +
                   encodeURIComponent(project.mentorMembershipId ?? "UNASSIGNED")}
@@ -171,7 +171,7 @@ export async function ProjectAdminAtRiskPage({
                   {project.mentorMembershipId ? "Reassign mentor" : "Assign mentor"}
                 </Link>
                 {project.riskReasons.includes("Pending review") ?
-                  <Link href={basePath + "/" + project.id + "/delivery?from=at-risk&reason=pending-review"}
+                  <Link href={basePath + "/" + project.id + "/delivery?from=at-risk&reason=REVIEW"}
                     className="inline-flex min-h-11 items-center text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review submission</Link> : null}
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -189,7 +189,7 @@ export async function ProjectAdminAtRiskPage({
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
+
       <ProjectAdminPagination
         basePath={basePath + "/at-risk"}
         query={query}
