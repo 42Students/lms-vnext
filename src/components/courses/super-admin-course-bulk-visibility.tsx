@@ -64,7 +64,7 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   </div></ScrollCue>
   <p className="text-xs text-muted-foreground" role="status">{selectedInScope.length} selected</p>
   <div className="flex flex-wrap gap-2">
-   <Button type="button" variant="primary" disabled={!selectedInScope.length||pending}
+   <Button type="button" variant="primary" loading={pending} disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(true)}
     className="min-h-11 md:min-h-9">
     {pending?"Updating…":"Show to students"}</Button>

@@ -83,26 +83,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-9.md: file, number of i
 - [x] `src/components/college/college-student-import-history.tsx`
 - [x] `src/components/college/student-class-move-action.tsx`
 - [x] `src/components/colleges/college-contact-profile-form.tsx`
-- [ ] `src/components/courses/admin-course-actions.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/admin-learning-structure-actions.tsx`
-- [ ] `src/components/courses/assignment-file-submission-control.tsx`
-- [ ] `src/components/courses/assignment-multipart-parts-editor.tsx`
-- [ ] `src/components/courses/assignment-submission-control.tsx`
-- [ ] `src/components/courses/college-assignment-actions.tsx`
-- [ ] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/college-assignment-review.tsx`
-- [ ] `src/components/courses/college-content-authoring-control.tsx`
-- [ ] `src/components/courses/college-content-preview.tsx`
-- [ ] `src/components/courses/college-learning-directory.tsx`
-- [ ] `src/components/courses/college-lesson-create-control.tsx`
-- [ ] `src/components/courses/college-lesson-drag-order.tsx`
-- [ ] `src/components/courses/college-lesson-reorder-actions.tsx`
-- [ ] `src/components/courses/college-lesson-visibility-controls.tsx`
-- [ ] `src/components/courses/college-quiz-actions.tsx`
-- [ ] `src/components/courses/college-quiz-attempts.tsx`
-- [ ] `src/components/courses/college-quiz-create.tsx`
-- [ ] `src/components/courses/college-quiz-questions-editor.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/admin-learning-structure-actions.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/courses/assignment-multipart-parts-editor.tsx`
+- [x] `src/components/courses/assignment-submission-control.tsx`
+- [x] `src/components/courses/college-assignment-actions.tsx`
+- [x] `src/components/courses/college-assignment-create.tsx`
+- [x] `src/components/courses/college-assignment-review.tsx`
+- [x] `src/components/courses/college-content-authoring-control.tsx`
+- [x] `src/components/courses/college-content-preview.tsx`
+- [x] `src/components/courses/college-learning-directory.tsx`
+- [x] `src/components/courses/college-lesson-create-control.tsx`
+- [x] `src/components/courses/college-lesson-drag-order.tsx`
+- [x] `src/components/courses/college-lesson-reorder-actions.tsx`
+- [x] `src/components/courses/college-lesson-visibility-controls.tsx`
+- [x] `src/components/courses/college-quiz-actions.tsx`
+- [x] `src/components/courses/college-quiz-attempts.tsx`
+- [x] `src/components/courses/college-quiz-create.tsx`
+- [x] `src/components/courses/college-quiz-questions-editor.tsx`
 - [ ] `src/components/courses/faculty-assessment-editor.tsx`
 - [ ] `src/components/courses/faculty-assignment-editor.tsx`
 - [ ] `src/components/courses/faculty-assignment-review.tsx`

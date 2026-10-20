@@ -498,7 +498,7 @@ export function LearnerAssessmentOverview({
                     ) : (
                       <Link
                         href={href}
-                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover md:w-auto"
+                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[rgba(38,186,199,0.35)] md:w-auto"
                       >
                         {state.action}
                       </Link>
@@ -506,7 +506,7 @@ export function LearnerAssessmentOverview({
                     {item.kind === "QUIZ" ? (
                       <Link
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center text-xs font-semibold text-primary-text underline md:min-h-9 md:w-auto"
+                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto"
                       >
                         Attempt history
                       </Link>

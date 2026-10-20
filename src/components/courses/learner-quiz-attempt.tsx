@@ -548,7 +548,7 @@ export function LearnerQuizAttempt() {
                     </li>
                   ))}
                 </ol>
-                <Button disabled={submitting} onClick={requestSubmit} className="min-h-11 md:min-h-9">
+                <Button loading={submitting} disabled={submitting} onClick={requestSubmit} className="min-h-11 md:min-h-9">
                   {submitting?"Submitting…":"Submit reviewed attempt"}
                 </Button>
               </section>
@@ -562,7 +562,7 @@ export function LearnerQuizAttempt() {
                 title={!current || (answers[current.id]??[]).length===0?"Answer this question or use the question numbers to skip.":undefined}
                 onClick={() => setStep((value) => Math.min(questions.length - 1, value + 1))}>Next</Button>
             ) : (
-              <Button className="min-h-11 md:min-h-9" disabled={submitting} onClick={requestSubmit}>{submitting ? "Submitting…" : "Submit"}</Button>
+              <Button className="min-h-11 md:min-h-9" loading={submitting} disabled={submitting} onClick={requestSubmit}>{submitting ? "Submitting…" : "Submit"}</Button>
             )}
           </div>
         </div>

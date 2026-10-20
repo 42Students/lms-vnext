@@ -340,7 +340,7 @@ function SubmissionGradeCard({
           <div><p className="mb-2 text-xs font-semibold text-body">Written Response</p><p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p></div>
         ) : content.kind === "FILE" || content.kind === "LINK" ? (
           <Link href={content.href} target="_blank" rel="noopener noreferrer" prefetch={false}
-            className="inline-flex min-h-11 items-center md:min-h-10 break-words text-sm font-semibold text-primary-text hover:text-primary-hover">
+            className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
             {content.label}
           </Link>
         ) : <p role="status" className="text-sm text-muted-foreground">{content.message}</p>}
