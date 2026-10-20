@@ -132,7 +132,7 @@ export default async function ElectiveRoster({
     {feedback.error && <Alert tone="error">{feedback.error}</Alert>}
     {archived && <Alert tone="warning">Archived offerings are read-only.</Alert>}
     <section className="space-y-3 border-t border-border pt-4">
-      <h2 className="text-lg font-semibold">Faculty</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Faculty</h2>
       <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
       {assignments.length === 0 && <EmptyState title="No faculty assigned" description="No faculty assigned."/>}
       {assignments.map(item => <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
@@ -145,13 +145,13 @@ export default async function ElectiveRoster({
       </div>)}
       {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-[8px]">
         <Input type="hidden" name="action" value="ASSIGN" />
-        <label className="grid gap-1 text-sm">Faculty
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
           <Select name="membershipId" required defaultValue="" >
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm">Role
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
           <Select name="role" >
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
