@@ -143,7 +143,7 @@ export function CollegeBrandingForm({
     <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] min-[992px]:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={save}
-        className="order-first min-w-0 space-y-[var(--lms-space-4)] print:hidden"
+        className="order-last min-w-0 space-y-[var(--lms-space-4)] min-[992px]:order-first print:hidden"
       >
         {!canEdit ? <Alert tone="info">You can view this branding but not change it.</Alert> : null}
         <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Colours</h2>
@@ -224,7 +224,7 @@ export function CollegeBrandingForm({
       <aside
         aria-label="Sign-in preview"
         style={previewStyle}
-        className="order-last min-w-0 h-fit space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] min-[992px]:border-t-0 min-[992px]:border-l min-[992px]:pl-[var(--lms-space-4)] min-[992px]:pt-0"
+        className="order-first min-w-0 h-fit space-y-[var(--lms-space-3)] min-[992px]:order-last border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] min-[992px]:border-t-0 min-[992px]:border-l min-[992px]:pl-[var(--lms-space-4)] min-[992px]:pt-0"
       >
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sign-in preview
