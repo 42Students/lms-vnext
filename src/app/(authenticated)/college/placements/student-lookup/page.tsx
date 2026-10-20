@@ -23,7 +23,7 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
   <PageHeader title="Student placement lookup"
    actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Analytics</Link>}/>
   <form action="/college/placements/student-lookup" role="search" className="border-b border-border pb-4">
-   <label className="grid min-w-0 w-full max-w-xl gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Name, roll number or email
+   <label className="grid min-w-0 w-full max-w-xl gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
       placeholder="Find one student in this college"
       />
