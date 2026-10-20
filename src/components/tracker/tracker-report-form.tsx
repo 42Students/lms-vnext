@@ -134,7 +134,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
 
   return (
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
-      className="min-w-0 max-w-4xl space-y-5">
+      className="space-y-5">
       {restored?<Banner tone="info" action={<Button type="button" variant="secondary" onClick={()=>{setDraft(initial);clearDraft();}}>Discard draft</Button>}>
         Unsaved report restored.
       </Banner>:null}
@@ -201,26 +201,21 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </Select>
         </label>
       </div>
-      <label className={label + " max-w-3xl"}>What went wrong?
+      <label className={label}>What went wrong?
         <Textarea className={field + " min-h-36"} name="description" required maxLength={4000} rows={6}
           value={draft.description} onChange={event=>patch("description",event.target.value)}
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground">Up to 4000 characters</span>
       </label>
-      <details className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Optional information</summary>
-        <div className="min-w-0 pt-3">
       <label className={label}>Evidence link
         <Input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
         <span className="mt-1 block text-xs font-normal text-muted-foreground">
           Optional — add a shareable HTTP/HTTPS evidence link (HTTPS recommended). Do not share private screenshots through public URLs. Direct clipboard paste and unscanned attachments are not accepted.
         </span>
       </label>
-        </div>
-      </details>
       {canSearchSimilar ? <>
-      <details aria-label="Similar issues" className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3" open={similarSearched||similarLoading}>
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Similar issues</summary>
+      <section aria-label="Similar issues" className="border-y border-border py-4">
+        <h2 className="text-sm font-semibold text-foreground">Similar issues</h2>
         <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
         <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
           <Input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
@@ -243,10 +238,10 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             </li>)}
           </ul>:<p>No existing reports match this phrase. You can submit a new issue.</p>}
         </div>:null}
-      </details>
-      </> : null>
+      </section>
+      </> : null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
-      <div className="flex min-w-0 flex-col-reverse items-stretch gap-2 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
         <Button disabled={pending} loading={pending} type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
           {pending ? "Reporting…" : "Report issue"}
