@@ -329,11 +329,11 @@ export function AdminAttendanceWorkspace({
           event.preventDefault();
           navigate();
         }}
-        className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
+        className="grid min-w-0 items-end gap-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
       >
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Class
-          <Select className="mt-1.5" value={sectionId}
+          <Select className="w-full" value={sectionId}
             onChange={(event) => {
               setSectionId(event.target.value);
               setCourseId("");setDeliveryId("");
@@ -346,9 +346,9 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Course
-          <Select className="mt-1.5" value={courseId}
+          <Select className="w-full" value={courseId}
             disabled={!sectionId}
             onChange={(event) => {setCourseId(event.target.value);setDeliveryId("");}}>
             <option value="">Select course</option>
@@ -363,9 +363,9 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
-        {termDeliveries.length>1?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        {termDeliveries.length>1?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic term
-          <Select className="mt-1.5" value={deliveryId||termDeliveries[0]?.deliveryId||""}
+          <Select className="w-full" value={deliveryId||termDeliveries[0]?.deliveryId||""}
             onChange={event=>setDeliveryId(event.target.value)}>
             {termDeliveries.map(item=><option key={item.deliveryId} value={item.deliveryId}>
               {item.academicPeriodName} · {item.sectionName}{item.isPast?" · past":""}{item.offeringType==="ELECTIVE"?" (elective)":""}
@@ -388,23 +388,25 @@ export function AdminAttendanceWorkspace({
           />
           Show all college courses (including courses not taught to this class)
         </label>
-        <div className="grid min-w-0 grid-cols-2 items-center gap-[var(--lms-space-2)] md:col-span-2 md:flex md:flex-wrap md:justify-between xl:col-span-3">
-          <Button size="sm" variant="secondary"
-            aria-label="Previous month"
-            onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
-            Previous
-          </Button>
-          <span className="min-w-32 text-center text-sm font-semibold text-body" aria-live="polite">{attendanceMonthLabel(data.month)}</span>
+        <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:col-span-2 md:flex-row md:flex-wrap md:items-center md:justify-between xl:col-span-3">
+          <div className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] md:justify-start">
+            <Button size="sm" variant="secondary"
+              aria-label="Previous month"
+              onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
+              Previous
+            </Button>
+            <span className="min-w-0 text-center text-sm font-semibold text-body" aria-live="polite">{attendanceMonthLabel(data.month)}</span>
+            <Button size="sm" variant="secondary"
+              aria-label="Next month"
+              onClick={() => navigate(shiftAttendanceMonth(data.month, 1))}>
+              Next
+            </Button>
+          </div>
           <Input className="min-w-0 w-full md:max-w-40" type="month" aria-label="Attendance month"
             value={data.month}
             onChange={(event) => {
               if (event.target.value) navigate(event.target.value);
             }} />
-          <Button size="sm" variant="secondary"
-            aria-label="Next month"
-            onClick={() => navigate(shiftAttendanceMonth(data.month, 1))}>
-            Next
-          </Button>
         </div>
       </form>
 
@@ -452,7 +454,7 @@ export function AdminAttendanceWorkspace({
                   }{" "}
                   of {heldSessions.length} held sessions marked
                 </p>
-                <dl className="mt-3 grid gap-2 text-xs text-body md:grid-cols-3 lg:grid-cols-5">
+                <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] text-xs text-body md:grid-cols-3 xl:grid-cols-6">
                   <div><dt>Monthly attendance</dt><dd className="font-semibold">{monthPercent===null?"—":monthPercent+"%"}</dd></div>
                   <div><dt>Students</dt><dd className="font-semibold">{data.grid.roster.length}</dd></div>
                   <div><dt>Sessions held</dt><dd className="font-semibold">{heldSessions.length}</dd></div>
@@ -639,7 +641,7 @@ export function AdminAttendanceWorkspace({
         }
         footer={
           target ? (
-            <div className="grid w-full min-w-0 grid-cols-2 gap-[var(--lms-space-2)] sm:flex sm:flex-wrap sm:justify-end [&>button]:min-h-11 sm:[&>button]:min-h-[var(--lms-control-height)]">
+            <div className="grid w-full min-w-0 grid-cols-2 gap-[var(--lms-space-2)] [&>button]:min-h-11 [&>button:last-child]:col-span-2 sm:flex sm:flex-wrap sm:justify-end sm:[&>button:last-child]:col-span-1 sm:[&>button]:min-h-[var(--lms-control-height)]">
               {(
                 [
                   "PRESENT",
@@ -677,8 +679,8 @@ export function AdminAttendanceWorkspace({
         }
       >
         {target ? (
-          <div className="space-y-4 text-sm">
-            <div className="border-t border-border pt-4">
+          <div className="min-w-0 space-y-[var(--lms-space-4)] text-sm">
+            <div className="border-b border-border pb-[var(--lms-space-4)]">
               <p className="font-semibold text-foreground">
                 Current status
               </p>
@@ -697,7 +699,7 @@ export function AdminAttendanceWorkspace({
             {target.record?.note ? (
               <p className="text-sm text-body">Note: {target.record.note}</p>
             ) : null}
-            <dl className="grid gap-3">
+            <dl className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
               <div>
                 <dt className="text-xs font-semibold uppercase text-muted-foreground">
                   Marked by
