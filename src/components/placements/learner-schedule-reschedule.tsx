@@ -54,7 +54,7 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
      <Input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/></label>}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-   <Button className="max-md:min-h-11" type="button" disabled={busy||reason.trim().length<3||!date||
+   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||reason.trim().length<3||!date||
      (nextMode==="ON_CAMPUS"?!nextVenue.trim():!/^https:\/\//i.test(nextUrl))}
      onClick={()=>void save()} >
     {busy?"Sending…":"Send request"}</Button>
