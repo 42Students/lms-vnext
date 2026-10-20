@@ -1,6 +1,8 @@
 "use client";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {Disclosure} from "@/components/ui/disclosure";
 
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -69,15 +71,6 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
   }finally{pending.current=false;setBusy(false);}
  }
  return <div className="space-y-3">
-  <div className="flex flex-wrap items-center justify-between gap-2">
-   <p className="text-xs text-muted-foreground">
-    {localMuted?"Muted: no unread count, no noise":"Everyone in the team can read and reply."}
-   </p>
-   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void updateMute()}
-    >
-    {busy?"Updating…":localMuted?"Unmute":"Mute"}
-   </Button>
-  </div>
   <form onSubmit={event=>{event.preventDefault();void post();}}
    className="min-w-0 space-y-3 border-y border-border py-4">
    <h2 className="font-semibold">Write to Everyone</h2>
@@ -88,12 +81,23 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
      placeholder="Share an update with the placement team"/>
    </label>
    <p aria-live="polite" className="text-xs text-muted-foreground">{message.length}/4000</p>
-   <Button type="submit" disabled={busy||!message.trim()}
+   <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||!message.trim()}
     >
     {busy?"Sending…":"Send to Everyone"}
    </Button>
   </form>
-  {success?<p role="status" className="text-sm text-body">{success}</p>:null}
-  {error?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p>:null}
+  <Disclosure title="Notification preferences" className="min-w-0 border-b border-border" contentClassName="py-3">
+  <div className="flex flex-wrap items-center justify-between gap-2">
+   <p className="text-xs text-muted-foreground">
+    {localMuted?"Muted: no unread count, no noise":"Everyone in the team can read and reply."}
+   </p>
+   <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} onClick={()=>void updateMute()}
+    >
+    {busy?"Updating…":localMuted?"Unmute":"Mute"}
+   </Button>
+  </div>
+  </Disclosure>
+  {success?<InlineNotice tone="success" message={success}/>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </div>;
 }
