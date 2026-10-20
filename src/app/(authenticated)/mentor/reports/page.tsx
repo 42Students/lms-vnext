@@ -50,7 +50,7 @@ export default async function MentorReportsPage({searchParams}:{
     </section>:<>
       <section aria-label="Project status totals" className="space-y-3">
         <h2 className="font-semibold">Registered project status</h2>
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
           {statusMetrics.map(([label,count])=>
             <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
@@ -64,7 +64,7 @@ export default async function MentorReportsPage({searchParams}:{
       </section>
       <section aria-label="Recorded attention totals" className="space-y-3">
         <h2 className="font-semibold">Recorded project attention</h2>
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
           {attentionMetrics.map(([label,count])=>
             <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>

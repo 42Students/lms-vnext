@@ -46,7 +46,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     {!data.enabled?<section role="status" className="border-b border-border pb-4">
       Projects are disabled. No private task, meeting or delivery evidence was loaded.
     </section>:<>
-      <section aria-label="Recorded workflow signals" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Recorded workflow signals" className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
         {metrics.map(([label,value])=>
           <article key={label} className="rounded-xl border border-border bg-surface p-4">
             <h2 className="text-xs font-semibold text-muted-foreground">{label}</h2>
