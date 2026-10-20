@@ -16,6 +16,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PersonProfileDialog } from "@/components/admin/person-profile-dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -199,9 +201,7 @@ export function PersonMembershipActions({
 
   return (
     <>
-      <details className="group min-w-0 text-left print:hidden">
-       <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Actions</summary>
-       <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center md:justify-end">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
         <PersonProfileDialog
           membershipId={membershipId}
           collegeId={collegeId}
@@ -209,31 +209,33 @@ export function PersonMembershipActions({
           roles={currentRoles}
           disabled={currentStatus === "ENDED"}
         />
-        <Button
-          variant="secondary"
-          size="sm"
-          className="min-h-11 w-full sm:w-auto md:min-h-9"
+        <Dropdown label="Membership actions" trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+          <Menu className="w-full min-w-0">
+            <MenuItem
+          
+          
+          
           disabled={currentStatus === "ENDED" || lifecyclePending || Boolean(rolePending) || roleRequestPending.current}
           onClick={() => setRolesOpen(true)}
         >
           Roles
-        </Button>
+        </MenuItem>
 
         {currentStatus === "ACTIVE" ? (
-          <Button
-            variant="secondary"
-            size="sm"
+          <MenuItem
+            
+            
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() => setSuspendOpen(true)}
           >
             Suspend
-          </Button>
+          </MenuItem>
         ) : null}
 
         {currentStatus === "SUSPENDED" ? (
-          <Button
-            variant="secondary"
-            size="sm"
+          <MenuItem
+            
+            
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() =>
               lifecycle({ action: "REACTIVATE" })
@@ -242,21 +244,22 @@ export function PersonMembershipActions({
             {lifecyclePending
               ? "Working…"
               : "Reactivate"}
-          </Button>
+          </MenuItem>
         ) : null}
 
         {currentStatus !== "ENDED" ? (
-          <Button
-            variant="ghost"
-            size="sm"
+          <MenuItem
+            
+            
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() => setEndOpen(true)}
           >
             End
-          </Button>
+          </MenuItem>
         ) : null}
-       </div>
-      </details>
+          </Menu>
+        </Dropdown>
+      </div>
 
       <Dialog
         open={rolesOpen}
@@ -305,7 +308,7 @@ export function PersonMembershipActions({
         title={`Suspend ${displayName}`}
         description="Suspension blocks this college membership without disabling the canonical user or their other college memberships."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
                 disabled={lifecyclePending}
@@ -332,17 +335,17 @@ export function PersonMembershipActions({
                 ? "Suspending…"
                 : "Suspend membership"}
             </Button>
-          </>
+          </div>
         }
       >
         <label
           htmlFor={`suspension-reason-${membershipId}`}
-          className="mb-1.5 block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4"
+          className="mb-[6px] block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4"
         >
           Suspension reason
         </label>
         <Textarea
-          className="min-h-11 w-full sm:w-auto md:min-h-9"
+          className="min-h-11 w-full md:min-h-9"
           id={`suspension-reason-${membershipId}`}
           value={suspensionReason}
           onChange={(event) =>
