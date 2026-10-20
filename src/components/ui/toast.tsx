@@ -68,7 +68,7 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
     }}
     tabIndex={toasts.length > 0 ? 0 : -1}
     style={bounds}
-    className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-[1050] flex w-[calc(100vw_-_2rem)] min-w-0 max-w-[min(420px,calc(100vw_-_32px))] flex-col gap-[var(--lms-space-2)] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:inset-x-auto sm:right-4 sm:w-[min(420px,calc(100vw_-_32px))]">
+    className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-[1000] flex w-[calc(100vw_-_2rem)] min-w-0 max-w-[min(420px,calc(100vw_-_32px))] flex-col gap-[var(--lms-space-2)] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:inset-x-auto sm:right-4 sm:w-[min(420px,calc(100vw_-_32px))]">
     {toasts.map(toast => <section key={toast.id} role={toast.tone === "error" ? "alert" : "status"}
       className={cx("min-w-0 shrink-0 rounded-[var(--lms-canvas-radius)] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[toast.tone])}>
       <div className="flex items-start gap-[var(--lms-space-3)]">
@@ -79,7 +79,7 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
         </div>
         <Button variant="ghost" type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
           onClick={() => onDismiss(toast.id)}
-          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)]"><OverlayCloseIcon /></Button>
+          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"><OverlayCloseIcon /></Button>
       </div>
     </section>)}
   </div>;

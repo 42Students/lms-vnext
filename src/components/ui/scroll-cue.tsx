@@ -63,9 +63,9 @@ export function ScrollCue({ children, axis, label, className, viewportClassName 
     <div ref={viewport} role={edges.scrollable ? "region" : undefined}
       aria-label={edges.scrollable ? label : undefined}
       tabIndex={edges.scrollable ? 0 : -1}
-      className={cx(axis === "x" ? "min-w-0 overflow-x-auto overscroll-x-contain" :
-        "min-h-0 overflow-y-auto overscroll-contain",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
+      className={cx(axis === "x" ? "min-w-0 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" :
+        "min-h-0 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
         viewportClassName)}>{children}</div>
     {edges.start ? <span aria-hidden="true" data-scroll-fade="start" className={cx(
       "pointer-events-none absolute z-20 from-surface to-transparent motion-reduce:transition-none",
