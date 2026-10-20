@@ -13,7 +13,7 @@ export default function ErrorPage({ reset }: {
       Expiry records could not be loaded. This is not evidence that no offers are expiring.
     </p>
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
+      <Button type="button" className="min-h-11 w-full sm:w-auto sm:min-h-9" onClick={reset}>Retry</Button>
     </div>
   </section>;
 }
