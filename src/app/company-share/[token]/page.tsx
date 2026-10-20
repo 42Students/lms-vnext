@@ -21,30 +21,30 @@ export default async function CompanySharePage({
  const {page,q,access}=await searchParams;
  const proof=(await cookies()).get("company_share_access")?.value??null;
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof).catch(()=>null);
- if(result===null)return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10`}>
+ if(result===null)return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
   <ErrorState title="Shared applicants" description="This page is temporarily unavailable. Try again."
     action={<Link href={"/company-share/"+encodeURIComponent(token)}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Try again</Link>}/>
  </main>;
- if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] md:py-10`}>
-  <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 md:p-6">
+ if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:py-12`}>
+  <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
    <PageHeader title="Enter the 6-digit share code" />
-   <p className="text-sm text-body">Ask the placement cell for the code sent separately with this company share link.</p>
+   <p className="max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for the code sent separately with this company share link.</p>
    {access==="invalid"?<p role="alert" className="text-sm text-error">
     That code did not work, or this share is no longer available.</p>:null}
    <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
      <Input name="code" type="text" required inputMode="numeric" autoComplete="one-time-code"
       pattern="[0-9]{6}" minLength={6} maxLength={6}
-      className="max-w-full tracking-widest" />
+      className="min-h-11 w-full max-w-full tracking-widest md:min-h-9" />
     </label>
-    <Button type="submit">Open shared applicants</Button>
+    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open shared applicants</Button>
    </form>
-   <p className="text-xs text-muted-foreground">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
+   <p className="max-w-prose break-words text-xs leading-5 text-muted-foreground">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
   </section>
  </main>;
- if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10`}>
-  <section role="alert" className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+ if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
+  <section role="alert" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
    <PageHeader title="This link is not valid any more." />
    <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
    <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Home</Link>
@@ -59,35 +59,35 @@ export default async function CompanySharePage({
   mobilePriority: index===0?"primary":"secondary",
   cell: row=>row.cells[key]??"Not recorded",
  }));
- return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-5 px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] md:px-5`}>
+ return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-4 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:px-5 min-[768px]:py-12`}>
   <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 md:grid-cols-3">
    {Array.from({length:18},(_,index)=><span key={index} className="block w-[150%] -rotate-30 whitespace-nowrap">{result.companyName} · confidential</span>)}
   </div>
-  <div className="min-w-0 space-y-5 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
-  <section aria-label="Shared applicant summary">
+  <div className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
+  <section aria-label="Shared applicant summary" className="min-w-0 space-y-2 border-b border-[var(--lms-canvas-border)] pb-4">
    <p className="text-sm text-muted-foreground">42Students · Company applicant share</p>
    <PageHeader title={"Shared with "+result.companyName} />
-   <p className="mt-1 break-words text-lg font-medium text-foreground">{result.title}</p>
-   <p className="mt-2 text-sm text-body">
+   <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-base font-medium leading-6 text-foreground">{result.title}</p>
+   <p className="max-w-3xl break-words text-sm leading-6 text-body">
     Shared by {result.collegeName} on {new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))}
     {" "}for {result.companyName}. Please do not forward this page.
    </p>
-   <p className="mt-2 text-sm text-body">
+   <p className="max-w-3xl break-words text-sm leading-6 text-body">
     The link works until {new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.
    </p>
-   <p className="mt-2 text-sm text-muted-foreground">
+   <p className="max-w-3xl break-words text-xs leading-5 text-muted-foreground">
     Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
    </p>
    {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
-    className="flex min-w-0 flex-wrap items-end gap-3 border-y border-border py-4">
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner name
+    className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:flex-row md:flex-wrap md:items-end">
+    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Search learner name
      <Input name="q" type="search" defaultValue={result.search} maxLength={80}
-      className="w-full md:w-64" placeholder="Name contains..." />
+      className="min-h-11 w-full md:min-h-9 md:w-64" placeholder="Name contains..." />
     </label>
-    <Button type="submit">Apply search</Button>
-    <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</a>
+    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply search</Button>
+    <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</a>
   </form>
   <p role="status" className="text-sm text-body">
    {result.total} shortlisted applicants · Page {result.page} of {result.totalPages}
@@ -101,10 +101,13 @@ export default async function CompanySharePage({
    </div>}/>
   <Pagination page={result.page} pageCount={result.totalPages}
    hrefForPage={href} label="Share pages"/>
-  <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-   href={publicApplicantExportHref(token,result.search)}>
-   Download list (CSV, up to 500 applicants)
-  </a>
+  <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
+   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Download options</summary>
+   <a className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+    href={publicApplicantExportHref(token,result.search)}>
+    Download list (CSV, up to 500 applicants)
+   </a>
+  </details>
   </div>
  </main>;
 }
