@@ -88,7 +88,7 @@ function formatMoney(value: number | null) {
   }).format(value);
 }
 
-const inputClass = "min-h-11 w-full max-[767px]:min-h-11";
+const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
 
 export function PlacementOfferControls({
   jobId,
@@ -335,6 +335,9 @@ export function PlacementOfferControls({
       </div>
 
       {isTpo ? (
+        <details className="border-b border-border py-3">
+          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Verified offer lifecycle / Bulk withdraw offers</summary>
+          <div className="space-y-4 pt-3">
         <TpoOfferLifecyclePanel
           jobId={jobId}
           choices={candidates.flatMap((item) => item.offer ? [{
@@ -346,7 +349,6 @@ export function PlacementOfferControls({
         />
       ) : null}
 
-      {isTpo ? (
         <PlacementBulkOfferWithdraw
           jobId={jobId}
           choices={candidates.flatMap((item) => item.offer ? [{
@@ -356,6 +358,8 @@ export function PlacementOfferControls({
             joiningStatus: item.joining?.status ?? null,
           }] : [])}
         />
+          </div>
+        </details>
       ) : null}
 
       {candidates.length === 0 ? (
@@ -381,8 +385,8 @@ export function PlacementOfferControls({
                 key={item.applicationId}
                 className="grid gap-4 py-5"
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
+                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0 flex-1 break-words">
                     <p className="m-0 font-semibold text-foreground">
                       {item.displayName ??
                         "Candidate"}
@@ -393,7 +397,7 @@ export function PlacementOfferControls({
                         "No email on profile"}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
                     <StatusBadge
                       tone={
                         item.offerReady
@@ -459,7 +463,7 @@ export function PlacementOfferControls({
                 {!active &&
                 item.offerReady &&
                 draft ? (
-                  <div className="grid gap-3 lg:grid-cols-4">
+                  <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                     <label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Record type
@@ -618,8 +622,8 @@ export function PlacementOfferControls({
                         }
                       />
                     </label>
-                    <div className="lg:col-span-4">
-                      <Button
+                    <div className="sm:col-span-2 lg:col-span-4">
+                      <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                         size="sm"
                         disabled={
                           pendingKey !==
@@ -642,7 +646,7 @@ export function PlacementOfferControls({
                 {item.offer?.status ===
                 "ISSUED" ? (
                   <div>
-                    <Button
+                    <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                       size="sm"
                       variant="danger"
                       disabled={
@@ -656,7 +660,7 @@ export function PlacementOfferControls({
                 ) : null}
 
                 {accepted && draft ? (
-                  <div className="grid gap-3 border-b border-border py-4 lg:grid-cols-4">
+                  <div className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-4">
                     <label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Joining outcome
@@ -802,8 +806,8 @@ export function PlacementOfferControls({
                         placeholder="Required when correcting a recorded outcome"
                       />
                     </label>
-                    <div className="lg:col-span-4">
-                      <Button
+                    <div className="sm:col-span-2 lg:col-span-4">
+                      <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                         size="sm"
                         disabled={
                           pendingKey !==
@@ -830,7 +834,11 @@ export function PlacementOfferControls({
         </div>
       )}
       {withdrawTarget?.offer?<Dialog open={Boolean(withdrawTarget.offer)} onOpenChange={next=>{if(!next&&pendingKey===null)setWithdrawTarget(null);}}
-        dismissible={pendingKey===null} title={"Withdraw offer for "+(withdrawTarget.displayName??"learner")+"?"} className="max-w-lg">
+        dismissible={pendingKey===null} title={"Withdraw offer for "+(withdrawTarget.displayName??"learner")+"?"} className="max-w-lg"
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingKey!==null} onClick={()=>setWithdrawTarget(null)}>Keep offer</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="danger" loading={pendingKey!==null} disabled={pendingKey!==null||(withdrawReason==="Other"&&withdrawDetail.trim().length<3)} onClick={()=>void withdraw(withdrawTarget)}>Confirm withdrawal</Button>
+        </div>}>
         <div className="space-y-4">
           <p className="text-sm text-body">This notifies the learner and recalculates held-offer eligibility. History is retained.</p>
           <label className="grid gap-2 text-sm">Reason<Select className={inputClass} value={withdrawReason}
@@ -840,11 +848,7 @@ export function PlacementOfferControls({
           <label className="grid gap-2 text-sm">Additional details
            <Textarea className={inputClass} maxLength={500} value={withdrawDetail} onChange={e=>setWithdrawDetail(e.target.value)}/>
           </label>
-          <div className="flex gap-3">
-            <Button variant="danger" disabled={pendingKey!==null||(withdrawReason==="Other"&&withdrawDetail.trim().length<3)}
-              onClick={()=>void withdraw(withdrawTarget)}>Confirm withdrawal</Button>
-            <Button variant="secondary" disabled={pendingKey!==null} onClick={()=>setWithdrawTarget(null)}>Keep offer</Button>
-          </div>
+ 
         </div>
       </Dialog>:null}
     </section>

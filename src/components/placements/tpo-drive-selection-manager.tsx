@@ -56,10 +56,10 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}finally{setPending(false);setConfirmOpen(false);}
  }
  return <section className="space-y-4">
-  <div className="flex flex-wrap gap-3">
-   <Button type="button" onClick={()=>open("RECORD")} disabled={!recordable.length}
+  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>open("RECORD")} disabled={!recordable.length}
     >Record a selection</Button>
-   <Button variant="secondary" type="button" onClick={()=>open("VERIFY_AND_RELEASE")} disabled={!releasable.length}
+   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" type="button" onClick={()=>open("VERIFY_AND_RELEASE")} disabled={!releasable.length}
     >
     Verify and release ({releasable.length})</Button>
   </div>
@@ -78,7 +78,13 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     ]}/>
   {report.length&&!mode?<InlineNotice tone="success" message={report.filter(r=>r.status==="released").length+" offers released."}/>:null}
   <Dialog open={mode!==null} onOpenChange={next=>{if(!next&&!pending){setMode(null);setError("");}}}
-    dismissible={!pending} title={mode==="RECORD"?"Record the company's selections":"Verify and release selections"}>
+    dismissible={!pending} title={mode==="RECORD"?"Record the company's selections":"Verify and release selections"}
+    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+     <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" type="button" disabled={pending} onClick={()=>{setMode(null);setError("");}}>Close</Button>
+     <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" loading={pending} disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())} onClick={()=>void submit()}>
+      {pending?"Saving…":mode==="RECORD"?"Record "+chosen.length+" selection(s)":"Verify and release "+chosen.length+" offer(s)"}
+     </Button>
+    </div>}>
     <div className="min-w-0 space-y-4">
     <p className="text-sm text-body">{mode==="RECORD"
       ?"Choose selected students and enter their package. Nothing is sent until release."
@@ -104,33 +110,27 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
      <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
       placeholder="Search name, email or role" />
     </label>
-    <div className="flex flex-wrap gap-3 text-sm">
-      <Button variant="ghost" type="button" disabled={pending} onClick={()=>setChosen(previous=>[
+    <div className="flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center">
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="ghost" type="button" disabled={pending} onClick={()=>setChosen(previous=>[
        ...new Set([...previous,...(mode==="RECORD"?visibleRecordable.map(x=>x.applicationId):visibleReleasable.map(x=>x.id))])].slice(0,100))}>
        Select matching (max 100)
       </Button>
-      <Button variant="ghost" type="button" disabled={pending||!chosen.length} onClick={()=>setChosen([])}>Clear selection</Button>
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="ghost" type="button" disabled={pending||!chosen.length} onClick={()=>setChosen([])}>Clear selection</Button>
     </div>
-    <fieldset className="max-h-60 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-3 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+    <fieldset className="max-h-60 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-3 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
      {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
        visibleReleasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
-       .map(item=><label key={item.id} className="flex min-h-11 items-center gap-3 px-2 text-sm hover:bg-muted md:min-h-9">
+       .map(item=><label key={item.id} className="flex min-h-11 min-w-0 items-start gap-3 px-2 py-2 text-sm hover:bg-muted md:min-h-9">
         <Checkbox checked={chosen.includes(item.id)} disabled={pending} onChange={()=>toggle(item.id)}/>
-        <span>{item.name} · {item.note}</span>
+        <span className="min-w-0 flex-1 break-words">{item.name} · {item.note}</span>
        </label>)}
     </fieldset>
     {error?<InlineNotice tone="error" message={error}/>:null}
     {report.length?<div role="status" tabIndex={0} aria-label="Selection release results, scroll for more" className="max-h-32 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_85%,transparent_100%)]">
      {report.map(x=><p key={x.selectionId}>{x.status}: {x.applicationId} {x.reason??""}</p>)}
     </div>:null}
-    <div className="flex gap-3">
-     <Button type="button" disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())}
-      onClick={()=>void submit()} >
-      {pending?"Saving…":mode==="RECORD"?"Record "+chosen.length+" selection(s)":"Verify and release "+chosen.length+" offer(s)"}</Button>
-     <Button variant="secondary" type="button" disabled={pending} onClick={()=>{setMode(null);setError("");}}
-      >Close</Button>
-    </div>
+
     </div>
   </Dialog>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}

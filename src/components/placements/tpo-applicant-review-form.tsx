@@ -58,8 +58,8 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
    }
   }
   return <form onKeyDown={shortcuts} onSubmit={event => void submit(event)}
-    className="space-y-4 border-b border-border pb-6">
-    <h2 className="font-semibold text-foreground">Review application</h2>
+    className="min-w-0 space-y-4 border-b border-border pb-6">
+    <h3 className="font-semibold text-foreground">Review application</h3>
     <label className="grid min-w-0 gap-[6px] text-sm text-body">Decision
       <Select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
         <option value="SHORTLISTED">Shortlist</option>
@@ -72,11 +72,11 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     </label>
     {decision==="REJECTED"?<fieldset className="space-y-2 text-sm">
       <legend className="font-semibold">Common not-selected reasons</legend>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
         {["Did not meet criteria","Application incomplete","Company screening decision","Other"].map(preset=>
           <Button variant="secondary" type="button" key={preset} disabled={pending||saved}
             onClick={()=>{setInternalReason(preset==="Other"?"":preset);setReviewed(false);}}
-            className="min-h-11 md:min-h-9 px-3">{preset}</Button>)}
+            className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">{preset}</Button>)}
       </div>
       <label className="block text-sm">Internal not-selected reason (not shown to the learner)
         <Textarea value={internalReason} maxLength={500} rows={2}
@@ -85,7 +85,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
       </label>
       <p className="text-xs text-body">The decision note above is learner-visible. Internal reason presets stay private; do not copy confidential employer notes into the learner message.</p>
     </fieldset>:null}
-    <label className="flex items-start gap-2 text-sm text-body">
+    <label className="flex min-w-0 items-start gap-2 break-words text-sm text-body">
       <Checkbox checked={reviewed} disabled={pending||saved}
         onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
       I reviewed the applicant and the learner-visible reason. This screening decision is audited.
@@ -94,7 +94,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     <p className="text-xs text-body">Only pending or held submitted applicants can be reviewed. Refresh if another TPO made a decision.</p>
     {error ? <InlineNotice tone="error" message={error}/> : null}
     {saved ? <InlineNotice tone="success" message="Decision saved. Refresh the applicant list to see its current stage."/> : null}
-    <Button variant="primary" type="submit" disabled={pending || saved || !reviewed || note.trim().length<10}
+    <Button variant="primary" type="submit" loading={pending} disabled={pending || saved || !reviewed || note.trim().length<10}
       className="min-h-11 w-full px-4 min-[768px]:min-h-9 min-[768px]:w-auto">
       {pending ? "Saving…" : saved ? "Decision saved" : "Review and confirm decision"}
     </Button>

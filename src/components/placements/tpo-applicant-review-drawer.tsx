@@ -20,17 +20,15 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
  }
  return <>
   <Button variant="secondary" type="button" onClick={()=>setOpen(true)}
-   className="mt-2">
+   className="mt-2 min-h-11 w-full sm:w-auto md:min-h-9">
    Review applicant
   </Button>
   <Drawer open={open} onOpenChange={setOpen} title={app.student??"Name unavailable"}>
-   <div onKeyDown={move} className="min-w-0 space-y-4">
-    <div className="flex justify-end"><Button variant="secondary" type="button" onClick={()=>setOpen(false)}
-     >Close</Button></div>
-   <dl className="mb-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+   <div onKeyDown={move} className="min-w-0 space-y-4 break-words">
+   <dl className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-3 border-b border-border pb-4 text-sm sm:grid-cols-2">
     <div><dt className="text-body">Role</dt><dd className="break-words">{app.role}</dd></div>
-    <div><dt className="text-body">Application</dt><dd>{app.applicationStatus}</dd></div>
-    <div><dt className="text-body">Screening</dt><dd>{app.screeningStatus??"Not recorded"}</dd></div>
+    <div className="min-w-0"><dt className="text-body">Application</dt><dd className="break-words">{app.applicationStatus}</dd></div>
+    <div className="min-w-0"><dt className="text-body">Screening</dt><dd className="break-words">{app.screeningStatus??"Not recorded"}</dd></div>
     <div><dt className="text-body">Eligibility</dt><dd>{app.eligibilityStatus}</dd></div>
     <div><dt className="text-body">Channel</dt><dd>{app.channel}</dd></div>
     <div><dt className="text-body">Submitted</dt><dd>{new Date(app.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</dd></div>
@@ -39,13 +37,13 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
     <TpoApplicantReviewForm key={app.screeningUpdatedAt} jobId={jobId} applicationId={app.id}
      expectedUpdatedAt={app.screeningUpdatedAt}/>:
     <p role="status" className="text-sm text-body">This application is read-only. Review requires a published drive and a pending or held submitted application.</p>}
-   <nav aria-label="Review neighbours" className="flex flex-wrap gap-3 text-sm">
+   <nav aria-label="Review neighbours" className="flex flex-col gap-2 border-t border-border pt-4 text-sm sm:flex-row sm:items-center sm:justify-between">
     {previousId?<Link href={applicantHref(previousId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">← Previous applicant</Link>:null}
     {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">Next applicant →</Link>:null}
    </nav>
    <p className="text-xs text-body">Use left and right arrows outside form controls to open the previous or next applicant.</p>
    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+app.id}
-    className="mt-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+    className="inline-flex min-h-11 w-full items-center justify-center border-t border-border pt-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline sm:w-auto sm:justify-start md:min-h-9">
     Open full applicant detail →
    </Link>
    </div>

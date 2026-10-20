@@ -111,9 +111,9 @@ export function PlacementBulkOfferWithdraw({
         </p>
       ) : (
         <>
-          <div tabIndex={0} role="group" aria-label="Offers eligible for withdrawal, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+          <div tabIndex={0} role="group" aria-label="Offers eligible for withdrawal, scroll for more" className="max-h-64 min-h-0 min-w-0 space-y-1 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
             {available.map((item) => (
-              <label key={item.id} className="flex min-h-11 cursor-pointer items-center gap-3 px-2 py-1 text-sm">
+              <label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-2 px-2 py-1 text-sm">
                 <input
                   type="checkbox"
                   checked={selected.includes(item.id)}
@@ -121,7 +121,7 @@ export function PlacementBulkOfferWithdraw({
                   disabled={busy || (selected.length >= 50 && !selected.includes(item.id))}
                   className="h-4 w-4 accent-primary"
                 />
-                <span className="font-medium text-foreground">{item.label}</span>
+                <span className="min-w-0 flex-1 break-words font-medium text-foreground">{item.label}</span>
                 <span className="text-muted-foreground">{item.status}</span>
               </label>
             ))}
@@ -137,13 +137,14 @@ export function PlacementBulkOfferWithdraw({
               className="mt-2 w-full"
             />
           </label>
-          <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+          <div className="flex flex-col items-stretch gap-3 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <span className="font-medium text-body">{selected.length} / 50 offers selected</span>
             <Button variant="danger"
               type="button"
               onClick={() => void submit()}
               disabled={busy || selected.length === 0 || reason.trim().length < 8}
-              className="min-h-10"
+              loading={busy}
+              className="min-h-11 w-full sm:w-auto md:min-h-9"
             >
               {busy ? "Applying withdrawal..." : "Review and confirm withdrawals"}
             </Button>
@@ -156,7 +157,7 @@ export function PlacementBulkOfferWithdraw({
           <h4 className="font-semibold text-foreground">Per-offer results</h4>
           <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border text-sm">
             {results.map((item) => (
-              <li key={item.offerId} className="flex flex-wrap gap-2 p-2">
+              <li key={item.offerId} className="flex min-w-0 flex-wrap gap-2 break-words p-3">
                 <span className="font-medium text-foreground">
                   {choices.find((choice) => choice.id === item.offerId)?.label ?? "Selected offer"}
                 </span>
