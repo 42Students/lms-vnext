@@ -64,8 +64,8 @@ export default async function MentorTeamCoveragePage({
           Projects access is disabled for this membership. No team records were loaded.
         </section>
       : <>
-        <FilterBar title="Filters" activeCount={Number(hasFilters)}><form role="search" aria-label="mentor team coverage filters" method="get" action="/mentor/team-coverage"
-          className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2">
+        <FilterBar title="Filters" activeCount={Number(Boolean(data.query.search))+Number(data.query.filter!=="ALL")+Number(data.query.status!=="ALL")+Number(data.query.assignment!=="ALL")+Number(data.query.order!=="TITLE")}><form role="search" aria-label="mentor team coverage filters" method="get" action="/mentor/team-coverage"
+          className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
               className="min-h-11 md:min-h-9"
@@ -85,7 +85,11 @@ export default async function MentorTeamCoveragePage({
               <option value="SINGLE_MENTOR">Exactly one active Mentor</option>
             </Select>
           </label>
-          <Disclosure title="More team coverage filters" defaultOpen={hasAdvancedFilters} className="md:col-span-2" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
+            <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+            {hasFilters?<Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear</Link>:null}
+          </div>
+          <Disclosure title="More team coverage filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project state
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
@@ -105,10 +109,7 @@ export default async function MentorTeamCoveragePage({
             </Select>
           </label>
           </Disclosure>
-          <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-2">
-            <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-            <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear</Link>
-          </div>
+
         </form></FilterBar>
         <section aria-label="Registered team coverage summary" className="grid min-w-0 grid-cols-1 gap-x-6 gap-y-2 border-b border-border pb-3 sm:grid-cols-3">
            {([

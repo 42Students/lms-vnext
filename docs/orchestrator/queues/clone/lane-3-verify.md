@@ -40,8 +40,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-3.md: surface | regres
 - [x] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
 - [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
 - [x] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
-- [ ] `src/components/projects/learner-task-progress-control.tsx`
+- [x] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
+- [x] `src/components/projects/learner-task-progress-control.tsx`
 - [ ] `src/components/projects/mentor-lane-board.tsx`
 - [ ] `src/components/projects/mentor-product-backlog.tsx`
 - [ ] `src/components/projects/mentor-project-closeout-control.tsx`
