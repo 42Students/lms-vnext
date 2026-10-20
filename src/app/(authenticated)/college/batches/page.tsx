@@ -12,7 +12,7 @@ import {
   collegeBatchDirectorySchema,
 } from "@/modules/academics/college-academic-directory-model";
 import { listCollegeBatches } from "@/modules/academics/college-academic-directory-service";
-import { academicExportHref , ACADEMIC_EXPORT_CAP } from "@/modules/academics/college-academic-export-model";
+import { academicExportHref, ACADEMIC_EXPORT_CAP } from "@/modules/academics/college-academic-export-model";
 
 export default async function CollegeBatchesPage({
   searchParams,
@@ -38,13 +38,12 @@ export default async function CollegeBatchesPage({
   const periodChoices = periods.filter(period => period.status !== "CLOSED").map(period => ({
     id: period.id, name: period.name, code: period.code,
   }));
-  return <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices}
+  return <div className="min-w-0 space-y-[var(--lms-space-4)]"><CollegeAcademicDirectory data={directory} batchPeriods={periodChoices}
     actions={<Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Export CSV
     </Link>}
-    prepend={<div className="min-w-0 space-y-4">
-      <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
-      <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching batches; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
-    </div>}/>;
+    prepend={<CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />} />
+    <p className="max-w-[80ch] text-xs leading-5 text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching batches; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
+  </div>;
 }
