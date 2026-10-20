@@ -14,6 +14,7 @@ export function TpoBulkDriveReminder(){
   if(!form||busy)return;
   const ids=[...new Set(new FormData(form).getAll("ids").filter((v):v is string=>typeof v==="string"))];
   if(!ids.length||ids.length>10){setError("Choose between 1 and 10 drives on this page.");return;}
+  setError("");setMessage("");
   setSelectedIds(ids);
   setConfirmOpen(true);
  }
@@ -60,7 +61,7 @@ export function TpoBulkDriveReminder(){
    className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Checking selected drives…":"Remind non-applicants in selected drives"}
   </Button>
-  {message?<InlineNotice tone={hadFailures?"warning":"success"} message={message}/>:null}
+  {message?<InlineNotice tone={hadFailures?"error":"success"} message={message}/>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title="Send eligible non-applicant reminders?"
