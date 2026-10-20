@@ -219,7 +219,7 @@ export default async function TpoMessagesPage({
 
       <section
         aria-label="Communication summary"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4"
       >
         {[
           {
@@ -264,7 +264,7 @@ export default async function TpoMessagesPage({
             {label} ({count})
           </Link>)}
       </nav> : null}
-      <section className="border-t border-border pt-4 sm:pt-5">
+      <section className="border-t border-border pt-4 min-[768px]:pt-5">
         <h2 className="text-base font-semibold text-foreground">
           Communication filters
         </h2>
@@ -272,7 +272,7 @@ export default async function TpoMessagesPage({
         <form
           action="/tpo/messages"
           method="get"
-          className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5"
+          className="mt-4 grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5"
         >
           <label className="grid gap-1 text-sm font-semibold text-body">
             Status
@@ -340,7 +340,7 @@ export default async function TpoMessagesPage({
             </Select>
           </label>
 
-          <div className="flex flex-wrap gap-3 sm:col-span-2 xl:col-span-5">
+          <div className="flex flex-wrap gap-3 min-[768px]:col-span-2 xl:col-span-5">
             <Button
               type="submit"
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
