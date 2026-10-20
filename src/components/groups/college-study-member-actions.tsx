@@ -66,7 +66,7 @@ export function CollegeStudyMemberActions({
     }} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-body leading-4">
         Add learner
-        <Select value={selection} onChange={(event) => setSelection(event.target.value)}
+        <Select value={selection} onChange={(event) => {setSelection(event.target.value);if(event.target.value)setManualId("");}}
           className="min-h-11 min-w-0 md:min-h-9">
           <option value="">Choose from first 100 members</option>
           {available.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
@@ -74,7 +74,7 @@ export function CollegeStudyMemberActions({
       </label>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-body leading-4">
         Or learner membership ID
-        <Input value={manualId} onChange={(event) => setManualId(event.target.value)}
+        <Input value={manualId} onChange={(event) => {setManualId(event.target.value);if(event.target.value.trim())setSelection("");}}
           placeholder="UUID" className="min-h-11 min-w-0 md:min-h-9" />
       </label>
       <Button type="submit" loading={pending} className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto" disabled={pending}>Review add</Button>
