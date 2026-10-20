@@ -84,8 +84,8 @@ export default async function TpoPerformanceIntelligencePage({
         <EmptyState title="No placement season exists." description="No company funnel or package performance is inferred."/>
       ) : null}
       <section aria-label="Company funnel">
-        <h2 className="mb-2 text-lg font-semibold text-foreground">Company funnel</h2>
-        <p className="mb-4 text-sm leading-6 text-body">
+        <h2 className="mb-2 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Company funnel</h2>
+        <p className="mb-4 text-sm text-body leading-[1.6]">
           Applicant denominator = distinct learners with SUBMITTED applications to
           this company in the selected season and drive scope. Numerator = distinct
           learners holding an ACCEPTED offer for this company. Rate is unknown when
@@ -111,8 +111,8 @@ export default async function TpoPerformanceIntelligencePage({
         />
       </section>
       <section aria-label="Compensation intelligence" className="space-y-4">
-        <h2 className="text-lg font-semibold text-foreground">Compensation intelligence</h2>
-        <p className="text-sm leading-6 text-body">
+        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Compensation intelligence</h2>
+        <p className="text-sm text-body leading-[1.6]">
           Only current ACCEPTED, FULL_TIME offers qualify. Offer-based measures
           count offer versions; best-per-learner measures retain each learner&apos;s
           highest accepted full-time CTC. Unknown packages are excluded from
@@ -143,7 +143,7 @@ export default async function TpoPerformanceIntelligencePage({
           emptyDescription="No accepted full-time offer with a known package is available."
         />
       </section>
-      <p className="text-xs leading-5 text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-[1.6]">
         Current branch attribution and accepted-offer status may change over time.
         This page does not claim placement-time historical cohorts, external offers
         or a regulatory accreditation placement rate.

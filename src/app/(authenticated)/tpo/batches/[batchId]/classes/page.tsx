@@ -21,7 +21,7 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
   {data.classes.length?<div className="grid min-w-0 gap-4 md:grid-cols-2">
    {data.classes.map(row=><section key={row.id} className="min-w-0 space-y-3 border-b border-border py-4">
     <div className="flex flex-wrap items-start justify-between gap-2">
-      <div><h2 className="text-base font-semibold">{row.name}</h2><p className="text-xs text-muted-foreground">{row.code} · {row.students} student{row.students===1?"":"s"}</p></div>
+      <div><h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{row.name}</h2><p className="text-xs text-muted-foreground">{row.code} · {row.students} student{row.students===1?"":"s"}</p></div>
       <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/students?classId="+encodeURIComponent(row.id)}
         className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View students →</Link>
     </div>

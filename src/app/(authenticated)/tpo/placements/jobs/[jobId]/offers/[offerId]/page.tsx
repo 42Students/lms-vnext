@@ -31,7 +31,7 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
   </section>
   <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 print:hidden" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</Link>
   <section aria-label="Offer status and joining history" className="border-b border-border pb-6">
-   <h2 className="font-semibold">Recorded transitions</h2>
+   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recorded transitions</h2>
    {data.events.length===0?<EmptyState title="No persisted status or joining history events were found; absence is not evidence of a decision."/>:
     <ol className="mt-4 divide-y divide-border">{data.events.map(event=><li key={event.id} className="py-4">
      <div className="flex flex-wrap items-center justify-between gap-3">

@@ -106,7 +106,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
  }
  return <section aria-label="Company applicant sharing"
    className="space-y-3 border-b border-border pb-6">
-  <h2 className="text-lg font-semibold text-foreground">Share shortlisted applicants with a company</h2>
+  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Share shortlisted applicants with a company</h2>
   <p className="text-sm text-body">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum 90-day lifetime, use a separate six-digit code, and may be revoked immediately. Private notes stay excluded.</p>
   {!ready?<Alert tone="warning">
@@ -144,7 +144,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     Give this six-digit code to the company separately. It cannot be recovered later.
    </Alert>:null}
    {newUrl?<div className="rounded-[var(--lms-control-radius)] border border-border p-3">
-    <p className="text-xs font-semibold text-body">Copy this URL now. The secret cannot be recovered later.</p>
+    <p className="text-xs font-semibold text-[var(--lms-muted-text)]">Copy this URL now. The secret cannot be recovered later.</p>
     <Input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
      className="mt-2 w-full"/>
     <Button type="button" variant="link" onClick={()=>void copyLink()}

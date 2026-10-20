@@ -34,7 +34,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    actions={<Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Drive workspace</Link>} />
   <section className="grid grid-cols-2 overflow-hidden border-y border-border bg-surface md:grid-cols-4" aria-label="Result counts">
    {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border p-3 md:border-r md:border-b-0 md:last:border-r-0">
-    <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
+    <p className="text-xs capitalize text-[var(--lms-muted-text)]">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
   {!data.truncated?<TpoBulkRoundResultRecorder roundId={roundId}
@@ -63,7 +63,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    <section className="grid min-w-0 gap-[var(--lms-space-3)]" aria-label="Round result entries">
     {visibleRows.map(row=><article key={row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
      <div className="mb-3">
-      <h2 className="font-semibold text-foreground">{row.student??"Name unavailable"}</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{row.student??"Name unavailable"}</h2>
       <p className="text-sm text-body">{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>
      </div>
      {row.editable?<TpoRoundResultEntryForm key={row.resultId??"unrecorded"} roundId={roundId} applicationId={row.applicationId}

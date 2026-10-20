@@ -66,7 +66,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
         </a><TpoDueFollowupWorkspace data={data} />
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><span className="text-body">Showing {data.total===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.total,data.page*data.pageSize)} of {data.total} matching tasks · page {data.page} of {data.totalPages}</span><Pagination label="Follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>tpoFollowupQueueHref({scope,window,q,page})}/></div></> : (
         <Alert tone="warning" className="border-t border-border">
-          <h2 className="font-semibold text-foreground">Recruiter follow-ups unavailable</h2>
+          <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recruiter follow-ups unavailable</h2>
           <p className="mt-2 text-sm text-body">
             DB09 must be verified before recruiter follow-ups can be loaded or changed.
             Unavailable records are not counted as zero.

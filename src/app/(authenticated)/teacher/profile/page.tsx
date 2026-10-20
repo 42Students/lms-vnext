@@ -33,7 +33,7 @@ export default async function FacultyProfilePage() {
         </Link>
       </nav>
       <section aria-label="Faculty profile details" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="text-base font-semibold text-foreground">About</h2>
+        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">About</h2>
         <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
           {fields.map(({ label, value }) => (
             <div key={label}>

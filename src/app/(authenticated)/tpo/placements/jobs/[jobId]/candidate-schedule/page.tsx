@@ -49,7 +49,7 @@ export default async function TpoCandidateSchedulePage({
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
     </Banner>
     <section className="border-b border-border pb-6">
-      <h2 className="font-semibold text-foreground">Persisted venue collision assessment</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Persisted venue collision assessment</h2>
       {warning.state === "UNAVAILABLE" ?
         <Alert tone="warning">Assessment unavailable; no conflict-free claim is made.</Alert>
         : <p className="mt-2 text-sm text-body">
@@ -104,7 +104,7 @@ export default async function TpoCandidateSchedulePage({
           ]}
         />
       </>}
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-[1.6]">
       Candidate slot assignments, if registered, are maintained in the dedicated slots workspace. This page shows shared-round planning only.
       Date/time evidence comes from migrated round timestamps and is presented
       explicitly in the Asia/Kolkata timezone.
