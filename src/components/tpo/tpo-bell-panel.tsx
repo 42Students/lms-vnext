@@ -113,18 +113,23 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   finally{setPending(false);}
  }
 
- const panelFooter = <div role="group" aria-label="Notification inbox actions" className="flex flex-wrap gap-3"><Button variant="secondary" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11">Refresh</Button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
-    {unread>0?<Button variant="secondary" type="button" className="min-h-11" onClick={()=>void markAll()} disabled={pending} loading={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}</div>;
- const panelBody = <>   {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
-   {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="space-y-0">
-    {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="list-none">
-    <p className="px-3 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.day}</p>
+ const panelFooter = <div role="group" aria-label="Notification inbox actions" className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:order-last sm:w-auto" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
+   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+    {unread>0?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto" onClick={()=>void markAll()} disabled={pending} loading={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}
+    <Button variant="ghost" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11 w-full sm:w-auto">Refresh</Button>
+   </div>
+  </div>;
+ const panelBody = <div className="min-w-0"> {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
+   {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="min-w-0 space-y-0">
+    {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="min-w-0 list-none">
+    <p className="px-3 pb-2 pt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.day}</p>
     <ul role="list" aria-label={"Notifications for "+group.day} className="space-y-0">
-    {group.items.map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[var(--lms-control-radius)] text-sm">
+    {group.items.map(item=><li key={item.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] text-sm last:border-b-0">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
-      className="w-full min-h-11 flex-col items-start justify-start gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-left hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-     <span className="block text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-topbar-unread)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
-     {item.body?<span className="mt-1 block line-clamp-2 break-words text-sm leading-[1.5] text-muted-foreground">{item.body}</span>:null}
+      className="min-h-11 w-full min-w-0 flex-col items-start justify-start gap-1 rounded-[var(--lms-control-radius)] border-0 bg-transparent px-3 py-3 text-left hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4">
+     <span className="block max-w-full break-words text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-topbar-unread)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
+     {item.body?<span className="mt-1 block max-w-full line-clamp-2 break-words text-sm leading-[1.5] text-muted-foreground">{item.body}</span>:null}
      <time dateTime={item.createdAt} className="mt-1 block text-xs text-[var(--lms-muted-text)]">
       {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))}
      </time>
@@ -132,7 +137,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      </Button>
     </li>)}</ul></li>)}</ul>:null}
    {error?<p role="alert" className={style.topbarNotificationError}>{error}</p>:null}
-</>;
+</div>;
  return <div className="relative min-w-0" ref={root}>
   <Button ref={trigger} variant="secondary" size="sm" type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending}
    aria-controls={open ? (mobile ? "tpo-notification-drawer" : "tpo-notification-popover") : undefined} disabled={pending} onClick={()=>changeOpen(!open)}
@@ -158,7 +163,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      </Drawer>
    : open ? <PopoverPanel id="tpo-notification-popover" data-slot="notification-popover" label="Notifications"
        onDismiss={()=>{setOpen(false);trigger.current?.focus();}}
-       className="absolute right-0 top-[calc(100%_+_8px)] z-[70] w-[min(420px,calc(100vw_-_24px))] max-h-[min(520px,calc(100dvh_-_120px))] overflow-y-auto p-4">
+       className="absolute right-0 top-[calc(100%_+_8px)] z-[70] w-[min(420px,calc(100vw_-_24px))] max-h-[min(520px,calc(100dvh_-_120px))] overflow-y-auto overscroll-contain p-4">
        <div className="mb-3 border-b border-border pb-3">
         <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
         <p className="text-xs text-muted-foreground">Most recent notifications from your own college.</p>
