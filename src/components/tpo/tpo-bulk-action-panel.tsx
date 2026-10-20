@@ -189,7 +189,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     {safeSelected.length} selected. Preview and confirm the next {Math.min(200,safeSelected.length)} rows;
     remaining rows stay selected for the following batch. Each batch must be reviewed and confirmed separately.
    </p>:null}
-  {target==="STUDENTS"?<div className="min-w-0 space-y-2 border-t border-border pt-3">
+  {target==="STUDENTS"?<div className="min-w-0 space-y-2 border-t border-border pt-3 print:hidden">
    <label className="grid gap-1 text-sm font-semibold text-body">Paste roll numbers (comma, whitespace or line separated)
      <Textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
       rows={2} maxLength={40000} placeholder="23CS001, 23CS002" />
@@ -218,7 +218,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     <span className="min-w-0 break-words">{row.label}</span>
    </label>)}
   </ScrollCue>
-  <div className="flex flex-wrap gap-2">
+  <div className="flex flex-wrap gap-2 print:hidden">
    <Button variant="secondary" type="button" disabled={busy||safeSelected.length===0}
      onClick={()=>{setSelected([]);invalidate();}}
      >
@@ -242,7 +242,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    
    onClick={()=>void runGuarded(undoLastRun)}>Undo last student batch (five minutes)</Button>:null}
   {undoNotice?<p role="status" aria-live="polite" className="text-sm">{undoNotice}</p>:null}
-  <div className="grid gap-3 md:grid-cols-2">
+  <div className="grid gap-3 md:grid-cols-2 print:hidden">
    <label className="text-sm font-semibold text-body">Action
     <Select value={action} disabled={busy}
       onChange={e=>{setAction(e.target.value as Action);invalidate();}}
@@ -282,7 +282,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       </Select>
      </label>
      {safeSelected.length>200?<p role="status" className="text-xs text-warning-text">Select at most 200 currently shortlisted applications for one company link. Other rows are not shared.</p>:null}
-     <div className="flex flex-wrap gap-2">
+     <div className="flex flex-wrap gap-2 print:hidden">
        <Button variant="secondary" type="button" disabled={busy||safeSelected.length===0||safeSelected.length>200} onClick={()=>setShareConfirmOpen(true)}
         >
          Share {safeSelected.length} selected with the company
@@ -308,7 +308,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      {safeSelected.length>1?<Disclosure title={`Review selected applicants individually (${safeSelected.length})`} className="text-sm">
        <ScrollCue axis="y" label="Selected applicant review links" viewportClassName="max-h-40"><ol className="mt-2 space-y-2">
          {safeSelected.map((id,index)=><li key={id}>
-           <Link href={tpoReviewOneByOneHref(jobId,id)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+           <Link href={tpoReviewOneByOneHref(jobId,id)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
              Applicant {index+1}
            </Link>
          </li>)}
@@ -361,7 +361,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      >
      Preview next batch ({Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)} of {safeSelected.length} remaining)
     </Button>:null}
-   {outcomes.some(item=>item.status!=="updated")?<div className="flex flex-wrap gap-2">
+   {outcomes.some(item=>item.status!=="updated")?<div className="flex flex-wrap gap-2 print:hidden">
      <Button variant="secondary" type="button" disabled={busy} onClick={()=>{
        const ids=outcomes.filter(item=>item.status!=="updated").map(item=>item.id);
        setSelected(ids);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");

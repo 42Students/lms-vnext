@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 /** A POST, not a GET side effect, moves the user's per-thread read pointer on open. */
@@ -22,9 +23,9 @@ export function TpoTeamOpenRead({threadId}:{threadId:string}){
   void acknowledge();
   return ()=>{active=false;};
  },[threadId,router,retryAttempt]);
- return failed?<div role="alert" className="flex min-w-0 flex-wrap items-center gap-3 border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">
+ return failed?<Alert tone="error" className="flex-row flex-wrap items-center gap-3">
   <span>Could not mark this conversation as read.</span>
   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9"
    onClick={()=>{setFailed(false);setRetryAttempt(count=>count+1);}}>Retry</Button>
- </div>:null;
+ </Alert>:null;
 }

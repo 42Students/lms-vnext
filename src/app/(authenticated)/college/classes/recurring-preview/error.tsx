@@ -6,6 +6,5 @@ export default function RecurringPreviewError({ reset }: {
 }) {
   return <ErrorState title="Recurring preview unavailable"
     description="The schedule source could not be checked. No zero-conflict result is assumed."
-    action={<Button variant="secondary" type="button" onClick={reset}
-      >Retry</Button>} />;
+    action={<Button variant="secondary" type="button" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>} />;
 }

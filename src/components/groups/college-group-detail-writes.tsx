@@ -2,6 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/selection-controls";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {groupRuleCriteriaSchema} from "@/modules/groups/rule-evaluator";
@@ -23,9 +26,14 @@ export function CollegeGroupDetailWrites({
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
+  const [confirmation,setConfirmation]=useState<{body:Record<string,unknown>;prompt:string}|null>(null);
   const hasSpace=capacity===null||activeCount<capacity;
-  async function submit(body:Record<string,unknown>,prompt:string){
-    if(!window.confirm(prompt+" Group: "+groupName))return;
+  function submit(body:Record<string,unknown>,prompt:string){
+    setError("");setNotice("");setConfirmation({body,prompt});
+  }
+  async function commitChange(){
+    if(!confirmation||busy)return;
+    const {body}=confirmation;
     setBusy(true);setError("");setNotice("");
     try {
       const response=await fetch("/api/college/groups/"+encodeURIComponent(groupId)+"/detail-actions",{
@@ -36,6 +44,7 @@ export function CollegeGroupDetailWrites({
       if(!response.ok)throw new Error(json.error??"GROUP_CHANGE_FAILED");
       if(typeof json.groupVersion==="number")setGroupVersion(json.groupVersion);
       setNotice("Group change saved and audited.");
+      setConfirmation(null);
       router.refresh();
     }catch(reason){setError(reason instanceof Error?reason.message:"Group action failed.");}
     finally{setBusy(false);}
@@ -57,11 +66,11 @@ export function CollegeGroupDetailWrites({
     <div className="space-y-3 border-b border-border pb-4">
       <h2 className="text-lg font-semibold text-foreground">Waitlist review</h2>
       <p className="mt-1 text-sm text-body">Only the first waitlisted learner can be promoted. Locked members and full groups cannot be overridden.</p>
-      {ordered.length===0?<p className="mt-2 text-sm text-muted-foreground">No waitlisted learners recorded.</p>:
-        <ul className="mt-3 space-y-2">{ordered.map(member=><li key={member.membershipId}
-          className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+      {ordered.length===0?<EmptyState title="No waitlisted learners" description="No waitlisted learners recorded."/>:
+        <ul className="mt-3 divide-y divide-border">{ordered.map(member=><li key={member.membershipId}
+          className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
           <span className="text-sm text-body">{member.displayName||"Unnamed learner"} · Position {member.waitlistPosition??"not recorded"}{member.isLocked?" · Locked":""}</span>
-          <Button variant="secondary" type="button" disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
+          <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" loading={busy} disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
             front?.membershipId!==member.membershipId||member.isLocked}
             
             onClick={()=>{void submit({
@@ -71,7 +80,7 @@ export function CollegeGroupDetailWrites({
             Promote
           </Button>
         </li>)}</ul>}
-      {!hasSpace?<p className="mt-2 text-xs text-warning">Group capacity is full. No manual promotion is available.</p>:null}
+      {!hasSpace?<Alert tone="warning">Group capacity is full. No manual promotion is available.</Alert>:null}
     </div>
     <div className="space-y-3 border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">Eligibility rule</h2>
@@ -82,12 +91,17 @@ export function CollegeGroupDetailWrites({
       </label>
       <Switch label="Enable rule auto-refresh setting (does not execute a refresh now)"
         checked={autoRefresh} disabled={busy} onChange={e=>setAutoRefresh(e.target.checked)}/>
-      <Button variant="primary" type="button" disabled={busy} onClick={saveRule}
+      <Button variant="primary" type="button" loading={busy} className="min-h-11 md:min-h-9" disabled={busy} onClick={saveRule}
         >
         {busy?"Saving…":"Confirm rule update"}
       </Button>
     </div>
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-    {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
+    {notice?<Alert tone="success">{notice}</Alert>:null}
+    <ConfirmDialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy)setConfirmation(null);}}
+      title={confirmation?.prompt??"Confirm group change"}
+      description={"Group: "+groupName+". Changes are audited."}
+      confirmLabel="Confirm" confirmVariant="primary" pending={busy}
+      onConfirm={()=>void commitChange()}/>
   </section>;
 }

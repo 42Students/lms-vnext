@@ -1,5 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -124,8 +127,8 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
 
   return (
     <div className="space-y-6">
-      {error ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p> : null}
-      {success ? <p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm text-body">{success}</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
+      {success ? <InlineNotice tone="success" message={success}/> : null}
       <section className="border-y border-border py-5">
         <h2 className="text-base font-semibold text-foreground">Schedule a follow-up</h2>
         <p className="mt-1 text-sm text-body">
@@ -133,9 +136,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           Both the task and its staff-attributed activity record are saved together.
         </p>
         {data.hasMoreLeads ? (
-          <p role="status" className="mt-2 text-xs text-muted-foreground">
-            Showing 200 most recently updated eligible recruiter leads. Use individual lead detail for others.
-          </p>
+          <Alert tone="warning">Showing 200 most recently updated eligible recruiter leads. Use individual lead detail for others.</Alert>
         ) : null}
         {data.leads.length === 0 ? (
           <p className="mt-3 text-sm text-body">
@@ -182,9 +183,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           </p>
         </div>
         {data.rows.length === 0 ? (
-          <p role="status" className="p-5 text-sm text-body">
-            {data.window==="DUE"?"No open follow-ups are due at this time.":"No open follow-ups are scheduled in the next seven days."}
-          </p>
+          <EmptyState title={data.window==="DUE"?"No open follow-ups are due at this time.":"No open follow-ups are scheduled in the next seven days."}/>
         ) : (
           <div className="divide-y divide-border">
             {data.rows.map((row) => (

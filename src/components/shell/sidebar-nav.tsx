@@ -52,6 +52,12 @@ export function SidebarNav({
  // not only the URL, so it does not acquire TPO headings/scrollbar chrome.
  const collegeSelected=visibleItems.some(item=>
   item.href==="/college"||item.href.startsWith("/college/"));
+ // Style against the visible account, not the pathname alone:
+ // Super Admin Overview is /dashboard, while College Admin can visit
+ // its one Placement cell shortcut on /tpo/home.
+ const sidebarSkin=collegeSelected?"college":
+  visibleItems.some(item=>item.href.startsWith("/admin/"))?"admin":
+  visibleItems.some(item=>item.href.startsWith("/learn/"))?"learner":"other";
  const sidebarPortal=collegeSelected?"other":
   pathname==="/tpo"||pathname.startsWith("/tpo/")
    ?"tpo":pathname==="/hr"||pathname.startsWith("/hr/")||
@@ -87,6 +93,7 @@ export function SidebarNav({
   ?collegeLegacyGroupForPath(pathname):null;
 
  return <nav aria-label="Main navigation" data-sidebar-portal={sidebarPortal}
+  data-sidebar-skin={sidebarSkin}
   className={cx("lms-sidebar-nav flex min-w-0",compact?"flex-row flex-wrap":"flex-col")}
  >{visibleItems.map((item,index)=>{
    const previousGroup=index>0?visibleItems[index-1]?.group:null;
