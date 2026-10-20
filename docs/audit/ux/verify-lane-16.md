@@ -116,3 +116,9 @@ Verified polish-lane-6.md proof, shortlisted detail route, scoped permission and
 
 ## 39. src/components/admin/admin-revoke-sessions.tsx
 Read polish-lane-6.md, AdminRevokeSessions, ConfirmDialog/Dialog contracts, useGuardedAction flight lock and POST sessions endpoint validation. Double-submit/pending/zero-count/confirm cancel/error/reopen/success states retain audited cross-college scope and accessible status/live messages; no missing imports, invalid props, duplicate fields, altered userId or route. 375/768 touch targets and warning text fit. No confirmed further change, source-only no CI. Files: queue/proof.
+
+## 40. src/components/admin/college-bulk-import.tsx
+Read other-lane polish-lane-6.md, college bulk-import component, CSV parsing/confirmation model contracts, DataTable/StatusBadge/ConfirmDialog/Alert/EmptyState shared components and college admin bulk-import API shape. Confirmed CSV edits and organization selection invalidate confirmation version, zero-org/invalid rows disable import, 200-row limit, discard confirmation, per-line results and mobile announced feedback. JSX/props/labels/ids/typed results and 375/768 button hierarchy source-checked; no additional confirmed regression or clutter fix. No CI. Files: queue/proof.
+
+## 41. src/components/admin/college-signin-method-form.tsx
+Compared polish-lane-6.md proof with signin method component, Zod enum/version, Radio and ConfirmDialog props, associated college signin route, loading/error, parent admin layout and API save shape. Read active/saved/disabled policy and stale-version error, confirmation, success and keyboard radio/375-768 row states. No JSX/import/prop mismatch, rewording, dropped id/permission or further alignment issue found. Source only, no CI. Files: queue/proof.
