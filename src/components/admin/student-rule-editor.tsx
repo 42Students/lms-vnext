@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
+import {Alert} from "@/components/ui/alert";
 import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,hasStudentRuleAcknowledgement,canReviewStudentRule,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
 export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,blocked}:{
  collegeId:string;membershipId:string;module:EditableStudentModule;
@@ -18,6 +19,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
  const [confirming,setConfirming]=useState(false);
  const [pending,setPending]=useState(false);
  const [feedback,setFeedback]=useState("");
+ const [feedbackTone,setFeedbackTone]=useState<"success"|"error">("success");
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/rules";
  const noChange=(choice==="INHERIT"&&observed===null)||
   (choice!=="INHERIT"&&observed!==null&&observed.enabled===(choice==="ON")&&observed.locked===nextLocked);
@@ -28,13 +30,13 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
    const response=await fetch(endpoint,{method:"GET",cache:"no-store"});
    const data:unknown=await response.json().catch(()=>null);
    const state=response.ok?parseStudentRuleRecheck(data,module):undefined;
-   if(state===undefined){setFeedback("Latest module state could not be verified.");return;}
+   if(state===undefined){setFeedbackTone("error");setFeedback("Latest module state could not be verified.");return;}
    setObserved(state);
    setChoice(state===null?"INHERIT":state.enabled?"ON":"OFF");
    setNextLocked(state?.locked??false);
-   setFeedback("Latest stored state loaded.");
+   setFeedbackTone("success");setFeedback("Latest stored state loaded.");
    router.refresh();
-  }catch{setFeedback("Could not recheck the persisted rule.");}
+  }catch{setFeedbackTone("error");setFeedback("Could not recheck the persisted rule.");}
   finally{setPending(false);}
  }
  async function apply(){
@@ -48,45 +50,57 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
    const data:unknown=await response.json().catch(()=>null);
    if(!response.ok){
     const code=data&&typeof data==="object"&&"error" in data?String(data.error):"REQUEST_FAILED";
-    setFeedback(code==="STALE_RULE"?"The stored rule changed. Reload this page before editing.":code==="ANCESTOR_LOCKED"?"A broader locked rule prevents this change.":"The module change could not be saved. Recheck the stored rule and try again.");
+    setFeedbackTone("error");setFeedback(code==="STALE_RULE"?"The stored rule changed. Reload this page before editing.":code==="ANCESTOR_LOCKED"?"A broader locked rule prevents this change.":"The module change could not be saved. Recheck the stored rule and try again.");
     return;
    }
    if(!hasStudentRuleAcknowledgement(data,module,choice,nextLocked)){
-    setFeedback("Server response did not confirm the intended rule. Recheck before another change.");return;
+    setFeedbackTone("error");setFeedback("Server response did not confirm the intended rule. Recheck before another change.");return;
    }
    const updated=choice==="INHERIT"?null:{enabled:choice==="ON",locked:nextLocked};
    setObserved(updated);
-   setFeedback("Saved. The full learner access trace will now be refreshed.");
+   setFeedbackTone("success");setFeedback("Saved. The full learner access trace will now be refreshed.");
    router.refresh();
   }catch{
-   setFeedback("Connection failed. No successful change was confirmed.");
+   setFeedbackTone("error");setFeedback("Connection failed. No successful change was confirmed.");
   }finally{
    setConfirming(false);
    setPending(false);
   }
  }
- return <div className="mt-4 space-y-3 border-t border-border pt-3 print:hidden">
-  {blocked?<p className="text-xs text-warning-text">A broader locked rule prevents writing On/Off. You can still remove a stored membership override with Inherit.</p>:null}
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored override
-   <Select value={choice} disabled={pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
-    className="min-h-11 w-full min-[768px]:min-h-9">
-    <option value="INHERIT">Inherit</option><option value="ON" disabled={blocked}>On</option><option value="OFF" disabled={blocked}>Off</option>
-   </Select>
-  </label>
-  <label className="flex min-h-11 items-center gap-2 text-sm text-body">
-   <Checkbox checked={nextLocked} onChange={e=>setNextLocked(e.target.checked)}
-    disabled={blocked||pending||choice==="INHERIT"}/>
-   Lock this membership rule
-  </label>
-  <div className="flex flex-col gap-[var(--lms-space-2)] min-[768px]:flex-row [&>button]:w-full min-[768px]:[&>button]:w-auto">
-   <Button className="min-h-11 md:min-h-9" disabled={!canReviewStudentRule(choice,blocked,pending,noChange)} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
-   <Button className="min-h-11 md:min-h-9" disabled={pending} variant="ghost" onClick={()=>{void reload();}}>Recheck stored rule</Button>
+ return <section aria-label="Learner module rule" aria-busy={pending} className="mt-4 min-w-0 space-y-3 border-t border-border pt-3 print:hidden">
+  {blocked?<Alert tone="warning">A broader locked rule prevents writing On/Off. You can still remove a stored membership override with Inherit.</Alert>:null}
+  <div className="grid min-w-0 gap-3 sm:grid-cols-2 sm:items-end">
+   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored override
+    <Select value={choice} disabled={pending||confirming}
+     onChange={e=>{setChoice(e.target.value as StudentSelection);setFeedback("");}}
+     className="min-h-11 w-full sm:min-h-9">
+     <option value="INHERIT">Inherit</option><option value="ON" disabled={blocked}>On</option><option value="OFF" disabled={blocked}>Off</option>
+    </Select>
+   </label>
+   <label className="flex min-h-11 min-w-0 items-center gap-3 text-sm leading-5 text-body sm:min-h-9">
+    <Checkbox checked={nextLocked} onChange={e=>{setNextLocked(e.target.checked);setFeedback("");}}
+     disabled={blocked||pending||confirming||choice==="INHERIT"}/>
+    <span className="min-w-0 break-words">Lock this membership rule</span>
+   </label>
   </div>
-  {feedback?<p role="status" className="text-xs leading-5 text-body">{feedback}</p>:null}
-  <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Confirm learner module access change"
+  <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+   <Button className="min-h-11 w-full sm:min-h-9 sm:w-auto"
+    disabled={confirming||!canReviewStudentRule(choice,blocked,pending,noChange)}
+    onClick={()=>{setFeedback("");setConfirming(true);}} variant="primary">Review change</Button>
+   <Button className="min-h-11 w-full sm:min-h-9 sm:w-auto" loading={pending}
+    disabled={pending||confirming} variant="secondary" onClick={()=>{void reload();}}>Recheck stored rule</Button>
+  </div>
+  {feedback?<Alert tone={feedbackTone}>{feedback}</Alert>:null}
+  <ConfirmDialog open={confirming} onOpenChange={next=>{if(!pending)setConfirming(next);}}
+   title="Confirm learner module access change"
    description={studentRuleChangeSummary(module,choice,nextLocked)}
-   confirmLabel="Apply change" pending={pending} confirmVariant="danger" onConfirm={()=>{void apply();}}>
-   <p className="text-sm leading-6 text-body">This changes a persisted membership-level rule for one learner. Broader locked rules, role checks and other participation gates can still affect access. The server records an audit event.</p>
+   confirmLabel="Apply change" pending={pending} confirmVariant="danger"
+   confirmDisabled={!canReviewStudentRule(choice,blocked,pending,noChange)}
+   onConfirm={()=>{void apply();}}>
+   <div className="min-w-0 space-y-3 px-4 py-4 md:px-6">
+    <p className="m-0 break-words text-sm leading-5 text-body">This changes a persisted membership-level rule for one learner. Broader locked rules, role checks and other participation gates can still affect access. The server records an audit event.</p>
+    <p className="m-0 break-words text-xs leading-5 text-muted-foreground">Current stored override: {observed===null?"Inherit":observed.enabled?"On":"Off"}</p>
+   </div>
   </ConfirmDialog>
- </div>;
+ </section>;
 }
