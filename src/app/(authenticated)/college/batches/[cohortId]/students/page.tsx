@@ -71,11 +71,11 @@ export default async function CollegeBatchStudentsPage({
           ilike(learnerProfiles.rollNumber, "%" + q + "%")) : undefined))
       .orderBy(users.displayName).limit(500),
   ]);
-  return <main className="min-w-0 max-w-full overflow-x-clip space-y-5">
+  return <div className="min-w-0 max-w-full overflow-x-clip space-y-5">
     <PageHeader title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
       actions={<PageBackLink href="/college/batches" label="Back to batches"/>} />
-    <FilterBar title="Filters"><form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
+    <FilterBar title="Filters" activeCount={Number(Boolean(q)) + Number(Boolean(sectionId))}><form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
       <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
         <Input type="search" name="q" defaultValue={q} maxLength={100}
           />
@@ -109,5 +109,5 @@ export default async function CollegeBatchStudentsPage({
         ]}
       />
     </section>
-  </main>;
+  </div>;
 }
