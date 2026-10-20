@@ -14,6 +14,9 @@ export function TpoInterviewRescheduleForm({round}:{
  const router=useRouter(),formRef=useRef<HTMLFormElement>(null);
  const [pending,setPending]=useState(false),[error,setError]=useState<string|null>(null);
  const [confirmOpen,setConfirmOpen]=useState(false);
+ const [mode,setMode]=useState(round.mode??"ON_CAMPUS");
+ const [venue,setVenue]=useState(round.venue??"");
+ const [meetingUrl,setMeetingUrl]=useState(round.meetingUrl??"");
  const initial=round.scheduledAt?new Date(round.scheduledAt).toLocaleString("sv-SE",{timeZone:"Asia/Kolkata"}).replace(" ","T").slice(0,16):"";
  async function submitConfirmed(){
   if(pending||!formRef.current)return;
@@ -43,7 +46,7 @@ export function TpoInterviewRescheduleForm({round}:{
   <label className="min-w-0 text-sm text-body">New interview time (IST)
    <Input required type="datetime-local" name="localDateTime" defaultValue={initial} className={field}/></label>
   <label className="text-sm text-body">Mode
-   <Select name="mode" defaultValue={round.mode??"ON_CAMPUS"} className={field}>
+   <Select name="mode" value={mode} onChange={e=>setMode(e.target.value)} className={field}>
     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
    </Select></label>
   <label className="text-sm text-body">Venue (for on-campus)
