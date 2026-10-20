@@ -389,13 +389,13 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     <Checkbox label="Publish now" checked={publishNow} disabled={pending}
         onChange={event=>setPublishNow(event.target.checked)}/>
     <Button variant="primary" type="button" disabled={pending||!lessonId}
-    onClick={()=>void submit("CREATE")} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-on-primary">{publishNow?"Create and publish":"Create draft"}</Button>
+    onClick={()=>void submit("CREATE")} className="min-h-11 md:min-h-9">{publishNow?"Create and publish":"Create draft"}</Button>
    </div>:
     <>
     <Button variant="secondary" type="button" disabled={!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}
      onClick={()=>void submit("EDIT")} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</Button>
     <Button variant="primary" type="button" disabled={pending||!facultyQuizReadyToPublish(chosen.status,dirtyDraft,detailsFailed,questions)}
-     onClick={()=>void submit("PUBLISH")} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-on-primary">Publish</Button>
+     onClick={()=>void submit("PUBLISH")} className="min-h-11 md:min-h-9">Publish</Button>
     {chosen.status==="PUBLISHED"&&
      <Button variant="secondary" type="button" disabled={pending}
       onClick={()=>void submit("CLOSE")}
@@ -403,9 +403,9 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       Close quiz
      </Button>}
     {["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status)&&
-     <Button variant="secondary" type="button" disabled={pending}
+     <Button variant="danger" type="button" disabled={pending}
       onClick={()=>void submit("ARCHIVE")}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-error px-4 py-2 text-error">
+      className="min-h-11 md:min-h-9">
       Archive quiz
      </Button>}
     </>}
