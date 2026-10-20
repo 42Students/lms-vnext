@@ -26,7 +26,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
   }
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title={data.person.name}
       actions={<div className="flex w-full min-w-0 items-center gap-2 md:w-auto">
         <PageBackLink href="/college/faculty" label="Back to faculty"/>
@@ -34,7 +34,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
           <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
         </div>
       </div>} />
-    <section className="min-w-0 border-b border-border pb-5">
+    <section className="min-w-0 border-b border-border pb-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Faculty record</h2>
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
@@ -47,7 +47,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <div><dt className="text-muted-foreground">Membership</dt><dd><StatusBadge tone={data.person.status==="ACTIVE"?"success":"warning"}>{data.person.status}</StatusBadge></dd></div>
       </dl>
     </section>
-    <section className="min-w-0 border-b border-border pb-5">
+    <section className="min-w-0 border-b border-border pb-4">
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
       <p className="mt-3 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
