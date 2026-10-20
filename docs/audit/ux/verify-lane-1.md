@@ -155,3 +155,24 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** checked own interview authorization, deep link/filter/DTO mapping, shared `LearnerCareerRoundsWorkspace` and `LearnerCareerRounds`, withdrawal request component, confirmation pending/validation, status/date links, loading/error/not-found and parent layout; no duplicated TSX attributes, imports, props mismatch or missing aria labels found.
 - **Extra clutter/alignment fixes (0):** shared hairline rows, selected accent, scoped withdrawal notice and responsive action buttons remain consistent.
 - **Files changed:** verification proof and queue only.
+
+## Surface 23 — Placement drive detail
+- **Surface:** `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 23.
+- **Regressions found/fixed (0):** inspected course/job DTO mappings, own historical drive record, scoped saved drives, `LearnerPlacementJobDetail`, shared `LearnerPlacementJobs`, `LearnerOwnDriveJourney`, save/apply/withdraw confirmation, links/roles/eligibility/pay details, loading/error/not-found; no TSX import, aria, button, duplicate-attribute or link regression found.
+- **Extra clutter/alignment fixes (0):** single drive heading, hairline facts, de-emphasized eligibility sections and stacked actions read clearly at 375/768.
+- **Files changed:** verification proof and queue only.
+
+## Surface 24 — Placement drives directory
+- **Surface:** `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 24.
+- **Regressions found/fixed (0):** checked `LearnerJobsBrowse` URL search/back-forward state, saved/expired filters, SegmentedControl/Select/Checkbox contracts, availability/eligibility sorting, pagination, `LearnerPlacementJobs` shared cards, search/loading/error/empty states and nearest learner layout; no broken props, imports, lost IDs or labels detected.
+- **Extra clutter/alignment fixes (0):** primary search remains visible above disclosure, secondary filters remain accessible, normal/ineligible/saved results retain compact mobile/tablet structure. No source change needed.
+- **Files changed:** verification proof and queue only.
+
+## Surface 25 — Placement notification preferences
+- **Surface:** `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 25.
+- **Regressions found/fixed (1):** `Reload saved choices` only called `router.refresh()`; React retains unsaved `useState` toggle values if the server snapshot's `updatedAt` key is unchanged, leaving visible unsaved choices after Reload. Reset both checkbox states to the authenticated `initial` snapshot and dismiss confirmation before refreshing, retaining server freshness for cross-tab updates.
+- **Extra clutter/alignment fixes (0):** reviewed two-choice Checkbox/label associations, pending Dialog/Toast/PUT expected-snapshot protections, 44px actions, loading/error/parent layout; existing legacy section density works at 375/768.
+- **Files changed:** `src/components/placements/learner-placement-notification-settings.tsx`; verification proof and queue.
