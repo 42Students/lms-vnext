@@ -386,6 +386,14 @@
   :where(h6):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-body-text) !important;
 }
+/* Preserve text contrast under native selection in the separate tracker theme.
+ * The light old-LMS selection ink remains --lms-neutral-900 below. */
+:root[data-tracker-theme="dark"]
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(*):not(:where([data-unskin], [data-unskin] *))::selection {
+  color: var(--lms-foreground) !important;
+  background-color: var(--lms-primary-subtle) !important;
+}
 
 /* LINKS
  * Legacy: components___common.scss:68-75 (.ln-lnk-ul: primary teal,
