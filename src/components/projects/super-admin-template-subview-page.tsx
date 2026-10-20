@@ -176,6 +176,7 @@ export async function SuperAdminTemplateSubviewPage({
         active="templates"
       />
 
+      <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
       <PageHeader
         title={detail.template.title}
         description={
@@ -183,11 +184,10 @@ export async function SuperAdminTemplateSubviewPage({
           "Read-only global project template details."
         }
         actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
+          <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
             {detail.template.status === "PUBLISHED" ? (
               <Link href={"/admin/projects/workspaces/new?templateId=" + encodeURIComponent(detail.template.id)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3.5 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                className="inline-flex min-h-11 items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3.5 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                 Use this template · Create workspace →
               </Link>
             ) : null}
@@ -195,7 +195,7 @@ export async function SuperAdminTemplateSubviewPage({
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={detail.template.status==="PUBLISHED"?"success":detail.template.status==="ARCHIVED"?"neutral":"warning"}>{detail.template.status}</StatusBadge><StatusBadge>Current version {detail.template.currentVersion}</StatusBadge></div>
+      <div className="flex min-w-0 flex-wrap items-center gap-2"><StatusBadge tone={detail.template.status==="PUBLISHED"?"success":detail.template.status==="ARCHIVED"?"neutral":"warning"}>{detail.template.status}</StatusBadge><StatusBadge>Current version {detail.template.currentVersion}</StatusBadge></div>
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active={section}
