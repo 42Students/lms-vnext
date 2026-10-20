@@ -412,6 +412,7 @@ export function FacultyQuizQuestionEditor({
     <>
       <Button
         size="md"
+        className="min-h-11 md:min-h-[var(--lms-control-height)]"
         variant="secondary"
         onClick={() => void load()}
       >
@@ -475,7 +476,7 @@ export function FacultyQuizQuestionEditor({
                     ) : null}
                   </div>
 
-                  <label className="mt-3 block text-xs font-semibold text-body">
+                  <label className="mt-3 block text-[13px] font-semibold leading-4 text-body">
                     Prompt
                     <Textarea
                       className="mt-1.5"
@@ -495,7 +496,7 @@ export function FacultyQuizQuestionEditor({
                   </label>
 
                   <div className="mt-3 grid gap-3 md:grid-cols-[1fr_8rem]">
-                    <label className="text-xs font-semibold text-body">
+                    <label className="text-[13px] font-semibold leading-4 text-body">
                       Question type
                       <Select
                         className="mt-1.5"
@@ -518,7 +519,7 @@ export function FacultyQuizQuestionEditor({
                         </option>
                       </Select>
                     </label>
-                    <label className="text-xs font-semibold text-body">
+                    <label className="text-[13px] font-semibold leading-4 text-body">
                       Points
                       <Input
                         className="mt-1.5"
