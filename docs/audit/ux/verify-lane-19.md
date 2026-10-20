@@ -99,3 +99,13 @@
 - **Regressions found/fixed:** 0. Checked chat-9 proof, page/loading/error/parent job layout, interview query and list, candidate-slot schedule, CollegeInterviewAppointments with add/edit/cancel/complete/no-show confirmations, ICS download, IST conversion, required reason, optimistic version and API pending/errors; checked shared Date/Select/DataTable/Disclosure/Dialog/ConfirmDialog. All routes, IDs and wording preserved.
 - **Extra clutter/alignment fixes:** Existing candidate table exposes one Schedule CTA, per-row Actions disclosure, compact round filter form and route-safe empty/pager recovery; no source change needed.
 - **Files changed:** Queue and verification proof only. Source checked at 375/768; no CI.
+
+## Surface 21 — `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- **Regressions found/fixed:** 0. Compared chat-9 polish proof, checked page/loading/error and job/college parent layouts, three scoped reads, metrics and stage labels, candidate-count semantics and responsive stat links. Inspected CollegeDrivePipelineOverview with stage link targets and attention flags, CollegeDriveDuplicateAction with audited confirmation/duplicate/redirect, StatusBadge/StatTile/Disclosure and empty attention state. No missing import, broken JSX or permission/URL drift observed.
+- **Extra clutter/alignment fixes:** Existing one Applications primary action and More actions disclosure already demote Edit, All drives and duplicate, and the fact row wraps at 375px. No source mutation required.
+- **Files changed:** Queue and verification proof only. No runtime/CI.
+
+## Surface 22 — `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
+- **Regressions found/fixed:** 0. Read the route redirect guard, loading/error, nested `[jobId]/layout.tsx` and its CollegeDriveLegacyNav/Tabs, shared PlacementDriveWorkspace, including scope-gated TPO-only sections, College-only primary applications link, dropdown states, draft edit, placement screening and lifecycle/offer controls. Verified source-level nesting, mapped props/IDs, confirmed write endpoints, error handling, existing legacy copy and small-screen actions; no dropped route or aria label found.
+- **Extra clutter/alignment fixes:** One inherited drive tab strip plus continuous white canvas, responsive header CTA and grouped Actions menu; no new nested chrome.
+- **Files changed:** Queue/proof only. Source review 375/768, no CI.
