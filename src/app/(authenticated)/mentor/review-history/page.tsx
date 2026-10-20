@@ -95,7 +95,7 @@ export default async function MentorReviewHistoryPage({
             </label>
             </div>
           </Disclosure>
-          <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+          {(data.query.decision!=="ALL"||Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.projectState!=="ALL"||data.query.version!==undefined||data.query.order!=="NEWEST"||data.query.window!=="ALL")?<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>:null}
         </form>
       </FilterBar>
 

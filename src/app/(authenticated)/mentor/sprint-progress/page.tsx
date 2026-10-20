@@ -52,7 +52,7 @@ export default async function MentorSprintProgressPage({
     {!data.enabled ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Sprint progress was not loaded.
     </section> : <>
-      <FilterBar title="Filters" activeCount={Number(hasFilters)}><form role="search" aria-label="mentor sprint progress filters" action="/mentor/sprint-progress" method="get"
+      <FilterBar title="Filters" activeCount={Number(Boolean(data.query.search))+Number(Boolean(data.query.projectId))+Number(data.query.state!=="ALL")+Number(data.query.taskAttention!=="ALL")+Number(data.query.release!=="ALL")+Number(data.query.order!=="PROJECT")}><form role="search" aria-label="mentor sprint progress filters" action="/mentor/sprint-progress" method="get"
         className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
@@ -64,6 +64,10 @@ export default async function MentorSprintProgressPage({
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
         </label>
+        <div className="flex min-w-0 flex-wrap items-center gap-2 max-md:col-span-1 md:col-span-1">
+          <Button type="submit" variant="primary" className="w-full min-h-11 md:w-auto md:min-h-9">Filter</Button>
+          {hasFilters?<Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9">Clear</Link>:null}
+        </div>
         <Disclosure title="More sprint filters" defaultOpen={hasAdvancedFilters} className="min-w-0 md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-4">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint status
           <Select name="state" defaultValue={data.query.state}
@@ -90,10 +94,7 @@ export default async function MentorSprintProgressPage({
           </Select>
         </label>
         </Disclosure>
-        <div className="flex min-w-0 flex-wrap items-center gap-2 max-md:col-span-1 md:col-span-3">
-          <Button type="submit" variant="primary" className="w-full min-h-11 md:w-auto md:min-h-9">Filter</Button>
-          <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9">Clear</Link>
-        </div>
+
       </form></FilterBar>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
         <p className="font-medium text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
