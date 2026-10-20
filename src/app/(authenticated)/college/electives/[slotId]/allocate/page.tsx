@@ -161,7 +161,7 @@ export default async function CollegeElectiveAllocatePage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
-      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Back to Electives</Link>} />
+      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to Electives</Link>} />
     {input.added !== undefined && <Alert tone={Number(input.failed ?? 0)>0?"warning":"success"}>
       Processed {input.added} learner(s); {input.failed ?? "0"} failed.
       {input.reason ? " " + input.reason : ""}
