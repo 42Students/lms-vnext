@@ -89,8 +89,8 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       />
 
       <section aria-label="Tenant Settings overview" className="border-b border-border pb-5">
-        <p className="text-sm font-semibold">Runtime configuration · {scopeLabel}</p>
-        <h2 className="mt-1 text-base font-semibold">Settings with explicit execution scope</h2>
+        <p className="text-sm font-semibold text-body">Runtime configuration · {scopeLabel}</p>
+        <h2 className="mt-1 text-base font-semibold text-foreground">Settings with explicit execution scope</h2>
         <dl className="mt-3 grid gap-3 text-sm md:grid-cols-3">
           <div><dt>Documented controls</dt><dd className="font-semibold">{documentedControls} visible inventory settings</dd></div>
           <div><dt>Stored keys</dt><dd className="font-semibold">{editorData?.ready?editorData.entries.length:"Unavailable"} in this scope</dd></div>
@@ -132,10 +132,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
+        <label className="grid min-w-48 flex-1 gap-1 text-[13px] font-semibold text-body">Setting or source
           <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 md:min-h-9"/>
         </label>
-        <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
+        <label className="grid min-w-36 gap-1 text-[13px] font-semibold text-body">Section
           <Select name="section" defaultValue={parsed.section} className="min-h-11 md:min-h-9">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
