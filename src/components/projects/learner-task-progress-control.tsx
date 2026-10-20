@@ -1,7 +1,7 @@
 "use client";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
@@ -16,14 +16,17 @@ export function LearnerTaskProgressControl(props: {
   const blockerId = useId();
   const { showToast } = useToast();
   const [pending, setPending] = useState(false);
+  const pendingRef = useRef(false);
   const [showBlocker, setShowBlocker] = useState(false);
   const [blockerNote, setBlockerNote] = useState(props.blockerReason ?? "");
   const [error, setError] = useState("");
   async function change(body: {
     action: "STATUS" | "MOVE_UP" | "MOVE_DOWN";
-    status?: "TODO" | "IN_PROGRESS" | "BLOCKED";
+    status?: "IN_PROGRESS" | "BLOCKED";
     blockerNote?: string;
   }) {
+    if (pendingRef.current) return;
+    pendingRef.current = true;
     setPending(true); setError("");
     try {
       await projectMutation(
@@ -37,17 +40,13 @@ export function LearnerTaskProgressControl(props: {
       const message = cause instanceof Error ? cause.message : "Task update failed.";
       setError(message);
       showToast({ tone: "error", title: "Task update failed.", description: message });
-    } finally { setPending(false); }
+    } finally { pendingRef.current = false; setPending(false); }
   }
   return <section className="mt-3 min-w-0 space-y-3 border-t border-border pt-3" aria-label="Task actions">
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
       {props.status !== "IN_PROGRESS" ? <Button variant="primary" size="sm" className="w-full sm:w-auto" disabled={pending}
         onClick={() => void change({ action: "STATUS", status: "IN_PROGRESS" })}>
         {props.status === "BLOCKED" ? "Resolve blocker" : "Start work"}
-      </Button> : null}
-      {props.status !== "TODO" ? <Button variant="secondary" size="sm" className="w-full sm:w-auto" disabled={pending}
-        onClick={() => void change({ action: "STATUS", status: "TODO" })}>
-        Move to To Do
       </Button> : null}
       {props.status !== "BLOCKED" ? <Button variant="secondary" size="sm" className="w-full sm:w-auto" disabled={pending}
         aria-expanded={showBlocker} aria-controls={blockerId}

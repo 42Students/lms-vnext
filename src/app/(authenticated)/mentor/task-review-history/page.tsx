@@ -48,8 +48,8 @@ export default async function MentorTaskReviewHistoryPage({
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Reviewed task history is unavailable.
     </section> : <>
-      <FilterBar title="Filters" activeCount={Number(hasFilters)}><form role="search" aria-label="mentor task review history filters" action="/mentor/task-review-history" method="get"
-        className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <FilterBar title="Filters" activeCount={Number(Boolean(data.query.search))+Number(data.query.decision!=="ALL")+Number(data.query.priority!=="ALL")+Number(data.query.order!=="NEWEST")}><form role="search" aria-label="mentor task review history filters" action="/mentor/task-review-history" method="get"
+        className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             className="min-h-11 min-[768px]:min-h-9" />
@@ -62,7 +62,11 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CHANGES_REQUESTED">Changes requested</option>
           </Select>
         </label>
-        <Disclosure title="More review history filters" defaultOpen={hasAdvancedFilters} className="md:col-span-2" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
+          <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+          {hasFilters?<Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        </div>
+        <Disclosure title="More review history filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 min-[768px]:min-h-9">
@@ -79,10 +83,7 @@ export default async function MentorTaskReviewHistoryPage({
           </Select>
         </label>
         </Disclosure>
-        <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-2">
-          <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-          <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
-        </div>
+
       </form></FilterBar>
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
         <p className="font-medium text-body">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
