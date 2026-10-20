@@ -94,44 +94,44 @@ export default async function TrackerIssuesPage({
         sort:current.sort,
       }).toString()} />
 
-      <form className="grid min-w-0 gap-2 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-5">
-        <label className="text-xs font-semibold text-body">
+      <form className="grid min-w-0 gap-2 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search
           <Input className="min-h-11 w-full md:min-h-9" name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
         </label>
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Reporter
           <Input className="min-h-11 w-full md:min-h-9" name="reporter" defaultValue={current.reporter??""} maxLength={100} placeholder="Reporter name"/>
         </label>
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Status
           <Select className="min-h-11 w-full md:min-h-9" name="status" defaultValue={current.status ?? ""}>
             <option value="">All statuses</option>
             {BUG_STATUSES.map((x) => <option key={x} value={x}>{x}</option>)}
           </Select>
         </label>
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Severity
           <Select className="min-h-11 w-full md:min-h-9" name="severity" defaultValue={current.severity ?? ""}>
             <option value="">All severities</option>
             {BUG_SEVERITIES.map((x) => <option key={x} value={x}>{x}</option>)}
           </Select>
         </label>
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Environment
           <Select className="min-h-11 w-full md:min-h-9" name="environment" defaultValue={current.environment ?? ""}>
             <option value="">All environments</option>
             {BUG_ENVIRONMENTS.map((x) => <option key={x} value={x}>{x}</option>)}
           </Select>
         </label>
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Sort
           <Select className="min-h-11 w-full md:min-h-9" name="sort" defaultValue={current.sort}>
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
           </Select>
         </label>
-        <div className="flex items-end gap-2 md:col-span-2 xl:col-span-5">
+        <div className="flex items-end gap-2 min-[768px]:col-span-2 min-[992px]:col-span-5">
           <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
           <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Reset
@@ -155,7 +155,7 @@ export default async function TrackerIssuesPage({
                     <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":issue.severity==="MAJOR"?"warning":"neutral"}>{issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
                     <StatusBadge>{issue.environment}</StatusBadge>
                   </div>
-                  <h2 className="mt-3 text-base font-semibold text-foreground">
+                  <h2 className="mt-3 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                     <Link className="inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
                       {issue.publicId} · {issue.issueType}
                     </Link>
