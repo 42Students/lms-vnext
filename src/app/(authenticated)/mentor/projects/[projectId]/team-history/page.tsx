@@ -56,20 +56,20 @@ export default async function MentorTeamHistoryPage({
         <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
           className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
           <Input type="hidden" name="view" value={data.query.view}/>
-          <label className="grid gap-1 text-sm font-semibold text-body">Registered role
+          <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Registered role
             <Select name="role" defaultValue={data.query.role}
               className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="ALL">All roles</option>
               <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Primary Mentor record
+          <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Primary Mentor record
             <Select name="primary" defaultValue={data.query.primary}
               className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="ALL">All team records</option><option value="PRIMARY">Recorded primary Mentors only</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Assignment chronology
+          <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Assignment chronology
             <Select name="order" defaultValue={data.query.order}
               className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="OLDEST">Earliest started first</option>

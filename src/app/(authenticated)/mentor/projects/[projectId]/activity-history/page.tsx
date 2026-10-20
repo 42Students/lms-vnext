@@ -46,7 +46,7 @@ export default async function MentorProjectActivityHistoryPage({
       <form method="get"
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
         className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0"}>
-        <label className="grid gap-1 text-sm font-semibold text-body">Event importance
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Event importance
           <Select name="importance" defaultValue={data.query.importance}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All</option><option value="LOW">Low</option>
@@ -54,7 +54,7 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="CRITICAL">Critical</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Event type
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Event type
           <Select name="view" defaultValue={data.query.view}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All recorded events</option>
@@ -65,7 +65,7 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recorded within
           <Select name="window" defaultValue={data.query.window}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All recorded events</option>
@@ -75,14 +75,14 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="OLDER_THAN_30_DAYS">Older than 30×24 hours</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Chronology
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Chronology
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="NEWEST">Newest recorded first</option>
             <option value="OLDEST">Oldest recorded first</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Rows per page
           <Select name="pageSize" defaultValue={String(data.query.pageSize)}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="20">20 events</option>

@@ -78,18 +78,18 @@ export default async function MentorReportsPage({searchParams}:{
       </section>
       <form method="get" action="/mentor/reports"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">Project title
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Status
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             {(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Attention
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention
           <Select name="attention" defaultValue={data.query.attention}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All</option>
@@ -100,13 +100,13 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="NONE">No currently recorded attention</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Recorded tasks
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recorded tasks
           <Select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All tasks</option><option value="NO_TASKS">No tracked tasks</option>
             <option value="OPEN_TASKS">Unfinished tasks</option><option value="ALL_DONE">All registered tasks done</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Mentor assignment
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All assigned projects</option>
@@ -114,7 +114,7 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Report order
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Report order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="UPDATED">Recently updated</option>
