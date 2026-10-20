@@ -4,7 +4,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Slot={id:string;startsAt:string;endsAt:string;room:string;panel:string|null;status:string;
@@ -17,7 +17,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
 }){
  const router=useRouter();const [date,setDate]=useState("");const [rooms,setRooms]=useState("Room 1");
  const [minutes,setMinutes]=useState(30);const [gap,setGap]=useState(5);const [count,setCount]=useState(8);
- const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [message,setMessage]=useState("");
+ const [busy,setBusy]=useState(false);const busyRef=useRef(false);const [error,setError]=useState("");const [message,setMessage]=useState("");
  const [pick,setPick]=useState<Record<string,string>>({});const [move,setMove]=useState<Record<string,string>>({});
  const [roomChange,setRoomChange]=useState<Record<string,string>>({});
  const [fromRoll,setFromRoll]=useState("");const [toRoll,setToRoll]=useState("");
@@ -28,7 +28,8 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
  const [confirmRequest,setConfirmRequest]=useState<{title:string;description:string;body:Record<string,unknown>}|null>(null);
  const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/interview-slots";
  async function action(body:Record<string,unknown>){
-  if(busy)return;
+  if(busyRef.current||busy)return;
+  busyRef.current=true;
   setBusy(true);setError("");setMessage("");
   try{const response=await fetch(url,{method:"POST",credentials:"same-origin",
     headers:{"content-type":"application/json"},body:JSON.stringify({...body,confirmed:true})});
@@ -37,7 +38,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    setMessage("Schedule updated.");
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Interview scheduling failed");}
-  finally{setBusy(false);}
+  finally{busyRef.current=false;setBusy(false);}
  }
  const free=slots.filter(s=>s.status==="AVAILABLE");
  const booked=slots.filter(s=>s.status==="BOOKED");

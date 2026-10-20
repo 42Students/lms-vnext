@@ -17,6 +17,7 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
  const [fieldIssue,setFieldIssue]=useState<"note"|"waitlistRank"|null>(null);
  const [review,setReview]=useState<{outcome:string;note:string;rank:string}|null>(null);
  const validatedPayload=useRef<ReturnType<typeof tpoRoundResultEntryFormSchema.parse>|null>(null);
+ const stagingRef=useRef(false);
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(pending||saved)return;
   const form=new FormData(event.currentTarget);
@@ -35,7 +36,8 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
   setConfirmOpen(true);
  }
  async function performStage(){
-  if(pending||saved||!validatedPayload.current)return;
+  if(stagingRef.current||pending||saved||!validatedPayload.current)return;
+  stagingRef.current=true;
   setPending(true);setError(null);
   try{
    const response=await fetch("/api/placements/tpo/rounds/"+encodeURIComponent(roundId)+"/confirmed-results",{
@@ -45,7 +47,7 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
    if(!response.ok)throw Error("Result changed; refresh and review it again.");
    setSaved(true);setConfirmOpen(false);router.refresh();
   }catch(caught){setConfirmOpen(false);setError(caught instanceof Error?caught.message:"Result staging failed");}
-  finally{setPending(false);}
+  finally{setPending(false);stagingRef.current=false;}
  }
  return (
   <form onSubmit={submit} aria-busy={pending}
