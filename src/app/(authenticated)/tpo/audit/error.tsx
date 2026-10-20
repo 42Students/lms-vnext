@@ -14,7 +14,7 @@ export default function TpoAuditError({
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO · Oversight"
-        title="Audit log"
+        title="Audit Log"
       />
       <ErrorState
         title="Could not load the audit log"

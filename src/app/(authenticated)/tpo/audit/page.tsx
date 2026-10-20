@@ -23,7 +23,6 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import {
   TPO_AUDIT_KINDS,
   TPO_AUDIT_KIND_LABELS,
-  formatTpoAuditEventType,
   tpoAuditHref,
 } from "@/modules/placements/tpo-audit-model";
 import {
