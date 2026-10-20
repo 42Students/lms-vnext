@@ -10,12 +10,12 @@ export default function HrJobError({reset}:{
 }){
  return <>
   <PageHeader title="Drive details could not load" />
-  <ErrorState title="Drive details unavailable"
+  <div className="min-w-0 max-w-2xl"><ErrorState title="Drive details unavailable"
    description="Some drive information may be stale or unavailable. We couldn't verify this drive right now. No applicant or offer details are shown until the employer and college access check succeeds."
    action={<>
     <Button onClick={reset}>Retry drive details</Button>
     <PageBackLink href="/hr/drives" label="Back to Drives"/>
    </>}
-  />
+  /></div>
  </>;
 }
