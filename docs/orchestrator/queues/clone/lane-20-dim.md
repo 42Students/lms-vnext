@@ -43,16 +43,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-20.md: file, number of 
 - [x] `src/app/(authenticated)/admin/programs/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/at-risk/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/submissions/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
 - [ ] `src/app/(authenticated)/admin/quizzes/page.tsx`
 - [ ] `src/app/(authenticated)/admin/semester-courses/page.tsx`
 - [ ] `src/app/(authenticated)/admin/semesters/page.tsx`
