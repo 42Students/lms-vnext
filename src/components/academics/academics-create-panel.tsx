@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -229,14 +230,12 @@ export function AcademicsCreatePanel({
   }
 
   return (
-    <section className="grid min-w-0 gap-[var(--lms-space-5)] xl:grid-cols-2">
+    <section aria-label="Create academic records" className="grid min-w-0 items-start gap-x-[var(--lms-space-6)] gap-y-[var(--lms-space-2)] xl:grid-cols-2">
+      <Disclosure id="academic-create-period" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New academic period</h2>} summaryClassName="!px-0" contentClassName="!pb-0">
       <form
         onSubmit={createPeriod}
-        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
+        className="min-w-0 pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]"
       >
-        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
-          New academic period
-        </h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Create the College calendar window before placing Cohorts or Sections.
         </p>
@@ -299,6 +298,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="w-full md:w-auto"
             disabled={
               pending ||
               !periodName.trim() ||
@@ -311,14 +311,13 @@ export function AcademicsCreatePanel({
           </Button>
         </div>
       </form>
+      </Disclosure>
 
+      <Disclosure id="academic-create-program" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New program</h2>} summaryClassName="!px-0" contentClassName="!pb-0">
       <form
         onSubmit={createProgram}
-        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
+        className="min-w-0 pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]"
       >
-        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
-          New program
-        </h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Programs are owned by Departments; duration is measured in academic terms.
         </p>
@@ -396,6 +395,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="w-full md:w-auto"
             disabled={
               pending ||
               !programDepartmentId ||
@@ -407,14 +407,13 @@ export function AcademicsCreatePanel({
           </Button>
         </div>
       </form>
+      </Disclosure>
 
+      <Disclosure id="academic-create-cohort" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New cohort / batch</h2>} summaryClassName="!px-0" contentClassName="!pb-0">
       <form
         onSubmit={createCohort}
-        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
+        className="min-w-0 pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]"
       >
-        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
-          New cohort / batch
-        </h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Cohorts are long-lived Program intakes; learner term progression is stored separately.
         </p>
@@ -535,6 +534,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="w-full md:w-auto"
             disabled={
               pending ||
               !cohortProgramId ||
@@ -547,14 +547,13 @@ export function AcademicsCreatePanel({
           </Button>
         </div>
       </form>
+      </Disclosure>
 
+      <Disclosure id="academic-create-section" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New section</h2>} summaryClassName="!px-0" contentClassName="!pb-0">
       <form
         onSubmit={createSection}
-        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
+        className="min-w-0 pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]"
       >
-        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
-          New section
-        </h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Sections are period-specific. Rosters and movement history attach here.
         </p>
@@ -663,6 +662,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="w-full md:w-auto"
             disabled={
               pending ||
               !sectionCohortId ||
@@ -675,6 +675,7 @@ export function AcademicsCreatePanel({
           </Button>
         </div>
       </form>
+      </Disclosure>
     </section>
   );
 }
