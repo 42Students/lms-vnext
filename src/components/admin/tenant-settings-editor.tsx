@@ -45,14 +45,14 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   finally{setSaving(false);}
  }
  const groups=[...new Set(keys.map(spec=>spec.group))];
- return <section aria-label="Edit Tenant Settings" className="space-y-5 border-b border-border pb-5 print:hidden">
+ return <section aria-label="Edit Tenant Settings" className="min-w-0 space-y-4 border-b border-border pb-4 print:hidden">
   <h2 className="text-lg font-semibold text-foreground">Edit Tenant Settings</h2>
   <p className="text-sm text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>
   {!ready?<Alert tone="warning">The tenant-settings migration is pending. This form is read-only.</Alert>:null}
   {groups.map(group=><fieldset disabled={!ready||saving} key={group} className="space-y-3">
    <legend className="mb-2 text-base font-semibold text-foreground">{group}</legend>
-   <div className="grid gap-3 md:grid-cols-2">
+   <div className="grid min-w-0 gap-3 md:grid-cols-2">
     {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="warning">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
@@ -71,8 +71,8 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    </div>
   </fieldset>)}
   <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries}/>
-  <div className="flex flex-wrap items-center gap-3">
-   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} className="min-h-11 md:min-h-9" onClick={()=>void save()}>
+  <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={()=>void save()}>
     {saving?"Saving…":"Save "+changed.length+" changed setting"+(changed.length===1?"":"s")}
    </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>

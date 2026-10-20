@@ -14,31 +14,31 @@ export default async function SuperAdminAuthSettings(){
  // Privileged auth posture is read-only, but even the key inventory must not
  // be presented to a disabled actor or a college-only account on a deep link.
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
    <PageHeader title="Authentication settings"/>
    <ErrorState title="Authentication settings access denied"
     description="Your account cannot view privileged authentication policies."
     action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
- return <div className="min-w-0 max-w-full space-y-6">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+  <PageBackLink href="/admin/settings" label="Platform settings" />
   <PageHeader title="Authentication settings"
-   description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."
-   actions={<PageBackLink href="/admin/settings" label="Platform settings" />} />
+   description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication." />
   <Banner tone="info">
    Configuration runtime status is not attested by this page. Privileged second-factor readiness must be verified separately before production.
   </Banner>
   <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
-    <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[18px] leading-[1.4]">{item.title}</h2>
-    <p className="mt-2 text-sm text-body">{item.description}</p>
+    <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">{item.title}</h2>
+    <p className="mt-2 break-words text-sm text-body">{item.description}</p>
     <div className="mt-3"><StatusBadge tone="neutral" className="max-w-full">{item.state}</StatusBadge></div>
    </li>)}
   </ul>
-  <section aria-label="Legacy platform and auth setting keys" className="space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+  <section aria-label="Legacy platform and auth setting keys" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <h2 className="font-semibold text-[var(--lms-heading)] text-[18px] leading-[1.4]">Platform &amp; auth policy keys</h2>
    <p className="text-sm text-body">Names and validation are listed for review. Environment and live network configuration are never displayed. Changes to host, cookie or network controls require manual deployment acceptance.</p>
-   <ul className="space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
-    <strong className="block">{spec.label}</strong>
+   <ul className="min-w-0 space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
+    <strong className="block break-words">{spec.label}</strong>
     <code className="break-all text-xs">{spec.key}</code>
     {spec.dangerous?<StatusBadge tone="warning" className="ml-2">High impact · deployment gated</StatusBadge>:null}
    </li>)}</ul>
