@@ -173,3 +173,23 @@
 **Fix:** one PageHeader Back to course action; flatter hairline question/preview sections; responsive two-column type/points controls; stacked mobile Create and publish; route-specific loading and error/retry/return UI. Read the 446-line QuizChoiceBuilder including local draft reconciliation, question/option order, publish/archive confirmations, paste options, learner preview and validation; preserved APIs, ids, labels, question behaviour and confirmations.
 
 **Files changed:** manage page, error, loading, shared choice builder, queue and proof. Static-only, no runtime/CI.
+
+## 20 · Teacher / Section reports
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`  
+**Problems found (9):** oversized repeated section and row headings competing with the page h1, a detached roster count, metric blocks with ambiguous reading order, assessment rows with large separate action areas, multi-line narrow filter toolbar, redundant Clear control when no filter, report links too narrow for touch, pagination with uneven mobile spacing, and error without a safe escape.
+
+**Fix:** move the roster count into the single PageHeader subtitle; create a compact 2/4-column definition-list summary and a unified hairline report directory with 16px item titles, aligned right actions on desktop and full-width links on phones; place attendance/gradebook follow-ups in equal-width border-separated columns; provide one-column phone and aligned tablet/desktop filter controls, hide Clear unless active, and align responsive pagination/retry and contextual not-found navigation. Preserve all report selectors, full assessment metrics, authorized links, unknown counts, paging, form GET semantics and existing exact wording.
+
+**Files changed:** `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`, `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx`, new `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/not-found.tsx`, queue and this proof. Reviewed `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/loading.tsx`, the parent course layout/error/loading, Faculty tab navigation, shared PageHeader/Button/EmptyState and report query model; no route template exists.
+
+**Verification boundary:** static JSX/semantics and 375/768/1280 responsive utility review only; no code execution, tests, build, screenshots or CI.
+
+## 21 · Teacher / Attendance session coverage
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`  
+**Problems found (8):** 4-way summary separated by wide card-like blocks, inconsistent heading scale with adjacent reports, recent session title/date losing reading order at 375px, overly dense mobile title/date clusters, no distinct session list boundaries, over-wide provenance disclaimer, nested bordered error card inside the shell canvas, and loading skeleton shaped like an unrelated card.
+
+**Fix:** use the same 2/4-column hairline metric strip as Section reports, one 18px report-section heading, a bordered divider list with stacked phone / aligned tablet+ time labels, readable line lengths and touch-safe Back to Attendance. Remove nested error card in favor of a full-width retry plus safe Courses escape, use directory-shaped loading skeleton, and add a privacy-safe route-specific missing state. Preserve dateTime, IST formatting, counts and unknown semantics, the 40-session cap, omitted-count status and course authorization.
+
+**Files changed:** `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`, `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`, `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/loading.tsx`, new `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/not-found.tsx`, queue and proof. Reviewed FacultyCourseTabLayout, nearest teacher layout/fallbacks, shared components and session coverage service; no route template exists.
+
+**Verification boundary:** static JSX/semantics and 375/768/1280 class review only; no runtime, tests, build, screenshot or CI.
