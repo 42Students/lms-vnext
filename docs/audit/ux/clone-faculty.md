@@ -682,3 +682,133 @@ All counts below came from entire current GitHub UTF-8 file blobs at the pushed 
 | `docs/design/old-lms-pages.md:4` small teal selected controls, old LMS consistent input skins | `faculty-choice-quiz-builder.tsx`: `NativeCheckbox` kept for form-inside-`label` preview choice, `Checkbox` with `label` from shared selection-controls for interactive authoring | Removed duplicate Checkbox name binding; no inferred behavior or grading change |
 
 The direct whole-blob regex equivalent is `<(button|input|select|textarea|table|dialog)\\b|window\\.confirm\\s*\\(|#[0-9a-fA-F]{3,8}\\b`. This was evaluated in GitHub connector response text on exactly the ten files above. **No `git grep` shell, no JSX parser, no responsive screenshots, no typecheck/tests/CI** were executed. The strict 94-work-item H queue remains unchecked because full visual/default/hover/focus/disabled/loading and transitive coverage conditions are not proven. These ten files are source-updated only. Next target: `src/components/courses/faculty-course-list.tsx` and `src/components/courses/faculty-assessment-overview.tsx`, followed by remaining unreviewed delegated teacher pages.
+
+
+## Full 94-item H path inventory — source-only coverage pass, 2026-10-20
+
+This inventory reads every named queued file through the connected GitHub repository branch; counts are computed over **entire returned UTF-8 file content**, not terminal `grep`. The exact query equivalent is `git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9A-Fa-f]{3,8}' -- <each-listed-path>` (shell **not run**). `sm:` count detects 640px modifiers that violate the 767px legacy phone boundary when used for a responsive switch. `Button` counts reflect source JSX opening vs closing and are **not** a JSX parser. Native hidden GET inputs are listed separately because they are semantically required, invisible, and style-free. Line examples are first 44px/13px/PageHeader visual declarations. Remaining unrendered states, full transitive dependency grep and computed-style comparisons block all strict H ticks.
+
+### Source inventory routes, part 1/4 (1–12 of 46)
+
+| Path | Lines | Native/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source value example lines |
+|---|---:|---:|---:|---:|---|
+| `src/app/(authenticated)/admin/academics/page.tsx` | 68 | 0 (0 hidden) | 0 | 0/0 | 19,24,25 |
+| `src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx` | 31 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 13,15 |
+| `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx` | 48 | 0 (0 hidden) | 0 | 0/0 | 25,41 |
+| `src/app/(authenticated)/admin/people/directory/page.tsx` | 128 | 1 (1 hidden) | 0 | 1/1 | 33,41,59 |
+| `src/app/(authenticated)/admin/people/page.tsx` | 184 | 0 (0 hidden) | 0 | 1/1 | 112,122,143 |
+| `src/app/(authenticated)/admin/people/unassigned/page.tsx` | 80 | 0 (0 hidden) | 0 | 1/1 | 22,24,39 |
+| `src/app/(authenticated)/admin/recruiters/page.tsx` | 7 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/allAssignments/page.tsx` | 26 | 0 (0 hidden) | 0 | 0/0 | 13,18 |
+| `src/app/(authenticated)/teacher/allQuizzes/page.tsx` | 30 | 0 (0 hidden) | 0 | 0/0 | 17,22 |
+| `src/app/(authenticated)/teacher/calendar/page.tsx` | 133 | 0 (0 hidden) | 0 | 1/1 | 31,32,49 |
+| `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx` | 58 | 0 (0 hidden) | 0 | 0/0 | 31,34 |
+
+
+### Source inventory routes, part 2/4 (13–24 of 46)
+
+| Path | Lines | Native/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source value example lines |
+|---|---:|---:|---:|---:|---|
+| `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx` | 159 | 0 (0 hidden) | 0 | 1/1 | 53,55,76 |
+| `src/app/(authenticated)/teacher/contacts/page.tsx` | 6 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx` | 44 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx` | 118 | 0 (0 hidden) | 0 | 1/1 | 30,31,37 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 16,24 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx` | 16 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx` | 107 | 0 (0 hidden) | 0 | 0/0 | 78,84 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx` | 74 | 0 (0 hidden) | 0 | 1/1 | 19,20,25 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx` | 49 | 0 (0 hidden) | 0 | 0/0 | 15,18 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx` | 41 | 0 (0 hidden) | 0 | 0/0 | 24,28 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx` | 67 | 0 (0 hidden) | 0 | 0/0 | 27,30 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx` | 150 | 0 (0 hidden) | 0 | 1/1 | 33,36,48 |
+
+
+### Source inventory routes, part 3/4 (25–36 of 46)
+
+| Path | Lines | Native/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source value example lines |
+|---|---:|---:|---:|---:|---|
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx` | 38 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx` | 16 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx` | 13 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx` | 24 | 0 (0 hidden) | 0 | 0/0 | 15,21 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx` | 70 | 0 (0 hidden) | 0 | 1/1 | 15,16,21 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx` | 45 | 0 (0 hidden) | 0 | 0/0 | 13,14 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx` | 89 | 0 (0 hidden) | 0 | 0/0 | 25,26,83 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx` | 54 | 0 (0 hidden) | 0 | 0/0 | 37,41 |
+| `src/app/(authenticated)/teacher/courses/page.tsx` | 39 | 0 (0 hidden) | 0 | 0/0 | 15,19,32 |
+| `src/app/(authenticated)/teacher/layout.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 17 |
+| `src/app/(authenticated)/teacher/live-classes/page.tsx` | 82 | 0 (0 hidden) | 0 | 1/1 | 21,25,39 |
+| `src/app/(authenticated)/teacher/notifications/page.tsx` | 123 | 0 (0 hidden) | 0 | 0/0 | 73,98,112 |
+
+
+### Source inventory routes, part 4/4 (37–46 of 46)
+
+| Path | Lines | Native/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source value example lines |
+|---|---:|---:|---:|---:|---|
+| `src/app/(authenticated)/teacher/profile/contacts/page.tsx` | 38 | 0 (0 hidden) | 0 | 0/0 | 9,11 |
+| `src/app/(authenticated)/teacher/profile/details/page.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 18,20 |
+| `src/app/(authenticated)/teacher/profile/page.tsx` | 56 | 0 (0 hidden) | 0 | 0/0 | 21,25,27 |
+| `src/app/(authenticated)/teacher/profile/teaching/page.tsx` | 101 | 0 (0 hidden) | 0 | 1/1 | 25,26,33 |
+| `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` | 223 | 0 (0 hidden) | 0 | 0/0 | 48,51,63 |
+| `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` | 134 | 4 (4 hidden) | 0 | 1/1 | 27,28,45 |
+| `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx` | 134 | 3 (3 hidden) | 0 | 1/1 | 27,28,41 |
+| `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` | 272 | 0 (0 hidden) | 0 | 0/0 | 50,53,56 |
+| `src/app/(authenticated)/teacher/response-followups/page.tsx` | 139 | 0 (0 hidden) | 0 | 1/1 | 24,25,32 |
+| `src/app/(authenticated)/teacher/results/page.tsx` | 163 | 0 (0 hidden) | 0 | 1/1 | 26,27,34 |
+
+**All 46 queued route/layout files are now covered by a whole-file static scan.** The only raw control tags in the four route tables are `type="hidden"` GET-state fields; no visible native form controls, no native `window.confirm`, no hard-coded hex and no remaining 640px `sm:` variants in these route blobs. Delegation/redirects are marked, not misrepresented as missing page heads. A full transitive component scan follows. This is source-only evidence: no owner-safe runtime pixel comparison, no interactive keyboard/hover/disabled validation and no claim of strict H closure.
+
+
+### Source inventory directly related components, part 1/4 (1–12 of 48)
+
+| Path | Lines | Raw/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source token/state example lines |
+|---|---:|---:|---:|---:|---|
+| `src/components/academics/academics-actions.tsx` | 947 | 0 (0 hidden) | 0 | 21/21 | 144,152,215 |
+| `src/components/academics/academics-create-panel.tsx` | 685 | 0 (0 hidden) | 0 | 4/4 | 58,302,400 |
+| `src/components/academics/academics-overview.tsx` | 399 | 0 (0 hidden) | 0 | 0/0 | 342,358,374 |
+| `src/components/academics/academics-section-page.tsx` | 90 | 0 (0 hidden) | 0 | 0/0 | 42 |
+| `src/components/academics/section-operations.tsx` | 992 | 0 (0 hidden) | 0 | 10/10 | 272,291,350 |
+| `src/components/admin/super-admin-attendance-settings-editor.tsx` | 68 | 0 (0 hidden) | 0 | 1/1 | 45,51,59 |
+| `src/components/admin/super-admin-faculty-assignment-create.tsx` | 174 | 0 (0 hidden) | 0 | 5/5 | 58,62,68 |
+| `src/components/admin/super-admin-faculty-bulk-import.tsx` | 119 | 0 (0 hidden) | 0 | 2/2 | 92,94,99 |
+| `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx` | 87 | 0 (0 hidden) | 0 | 3/3 | 56,60,68 |
+| `src/components/admin/super-admin-people-csv-control.tsx` | 32 | 0 (0 hidden) | 0 | 1/1 | 25,29 |
+| `src/components/attendance/faculty-attendance-schedule-editor.tsx` | 146 | 0 (0 hidden) | 0 | 1/1 | 98,105,112 |
+| `src/components/attendance/faculty-attendance-workspace.tsx` | 1284 | 0 (0 hidden) | 0 | 14/14 | 491,493,549 |
+
+
+### Source inventory directly related components, part 2/4 (13–24 of 48)
+
+| Path | Lines | Raw/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source token/state example lines |
+|---|---:|---:|---:|---:|---|
+| `src/components/courses/faculty-assessment-create.tsx` | 88 | 0 (0 hidden) | 0 | 2/2 | 45,47,52 |
+| `src/components/courses/faculty-assessment-editor.tsx` | 368 | 0 (0 hidden) | 0 | 3/3 | 207,273,286 |
+| `src/components/courses/faculty-assessment-lifecycle.tsx` | 90 | 0 (0 hidden) | 0 | 1/1 | 66,73,76 |
+| `src/components/courses/faculty-assessment-overview.tsx` | 316 | 0 (0 hidden) | 0 | 2/2 | 73,103,121 |
+| `src/components/courses/faculty-assignment-editor.tsx` | 219 | 0 (0 hidden) | 0 | 4/4 | 156,158,166 |
+| `src/components/courses/faculty-assignment-material-links.tsx` | 100 | 0 (0 hidden) | 0 | 2/2 | 58,61,62 |
+| `src/components/courses/faculty-assignment-method-picker.tsx` | 29 | 0 (0 hidden) | 0 | 0/0 | 9,15 |
+| `src/components/courses/faculty-assignment-review.tsx` | 668 | 0 (0 hidden) | 0 | 11/11 | 343,394,401 |
+| `src/components/courses/faculty-choice-quiz-builder.tsx` | 442 | 0 (0 hidden) | 0 | 26/26 | 207,209,211 |
+| `src/components/courses/faculty-contacts-table.tsx` | 66 | 0 (0 hidden) | 0 | 0/0 | 16,26 |
+| `src/components/courses/faculty-content-editor.tsx` | 183 | 0 (0 hidden) | 0 | 2/2 | 107,122,127 |
+| `src/components/courses/faculty-content-order-editor.tsx` | 205 | 0 (0 hidden) | 0 | 4/4 | 102 |
+
+
+### Source inventory directly related components, part 3/4 (25–36 of 48)
+
+| Path | Lines | Raw/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source token/state example lines |
+|---|---:|---:|---:|---:|---|
+| `src/components/courses/faculty-course-filter-auto-submit.tsx` | 42 | 0 (0 hidden) | 0 | 0/0 | shared/indirect |
+| `src/components/courses/faculty-course-home-signals.tsx` | 262 | 0 (0 hidden) | 0 | 0/0 | 38,42,83 |
+| `src/components/courses/faculty-course-list.tsx` | 230 | 0 (0 hidden) | 0 | 1/1 | 58,71,87 |
+| `src/components/courses/faculty-course-roster.tsx` | 256 | 0 (0 hidden) | 0 | 2/2 | 116,162,169 |
+| `src/components/courses/faculty-course-tab-navigation.tsx` | 92 | 0 (0 hidden) | 0 | 0/0 | 54,60,71 |
+| `src/components/courses/faculty-course-workspace.tsx` | 712 | 0 (0 hidden) | 0 | 0/0 | 250,344,384 |
+| `src/components/courses/faculty-ist-quarter-hour-picker.tsx` | 54 | 0 (0 hidden) | 0 | 0/0 | 20,22,25 |
+| `src/components/courses/faculty-item-actions.tsx` | 129 | 0 (0 hidden) | 0 | 1/1 | 90 |
+| `src/components/courses/faculty-lesson-authoring.tsx` | 1173 | 0 (0 hidden) | 0 | 11/11 | 65,600,664 |
+| `src/components/courses/faculty-lesson-video-manager.tsx` | 341 | 0 (0 hidden) | 0 | 11/11 | 218,222,225 |
+| `src/components/courses/faculty-live-class-editor.tsx` | 165 | 0 (0 hidden) | 0 | 1/1 | 108,116,124 |
+| `src/components/courses/faculty-quiz-learner-preview.tsx` | 67 | 0 (0 hidden) | 0 | 1/1 | 43,48,49 |
