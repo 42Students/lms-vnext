@@ -12,7 +12,7 @@ export default function Error({reset}:{
       are ineligible or that your record is empty.
     </p>
     <Button type="button" onClick={reset}
-      className="mt-4 max-md:min-h-11">
+      className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
       Retry
     </Button>
   </section>;
