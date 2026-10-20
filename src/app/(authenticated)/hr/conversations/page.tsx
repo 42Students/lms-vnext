@@ -72,7 +72,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  const visibleRows=generalHistoryResult && !generalHistoryResult.ok && generalThread
   ?result.items.map(row=>row.id===generalThread.id?{...row,preview:null}:row)
   :result.items;
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-6">
   <RecruiterConversationLiveRefresh/>
   <PageHeader title="Messages"
    description={result.status==="READY"

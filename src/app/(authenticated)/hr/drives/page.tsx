@@ -53,13 +53,13 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     deadline:first(raw.deadline)||undefined,page:first(raw.page)||undefined,
     sort:first(raw.sort)||undefined,
   });
-  if (!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Drives" />
+  if (!query.success) return <div className="min-w-0 max-w-full space-y-6"><PageHeader title="Drives" />
     <ErrorState title="Invalid drive filters" description="Review the college, lifecycle and search text."
       action={<Link href="/hr/drives" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} /></div>;
   const grants = context.recruiter.grants;
   if (query.data.collegeId && !grants.some(grant => grant.collegeId === query.data.collegeId)) notFound();
   const selectedCollege = query.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
-  if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Drives" description="Choose an authorized college to open its hiring drives." />
+  if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-6"><PageHeader title="Drives" description="Choose an authorized college to open its hiring drives." />
     {grants.length === 0 ? <EmptyState title="No active college access" description="Your placement-cell relationship must be active before any drives are visible." /> :
     <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant=>({
       key:grant.collegeId,label:grant.collegeName,
@@ -123,7 +123,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         href:recruiterDrivesHref({...query.data,collegeId:grant.collegeId}),
       }))}/> : null}
     {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
-      className="border-b border-border pb-4 md:pb-5">
+      className="border-b border-border pb-4 md:pb-6">
       <h2 className="font-semibold text-[var(--lms-heading)]">Deadline attention</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
