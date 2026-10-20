@@ -35,7 +35,6 @@ export function ResourceProgressControl({
 
   async function markComplete() {
     if (saving || complete) return;
-    setConfirmOpen(false);
     setError(null);
     try {
       await run(async () => {
@@ -65,32 +64,27 @@ export function ResourceProgressControl({
       });
     } catch {
       setError("Could not mark this as complete. Please try again.");
+    } finally {
+      setConfirmOpen(false);
     }
   }
 
   return (
-    <div className="mt-3">
-      <Button
-        size="sm"
-        className="min-h-11 md:min-h-9"
-        variant={
-          complete ? "secondary" : "primary"
-        }
-        disabled={!hydrated || saving || complete}
-        onClick={() => setConfirmOpen(true)}
-      >
-        {complete
-          ? "Completed"
-          : saving
-            ? "Saving…"
-            : "Mark as complete"}
-      </Button>
-      {complete ? <Badge role="status" tone="success" className="mt-2">Marked as complete</Badge> : null}
-      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+    <div className="min-w-0 space-y-2 border-t border-border pt-3">
+      {complete ? (
+        <Badge role="status" tone="success" className="inline-flex min-h-11 items-center px-3 md:min-h-9">Marked as complete</Badge>
+      ) : (
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9"
+          variant="primary" disabled={!hydrated||saving}
+          loading={saving} onClick={()=>{setError(null);setConfirmOpen(true);}}>
+          {saving?"Saving…":"Mark as complete"}
+        </Button>
+      )}
+      <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!saving)setConfirmOpen(next);}}
         title={contentType === "LIVE_CLASS" ? "Attended this session?" : "Finished with these materials?"}
         description="Mark this learning item as complete?"
         confirmLabel="Mark as complete" confirmVariant="primary" pending={saving} onConfirm={markComplete} />
-      {error ? <Alert tone="error" className="mt-2">{error}</Alert> : null}
+      {error ? <div role="alert"><Alert tone="error">{error}</Alert></div> : null}
     </div>
   );
 }
