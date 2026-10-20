@@ -97,7 +97,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   {filename?<p className="text-xs text-muted-foreground print:hidden">File: {filename}</p>:null}
   {count>0?<p role="status" className="text-sm text-body">{count} rows validated locally; review before creating.</p>:null}
   {(issue||error)?<Alert tone="error">{error||issue}</Alert>:null}
-  <Button type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}>
+  <Button type="button" className="min-h-11 md:min-h-9 print:hidden" loading={busy} onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}>
     {busy?"Importing…":"Validate and Create"}
   </Button>
   {results.length>0?<div className="space-y-2">

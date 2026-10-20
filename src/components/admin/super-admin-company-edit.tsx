@@ -47,7 +47,7 @@ export function SuperAdminCompanyEdit({company}:{company:Company}){
   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Public logo URL (HTTPS)<Input name="logoPublicUrl"
    type="url" defaultValue={company.logoPublicUrl??""} className={cls}/></label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending}>
+  <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending}>
    {pending?"Saving…":"Save company"}</Button>
   <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
    className="ml-2 min-h-11 md:min-h-9">Cancel</Button>

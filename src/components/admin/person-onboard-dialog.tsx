@@ -128,6 +128,7 @@ export function PersonOnboardDialog({
               Cancel
             </Button>
             <Button className="min-h-11 md:min-h-9"
+              loading={pending}
               disabled={
                 pending ||
                 !(forcedRole?firstName.trim()&&lastName.trim():displayName.trim()) ||

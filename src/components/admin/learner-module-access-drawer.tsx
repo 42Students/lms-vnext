@@ -102,7 +102,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      Recheck access after a change
     </Button>
     <p className="text-xs text-body">This reads persisted learner access. It does not sign in as the student.</p>
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
      href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(detail.membershipId)}>
      Open full access trace →
     </Link>

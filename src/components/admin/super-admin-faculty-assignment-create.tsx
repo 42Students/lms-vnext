@@ -109,7 +109,7 @@ export function SuperAdminFacultyAssignmentCreate({
     </p>:null}
     {error?<Alert tone="error" className="md:col-span-2">{error}</Alert>:null}
     <div className="flex flex-wrap gap-2 md:col-span-2">
-      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9">
+      <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 md:min-h-9">
        {pending?"Assigning…":"Assign faculty"}
       </Button>
       <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
@@ -163,7 +163,7 @@ export function SuperAdminTeachingRoleEdit({
           {facultyAssignmentRoleLabel(value)}</option>)}
        </Select>
       </label>
-      <Button variant="primary" type="button" disabled={pending||role===initialRole}
+      <Button variant="primary" type="button" loading={pending} disabled={pending||role===initialRole}
        onClick={()=>void save()} className="min-h-11 md:min-h-9">
        {pending?"Saving…":"Save role"}
       </Button>
