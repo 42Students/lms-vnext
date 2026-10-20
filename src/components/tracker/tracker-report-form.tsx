@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {StatusBadge} from "@/components/ui/status-badge";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {Banner} from "@/components/ui/banner";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -16,7 +19,7 @@ import {
 import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 
 const field = "mt-1 w-full";
-const label = "block text-sm font-semibold text-body";
+const label = "block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
 
 export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,knownErrorId}:{contextPrefill?:string;canSearchSimilar?:boolean;knownErrorId?:string}={}) {
   const initial={reporterName:"",accountRole:"",environment:"",page:"",screen:"",section:"",issueType:"",severity:"NOT_SURE",description:contextPrefill?"\n\nCaptured context:\n"+contextPrefill:"",evidenceLink:""};
@@ -112,16 +115,16 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
 
   if (created) return (
     <section className="space-y-4 border-b border-border py-5" aria-live="polite">
-      <p className="text-sm font-semibold text-success">Issue reported</p>
+      <StatusBadge tone="success">Issue reported</StatusBadge>
       <h2 className="text-xl font-semibold">{created}</h2>
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
-      {linkIssueError?<p role="alert" className="text-sm text-body">{linkIssueError}</p>:null}
+      {linkIssueError?<InlineNotice tone="error" message={linkIssueError}/>:null}
       {knownErrorId&&linkIssueError?<Button type="button"
         variant="secondary"
         onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</Button>:null}
 
       <div className="flex flex-wrap gap-3">
-        <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
+        <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] transition-colors duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
         <Button 
           onClick={() => {setCreated("");setDraft(initial);clearDraft();setError("");}}
           type="button" className="min-h-11 md:min-h-9">Report another</Button>
@@ -132,11 +135,11 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   return (
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
       className="space-y-5">
-      {restored?<div role="status" className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 text-sm">
-        <span>Unsaved report restored.</span><Button type="button" variant="secondary" onClick={()=>{setDraft(initial);clearDraft();}}>Discard draft</Button>
-      </div>:null}
+      {restored?<Banner tone="info" action={<Button type="button" variant="secondary" onClick={()=>{setDraft(initial);clearDraft();}}>Discard draft</Button>}>
+        Unsaved report restored.
+      </Banner>:null}
       {dirty?<p className="text-xs text-muted-foreground">Unsaved changes are kept on this device until your report is submitted.</p>:null}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
         <label className={label}>Reporter
           <Select className={field} name="reporterName" required value={draft.reporterName} onChange={event=>patch("reporterName",event.target.value)}>
             <option value="" disabled>Select reporter</option>
@@ -157,8 +160,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </label>
       </div>
       <fieldset className="grid min-w-0 gap-3 border-y border-border py-4">
-        <legend className="px-1 text-sm font-semibold">Where did this happen?</legend>
-        <div className="grid gap-3 md:grid-cols-3">
+        <legend className="px-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where did this happen?</legend>
+        <div className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
           <label className={label}>Page
             <Select className={field} required value={page} onChange={event => {
               setDraft(current=>({...current,page:event.target.value,screen:"",section:""}));
@@ -185,8 +188,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </label>
         </div>
       </fieldset>
-      <div className="grid gap-4 md:grid-cols-3">
-        <label className={label + " md:col-span-2"}>What kind of issue?
+      <div className="grid gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+        <label className={label + " min-[992px]:col-span-2"}>What kind of issue?
           <Select className={field} name="issueType" required value={draft.issueType} onChange={event=>patch("issueType",event.target.value)}>
             <option value="" disabled>Search issue type</option>
             {ISSUE_TYPE_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -220,24 +223,24 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             maxLength={100} placeholder="e.g. Quiz submission"
             className={field+" min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
-            disabled={similarLoading||similarQuery.trim().length<3}
+            disabled={similarLoading||similarQuery.trim().length<3} loading={similarLoading}
             variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
             {similarLoading?"Searching…":"Find similar issues"}
           </Button>
         </div>
-        {similarError?<p role="alert" className="mt-2 text-sm text-error">{similarError}</p>:null}
+        {similarError?<InlineNotice tone="error" message={similarError}/>:null}
         {similarSearched?<div role="status" className="mt-2 text-sm">
           {similarResults.length?<ul className="divide-y divide-border">
             {similarResults.map(issue=><li key={issue.publicId} className="py-3">
               <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{issue.publicId}</Link>
-              <span className="ml-2 text-xs text-muted-foreground">{issue.status}</span>
+              <span className="ml-2 inline-flex align-middle"><StatusBadge tone="neutral">{issue.status}</StatusBadge></span>
               <p className="mt-1 break-words text-xs text-body">{issue.description.slice(0,160)}</p>
             </li>)}
           </ul>:<p>No existing reports match this phrase. You can submit a new issue.</p>}
         </div>:null}
       </section>
       </> : null}
-      {error && <p role="alert" className="text-sm text-error">{error}</p>}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
         <Button disabled={pending} loading={pending} type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
