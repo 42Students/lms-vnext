@@ -65,11 +65,11 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
   <h2 className="text-lg font-semibold text-foreground">{title}</h2>
   {rows.length===0?<p role="status" className="border-y border-border py-4 text-sm">{emptyDescription}</p>:<>
    <div data-report-toolbar className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-    <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold">Search table
+    <label className="grid min-w-48 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold">Search table
      <Input type="search" maxLength={100} value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
       className="min-h-11 md:min-h-9" placeholder="Search shown report rows"/>
     </label>
-    <label className="grid gap-1 text-xs font-semibold">Rows shown
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold">Rows shown
      <Select value={limit} onChange={e=>setLimit(Number(e.target.value))}
       className="min-h-11 md:min-h-9">
       {[25,50,100,500,1000].map(n=><option key={n} value={n}>{n}</option>)}
@@ -85,7 +85,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       }} size="sm" className="min-h-11 md:min-h-9 print:hidden">
        Close filters
       </Button>
-      {headings.map((heading,index)=><label key={index} className="grid gap-1 text-xs font-semibold">
+      {headings.map((heading,index)=><label key={index} className="grid gap-1 text-[var(--lms-font-sm)] font-semibold">
        {heading}
        <Input type="search" maxLength={100} value={columnFilters[index]??""}
         onChange={event=>{setColumnFilters(current=>({...current,[index]:event.target.value}));setLimit(100);}}
@@ -104,9 +104,9 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
        Close columns
       </Button>
       {headings.map((heading,index)=><label key={index}
-       className={"flex min-h-11 items-center gap-2 rounded-[8px] px-2 py-1 text-xs transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none "+
+       className={"flex min-h-11 items-center gap-2 rounded-lg px-2 py-1 text-xs transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none "+
         (!hidden.includes(index)&&hidden.length===headings.length-1
-          ? "cursor-not-allowed opacity-50" : "hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)]")}>
+          ? "cursor-not-allowed opacity-50" : "hover:bg-primary-subtle active:bg-primary-subtle")}>
        <Checkbox checked={!hidden.includes(index)}
         disabled={!hidden.includes(index)&&hidden.length===headings.length-1}
         onChange={e=>{setHidden(current=>e.target.checked?current.filter(n=>n!==index):[...current,index]);if(!e.target.checked&&sort===index){setSort(null);setDescending(false);}}}/>
@@ -121,7 +121,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
-   <div data-report-toolbar className="flex flex-wrap items-center gap-2 sm:hidden">
+   <div data-report-toolbar className="flex flex-wrap items-center gap-2 min-[768px]:hidden">
     <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Sort rows by
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
