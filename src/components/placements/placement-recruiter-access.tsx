@@ -172,14 +172,14 @@ export function PlacementRecruiterAccess({
         </p>
       </div>
 
-      <div className="grid gap-3 border-b border-border py-5 lg:grid-cols-[minmax(12rem,1fr)_minmax(14rem,1fr)_minmax(10rem,0.7fr)_auto]">
+      <div className="grid min-w-0 gap-3 border-b border-border py-5 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.7fr)_auto]">
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             Employer relationship
           </span>
           <Select
             aria-label="Employer relationship"
-            className="min-h-9 w-full"
+            className="min-h-11 w-full md:min-h-9"
             value={relationshipId}
             onChange={(event) =>
               setRelationshipId(
@@ -241,9 +241,10 @@ export function PlacementRecruiterAccess({
           />
         </label>
 
-        <div className="flex items-end">
+        <div className="flex min-w-0 items-end sm:col-span-2 xl:col-span-1">
           <Button
             size="sm"
+            className="w-full sm:w-auto"
             disabled={
               pending !== null ||
               relationships.length === 0
@@ -258,7 +259,7 @@ export function PlacementRecruiterAccess({
       </div>
 
       {grants.length === 0 ? (
-        <p className="m-0 px-5 py-6 text-sm text-muted-foreground">
+        <p className="m-0 py-6 text-sm text-muted-foreground">
           No active recruiter grants in this college.
         </p>
       ) : (
@@ -266,7 +267,7 @@ export function PlacementRecruiterAccess({
           {grants.map((grant) => (
             <div
               key={grant.grantId}
-              className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+              className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0">
                 <p className="m-0 font-semibold text-foreground">
