@@ -38,7 +38,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       description={[data.delivery.courseName,data.delivery.sectionName,
         data.delivery.academicPeriodName].join(" · ")}
       actions={<Link href={back + "/students"}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Section students
       </Link>} />
     <section className="border-b border-border pb-5">
@@ -50,9 +50,9 @@ export default async function FacultyCourseAssessmentHealthPage({
     </section>
     <form action={facultyCourseHealthHref({...data.query,page:1}).split("?")[0]}
       method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="ALL">All published assessments</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
@@ -74,7 +74,7 @@ export default async function FacultyCourseAssessmentHealthPage({
           <h2 className="font-semibold text-foreground">{item.title}</h2>
           <span className="text-xs font-semibold text-body">{item.kind}</span>
         </div>
-        <dl className="mt-4 grid gap-3 sm:grid-cols-4">
+        <dl className="mt-4 grid gap-3 md:grid-cols-4">
           {([
             ["Eligible",item.eligible],
             ["Responded",item.responded],

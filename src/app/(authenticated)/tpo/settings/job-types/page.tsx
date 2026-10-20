@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import {TpoBuiltinJobTypesEditor} from "@/components/tpo/tpo-builtin-job-types-editor";
 import { TpoJobTypesEditor } from "@/components/tpo/tpo-job-types-editor";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,7 +12,7 @@ export default async function JobTypesSettings(){
  <p className="text-sm text-muted-foreground">Manage the college&apos;s custom job-type choices. Inactive types are kept for historical records.</p>
  {ready?<TpoBuiltinJobTypesEditor stored={rows.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}
   customActive={rows.filter(row=>!row.isBuiltin&&row.active).length}/>:null}
- {!ready?<p role="status" className="rounded border border-border p-4">Job types storage is awaiting migration registration.</p>:
+ {!ready?<Alert tone="warning">Job types storage is awaiting migration registration.</Alert>:
  <TpoJobTypesEditor types={rows.filter(row=>!row.isBuiltin).map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}/>}
  </div>;
 }

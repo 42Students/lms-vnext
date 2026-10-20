@@ -64,7 +64,7 @@ export default async function FacultyGradebookPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Published gradebook"
       actions={<Link href={csv}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Download full Section CSV
       </Link>} />
     <p className="text-sm text-body">
@@ -72,11 +72,11 @@ export default async function FacultyGradebookPage({
       {" "}assessments with published result records
     </p>
     <form method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-foreground">
+      <label className="grid min-w-56 flex-1 gap-1 text-[13px] font-semibold leading-4 text-foreground">
         Find learner
         <Input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
+          className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
       </label>
       <Button type="submit" variant="primary">
         Search
@@ -109,7 +109,7 @@ export default async function FacultyGradebookPage({
           className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           View published score breakdown →
         </Link>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+        <div className="mt-3 grid gap-2 md:grid-cols-3">
           <p className="text-sm text-body">Published scores: {row.gradedCount}/{row.publishedAssessments}</p>
           <p className="text-sm text-body">Recorded points: {
             row.earned===null?"Unknown":row.earned+" / "+row.possible

@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeBrandingForm } from "@/components/admin/college-branding-form";
 import { CollegeLogoUploader } from "@/components/admin/college-logo-uploader";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { getCollegeBranding } from "@/modules/colleges/branding-service";
 import { can } from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
@@ -27,9 +28,9 @@ export default async function CollegeBrandingPage() {
         title="Branding"
         description="Logo, colours and support details shown on your college's sign-in page."
       />
-      <p role="status" className="border-b border-border pb-3 text-sm text-body">
+      <Alert tone="info">
         College contact details are managed in College profile. Sign-in branding, domains and logo changes are controlled by a Super Admin.
-      </p>
+      </Alert>
       <CollegeLogoUploader collegeId={membership.collegeId} currentUrl={branding.uploadedLogoUrl} canEdit={canEdit}/>
       <CollegeBrandingForm
         key={membership.collegeId}

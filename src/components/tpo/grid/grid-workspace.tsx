@@ -11,6 +11,7 @@ import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
 import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-filter-panel";
 import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
+import {gridClipboardTsv} from "./grid-export";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
 type GridWorkspaceProps<Row>={
@@ -43,10 +44,6 @@ type GridWorkspaceProps<Row>={
  onSearchChange?:(next:string)=>void;
 };
 
-const safeTsv=(value:unknown)=>{
- const cell=String(value??"").replace(/[\t\r\n]+/g," ");
- return /^[\s\u0000-\u001f]*[=+@-]/u.test(cell)?"'"+cell:cell;
-};
 
 /** Legacy TPO list chrome. Accepts only the authorized rows supplied by the page:
  * search persists in its URL, and copy/paste/export never fetch broader datasets. */
@@ -143,9 +140,8 @@ export function GridWorkspace<Row>({
  };
  const copyRows=async()=>{
   if(onCopyRows){onCopyRows();return;}
-  const lines=[exportColumns.map(column=>safeTsv(column.label)).join("\t"),
-   ...exportedRows.map(row=>exportColumns.map(column=>safeTsv(column.read(row))).join("\t"))];
-  try{await navigator.clipboard.writeText(lines.join("\r\n"));
+  const tsv=gridClipboardTsv(exportColumns,exportedRows,true);
+  try{await navigator.clipboard.writeText(tsv);
    setNotice("Copied "+exportedRows.length+" row(s) as tab-separated columns.");
   }catch{setNotice("Clipboard access is blocked. Use CSV export instead.");}
  };

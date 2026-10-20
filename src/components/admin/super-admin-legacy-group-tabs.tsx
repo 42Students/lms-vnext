@@ -11,6 +11,6 @@ export function SuperAdminLegacyGroupTabs(){
   if(!group)return null;
   const current=group.tabs.find(tab=>superAdminLegacyTabActive(pathname,tab.href))?.href
     ??group.tabs[0]?.href??"";
-  return <Tabs ariaLabel={group.title} renderPanel={false} value={current}
-    items={group.tabs.map(tab=>({value:tab.href,label:tab.label,href:tab.href}))}/>;
+  return <div className="print:hidden"><Tabs ariaLabel={group.title} renderPanel={false} value={current}
+    items={group.tabs.map(tab=>({value:tab.href,label:tab.label,href:tab.href}))}/></div>;
 }

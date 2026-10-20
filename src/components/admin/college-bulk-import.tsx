@@ -50,12 +50,12 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    aria-expanded={open} aria-controls={open?"admin-college-bulk-import-panel":undefined}
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div id="admin-college-bulk-import-panel" className="space-y-3">
-   <label className="grid gap-1 text-sm print:hidden">Organization
+   <label className="grid gap-1 text-[13px] font-semibold text-body print:hidden">Organization
     <Select className="min-h-11 md:min-h-9" value={organizationId} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
-   <label className="grid gap-1 text-sm print:hidden">CSV (name, code, city, state, country)
+   <label className="grid gap-1 text-[13px] font-semibold text-body print:hidden">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
      className="font-mono" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
@@ -71,7 +71,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
     <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
      onClick={()=>csv?setConfirmDiscard(true):discard()}>Discard draft</Button>
    </div>
-   {results.length>0?<div role="region" aria-label="College import results" className="min-w-0 space-y-2"><h3 className="font-semibold">Import results</h3>
+   {results.length>0?<div role="region" aria-label="College import results" className="min-w-0 space-y-2"><h3 className="font-semibold text-foreground">Import results</h3>
     <DataTable caption="College bulk import results" rows={results} getRowKey={row=>String(row.line)}
      empty={<EmptyState title="No import results" description="No import results have been recorded."/>}
      columns={[

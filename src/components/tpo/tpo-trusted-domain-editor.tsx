@@ -1,5 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -44,7 +46,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
    <Button type="button" disabled={busy} onClick={()=>setReview({action:"REMOVE",value:item})}
     variant="secondary" className="min-h-11 min-[768px]:min-h-9">Stop trusting</Button>
   </li>)}</ul>
-  {domains.length===0?<p role="status" className="text-sm text-muted-foreground">No explicit trusted domains.</p>:null}
+  {domains.length===0?<EmptyState title="No explicit trusted domains."/>:null}
   {status?<p role="status" className="text-sm">{status}</p>:null}
   <ConfirmDialog open={review!==null}
     onOpenChange={value=>{if(!value&&!busy)setReview(null);}}
@@ -53,7 +55,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
     confirmLabel={review?.action==="REMOVE"?"Stop trusting":"Trust domain"}
     pending={busy}
     onConfirm={()=>{if(review)void change(review.action,review.value);}}>
-    {status?<p role="alert" className="text-sm text-foreground">{status}</p>:null}
+    {status?<Alert tone={status==="Domain trusted."||status==="Stopped trusting domain."?"success":"error"}>{status}</Alert>:null}
   </ConfirmDialog>
  </section>;
 }

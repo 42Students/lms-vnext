@@ -8,6 +8,7 @@ import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./coll
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { collegeLearningHref, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
 import type {
   listCollegeCourseProgress,
@@ -37,23 +38,23 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
       />
       <section aria-label={title + " filters"} className="border-b border-border pb-5">
         <form method="get" action={href} className="flex flex-wrap items-end gap-3">
-          {lessons?<label className="grid min-w-32 gap-1 text-sm font-semibold text-body">
+          {lessons?<label className="grid min-w-32 gap-1 text-xs font-semibold text-body">
             Rows per page
             <Select name="pageSize" defaultValue={data.query.pageSize}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
             </Select>
           </label>:null}
-          <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-56 flex-1 gap-1 text-xs font-semibold text-body">
             Course or {lessons ? "lesson" : "cohort"}
             <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
               placeholder="Search registered records"
-              className="min-h-11" />
+              className="min-h-11 md:min-h-9" />
           </label>
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent program lifecycle
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Parent program lifecycle
               <Select name="programStatus" defaultValue={data.query.programStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
                 <option value="ACTIVE">Active</option>
                 <option value="ARCHIVED">Archived</option>
@@ -61,9 +62,9 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent batch lifecycle
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Parent batch lifecycle
               <Select name="cohortStatus" defaultValue={data.query.cohortStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
                 <option value="PLANNED">Planned</option>
                 <option value="ACTIVE">Active</option>
@@ -73,9 +74,9 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period lifecycle
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Academic period lifecycle
               <Select name="periodStatus" defaultValue={data.query.periodStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
                 <option value="PLANNED">PLANNED</option>
                 <option value="ACTIVE">ACTIVE</option>
@@ -84,9 +85,9 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent course lifecycle
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Parent course lifecycle
               <Select name="courseStatus" defaultValue={data.query.courseStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="ARCHIVED">ARCHIVED</option>
@@ -94,15 +95,15 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Department code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Department code (exact)
               <Input type="search" name="departmentCode" maxLength={64} defaultValue={data.query.departmentCode ?? ""}
-                className="min-h-11" />
+                className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent program lifecycle
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Parent program lifecycle
               <Select name="programStatus" defaultValue={data.query.programStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="ARCHIVED">ARCHIVED</option>
@@ -110,9 +111,9 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent batch lifecycle
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Parent batch lifecycle
               <Select name="cohortStatus" defaultValue={data.query.cohortStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
                 <option value="PLANNED">PLANNED</option>
                 <option value="ACTIVE">ACTIVE</option>
@@ -122,9 +123,9 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period lifecycle
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Academic period lifecycle
               <Select name="periodStatus" defaultValue={data.query.periodStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
                 <option value="PLANNED">PLANNED</option>
                 <option value="ACTIVE">ACTIVE</option>
@@ -133,9 +134,9 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent course lifecycle
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Parent course lifecycle
               <Select name="courseStatus" defaultValue={data.query.courseStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="ARCHIVED">ARCHIVED</option>
@@ -143,45 +144,45 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Department code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Department code (exact)
               <Input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""}
-                className="min-h-11" />
+                className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
-          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
             {lessons ? "Lesson status" : "Offering status"}
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ACTIVE">Active</option>
               <option value="ARCHIVED">Archived</option>
               <option value="ALL">All</option>
             </Select>
           </label>
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Academic period code (exact)
               <Input name="periodCode" type="search" maxLength={64}
                 defaultValue={data.query.periodCode??""}
-                className="min-h-11"/>
+                className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Batch code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Batch code (exact)
               <Input name="cohortCode" type="search" maxLength={64}
                 defaultValue={data.query.cohortCode??""}
-                className="min-h-11"/>
+                className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Program code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Program code (exact)
               <Input name="programCode" type="search" maxLength={64}
                 defaultValue={data.query.programCode??""}
-                className="min-h-11"/>
+                className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Course
               <Select name="courseCode" defaultValue={data.query.courseCode??""}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="">All courses</option>
                 {courseChoices.map(option=><option key={option.code} value={option.code}>
                   {option.name} ({option.code})
@@ -192,68 +193,68 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Course offering type
               <Select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">Any offering type</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Course department name (exact)
               <Input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
-                className="min-h-11"/>
+                className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Published and visibility-flagged content
-              <Select name="flaggedVisibility" defaultValue={data.query.flaggedVisibility} className="min-h-11">
+              <Select name="flaggedVisibility" defaultValue={data.query.flaggedVisibility} className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="HAS_FLAGGED">Has flagged content</option><option value="NONE_FLAGGED">No flagged content</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Authored assignments
-              <Select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11">
+              <Select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="HAS_ASSIGNMENTS">Has assignments</option><option value="NO_ASSIGNMENTS">No assignments</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Authored quizzes
-              <Select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11">
+              <Select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="HAS_QUIZZES">Has quizzes</option><option value="NO_QUIZZES">No quizzes</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Published lesson content
-              <Select name="publishedContent" defaultValue={data.query.publishedContent} className="min-h-11">
+              <Select name="publishedContent" defaultValue={data.query.publishedContent} className="min-h-11 md:min-h-9">
                 <option value="ALL">Any publication</option><option value="HAS_PUBLISHED">Has published content</option><option value="NONE_PUBLISHED">No published content</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Authored lesson items
               <Select name="contentPresence" defaultValue={data.query.contentPresence??"ALL"}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="HAS_CONTENT">Contains authored content</option>
                 <option value="EMPTY">No content authored</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Learning path lifecycle
               <Select name="pathStatus" defaultValue={data.query.pathStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All paths</option>
                 <option value="DRAFT">Draft paths</option><option value="PUBLISHED">Published paths</option>
                 <option value="ARCHIVED">Archived paths</option>
@@ -261,10 +262,10 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
               Offering lifecycle
               <Select name="offeringStatus" defaultValue={data.query.offeringStatus}
-                className="min-h-11">
+                className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option>
                 <option value="ACTIVE">Active offerings</option>
                 <option value="ARCHIVED">Archived offerings</option>
@@ -272,76 +273,76 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course offering type
-              <Select name="offeringType" defaultValue={data.query.offeringType??"ALL"} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Course offering type
+              <Select name="offeringType" defaultValue={data.query.offeringType??"ALL"} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course department (exact name)
-              <Input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""} className="min-h-11"/>
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Course department (exact name)
+              <Input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""} className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Recorded learner activity
-              <Select name="activityState" defaultValue={data.query.activityState} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Recorded learner activity
+              <Select name="activityState" defaultValue={data.query.activityState} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="RECORDED">Has activity rows</option><option value="UNRECORDED">No recorded activity</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Content completion evidence
-              <Select name="completionEvidence" defaultValue={data.query.completionEvidence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Content completion evidence
+              <Select name="completionEvidence" defaultValue={data.query.completionEvidence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="COMPLETED_CONTENT">Has completed content records</option><option value="NO_COMPLETED_CONTENT">No completed content records</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Shared learning path
-              <Select name="learningPathPresence" defaultValue={data.query.learningPathPresence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Shared learning path
+              <Select name="learningPathPresence" defaultValue={data.query.learningPathPresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_PATH">Has a path</option><option value="NO_PATH">No learning path</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Published learning path
-              <Select name="publishedPathPresence" defaultValue={data.query.publishedPathPresence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Published learning path
+              <Select name="publishedPathPresence" defaultValue={data.query.publishedPathPresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">Any publication</option><option value="HAS_PUBLISHED_PATH">Published path exists</option><option value="NO_PUBLISHED_PATH">No published path</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Batch / cohort code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Batch / cohort code (exact)
               <Input name="cohortCode" type="search" maxLength={64}
                 defaultValue={data.query.cohortCode??""}
-                className="min-h-11"/>
+                className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Academic period code (exact)
               <Input name="periodCode" type="search" maxLength={64}
                 defaultValue={data.query.periodCode??""}
-                className="min-h-11"/>
+                className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Program code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Program code (exact)
               <Input name="programCode" type="search" maxLength={64}
                 defaultValue={data.query.programCode??""}
-                className="min-h-11"/>
+                className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course code (exact)
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Course code (exact)
               <Input name="courseCode" type="search" maxLength={64}
                 defaultValue={data.query.courseCode??""}
-                className="min-h-11"/>
+                className="min-h-11 md:min-h-9"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved content kind
-              <Select name="contentType" defaultValue={data.query.contentType} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Saved content kind
+              <Select name="contentType" defaultValue={data.query.contentType} className="min-h-11 md:min-h-9">
                 <option value="ALL">All kinds</option>
                 <option value="RESOURCE">Resource</option>
                 <option value="VIDEO">Uploaded video</option>
@@ -351,8 +352,8 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved content lifecycle
-              <Select name="contentLifecycle" defaultValue={data.query.contentLifecycle} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Saved content lifecycle
+              <Select name="contentLifecycle" defaultValue={data.query.contentLifecycle} className="min-h-11 md:min-h-9">
                 <option value="ALL">Any content state</option>
                 <option value="DRAFT">Draft exists</option>
                 <option value="PUBLISHED">Published exists</option>
@@ -361,171 +362,171 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Starting lesson order (1-based)
-              <Input name="sequenceFrom" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceFrom ?? ""} className="min-h-11" />
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Starting lesson order (1-based)
+              <Input name="sequenceFrom" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceFrom ?? ""} className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Last lesson order (1-based)
-              <Input name="sequenceThrough" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceThrough ?? ""} className="min-h-11" />
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Last lesson order (1-based)
+              <Input name="sequenceThrough" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceThrough ?? ""} className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Exact saved lesson title
-              <Input name="lessonName" type="search" maxLength={255} defaultValue={data.query.lessonName ?? ""} className="min-h-11" />
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Exact saved lesson title
+              <Input name="lessonName" type="search" maxLength={255} defaultValue={data.query.lessonName ?? ""} className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved lessons
-              <Select name="lessonPresence" defaultValue={data.query.lessonPresence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Saved lessons
+              <Select name="lessonPresence" defaultValue={data.query.lessonPresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_LESSONS">Has authored lessons</option><option value="NO_LESSONS">No authored lessons</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Authored course assignments
-              <Select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Authored course assignments
+              <Select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_ASSIGNMENTS">Assignments authored</option><option value="NO_ASSIGNMENTS">No assignments authored</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Authored course quizzes
-              <Select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Authored course quizzes
+              <Select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_QUIZZES">Quizzes authored</option><option value="NO_QUIZZES">No quizzes authored</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved resources
-              <Select name="resourcePresence" defaultValue={data.query.resourcePresence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Saved resources
+              <Select name="resourcePresence" defaultValue={data.query.resourcePresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_RESOURCES">Has resources</option><option value="NO_RESOURCES">No resources</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Scheduled live-class content
-              <Select name="liveClassPresence" defaultValue={data.query.liveClassPresence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Scheduled live-class content
+              <Select name="liveClassPresence" defaultValue={data.query.liveClassPresence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_LIVE">Has saved live classes</option><option value="NO_LIVE">No saved live classes</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Authored content audience
-              <Select name="contentAudience" defaultValue={data.query.contentAudience} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Authored content audience
+              <Select name="contentAudience" defaultValue={data.query.contentAudience} className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="SHARED">Has shared content</option><option value="SECTION">Has section-bound content</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Published items hidden from students
-              <Select name="hiddenPublished" defaultValue={data.query.hiddenPublished} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Published items hidden from students
+              <Select name="hiddenPublished" defaultValue={data.query.hiddenPublished} className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="HAS_HIDDEN">Has hidden published item</option><option value="NO_HIDDEN">No hidden published items</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Authored video or YouTube
-              <Select name="videoEvidence" defaultValue={data.query.videoEvidence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Authored video or YouTube
+              <Select name="videoEvidence" defaultValue={data.query.videoEvidence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="HAS_VIDEO">With videos</option><option value="NO_VIDEO">Without videos</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved resource items
-              <Select name="resourceEvidence" defaultValue={data.query.resourceEvidence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Saved resource items
+              <Select name="resourceEvidence" defaultValue={data.query.resourceEvidence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="HAS_RESOURCE">Has resources</option><option value="NO_RESOURCE">No resources</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved live-class items
-              <Select name="liveEvidence" defaultValue={data.query.liveEvidence} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Saved live-class items
+              <Select name="liveEvidence" defaultValue={data.query.liveEvidence} className="min-h-11 md:min-h-9">
                 <option value="ALL">All lessons</option><option value="HAS_LIVE">Has live-class items</option><option value="NO_LIVE">No live-class items</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Offering video material
-              <Select name="videoContentState" defaultValue={data.query.videoContentState} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Offering video material
+              <Select name="videoContentState" defaultValue={data.query.videoContentState} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_VIDEO">Contains video content</option><option value="NO_VIDEO">No video content</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Published authored content
-              <Select name="publishedContentState" defaultValue={data.query.publishedContentState} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Published authored content
+              <Select name="publishedContentState" defaultValue={data.query.publishedContentState} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_PUBLISHED">Contains published content</option><option value="NO_PUBLISHED">No published content</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Hidden published content
-              <Select name="hiddenContentState" defaultValue={data.query.hiddenContentState} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Hidden published content
+              <Select name="hiddenContentState" defaultValue={data.query.hiddenContentState} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_HIDDEN">Contains hidden published item</option><option value="NO_HIDDEN">No hidden published items</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Shared learning content
-              <Select name="sharedContentState" defaultValue={data.query.sharedContentState} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Shared learning content
+              <Select name="sharedContentState" defaultValue={data.query.sharedContentState} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_SHARED">Has shared content</option><option value="NO_SHARED">No shared content</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section-bound authored content
-              <Select name="sectionContentState" defaultValue={data.query.sectionContentState} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Section-bound authored content
+              <Select name="sectionContentState" defaultValue={data.query.sectionContentState} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_SECTION">Has section-bound items</option><option value="NO_SECTION">No section-bound items</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact lesson ID
+            <label className="grid min-w-48 gap-1 text-xs font-semibold text-body">Exact lesson ID
               <Input name="lessonId" defaultValue={data.query.lessonId??""} placeholder="Lesson UUID"
-                className="min-h-11" />
+                className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Offering ID
+            <label className="grid min-w-48 gap-1 text-xs font-semibold text-body">Offering ID
               <Input name="offeringId" defaultValue={data.query.offeringId??""} placeholder="Course offering UUID"
-                className="min-h-11" />
+                className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact offering ID
+            <label className="grid min-w-48 gap-1 text-xs font-semibold text-body">Exact offering ID
               <Input name="offeringId" defaultValue={data.query.offeringId??""} placeholder="Course offering UUID"
-                className="min-h-11" />
+                className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact learning path ID
+            <label className="grid min-w-48 gap-1 text-xs font-semibold text-body">Exact learning path ID
               <Input name="pathId" defaultValue={data.query.pathId??""} placeholder="Path UUID"
-                className="min-h-11" />
+                className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Minimum authored items
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Minimum authored items
               <Input type="number" name="minContentCount" min={1} max={1000} defaultValue={data.query.minContentCount??""}
-                className="min-h-11" />
+                className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Maximum authored items
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Maximum authored items
               <Input type="number" name="maxContentCount" min={0} max={1000} defaultValue={data.query.maxContentCount??""}
-                className="min-h-11" />
+                className="min-h-11 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Draft lesson content
-              <Select name="draftContentState" defaultValue={data.query.draftContentState} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Draft lesson content
+              <Select name="draftContentState" defaultValue={data.query.draftContentState} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_DRAFT">Contains drafts</option><option value="NO_DRAFT">No saved drafts</option>
               </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Archived lesson content
-              <Select name="archivedContentState" defaultValue={data.query.archivedContentState} className="min-h-11">
+            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">Archived lesson content
+              <Select name="archivedContentState" defaultValue={data.query.archivedContentState} className="min-h-11 md:min-h-9">
                 <option value="ALL">All offerings</option><option value="HAS_ARCHIVED">Contains archived items</option><option value="NO_ARCHIVED">No archived items</option>
               </Select>
             </label>
@@ -555,36 +556,36 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
               : "No records exist on this page. Return to an earlier page."}
           </p>
         ) : (<>
-          <div className="space-y-3 p-3 md:hidden" aria-label={title+" mobile records"}>
+          <div className="divide-y divide-border px-2 md:hidden" aria-label={title+" mobile records"}>
            {data.kind==="LESSONS" ? (
             <>
-            {data.items.map(item=><article key={item.id} className="space-y-2 rounded-lg border border-border p-3">
+            {data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 py-4">
              <h3 className="break-words font-semibold">{item.name}</h3>
-             <Link className="block break-words text-sm font-semibold text-primary-text underline"
+             <Link className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
               {item.courseName} ({item.courseCode})
              </Link>
              <p className="text-xs text-body">{item.cohortName} · {item.periodName} · Lesson #{item.sequence+1}</p>
-             <p className="text-xs">{collegeLessonVisibilityLabel(item)}</p>
+             <StatusBadge tone={item.status==="ARCHIVED"?"neutral":item.visibleToStudents?"success":"warning"}>{collegeLessonVisibilityLabel(item)}</StatusBadge>
              {item.status==="ARCHIVED"?
               <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
               <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
                visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
-             <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">View recorded course activity</Link>
+             <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View recorded course activity</Link>
             </article>)}
             </>
            ) : (
             <>
-            {data.items.map(item=><article key={item.offeringId} className="space-y-2 rounded-lg border border-border p-3">
-             <Link className="block break-words font-semibold text-primary-text underline"
+            {data.items.map(item=><article key={item.offeringId} className="min-w-0 space-y-2 py-4">
+             <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
               {item.courseName} ({item.courseCode})
              </Link>
              <p className="text-xs text-body">{item.cohortName} · {item.periodName}</p>
-             <p className="text-xs text-body">Offering state: {item.offeringStatus}</p>
+             <p className="flex flex-wrap items-center gap-2 text-xs text-body">Offering state: <StatusBadge tone={item.offeringStatus==="ACTIVE"?"success":"neutral"}>{item.offeringStatus}</StatusBadge></p>
              <p className="text-xs text-body">{collegeProgressDescription(item)}</p>
              <Link href={collegeOfferingLessonsHref(item.offeringId)}
-              className="inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">View authored lessons</Link>
+              className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View authored lessons</Link>
             </article>)}
             </>
            )}
@@ -610,7 +611,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                   cell:item=>item.sequence+1},
                 {key:"students",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.studentsSeeIt,mobilePriority:"action" as const,
                   cell:item=><div className="min-w-0 space-y-2">
-                    <p className="text-body">{collegeLessonVisibilityLabel(item)}</p>
+                    <StatusBadge tone={item.status==="ARCHIVED"?"neutral":item.visibleToStudents?"success":"warning"}>{collegeLessonVisibilityLabel(item)}</StatusBadge>
                     {item.status==="ARCHIVED"?
                       <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
                       <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
@@ -640,7 +641,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                     </Link>
                   </div>},
                 {key:"state",header:"Offering state",mobilePriority:"secondary" as const,
-                  cell:item=>item.offeringStatus},
+                  cell:item=><StatusBadge tone={item.offeringStatus==="ACTIVE"?"success":"neutral"}>{item.offeringStatus}</StatusBadge>},
                 {key:"activity",header:"Recorded learner activity",mobilePriority:"secondary" as const,
                   cell:item=>collegeProgressDescription(item)},
               ]}
@@ -657,7 +658,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                 <Input key={key} type="hidden" name={key} value={value}/>)}
             <label className="text-xs font-semibold">Jump to page
               <Input type="number" name="page" min={1} max={data.totalPages} defaultValue={data.query.page}
-                className="ml-2 w-20"/>
+                className="ml-2 min-h-11 w-20 md:min-h-9"/>
             </label>
             <Button type="submit" className="min-h-11 md:min-h-9">Go</Button>
           </form>:null}
