@@ -63,7 +63,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
    <SummaryStrip label="After-college outcomes" steps={AFTER_COLLEGE_OUTCOMES.map(key=>({label:AFTER_COLLEGE_LABELS[key],value:data.counts[key]}))}/>
    <DataTable rows={data.rows.slice((page-1)*25,page*25)} getRowKey={row=>row.membershipId}
     caption="After college"
-    empty={<EmptyState title="No students match these filters."/>}
+    empty={<EmptyState title="No data for these filters" description="Try a wider filter, or a different report."/>}
     columns={[
      {key:"student",header:"Student",cell:row=>row.displayName,mobilePriority:"primary"},
      {key:"roll",header:"Roll no.",cell:row=>row.rollNumber??"—",mobilePriority:"secondary"},

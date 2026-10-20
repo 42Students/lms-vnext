@@ -44,7 +44,7 @@ export default async function TpoProfilePage() {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        title="My profile"
+        title="Profile"
         description="Your signed-in college membership and available faculty-backed profile information."
         actions={
           <Link
