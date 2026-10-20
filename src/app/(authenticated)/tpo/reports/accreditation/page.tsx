@@ -84,10 +84,10 @@ export default async function TpoAccreditationReportPage({
       <PageBackLink href="/tpo/reports" label="All reports" />
       <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <section id="accreditation-batch" className="space-y-3 border-t border-border pt-5">
-       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">NAAC 5.2.1 · Placed students</h2>
+      <section aria-labelledby="section-naac-5-2-1-placed-students" id="accreditation-batch" className="space-y-3 border-t border-border pt-5">
+       <h2 id="section-naac-5-2-1-placed-students" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">NAAC 5.2.1 · Placed students</h2>
        <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
-       <form method="get" className="flex flex-wrap items-end gap-3">
+       <form role="search" aria-label="reports accreditation filters" method="get" className="flex flex-wrap items-end gap-3">
         <label className="text-sm">Batch
          <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 min-[768px]:min-h-9">
           <option value="">Pick a batch</option>
@@ -101,7 +101,7 @@ export default async function TpoAccreditationReportPage({
        {batchId&&!selectedBatch&&<Alert tone="error">Choose a batch from this college.</Alert>}
        {selectedBatch&&studentReport?.rows.length===0?<Alert tone="info">No placed students in this batch. Export is unavailable until a recorded placement exists.</Alert>:null}
        {studentReport&&<>
-        {completeness?<div aria-label="NAAC and NIRF completeness" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+        {completeness?<div role="group" aria-label="NAAC and NIRF completeness" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
          <h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</h3>
          <ul className="grid gap-1 text-sm min-[768px]:grid-cols-2">{completeness.fields.map(field=>
           <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
@@ -133,8 +133,8 @@ export default async function TpoAccreditationReportPage({
         />
        </>}
       </section>
-      <section className="border-t border-border py-5">
-        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+      <section aria-labelledby="section-reporting-scope" className="border-t border-border py-5">
+        <h2 id="section-reporting-scope" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Reporting scope
         </h2>
         <p className="mt-2 text-sm text-body">
@@ -170,8 +170,8 @@ export default async function TpoAccreditationReportPage({
         </ul>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+      <section aria-labelledby="section-evidence-preview" className="space-y-3">
+        <h2 id="section-evidence-preview" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Evidence preview
         </h2>
         {overview.length === 0 ? (
