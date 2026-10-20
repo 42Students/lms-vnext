@@ -259,7 +259,7 @@ export default async function TpoStudentsPage({
 
   if (urlError || !parsed.success) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-5"
         <PageHeader
           title={TPO_OWNER_PAGE_COPY.students}
           description="Everyone in placements, from the batches you made eligible."
@@ -407,14 +407,14 @@ export default async function TpoStudentsPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-5"
       <PageHeader
         title={TPO_OWNER_PAGE_COPY.students}
         description="Everyone in placements, from the batches you made eligible."
         actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
       <Dropdown mobileSheet align="start" label="Student roster tools" trigger="More student tools">
-        <nav aria-label="Student roster tools" className="flex min-w-52 flex-col gap-2">
+        <nav aria-label="Student roster tools" className="flex w-full min-w-0 flex-col gap-2">
         <Link href="/tpo/students/requests" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Student Requests</Link>
         <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Preparation support</Link>
         <TpoSafeCsvDownload href={exportHref} filename="students.csv" label="Export filtered CSV" />
