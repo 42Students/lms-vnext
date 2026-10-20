@@ -46,7 +46,7 @@ export function TenantRestoreAction({
    description={"The archived "+kind+" will become active again. Child accounts, domains, and service readiness are not automatically enabled. Review before allowing access."}
    confirmLabel={"Restore "+kind} confirmVariant="primary" pending={pending}
    onConfirm={()=>void restore()}>
-   <div className="min-w-0 space-y-3 px-4 py-4 md:px-6">
+   <div className="min-w-0 space-y-3">
     <p className="m-0 break-words text-sm leading-5 text-body"><strong className="font-semibold text-foreground">{name}</strong> will become active again.</p>
     <p className="m-0 break-words text-xs leading-5 text-muted-foreground">Child accounts, domains and runtime readiness still need review before access is allowed.</p>
     {error?<Alert tone="error">{error}</Alert>:null}

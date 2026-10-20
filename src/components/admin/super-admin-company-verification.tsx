@@ -33,7 +33,7 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
    description={(verified?"Unverify ":"Verify ")+name+" globally for 42?"}
    confirmLabel={verified?"Confirm unverify":"Confirm verify"} confirmVariant={verified?"danger":"primary"}
    pending={busy} onConfirm={()=>void save()}>
-   <div className="min-w-0 space-y-3 px-4 py-4 md:px-6">
+   <div className="min-w-0 space-y-3">
     <p className="m-0 break-words text-sm leading-5 text-body"><strong className="font-semibold text-foreground">{name}</strong> · {verified?"Verified → Unverified":"Unverified → Verified"}</p>
     {error?<Alert tone="error">{error}</Alert>:null}
    </div>
