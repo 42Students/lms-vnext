@@ -94,7 +94,7 @@ export function SidebarNav({
 
  return <nav aria-label="Main navigation" data-sidebar-portal={sidebarPortal}
   data-sidebar-skin={sidebarSkin}
-  className={cx("lms-sidebar-nav flex min-w-0",compact?"flex-row flex-wrap":"flex-col")}
+  className={cx("lms-sidebar-nav flex w-full min-w-0",compact?"flex-row flex-wrap gap-[var(--lms-space-2)]":"flex-col")}
  >{visibleItems.map((item,index)=>{
    const previousGroup=index>0?visibleItems[index-1]?.group:null;
    const startsNewGroup=Boolean(item.group)&&(index===0||item.group!==previousGroup);
@@ -117,7 +117,7 @@ export function SidebarNav({
      aria-current={active?"page":undefined}
      data-active={active?"true":undefined}
      onClick={onNavigate}
-     className="lms-sidebar-item group"
+     className="lms-sidebar-item group min-w-0"
     >
      <span className="lms-sidebar-item-icon" aria-hidden="true">
       {item.icon?
@@ -126,7 +126,7 @@ export function SidebarNav({
         className="h-5 w-5 object-contain"/>:
        <ShellNavGlyph name={shellNavIconKey(item)}/>}
      </span>
-     <span className="lms-nav-label">{item.label}</span>
+     <span className="lms-nav-label min-w-0">{item.label}</span>
      {badge?<span className="lms-sidebar-badge" aria-label={count+" pending"}>{badge}</span>:null}
     </Link>
    </Fragment>;
