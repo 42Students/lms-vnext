@@ -47,32 +47,32 @@ export default async function FacultyQuizReportPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Back
       </Link>
       <PageHeader title={quiz.title} />
       <div className="flex flex-wrap justify-end gap-3">
         <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
           Individual attempts &amp; question accuracy →
         </Link>
       </div>
       <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
-          className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link md:min-h-9">
           Export attempted only
         </Link>
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
-          className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link md:min-h-9">
           Export not attempted only
         </Link>
       </nav>
       <div className="flex flex-wrap items-center gap-3">
         <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
           "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link">
           Download question accuracy CSV
         </Link>
         <p className="text-xs text-muted-foreground">Question export includes aggregate accuracy only, capped at 500 questions.</p>
@@ -243,7 +243,7 @@ export default async function FacultyQuizReportPage({
             {notAttemptedLearners.map((learner) => (
               <li
                 key={learner.membershipId}
-                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3"
+                className="border-b border-[var(--lms-canvas-border)] py-3"
               >
                 <p className="m-0 text-sm font-semibold text-foreground">
                   {facultyReportLearnerName(learner.displayName)}

@@ -34,11 +34,11 @@ export function FacultyReportStudentTable({
           </p>
         </div>
         {rows.length > 8 ? (
-          <label className="w-full max-w-sm text-[13px] font-semibold leading-4 text-body">
+          <label className="w-full max-w-sm text-[length:var(--lms-font-sm)] font-semibold leading-4 text-body">
             Search students
             <Input
               aria-label="Search report students"
-              className="mt-1"
+              className="mt-1 min-h-11 md:min-h-9"
               value={search}
               onChange={(event) => { setSearch(event.target.value); setRequestedPage(1); }}
               placeholder="Name"
@@ -82,16 +82,16 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page === 1}
             onClick={() => setRequestedPage(result.page - 1)}
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-9"
           >
             Previous
           </Button>
-          <span className="text-xs text-muted-foreground">Page {result.page} of {result.pages}</span>
+          <span role="status" className="sr-only">Page {result.page} of {result.pages}</span>
           <Button variant="secondary"
             type="button"
             disabled={result.page >= result.pages}
             onClick={() => setRequestedPage(result.page + 1)}
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-9"
           >
             Next
           </Button>

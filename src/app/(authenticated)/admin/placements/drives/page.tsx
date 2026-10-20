@@ -31,7 +31,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
-   action={<Link href="/admin/placements/drives" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+   action={<Link href="/admin/placements/drives" className="font-semibold text-link underline">Clear filters</Link>}/>
  </div>;
  // Keep an unavailable college reporting backend from crashing the entire
  // Super Admin drive directory; preserve the validated filter on Retry.
@@ -46,7 +46,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     ?"Your account cannot manage drives in this college."
     :"This college's drives could not be loaded. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
-    className="font-semibold text-primary-text underline">
+    className="font-semibold text-link underline">
     {loaded.denied?"Back to dashboard":"Retry loading drives"}
    </Link>}
   />
@@ -70,7 +70,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    cell:row=><span className="tabular-nums">{row.metrics.submittedApplications}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",
    cell:row=><Link href={"/admin/placements/jobs/"+encodeURIComponent(row.job.id)}
-    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     Open drive →</Link>},
  ];
  return <div className="min-w-0 space-y-5">
@@ -78,7 +78,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    description="Review and open every persisted non-archived drive in the selected college."
    actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
     <PageBackLink href="/admin/placements" label="Placement overview" />
-    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Look up a student&apos;s placement status →</Link>
+    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new"
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create drive →</Link>
    </div>} />
@@ -86,23 +86,23 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company
     <Input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
-     className="w-full"/>
+     className="min-h-11 w-full md:min-h-9"/>
    </label>
    <label className="grid min-w-36 flex-1 gap-1 text-sm font-semibold text-body">Status
     <Select name="status" defaultValue={parsed.data.status}
-     className="w-full">
+     className="min-h-11 w-full md:min-h-9">
      <option value="ALL">All</option><option value="DRAFT">Draft</option>
      <option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
     </Select>
    </label>
    <label className="grid min-w-36 flex-1 gap-1 text-sm font-semibold text-body">Rows per page
     <Select name="pageSize" defaultValue={parsed.data.pageSize}
-     className="w-full">
+     className="min-h-11 w-full md:min-h-9">
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
     </Select>
    </label>
-   <Button type="submit" >Filter</Button>
-   <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-primary-text">Clear all</Link>
+   <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
+   <Link href="/admin/placements/drives" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
   <p role="status" className="text-sm text-muted-foreground">{data.total} matching drives · Page {data.page} of {data.totalPages}</p>

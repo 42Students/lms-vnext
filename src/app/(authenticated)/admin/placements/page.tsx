@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 
 const secondaryActionClass =
-  "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9";
+  "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9";
 
 export default async function AdminPlacementsPage({ searchParams }: {
   searchParams: Promise<{ staleDays?: string }>;
@@ -34,7 +34,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-            title="Placement Drives"
+          title="Placement Drives"
           description="Placement administration requires a college safety scope."
           actions={<>
             {directoryActions}
