@@ -14,11 +14,11 @@ export default async function CollegeActivityDetailPage({
   const date = new Intl.DateTimeFormat("en-IN", {
     dateStyle: "full", timeStyle: "medium", timeZone: "Asia/Kolkata",
   }).format(event.occurredAt);
-  return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
+  return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
     <PageHeader title="Activity detail"
       description={event.summary}
       actions={<PageBackLink href="/college/activity" label="Back to Activity Log"/>} />
-    <dl className="grid min-w-0 gap-x-[var(--lms-space-5)] gap-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] text-[var(--lms-font-base)] sm:grid-cols-2">
+    <dl className="grid min-w-0 gap-x-[var(--lms-space-6)] gap-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] text-[var(--lms-font-base)] sm:grid-cols-2">
       <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Occurred (IST)</dt>
         <dd className="mt-1 text-body">{date}</dd></div>
       <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor</dt>

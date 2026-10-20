@@ -3,7 +3,6 @@ import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -43,7 +42,7 @@ export default async function CollegeActivityPage({
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
-  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
+  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
     <PageHeader title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
       actions={<div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]"><Link href="/college/projects/audit" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View project activity</Link><a href={"/api/activity/college-export" +
@@ -80,6 +79,8 @@ export default async function CollegeActivityPage({
     </div>
     <section className="border-b border-border pb-4" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid min-w-0 gap-[var(--lms-space-2)] md:grid-cols-2 lg:grid-cols-4">
+        {data.query.view ? <input type="hidden" name="view" value={data.query.view}/> : null}
+        {data.query.category ? <input type="hidden" name="category" value={data.query.category}/> : null}
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Module
           <Select name="module" defaultValue={data.query.module ?? ""}
@@ -158,11 +159,11 @@ export default async function CollegeActivityPage({
         </label>
           </div>
         </details>
-        <div className="flex flex-wrap items-end gap-2 md:col-span-2 lg:col-span-4">
-          <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">
+        <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end md:col-span-2 lg:col-span-4">
+          <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
             Apply filters
           </Button>
-          <Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <Link href="/college/activity" className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Clear
           </Link>
         </div>
