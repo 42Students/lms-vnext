@@ -38,7 +38,7 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader  title="Lecture Halls" />
     <ErrorState title="Invalid lecture hall filters"
       description="Search, status, capacity or page selection is invalid. No records were loaded."
-      action={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+      action={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
 
   const [halls, departments] = await Promise.all([
@@ -69,7 +69,7 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader  title="Lecture Halls"
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
     <section aria-label="Lecture hall filters" className="space-y-4 border-b border-border pb-4">
-      <form action="/admin/lecture-halls" method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-4">
         <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room name
           <Input type="search" name="q" maxLength={100} defaultValue={query.q}
             placeholder="Search halls" className="min-h-11 w-full md:min-h-9"/>
@@ -104,10 +104,10 @@ export default async function SuperAdminLectureHallsPage({
           </Select>
         </label>
         <Button type="submit">Search</Button>
-        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
+        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
       </form>
       <div className="flex flex-wrap gap-2">
-        <a href={csvHref} download className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export CSV</a>
+        <a href={csvHref} download className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export CSV</a>
         <form action="/admin/lecture-halls" method="get">
           {Object.entries(query).map(([name,value]) =>
             value !== undefined && value !== ""
