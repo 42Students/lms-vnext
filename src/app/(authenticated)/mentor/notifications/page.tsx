@@ -80,6 +80,7 @@ export default async function MentorNotificationsPage({
   const projectOptions=mentorAttentionProjectOptions(alerts,
     assigned.map(row=>({id:row.project.id,title:row.project.title})));
   const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data);
+  const attentionFiltered=Boolean(projectId.data)||kind.data!=="ALL"||attentionOrder.data!=="RECENT";
   const items:NotificationListItem[] = (inbox?.page.items ?? []).map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
     actionHref:notification.actionHref,
@@ -89,7 +90,7 @@ export default async function MentorNotificationsPage({
   }));
   const nextHref = inbox?.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
-  return <div className="min-w-0 max-w-full space-y-5 md:space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
     {failedSources.length ? <Alert tone="warning" role="alert">
@@ -101,7 +102,7 @@ export default async function MentorNotificationsPage({
         className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Retry sources</Link>
     </Alert> : null}
     <section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
-      <h2 id="mentor-personal-notifications" className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Personal notifications
       </h2>
       {inbox ? <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount}
@@ -126,7 +127,7 @@ export default async function MentorNotificationsPage({
             </div> : null}
           </>}
     </section>    <section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
-      <h2 id="mentor-attention" className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      <h2 id="mentor-attention" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
       <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
@@ -157,7 +158,7 @@ export default async function MentorNotificationsPage({
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter attention
         </Button>
-        <Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
+        {attentionFiltered?<Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form>
       {!projectAccess?.projects.enabled
         ? <p role="status" className="border-b border-border pb-4 text-sm text-body leading-[22px]">
