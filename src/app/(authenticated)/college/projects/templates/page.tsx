@@ -33,7 +33,7 @@ export default async function CollegeProjectTemplatesPage({
     <ErrorState title="Project templates unavailable"
       description="The assigned template catalogue could not be loaded. Your filters were not changed."
       action={<Link href="/college/projects/templates"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading templates</Link>}/>
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry loading templates</Link>}/>
   </div>;
   const templates = templateRead.value;
 
@@ -76,17 +76,17 @@ export default async function CollegeProjectTemplatesPage({
         description="Published project templates assigned to this college."
       />
       <form action="/college/projects/templates" method="get" role="search" aria-label="Project template search"
-        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="min-w-52 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+        <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">
           Search templates
           <Input type="search" name="q" maxLength={120} defaultValue={q}
             placeholder="Search by template or version"
             className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" />
         </label>
-        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">
+        <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
           Search
         </Button>
-        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-h-11 inline-flex items-center lms-inline-link">
+        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-h-11 md:min-h-9 inline-flex items-center lms-inline-link">
           Clear search
         </Link> : null}
 
