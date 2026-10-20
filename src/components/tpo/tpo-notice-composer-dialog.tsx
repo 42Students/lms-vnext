@@ -9,10 +9,12 @@ export function TpoNoticeComposerDialog({children,mode="NEW",initialOpen=false}:
  const title=mode==="EDIT"?"Edit announcement":"New announcement";
  return <>
   <Button type="button" variant={mode==="EDIT"?"secondary":"primary"} onClick={()=>setOpen(true)}
-   className="min-h-11 w-full min-[768px]:min-h-9 sm:w-auto">
+   className="min-h-11 w-full min-w-0 sm:w-auto md:min-h-9">
    {title}
   </Button>
-  <Dialog open={open} onOpenChange={setOpen} title={title} className="max-w-[42rem] max-[767px]:w-[calc(100%_-_1rem)]">
+  <Dialog open={open} onOpenChange={setOpen} title={title}
+   className="max-w-[42rem]"
+   bodyClassName="!min-w-0 !overflow-x-hidden !p-4 md:!p-[var(--lms-canvas-padding)] [&_form]:min-w-0 [&_input]:max-w-full [&_textarea]:max-w-full">
    {children}
   </Dialog>
  </>;
