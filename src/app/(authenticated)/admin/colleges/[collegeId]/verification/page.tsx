@@ -44,7 +44,7 @@ export default async function AdminCollegeVerification({
   actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>;
  if(!parsed?.success)return <div className="min-w-0 space-y-5">{header}
   <ErrorState title="Invalid verification filters" description="Choose a valid set of verification filters."
-   action={<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Reset filters</Link>}/>
+   action={<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Reset filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>;
  try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
@@ -55,7 +55,7 @@ export default async function AdminCollegeVerification({
     description={e instanceof VerificationUnavailableError?
      "Verification storage is not yet available. No queue decisions can be made.":
      "The verification queue exceeds its safe scan cap. Narrow server-side filters before reviewing."}
-    action={<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline" href={base}>Retry</Link>}/>
+    action={<Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9" href={base}>Retry</Link>}/>
   </div>;
  }
  const [policy]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
