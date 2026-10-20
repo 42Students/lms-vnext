@@ -10,25 +10,25 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 
 ### 1. `src/app/(authenticated)/hr` — 71 TSX files
 
-- [ ] `src/app/(authenticated)/hr/activity/error.tsx`
+- [x] `src/app/(authenticated)/hr/activity/error.tsx` (route-local 0 intrinsic DOM, 0 styles, 0 raw controls/hex/overlays; shared PageHeader+ErrorState+Button, responsive unchanged; local property table below)
 - [x] `src/app/(authenticated)/hr/activity/loading.tsx` (own DOM/styles: 0; shared GracefulPageLoading only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
 - [ ] `src/app/(authenticated)/hr/activity/page.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/error.tsx`
+- [x] `src/app/(authenticated)/hr/calendar/error.tsx` (route-local 0 intrinsic DOM, 0 styles, 0 raw controls/hex/overlays; shared PageHeader+ErrorState+Button, responsive unchanged; local property table below)
 - [x] `src/app/(authenticated)/hr/calendar/loading.tsx` (own DOM/styles: 0; shared GracefulPageLoading only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
 - [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
 - [x] `src/app/(authenticated)/hr/colleges/error.tsx` (own DOM/styles: 0; shared GracefulErrorBoundary only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
 - [x] `src/app/(authenticated)/hr/colleges/loading.tsx` (own DOM/styles: 0; shared GracefulPageLoading only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
 - [x] `src/app/(authenticated)/hr/colleges/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
-- [ ] `src/app/(authenticated)/hr/company/error.tsx`
+- [x] `src/app/(authenticated)/hr/company/error.tsx` (route-local 0 intrinsic DOM, 0 styles, 0 raw controls/hex/overlays; shared PageHeader+ErrorState+Button, responsive unchanged; local property table below)
 - [x] `src/app/(authenticated)/hr/company/loading.tsx` (single shared `GracefulPageLoading` only; own JSX DOM/styles: 0; source native/hex/overlay: 0; default/error/loading/mobile/tablet props delegated, N/A locally)
 - [ ] `src/app/(authenticated)/hr/company/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/error.tsx`
+- [x] `src/app/(authenticated)/hr/company/reports/error.tsx` (route-local 0 intrinsic DOM, 0 styles, 0 raw controls/hex/overlays; shared PageHeader+ErrorState+Button, responsive unchanged; local property table below)
 - [x] `src/app/(authenticated)/hr/company/reports/loading.tsx` (single shared `GracefulPageLoading` only; own JSX DOM/styles: 0; source native/hex/overlay: 0; default/error/loading/mobile/tablet props delegated, N/A locally)
 - [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx` (route-local 0 intrinsic DOM, 0 styles, 0 raw controls/hex/overlays; shared PageHeader+ErrorState+Button, responsive unchanged; local property table below)
 - [x] `src/app/(authenticated)/hr/conversations/[threadId]/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/error.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/error.tsx` (route-local 0 intrinsic DOM, 0 styles, 0 raw controls/hex/overlays; shared PageHeader+ErrorState+Button, responsive unchanged; local property table below)
 - [x] `src/app/(authenticated)/hr/conversations/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
@@ -43,25 +43,25 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/error.tsx` (route-local 0 raw tags/className/hex/overlays; fully shared error/alert and button states; legacy value and breakpoint N/A-local table below)
 - [x] `src/app/(authenticated)/hr/drives/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/new/error.tsx`
 - [x] `src/app/(authenticated)/hr/drives/new/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/new/page.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/proposals/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/proposals/error.tsx` (route-local 0 raw tags/className/hex/overlays; fully shared error/alert and button states; legacy value and breakpoint N/A-local table below)
 - [x] `src/app/(authenticated)/hr/drives/proposals/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/recorded-outside/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/hr/drives/recorded-outside/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
-- [ ] `src/app/(authenticated)/hr/error.tsx`
-- [ ] `src/app/(authenticated)/hr/home/error.tsx`
+- [x] `src/app/(authenticated)/hr/error.tsx` (source native/hex/h1/overlays: 0/0/0/0; own DOM/CSS/property/state and mobile/tablet values N/A; sole unchanged GracefulErrorBoundary)
+- [x] `src/app/(authenticated)/hr/home/error.tsx` (route-local 0 raw tags/className/hex/overlays; fully shared error/alert and button states; legacy value and breakpoint N/A-local table below)
 - [x] `src/app/(authenticated)/hr/home/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/home/page.tsx`
 - [x] `src/app/(authenticated)/hr/layout.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
 - [x] `src/app/(authenticated)/hr/loading.tsx` (single shared GracefulPageLoading; no own DOM/styles/controls; all visual values, states and phone/tablet delegated unchanged; native/hex/h1/overlay source counts 0)
-- [ ] `src/app/(authenticated)/hr/messages/error.tsx`
+- [x] `src/app/(authenticated)/hr/messages/error.tsx` (route-local 0 raw tags/className/hex/overlays; fully shared error/alert and button states; legacy value and breakpoint N/A-local table below)
 - [x] `src/app/(authenticated)/hr/messages/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/hr/messages/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
 - [ ] `src/app/(authenticated)/hr/not-found.tsx`
@@ -75,7 +75,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/hr/placements/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/placements/page.tsx`
-- [ ] `src/app/(authenticated)/hr/profile/error.tsx`
+- [x] `src/app/(authenticated)/hr/profile/error.tsx` (route-local 0 raw tags/className/hex/overlays; fully shared error/alert and button states; legacy value and breakpoint N/A-local table below)
 - [x] `src/app/(authenticated)/hr/profile/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/profile/page.tsx`
 - [ ] `src/app/(authenticated)/hr/round-results/error.tsx`
@@ -123,7 +123,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/recruiter/drives/recorded-outside/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/recruiter/drives/recorded-outside/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
-- [ ] `src/app/(authenticated)/recruiter/error.tsx`
+- [x] `src/app/(authenticated)/recruiter/error.tsx` (source native/hex/h1/overlays: 0/0/0/0; own DOM/CSS/property/state and mobile/tablet values N/A; sole unchanged GracefulErrorBoundary)
 - [x] `src/app/(authenticated)/recruiter/home/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/recruiter/home/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/recruiter/home/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
@@ -146,7 +146,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/tracker/audit-findings/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/tracker/audit-findings/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/error.tsx`
+- [x] `src/app/(authenticated)/tracker/error.tsx` (source native/hex/h1/overlays: 0/0/0/0; own DOM/CSS/property/state and mobile/tablet values N/A; sole unchanged GracefulErrorBoundary)
 - [x] `src/app/(authenticated)/tracker/issues/[publicId]/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/tracker/issues/[publicId]/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
@@ -157,7 +157,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/tracker/logs/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/tracker/logs/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/[publicId]/error.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/[publicId]/error.tsx` (source native/hex/h1/overlays: 0/0/0/0; own DOM/CSS/property/state and mobile/tablet values N/A; sole unchanged GracefulErrorBoundary)
 - [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/page.tsx`
@@ -778,3 +778,58 @@ For each route listed below, complete fetched source shows exactly one shared `G
 | Desktop sheet/mobile card | `old-lms-pages.md:10` sortable compact sheet; <=767px stacked fallback | Existing `RecruiterPlacementPortfolio` uses authorized `HrRecruiterDrivesGrid` desktop and mobile cards; no data fetch added | Existing E8 proof open |
 
 The complete file was re-fetched: 242 lines; native button/input/select/textarea/table = 0; inline hex = 0; custom h1 = 0; hand-written modal = 0; 9 source action links have a 44px mobile target and 36px desktop; paired `div` 8/8 and `nav` 1/1. No changes to permission/pagination/export flows, and no CI/browser/pixel check. **Remain unticked** pending visible state and mobile/tablet screenshot comparison.
+
+
+### chat-15 strict delegation closure: 4 existing zero-own-DOM route errors (2026-10-20)
+
+| Complete file | Old-LMS source/value | vNext source/value | Source/coverage/viewport verdict |
+| --- | --- | --- | --- |
+| `src/app/(authenticated)/hr/error.tsx` | `old-lms-pages.md:6-12`: font, canvas, control, banner and responsive requirements at shared display level; no route-local style | `src/app/(authenticated)/hr/error.tsx`: one `GracefulErrorBoundary` with retained error/reset and original homeHref, no own element, CSS, inline color or breakpoint | All **route-local** values (default, hover, active, focus, disabled, loading, error, empty, phone <=767px, tablet >=768px) N/A; source grep native/hex/h1/custom overlays **0/0/0/0**, JSX opening/closing tags balanced. Shared component unchanged. |
+| `src/app/(authenticated)/recruiter/error.tsx` | `old-lms-pages.md:6-12`: font, canvas, control, banner and responsive requirements at shared display level; no route-local style | `src/app/(authenticated)/recruiter/error.tsx`: one `GracefulErrorBoundary` with retained error/reset and original homeHref, no own element, CSS, inline color or breakpoint | All **route-local** values (default, hover, active, focus, disabled, loading, error, empty, phone <=767px, tablet >=768px) N/A; source grep native/hex/h1/custom overlays **0/0/0/0**, JSX opening/closing tags balanced. Shared component unchanged. |
+| `src/app/(authenticated)/tracker/error.tsx` | `old-lms-pages.md:6-12`: font, canvas, control, banner and responsive requirements at shared display level; no route-local style | `src/app/(authenticated)/tracker/error.tsx`: one `GracefulErrorBoundary` with retained error/reset and original homeHref, no own element, CSS, inline color or breakpoint | All **route-local** values (default, hover, active, focus, disabled, loading, error, empty, phone <=767px, tablet >=768px) N/A; source grep native/hex/h1/custom overlays **0/0/0/0**, JSX opening/closing tags balanced. Shared component unchanged. |
+| `src/app/(authenticated)/tracker/mine/[publicId]/error.tsx` | `old-lms-pages.md:6-12`: font, canvas, control, banner and responsive requirements at shared display level; no route-local style | `src/app/(authenticated)/tracker/mine/[publicId]/error.tsx`: one `GracefulErrorBoundary` with retained error/reset and original homeHref, no own element, CSS, inline color or breakpoint | All **route-local** values (default, hover, active, focus, disabled, loading, error, empty, phone <=767px, tablet >=768px) N/A; source grep native/hex/h1/custom overlays **0/0/0/0**, JSX opening/closing tags balanced. Shared component unchanged. |
+
+**Scope note:** These four checkmarks close only the route-specific JSX/style inventory; they do not assert shared GracefulErrorBoundary itself has been visually compared by the shared-state owner or that any browser screenshot was run. All error recovery props unchanged. No CI.
+
+
+### 2026-10-20 source-closed HR fallback pages: batch A (6 files)
+
+Every row below covers only **route-local styling**. Shared primitives are owned by their UI lanes; this lane does not change their pixel contracts.
+
+| Complete route | Legacy property/value/reference | Current page/shared implementation | Grep, states and responsive proof |
+| --- | --- | --- | --- |
+| `src/app/(authenticated)/hr/activity/error.tsx` | `old-lms-pages.md:6-12`: one 12px-radius white canvas, compact page title, slim shared error and action; `components___listing-page-header.scss:131-158`: phone <=767px, tablet >=768px | `src/app/(authenticated)/hr/activity/error.tsx`: ONLY shared `PageHeader`, `ErrorState`, `Button`; route adds no div, canvas, CSS, margin, border, color, fixed element, control or title styling | Local typography/weight/color/background/border/radius/shadow/spacing/hover/active/focus/disabled/loading/error/empty all N/A (inherited shared tokens); mobile PageHeader 20px and Button 44px via shared implementation, desktop header shared 30px and Button control height; local source grep native/hex/h1/overlays/className **0/0/0/0/0**; balanced 1/1 fragment; original copy/reset preserved |
+| `src/app/(authenticated)/hr/calendar/error.tsx` | `old-lms-pages.md:6-12`: one 12px-radius white canvas, compact page title, slim shared error and action; `components___listing-page-header.scss:131-158`: phone <=767px, tablet >=768px | `src/app/(authenticated)/hr/calendar/error.tsx`: ONLY shared `PageHeader`, `ErrorState`, `Button`; route adds no div, canvas, CSS, margin, border, color, fixed element, control or title styling | Local typography/weight/color/background/border/radius/shadow/spacing/hover/active/focus/disabled/loading/error/empty all N/A (inherited shared tokens); mobile PageHeader 20px and Button 44px via shared implementation, desktop header shared 30px and Button control height; local source grep native/hex/h1/overlays/className **0/0/0/0/0**; balanced 1/1 fragment; original copy/reset preserved |
+| `src/app/(authenticated)/hr/company/error.tsx` | `old-lms-pages.md:6-12`: one 12px-radius white canvas, compact page title, slim shared error and action; `components___listing-page-header.scss:131-158`: phone <=767px, tablet >=768px | `src/app/(authenticated)/hr/company/error.tsx`: ONLY shared `PageHeader`, `ErrorState`, `Button`; route adds no div, canvas, CSS, margin, border, color, fixed element, control or title styling | Local typography/weight/color/background/border/radius/shadow/spacing/hover/active/focus/disabled/loading/error/empty all N/A (inherited shared tokens); mobile PageHeader 20px and Button 44px via shared implementation, desktop header shared 30px and Button control height; local source grep native/hex/h1/overlays/className **0/0/0/0/0**; balanced 1/1 fragment; original copy/reset preserved |
+| `src/app/(authenticated)/hr/company/reports/error.tsx` | `old-lms-pages.md:6-12`: one 12px-radius white canvas, compact page title, slim shared error and action; `components___listing-page-header.scss:131-158`: phone <=767px, tablet >=768px | `src/app/(authenticated)/hr/company/reports/error.tsx`: ONLY shared `PageHeader`, `ErrorState`, `Button`; route adds no div, canvas, CSS, margin, border, color, fixed element, control or title styling | Local typography/weight/color/background/border/radius/shadow/spacing/hover/active/focus/disabled/loading/error/empty all N/A (inherited shared tokens); mobile PageHeader 20px and Button 44px via shared implementation, desktop header shared 30px and Button control height; local source grep native/hex/h1/overlays/className **0/0/0/0/0**; balanced 1/1 fragment; original copy/reset preserved |
+| `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx` | `old-lms-pages.md:6-12`: one 12px-radius white canvas, compact page title, slim shared error and action; `components___listing-page-header.scss:131-158`: phone <=767px, tablet >=768px | `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx`: ONLY shared `PageHeader`, `ErrorState`, `Button`; route adds no div, canvas, CSS, margin, border, color, fixed element, control or title styling | Local typography/weight/color/background/border/radius/shadow/spacing/hover/active/focus/disabled/loading/error/empty all N/A (inherited shared tokens); mobile PageHeader 20px and Button 44px via shared implementation, desktop header shared 30px and Button control height; local source grep native/hex/h1/overlays/className **0/0/0/0/0**; balanced 1/1 fragment; original copy/reset preserved |
+| `src/app/(authenticated)/hr/conversations/error.tsx` | `old-lms-pages.md:6-12`: one 12px-radius white canvas, compact page title, slim shared error and action; `components___listing-page-header.scss:131-158`: phone <=767px, tablet >=768px | `src/app/(authenticated)/hr/conversations/error.tsx`: ONLY shared `PageHeader`, `ErrorState`, `Button`; route adds no div, canvas, CSS, margin, border, color, fixed element, control or title styling | Local typography/weight/color/background/border/radius/shadow/spacing/hover/active/focus/disabled/loading/error/empty all N/A (inherited shared tokens); mobile PageHeader 20px and Button 44px via shared implementation, desktop header shared 30px and Button control height; local source grep native/hex/h1/overlays/className **0/0/0/0/0**; balanced 1/1 fragment; original copy/reset preserved |
+
+**Strict scope:** The six route files have no remaining hand-rolled visual pixels. Browser screenshot comparison of the *shared PageHeader, ErrorState and Button* is an independent cross-lane requirement, not represented as completed by these route ticks. No code execution or CI.
+
+
+### 2026-10-20 source-closed HR fallback pages: batch B (5 files)
+
+| Complete route | Exact relevant old-LMS source/value | vNext source/value | All local states / coverage / responsive proof |
+| --- | --- | --- | --- |
+| `src/app/(authenticated)/hr/messages/error.tsx` | `old-lms-pages.md:6,10-12`: single white 12px canvas, slim error/shared action; `components___listing-page-header.scss:131-158`: 767px mobile split | `src/app/(authenticated)/hr/messages/error.tsx`: only `PageHeader + ErrorState + Button` shared components; exact original fallback text, existing retry action and error state preserved | **Local** font/weight/size/line-height/color/bg/border/radius/padding/spacing/shadow/default/hover/active/focus/disabled/loading/error/empty and phone/tablet CSS N/A; shared Button 44px <=767px, usual control-height >=768px, shared ErrorState/Alert owns painted tokens; source native/hex/h1/overlays/className **0/0/0/0/0**, fragment `1/1` balanced |
+| `src/app/(authenticated)/hr/profile/error.tsx` | `old-lms-pages.md:6,10-12`: single white 12px canvas, slim error/shared action; `components___listing-page-header.scss:131-158`: 767px mobile split | `src/app/(authenticated)/hr/profile/error.tsx`: only `PageHeader + ErrorState + Button` shared components; exact original fallback text, existing retry action and error state preserved | **Local** font/weight/size/line-height/color/bg/border/radius/padding/spacing/shadow/default/hover/active/focus/disabled/loading/error/empty and phone/tablet CSS N/A; shared Button 44px <=767px, usual control-height >=768px, shared ErrorState/Alert owns painted tokens; source native/hex/h1/overlays/className **0/0/0/0/0**, fragment `1/1` balanced |
+| `src/app/(authenticated)/hr/drives/error.tsx` | `old-lms-pages.md:6,10-12`: single white 12px canvas, slim error/shared action; `components___listing-page-header.scss:131-158`: 767px mobile split | `src/app/(authenticated)/hr/drives/error.tsx`: only `Alert + Button` shared components; exact original fallback text, existing retry action and error state preserved | **Local** font/weight/size/line-height/color/bg/border/radius/padding/spacing/shadow/default/hover/active/focus/disabled/loading/error/empty and phone/tablet CSS N/A; shared Button 44px <=767px, usual control-height >=768px, shared ErrorState/Alert owns painted tokens; source native/hex/h1/overlays/className **0/0/0/0/0**, fragment `0/0` balanced |
+| `src/app/(authenticated)/hr/drives/proposals/error.tsx` | `old-lms-pages.md:6,10-12`: single white 12px canvas, slim error/shared action; `components___listing-page-header.scss:131-158`: 767px mobile split | `src/app/(authenticated)/hr/drives/proposals/error.tsx`: only `ErrorState + Button` shared components; exact original fallback text, existing retry action and error state preserved | **Local** font/weight/size/line-height/color/bg/border/radius/padding/spacing/shadow/default/hover/active/focus/disabled/loading/error/empty and phone/tablet CSS N/A; shared Button 44px <=767px, usual control-height >=768px, shared ErrorState/Alert owns painted tokens; source native/hex/h1/overlays/className **0/0/0/0/0**, fragment `0/0` balanced |
+| `src/app/(authenticated)/hr/home/error.tsx` | `old-lms-pages.md:6,10-12`: single white 12px canvas, slim error/shared action; `components___listing-page-header.scss:131-158`: 767px mobile split | `src/app/(authenticated)/hr/home/error.tsx`: only `ErrorState + Button` shared components; exact original fallback text, existing retry action and error state preserved | **Local** font/weight/size/line-height/color/bg/border/radius/padding/spacing/shadow/default/hover/active/focus/disabled/loading/error/empty and phone/tablet CSS N/A; shared Button 44px <=767px, usual control-height >=768px, shared ErrorState/Alert owns painted tokens; source native/hex/h1/overlays/className **0/0/0/0/0**, fragment `0/0` balanced |
+
+**Result:** every caller in this batch delegates visual states to existing shared primitives; no local custom HTML or wrapper CSS remains. This tick does not claim a measured old-versus-new screenshot or prove the shared components' independent global parity. No app run, CI or TS compile.
+
+
+### chat-15 follow-through: six further HR recovery/action source passes (2026-10-20)
+
+| File and state | Old LMS value, source | vNext implementation | Source/phone/tablet/static proof and strict outcome |
+| --- | --- | --- | --- |
+| `src/app/(authenticated)/hr/drives/new/error.tsx` | `old-lms-pages.md:6-12` single canvas/shared error + `components___listing-page-header.scss:131-158` mobile max 767px | Drive draft error uses shared PageHeader, ErrorState and shared Button; original error telemetry and retry preserved | Full-file native/hex/h1/overlays **0/0/0/0**, div **0/0**, section **0/0**, JSX fragments **1/1**; default/hover/focus/disabled/active/error/loading paint delegated to shared components. **Visible screen still unticked**: computed colors, toolbar alignment, keyboard and actual phone/tablet screenshot unverified |
+| `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx` | `old-lms-pages.md:6-12` single canvas/shared error + `components___listing-page-header.scss:131-158` mobile max 767px | Job details error now shares PageHeader, ErrorState, Button, PageBackLink; sensitive access explanation unchanged | Full-file native/hex/h1/overlays **0/0/0/0**, div **0/0**, section **0/0**, JSX fragments **2/2**; default/hover/focus/disabled/active/error/loading paint delegated to shared components. **Visible screen still unticked**: computed colors, toolbar alignment, keyboard and actual phone/tablet screenshot unverified |
+| `src/app/(authenticated)/hr/not-found.tsx` | `old-lms-pages.md:6-12` single canvas/shared error + `components___listing-page-header.scss:131-158` mobile max 767px | 404 fallback uses shared PageBackLink (44px phone, icon only below 768px), keeps exact description and PageHeader | Full-file native/hex/h1/overlays **0/0/0/0**, div **0/0**, section **1/1**, JSX fragments **0/0**; default/hover/focus/disabled/active/error/loading paint delegated to shared components. **Visible screen still unticked**: computed colors, toolbar alignment, keyboard and actual phone/tablet screenshot unverified |
+| `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx` | `old-lms-pages.md:6-12` single canvas/shared error + `components___listing-page-header.scss:131-158` mobile max 767px | 404 fallback uses shared PageBackLink (44px phone, icon only below 768px), keeps exact description and PageHeader | Full-file native/hex/h1/overlays **0/0/0/0**, div **0/0**, section **1/1**, JSX fragments **0/0**; default/hover/focus/disabled/active/error/loading paint delegated to shared components. **Visible screen still unticked**: computed colors, toolbar alignment, keyboard and actual phone/tablet screenshot unverified |
+| `src/components/placements/recruiter-resume-download.tsx` | `old-lms-pages.md:6-12` single canvas/shared error + `components___listing-page-header.scss:131-158` mobile max 767px | Single shared Button (loading + disabled) and InlineNotice success/error; duplicate Button import removed, guarded HTTPS-only ephemeral grant path unchanged | Full-file native/hex/h1/overlays **0/0/0/0**, div **1/1**, section **0/0**, JSX fragments **0/0**; default/hover/focus/disabled/active/error/loading paint delegated to shared components. **Visible screen still unticked**: computed colors, toolbar alignment, keyboard and actual phone/tablet screenshot unverified |
+| `src/components/hr/recruiter-request-cancel-button.tsx` | `old-lms-pages.md:6-12` single canvas/shared error + `components___listing-page-header.scss:131-158` mobile max 767px | Cancel request uses shared Button, ConfirmDialog and InlineNotice; optimistic updatedAt/mutation lock unchanged | Full-file native/hex/h1/overlays **0/0/0/0**, div **1/1**, section **0/0**, JSX fragments **0/0**; default/hover/focus/disabled/active/error/loading paint delegated to shared components. **Visible screen still unticked**: computed colors, toolbar alignment, keyboard and actual phone/tablet screenshot unverified |
+
+None of these six routes/components adds hard-coded colors or native controls. Error actions preserve retry destinations and per-route description; signed resume and request cancellation state transitions are unchanged. This is complete **source** coverage only, with no TS/CI/build or rendered pixel proof.
