@@ -32,15 +32,15 @@ export function LearnerSupportCancel({requestId,expectedUpdatedAt}:{
     finally{setPending(false);}
   }
   return <>
-    <Button size="sm" variant="secondary" onClick={()=>{setError(null);setOpen(true);}}>
+    <Button className="max-md:min-h-11" size="sm" variant="secondary" onClick={()=>{setError(null);setOpen(true);}}>
       Cancel pending request
     </Button>
     <Dialog open={open} onOpenChange={value=>{if(!pending)setOpen(value);}}
       title="Cancel placement request"
       description="Cancel this pending request? The original application, interview or offer will not change."
       footer={<>
-        <Button variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Keep request</Button>
-        <Button disabled={pending} onClick={()=>void confirm()}>
+        <Button className="max-md:min-h-11" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Keep request</Button>
+        <Button className="max-md:min-h-11" disabled={pending} onClick={()=>void confirm()}>
           {pending?"Cancelling…":"Confirm cancellation"}
         </Button>
       </>}>
