@@ -3,6 +3,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   getTpoStudentPlacementHistory,
@@ -86,11 +87,7 @@ export default async function TpoLearnerPlacementHistoryPage({
         when an accepted offer has a recorded JOINED outcome.
       </p>
       {history.items.length === 0 ? (
-        <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
-          No persisted placement applications were found for this learner on this page.
-          External placement records and unmigrated placement registration sources are
-          not included.
-        </p>
+        <EmptyState title="No persisted placement applications were found for this learner on this page." description="External placement records and unmigrated placement registration sources are not included."/>
       ) : (
         <div className="space-y-4">
           {history.items.map((item) => (

@@ -1,5 +1,7 @@
 import {Textarea} from "@/components/ui/textarea";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -12,7 +14,7 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
  const ctx=await getCurrentRequestContext();const collegeId=await requireTpoBatchActor(ctx);
  const raw=await searchParams;
  const parsed=querySchema.safeParse({page:Array.isArray(raw.page)?raw.page[0]:raw.page});
- if(!parsed.success)return <div role="alert">Invalid page. <Link href="/tpo/students/preparation-prep">Reset</Link></div>;
+ if(!parsed.success)return <Alert tone="error">Invalid page. <Link href="/tpo/students/preparation-prep">Reset</Link></Alert>;
  const view=await getTpoStudentsIntelligence(ctx,{collegeId,journeyState:"NEEDS_READINESS_SUPPORT",page:parsed.data.page,pageSize:25});
  const rows=tpoPreparationFocusRows(view.roster.items);
  const href=(page:number)=>"/tpo/students/preparation-prep?page="+page;
@@ -21,8 +23,8 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
   <Link href="/tpo/students" className="inline-flex min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 lms-inline-link">All students</Link>
   <Link href="/tpo/students/preparation-plan" className="ml-3 text-link underline lms-inline-link">View the college preparation course plan</Link>
   <p className="text-sm text-body">{rows.length} evidence-based candidates on the current 25-row page, from {view.roster.total} matching learner journeys. This is not a verified employability, course-assignment or contact/consent list.</p>
-  {!view.definitions.registrationsAvailable?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">Placement registration records are unavailable; participation evidence may be incomplete.</p>:null}
-  {rows.length===0?<p role="status">No preparation-support candidates on this page.</p>:<ul className="space-y-3">{rows.map(row=><li key={row.membershipId} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+  {!view.definitions.registrationsAvailable?<Alert tone="warning">Placement registration records are unavailable; participation evidence may be incomplete.</Alert>:null}
+  {rows.length===0?<EmptyState title="No preparation-support candidates on this page."/>:<ul className="space-y-3">{rows.map(row=><li key={row.membershipId} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
    <h2 className="font-semibold">{row.displayName}</h2>
    <p className="text-xs text-muted-foreground">{row.branchName} · {row.cohortName} · {row.readinessSignal.replaceAll("_"," ").toLowerCase()}</p>
    <label className="mt-3 block text-sm">Manual follow-up draft<Textarea readOnly rows={3} value={tpoPreparationNudgeMessage(row)} className="mt-1"/></label>

@@ -3,6 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { TpoCompanyFeedbackForm } from "@/components/placements/tpo-company-feedback-form";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoCompanyFeedback } from "@/modules/placements/tpo-company-feedback-service";
@@ -48,22 +50,22 @@ export default async function TpoCompanyFeedbackPage({
         description="Recorded TPO recruiter notes for contacts explicitly linked to this college-company relationship."
       />
       {!data.available ? (
-        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
+        <Alert tone="warning">
           Registered recruiter note storage is unavailable in this database. No
           zero-history inference is made and note creation is disabled.
-        </p>
+        </Alert>
       ) : (
         <>
           {!data.writeEnabled ? (
-            <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
+            <Alert tone="warning">
               CRM writes are not enabled for this deployment. Existing notes remain
               readable, but new feedback cannot be recorded.
-            </p>
+            </Alert>
           ) : data.contacts.length === 0 ? (
-            <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
+            <Alert tone="warning">
               No recruiter contacts are explicitly linked to this company. Link
               a contact before recording company feedback.
-            </p>
+            </Alert>
           ) : (
             <TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} />
           )}
@@ -72,10 +74,7 @@ export default async function TpoCompanyFeedbackPage({
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
             {data.notes.length === 0 ? (
-              <p role="status" className="p-5 text-sm text-body">
-                No saved NOTE-type CRM activities appear on this page. Calls,
-                meetings, external communications and unstored feedback are not inferred.
-              </p>
+              <EmptyState title="No saved NOTE-type CRM activities appear on this page." description="Calls, meetings, external communications and unstored feedback are not inferred."/>
             ) : (
               <ul className="divide-y divide-border">
                 {data.notes.map((item) => (
