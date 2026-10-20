@@ -33,16 +33,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-8.md: file, number of i
 - [x] `src/components/admin/college-bulk-import.tsx`
 - [x] `src/components/admin/college-edit-dialog.tsx`
 - [x] `src/components/admin/college-feature-rule-editor.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/college-signin-method-form.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/inbound-mail-list.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/managed-college-subdomain.tsx`
-- [ ] `src/components/admin/organization-actions.tsx`
-- [ ] `src/components/admin/person-membership-actions.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/college-signin-method-form.tsx`
+- [x] `src/components/admin/department-actions.tsx`
+- [x] `src/components/admin/inbound-mail-list.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/managed-college-subdomain.tsx`
+- [x] `src/components/admin/organization-actions.tsx`
+- [x] `src/components/admin/person-membership-actions.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
 - [ ] `src/components/admin/person-profile-dialog.tsx`
 - [ ] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
 - [ ] `src/components/admin/student-rule-editor.tsx`
