@@ -24,7 +24,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
 - [x] `src/components/admin/admin-program-directory.tsx`
 - [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/courses/faculty-assessment-lifecycle.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/super-admin-company-merge.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/courses/faculty-assessment-lifecycle.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/super-admin-company-merge.tsx`
