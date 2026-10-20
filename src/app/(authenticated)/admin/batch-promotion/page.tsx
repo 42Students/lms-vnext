@@ -50,33 +50,33 @@ export default async function SuperAdminBatchPromotionPage({
   return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion"
       description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Class moves are managed separately in the batch roster." />
-    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
-      <label className="grid gap-1 text-sm font-semibold text-body">Program
+    <form method="get" className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 lg:grid-cols-4">
+      <label className="grid gap-1 text-[13px] font-semibold text-body">Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
-          className="min-h-11 sm:min-h-9">
+          className="min-h-11 min-[768px]:min-h-9">
           <option value="">All programs</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Batch
+      <label className="grid gap-1 text-[13px] font-semibold text-body">Batch
         <Select name="cohortId" defaultValue={input.data.cohortId ?? ""}
-          className="min-h-11 sm:min-h-9">
+          className="min-h-11 min-[768px]:min-h-9">
           <option value="">Select a batch</option>
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Academic year start override
+      <label className="grid gap-1 text-[13px] font-semibold text-body">Academic year start override
         <Input name="yearStart" type="number" min={1900} max={9998} step={1}
-          defaultValue={input.data.yearStart ?? ""} className="min-h-11 sm:min-h-9" />
+          defaultValue={input.data.yearStart ?? ""} className="min-h-11 min-[768px]:min-h-9" />
       </label>
-      <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
+      <label className="flex min-h-11 items-center gap-2 text-[13px] font-semibold text-body">
         <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
-      <Button type="submit" className="min-h-11 sm:min-h-9 self-end">Preview</Button>
+      <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end">Preview</Button>
     </form>
     <section aria-label="Batch promotion queue" className="min-w-0 space-y-3 pt-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Batches</h2>
+        <h2 className="text-lg font-semibold text-foreground">Batches</h2>
         <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
       </div>
       <DataTable<(typeof visibleCohorts)[number]>
@@ -109,7 +109,7 @@ export default async function SuperAdminBatchPromotionPage({
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
         </div>
         <p className="text-sm text-body">{preview.batch.programName} · {preview.batch.status}</p>
-        <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-4">
           {([
             ["Action", summary.action], ["Target term", summary.targetTerm ?? "Unavailable"],
             ["Learners checked", summary.learnersChecked], ["Learners with blockers", summary.blockedLearners],
@@ -154,6 +154,6 @@ export default async function SuperAdminBatchPromotionPage({
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </section>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline sm:min-h-9">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline min-[768px]:min-h-9">← Academics</Link>
   </div>;
 }
