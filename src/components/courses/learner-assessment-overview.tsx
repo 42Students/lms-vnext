@@ -239,7 +239,7 @@ export function LearnerAssessmentOverview({
             ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
           </Disclosure>
         </section>
-      ) : (<div className={styles.metricGrid} aria-label="Assessment totals">
+      ) : (<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div className={styles.metricGrid} aria-label="Assessment totals">
         <StatTile className={styles.tile}
           label={
             kind === "ASSIGNMENT"
@@ -266,7 +266,7 @@ export function LearnerAssessmentOverview({
           }
           value={completed}
         ><span className={styles.icon}><AssessmentMetricGlyph kind="submitted" /></span></StatTile>
-      </div>
+      </div></Disclosure>
       )}
 
       <NeedsDoingChips
@@ -283,7 +283,7 @@ export function LearnerAssessmentOverview({
           setPage(1);
         }}
       />
-      <div className="grid min-w-0 gap-[8px] md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
         <label className="w-full">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
           <Input type="search" value={search} maxLength={100}
@@ -316,7 +316,9 @@ export function LearnerAssessmentOverview({
             ))}
           </Select>
         </label>
-        <label className="w-full">
+      </div>
+      <Disclosure title="State · Sort" className="border-b border-border" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-4 md:grid-cols-2">
+        <label className="min-w-0 w-full">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</span>
           <Select className="min-h-11 md:min-h-9" value={stateFilter}
             onChange={event => {
@@ -338,7 +340,7 @@ export function LearnerAssessmentOverview({
             ))}
           </Select>
         </label>
-      </div>
+      </Disclosure>
 
       {learnerAssessmentFiltersActive({courseId:activeCourseId,search,stateFilter,sort}) ? (
         <Button type="button" onClick={() => {
@@ -417,9 +419,9 @@ export function LearnerAssessmentOverview({
             return (
               <article
                 key={`${item.deliveryId}-${item.id}`}
-                className="min-w-0 py-4"
+                className="min-w-0 py-4 first:pt-2"
               >
-                <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <StatusBadge
@@ -456,7 +458,7 @@ export function LearnerAssessmentOverview({
                           : "No deadline"}
                     </p>
                     {item.kind === "ASSIGNMENT" ? (
-                      <p className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body md:hidden"
+                      <p className="mt-2 break-words text-xs font-semibold text-body md:hidden"
                         role="status">
                         {learnerAssignmentMobileState(item,currentNowMs).label}
                         {" · "}{learnerAssignmentMobileState(item,currentNowMs).detail}
@@ -464,19 +466,19 @@ export function LearnerAssessmentOverview({
                     ) : null}
                     {item.kind === "QUIZ" ? (
                       <p role="status"
-                        className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body md:hidden">
+                        className="mt-2 break-words text-xs font-semibold text-body md:hidden">
                         {learnerQuizMobileState(item,currentNowMs).label}
                         {" · "}{learnerQuizMobileState(item,currentNowMs).detail}
                       </p>
                     ) : null}
                     {item.description ? (
-                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-body">
+                      <p className="mt-2 max-w-prose line-clamp-2 text-sm leading-[22px] text-body">
                         {item.description}
                       </p>
                     ) : null}
                   </div>
 
-                  <div className="flex w-full flex-col items-stretch gap-2 md:w-auto md:items-end">
+                  <div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:shrink-0 md:items-end">
                     <span className="text-xs font-semibold text-muted-foreground">
                       {item.kind ===
                       "ASSIGNMENT"
@@ -536,7 +538,7 @@ export function LearnerAssessmentOverview({
         }
         footer={
           selectedAssignment ? (
-            <>
+            <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
               className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto"
@@ -547,14 +549,14 @@ export function LearnerAssessmentOverview({
               className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
               Full assignment details
             </Link>
-            </>
+            </div>
           ) : undefined
         }
       >
         {selectedAssignment ? (
-          <div className="space-y-5">
-            <div className="grid gap-3 md:grid-cols-2">
-              <div className="rounded-[var(--lms-radius-card)] border border-border bg-surface-subtle p-4">
+          <div className="min-w-0 space-y-4 md:space-y-6">
+            <div className="grid min-w-0 grid-cols-2 gap-4 border-b border-border pb-4">
+              <div className="min-w-0">
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                   Due
                 </p>
@@ -562,7 +564,7 @@ export function LearnerAssessmentOverview({
                   {formatDate(selectedAssignment.dueAt)}
                 </p>
               </div>
-              <div className="rounded-[var(--lms-radius-card)] border border-border bg-surface-subtle p-4">
+              <div className="min-w-0">
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                   Points
                 </p>
@@ -587,7 +589,7 @@ export function LearnerAssessmentOverview({
               <AssignmentFileOpenControl key={selectedAssignment.submissionId}
                 submissionId={selectedAssignment.submissionId} enabled={fileUploadsEnabled} /> : null}
             {selectedAssignment.submissionId ? (
-              <section className="rounded-xl border border-border bg-surface-subtle p-4">
+              <section className="min-w-0 space-y-3 border-t border-border pt-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="m-0 text-sm font-semibold text-foreground">
@@ -613,7 +615,7 @@ export function LearnerAssessmentOverview({
 
                 {selectedAssignment.submissionType === "TEXT" &&
                 selectedAssignment.submissionText ? (
-                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                  <div className="min-w-0 border-t border-border pt-3">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       Written Response
                     </p>
@@ -625,7 +627,7 @@ export function LearnerAssessmentOverview({
 
                 {selectedAssignment.submissionType === "LINK" &&
                 selectedAssignment.submissionUrl ? (
-                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                  <div className="min-w-0 border-t border-border pt-3">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       Submitted Link
                     </p>
@@ -642,7 +644,7 @@ export function LearnerAssessmentOverview({
                 ) : null}
 
                 {selectedAssignment.submissionType === "FILE" ? (
-                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                  <div className="min-w-0 border-t border-border pt-3">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       File submission received
                     </p>
@@ -654,7 +656,7 @@ export function LearnerAssessmentOverview({
 
                 {selectedAssignment.gradePublished &&
                 selectedAssignment.feedback ? (
-                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                  <div className="min-w-0 border-t border-border pt-3">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       Faculty feedback
                     </p>
