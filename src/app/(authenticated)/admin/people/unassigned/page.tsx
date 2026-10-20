@@ -21,7 +21,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   if (!unassignedIdentityScopeAllowed(context.adminScope)) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader eyebrow="Super Admin" title="Users without college memberships" />
     <EmptyState title="Clear the admin scope" description="These users have no college membership. Clear the organization and college selection in the header to inspect global identities." />
-    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Users & Roles</Link>
+    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] underline-offset-4">← Users & Roles</Link>
   </div>;
   const raw = await searchParams;
   const validKeys=new Set(["q","platformStatus","role","page"]);
@@ -31,7 +31,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
     ?{q:raw.q,platformStatus:raw.platformStatus,role:raw.role,page:raw.page}
     :{invalid:true});
   if (!parsed.success) return <ErrorState title="Invalid user filters" description="Review search, status, role and page."
-    action={<Link href="/admin/people/unassigned">Clear filters</Link>} />;
+    action={<Link href="/admin/people/unassigned" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />;
   const loaded = await listSuperAdminUnassignedUsers(context, parsed.data)
     .then(value => ({ok:true as const,value}))
     .catch(error => ({ok:false as const,denied:error instanceof AuthorizationError}));
