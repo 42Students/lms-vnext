@@ -20,7 +20,7 @@ export function GracefulPageLoading({ label = "Loading your page...", shape = "c
       <Skeleton label={label} variant="row" count={3} />
     </> : <>
       <Skeleton label={label} variant="line" count={2} />
-      <div aria-hidden="true" className="border-t border-border pt-[var(--lms-space-3)]">
+      <div aria-hidden="true" className="border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
         <Skeleton label={label} variant="row" count={4} />
       </div>
     </>}
