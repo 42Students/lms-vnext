@@ -8,6 +8,7 @@ import {listCollegeTermMappings} from "@/modules/academics/college-term-mapping-
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Banner} from "@/components/ui/banner";
 import {listAdminTermCourseMappings} from "@/modules/admin-ui/super-admin-term-mapping-service";
 const statuses=["ALL","ACTIVE","INACTIVE"] as const;
 export default async function SuperAdminSemesterCourseMappingPage({searchParams}:{
@@ -34,9 +35,9 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
  <AdminScopedReadPage
   intro={<section aria-label="Semester curriculum tools" className="min-w-0 space-y-4">
    <AcademicSetupSteps step={4}/>
-   {!curriculumResult.ok?<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body">
+   {!curriculumResult.ok?<Banner tone="warning">
     Semester mapping editor is temporarily unavailable. The directory remains accessible.
-   </p>:null}
+   </Banner>:null}
    {curriculum?<CollegeTermMappingManager data={curriculum}/>:null}
   </section>}
   title="Semester–Course Mapping" path="/admin/semester-courses" statuses={statuses}

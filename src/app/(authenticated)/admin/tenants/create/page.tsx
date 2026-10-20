@@ -28,7 +28,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
    <PageHeader title="Create the customer, then make one college launch-ready" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
    <ErrorState title="Organization directory unavailable"
     description="Organization choices could not be verified. College creation remains unavailable until your authorized organizations can be loaded."
-    action={<Link href="/admin/tenants/create" className="font-semibold text-primary-text">Retry organization directory</Link>}/>
+    action={<Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry organization directory</Link>}/>
   </div>;
  }
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
