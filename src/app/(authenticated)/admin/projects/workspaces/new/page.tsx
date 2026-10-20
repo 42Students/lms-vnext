@@ -14,8 +14,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
 }) {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId;
-  if (!collegeId) return <div className="min-w-0 space-y-5"><PageHeader title="Create workspaces from a class" description="Choose a college safety scope before creating Project workspaces."
-    actions={<PageBackLink href="/admin/projects" label="Back to workspaces"/>}/><EmptyState title="Select a college" description="Use the admin scope selector to choose an active college."/></div>;
+  if (!collegeId) return <div className="min-w-0 space-y-5"><PageBackLink href="/admin/projects" label="Back to workspaces"/><PageHeader title="Create workspaces from a class" description="Choose a college safety scope before creating Project workspaces."/><EmptyState title="Select a college" description="Use the admin scope selector to choose an active college."/></div>;
   let templates: Awaited<ReturnType<typeof listAssignedProjectTemplates>>;
   try {
     // Do not fetch or show template details until the selected college scope
@@ -25,8 +24,8 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
   } catch (error) {
     const denied = error instanceof ProjectsServiceError && error.code === "PROJECT_ACCESS_DENIED";
     return <div className="min-w-0 space-y-5">
-      <PageHeader title="Create project workspace"
-        actions={<PageBackLink href="/admin/projects" label="Back to workspaces"/>}/>
+      <PageBackLink href="/admin/projects" label="Back to workspaces"/>
+      <PageHeader title="Create project workspace"/>
       <ErrorState title={denied ? "Project creation access denied" : "Project setup unavailable"}
         description={denied
           ? "Your selected college cannot be used to create workspaces. Select an authorized college and try again."
@@ -36,11 +35,12 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
   }
   const requested=(await searchParams).templateId;
   const selected=typeof requested==="string"&&templates.some(t=>t.templateId===requested)?requested:null;
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+    <PageBackLink href="/admin/projects" label="Back to workspaces" />
     <PageHeader title="Create project workspace"
-      description="Every workspace starts from a template — pick one below."
-      actions={<PageBackLink href="/admin/projects" label="Back to workspaces" />} />
-    {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."/> :
+      description="Every workspace starts from a template — pick one below." />
+    {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."
+      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Project templates</Link>}/> :
       <ClassTeamWorkspaceCreator collegeId={collegeId} basePath="/admin/projects" initialTemplateId={selected} templates={templates.map(t => ({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/>}
   </div>;
 }
