@@ -122,8 +122,8 @@ export default async function MentorTeamCoveragePage({
                 description="There are no current non-archived project assignments for this Mentor. No historical team or staffing status is inferred." />
             : <EmptyState title="No projects match these filters"
                 description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments." />
-          : <div className="divide-y divide-border">{data.items.map(item =>
-            <article key={item.projectId} className="py-4">
+          : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+            <article key={item.projectId} className="py-[var(--lms-space-3)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="font-semibold text-foreground">{item.title}</h2>
                 <span className="text-xs font-semibold text-body">{item.status}</span>

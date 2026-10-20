@@ -141,8 +141,8 @@ export default async function MentorTaskReviewsPage({
             description={data.total > 0
               ? "This page is outside the matching result range. Return to page 1."
               : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."} />
-        : <div className="min-w-0 divide-y divide-border">{data.items.map(item =>
-          <article key={item.id} className="py-4">
+        : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+          <article key={item.id} className="py-[var(--lms-space-3)]">
             <p className="text-sm font-semibold text-foreground">{item.taskTitle}</p>
             <p className="mt-1 text-sm text-body">
               {item.projectTitle} · Version {item.version} · Priority {item.priority}

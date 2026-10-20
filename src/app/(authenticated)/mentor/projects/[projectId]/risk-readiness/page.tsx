@@ -85,8 +85,8 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       </form>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
         description="No matching stored signals were found. This is not a certificate of project safety or completeness."/>:
-      <ol className="divide-y divide-border">{data.items.map(row=>
-        <li key={row.key} className="py-4">
+      <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
+        <li key={row.key} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="break-words font-semibold text-foreground">{row.title}</h2>
             <span className="text-xs font-semibold text-body">

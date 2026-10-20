@@ -108,8 +108,8 @@ export default async function MentorTeamMeetingsPage({
       <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
         description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." />
-        :<ol className="divide-y divide-border">{data.items.map(meeting=>
-          <li key={meeting.id} className="py-4">
+        :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
+          <li key={meeting.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{meeting.title}</h2>
               <span className="text-xs font-semibold text-body">{mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderedAt)}</span>

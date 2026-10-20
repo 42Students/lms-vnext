@@ -141,8 +141,8 @@ export default async function MentorBoardReviewPage({
         description={data.count===0?
           "This project has no stored tasks. No workload or assignment is inferred.":
           "The stored tasks do not match your filters. Clear filters to view the whole board."}/>:
-        <ol className="divide-y divide-border">{data.items.map(row=><li key={row.id}
-          className="py-4">
+        <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=><li key={row.id}
+          className="py-[var(--lms-space-3)]">
           <h2 className="break-words font-semibold">{row.title}</h2>
           <p className="mt-2 text-sm text-body">{row.status.replaceAll("_"," ")} ·
             {row.priority} priority · {row.sprintTitle}</p>

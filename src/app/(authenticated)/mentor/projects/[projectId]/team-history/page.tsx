@@ -85,8 +85,8 @@ export default async function MentorTeamHistoryPage({
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
               description="No registered membership rows match this project and filter. History from before migration may not be available." />
-          : <div className="divide-y divide-border">{data.items.map(item =>
-              <article key={item.id} className="py-4">
+          : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+              <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-semibold text-foreground">{item.displayName}</h2>
                   <span className="text-xs font-semibold text-body">{item.state}</span>
