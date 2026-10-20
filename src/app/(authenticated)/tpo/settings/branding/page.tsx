@@ -171,14 +171,11 @@ export default async function TpoPlacementBrandingPage() {
             />
           </div>
         ) : (
-          <div
-            role="status"
-            className="mt-5 border-t border-border pt-4 text-sm leading-6 text-body"
-          >
+          <Alert tone={branding.logoPreviewSuppressed ? "warning" : "info"}>
             {branding.logoPreviewSuppressed
               ? "A logo address is stored, but it cannot be safely previewed as a public image. The address is not exposed here."
               : "No public logo URL is configured. The standard LMS presentation remains the fallback."}
-          </div>
+          </Alert>
         )}
 
         <p className="mt-3 text-xs leading-5 text-muted-foreground">
