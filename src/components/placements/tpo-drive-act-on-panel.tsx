@@ -96,37 +96,42 @@ export function TpoDriveActOnPanel(){
   }catch{setNotice("Clipboard unavailable. Failed drives remain listed below.");}
  }
  return <section aria-label="Act on selected drives" className="min-w-0 space-y-3">
-  <Button variant="secondary" type="button" onClick={()=>setOpen(!open)} aria-expanded={open}
-   >Act on selected drives</Button>
-  {open?<div className="space-y-4">
+  <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setOpen(!open)} aria-expanded={open}
+   aria-controls="tpo-drive-bulk-actions">Act on selected drives</Button>
+  {open?<div id="tpo-drive-bulk-actions" className="min-w-0 space-y-4 border-t border-border pt-4">
    <p className="text-sm text-body">Actions only apply to checked rows on this page. Every drive is rechecked by the placement server before applying a change.</p>
-   <TpoBulkDriveReminder/>
-   <label className="grid max-w-sm gap-1 text-sm font-semibold">Action
-    <Select value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);}}
+   <details className="min-w-0 border-b border-border pb-3">
+    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Other selected-drive actions</summary>
+    <div className="pt-2"><TpoBulkDriveReminder/></div>
+   </details>
+   <div className="grid min-w-0 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+   <label className="grid min-w-0 gap-1 text-sm font-semibold">Action
+    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);setNotice("");}}
      >
      <option value="CLOSE">Close selected live drives</option>
      <option value="CANCEL">Cancel selected drives</option>
     </Select>
    </label>
-   <Button variant="secondary" type="button" disabled={pending} onClick={e=>void preview(e)}
+   <Button variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} loading={pending} onClick={e=>void preview(e)}
     >Preview applicable drives</Button>
-   {rows.length?<div className="space-y-2">
+   </div>
+   {rows.length?<div className="min-w-0 space-y-3 border-t border-border pt-4">
     <p role="status" className="text-sm">{rows.filter(row=>row.allowed).length} applicable · {rows.filter(row=>!row.allowed).length} left out</p>
-    <ul className="space-y-1 text-sm">{rows.map(row=><li key={row.id}>{row.title} · {row.reason}</li>)}</ul>
-    <label className="grid max-w-lg gap-1 text-sm font-semibold">Reason (audited)
-     <Textarea value={reason} onChange={e=>setReason(e.target.value)} rows={2} maxLength={1000}
+    <ul className="min-w-0 divide-y divide-border text-sm">{rows.map(row=><li key={row.id} className="flex min-w-0 flex-col gap-1 py-2 sm:flex-row sm:justify-between sm:gap-3"><span className="break-words font-medium">{row.title}</span><span className={row.allowed?"text-body":"text-muted-foreground"}>{row.reason}</span></li>)}</ul>
+    <label className="grid min-w-0 max-w-xl gap-1 text-sm font-semibold">Reason (audited)
+     <Textarea className="min-w-0 w-full" value={reason} onChange={e=>{setReason(e.target.value);setNotice("");}} rows={3} minLength={10} maxLength={1000}
       />
     </label>
-    <Button variant="secondary" type="button" disabled={pending||!rows.some(row=>row.allowed)}
+    <Button variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending||!rows.some(row=>row.allowed)||reason.trim().length<10}
       onClick={()=>void apply()} >
      {pending?"Applying…":"Confirm selected action"}</Button>
    </div>:null}
-   {results.length?<div className="space-y-2">
+   {results.length?<div className="min-w-0 space-y-2 border-t border-border pt-4">
     <p className="text-sm font-semibold">Per-drive results and retry</p>
-    <ul className="space-y-1 text-sm">{results.map(row=><li key={row.id}>{row.id} · {row.status} · {row.reason}</li>)}</ul>
-    {results.some(row=>row.status==="failed")?<div className="flex flex-wrap gap-3">
-     <Button variant="secondary" type="button" disabled={pending} onClick={()=>void apply(true)} >Retry failed</Button>
-     <Button variant="secondary" type="button" onClick={()=>void copyFailed()} >Copy failed</Button>
+    <ul className="min-w-0 divide-y divide-border text-sm">{results.map(row=><li key={row.id} className="min-w-0 break-all py-2">{row.id} · {row.status} · {row.reason}</li>)}</ul>
+    {results.some(row=>row.status==="failed")?<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+     <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>void apply(true)} >Retry failed</Button>
+     <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>void copyFailed()} >Copy failed</Button>
     </div>:null}
    </div>:null}
    {notice?<InlineNotice tone="info" message={notice}/>:null}
