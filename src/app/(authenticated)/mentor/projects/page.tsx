@@ -63,7 +63,7 @@ export default async function MentorProjectsPage({
     return <div className="min-w-0 space-y-5">
       <PageHeader title="Projects" />
       <ErrorState title="Invalid Project filters" description="Review the project search, attention, status and page filters."
-        action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>
+        action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
     </div>;
   }
   const query = parsed.data;
