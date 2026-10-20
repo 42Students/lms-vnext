@@ -21,12 +21,13 @@ export default async function CollegeLiveClassesPage({searchParams}:{
     action={<Link href="/college/live-classes" className="font-semibold text-link lms-inline-link">Clear filters</Link>}/>
  </div>;
  const [data,authoring]=await Promise.all([listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data),getCollegeContentAuthoringOptions(context,"LIVE_CLASS")]);
- return <div className="space-y-4">
+ return <div className="min-w-0 space-y-4">
+  <PageHeader title="Live Classes" description="Saved lesson sessions in your college. Meeting links are available only through authorized course workspaces." />
   <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated}/>
   <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,from:data.from,to:data.to})}
     className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
     Export live-class schedule CSV (UTC)
   </Link>
-  <CollegeLiveClassesDirectory data={data}/>
+  <CollegeLiveClassesDirectory data={data} showHeader={false}/>
  </div>;
 }

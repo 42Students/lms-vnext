@@ -686,3 +686,98 @@ No source modification was needed for `src/app/(authenticated)/learn/notificatio
 **Source scan for those four inspected pages:** raw input/select/button/textarea: 0 each; `sm:` inappropriate breakpoint tokens: 0 each; hard-coded six-digit hex: 0 each. Phone at 375px and 700px stays in the mobile layout, 768px flips `md:` where present, desktop stays in existing authenticated canvas. Computed values, mobile screenshots and keyboard traversal remain unverified. LRN-05/06 remain open.
 
 **Next exact file:** `src/app/(authenticated)/learn/attendance/calendar/page.tsx` (LRN-05), then the learner attendance history and profile subpages requiring source proofs. Do not change shared `src/components/academics/**` or `src/components/activity/**` owned by other lanes.
+
+
+## Replacement lane batch: attendance + profile source inventory (2026-10-20)
+
+Branch rebased to origin/main `75cef123a9bafdf9126daaeb23556f66cb878caa` after verifying it was 0 commits ahead; prior [chat-1] commits already in main. New pushed source changes: `475f700e26646f36efd87d9de1a17e3927646a75` (6 files) and `de5f42035dbdeb0b787ce6958f0a9f8e9984ada7` (4 files). **No app execution, TypeScript check, CI, or actual browser screenshots.**
+
+### Work queue — next 15 individual full-source inspections (none strictly tickable yet)
+
+- [ ] `src/app/(authenticated)/learn/attendance/calendar/page.tsx` — source inspected (193 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/attendance/calendar/error.tsx` — source inspected (19 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/attendance/calendar/loading.tsx` — source inspected (6 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/attendance/page.tsx` — source inspected (60 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/attendance/error.tsx` — source inspected (27 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/attendance/loading.tsx` — source inspected (6 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/page.tsx` — source inspected (166 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/error.tsx` — source inspected (26 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/loading.tsx` — source inspected (6 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/academic-record/page.tsx` — source inspected (35 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/academic-record/error.tsx` — source inspected (12 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/academic-record/loading.tsx` — source inspected (7 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/completeness/page.tsx` — source inspected (79 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/completeness/error.tsx` — source inspected (33 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+- [ ] `src/app/(authenticated)/learn/profile/completeness/loading.tsx` — source inspected (6 lines, source evidence table below); legacy: `components___listing-page-header.scss:26-60,130-164`, `components___learn-notifications.scss:9-11,90-116`; missing computed states and rendered phone/tablet proof.
+
+### Full-file coverage checks (read entire TSX from GitHub branch; static regex, not local grep)
+
+| Learner file | Lines | Header | Loader | Raw controls | #RRGGBB | `sm:` | Mobile >=44px tokens | `md:` count | JSX Button/section balance | Header or fallback line |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|
+| `attendance/calendar/page.tsx` | 193 | 2 | 0 | 0 | 0 | 0 | 10 | 16 | Balanced | 44 |
+| `attendance/calendar/error.tsx` | 19 | 1 | 0 | 0 | 0 | 0 | 1 | 1 | Balanced | 11 |
+| `attendance/calendar/loading.tsx` | 6 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | Balanced | 4 |
+| `attendance/page.tsx` | 60 | 1 | 0 | 0 | 0 | 0 | 1 | 1 | Balanced | 29 |
+| `attendance/error.tsx` | 27 | 1 | 0 | 0 | 0 | 0 | 1 | 1 | Balanced | 15 |
+| `attendance/loading.tsx` | 6 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | Balanced | 4 |
+| `profile/page.tsx` | 166 | 1 | 0 | 0 | 0 | 0 | 6 | 11 | Balanced | 42 |
+| `profile/error.tsx` | 26 | 1 | 0 | 0 | 0 | 0 | 2 | 1 | Balanced | 15 |
+| `profile/loading.tsx` | 6 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | Balanced | 4 |
+| `profile/academic-record/page.tsx` | 35 | 1 | 0 | 0 | 0 | 0 | 1 | 2 | Balanced | 13 |
+| `profile/academic-record/error.tsx` | 12 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | Balanced | 10 |
+| `profile/academic-record/loading.tsx` | 7 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | Balanced | 5 |
+| `profile/completeness/page.tsx` | 79 | 1 | 0 | 0 | 0 | 0 | 2 | 6 | Balanced | 32 |
+| `profile/completeness/error.tsx` | 33 | 1 | 0 | 0 | 0 | 0 | 2 | 2 | Balanced | 15 |
+| `profile/completeness/loading.tsx` | 6 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | Balanced | 4 |
+
+Patterns checked on **all 15 full file texts**: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:/g`, `/<Button\\b/g`, `/<\\/Button>/g`, `/<section\\b/g`, `/<\\/section>/g`. The 15-source subset has **zero raw controls, zero literal 6-digit hex, zero premature 640px `sm:` rules**, and balanced simple Button and section tag pairs. This is **subset coverage**, not the exhaustive grep required by the strict tick rule. Reproduce locally (orchestrator only):
+
+```bash
+grep -RInE '<(button|input|select|textarea)([[:space:]>])|#[[:xdigit:]]{6}|sm:' 'src/app/(authenticated)/learn/attendance' 'src/app/(authenticated)/learn/profile' --include='*.tsx'
+```
+
+### Legacy value comparisons for these 15 source files
+
+| Element / state | Legacy source:line and exact value | vNext location and source value | Source verdict |
+|---|---|---|---|
+| Common page head | `components___listing-page-header.scss:26-35`: flex row, gap 24px, bottom padding16px, 1px border; `:52-59`: 28px/600/1.3 at desktop | `src/components/ui/page-header.tsx:26-35`: one head, 24px md gap, 16px bottom, border; desktop 30px/600/1.35 | **Open mismatch** 28 vs 30 and 1.3 vs 1.35, shared owner chat-9/17; no edit here |
+| Phone page title | `components___listing-page-header.scss:130-143`: <=767px, title20px, actions stacked | `src/components/ui/page-header.tsx:28-34,48-51`: 20px and stacked until md (768px) | Source geometry matches, line height still shared mismatch |
+| Learner 44px mobile touch | `components___learn-notifications.scss:9-11,90-104`: 44px minimum and 8px radius | `profile/completeness/error.tsx:16-25`, `profile/verification/error.tsx:17-21`: `min-h-11 md:min-h-9`; `attendance/calendar/page.tsx:125-129`: month arrows `min-h-11` | Source phone threshold matches |
+| Learner 767px breakpoint | `components___learn-notifications.scss:9,67-85`: max-width 767px; `components___learn-layout.scss:154-164`: 16px inset mobile and 24px desktop | `profile/verification/page.tsx:24,77`: `md:min-h-9` at 768px; `profile/completeness/error.tsx:24`: `md:min-h-9` | Source breakpoint matches; canvas padding owned by shell team |
+| Empty and failure pages | `components___learn-notifications.scss:314-351`: min-height180px, vertical48px horizontal24px, center-aligned text for empty; `old-lms-pages.md:5-13`: one canvas | `profile/completeness/error.tsx:13-29` / `profile/verification/error.tsx:12-23`: left-aligned PageHeader and error, no nested page shell; separate page errors require inline shell fallback via codemod below | Source structure matches for two files; generic fallbacks still open |
+| Route loading | `old-lms-pages.md:5-13`: one canvas, load content inside it; no wrapper card | `profile/completeness/loading.tsx:4`, `profile/verification/loading.tsx:4`: `GracefulPageLoading shape="directory"`; attendance loaders also use directory | Source structural match; rendered skeleton state unverified |
+| Calendar month navigation | `components___learn-notifications.scss:9-11`: 44px mobile; `legacy-class-month-grid.module.css:38-57`: 44px link, hover teal, focus teal outline | `attendance/calendar/page.tsx:125-129`: two month arrow Links keep CSS module and explicit 44px mobile/36px md targets | Source match for touch and inherited hover/focus; runtime interactions unverified |
+| Notices and offers filtered-empty state | `components___learn-notifications.scss:314-352`: center-aligned, padding 48px/24px, min-height180px | `my-placements/announcements/page.tsx:166-185` and `offers/page.tsx:229-233`: `items-center justify-center text-center min-h-[180px] px-6 py-12` | Source dimensions/alignment match; dynamic result flow unchanged |
+| Support request row cards | `components___learn-notifications.scss:183-205,210-221`: 12px radius, shadow 0 1px 2px rgba(0,0,0,.04), hover border rgba(38,186,199,.25), shadow 0 2px 6px rgba(0,0,0,.06), padding16/24 | `my-placements/support/page.tsx:53`: matched class values and 200ms transition, reduced-motion exemption | Source match; hover screenshot unverified |
+
+### Responsive proof (source rules, **not** rendered proof)
+
+- **375px phone**: PageHeader stacks at below 768px, route retry and back controls have 44px height; attendance month arrows retain 44px; loaders remain inside same existing canvas. No claim about actual viewport screenshots.
+- **700px small tablet**: remains under legacy 767px breakpoint, 44px target continues, checklist links not prematurely compressed by `sm:`.
+- **768px tablet**: `md:` begins with 36px optional actions, two-column facts in profile; heading and overall canvas owned by global shared components.
+- **1024px desktop**: existing facts and calendar grids retain all labels, paths, query filters, empty/error data; PageHeader shares title/actions row and no new page canvas is introduced. No app, screenshot or keyboard testing performed.
+
+**STRICT TICK STATUS:** all LRN-01..07 remain unticked. Shared desktop title discrepancy, whole-tree grep, computed hover/focus/disabled, side-by-side screenshots, real phone/tablet responsiveness and any generic shell fallbacks remain blocking. Individual source-inspected files are not certified pixel-level complete.
+
+### Repeated judgement-case codemod (not executed)
+
+`scripts/codemods/chat1-learner-inline-errors.cjs`: change five owned learner route error files with `GracefulErrorBoundary` to `insideShell homeHref="/learn"` so the generic full-screen error wrapper does not reintroduce a second canvas. Expected files: `learn/error.tsx`, `learn/placements/error.tsx`, `learn/profile/academic-record/error.tsx`, `learn/my-placements/jobs/error.tsx`, `learn/my-placements/schedule/error.tsx`. Default dry run: `node scripts/codemods/chat1-learner-inline-errors.cjs`; orchestrator executes `--apply`, parses TSX and commits changed files. **Codemod only has been committed: these five target files are not marked done.**
+
+**Exact next file:** `src/app/(authenticated)/learn/profile/data-access/page.tsx`, then `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`; continue source state/value audit and fix owned exceptions.
+
+
+## Learner placement component judgement pass — 5 more files (2026-10-20)
+
+Source edit batch on `chatgpt/chat-1-b`; all business rules, event handlers, API calls, status mapping and vNext copy preserved. **No app run, CLI codemod run, CI or screenshot.**
+
+| Full source file under `src/components/placements/` | Legacy value (file:line) | Changed vNext source | Source result |
+|---|---|---|---|
+| `learner-interview-withdrawal-request.tsx` | `components___learn-notifications.scss:9-11,67-85`: mobile through 767px, 44px touch | line45-48: three button pairs `min-h-11 md:min-h-9 w-full md:w-auto`, preserving disabled/pending/confirm events | Mobile width and touch breakpoint match at 375/700/768 |
+| `learner-recent-placement-activity.tsx` | `components___learn-notifications.scss:314-352`: empty center, min180px, padding48px/24px | line38: empty-only status with `min-h-[180px] px-6 py-12 items-center justify-center text-center` | Empty visual dimensions source-match; screen proof missing |
+| `learner-placement-partial-alert.tsx` | `old-lms-pages.md:7`: slim pale-yellow warning strip; `components___learn-notifications.scss:18-31`: 16px horizontal and 12px vertical rhythm | line7: remove erroneous rounded boxed card, now `border-l-2 border-warning bg-warning-subtle px-4 py-3`; retry untouched | One canvas, inline slim warning; computed colour unverified |
+| `learner-placement-notification-settings.tsx` | `components___learn-notifications.scss:9-11,90-116`: 44px phone touch, 767px boundary | lines82/85/93/94: four existing shared Buttons `max-md:min-h-11`; label cards already radius8, transition150ms, focus outline2px | Choice state, confirm Dialog, disabled/pending, reload remain unchanged; keyboard proof missing |
+| `learner-prep-assignment-cards.tsx` | `components___learn-notifications.scss:183-205,210-221`: radius12, 1px border, p16/24, shadow 0 1px 2px rgba(0,0,0,.04), hover teal border rgba(38,186,199,.25), hover shadow 0 2px 6px rgba(0,0,0,.06), transition200ms | lines17-20: each assigned-preparation object keeps its own card, gains matching row geometry/hover/focus; course link `min-h-11 md:min-h-9` | Source match for dimensions/hover; interactive screenshot unverified |
+
+Source scans of these **five entire files**: `/<(button|input|select|textarea)(?=\\s|>)/g` => 0, `/#[0-9a-f]{6}\\b/gi` => 0, `/\\bsm:/g` => 0 in each; shared Button open/close and section open/close counts balanced. Responsive **source**: 375/700px retain 44px controls and single-column withdrawal form; 768px switches to compact desktop action layout; 1024px displays the existing object groupings and no new canvas. Actual viewports, hover/focus rendering and all branch states unverified; keep LRN-02, LRN-04, LRN-05, LRN-06 open.
+
+**Total direct edits this replacement turn: 15 distinct owned TSX files; 15 additional per-file full-source attendance/profile audit entries, plus the five-component checks above.** Exact next source file: `src/app/(authenticated)/learn/profile/data-access/page.tsx`; then review dynamic styling inside `src/components/placements/learner-career-rounds-workspace.tsx` and `learner-career-rounds.tsx`.
