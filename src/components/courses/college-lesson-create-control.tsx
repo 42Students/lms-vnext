@@ -71,12 +71,12 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
    setError(cause instanceof Error?cause.message:"Unable to create Lesson.");
   }finally{setBusy(false);}
  }
- return <section className="space-y-3 border-b border-border pb-4">
-  <div className="flex flex-wrap items-center justify-between gap-3">
-   <h2 className="font-semibold text-foreground">Lessons</h2>
+ return <section className="min-w-0 space-y-3 md:flex-none">
+  <div className="flex min-w-0 items-center justify-end gap-3">
+   <h2 className="sr-only">Lessons</h2>
    <Button type="button" aria-expanded={open} onClick={()=>{setOpen(value=>!value);setError("");}}
     disabled={!options.length||busy}
-    className="min-h-11 md:min-h-9">
+    className="min-h-11 w-full md:min-h-9 md:w-auto">
     Create New Lesson
    </Button>
   </div>
@@ -107,7 +107,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
      maxLength={5000} rows={3}
      className="min-h-11 md:min-h-9"/>
    </label>
-   <div className="flex flex-wrap gap-2">
+   <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap md:items-center">
     <Button type="button" loading={busy} disabled={busy||!name.trim()} onClick={()=>void create(false)}
      className="min-h-11 md:min-h-9">
      {busy?"Saving…":"Create Lesson"}
