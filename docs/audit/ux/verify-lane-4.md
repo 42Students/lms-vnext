@@ -19,3 +19,13 @@
 - Regressions found/fixed: 0. Read company/team page and its route loading/error, HR and authenticated layouts, recruiter team pagination/search/roster models, needs-doing chips, tabs, badge, status, summary, pagination and input primitives, plus lane-14 evidence; checked college grants, query validation, direct links, exported CSV, and team identity visibility.
 - Extra clutter/alignment: 2 — only show pagination when it has multiple pages (was rendering a disabled Previous/1/Next set for empty and one-page rosters); provide a clear-search recovery action when the roster query has no match.
 - Files changed: `src/app/(authenticated)/hr/company/page.tsx`. Static source inspection; no runtime or CI.
+
+## 5. `src/app/(authenticated)/hr/company/reports/page.tsx`
+- Regressions found/fixed: 0. Inspected page and route error/loading, HR and authenticated layouts; matched lane-14 proof and read HrCompanyReportsGrid → TpoGrid props, MetricBar, Select, Tabs, SummaryStrip, recruiter report query/route model, funnel CSS. Report filters and scope, CSV export and grid rows remained consistent.
+- Extra clutter/alignment: 2 — hide redundant single-page pagination; filtered empty report now offers Clear filters rather than a dead-end.
+- Files changed: `src/app/(authenticated)/hr/company/reports/page.tsx`. No CI or runtime.
+
+## 6. `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
+- Regressions found/fixed: 0. Inspected authorized thread page, route error/loading, parent HR layout and 404; compared lane-14 proof. Read reply form, read control, live-refresh, ConfirmActionDialog, Alert, ScrollCue, StatusBadge and thread page-link model. Existing draft protection, receipt checks, message/order links, change-request disclosure, and authorization remain.
+- Extra clutter/alignment: 1 — remove duplicate empty-state description and provide a return-to-conversations next step, without changing the empty title.
+- Files changed: `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`. No CI or runtime.
