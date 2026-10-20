@@ -8,8 +8,8 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {LEGACY_TENANT_SETTING_MAP} from "@/modules/platform-settings/legacy-setting-specs";
 type Entry={key:string;value:string;version:number};
-export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
- scopeType:"GLOBAL"|"COLLEGE";collegeId?:string;ready:boolean;entries:readonly Entry[];
+export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeading=true}:{
+ scopeType:"GLOBAL"|"COLLEGE";collegeId?:string;ready:boolean;entries:readonly Entry[];showHeading?:boolean;
 }){
  const router=useRouter();
  const inFlightRef=useRef(false);
@@ -47,7 +47,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <section aria-label="Other stored keys" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden">
-  <h3 className="font-semibold">Other stored keys</h3>
+  {showHeading?<h3 className="font-semibold">Other stored keys</h3>:null}
   <p className="max-w-prose text-sm leading-6 text-body">These values are stored for reference. No runtime reader is activated by adding a key. Never enter passwords, credentials, tokens or secrets.</p>
   {!ready?<Alert tone="warning">Stored setting changes are unavailable in this scope.</Alert>:null}
   {others.length===0?<p className="text-sm text-body">No other stored keys at this scope.</p>:
