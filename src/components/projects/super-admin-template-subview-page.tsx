@@ -191,26 +191,11 @@ export async function SuperAdminTemplateSubviewPage({
                 Use this template · Create workspace →
               </Link>
             ) : null}
-            <StatusBadge
-              tone={
-                detail.template.status === "PUBLISHED"
-                  ? "success"
-                  : detail.template.status === "ARCHIVED"
-                    ? "neutral"
-                    : "warning"
-              }
-            >
-              {detail.template.status}
-            </StatusBadge>
-
-            <StatusBadge>
-              Current version{" "}
-              {detail.template.currentVersion}
-            </StatusBadge>
           </div>
         }
       />
 
+      <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={detail.template.status==="PUBLISHED"?"success":detail.template.status==="ARCHIVED"?"neutral":"warning"}>{detail.template.status}</StatusBadge><StatusBadge>Current version {detail.template.currentVersion}</StatusBadge></div>
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active={section}
