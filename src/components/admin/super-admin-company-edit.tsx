@@ -36,15 +36,15 @@ export function SuperAdminCompanyEdit({company}:{company:Company}){
  const cls="min-h-11 w-full md:min-h-9";
  return <form onSubmit={e=>void save(e)} className="mt-3 space-y-3 border-b border-border pb-5 print:hidden">
   <h3 className="font-semibold text-foreground">Edit company</h3>
-  <label className="grid gap-1 text-[13px] font-semibold text-body">Name<Input required minLength={2} maxLength={150}
+  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Name<Input required minLength={2} maxLength={150}
    name="name" defaultValue={company.name} className={cls}/></label>
-  <label className="grid gap-1 text-[13px] font-semibold text-body">Website (HTTPS)<Input type="url" name="website"
+  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Website (HTTPS)<Input type="url" name="website"
    defaultValue={company.website??""} className={cls}/></label>
-  <label className="grid gap-1 text-[13px] font-semibold text-body">Industry<Input name="industry" maxLength={160}
+  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Industry<Input name="industry" maxLength={160}
    defaultValue={company.industry??""} className={cls}/></label>
-  <label className="grid gap-1 text-[13px] font-semibold text-body">About<Textarea name="about" maxLength={3000}
+  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">About<Textarea name="about" maxLength={3000}
    defaultValue={company.about??""} rows={3} className={cls}/></label>
-  <label className="grid gap-1 text-[13px] font-semibold text-body">Public logo URL (HTTPS)<Input name="logoPublicUrl"
+  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Public logo URL (HTTPS)<Input name="logoPublicUrl"
    type="url" defaultValue={company.logoPublicUrl??""} className={cls}/></label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending}>
