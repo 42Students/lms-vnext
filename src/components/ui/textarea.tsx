@@ -10,15 +10,17 @@ export type TextareaProps = ComponentPropsWithRef<"textarea"> & { error?: boolea
  * invalid #ef4444 and focus halo rgba(239,68,68,.2).
  * Preserve caller rows/cols, controlled state, ref and resizing.
  */
-export function Textarea({ className, error = false, ...props }: TextareaProps) {
+export function Textarea({ className, error = false, rows, ...props }: TextareaProps) {
   const invalid = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
   return (
     <textarea
       data-slot="textarea"
       {...props}
+      rows={rows}
       aria-invalid={invalid ? true : props["aria-invalid"]}
       className={cx(
-        "min-h-[112px] w-full min-w-0 resize-y disabled:resize-none font-[inherit] scroll-mt-3",
+        rows === undefined ? "min-h-[112px]" : "min-h-[var(--lms-control-height)]",
+        "w-full min-w-0 resize-y disabled:resize-none font-[inherit] scroll-mt-3",
         "rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)]",
         "bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[10px]",
         "text-[var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",

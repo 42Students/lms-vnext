@@ -12,6 +12,7 @@ export type FileDropzoneProps = {
   progress?: number;
   showSelectedFiles?: boolean;
   showImagePreview?: boolean;
+  imagePreviewKind?: "attachment" | "profile";
   disabled?:boolean;
   pickerUnavailable?:boolean;
   helper?:string;
@@ -19,7 +20,7 @@ export type FileDropzoneProps = {
   className?:string;
 };
 /** Drag and picker both enforce the same client-side validation before delegation. */
-export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,showSelectedFiles=false,showImagePreview=false,disabled=false,pickerUnavailable=false,helper,fallback,className}:FileDropzoneProps) {
+export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,showSelectedFiles=false,showImagePreview=false,imagePreviewKind="attachment",disabled=false,pickerUnavailable=false,helper,fallback,className}:FileDropzoneProps) {
   const errorId = useId();
   const unavailable = disabled || pickerUnavailable;
   const [dragging,setDragging]=useState(false);
@@ -65,7 +66,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     onDragLeave={event => { const next = event.relatedTarget; if (!(next instanceof Node) || !event.currentTarget.contains(next)) setDragging(false); }}
     onDrop={onDrop}
     className={cx("min-w-0 rounded-[var(--lms-field-radius)] border border-dashed border-[var(--lms-neutral-300)] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-150",dragging?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)]":"",unavailable?"opacity-50":"",className)}>
-    <FileUpload key={pickerResetToken} label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError(null);onFiles(files);}} accept={accept} multiple={multiple} maxBytes={maxBytes} progress={progress} showSelectedFiles={showSelectedFiles} showImagePreview={showImagePreview} disabled={disabled} pickerUnavailable={pickerUnavailable} helper={helper} fallback={fallback}/>
+    <FileUpload key={pickerResetToken} label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError(null);onFiles(files);}} accept={accept} multiple={multiple} maxBytes={maxBytes} progress={progress} showSelectedFiles={showSelectedFiles} showImagePreview={showImagePreview} imagePreviewKind={imagePreviewKind} disabled={disabled} pickerUnavailable={pickerUnavailable} helper={helper} fallback={fallback}/>
     <p className="mt-2 text-[12px] text-[var(--lms-muted-text)]">Drag a file here or use the file picker.</p>
     {showSelectedFiles && droppedNames.length>0 && !unavailable
       ? <ul aria-label="Dropped files" className="mt-2 space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
@@ -77,8 +78,11 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
           Remove dropped files
         </Button> : null}
     {showImagePreview&&dropPreviewFile&&dropPreviewUrl&&!unavailable
-      ? <div data-slot="image-drop-preview" className="mt-2 rounded-[10px] border border-[var(--lms-neutral-200)] bg-white p-2">
-          <img src={dropPreviewUrl} alt={`${label} preview`} className="max-h-40 max-w-full rounded-[6px] object-contain" />
+      ? <div data-slot="image-drop-preview" data-preview-kind={imagePreviewKind}
+          className={cx("mt-2 border border-[var(--lms-neutral-200)] bg-white",
+            imagePreviewKind === "profile" ? "h-[194px] w-[175px] max-w-full overflow-hidden rounded-[8px]" : "rounded-[10px] p-2")}>
+          <img src={dropPreviewUrl} alt={`${label} preview`}
+            className={imagePreviewKind === "profile" ? "h-full w-full object-cover object-center" : "max-h-40 max-w-full rounded-[6px] object-contain"} />
         </div> : null}
     {droppedNames.length>0 && typeof progress==="number" && Number.isFinite(progress) && !unavailable
       ? <div role="progressbar" aria-label={`${label} upload progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.max(0,Math.min(100,progress))}
