@@ -34,14 +34,14 @@ export default async function MentorReviewOverviewPage({
   Delivery workspace</Link>}/>
  <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
  className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-  <label className="grid gap-1 text-sm font-semibold text-body">Delivery status
+  <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Delivery status
    <Select name="status" defaultValue={data.query.status}
     className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </Select>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">Written feedback
+  <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Written feedback
    <Select name="feedback" defaultValue={data.query.feedback}
     className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
     <option value="ALL">Any</option>
@@ -49,7 +49,7 @@ export default async function MentorReviewOverviewPage({
     <option value="WITHOUT">Not recorded</option>
    </Select>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">Exact delivery version
+  <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Exact delivery version
    <Input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
     placeholder="All versions" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
@@ -61,10 +61,10 @@ export default async function MentorReviewOverviewPage({
    className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
  </form>
  <div className="flex flex-wrap items-center gap-3 text-sm">
-  <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
+  <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
    new URLSearchParams({status:data.query.status,feedback:data.query.feedback,
     ...(data.query.version===undefined?{}:{version:String(data.query.version)})}).toString()}
-   download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+   download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
    Export filtered delivery review CSV (max 200)
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
