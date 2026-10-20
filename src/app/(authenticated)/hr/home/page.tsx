@@ -45,7 +45,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const parsed = querySchema.safeParse({collegeId:(await searchParams).collegeId});
   if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
-      action={<Link href="/hr/home" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose again</Link>} /></div>;
+      action={<Link href="/hr/home" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose again</Link>} /></div>;
   const recruiter = context.recruiter;
   const grants = recruiter.grants;
   const selectedId = parsed.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
@@ -320,10 +320,10 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         View all conversations
       </Link>:null}
     </section>
-    <div className="flex flex-wrap gap-4 text-sm"><Link className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
-      <Link className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
-      <Link className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/recruiter/messages?collegeId="+encodeURIComponent(selectedId)}>Messages</Link>
-      <Link className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/hr/activity?collegeId="+encodeURIComponent(selectedId)}>Hiring activity</Link>
-      <Link className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href="/hr/profile">Your profile</Link></div>
+    <div className="flex flex-wrap gap-4 text-sm"><Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
+      <Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
+      <Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/recruiter/messages?collegeId="+encodeURIComponent(selectedId)}>Messages</Link>
+      <Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/hr/activity?collegeId="+encodeURIComponent(selectedId)}>Hiring activity</Link>
+      <Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href="/hr/profile">Your profile</Link></div>
   </div>;
 }

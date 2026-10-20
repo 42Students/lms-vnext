@@ -55,7 +55,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   });
   if (!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Drives" />
     <ErrorState title="Invalid drive filters" description="Review the college, lifecycle and search text."
-      action={<Link href="/hr/drives" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} /></div>;
+      action={<Link href="/hr/drives" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} /></div>;
   const grants = context.recruiter.grants;
   if (query.data.collegeId && !grants.some(grant => grant.collegeId === query.data.collegeId)) notFound();
   const selectedCollege = query.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
@@ -128,12 +128,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-          className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="min-h-11 md:min-h-9 inline-flex items-center rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block font-semibold">{item.job.title}</span>
           <span className="mt-1 block text-xs text-body">Due within 7 days · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"})}</span>
         </Link>)}
         {attention.past.map(item=><Link key={"past:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-          className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="min-h-11 md:min-h-9 inline-flex items-center rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block font-semibold">{item.job.title}</span>
           <span className="mt-1 block text-xs text-body">Recorded deadline passed · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"})}</span>
         </Link>)}
@@ -155,21 +155,21 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <Input type="hidden" name="collegeId" value={selectedCollege} />
       <Input type="hidden" name="view" value={query.data.view} />
       <Input type="hidden" name="page" value="1" />
-      <label className="grid min-w-[180px] flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search role
+      <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-[180px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search role
         <Input type="search" name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="min-h-11 w-full md:min-h-9" /></label>
-      <label className="grid min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
+      <label className="grid min-w-0 w-full md:w-auto md:min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
         <Select name="employment" defaultValue={query.data.employment} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
         </Select></label>
-      <label className="grid min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
+      <label className="grid min-w-0 w-full md:w-auto md:min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
         <Select name="mode" defaultValue={query.data.mode} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="ONSITE">On-site</option><option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
         </Select></label>
-      <label className="grid min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline
+      <label className="grid min-w-0 w-full md:w-auto md:min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline
         <Select name="deadline" defaultValue={query.data.deadline} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">Any</option><option value="TODAY">Today (IST)</option><option value="SOON">Within 7 days</option><option value="PAST">Recorded deadline passed</option><option value="UNKNOWN">Not recorded</option>
         </Select></label>
-      <label className="grid min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      <label className="grid min-w-0 w-full md:w-auto md:min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={query.data.sort} className="min-h-11 w-full md:min-h-9">
           <option value="RECENT">Newest first</option>
           <option value="DEADLINE">Deadline first</option>
