@@ -89,7 +89,7 @@ export function CollegeAttendancePolicyForm({
     <>
     <form
       onSubmit={save}
-      className="space-y-6 border-b border-border pb-5"
+      className="space-y-[var(--lms-space-5)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]"
     >
       <div>
         <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -104,11 +104,11 @@ export function CollegeAttendancePolicyForm({
         </p>
       </div>
 
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-[var(--lms-space-5)] md:grid-cols-2">
         <div>
           <label
             htmlFor="attendance-eligibility-threshold"
-            className="mb-1.5 block text-sm font-semibold text-body"
+            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
           >
             Eligibility threshold (%)
           </label>
@@ -138,7 +138,7 @@ export function CollegeAttendancePolicyForm({
         <div>
           <label
             htmlFor="attendance-correction-window"
-            className="mb-1.5 block text-sm font-semibold text-body"
+            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
           >
             Correction window (hours)
           </label>
@@ -192,7 +192,7 @@ export function CollegeAttendancePolicyForm({
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-border pt-5">
+      <div className="flex flex-wrap items-center gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]">
         <Button
           type="submit"
           className="min-h-11 md:min-h-9"
