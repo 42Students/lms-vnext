@@ -39,7 +39,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-18.md: surface | probl
 - [x] `src/components/projects/project-mentor-reassignment.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/projects/project-resource-controls.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/projects/project-task-submission-control.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/projects/project-team-controls.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/projects/project-team-controls.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/projects/project-template-controls.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/projects/template-metadata-edit-control.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/recruiter-lead-csv-import.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
