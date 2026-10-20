@@ -48,7 +48,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     {key:"time",header:"Time",mobilePriority:"secondary",cell:item=>driveRoundTime(item.scheduledAt,item.timezone)},
     {key:"venue",header:"Venue",mobilePriority:"secondary",cell:item=>item.venue??"Not recorded"},
     {key:"mode",header:"Mode",mobilePriority:"secondary",cell:item=>item.mode??"Not recorded"},
-    {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="SCHEDULED"?"info":item.status==="CANCELLED"?"neutral":"warning"}>{item.status}</StatusBadge>},
+    {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="SCHEDULED"?"info":item.status==="CANCELLED"?"error":"warning"}>{item.status}</StatusBadge>},
     {key:"slots",header:"Candidate slots",mobilePriority:"secondary",cell:()=> "See candidate interviews above"},
   ];
   return <div className="min-w-0 space-y-5">

@@ -18,7 +18,7 @@ export default async function SuperAdminRetentionPage(){
  const columns:DataTableColumn<(typeof report.rows)[number]>[]=[
   {key:"applicant",header:"Applicant",mobilePriority:"primary",cell:row=>row.applicantName},
   {key:"drive",header:"Drive",mobilePriority:"secondary",cell:row=>row.jobTitle},
-  {key:"state",header:"State",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="WITHDRAWN"?"neutral":"warning"}>{row.applicationStatus==="WITHDRAWN"?"Withdrawn":"Rejected"}</StatusBadge>},
+  {key:"state",header:"State",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="WITHDRAWN"?"neutral":"error"}>{row.applicationStatus==="WITHDRAWN"?"Withdrawn":"Rejected"}</StatusBadge>},
   {key:"updated",header:"Last updated",mobilePriority:"secondary",cell:row=>fmt(row.lastUpdated)},
   {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link href={"/admin/placements/applications/"+encodeURIComponent(row.id)}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Review →</Link>},
