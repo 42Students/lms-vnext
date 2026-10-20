@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -108,7 +109,7 @@ export function SuperAdminTemplateCreateForm(){
     <Input type="url" maxLength={2048} disabled={saving} value={values.resourceUrl} onChange={event=>edit("resourceUrl",event.target.value)} className="w-full"/>
    </label>
   </fieldset>
-  {error?<p role="alert" className="break-words text-sm text-error-text">{error}</p>:null}
+  {error?<Banner tone="error">{error}</Banner>:null}
   <div className="flex flex-wrap justify-end gap-3">
    <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Cancel</Link>
    <Button type="submit" disabled={saving} className="">{saving?"Creating…":"Create draft template"}</Button>
