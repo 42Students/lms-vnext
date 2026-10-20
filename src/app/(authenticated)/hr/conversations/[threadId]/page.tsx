@@ -38,7 +38,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Messages"/>
     <ErrorState title="No access to this college"
      description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
-     action={<Link href="/hr/home" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Today</Link>}/>
+     action={<Link href="/hr/home" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Today</Link>}/>
    </div>;
   }
   if(error instanceof TpoMessagingError)notFound();
@@ -75,21 +75,21 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   {driveLookupResult && !driveLookupResult.ok?
     <Alert tone="warning">Hiring drive details are temporarily unavailable. You can still read and reply to this authorized conversation.</Alert>:null}
   {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
-   className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
    Open drive: {matchingDrive.job.title}
   </Link>:null}
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
-   className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to conversations</Link>
+   className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to conversations</Link>
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
   {changeRequestResult && !changeRequestResult.ok?
     <Alert tone="warning">Change request updates are temporarily unavailable. Messages remain available; refresh to try again.</Alert>:null}
   {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
-    <section aria-label="Drive change request updates" className="border-b border-border pb-4">
-      <h2 className="text-sm font-semibold text-foreground">Change requests · {changeRequests.requests.length}</h2>
+    <section aria-label="Drive change request updates" className="border-b border-[var(--lms-canvas-border)] pb-4">
+      <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Change requests · {changeRequests.requests.length}</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
-      <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="divide-y divide-border border-y border-border">
+      <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {changeRequests.requests.slice(0,8).map(request=><li key={request.id}
           className="min-w-0 py-3 text-sm">
           <span className="font-semibold text-foreground">
@@ -107,11 +107,11 @@ export default async function RecruiterConversationDetail({params,searchParams}:
         </li>)}
       </ol></ScrollCue>
       <Link href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
-        className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Review requests, answers and decisions
       </Link>
     </section>:null}
-  <ol aria-label="Employer and placement cell messages" className="divide-y divide-border border-y border-border">
+  <ol aria-label="Employer and placement cell messages" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {messages.map(message=><li key={message.id}
     className="min-w-0 px-1 py-3 transition-colors duration-200 hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
     <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {dateTime(message.createdAt)} IST</p>
@@ -121,7 +121,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
       <p>Proposal reference: {message.proposal.referenceId}</p>
       <p>Not a submitted approval request or a published drive.</p>
       <Link href={hrSentProposalsHref(result.thread.collegeId)}
-       className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        View sent proposal history
       </Link>
      </div>:null}
@@ -132,13 +132,13 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <RecruiterConversationReplyForm threadId={result.thread.id}/>
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Newest messages</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Newest messages</Link>:null}
    {result.page<result.pages&&result.pages>2?<Link href={hrConversationDetailHref(threadId,result.pages)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Oldest messages</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Oldest messages</Link>:null}
    {result.page<result.pages?<Link href={hrConversationDetailHref(threadId,result.page+1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Older</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Older</Link>:null}
    {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Newer</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Newer</Link>:null}
   </nav>
  </div>;
 }
