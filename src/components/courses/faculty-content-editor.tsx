@@ -119,38 +119,38 @@ export function FacultyContentEditor({ item }: { item: Item }) {
         }}
         title={"Edit " + item.contentType.replaceAll("_", " ")}
         description={item.contentType==="VIDEO"?"Edit the title and notes. The stored video file is not changed.":"Changes to this item stay scoped to your assigned teaching Section."}
-        footer={<Button type="submit" className="min-h-11 md:min-h-[var(--lms-control-height)]" form={"faculty-content-edit-" + item.id} disabled={saving || !dirty}>
+        footer={<Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]" form={"faculty-content-edit-" + item.id} disabled={saving || !dirty}>
           {saving ? "Saving…" : dirty ? "Save content" : "No changes"}
         </Button>}
       >
-        <form id={"faculty-content-edit-" + item.id} onSubmit={save} className="space-y-4">
-          <label className="block text-xs leading-4 font-semibold text-body">
+        <form id={"faculty-content-edit-" + item.id} onSubmit={save} className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
+          <label className="block min-w-0 text-xs leading-4 font-semibold text-body md:col-span-2">
             Title
             <Input className="mt-1.5" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={255} required />
           </label>
-          <label className="block text-xs leading-4 font-semibold text-body">
+          <label className="block min-w-0 text-xs leading-4 font-semibold text-body">
             Points
             <Input className="mt-1.5" type="number" min={0} max={1000}
               value={points} onChange={(event)=>setPoints(event.target.value)} required/>
           </label>
-          <label className="block text-xs leading-4 font-semibold text-body">
+          <label className="block min-w-0 text-xs leading-4 font-semibold text-body md:col-span-2">
             Notes
             <Textarea className="mt-1.5 min-h-24" value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={5000} />
           </label>
-          {item.contentType !== "VIDEO" ? <label className="block text-xs leading-4 font-semibold text-body">
+          {item.contentType !== "VIDEO" ? <label className="block min-w-0 text-xs leading-4 font-semibold text-body md:col-span-2">
             {item.contentType === "YOUTUBE" ? "YouTube URL" : item.contentType === "LIVE_CLASS" ? "Meeting URL" : "Resource URL"}
             <Input className="mt-1.5" type="url" value={url} onChange={(event) => setUrl(event.target.value)}
               required={item.contentType !== "RESOURCE"} placeholder="https://…" />
           </label>:null}
           {item.contentType === "YOUTUBE" ? (
-            <label className="block text-xs leading-4 font-semibold text-body">
+            <label className="block min-w-0 text-xs leading-4 font-semibold text-body">
               Actual video duration (seconds)
               <Input className="mt-1.5" type="number" min={1} max={86400} value={duration}
                 onChange={(event) => setDuration(event.target.value)} required />
             </label>
           ) : null}
           {item.contentType === "LIVE_CLASS" ? (
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid min-w-0 gap-3 md:col-span-2 md:grid-cols-2">
               <label className="text-xs leading-4 font-semibold text-body">
                 Start (IST)
                 <Input className="mt-1.5" type="datetime-local" value={starts}
@@ -163,7 +163,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
               </label>
             </div>
           ) : null}
-          {error ? <Alert tone="error">{error}</Alert> : null}
+          {error ? <div className="md:col-span-2"><Alert tone="error">{error}</Alert></div> : null}
         </form>
       </Drawer>
       <ConfirmDialog
