@@ -200,7 +200,7 @@ export function PersonProfileDialog({
       <Button
         variant="secondary"
         size="sm"
-        className="min-h-11 md:min-h-[var(--lms-control-height)]"
+        className="min-h-11 md:min-h-9"
         disabled={disabled}
         onClick={openDialog}
       >
@@ -217,14 +217,14 @@ export function PersonProfileDialog({
           <>
             <Button
               variant="secondary"
-              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              className="min-h-11 md:min-h-9"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              className="min-h-11 md:min-h-9"
               loading={pending}
               disabled={
                 loading ||
@@ -256,7 +256,7 @@ export function PersonProfileDialog({
                   >
                     Roll number
                   </label>
-                  <Input
+                  <Input className="min-h-11 md:min-h-9"
                     id={`roll-${membershipId}`}
                     value={rollNumber}
                     onChange={(event) =>
@@ -272,7 +272,7 @@ export function PersonProfileDialog({
                   >
                     Registration number
                   </label>
-                  <Input
+                  <Input className="min-h-11 md:min-h-9"
                     id={`registration-${membershipId}`}
                     value={registrationNumber}
                     onChange={(event) =>
@@ -296,7 +296,7 @@ export function PersonProfileDialog({
                   >
                     Primary department
                   </label>
-                  <Select
+                  <Select className="min-h-11 md:min-h-9"
                     id={`department-${membershipId}`}
                     value={primaryDepartmentId}
                     onChange={(event) =>
@@ -321,7 +321,7 @@ export function PersonProfileDialog({
                   >
                     Employment type
                   </label>
-                  <Input
+                  <Input className="min-h-11 md:min-h-9"
                     id={`employment-${membershipId}`}
                     value={employmentType}
                     onChange={(event) =>
@@ -338,7 +338,7 @@ export function PersonProfileDialog({
                   >
                     Academic title
                   </label>
-                  <Input
+                  <Input className="min-h-11 md:min-h-9"
                     id={`title-${membershipId}`}
                     value={academicTitle}
                     onChange={(event) =>

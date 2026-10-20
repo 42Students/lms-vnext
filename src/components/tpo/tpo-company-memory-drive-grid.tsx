@@ -37,7 +37,7 @@ const columns:readonly TpoGridColumn<CompanyMemoryDriveRow>[]=[
 /** Quartz sheet mounts in the browser; rows remain the server-scoped company's drives. */
 const TpoGrid=dynamic<TpoSpreadsheetGridProps<CompanyMemoryDriveRow>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<CompanyMemoryDriveRow>),
- {ssr:false,loading:()=> <p role="status" className="py-4 text-sm text-muted-foreground">Loading company drives…</p>},
+ {ssr:false,loading:()=> <p role="status" className="border-y border-border py-4 text-sm text-muted-foreground">Loading company drives…</p>},
 );
 
 export function TpoCompanyMemoryDriveGrid({companyName,drives,search,onSearchChange}:{

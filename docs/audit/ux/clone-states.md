@@ -722,3 +722,295 @@ Coverage above is **scoped to 37 migrated TSX files**, not a claimed zero for th
 - [ ] **F5 OPEN:** all 403/404/500/offline/maintenance/session-expired and other portal state comparisons; no 320/767/1024px captures.
 
 **Next exact file:** `src/components/tpo/tpo-prep-readiness-editor.tsx` (remaining mixed saved-config warnings and success feedback, then adjacent TPO controls). The previously listed `src/components/tpo/tpo-communication-settings-editors.tsx` is now source-migrated.
+
+
+## Chat-5 2026-10-20 — next 20 TPO components, source migrated and independently re-fetched
+
+**Repo synchronization:** at this turn's start, `main` was `5511eb1043bb9368a74cdf84eddb35f5d18636e3` and `chatgpt/chat-5-b` was exactly zero ahead and 505 behind. Safely fast-forwarded **only the chat-5 branch** with a lease; every new change pushed via `[chat-5]` contents commits to that branch (never directly to main). Old vs new TSX files were fetched for all 20 sources, and API endpoint counts, action events, input changes, disabled guards, hrefs and HTTP mutation method tokens all stayed unchanged. All JSX `<Alert>` / `</Alert>` and `<Banner>` / `</Banner>` paired after source re-read. This is a **source-conversion result, not a strict checkbox completion or side-by-side pixel-level proof**.
+
+### Source coverage evidence: exactly these 20 files
+
+| Component (within `src/components/tpo/`) | Alert open/close | Banner open/close | InlineNotice | EmptyState | Untouched raw status/alert | Decorated raw role notices | First migrated line |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `tpo-prep-readiness-editor.tsx` | 1/1 | 0/0 | 2 | 0 | 0 | 0 | 62 |
+| `tpo-job-types-editor.tsx` | 0/0 | 0/0 | 2 | 1 | 1 | 0 | 73 |
+| `tpo-optional-emails-editor.tsx` | 0/0 | 0/0 | 2 | 0 | 0 | 0 | 60 |
+| `tpo-prep-percentage-editor.tsx` | 0/0 | 0/0 | 2 | 0 | 0 | 0 | 49 |
+| `tpo-after-college-editor.tsx` | 0/0 | 0/0 | 2 | 0 | 0 | 0 | 86 |
+| `tpo-my-notification-preferences-editor.tsx` | 0/0 | 0/0 | 2 | 0 | 0 | 0 | 54 |
+| `tpo-blocked-dates-editor.tsx` | 0/0 | 0/0 | 3 | 1 | 1 | 0 | 56 |
+| `tpo-grid-filter-panel.tsx` | 0/0 | 0/0 | 1 | 0 | 1 | 0 | 39 |
+| `tpo-notice-audience-picker.tsx` | 1/1 | 0/0 | 0 | 0 | 2 | 0 | 73 |
+| `tpo-students-assign-prep.tsx` | 0/0 | 0/0 | 3 | 0 | 1 | 0 | 60 |
+| `tpo-student-nudge-panel.tsx` | 0/0 | 0/0 | 2 | 0 | 1 | 0 | 92 |
+| `tpo-batch-rule-editor.tsx` | 0/0 | 1/1 | 2 | 0 | 1 | 0 | 132 |
+| `tpo-batch-decision-control.tsx` | 0/0 | 0/0 | 2 | 0 | 0 | 0 | 55 |
+| `tpo-batch-inline-decision.tsx` | 0/0 | 0/0 | 3 | 0 | 0 | 0 | 78 |
+| `tpo-batch-lifecycle-control.tsx` | 0/0 | 0/0 | 2 | 0 | 0 | 0 | 48 |
+| `tpo-timed-debar-control.tsx` | 0/0 | 0/0 | 2 | 0 | 1 | 0 | 96 |
+| `tpo-team-away-form.tsx` | 0/0 | 0/0 | 2 | 0 | 0 | 0 | 34 |
+| `tpo-team-follow-controls.tsx` | 0/0 | 0/0 | 1 | 0 | 1 | 0 | 41 |
+| `tpo-students-bulk-add.tsx` | 1/1 | 0/0 | 2 | 3 | 1 | 0 | 171 |
+| `tpo-students-bulk-debar.tsx` | 0/0 | 0/0 | 2 | 0 | 2 | 0 | 106 |
+| **Total scoped** | **3/3** | **1/1** | **39** | **5** | **13** | **0** | — |
+
+The **13 untouched raw status** elements are deliberately live counters, form eligibility explanations, listbox selection counts, in-dialog application counts and per-learner result summaries. There are **zero raw `role="alert"`** elements in this bounded collection, but **no claim** of zero across the repository. For source-indexed, independently repeatable grep use:
+
+```sh
+rg -n '<(Alert|Banner|InlineNotice|EmptyState)\\b|</(Alert|Banner)>' src/components/tpo -g '*.tsx'
+rg -n '<(p|div|span|section)[^>]*role="(alert|status)"' src/components/tpo -g '*.tsx'
+rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g 'loading.tsx'
+```
+
+*These commands are recorded for a later checkout. They were **not executed** in this turn; the source proof above was obtained by scanning exact re-fetched branch file content.* Each file's default/error/warning/success/empty relevant old-to-new comparison and source-level responsive check follows.
+
+### Per-file property comparisons, scoped greps and responsiveness
+
+#### `src/components/tpo/tpo-prep-readiness-editor.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| warning state (default) | `components___variables.scss:69–70`: `#d97706` / `rgba(217,119,6,.10)` | `alert.tsx:12` or `banner.tsx:12`: `--lms-warning-subtle`, `rgba(217,119,6,.1)` | MATCH base fill/hue; border/dot alignment OPEN |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-prep-readiness-editor.tsx` retains: min-[768px] touch target; max-h-72 scroll; min-w-0; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-prep-readiness-editor.tsx` after commit — `<Alert` 1 / `</Alert>` 1; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **62**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-job-types-editor.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| empty state (default) | `old-lms-pages.md:6`: one white canvas, no nested card for normal content | `empty-state.tsx:5–9`: transparent, centered, min-w-0 and break-words | MATCH neutral surface; exact vertical typography/open whitespace OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-job-types-editor.tsx` retains: flex-wrap list rows; min-w-0; responsive controls; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-job-types-editor.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 1; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **73**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-optional-emails-editor.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-optional-emails-editor.tsx` retains: md:min-h-9 button; source email preferences remain checkbox-based; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-optional-emails-editor.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **60**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-prep-percentage-editor.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-prep-percentage-editor.tsx` retains: min-[768px]:min-h-9 button; input dimensions unchanged; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-prep-percentage-editor.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **49**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-after-college-editor.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-after-college-editor.tsx` retains: min-w-0/dialog and flex-wrap actions preserved; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-after-college-editor.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **86**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-my-notification-preferences-editor.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-my-notification-preferences-editor.tsx` retains: min-[768px]:min-h-9 Save; checkboxes unchanged; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-my-notification-preferences-editor.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **54**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-blocked-dates-editor.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| empty state (default) | `old-lms-pages.md:6`: one white canvas, no nested card for normal content | `empty-state.tsx:5–9`: transparent, centered, min-w-0 and break-words | MATCH neutral surface; exact vertical typography/open whitespace OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-blocked-dates-editor.tsx` retains: min-[768px]:grid-cols-2; max-height/overflow scroll; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-blocked-dates-editor.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 3; `<EmptyState` 1; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **56**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-grid-filter-panel.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-grid-filter-panel.tsx` retains: md: min button and text; mobile BottomSheet retained; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-grid-filter-panel.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 1; `<EmptyState` 0; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **39**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-notice-audience-picker.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-notice-audience-picker.tsx` retains: responsive min-w-48 drive target selector; live counts unchanged; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-notice-audience-picker.tsx` after commit — `<Alert` 1 / `</Alert>` 1; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 0; `<EmptyState` 0; native `role="status"/"alert"` 2, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **73**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-students-assign-prep.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-students-assign-prep.tsx` retains: min-w-0/flex-wrap; due-date input and dialog retained; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-students-assign-prep.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 3; `<EmptyState` 0; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **60**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-student-nudge-panel.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-student-nudge-panel.tsx` retains: min-w-0 grid and scroll cue retained; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-student-nudge-panel.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **92**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-batch-rule-editor.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| warning state (default) | `components___variables.scss:69–70`: `#d97706` / `rgba(217,119,6,.10)` | `alert.tsx:12` or `banner.tsx:12`: `--lms-warning-subtle`, `rgba(217,119,6,.1)` | MATCH base fill/hue; border/dot alignment OPEN |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-batch-rule-editor.tsx` retains: flex-wrap actions and 44px control targets retained; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-batch-rule-editor.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 1 / `</Banner>` 1; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **132**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-batch-decision-control.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-batch-decision-control.tsx` retains: md:min-h-9 buttons, confirm flow unchanged; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-batch-decision-control.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **55**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-batch-inline-decision.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-batch-inline-decision.tsx` retains: flex gap; dialog and w-full layout retained; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-batch-inline-decision.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 3; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **78**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-batch-lifecycle-control.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-batch-lifecycle-control.tsx` retains: Button/Checkbox min target unchanged; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-batch-lifecycle-control.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **48**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-timed-debar-control.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-timed-debar-control.tsx` retains: responsive form controls and dialog retained; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-timed-debar-control.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **96**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-team-away-form.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| success state (default) | `components___variables.scss:67–68`: `#059669` / `rgba(5,150,105,.10)` | `inline-notice.tsx:9`: `--lms-success-subtle`, `rgba(5,150,105,.1)` | MATCH base fill/hue; animation/hover OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-team-away-form.tsx` retains: md:min-h-9 buttons; flex-wrap actions; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-team-away-form.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 0, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **34**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-team-follow-controls.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-team-follow-controls.tsx` retains: compact FilterChip and status availability retained; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-team-follow-controls.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 1; `<EmptyState` 0; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **41**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-students-bulk-add.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| empty state (default) | `old-lms-pages.md:6`: one white canvas, no nested card for normal content | `empty-state.tsx:5–9`: transparent, centered, min-w-0 and break-words | MATCH neutral surface; exact vertical typography/open whitespace OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-students-bulk-add.tsx` retains: md:grid-cols-2; max-h-80 learner list; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-students-bulk-add.tsx` after commit — `<Alert` 1 / `</Alert>` 1; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 3; native `role="status"/"alert"` 1, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **171**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+#### `src/components/tpo/tpo-students-bulk-debar.tsx`
+
+| Visual property | Old LMS exact value and source | vNext current source/value | Result |
+| --- | --- | --- | --- |
+| error state (default) | `components___variables.scss:71–72`: `#ef4444` / `rgba(239,68,68,.10)` | `inline-notice.tsx:8` and `alert.tsx:13`: `--lms-error-subtle`, `rgba(239,68,68,.1)` | MATCH base fill/hue; text and border contrast OPEN |
+| Shared feedback control radius | `components___variables.scss:133`: **6px** | `globals.css:827`: `--lms-radius-control:6px` used by `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33` | MATCH for shared primitives |
+| Responsive / phone tablet | `components___antddesign.scss:21–23`: mobile max **767px**; `components___variables.scss:136`: touch 44px | `tpo-students-bulk-debar.tsx` retains: md:min-h-9 action; max-h-64 result ScrollCue; shared Alert `min-w-0 max-w-full`, InlineNotice `min-w-0 break-words` | Source-only; rendered 320/767/768/1024px **OPEN** |
+| Focus, hover, active, disabled/loading | `components___accessibility.scss:19–23,43–58`: focus 2px/3px offset; mobile role-button active scale .98 | `inline-notice.tsx:36` dismiss focus 2px/3px; source event handlers, disabled controls and loading branches identical to baseline | Partial focus match; actual hover/disabled/loading pixel comparison **OPEN** |
+
+**Scoped grep source proof:** re-fetched `tpo-students-bulk-debar.tsx` after commit — `<Alert` 0 / `</Alert>` 0; `<Banner` 0 / `</Banner>` 0; `<InlineNotice` 2; `<EmptyState` 0; native `role="status"/"alert"` 2, all unstyled count/selection/result descriptors; decorated native notice wrappers **0**. First migrated shared state at line **106**. Baseline-vs-current static probes: `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, mutation-method token counts **unchanged**. No compilation, browser, pixel or behavior execution.
+
+### Strict-tick and browser proof gaps
+
+- [ ] **F3**: scoped migration complete for these 20 files only. Old warning/error/success background values and shared 6px radius match. Whole-repo zero bespoke notices, text metrics, notice border hues, active/hover/disabled and actual breakpoint comparisons **OPEN**.
+- [ ] **F4**: no loading route/skeleton motion changes in this batch; full category-specific route timing and reduced-motion comparisons **OPEN**.
+- [ ] **F5**: shared EmptyState for five JSX sites, but exact old 403/404/500/offline/maintenance/session-expired and rendered 320px/767px/1024px behavior **OPEN**.
+- [ ] **No individual strict completion box ticked** without running required repo-wide grep and rendered responsive/visual checks. "Source migrated" does not equal pixel-cloned.
+
+**Exact next file:** `src/components/tpo/tpo-team-forms.tsx`, followed by `src/components/tpo/tpo-team-handover.tsx` and `src/components/tpo/tpo-campaign-compose.tsx`.

@@ -75,7 +75,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
        maxLength={200}
       value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);setReviewed(false);}}/>
     </label>:null}
-    {!valid?<p role="status" className="text-xs text-error">Enter a reason of at least 3 characters.</p>:null}
+    {!valid?<InlineNotice tone="error" message="Enter a reason of at least 3 characters."/>:null}
     <div className="flex gap-2">
      <Button variant="secondary" type="button" onClick={()=>setReasonOpen(false)} >Cancel</Button>
      <Button variant="primary" type="button" disabled={!valid} onClick={()=>setReasonOpen(false)}

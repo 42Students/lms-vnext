@@ -95,7 +95,7 @@ export default async function FacultyNotificationsPage({
           <Alert tone="error">
             The notification filters or page link are invalid.{" "}
             <Link href={FACULTY_INBOX + "?view=" + view}
-              className="font-semibold text-primary-text underline inline-flex min-h-11 min-[768px]:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="font-semibold text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Return to the newest notifications
             </Link>
           </Alert>
@@ -109,7 +109,7 @@ export default async function FacultyNotificationsPage({
             {nextHref ? (
               <div className="flex justify-center">
                 <Link href={nextHref}
-                  className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                   Older notifications
                 </Link>
               </div>

@@ -337,6 +337,7 @@ export function QuizAttemptControl({
           <Button
             size="sm"
             variant="ghost"
+            className="min-h-11 md:min-h-9"
             disabled={submitting}
             onClick={() => {
               setQuiz(null);
@@ -435,6 +436,7 @@ export function QuizAttemptControl({
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button
+            className="min-h-11 md:min-h-9"
             disabled={submitting}
             onClick={submitAttempt}
           >
@@ -467,6 +469,7 @@ export function QuizAttemptControl({
           <Button
             size="sm"
             variant="ghost"
+            className="min-h-11 md:min-h-9"
             onClick={() =>
               setAttempts(null)
             }
@@ -609,6 +612,7 @@ export function QuizAttemptControl({
         {interaction.canAttempt ? (
           <Button
             size="sm"
+            className="min-h-11 md:min-h-9"
             disabled={loading}
             onClick={startAttempt}
           >
@@ -624,6 +628,7 @@ export function QuizAttemptControl({
           <Button
             size="sm"
             variant="secondary"
+            className="min-h-11 md:min-h-9"
             disabled={loading}
             onClick={reviewResults}
           >

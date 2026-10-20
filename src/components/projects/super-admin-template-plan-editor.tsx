@@ -1,5 +1,7 @@
 "use client";
 import { Textarea } from "@/components/ui/textarea";
+import { Banner } from "@/components/ui/banner";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
@@ -29,6 +31,7 @@ const field = "mt-1 w-full";
 const label = "block text-[13px] font-semibold text-body";
 
 export function SuperAdminTemplatePlanEditor(props: Props) {
+  const {askConfirm,dialog}=useConfirmFlow();
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [pending, setPending] = useState(false);
@@ -93,7 +96,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
       setError(parsed.error.issues[0]?.message ?? "Invalid template plan.");
       return;
     }
-    if (!window.confirm("Save changes as a new template version?")) return;
+    if (!(await askConfirm("Save changes as a new template version?"))) return;
     setPending(true); setError(""); setMessage("");
     try {
       const result = await projectMutation(
@@ -135,7 +138,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         setError(""); setMessage(""); setExpanded(value => !value);
       }}>{expanded ? "Cancel" : props.section === "sprints" ? "Edit sprints" : "Edit tasks"}</Button>
     </div>
-    {message ? <p role="status" className="mt-2 text-sm text-success">{message}</p> : null}
+    {message ? <Banner tone="success">{message}</Banner> : null}
     {expanded ? <form className="mt-4 grid gap-4" onSubmit={save}>
       {props.section === "sprints" ? <>
         <p className="m-0 text-xs text-muted-foreground">
@@ -271,7 +274,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           onClick={addTask}>Add task</Button>
         {!draft.tasks.length ? <p className="text-sm">No tasks yet.</p> : null}
       </>}
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {error ? <Banner tone="error">{error}</Banner> : null}
       <div className="flex flex-wrap items-center justify-end gap-2">
         <Button type="button" variant="secondary" disabled={pending} onClick={() => {
           setDraft(props.blueprint); setError("");
@@ -281,5 +284,6 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         </Button>
       </div>
     </form> : null}
+    {dialog}
   </section>;
 }
