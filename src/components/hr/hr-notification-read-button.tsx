@@ -37,7 +37,7 @@ export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
   }catch{setMessage("Network error. Try again.");}
   finally{gate.current.end();setSaving(false);}
  }
- return <div className="mt-3 flex flex-wrap items-center gap-2">
+ return <div className="mt-2 flex flex-wrap items-center gap-2">
   <Button type="button" variant="secondary" disabled={saving||complete} loading={saving} onClick={()=>void markRead()}>
    {complete?"Marked as read":saving?"Saving…":"Mark as read"}
   </Button>
