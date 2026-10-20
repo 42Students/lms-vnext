@@ -14,6 +14,7 @@ export function TpoBulkDriveReminder(){
   if(!form||busy)return;
   const ids=[...new Set(new FormData(form).getAll("ids").filter((v):v is string=>typeof v==="string"))];
   if(!ids.length||ids.length>10){setError("Choose between 1 and 10 drives on this page.");return;}
+  setError("");setMessage("");
   setSelectedIds(ids);
   setConfirmOpen(true);
  }
@@ -44,8 +45,7 @@ export function TpoBulkDriveReminder(){
   setMessage(sent+" learners reminded; "+skipped+" drives skipped; "+failed+" drives failed.");
   setBusy(false);
  }
- return <div className="flex min-w-0 flex-col gap-2 border-t border-border pt-3">
-  <p className="text-xs leading-5 text-body">Choose 1 to 10 drives from this page.</p>
+ return <div className="flex min-w-0 flex-col gap-3">
   <div className="flex min-w-0 flex-col gap-2 text-xs sm:flex-row sm:flex-wrap">
    <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full font-semibold text-primary-text sm:w-auto md:min-h-9"
     onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=true;});}}>
