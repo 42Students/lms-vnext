@@ -21,5 +21,5 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-19.md: surface | probl
 - [x] `src/components/placements/tpo-round-result-entry-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/tpo/tpo-topbar-new-menu.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/courses/learner-course-workspace.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
-- [ ] `src/app/(authenticated)/hr/layout.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/app/(authenticated)/hr/layout.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
