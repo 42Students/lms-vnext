@@ -31,11 +31,11 @@ export default async function MentorBoardReviewPage({
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no tasks were loaded."}
       actions={<Link data-unskin="" href={base+"?tab=board"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Full task workspace
       </Link>}/>
     {!data.enabled?
@@ -51,7 +51,7 @@ export default async function MentorBoardReviewPage({
           " "+data.completedPercent+"% recorded DONE tasks"}
       </p>
       <FilterBar title="Filters"><form method="get" action={base+"/board-review"} role="search" aria-label="Task board review filters"
-        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
+        className="grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
             className="min-h-11 w-full md:min-h-9"/>
@@ -77,7 +77,7 @@ export default async function MentorBoardReviewPage({
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </Select>
         </label>
-        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
+        <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter
         </Button>
         <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
@@ -86,20 +86,32 @@ export default async function MentorBoardReviewPage({
         <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
           (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
             "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-          download className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none md:py-0">
+          download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">
           Download filtered CSV (max 500)
         </Link>
         {data.exportOmitted>0?<span role="status">
           CSV omits {data.exportOmitted} matching tasks beyond the export cap.
         </span>:null}
       </div>
+      {data.items.length===0?<EmptyState
+        title={data.count===0?"No registered project tasks":"No tasks match these filters"}
+        description={data.count===0?
+          "This project has no stored tasks. No workload or assignment is inferred.":
+          "The stored tasks do not match your filters. Clear filters to view the whole board."} action={<Link href={base+"?tab=board"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Full task workspace</Link>} />:
+        <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=><li key={row.id}
+          className="py-[var(--lms-space-3)]">
+          <h2 className="m-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.title}</h2>
+          <p className="mt-2 text-sm text-body leading-[22px]">{row.status.replaceAll("_"," ")} ·
+            {row.priority} priority · {row.sprintTitle}</p>
+        </li>)}</ol>}
+      {data.totalPages>1?<Pagination label="Board status pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorBoardReviewHref({...data.query,page})}/>:null}
       <section aria-label="Sprint status summaries" className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Sprint summaries</h2>
           <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-            download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+            download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">
             Download filtered Sprint summary CSV (max 100)
           </Link>
         </div>
@@ -135,18 +147,7 @@ export default async function MentorBoardReviewPage({
           CSV omits {data.sprintSummaryExportOmitted} Sprints beyond the 100-row cap.
         </p>:null}
       </section>
-      {data.items.length===0?<EmptyState
-        title={data.count===0?"No registered project tasks":"No tasks match these filters"}
-        description={data.count===0?
-          "This project has no stored tasks. No workload or assignment is inferred.":
-          "The stored tasks do not match your filters. Clear filters to view the whole board."}/>:
-        <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=><li key={row.id}
-          className="py-[var(--lms-space-3)]">
-          <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{row.title}</h2>
-          <p className="mt-2 text-sm text-body leading-[22px]">{row.status.replaceAll("_"," ")} ·
-            {row.priority} priority · {row.sprintTitle}</p>
-        </li>)}</ol>}
-      <Pagination label="Board status pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorBoardReviewHref({...data.query,page})}/>
+
     </>}
     <p className="text-xs text-muted-foreground leading-5">Only registered task status, priority
       and sprint linkage are shown. No task assignee, effort or workload values
