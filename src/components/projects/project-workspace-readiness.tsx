@@ -51,12 +51,12 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       }))} />
     <section className="border-b border-border py-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-semibold">Current readiness</h2>
+        <h2 className="font-semibold text-foreground">Current readiness</h2>
         <StatusBadge tone={readiness.finalSubmission.canSubmitDraft?"success":"warning"}>
           {readiness.finalSubmission.canSubmitDraft?"Ready":"Not ready"}
         </StatusBadge>
       </div>
-      <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+      <dl className="mt-4 grid gap-3 text-sm min-[768px]:grid-cols-3">
         <div><dt className="font-semibold">State</dt><dd>{readiness.readinessOverride.state??"Automatic"}</dd></div>
         <div><dt className="font-semibold">Reason</dt><dd className="whitespace-pre-wrap">{readiness.readinessOverride.note??
           (readiness.execution.complete?"All execution items completed":"Incomplete tasks, sprints or releases")}</dd></div>
@@ -79,7 +79,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         value={item.done} maximum={item.total||1} />
       </div>)}
     </section>
-    <div className="grid gap-3 sm:grid-cols-3">
+    <div className="grid gap-3 min-[768px]:grid-cols-3">
       <p>Tasks completed: {readiness.execution.tasks.done}/{readiness.execution.tasks.total}</p>
       <p>Sprints completed: {readiness.execution.sprints.completed}/{readiness.execution.sprints.total}</p>
       <p>Releases shipped: {readiness.execution.releases.shipped}/{readiness.execution.releases.total}</p>

@@ -76,8 +76,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <PageHeader title="Messages"
    description={result.status==="READY"
     ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
-    : "Conversations with the placement cell, one per drive, plus a general one."}/>
-  <Link href="/hr/notifications" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>
+    : "Conversations with the placement cell, one per drive, plus a general one."}
+   actions={<Link href="/hr/notifications"
+     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">Notification inbox</Link>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(g=>({

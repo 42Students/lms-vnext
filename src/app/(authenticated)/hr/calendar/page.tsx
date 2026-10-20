@@ -313,22 +313,17 @@ export default async function HrCalendarPage({
       <PageHeader
         title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
-        actions={
-          <Link
-            href="/hr/placements"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
-          >
+        actions={<>
+          <Link href="/hr/placements"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
             Drives →
           </Link>
-        }
+          {!noCollegeAccess?<Link href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
+            Export calendar CSV
+          </Link>:null}
+        </>}
       />
-
-      {!noCollegeAccess?<div className="flex justify-end">
-        <Link href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-          Export calendar CSV
-        </Link>
-      </div>:null}
       {noCollegeAccess ? (
         <section className="border-b border-border pb-6">
           <h2 className="text-lg font-semibold text-foreground">

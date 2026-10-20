@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -213,11 +214,9 @@ export function ProjectMentorReassignment({
             {workspaces.map((workspace) => (
               <label
                 key={workspace.id}
-                className="flex cursor-pointer items-center gap-3 rounded-lg border border-border p-3"
+                className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
               >
-                <input
-                  type="checkbox"
-                  className="size-4 accent-[var(--lms-button-primary)]"
+                <Checkbox
                   checked={selected.includes(
                     workspace.id,
                   )}
@@ -250,8 +249,8 @@ export function ProjectMentorReassignment({
         <h2 className="m-0 text-base font-semibold text-foreground">
           Reassign to mentor
         </h2>
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          <label className="grid gap-1 text-sm font-semibold text-foreground">
+        <div className="mt-4 grid gap-4 min-[768px]:grid-cols-2">
+          <label className="grid gap-1 text-[13px] font-semibold text-body">
             Search mentors
             <Input
               type="search"
@@ -263,7 +262,7 @@ export function ProjectMentorReassignment({
               className="w-full"
             />
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-foreground">
+          <label className="grid gap-1 text-[13px] font-semibold text-body">
             New primary mentor
             <Select
               value={mentorMembershipId}
@@ -286,7 +285,7 @@ export function ProjectMentorReassignment({
               ))}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-foreground">
+          <label className="grid gap-1 text-[13px] font-semibold text-body">
             Role label
             <Input
               value={roleLabel}
