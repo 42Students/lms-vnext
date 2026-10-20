@@ -38,7 +38,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     actions={<div className="flex flex-wrap items-center gap-2">
       {back}
       <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Export CSV</a>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] transition-colors hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Export CSV</a>
     </div>}
   />
   <dl className="grid gap-[var(--lms-space-4)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-4">
