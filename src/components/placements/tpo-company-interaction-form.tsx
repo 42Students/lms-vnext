@@ -122,7 +122,7 @@ export function TpoCompanyInteractionForm({
       </label>
       {reviewing?<div role="group" aria-label="Review company interaction" className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
         <p>{interactionConfirmationSummary({type,contactName:contacts.find(c=>c.id===leadId)?.name??"contact"})}</p>
-        <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
+        <Button type="button" variant="link" className="mt-2 min-h-11 max-[767px]:min-h-11" onClick={()=>setReviewing(false)}>Cancel review</Button>
       </div>:null}
       <Button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
         >
