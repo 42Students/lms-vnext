@@ -116,9 +116,9 @@ export async function ProjectAdminSubmissionsPage({
 
   return (
     <div className="min-w-0 space-y-4">
+      <PageBackLink href={basePath} label="Project workspaces" />
       <PageHeader
         title="Submissions dashboard"
-        actions={<PageBackLink href={basePath} label="Project workspaces" />}
         description="Final project deliverables across all workspaces."
         needsDoingLabel="Review status:"
         selectedNeedKey={query.submissionStatus}
@@ -279,8 +279,7 @@ export async function ProjectAdminSubmissionsPage({
                   status={submission.status} locked={!!submission.lockedAt}
                   projectStatus={submission.projectStatus} allowLock={allowLock} />
                 <Link href={basePath+"/"+submission.projectId+
-                  "/delivery?from=submissions&reason="+encodeURIComponent(
-                    submission.status==="SUBMITTED"?"pending-review":submission.status.toLowerCase())}
+                  "/delivery?from=submissions"+(submission.status==="SUBMITTED"?"&reason=REVIEW":"")}
                   className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open · Review submission</Link>
                 <Link href={basePath+"/reassign-mentor?fromMentorId="+
                   encodeURIComponent(submission.mentorMembershipId??"UNASSIGNED")}

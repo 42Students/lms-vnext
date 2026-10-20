@@ -53,3 +53,37 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Regressions found/fixed (2): Refresh previously reset saved audit filters despite its label; now retains validated action, importance, subject and IST from/to filters (pagination restarts). Audit-specific empty state previously linked Reset to unrelated `/activity`; introduced optional `emptyHref` in shared ActivityCenter with unchanged default for existing consumers, supplying `/admin/projects/audit` (or college equivalent) only from this audit page.
 - Extra clutter/alignment fixes: 0; existing disclosure, date fields, result actions and grouping match legacy layout; no changed labels, aria, or tokens.
 - Files changed: `src/components/projects/project-admin-audit-page.tsx`, `src/components/activity/activity-center.tsx`, this proof, queue.
+
+## Surface 9 — `src/app/(authenticated)/admin/projects/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 9. Inspected route/loading/error, `ProjectAdminWorkspaceList`, `CreateProjectControl`, `Dropdown`, query/service model, statuses, shared table, filter and tabs, and parent layouts. Existing creation flow, view switch, permissions, query params, modal/pagination actions retained.
+- Regression fixed (1): route omitted `riskReasons` and the assigned `templateTitle` on the compact list mapping, so status and template rows lost persisted context despite prior polish. Pass typed `riskReasons` and resolve the matching assigned template title from the already-loaded choices, without adding reads.
+- Extra clutter/alignment fixes: 0; compact single-canvas row layout remains opted-in only here. Page copy/labels, legacy tokens, IDs and aria preserved.
+- Files changed: `src/app/(authenticated)/admin/projects/page.tsx`, proof and queue.
+
+## Surface 10 — `src/app/(authenticated)/admin/projects/readiness/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 10. Inspected route/loading/error, `ProjectAdminReadinessPage` and picker/table/disclosure/filter/overrides and corresponding service model, page/nav/scoped layouts. Retained statuses, filtering, exports, no-match and error controls, keyboard disclosures.
+- Regression fixed (1): the Select workspace disclosure was collapsed by default when nothing had been selected, hiding the task's primary starting control. It now starts open, while remaining collapsible and preserving selected workspace releases/Manage override.
+- Extra alignment fix (1): moved original Project workspaces back link above single PageHeader instead of retaining it in its action slot, as required by prior polish; no text or destination changed.
+- Files changed: `src/components/projects/project-admin-readiness-page.tsx`, proof and queue.
+
+## Surface 11 — `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 11. Inspected route/loading/error, `ProjectAdminReassignMentorPage`, complete `ProjectMentorReassignment`, independent GET filter controls, mentor workload, statuses, confirmations, per-workspace failed retries, parent layouts.
+- Regressions found/fixed: 0. Source has no stray FilterBar import; reviewed TSX tags, component prop contracts, buttons, form names, role and dialog labels and result state. No behavior change.
+- Extra alignment fix (1): moved original Back to workspaces destination outside heading actions and above the PageHeader as requested by polish proof.
+- Files changed: `src/components/projects/project-admin-reassign-mentor-page.tsx`, proof and queue. UI/TypeScript reviewed only, not executed.
+
+## Surface 12 — `src/app/(authenticated)/admin/projects/submissions/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 12. Inspected route/loading/error, `ProjectAdminSubmissionsPage`, two GET filter modes, export, status chips, row/review modal and pagination, read services and shared components.
+- Regression fixed (1): Open · Review submission used `reason=pending-review` or status strings not recognized by shared project route guard (only `STALLED|BLOCKER|REVIEW`). Preserve existing destination and `from=submissions` and supply valid `REVIEW` only for submitted deliveries; other statuses omit unsupported reason.
+- Extra alignment fix (1): moved unchanged Project workspaces back link above the single PageHeader; review chips remain in PageHeader. All labels, permissions, accessible targets and legacy tokens preserved.
+- Files changed: `src/components/projects/project-admin-submissions-page.tsx`, proof and queue. No CI or runtime.
+
+## Surface 13 — `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 13. Reviewed entire page, loading and error routes, SuperAdminTemplateCollegeBulk (selection, checkbox permissions, confirm, retry, partial failures), tabs, DataTable/FilterBar, ID and search schema, authorized service, pagination and parent layouts.
+- Regressions found/fixed: 0. Native disclosure renders only when requested, action/dialog/button props and query keys agree with model, college assignment scope and disabled states remain intact. No duplicate attributes, missing imports, dropped IDs/aria, or invalid TSX found in inspected files.
+- Extra clutter/alignment fixes: 0. Single canvas, page title, clear-filter recovery, mobile selections, existing bulk disclosure and directory loading retained. Files changed: queue and this proof; source inspection only, not executed.
+
+## Surface 14 — `src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 14. Redirect-only Overview alias read with loading/error boundaries, permission helper, template UUID schema and canonical subview resolver. Inspected absence of any independent rendered page controls.
+- Regressions found/fixed: 0. Authorizes before validation and canonical redirect, invalid UUID notFound; template-specific directory loader with unchanged error retry. No content/layout invented.
+- Extra clutter/alignment fixes: 0. Files changed: queue and this proof; source-only, no CI.
