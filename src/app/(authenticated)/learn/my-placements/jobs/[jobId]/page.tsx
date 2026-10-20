@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerPlacementJobDetail } from "@/components/placements/learner-placement-job-detail";
@@ -72,7 +74,11 @@ export default async function LearnerPlacementJobDetailPage({
 
   const query=await searchParams;
   const back=learnerJobReturnToDrivesHref(query.back);
-  return <div className="space-y-5">
+  return <div className="min-w-0 space-y-5">
+   {rows.length===0 && journey ? (
+    <PageHeader title="Placement drive history" description="Your recorded application journey remains available."
+      actions={<Link href={back} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">← Back to drives</Link>} />
+   ) : null}
    {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}
     returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}/>:null}
    {journey?<LearnerOwnDriveJourney journey={journey}/>:null}
