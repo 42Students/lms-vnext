@@ -202,13 +202,13 @@ export function CollegeRecurringPreview({
               </Select>
             </label>
           </div>
-          <Button type="submit" disabled={pending || !sectionId || !from || !to || weekdays.length === 0}>
+          <Button type="submit" loading={pending} className="min-h-11 md:min-h-9" disabled={pending || !sectionId || !from || !to || weekdays.length === 0}>
             {pending ? "Checking conflicts…" : "Preview sessions"}
           </Button>
-          {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}
+          {error ? <Alert tone="error">{error}</Alert> : null}
         </form>
       )}
-      {created !== null ? <div role="status" className="space-y-2 text-sm">
+      {created !== null ? <Alert tone="success" className="space-y-2">
         <p>Created {created} scheduled sessions.</p>
         {skipped.length > 0 && <>
           <p className="font-semibold">These dates were skipped:</p>
@@ -219,9 +219,9 @@ export function CollegeRecurringPreview({
       {result ? <section aria-label="Schedule preview results" className="space-y-3">
         <h2 className="text-lg font-semibold text-foreground">Preview · {result.ready} clear, {result.blocked} blocked</h2>
         <p className="text-sm text-muted-foreground">{result.notice}</p>
-        <Button type="button" disabled={pending || !title.trim() || result.ready===0}
+        <Button type="button" loading={pending} className="min-h-11 md:min-h-9" disabled={pending || !title.trim() || result.ready===0}
           onClick={execute}>{pending?"Creating…":"Confirm and create "+result.ready+" sessions"}</Button>
-        {result.blocked>0 ? <p className="text-xs text-error">Conflicting dates will be skipped; clear dates may still be created.</p> : null}
+        {result.blocked>0 ? <Alert tone="warning">Conflicting dates will be skipped; clear dates may still be created.</Alert> : null}
         {result.slots.length === 0 ? <EmptyState title="No matching dates" description="No selected weekdays match this date range."/> : (
           <div className="max-h-[32rem] min-w-0 overflow-auto border-y border-border">
             <DataTable<Result["slots"][number]>
