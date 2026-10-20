@@ -10,6 +10,8 @@ import {
 
 export const SESSION_COOKIE_NAME = "lms_session";
 export const MEMBERSHIP_COOKIE_NAME = "lms_membership";
+/** Which single role of the active membership the person is working in (one workspace at a time). */
+export const ROLE_COOKIE_NAME = "lms_role";
 export const SESSION_MAX_AGE_SECONDS = MAX_AGE;
 
 export class SessionAuthenticationError extends Error {

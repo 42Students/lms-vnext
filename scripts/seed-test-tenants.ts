@@ -91,6 +91,13 @@ export const TEST_ACCOUNTS: Account[] = [
   ...per("a", 1100),
   ...per("b", 1200),
   {
+    label: "Multi-workspace person (Faculty and TPO at college A, Learner at college B)",
+    phone: "+919100061401",
+    email: "multi@vnext.test",
+    name: "Test Multi Workspace",
+    memberships: { a: ["FACULTY", "TPO"], b: ["LEARNER"] },
+  },
+  {
     label: "HR / Recruiter (both colleges)",
     phone: "+919100061301",
     email: "hr@vnext.test",

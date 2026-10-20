@@ -21,7 +21,7 @@ import style from "./topbar.module.css";
 
 export function LegacyTopbar({
   navigation, roleLabel, organizationName, identityUid, accountVariant,
-  memberships, activeMembershipId, adminScopeChoices, adminScope, tpoCollegeId,
+  memberships, activeMembershipId, activeRole, adminScopeChoices, adminScope, tpoCollegeId,
 }: {
   navigation: readonly ShellNavItem[];
   roleLabel: string;
@@ -30,6 +30,7 @@ export function LegacyTopbar({
   accountVariant: AccountMenuVariant;
   memberships: readonly MembershipChoice[];
   activeMembershipId: string | null;
+  activeRole?: string | null;
   adminScopeChoices: AdminScopeChoices | null;
   adminScope: AdminScope | null | undefined;
   tpoCollegeId: string | null;
@@ -60,12 +61,12 @@ export function LegacyTopbar({
     </div>
     <div className={style.accountArea}>
       <TopbarOrganizationSwitcher organizationName={organizationName}
-        memberships={memberships} activeMembershipId={activeMembershipId}
+        memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}
         choices={adminScopeChoices} scope={adminScope}/>
       <ShellWidgetBoundary name="Account actions" fallbackHref="/account/security">
         <TopbarAccountMenu identityUid={identityUid} roleLabel={roleLabel}
           organizationName={organizationName} variant={accountVariant}
-          memberships={memberships} activeMembershipId={activeMembershipId}
+          memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}
           adminScopeChoices={adminScopeChoices} scope={adminScope}/>
       </ShellWidgetBoundary>
     </div>

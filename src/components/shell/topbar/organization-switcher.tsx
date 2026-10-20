@@ -13,11 +13,12 @@ import style from "./topbar.module.css";
 
 /** Legacy header org trigger: tenant selection never bypasses server permissions. */
 export function TopbarOrganizationSwitcher({
-  organizationName, memberships, activeMembershipId, choices, scope,
+  organizationName, memberships, activeMembershipId, activeRole, choices, scope,
 }: {
   organizationName: string;
   memberships: readonly MembershipChoice[];
   activeMembershipId: string|null;
+  activeRole?: string | null;
   choices: AdminScopeChoices|null;
   scope: AdminScope|null|undefined;
 }) {
@@ -68,7 +69,7 @@ export function TopbarOrganizationSwitcher({
       <span id="lms-org-switcher-context" className="sr-only">Current workspace: {organizationName}</span>
       <p className={style.accountSectionHeading}>Switch workspace</p>
       {choices?<AdminScopeSwitcher choices={choices} scope={scope}/>:
-        <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
+        <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}/>}
     </PopoverPanel>:null}
   </div>;
 }

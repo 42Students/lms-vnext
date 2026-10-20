@@ -39,6 +39,7 @@ export class ContextResolutionError extends Error {
 export type ResolveRequestContextInput = {
   identityUid: string;
   activeMembershipId?: string | null;
+  activeRole?: MembershipRole | null;
   adminScope?: AdminScope | null;
 };
 
@@ -191,6 +192,23 @@ async function findMembershipRoles(
   return rows.map((row) => row.role);
 }
 
+/** Role shown first when a person holds several roles and has not picked one yet. */
+const ROLE_PRIORITY: readonly MembershipRole[] = ["COLLEGE_ADMIN", "TPO", "MENTOR", "FACULTY", "LEARNER"];
+
+/**
+ * One workspace at a time: a person holding several roles works in exactly one of them.
+ * The chosen role (or the highest-priority held role when none is chosen) becomes the only
+ * role of the request context, so menus, pages and permission checks never mix roles.
+ */
+export function narrowToActiveRole(
+  roles: readonly MembershipRole[],
+  activeRole?: MembershipRole | null,
+): MembershipRole[] {
+  if (roles.length <= 1) return [...roles];
+  if (activeRole && roles.includes(activeRole)) return [activeRole];
+  return [ROLE_PRIORITY.find((role) => roles.includes(role)) ?? roles[0]];
+}
+
 export async function resolveRequestContext(
   input: ResolveRequestContextInput,
 ): Promise<RequestContext> {
@@ -256,7 +274,7 @@ export async function resolveRequestContext(
     throw new ContextResolutionError("MEMBERSHIP_NOT_ACTIVE");
   }
 
-  const roles = await findMembershipRoles(membership.id);
+  const roles = narrowToActiveRole(await findMembershipRoles(membership.id), input.activeRole);
 
   return {
     user: {
