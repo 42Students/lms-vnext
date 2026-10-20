@@ -753,3 +753,50 @@ mobile footer and shared shell wrappers were re-read by source.
 Only confirmed remote-source findings are reported. Under the strict
 tick rule, B3 and B4 remain **[ ]** until the owner executes the
 generated ledger and verifies browser pixels and interactions.
+
+
+## 2026-10-20 B3/B4 continuation: synced main, legacy rail corrections, 18 source files
+
+**Branch safety:** `chatgpt/chat-19-b` was 0 commits ahead and 1,695 behind `main` (compare at `96efdcc5dcf3b3f7bc54a85ff033923e6ca06c84`); safely fast-forwarded only the lane branch. No other branch/HR-owned page was written. The following is a bounded **source** audit; it does not certify old/new browser pixels.
+
+### Two source-value corrections, opening/hover/mobile state
+
+| Property | Legacy source file:line / exact value | vNext file:line / exact value | Result |
+|---|---|---|---|
+| Admin menu item, normal/hover/active vertical inset | `docs/design/old-lms-shell.css:27-28`: admin menu `padding-top:12px; padding-bottom:12px`, min-height44 | `src/components/shell/sidebar-legacy.css:122-124`: same; previous base rule was 10px | Fixed; 12px in normal/hover/active |
+| TPO/recruiter menu item, normal/hover/active inset | `docs/design/old-lms-shell.css:30-31`: `padding:10px 12px`, radius8, min-height44 | `sidebar-legacy.css:111`: `padding:10px 12px` retained outside admin-specific override | Still matches |
+| Learner desktop right inset | `docs/design/old-lms-shell.css:24-25` + `legacy-styles/components___learn-layout.scss:516-521`: `$learn-s2 = 16px` at ≥768 | `src/components/shell/sidebar-legacy.css:25`: `padding-right:16px` at ≥768 | Fixed; 96→256 border-box width unchanged |
+| Explicit visual-role choice | Legacy `.admin-sidebar-panel` and `.learn-layout` style by account; not by arbitrary destination | `sidebar-nav.tsx:58-96`: derives visual skin from **visible role rows** | Super Admin overview at /dashboard gets admin rules; College Admin /tpo/home shortcut keeps college rules |
+| Rail collapsed/hover width and easing | `old-lms-shell.css:13,18`: 96→256px, .15s cubic-bezier(.2,0,0,1) | `sidebar-legacy.css:10-12`: same | Unchanged |
+| Phone drawer dimensions | `components___antddesign.scss:305-359`: 82%, max300, visible text | `sidebar-legacy.css:201`, `mobile-navigation.tsx:39` | Still matches, tablet conversion at 768 |
+
+### 18-file complete scoped source review
+
+Each listed file was fetched in full from `chatgpt/chat-19-b`, and its control/overlay literal occurrences were counted directly in the returned source. This is a **per-file connected-source scan**, **not** an executed checkout `git grep`; results are not evidence that all remaining `src/app`/TPO component code is clean. No other lane's ownership was altered.
+
+| File checked | Legacy property reference | Current vNext source anchor | State, breakpoints and scoped grep counts |
+|---|---|---|---|
+| `src/components/shell/app-shell.tsx` | `old-lms-shell.css:13,18,22` | `app-shell.tsx:76` | Flex-push, footer box, sidebar hidden at ≤767 via md:flex; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/sidebar-nav.tsx` | `old-lms-shell.css:27-53` | `sidebar-nav.tsx:96` | One role-scoped navigation for phone and desktop; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/sidebar-legacy.css` | `old-lms-shell.css:13-53; learn-layout.scss:516-521` | `sidebar-legacy.css:25` | 96→256 hover/focus desktop; learner right inset; 82vw phone drawer; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/shell-model.ts` | `docs/audit/legacy-copy-A.md; old-lms-shell.css:49-53` | `shell-model.ts:45` | Account-route keys and legacy section grouping; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/shell-nav-icons.tsx` | `old-lms-shell.css:12,34-35` | `shell-nav-icons.tsx:3` | 38×36 SVG rail mark, 20px glyphs; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/legacy-ant-paths.ts` | `old-lms-shell.css:34-35` | `legacy-ant-paths.ts:6` | SVG paths are fixed size-independent artwork; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/legacy-sidebar-active-model.ts` | `old-lms-shell.css:45-46` | `legacy-sidebar-active-model.ts:4` | Legacy teal state selected by route for phone and desktop; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/shell-counts-model.ts` | `old-lms-shell.css:39-40` | `shell-counts-model.ts:12` | Collapsed .72 bubble and expanded position styled in CSS; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/mobile-navigation.tsx` | `components___antddesign.scss:305-359` | `mobile-navigation.tsx:39` | 82vw/max300 phone drawer; closes on viewport ≥768; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/tpo-mobile-footer.tsx` | `components___antddesign.scss:912-936` | `tpo-mobile-footer.tsx:4` | Re-export avoids second TPO bottom nav; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-progress.tsx` | `components___common.scss:1008-1019` | `route-progress.tsx:90` | Full-screen slow loader present; nonhistoric top bar open; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-progress.css` | `components___common.scss:1008-1019` | `route-progress.css:35` | White fixed overlay, 4-dot Ant spin; novel 3px bar open; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-transition.tsx` | `components___learn-layout.scss:49-86` | `route-transition.tsx:55` | Learner-only exit, path change, browser Back; no query remount; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-transition.css` | `components___learn-layout.scss:49-86` | `route-transition.css:21` | 250ms entrance + 220/260ms exit, reduction opt out; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/route-announcer.tsx` | `No matching visual legacy rule (screen-reader only)` | `route-announcer.tsx:34` | Live route announcement, no painted footprint; raw control openings **0**, direct dialog/overlay tokens **1** |
+| `src/components/shell/learner-faculty-mobile-footer.tsx` | `components___antddesign.scss:912-936` | `learner-faculty-mobile-footer.tsx:88` | Phone-only permitted-account link inventory; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/legacy-mobile-footer.css` | `components___antddesign.scss:912-936` | `legacy-mobile-footer.css:13` | Phone 64px+safe area; hidden ≥768; raw control openings **0**, direct dialog/overlay tokens **0** |
+| `src/components/shell/shell-widget-boundary.tsx` | `No matching visual legacy rule (failure-only)` | `shell-widget-boundary.tsx:10` | Only mounts retry/error when widget throws; raw control openings **0**, direct dialog/overlay tokens **0** |
+
+**Source scan predicates and scope:** `<(button|select|input|textarea)(?=[ >\\n])` and `role="dialog"|fixed inset-0` on the 18 exact source paths above. Totals are **0 direct raw-control tag openings** and **1 direct hand-rolled overlay tokens** in this inspected scope. The sole native Drawer is imported from `@/components/ui/drawer`; actual overlay focus/escape is delegated to shared UI. `shell-nav-icons.tsx:3` imports `legacyAntPaths` from `./legacy-ant-paths`, and `legacy-ant-paths.ts:6` exports it.
+
+**Responsive static proof:** 320, 360, 390, and 767px: `md:flex` keeps rail hidden and native Drawer uses max300px/82vw, with icon+labels visible and touch-scroll; the new admin/learner overrides are wrapped in `@media(min-width:768px)` and have no mobile effect. At 768/1024/1280px the rail remains a relative flex sibling, pushing content from 96 to 256px on hover/focus in .15s, learner right padding is 16px, admin block padding 12px, and ordinary TPO/recruiter menu padding 10px. Phone footer remains 64px+safe-area and hidden at tablet sizes; route entrance/exits are reduced-motion aware. These are **source-rule proofs**, not browser screenshots.
+
+**Remaining strict tick prerequisites:** run `node scripts/audit/chat19-shell-grep.cjs --markdown` on the final checkout and retain its command-level complete-tree output; verify historical icon glyphs, actual desktop expanded/collapsed canvas x and 320/768/1024px drawer in a real browser; confirm historic TPO More interactions, Ant spin rendering, and the nonlegacy 3px intent bar disposition. Accordingly, **B3 [ ] and B4 [ ] stay open**. The source-only test assertions are written but no tests, code, build, lint or CI were executed.
