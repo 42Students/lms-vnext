@@ -89,46 +89,46 @@ export function FacultyAttendanceScheduleEditor({
   }
   return <section aria-label="Faculty attendance session scheduling"
     className="space-y-3 border-t border-border pt-4">
-    <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Schedule an attendance session</h2>
+    <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Schedule an attendance session</h2>
     <p className="text-xs text-muted-foreground">
       Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
       Only sessions you scheduled and have not marked for attendance can be rescheduled.
     </p>
-    <div className="grid gap-3 md:grid-cols-2">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">Action
+    <div className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2">
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
         <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
-          className="text-base md:text-sm">
+          className="text-[14px]>
           <option value="CREATE">Schedule</option>
           <option value="RESCHEDULE" disabled={eligible.length===0}>Reschedule</option>
         </Select>
       </label>
-      {action==="RESCHEDULE"?<label className="grid gap-1 text-[13px] font-semibold leading-4">Unmarked session
+      {action==="RESCHEDULE"?<label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Unmarked session
         <Select value={id} onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)applyExistingSession(next);}}
-          className="text-base md:text-sm">
+          className="text-[14px]>
           {eligible.map(s=>
             <option key={s.id} value={s.id}>{s.title}</option>)}
         </Select>
       </label>:null}
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">Session title
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session title
         <Input value={title} onChange={e=>setTitle(e.target.value)}
-          maxLength={160} className="text-base md:text-sm" />
+          maxLength={160} className="text-[14px] />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">Location
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Location
         <Input value={location} onChange={e=>setLocation(e.target.value)}
-          maxLength={240} className="text-base md:text-sm" />
+          maxLength={240} className="text-[14px] />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">Start (IST)
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
         <Input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-          className="text-base md:text-sm" />
+          className="text-[14px] />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">End (IST)
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
         <Input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-          className="text-base md:text-sm" />
+          className="text-[14px] />
       </label>
     </div>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4">Description
+    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
       <Textarea value={description} onChange={e=>setDescription(e.target.value)}
-        maxLength={1000} className="text-base md:text-sm" />
+        maxLength={1000} className="text-[14px] />
     </label>
     <Button type="button" variant="primary" loading={busy} onClick={()=>void save()}
       disabled={busy||unchanged||action==="RESCHEDULE"&&!selected}>
