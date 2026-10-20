@@ -63,7 +63,7 @@ export default async function ProfileCompleteness({searchParams}:{
       </p> : <ul className="mt-4 grid gap-3 md:grid-cols-2">
         {readiness.items.map(item=><li key={item.section} className="min-w-0">
           <Link href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-12 items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm text-foreground hover:border-primary hover:bg-primary-subtle">
+            className="flex min-h-12 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground hover:border-primary hover:bg-primary-subtle">
             <span className="min-w-0 break-words">{item.label}
               {(["personal-details","contacts","education","skills"].includes(item.section))?
                 <span className="ml-2 text-xs font-semibold text-muted-foreground">Required</span>:null}
