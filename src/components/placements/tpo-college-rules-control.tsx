@@ -108,14 +108,14 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
           </label>
         ))}
       </div>
-      <section role="status" className="mt-4 text-sm text-body border-t border-border pt-5">
+      <section role="status" className="mt-4 min-w-0 text-sm text-body border-t border-border pt-5">
         <p>A student may hold {Number.isFinite(held)?held:0} offers (released or accepted) before the next rule applies.</p>
         <p className="mt-1">After that, another offer needs a CTC at least {form.upliftPct}% higher than their best offer, or a Dream drive. Internships never count.</p>
         <p className="mt-2 font-semibold">For example</p>
         <p>A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
       </section>
       <Button type="button" disabled={busy} onClick={() => void save()}
-        className="mt-4 min-h-11 md:min-h-9">
+        className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
         {busy ? "Saving..." : "Review and confirm rules"}
       </Button>
       {error ? <InlineNotice tone="error" message={error}/> : null}
