@@ -28,14 +28,14 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
 }){
  const raw=await searchParams;
  const query=parseSuperAdminTemplateDirectoryQuery(raw);
- if(!query.success)return <div className="min-w-0 space-y-5">
+ if(!query.success)return <div className="min-w-0 space-y-6">
   <PageHeader title="Project templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
    action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
    <PageHeader title="Project templates"/>
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates access denied"
@@ -46,7 +46,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  try {
   data=await listSuperAdminTemplateDirectory(context,query.data);
  } catch {
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
    <PageHeader title="Project templates"/>
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates unavailable"
@@ -54,7 +54,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     action={<Link href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9">Retry loading templates</Link>}/>
   </div>;
  }
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">New template →</Link>:undefined}/>
@@ -88,7 +88,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
         <StatusBadge tone={tone(item.status)}>{item.status}</StatusBadge>},
       {key:"sections",header:"Sections",mobilePriority:"secondary",cell:item=>item.sectionCounts?
-        <div className="flex min-w-0 flex-wrap gap-1.5">
+        <div className="flex min-w-0 flex-wrap gap-2">
           <Badge tone="info">Overview</Badge>
           <Badge tone="info">Sprints {item.sectionCounts.sprints}</Badge>
           <Badge tone="info">Tasks {item.sectionCounts.tasks}</Badge>

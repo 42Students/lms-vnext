@@ -85,10 +85,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
         actions={<Link href="/admin/settings/auth"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Authentication and privileged access checklist →</Link>}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Authentication and privileged access checklist →</Link>}
       />
 
-      <section aria-label="Tenant Settings overview" className="border-b border-border pb-5">
+      <section aria-label="Tenant Settings overview" className="border-b border-border pb-6">
         <p className="text-sm font-semibold text-body">Runtime configuration · {scopeLabel}</p>
         <h2 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Settings with explicit execution scope</h2>
         <dl className="mt-3 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 md:grid-cols-3 md:divide-x md:divide-y-0">
@@ -100,7 +100,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <section
         role="status"
         aria-label="Settings scope"
-        className="text-sm leading-6 text-body border-t border-border pt-5"
+        className="text-sm leading-6 text-body border-t border-border pt-6"
       >
         <p className="font-semibold text-foreground">
           {selectedCollegeName
