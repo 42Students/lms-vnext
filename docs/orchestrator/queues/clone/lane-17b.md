@@ -17,21 +17,21 @@ These 34 items were moved to chat-17 from the END of other lanes' queues because
 - [x] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
 - [x] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/e2e/superadmin-login/page.tsx`
-- [ ] `src/app/placements/page.tsx`
-- [ ] `src/app/superadmin-login/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/see/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/templates/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
-- [ ] `src/app/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/e2e/superadmin-login/page.tsx`
+- [x] `src/app/placements/page.tsx`
+- [x] `src/app/superadmin-login/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/season/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/see/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/templates/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
+- [x] `src/app/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
+- [x] `src/app/(authenticated)/tpo/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
