@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { SummaryStrip } from "@/components/ui/summary-strip";
+import { Disclosure } from "@/components/ui/disclosure";
 import type { PlacementReportMetrics } from "@/modules/placements/report-model";
 import type { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 
@@ -183,9 +184,10 @@ export function ReportMetrics({
 }
 
 export function ReportNavigation({
-  workspace,
+  workspace, compactNavigation = false,
 }: {
   workspace: PlacementReportWorkspace;
+  compactNavigation?: boolean;
 }) {
   const links = [
     { href: "/tpo/reports", label: "All reports" },
@@ -221,7 +223,8 @@ export function ReportNavigation({
      {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
     </p>
     <div className="flex flex-wrap justify-end print:hidden"><TpoReportPresentation/></div>
-    <nav aria-label="Reports navigation" className="flex flex-wrap gap-2 print:hidden">
+    {compactNavigation ? <Disclosure title="Other reports" className="min-w-0 print:hidden" contentClassName="pt-[var(--lms-space-2)]">
+      <nav aria-label="Reports navigation" className="flex flex-wrap gap-2 print:hidden">
       {links.map((link) => (
         <Link
           key={link.href}
@@ -231,7 +234,15 @@ export function ReportNavigation({
           {link.label}
         </Link>
       ))}
-    </nav>
+      </nav>
+    </Disclosure> : <nav aria-label="Reports navigation" className="flex flex-wrap gap-2 print:hidden">
+      {links.map((link) => (
+        <Link key={link.href} href={reportHref(link.href, workspace)}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          {link.label}
+        </Link>
+      ))}
+    </nav>}
    </>);
 }
 
