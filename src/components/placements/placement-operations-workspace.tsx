@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   listPlacementCompanies,
@@ -54,13 +55,14 @@ export async function PlacementOperationsWorkspace({
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-5">
       <PlacementOperationsOverview
         operations={operations}
         basePath={basePath}
         showDriveSearch={basePath.startsWith("/admin/")}
         staleDays={staleDays}
       />
+      <Disclosure title="Placement season" defaultOpen={!seasons.some(season=>season.status==="ACTIVE")} className="border-b border-[var(--lms-canvas-border)]">
       <PlacementSeasonManager
         collegeId={collegeId}
         seasons={seasons.map((season) => ({
@@ -75,6 +77,8 @@ export async function PlacementOperationsWorkspace({
               | "CLOSED",
         }))}
       />
+      </Disclosure>
+      <Disclosure title="Companies" className="border-b border-[var(--lms-canvas-border)]">
       <PlacementEmployerRelationships
         relationships={relationships.map(
           (item) => ({
@@ -92,6 +96,8 @@ export async function PlacementOperationsWorkspace({
         )}
         owners={owners}
       />
+      </Disclosure>
+      <Disclosure title="Recruiter access" className="border-b border-[var(--lms-canvas-border)]">
       <PlacementRecruiterAccess
         relationships={relationships.map(
           (item) => ({
@@ -117,6 +123,7 @@ export async function PlacementOperationsWorkspace({
           }),
         )}
       />
+      </Disclosure>
     </div>
   );
 }
