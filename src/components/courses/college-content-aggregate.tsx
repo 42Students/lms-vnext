@@ -25,7 +25,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
   const title = videos ? COLLEGE_COURSE_TAB_COPY.videosTitle : "Resources";
   const path = videos ? "/college/videos" : "/college/resources";
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-5 md:space-y-6">
       {showHeader ? <PageHeader
         eyebrow="College Admin · Courses & Content"
         title={title}
@@ -37,14 +37,17 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
         }
       /> : null}
       <section aria-label={title + " filters"} className="border-b border-border pb-5 print:hidden">
-        <form method="get" action={path} className="flex flex-wrap items-end gap-3">
+        <form method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-3">
           <label className="grid min-w-56 flex-1 gap-1 text-xs font-semibold text-body">
             Title, lesson or course
             <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
               placeholder="Search authored content"
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <details className="group min-w-0 basis-full" open={Boolean(data.query.courseCode || data.query.programCode || data.query.cohortCode || data.query.periodCode || data.query.departmentName || data.query.deliveryId || data.query.pathStatus !== "ALL" || data.query.offeringType !== "ALL" || data.query.lessonStatus !== "ALL" || data.query.status !== "ALL" || data.query.visibility !== "ALL" || data.query.scope !== "ALL" || data.query.offeringStatus !== "ALL" || (videos && data.query.format !== "ALL"))}>
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body md:min-h-9">Filters</summary>
+            <div className="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
+          <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
             Course code (exact)
             <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode ?? ""}
               placeholder="e.g. CS101"
@@ -154,12 +157,13 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               <option value="SECTION">Section-specific</option>
             </Select>
           </label>
+          </div></details>
           <Button type="submit"
-            className="min-h-11 md:min-h-9">
+            className="min-h-11 w-full md:min-h-9 md:w-auto">
             Filter
           </Button>
           <Link href={path}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Clear
           </Link>
         </form>

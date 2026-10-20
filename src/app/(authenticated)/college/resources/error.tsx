@@ -1,8 +1,9 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
 import {ErrorState} from "@/components/ui/error-state";
 export default function CollegeResourcesError({reset}:{error:Error&{digest?:string};reset:()=>void}){
- return <ErrorState title="Resources unavailable"
+ return <div className="min-w-0 space-y-6"><PageHeader title="Resources" /><ErrorState title="Resources unavailable"
   description="Resource metadata could not be loaded. No empty-result conclusion is assumed."
-  action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}/>;
+  action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}/></div>;
 }

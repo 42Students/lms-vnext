@@ -150,13 +150,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 border-b border-border pb-5">
-  <div className="flex flex-wrap items-center gap-3">
-   <h2 className="font-semibold">{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
+  <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center">
+   <p className="font-semibold">{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</p>
    <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
-    onClick={fresh}>{text}</Button>
+    onClick={fresh} className="w-full md:w-auto">{text}</Button>
   </div>
   {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
-  {open&&<div className="grid max-w-3xl gap-3 md:grid-cols-2">
+  {open&&<div className="grid min-w-0 max-w-3xl gap-4 md:grid-cols-2">
    <label className="text-sm">Lesson
     <Select className="mt-1" value={selectedLesson?lessonId:""}
      onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}} disabled={Boolean(editing)}>
@@ -213,14 +213,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <Checkbox checked={removeLink} onChange={e=>setRemoveLink(e.target.checked)}/>
     Remove existing resource link
    </label>:null}
-   <div className="flex gap-2 md:col-span-2">
+   <div className="flex flex-col-reverse gap-2 border-t border-border pt-3 md:col-span-2 md:flex-row md:justify-end">
     <Button type="button" variant="primary" loading={busy} disabled={busy} onClick={()=>void save()}>
      {busy?"Saving…":"Save"}</Button>
     <Button type="button" variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
    </div>
   </div>}
-  {existing.length>0&&<div className="space-y-2">
-   <h3 className="text-sm font-semibold">Existing Content</h3>
+  {existing.length>0&&<details className="group min-w-0 border-b border-border pb-4"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Existing Content</summary><div className="min-w-0 space-y-3 pt-3">
    {kind==="RESOURCE"&&!materialsEnabled?<p className="text-xs text-muted-foreground">
     Additional link and file materials are unavailable until the Resource Materials database runtime is verified.
     You can still edit Resource notes and its saved HTTPS link.
@@ -259,7 +258,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.courseCode} · {item.lessonName} · {item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?
         ((deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"Section")+" ("+
          (deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionCode??"")+")"):"One section":"All sections taking this course"})</span></span>
-    <div className="flex gap-2">
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
       {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}</a>}
      <label className="flex items-center gap-1 text-xs">Order
@@ -281,7 +280,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       <LessonResourceMaterialsControl key={item.id} contentId={item.id}
        deliveryId={item.deliveryId} editable/>:null}
    </li>)}</ul>
-  </div>}
+  </div></details>}
   {error&&<p role="alert" className="text-sm text-error">{error}</p>}
   {message&&<p role="status" className="text-sm">{message}</p>}
  </section>;
