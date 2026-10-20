@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { Tabs } from "@/components/ui/tabs";
 import {Select} from "@/components/ui/select";
 import {Table} from "@/components/ui/table";
 import { Alert } from "@/components/ui/alert";
@@ -116,9 +115,9 @@ export default async function TpoStudentRequestsPage({
 
   if (tpoStudentRequestsHasInvalidUrlFilters(raw) || !parsed.success) {
     return (
-      <div className="min-w-0 space-y-5"
+      <div className="space-y-6">
         <PageHeader
-          
+          eyebrow="TPO · Students"
           title="Student Requests"
           description="College-wide placement exception and change requests."
         />
@@ -169,9 +168,9 @@ export default async function TpoStudentRequestsPage({
   );
 
   return (
-    <div className="min-w-0 space-y-5"
+    <div className="space-y-6">
       <PageHeader
-        
+        eyebrow="TPO · Students"
         title="Student Requests"
         description="Read-only, college-scoped placement withdrawal, round reschedule and offer extension requests. Open the related placement job for operational context."
         actions={
@@ -184,9 +183,24 @@ export default async function TpoStudentRequestsPage({
         }
       />
 
-      <Tabs ariaLabel="Students workspace tabs" value="requests" renderPanel={false}
-        items={[{value:"students",label:"Students roster",href:"/tpo/students"},
-          {value:"requests",label:"Requests",href:"/tpo/students/requests"}]}/>
+      <nav
+        aria-label="Students workspace tabs"
+        className="flex flex-wrap gap-2 border-b border-border pb-3"
+      >
+        <Link
+          href="/tpo/students"
+          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+        >
+          Students roster
+        </Link>
+        <Link
+          href="/tpo/students/requests"
+          aria-current="page"
+          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-primary px-4 py-2 text-sm font-[650] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+        >
+          Requests
+        </Link>
+      </nav>
 
       <section className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-5">
         <Link

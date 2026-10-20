@@ -14,9 +14,9 @@ export default async function TpoMorePage() {
   }
 
   return (
-    <div className="min-w-0 space-y-5"
+    <div className="space-y-6">
       <PageHeader
-        
+        eyebrow="TPO · Navigation"
         title="More"
         description="Quick access to the placement tools, recruiter relationships and account pages available to your TPO membership."
       />
@@ -40,12 +40,12 @@ export default async function TpoMorePage() {
               </p>
             </div>
 
-            <div className="divide-y divide-border border-y border-border">
+            <div className="grid gap-3 sm:grid-cols-2">
               {group.links.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group block min-w-0 px-3 py-4 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  className="group block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="text-base font-semibold text-link">

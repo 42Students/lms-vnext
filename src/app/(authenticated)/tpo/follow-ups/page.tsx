@@ -7,7 +7,6 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
-import { FilterChipLink } from "@/components/ui/filter-chip";
 import { Alert } from "@/components/ui/alert";
 import { TpoDueFollowupWorkspace } from "@/components/tpo/tpo-due-followup-workspace";
 import { getTpoDueFollowupQueue } from "@/modules/placements/tpo-followup-queue-service";
@@ -31,30 +30,34 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
   const ready = await tpoCrmTablesReady();
   const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope,window,q,page}) : null;
   return (
-    <div className="min-w-0 space-y-5"
+    <div className="space-y-6">
       <Link href="/tpo/recruiters"
-        className="text-sm font-semibold text-link hover:underline">
+        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Back to recruiter leads
       </Link>
-      <PageHeader  title="Follow-ups due"
+      <PageHeader eyebrow="TPO · Recruiter relationships" title="Follow-ups due"
         description="Schedule recruiter follow-ups and log completed outcomes using registered CRM data." />
       <nav aria-label="Follow-up ownership" className="flex flex-wrap gap-3">
-        {FOLLOWUP_SCOPES.map(view=><FilterChipLink key={view} href={tpoFollowupQueueHref({scope:view,window,q})} selected={view===scope}>
+        {FOLLOWUP_SCOPES.map(view=><Link key={view} href={tpoFollowupQueueHref({scope:view,window,q})}
+          aria-current={view===scope?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           {view==="MINE"?"My Work":"Placement Team"}
-        </FilterChipLink>)}
+        </Link>)}
       </nav>
       <nav aria-label="Follow-up date window" className="flex flex-wrap gap-3">
-        {FOLLOWUP_WINDOWS.map(view=><FilterChipLink key={view} href={tpoFollowupQueueHref({scope,window:view,q})} selected={view===window}>
+        {FOLLOWUP_WINDOWS.map(view=><Link key={view} href={tpoFollowupQueueHref({scope,window:view,q})}
+          aria-current={view===window?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           {view==="DUE"?"Due now":"Next 7 days"}
-        </FilterChipLink>)}
+        </Link>)}
       </nav>
       <form action="/tpo/follow-ups" method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
-        <Input type="hidden" name="scope" value={scope}/><Input type="hidden" name="window" value={window}/>
+        <input type="hidden" name="scope" value={scope}/><input type="hidden" name="window" value={window}/>
         <label className="min-w-0 flex-1 text-sm font-semibold text-body">Find recruiter or company
           <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
             className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
         </label><Button type="submit" className="min-h-[var(--lms-control-height)]">Search</Button>
-        {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-link">Clear</Link>:null}
+        {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>:null}
       </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
       {data ? <><a href={tpoFollowupQueueExportHref({scope,window,q})}
