@@ -27,7 +27,7 @@ export default async function CollegeAttendanceSettingsPage() {
     );
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-5)]">
       <PageHeader
         title="Attendance policy"
         description={`Set the attendance eligibility threshold and correction window for ${college.name}.`}
@@ -36,10 +36,12 @@ export default async function CollegeAttendanceSettingsPage() {
         }
       />
 
-      <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"><CollegeAttendancePolicyForm
+      <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+        <CollegeAttendancePolicyForm
         collegeId={college.id}
         initialPolicy={policy}
-      /></section>
+        />
+      </section>
     </div>
   );
 }
