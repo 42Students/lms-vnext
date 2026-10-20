@@ -3,6 +3,8 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -211,16 +213,22 @@ export function CreateProjectControl({
 
   if (templates.length === 0) {
     return (
-      <Button size="sm" variant="secondary" disabled>
-        No assigned templates
-      </Button>
+      standalone ? (
+        <EmptyState title="No assigned templates"
+          description="Create an independent Project workspace from a published template assigned to this college."
+          action={<Link href={basePath + "/templates"}
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Templates</Link>}
+        />
+      ) : (
+        <Button size="sm" variant="secondary" disabled>No assigned templates</Button>
+      )
     );
   }
 
 
   const form = (
-        <form onSubmit={submit} className="grid gap-4">
-          <label>
+        <form onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4 md:grid-cols-2">
+          <label className="min-w-0">
             <span className="mb-1.5 block text-sm font-semibold text-body">
               Assigned template
             </span>
@@ -241,7 +249,7 @@ export function CreateProjectControl({
               ))}
             </Select>
           </label>
-          <label>
+          <label className="min-w-0">
             <span className="mb-1.5 block text-sm font-semibold text-body">
               Project title
             </span>
@@ -253,7 +261,7 @@ export function CreateProjectControl({
               placeholder="Campus placement portal"
             />
           </label>
-          <label>
+          <label className="min-w-0">
             <span className="mb-1.5 block text-sm font-semibold text-body">
               Slug
             </span>
@@ -271,7 +279,7 @@ export function CreateProjectControl({
               Lowercase letters, numbers and hyphens only.
             </span>
           </label>
-          <label>
+          <label className="min-w-0 md:col-span-2">
             <span className="mb-1.5 block text-sm font-semibold text-body">
               Summary
             </span>
@@ -284,7 +292,7 @@ export function CreateProjectControl({
               placeholder="Optional context specific to this Project instance."
             />
           </label>
-          <label>
+          <label className="min-w-0">
             <span className="mb-1.5 block text-sm font-semibold text-body">
               Primary mentor
             </span>
@@ -313,14 +321,14 @@ export function CreateProjectControl({
               If selected, the Mentor assignment is validated and committed atomically with workspace creation.
             </span>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Class
+          <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Class
             <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="w-full">
               <option value="">No class</option>
               {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
             </Select>
           </label>
-          {classesError?<p role="alert" className="text-sm text-error">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</Button></p>:null}
+          {classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</Button></p>:null}
           <label className="grid gap-1 text-sm font-semibold text-body">Status
             <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="w-full">
@@ -328,12 +336,12 @@ export function CreateProjectControl({
               <option value="ACTIVE" disabled={!mentorMembershipId}>Active</option>
             </Select>
           </label>
-          {!mentorMembershipId?<p className="text-xs text-warning">This workspace has no mentor.</p>:null}
-          {sectionId?<section className="min-w-0 border-b border-border pb-4">
+          {!mentorMembershipId?<p className="text-xs text-warning md:col-span-2">This workspace has no mentor.</p>:null}
+          {sectionId?<section className="min-w-0 border-b border-border pb-4 md:col-span-2">
             <p className="mb-2 text-sm font-semibold text-foreground">Students · {learnerMembershipIds.length} selected</p>
             {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try again</Button></p>:null}
             {!rosterError&&loadedRosterSectionId!==sectionId?<p role="status" className="text-sm text-body">Loading class roster…</p>:null}
-            <div className="flex gap-3 text-xs">
+            <div className="flex flex-wrap gap-3 text-xs">
               <Button variant="ghost" type="button" disabled={loadedRosterSectionId!==sectionId} className="text-primary-text underline"
                 onClick={()=>setLearnerMembershipIds(roster.map(x=>x.membershipId))}>Whole class</Button>
               <Button variant="ghost" type="button" className="text-primary-text underline"
@@ -351,19 +359,20 @@ export function CreateProjectControl({
           </section>:null}
 
           {mentorsError ? (
-            <p role="alert" className="m-0 text-xs font-semibold text-warning">
+            <p role="alert" className="m-0 text-xs font-semibold text-warning md:col-span-2">
               {mentorsError} You can create the planned workspace and assign a Mentor from Team later.
             </p>
           ) : null}
           {error ? (
-            <p role="alert" className="m-0 text-sm font-semibold text-error">
+            <p role="alert" className="m-0 text-sm font-semibold text-error md:col-span-2">
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-2 border-t border-border pt-4 md:col-span-2 md:flex-row md:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full md:w-auto"
               disabled={pending}
               onClick={() => standalone ? router.push(basePath) : setOpen(false)}
             >
@@ -371,6 +380,7 @@ export function CreateProjectControl({
             </Button>
             <Button
               type="submit"
+              className="w-full md:w-auto"
               disabled={
                 pending ||
                 !templateId ||
@@ -390,7 +400,7 @@ export function CreateProjectControl({
         <Button size="sm" onClick={openDialog}>Create workspace</Button>
       ) : null}
       {standalone ? (
-        <section aria-label="Create workspace" className="space-y-5">
+        <section aria-label="Create workspace" className="min-w-0 max-w-3xl space-y-5">
           <p className="text-sm text-body">Create an independent Project workspace from a published template assigned to this college.</p>
           {form}
         </section>
