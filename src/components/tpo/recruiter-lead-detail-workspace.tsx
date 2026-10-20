@@ -278,12 +278,9 @@ export function RecruiterLeadDetailWorkspace({
     setEditing(true);
   }
 
-  async function saveEdit(event: React.FormEvent) {
-    event.preventDefault();
-    if (!window.confirm(
-      "Save updated recruiter details? Contact identity changes may affect " +
-      "duplicate checks and outreach. The update will be recorded in the activity log.",
-    )) return;
+  async function saveEdit(event?: React.FormEvent,confirmed=false) {
+    event?.preventDefault();
+    if(!confirmed){setConfirmation("SAVE_EDIT");return;}
     const ok = await mutate(base, "PATCH", {
       collegeId,
       name: edit.name,
@@ -326,16 +323,13 @@ export function RecruiterLeadDetailWorkspace({
     if (ok) { setFollowAt(""); setFollowNote(""); }
   }
 
-  async function markNotNow(event: React.FormEvent) {
-    event.preventDefault();
+  async function markNotNow(event?: React.FormEvent,confirmed=false) {
+    event?.preventDefault();
     if (!notNowReason.trim()) {
       setActionError("Please tell us why this recruiter is not available now.");
       return;
     }
-    if (!window.confirm(
-      "Mark this recruiter Not Now? The stage and reason/revisit date will be " +
-      "saved with an auditable change record. No invitation will be sent.",
-    )) return;
+    if(!confirmed){setConfirmation("MARK_NOT_NOW");return;}
     const ok = await mutate(base + "/not-now", "POST", {
       confirmed: true,
       decision: {
@@ -347,8 +341,8 @@ export function RecruiterLeadDetailWorkspace({
     if (ok) setNotNowOpen(false);
   }
 
-  async function createInviteLink() {
-    if (!window.confirm("Create an invitation valid for 7 days? Any previous link will stop working.")) return;
+  async function createInviteLink(confirmed=false) {
+    if(!confirmed){setConfirmation("CREATE_INVITE");return;}
     if(lead?.unsubscribedAt){setActionError("Asked not to be contacted.");return;}
     if(!lead?.emailNorm||!lead.companyRelationshipId){
       setActionError("Add a work email and link a company before inviting.");
@@ -547,8 +541,7 @@ export function RecruiterLeadDetailWorkspace({
                           "&body="+encodeURIComponent(inviteMessage)}>
                         Also email it (open draft)</a>:null}
                       <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
-                        if(!window.confirm("Close invitation preview? The one-time token and message will not be shown again."))return;
-                        setInviteLink("");setInviteMessage("");setInviteNotice("");setInviteExpiresAt("");
+                        setConfirmation("CLOSE_INVITE");
                       }}>Close preview</Button>
                     </div>
                   </div>:null}
