@@ -27,6 +27,7 @@ export default async function MentorReviewOverviewPage({
  <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
  </section>;
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
+ const filtered=data.query.status!=="ALL"||data.query.feedback!=="ALL"||data.query.version!==undefined;
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
  <PageHeader eyebrow="Mentor · Project" title="Delivery review overview"
  description={data.project.title+" · "+data.project.status}
@@ -58,8 +59,8 @@ export default async function MentorReviewOverviewPage({
   <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
    Filter
   </Button>
-  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>
+  {filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
  </form></FilterBar>
  <div className="flex flex-wrap items-center gap-3 text-sm">
   <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
@@ -80,7 +81,7 @@ export default async function MentorReviewOverviewPage({
  </p></section>
  <p className="text-sm text-body leading-[22px]">{data.total} registered delivery version{data.total===1?"":"s"}</p>
  {data.items.length===0?<EmptyState title="No registered final delivery"
- description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history." action={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Delivery workspace</Link>}/>
+ description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history." action={filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>:<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Delivery workspace</Link>}/>
  :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
  <li key={item.id} className="py-[var(--lms-space-3)]">
  <div className="flex flex-wrap items-center justify-between gap-3">
