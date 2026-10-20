@@ -37,7 +37,7 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   }catch(e){setError(e instanceof Error?e.message:"Unable to confirm the change.");}
   finally{setPending(false);}
  }
- return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Batch eligibility decision">
+ return <section className="min-w-0 space-y-3 border-y border-[var(--lms-canvas-border)] py-4" aria-label="Batch eligibility decision">
   <h2 className="font-semibold">Who is in placements?</h2>
   <p className="text-sm text-muted-foreground">This sets the default for this whole cohort. More specific class and student decisions override it.</p>
   <label className="block text-sm">Batch default decision
@@ -51,7 +51,7 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
     onChange={e=>setReason(e.target.value)} disabled={pending}/>
   </label>:null}
   <Button type="button" onClick={()=>void submit()} disabled={pending||!valid}
-   className="min-h-11 md:min-h-9">{pending?"Saving…":"Review and save batch decision"}</Button>
+   className="min-h-11 w-full sm:w-auto md:min-h-9">{pending?"Saving…":"Review and save batch decision"}</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
   {actionId?<TpoBatchUndoControl batchId={batchId} actionId={actionId}/>:null}
