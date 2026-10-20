@@ -30,6 +30,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
+  const filtered=data.query.focus!=="ALL"||data.query.taskPriority!=="ALL";
   const metrics=[
     ["Blocked tasks",data.counts.blockedTasks],
     ["Awaiting task review",data.counts.reviewTasks],
@@ -50,7 +51,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       <section aria-label="Recorded workflow signals" className="grid min-w-0 gap-x-4 gap-y-1 border-y border-[var(--lms-canvas-border)] md:grid-cols-2 lg:grid-cols-5">
         {metrics.map(([label,value])=>
           <article key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] md:border-b-0">
-            <h2 className="m-0 text-xs font-semibold text-muted-foreground">{label}</h2>
+            <p className="m-0 text-xs font-semibold text-muted-foreground">{label}</p>
             <p className="mt-1 text-xl font-semibold tabular-nums">{value}</p>
           </article>)}
       </section>
@@ -81,11 +82,11 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">
           Filter
         </Button>
-        <Link href={base+"/risk-readiness"}
-          className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear</Link>
+        {filtered?<Link href={base+"/risk-readiness"}
+          className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form></FilterBar>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
-        description="No matching stored signals were found. This is not a certificate of project safety or completeness." action={<Link href={base+"/risk-readiness"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>}/>:
+        description="No matching stored signals were found. This is not a certificate of project safety or completeness." action={filtered?<Link href={base+"/risk-readiness"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>:<Link href={base} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Full project workspace</Link>}/>:
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
         <li key={row.key} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
