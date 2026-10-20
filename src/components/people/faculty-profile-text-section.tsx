@@ -37,16 +37,16 @@ export function FacultyProfileTextSection({ section, title, description, fields,
     if(!pending && changed) void onSave(section,draft);
   }
   return <form id={facultyProfileAnchor(section)} onSubmit={submit}
-    className="min-w-0 scroll-mt-6 space-y-4 border-b border-[var(--lms-canvas-border)] py-5" aria-label={title} aria-busy={pending}>
+    className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]" aria-label={title} aria-busy={pending}>
     <div>
       <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg">{title}</h2>
       <p className="mt-[var(--lms-space-1)] max-w-[75ch] break-words text-sm leading-6 text-body">{description}</p>
     </div>
-    <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+    <div className="grid min-w-0 max-w-[960px] gap-[var(--lms-space-4)] sm:grid-cols-2">
       {fields.map(field=>{
         const id=`${facultyProfileAnchor(section)}-${field.name}`;
         const fieldError=changed&&issueField===field.name ? issue?.slice(field.name.length+1).trim() : null;
-        return <div key={field.name} className={field.multiline?"min-w-0 min-[768px]:col-span-2":"min-w-0"}>
+        return <div key={field.name} className={field.multiline?"min-w-0 sm:col-span-2":"min-w-0"}>
           <FormField id={id} label={field.label} error={fieldError}>
           {props=>field.multiline
             ? <Textarea {...props} rows={4} value={draft[field.name]??""} maxLength={field.maxLength}

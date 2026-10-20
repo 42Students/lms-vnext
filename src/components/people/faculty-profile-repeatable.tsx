@@ -62,7 +62,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   }
   return (
     <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
-      className="min-w-0 scroll-mt-6 space-y-4 border-b border-[var(--lms-canvas-border)] py-5">
+      className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <div>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
@@ -70,7 +70,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       {rows.length === 0 ? <p className="text-sm text-muted-foreground">No records added yet.</p> : null}
       {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-          className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full" placeholder="Search section fields"/>
+          className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full" placeholder="Search section fields"/>
       </label>:null}
       {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
@@ -98,12 +98,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                     <Checkbox  className="ml-3" checked={value === true} disabled={pending}
                       onChange={event => update(row.id, field.name, event.target.checked)} />
                   ) : field.multiline ? (
-                    <Textarea className="mt-1.5 min-h-24 w-full min-w-0"
+                    <Textarea className="mt-[var(--lms-space-2)] min-h-24 w-full min-w-0"
                       maxLength={field.maxLength} value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   ) : (
-                    <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0"
+                    <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0"
                       type={field.kind ?? "text"} maxLength={field.maxLength}
                       value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
@@ -112,7 +112,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 </label>;
               })}
             </div>:null}
-            <div className="mt-3 flex min-w-0 flex-wrap gap-2">
+            <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap [&>button]:w-full sm:[&>button]:w-auto">
               <Button variant="secondary" type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} className="min-h-11 min-[768px]:min-h-9" onClick={async()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
               }}  aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</Button>
@@ -123,20 +123,20 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
             <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems} onClick={async () => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
               setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);
-            }} className="mt-3 mr-2 min-h-11 min-[768px]:min-h-9">
+            }} className="mt-[var(--lms-space-3)] mr-[var(--lms-space-2)] min-h-11 w-full sm:w-auto min-[768px]:min-h-9">
               Duplicate draft
             </Button>
             <Button variant="secondary" type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={async () => {
               if (!(await askConfirm("Remove record "+(index+1)+" from "+title+"? It remains saved until you submit the section."))) return;
               setRows(current => removeFacultyProfileDraftRow(current,row.id)); setChanged(true);
-            }} className="mt-3 min-h-11 min-[768px]:min-h-9 text-error">
+            }} className="mt-[var(--lms-space-3)] min-h-11 w-full text-error sm:w-auto min-[768px]:min-h-9">
               Remove draft record
             </Button>
             {facultyProfileRecordHasManagedDocument(row) ? <p className="mt-2 text-xs text-muted-foreground">This entry has a managed document. Contact your College to remove it.</p> : null}
           </fieldset>
         ))}
       </div>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap [&>button]:w-full sm:[&>button]:w-auto">
         <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems} className="min-h-11 min-[768px]:min-h-9"
           
           onClick={async () => { setRows(current => [...current, create()]); setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true); }}>
