@@ -103,16 +103,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-14.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/profile/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
