@@ -9,29 +9,36 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
  companyId:string;name:string;verified:boolean;
 }){
  const router=useRouter(),[confirm,setConfirm]=useState(false),
-  [busy,setBusy]=useState(false),[error,setError]=useState("");
+  [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  async function save(){
   if(busy)return;
-  setBusy(true);setError("");
+  setBusy(true);setError("");setNotice("");
   try{
    await apiFetch("/api/admin/companies/verification",{
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({companyId,verified:!verified}),
    });
-   setConfirm(false);router.refresh();
+   setConfirm(false);setNotice(verified?"Company verification removed.":"Company verified.");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Verification unavailable. Please try again.");}
   finally{setBusy(false);}
  }
- return <div className="mt-2 space-y-2 print:hidden">
-  <Button type="button" variant="secondary" disabled={busy} loading={busy}
-   onClick={()=>setConfirm(true)} className="min-h-11 md:min-h-9">
+ return <section aria-label="Company verification" aria-busy={busy} className="mt-2 min-w-0 space-y-2 print:hidden">
+  <Button type="button" variant={verified?"secondary":"primary"} disabled={busy} loading={busy}
+   onClick={()=>{setError("");setNotice("");setConfirm(true);}}
+   className="min-h-11 w-full sm:min-h-9 sm:w-auto">
    {verified?"Unverify":"Verify"} company
   </Button>
-  <ConfirmDialog open={confirm} onOpenChange={setConfirm}
+  <ConfirmDialog open={confirm} onOpenChange={open=>{if(!busy)setConfirm(open);}}
    title={verified?"Remove global company verification?":"Verify company globally?"}
    description={(verified?"Unverify ":"Verify ")+name+" globally for 42?"}
-   confirmLabel={verified?"Confirm unverify":"Confirm verify"} confirmVariant={verified?"danger":"primary"} pending={busy}
-   onConfirm={()=>void save()}/>
-  {error?<Alert tone="error">{error}</Alert>:null}
- </div>;
+   confirmLabel={verified?"Confirm unverify":"Confirm verify"} confirmVariant={verified?"danger":"primary"}
+   pending={busy} onConfirm={()=>void save()}>
+   <div className="min-w-0 space-y-3 px-4 py-4 md:px-6">
+    <p className="m-0 break-words text-sm leading-5 text-body"><strong className="font-semibold text-foreground">{name}</strong> · {verified?"Verified → Unverified":"Unverified → Verified"}</p>
+    {error?<Alert tone="error">{error}</Alert>:null}
+   </div>
+  </ConfirmDialog>
+  {error&&!confirm?<Alert tone="error">{error}</Alert>:null}
+  {notice&&!confirm?<Alert tone="success">{notice}</Alert>:null}
+ </section>;
 }
