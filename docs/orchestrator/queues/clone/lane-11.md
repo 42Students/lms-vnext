@@ -20,25 +20,25 @@ Fix every listed deviation using the shared components in src/components/ui and 
 - [x] `src/components/placements/learner-placement-notification-settings.tsx` (score 2: arbitrary px size x2)
 - [x] `src/components/projects/mentor-meeting-reschedule.tsx` (score 2: arbitrary px size x2)
 - [x] `src/components/activity/learner-notifications-inbox.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/projects/mentor-sprint-write.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/projects/mentor-task-details-edit.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/projects/project-list.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/tpo/tpo-my-notification-preferences-editor.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/projects/mentor-sprint-write.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/projects/mentor-task-details-edit.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/projects/project-list.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/tpo/tpo-my-notification-preferences-editor.tsx` (score 1: arbitrary px size x1)
 
 ## Section 2: page routes, full fidelity pass (28)
 For each page: page head via PageHeader (title, subtitle, actions exactly as the old LMS), canvas card (white, radius 12, border #e5e9f0, padding 24), tabs, filter row, tables/grids/cards, chips and badges, banners and inline notices, every modal and drawer the page opens, buttons and forms, empty/loading/error states, toasts, spacing and typography values, and responsive at 1280, 768 and 375 widths. Read the page and the components it renders, fix every deviation you find, not only the listed ones.
 
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/data-access/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/data-access/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx`
 - [ ] `src/app/(authenticated)/notifications/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/profile/page.tsx`

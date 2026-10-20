@@ -63,7 +63,7 @@ export default async function TenantDirectory({searchParams}:{
       Create an organization and its colleges
     </Link>
    </div>} />
-  <form className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 min-[1366px]:grid-cols-4">
+  <form className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold leading-4 text-body">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 md:min-h-9"/>

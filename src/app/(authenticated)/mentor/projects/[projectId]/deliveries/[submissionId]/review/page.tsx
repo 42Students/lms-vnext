@@ -15,13 +15,13 @@ export default async function MentorDeliveryVersionPage({params}:{
     dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
   }).format(date)+" IST";
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Mentor · Final delivery" title={"Delivery version "+v.version}
+    <PageHeader title={"Delivery version "+v.version}
       description={data.projectTitle+" · "+data.projectStatus}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-safe:transition-colors motion-safe:duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-body min-[768px]:min-h-9 hover:bg-primary-subtle hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-safe:transition-colors motion-safe:duration-150 motion-reduce:transition-none">
         Review overview
       </Link>}/>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+    <section className="border-b border-border pb-[var(--lms-space-5)]">
       <h2 className="text-base font-semibold">Registered review decision</h2>
       <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Submission state</dt>
@@ -54,43 +54,43 @@ export default async function MentorDeliveryVersionPage({params}:{
           No written reviewer feedback is recorded for this version.
         </p>}
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+    <section className="border-b border-border pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Learner notes</h2>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
         {v.notes||"No learner notes were attached to this version."}
       </p>
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+    <section className="border-b border-border pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Submitted source and demo links</h2>
       <div className="mt-3 flex flex-wrap gap-3">
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
           {label:"Demo",href:safeProjectExternalHref(v.demoUrl)}]).map(item=>
             item.href?<a key={item.label} href={item.href} target="_blank"
-              rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Open {item.label.toLowerCase()} link ↗</a>:null)}
         {!safeProjectExternalHref(v.sourceUrl)&&!safeProjectExternalHref(v.demoUrl)?
           <p className="text-sm text-muted-foreground">No valid source or demo URL.</p>:null}
       </div>
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+    <section className="border-b border-border pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Additional submission files and links ({attachments.length})</h2>
       {!attachments.length?<p className="mt-2 text-sm text-muted-foreground">No extra attachments recorded.</p>:null}
-      <ul className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{attachments.map((entry,index)=>{
+      <ul className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-border">{attachments.map((entry,index)=>{
         const name=typeof entry.name==="string"?entry.name:"Attachment "+(index+1);
         const kind=entry.kind==="FILE"?"File":entry.kind==="LINK"?"Link":"Attachment";
         const href=typeof entry.url==="string"?safeProjectExternalHref(entry.url):null;
         return <li key={index} className="py-[var(--lms-space-3)] text-sm">
           <span className="break-words font-semibold">{name}</span> · {kind}
           {href?<a href={href} target="_blank" rel="noopener noreferrer"
-            className="ml-2 inline-flex min-h-11 max-w-full items-center break-all text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open link ↗</a>:null}
+            className="ml-2 inline-flex min-h-11 max-w-full items-center break-all text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open link ↗</a>:null}
           {kind==="File"&&typeof entry.fileId==="string"?
             <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}
         </li>;
       })}</ul>
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+    <section className="border-b border-border pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Recorded submission history</h2>
-      <ol className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-sm">
+      <ol className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-border text-sm">
         {v.createdAt?<li className="py-[var(--lms-space-3)]">Draft created · {format(v.createdAt)} · {data.createdByName??"Project learner"}</li>:null}
         {v.submittedAt?<li className="py-[var(--lms-space-3)]">Submitted · {format(v.submittedAt)} · {data.submittedByName??"Project learner"}</li>:null}
         {v.reviewedAt?<li className="py-[var(--lms-space-3)]">Reviewed ({v.decisionLabel}) · {format(v.reviewedAt)}
