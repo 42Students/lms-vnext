@@ -8,6 +8,7 @@ import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-c
 import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {CollegeContentCsvExport} from "./college-content-csv-export";
 import {CollegeContentPreview} from "./college-content-preview";
 import {
@@ -189,7 +190,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                 <article key={item.id} className="min-w-0 space-y-2 p-4" aria-label={item.title}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-xs font-semibold text-muted-foreground">{item.contentType}</span>
-                    <span className="text-xs font-semibold text-body">{item.status}</span>
+                    <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="ARCHIVED"?"neutral":"warning"}>{item.status}</StatusBadge>
                   </div>
                   <h2 className="break-words text-base font-semibold text-foreground">{item.title}</h2>
                   <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
