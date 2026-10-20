@@ -98,12 +98,12 @@ export function TpoCompanyPersonEditor({
         <label className="text-sm font-medium">Email
           <Input type="email" value={email} maxLength={150}
             onChange={event => {setReviewing(false);setEmail(event.target.value);}}
-            className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+            className="mt-1 block min-h-11 w-full md:min-h-9" />
         </label>
         <label className="text-sm font-medium">Designation (optional)
           <Input value={designation} maxLength={100}
             onChange={event => {setReviewing(false);setDesignation(event.target.value);}}
-            className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+            className="mt-1 block min-h-11 w-full md:min-h-9" />
         </label>
       </div>
       {reviewing?<Alert tone="info">
@@ -116,7 +116,7 @@ export function TpoCompanyPersonEditor({
         className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
         {busy ? "Saving..." : reviewing?"Confirm contact save":current ? "Review and save changes" : "Review and add contact"}
       </Button>
-      {message ? <InlineNotice tone={message.startsWith("Network error")?"error":"success"} message={message}/> : null}
+      {message ? <InlineNotice tone={message.startsWith("Contact saved.")?"success":"error"} message={message}/> : null}
     </section>
   );
 }
