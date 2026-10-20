@@ -77,22 +77,22 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   </p>
   <form method="get" className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-5">
    <Input type="hidden" name="tab" value={tabForm.hiddenTab} />
-   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name or college
+   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name or college
     <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
      className="min-h-11 w-full md:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
     <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 w-full md:min-h-9">
      {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
+   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
     <Select name="membershipStatus" defaultValue={query.data.membershipStatus}
      className="min-h-11 w-full md:min-h-9">
      {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform
+   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform
     <Select name="platformStatus" defaultValue={query.data.platformStatus}
      className="min-h-11 w-full md:min-h-9">
      {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}

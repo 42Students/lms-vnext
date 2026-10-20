@@ -39,20 +39,20 @@ export default async function HrRoundsEditorPage({params}:{
    <h2 className="font-semibold text-foreground">Add a round</h2>
    <form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
     <Input type="hidden" name="action" value="CREATE"/>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round name
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round name
      <Input name="name" required maxLength={100} className="w-full"/>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
      <Select name="kind" required defaultValue="INTERVIEW" className="w-full">
       {KINDS.map(([value,label])=><option key={value} value={value}>{label}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
      <Select name="mode" defaultValue="" className="w-full">
       <option value="">Not scheduled</option><option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (minutes)
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (minutes)
      <Input name="durationMinutes" type="number" min={1} max={1440} className="w-full"/>
     </label>
     <Button type="submit" className="md:col-span-2">Add round</Button>
@@ -81,15 +81,15 @@ export default async function HrRoundsEditorPage({params}:{
       <h3 className="hidden font-semibold text-foreground md:col-span-2 md:block">Change {round.sequence}. {round.name}</h3>
       <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>
       <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
        <Input name="name" required defaultValue={round.name} maxLength={100} className="w-full"/>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind
        <Select name="kind" defaultValue={round.kind} className="w-full">
         {KINDS.map(([value,label])=><option key={value} value={value}>{label}</option>)}
        </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
        <Select name="mode" defaultValue={round.mode??""} className="w-full">
         <option value="">Not scheduled</option><option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
        </Select>

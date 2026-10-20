@@ -45,20 +45,20 @@ export default async function CollegeCompaniesPage({
       actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</a>} />
     <CollegeCompanyCreate collegeId={collegeId}/>
     <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
-      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+      <label className="grid min-w-0 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
         <Input name="q" type="search" maxLength={100} defaultValue={query.q} className="min-h-11 w-full min-w-0 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={query.status}>
           <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={query.sort}>
           <option value="LAST_ACTIVE">Last active</option><option value="COMPANY">Company</option><option value="DRIVES">Drive count</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows
         <Select name="pageSize" defaultValue={query.pageSize}>
           {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>

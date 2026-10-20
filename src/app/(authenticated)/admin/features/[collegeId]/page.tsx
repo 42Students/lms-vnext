@@ -180,30 +180,30 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <form method="get" className="flex flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch" aria-label="Filter stored module overrides">
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored descendant module
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored descendant module
           <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 min-[768px]:min-h-9">
             <option value="">All modules</option>
             {OPTIONAL_MODULE_KEYS.map(key => <option key={key} value={key}>{ADMIN_MODULE_LABELS[key]}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored scope
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored scope
           <Select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 md:min-h-9">
             <option value="">All descendant scopes</option>
             {(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"] as const).map(key =>
               <option key={key} value={key}>{MODULE_SCOPE_LABELS[key]}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lock state
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lock state
           <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">All stored rules</option><option value="LOCKED">Locked rules only</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored value
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored value
           <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">Any stored value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact scope ID (optional)
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact scope ID (optional)
           <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 md:min-h-9"/>
         </label>
         <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Filter overrides</Button>

@@ -226,7 +226,7 @@ export default async function RecruiterCompanyReportsPage({
             value={collegeId}
           />
 
-          <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-44">
+          <label className="grid w-full min-w-0 gap-[6px] md:w-auto md:min-w-44 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Drive status
             <Select
               name="status"
@@ -245,7 +245,7 @@ export default async function RecruiterCompanyReportsPage({
             </Select>
           </label>
 
-          <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-32">
+          <label className="grid w-full min-w-0 gap-[6px] md:w-auto md:min-w-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Rows per page
             <Select
               name="pageSize"
