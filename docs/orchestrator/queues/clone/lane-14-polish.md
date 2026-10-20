@@ -42,7 +42,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-14.md: surface | probl
 - [x] `src/app/(authenticated)/college-admin/departments/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/app/(authenticated)/college-admin/programs/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/app/(authenticated)/dashboard/page.tsx` (Other page (super admin, public, auth, misc))
-- [ ] `src/app/(authenticated)/notifications/page.tsx` (Other page (super admin, public, auth, misc))
+- [x] `src/app/(authenticated)/notifications/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/(authenticated)/superadmin/[...legacy]/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/(authenticated)/superadmin/departments/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/(authenticated)/superadmin/page.tsx` (Other page (super admin, public, auth, misc))
