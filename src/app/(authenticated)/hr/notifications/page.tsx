@@ -73,7 +73,7 @@ export default async function HrMessagesPage({searchParams}:{
      <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
      <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
-       placeholder="Search drive titles" className="min-h-11 min-w-0 w-full basis-full md:w-[220px] md:basis-auto md:flex-none" />
+       placeholder="Search drive titles" className="min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none" />
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
@@ -84,7 +84,7 @@ export default async function HrMessagesPage({searchParams}:{
        aria-label={"Notifications for "+group.title}
        className="border-b border-border pb-4">
        <div className="flex flex-wrap items-center justify-between gap-2">
-         <h2 className="text-[18px] font-semibold leading-[1.35] text-[var(--lms-heading)]">
+         <h2 className="text-lg font-semibold leading-[1.35] text-[var(--lms-heading)]">
            <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
              className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{group.title}</Link>
          </h2>
@@ -110,9 +110,9 @@ export default async function HrMessagesPage({searchParams}:{
       </p>
       <div className="flex flex-wrap gap-2">
        {result.page>1?<Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page-1)}
-        className="inline-flex min-h-9 max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Previous</Link>:null}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Previous</Link>:null}
        {result.page<result.pages?<Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page+1)}
-        className="inline-flex min-h-9 max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Next</Link>:null}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Next</Link>:null}
       </div>
     </nav>
    <p className="text-xs text-muted-foreground"><Link href="/hr/messages" className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
