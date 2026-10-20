@@ -406,7 +406,7 @@ export function LearnerCourseDiscussion({
           <p className="m-0 flex-1 text-sm text-warning-text">
             Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
           </p>
-          <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => void load(true)}>
+          <Button type="button" size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => void load(true)}>
             Retry discussion refresh
           </Button>
         </Alert>
@@ -439,7 +439,7 @@ export function LearnerCourseDiscussion({
         onOpenChange={open=>{if(!open&&deletingId===null)setDeleteTarget(null);}}
         title="Delete this message?"
         description="This cannot be undone."
-        confirmLabel="Delete"
+        confirmLabel="Delete" confirmVariant="danger"
         pending={deletingId!==null}
         onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}/>
       <ConfirmDialog open={leaveHref!==null}
@@ -478,7 +478,7 @@ export function LearnerCourseDiscussion({
               <p className="mt-2 text-sm text-body">
                 Check your connection and try again.
               </p>
-              <Button className="mt-4 min-h-11 md:min-h-9" variant="secondary" onClick={() => void load()}>
+              <Button className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" onClick={() => void load()}>
                 Retry
               </Button>
             </div>
@@ -510,7 +510,7 @@ export function LearnerCourseDiscussion({
             <div className="min-w-0 space-y-2" role="log" aria-live="polite" aria-relevant="additions">
               {olderCursor ? (
                 <div className="flex flex-col items-center gap-2 pb-3">
-                  <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={loadingOlder}
+                  <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={loadingOlder}
                     onClick={() => void loadOlder()}>
                     {loadingOlder ? "Loading earlier messages…" : "Load earlier messages"}
                   </Button>
@@ -566,40 +566,26 @@ export function LearnerCourseDiscussion({
                     <p className={`${row.grouped ? "mt-0" : "mt-2"} whitespace-pre-wrap text-sm leading-6 text-body`}>
                       {row.item.messageText}
                     </p>
-                    {canPost ? <Button type="button"
-                      variant="ghost" className="mt-2 min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
-                      onClick={() => {
-                        setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
-                        focusComposer();
-                      }}>
-                      Reply
-                    </Button> : null}
-                    {canPost &&
-                    (moderate || row.item.isMine) ? (
-                      <div className="mt-2 flex flex-wrap items-center gap-3">
-                        {moderate ? (
-                          <Button
-                            type="button"
-                            disabled={pinningId !== null}
-                            onClick={() =>
-                              void togglePin(row.item.id)
-                            }
-                            variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] hover:underline md:min-h-9"
-                          >
-                            {pinningId === row.item.id
-                              ? "Saving…"
-                              : row.item.pinned
-                                ? "Unpin"
-                                : "Pin"}
-                          </Button>
-                        ) : null}
-                        {(moderate || row.item.isMine) ? <Button
-                          type="button"
-                          disabled={deletingId === row.item.id}
-                          onClick={() => setDeleteTarget(row.item.id)}
-                          variant="ghost" className="min-h-11 !text-[var(--lms-error)] hover:underline md:min-h-9"
-                        >
-                          {deletingId === row.item.id ? "Deleting…" : "Delete"}
+                    {(canPost || (moderate && row.item.isMine)) ? (
+                      <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+                        {canPost ? <Button type="button" variant="ghost"
+                          className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
+                          onClick={() => {
+                            setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
+                            focusComposer();
+                          }}>Reply</Button> : null}
+                        {canPost && moderate ? <Button type="button" variant="ghost"
+                          disabled={pinningId!==null}
+                          onClick={()=>void togglePin(row.item.id)}
+                          className="min-h-11 !text-[var(--lms-primary-text)] hover:underline md:min-h-9">
+                          {pinningId===row.item.id?"Saving…":row.item.pinned?"Unpin":"Pin"}
+                        </Button> : null}
+                        {canPost && (moderate || row.item.isMine) ? <Button
+                          type="button" variant="ghost"
+                          disabled={deletingId===row.item.id}
+                          onClick={()=>setDeleteTarget(row.item.id)}
+                          className="min-h-11 !text-[var(--lms-error)] hover:underline md:min-h-9">
+                          {deletingId===row.item.id?"Deleting…":"Delete"}
                         </Button> : null}
                       </div>
                     ) : null}
