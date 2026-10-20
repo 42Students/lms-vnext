@@ -105,7 +105,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         eyebrow="Super Admin · Module Access"
         title={`${college.name} · Access hierarchy`}
         description={`Inspect and update college rules for ${college.code}. Higher-priority locks and learner participation gates still apply.`}
-        actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Feature Controls</Link>}
+        actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">← Feature Controls</Link>}
       />
 
       <LearnerModuleAccessDrawer collegeId={college.id}/>
@@ -179,8 +179,8 @@ export default async function SuperAdminCollegeModuleAccessPage({
         ))}
       </section>
 
-      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch" aria-label="Filter stored module overrides">
-        <label className="grid gap-1 text-sm font-semibold text-body">Stored descendant module
+      <form method="get" className="flex flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch" aria-label="Filter stored module overrides">
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored descendant module
           <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 sm:min-h-9">
             <option value="">All modules</option>
             {OPTIONAL_MODULE_KEYS.map(key => <option key={key} value={key}>{ADMIN_MODULE_LABELS[key]}</option>)}
