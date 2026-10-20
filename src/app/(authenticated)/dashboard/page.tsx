@@ -57,10 +57,10 @@ function MetricCard({
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </p>
-      <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
+      <p className="mt-2 break-words text-2xl font-semibold tracking-tight tabular-nums text-foreground min-[768px]:text-3xl">
         {value}
       </p>
-      <p className="mt-2 text-sm text-body leading-[1.6]">
+      <p className="mt-2 break-words text-sm leading-6 text-body">
         {description}
       </p>
     </>
@@ -69,12 +69,12 @@ function MetricCard({
   return href ? (
     <Link
       href={href}
-      className="flex min-h-11 flex-col rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
     >
       {content}
     </Link>
   ) : (
-    <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+    <section className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
       {content}
     </section>
   );
@@ -111,13 +111,13 @@ async function SuperAdminDashboard({
       : "All-platform scope";
 
   return (
-    <div className="min-w-0 space-y-[16px]">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Overview"
         description={`${scopeLabel}. Counts and actions follow the selected safety scope.`}
       />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Organizations"
           value={organizations.length}
@@ -153,16 +153,14 @@ async function SuperAdminDashboard({
       </div>
       {collegeId?<CollegeAtGlancePanel collegeId={collegeId} initial={glance}/>:null}
       {collegeId?<SuperAdminTodayBoard data={today}/>:null}
-      <section className="border-b border-[var(--lms-canvas-border)] py-[16px]">
-        <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
-          Safety scope
-        </h2>
+      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Safety scope</summary>
         <p className="mt-2 text-sm text-body leading-[1.6]">
           {scopeLabel}. Use the selector in the top bar before
           college-specific administration. Global system-role
           management remains available only when the scope is cleared.
         </p>
-      </section>
+      </details>
       {collegeId ? <SuperAdminCollegeDashboardActions /> : <SuperAdminGlobalDashboardActions />}
     </div>
   );
@@ -179,7 +177,7 @@ async function RecruiterDashboard({
     );
 
   return (
-    <div className="min-w-0 space-y-[16px]">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         eyebrow="Employer Recruiter"
         title={context.recruiter?.companyName ?? "Hiring dashboard"}
@@ -324,7 +322,7 @@ async function MembershipDashboard({
     !hasActiveRecruiter(context)
   ) {
     return (
-      <div className="min-w-0 space-y-[16px]">
+      <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
         <PageHeader
           eyebrow="College access"
           title="No workspace role assigned"
@@ -339,7 +337,7 @@ async function MembershipDashboard({
   }
 
   return (
-    <div className="min-w-0 space-y-[16px]">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         eyebrow={roleLabel}
         title={
@@ -504,7 +502,7 @@ export default async function DashboardPage() {
       );
 
     return (
-      <div className="min-w-0 space-y-[16px]">
+      <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
         <PageHeader
           eyebrow="College access"
           title="Choose your college"

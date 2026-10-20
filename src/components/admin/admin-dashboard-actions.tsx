@@ -61,16 +61,16 @@ export function CollegeAdminDashboardActions() {
   return (
     <div className="space-y-6">
       <CollegeAdminQuickActions />
-      <section aria-label="Setup Guide" className="space-y-4">
+      <details className="min-w-0 space-y-4 border-t border-border pt-4">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <summary className="flex min-h-11 cursor-pointer items-center text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             {COLLEGE_SETUP_GUIDE_COPY.heading}
-          </h2>
+          </summary>
           <p className="mt-1 text-sm text-body">
             {COLLEGE_SETUP_GUIDE_COPY.intro}
           </p>
         </div>
-        {COLLEGE_ADMIN_SETUP_PHASES.map((phase, phaseIndex) => (
+        <div className="space-y-4 pt-4">{COLLEGE_ADMIN_SETUP_PHASES.map((phase, phaseIndex) => (
           <section
             key={phase.title}
             className="space-y-3 border-b border-border pb-5"
@@ -90,8 +90,8 @@ export function CollegeAdminDashboardActions() {
               ))}
             </div>
           </section>
-        ))}
-      </section>
+        ))}</div>
+      </details>
     </div>
   );
 }
@@ -124,9 +124,11 @@ export function SuperAdminCollegeDashboardActions() {
     <div className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
       {SUPER_ADMIN_COLLEGE_QUICK_ACTIONS.map(item=><ActionLink key={"quick:"+item.label} label={item.label} href={item.href}/>)}
     </div>
-    <h3 className="pt-3 text-sm font-semibold text-body">Other college workspaces</h3>
-    <div className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
-      {SUPER_ADMIN_COLLEGE_LINKS.map(item => <ActionLink key={item.label} label={item.label} href={item.href} />)}
-    </div>
+    <details className="min-w-0 border-t border-border pt-3">
+      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Other college workspaces</summary>
+      <div className="grid min-w-0 gap-3 pt-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
+        {SUPER_ADMIN_COLLEGE_LINKS.map(item => <ActionLink key={item.label} label={item.label} href={item.href} />)}
+      </div>
+    </details>
   </section>;
 }
