@@ -221,7 +221,7 @@ export function CreateProjectControl({
   const form = (
         <form onSubmit={submit} className="grid gap-4">
           <label>
-            <span className="mb-1.5 block text-[13px] font-semibold text-body">
+            <span className="mb-1.5 block text-sm font-semibold text-body">
               Assigned template
             </span>
             <Select
@@ -242,7 +242,7 @@ export function CreateProjectControl({
             </Select>
           </label>
           <label>
-            <span className="mb-1.5 block text-[13px] font-semibold text-body">
+            <span className="mb-1.5 block text-sm font-semibold text-body">
               Project title
             </span>
             <Input
@@ -254,7 +254,7 @@ export function CreateProjectControl({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-[13px] font-semibold text-body">
+            <span className="mb-1.5 block text-sm font-semibold text-body">
               Slug
             </span>
             <Input
@@ -272,7 +272,7 @@ export function CreateProjectControl({
             </span>
           </label>
           <label>
-            <span className="mb-1.5 block text-[13px] font-semibold text-body">
+            <span className="mb-1.5 block text-sm font-semibold text-body">
               Summary
             </span>
             <Textarea
@@ -285,7 +285,7 @@ export function CreateProjectControl({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-[13px] font-semibold text-body">
+            <span className="mb-1.5 block text-sm font-semibold text-body">
               Primary mentor
             </span>
             <Select
@@ -313,7 +313,7 @@ export function CreateProjectControl({
               If selected, the Mentor assignment is validated and committed atomically with workspace creation.
             </span>
           </label>
-          <label className="grid gap-1 text-[13px] font-semibold text-body">Class
+          <label className="grid gap-1 text-sm font-semibold text-body">Class
             <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="w-full">
               <option value="">No class</option>
@@ -321,7 +321,7 @@ export function CreateProjectControl({
             </Select>
           </label>
           {classesError?<p role="alert" className="text-sm text-error">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</Button></p>:null}
-          <label className="grid gap-1 text-[13px] font-semibold text-body">Status
+          <label className="grid gap-1 text-sm font-semibold text-body">Status
             <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="w-full">
               <option value="PLANNED">Planned</option>

@@ -147,7 +147,7 @@ export function CollegeBrandingForm({
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
             <label key={key} className="block min-w-0">
-              <span className="mb-1 block text-[13px] font-semibold text-body">
+              <span className="mb-1 block text-sm font-semibold text-body">
                 {key === "primaryColor" ? "Primary colour" : "Secondary colour"}
               </span>
               <div className="flex items-center gap-2">
@@ -182,7 +182,7 @@ export function CollegeBrandingForm({
 
         {FIELDS.map((field) => (
           <label key={field.key} className="block min-w-0">
-            <span className="mb-1 block text-[13px] font-semibold text-body">
+            <span className="mb-1 block text-sm font-semibold text-body">
               {field.label}
             </span>
             <Input

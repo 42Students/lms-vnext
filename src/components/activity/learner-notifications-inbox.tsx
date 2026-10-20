@@ -127,7 +127,7 @@ export function LearnerNotificationsInbox({
               type="button"
               aria-pressed={active === key}
               onClick={() => selectCategory(key)}
-              className="min-h-11 shrink-0 rounded-[8px] px-4 text-center text-sm font-medium whitespace-nowrap"
+              className="min-h-11 min-[768px]:min-h-9 shrink-0 rounded-[var(--lms-filter-radius,8px)] px-4 text-center text-sm font-medium whitespace-nowrap"
             >
               {label}
             </FilterChip>
