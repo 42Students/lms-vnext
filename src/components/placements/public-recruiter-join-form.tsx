@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 
 import authStyles from "@/components/public/public-auth-skin.module.css";
@@ -122,17 +123,17 @@ export function PublicRecruiterJoinForm({
       <Card as="section" className="w-full">
         {preview.kind !== "READY" ? (
           <>
-            <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">This link is no longer valid</h1>
+            <PageHeader title="This link is no longer valid" />
             <p className="mt-3 text-sm text-body">Ask the placement cell for a new one.</p>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
-           <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">Recruiter verification unavailable</h1>
+           <PageHeader title="Recruiter verification unavailable" />
            <p className="text-sm text-body">{blockedReason}</p>
           </div>
         ) : joined ? (
           <>
-            <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">{alreadyJoined?"You already have access to "+college:"You now have access to "+college}</h1>
+            <PageHeader title={alreadyJoined?"You already have access to "+college:"You now have access to "+college} />
             <p className="mt-3 text-sm text-body">
               {alreadyJoined
                 ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
@@ -142,9 +143,7 @@ export function PublicRecruiterJoinForm({
           </>
         ) : (
           <>
-            <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">
-              {scope === "COLLEGE" ? "Hire from " + college : college + " would like " + companyLabel + " to hire from their students"}
-            </h1>
+            <PageHeader title={scope === "COLLEGE" ? "Hire from " + college : college + " would like " + companyLabel + " to hire from their students"} />
             <p className="mt-3 text-sm text-body">
               Join with your company email. You can then request placement drives and review the students who apply.
             </p>

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import authStyles from "@/components/public/public-auth-skin.module.css";
 import Link from "next/link";
 import {Card} from "@/components/ui/card";
@@ -9,7 +10,7 @@ export function PublicJoinPreviewRetry({scope,token}:{
  const root=scope==="COMPANY"?"/company-join/":"/college-join/";
  return <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 items-center px-4 py-8 sm:py-12`}>
   <Card as="section" role="alert" className="w-full">
-   <h1 className="text-[30px] font-semibold leading-[1.3] text-[var(--lms-heading)]">We couldn&apos;t load this page</h1>
+   <PageHeader title="We couldn&apos;t load this page" />
    <p className="text-sm text-body">Check your connection and try again. Your invitation was not used.
     If the problem continues, ask the placement cell for help.</p>
    <Link href={root+encodeURIComponent(token)}

@@ -258,7 +258,7 @@ export default async function TpoMessagesPage({
           key={status}
           href={tpoMessagesHref({...commonFilters,status,page:1})}
           aria-current={query.status===status?"page":undefined}
-          className={"inline-flex min-h-11 shrink-0 items-center rounded-[8px] border px-4 text-sm font-medium transition-colors duration-150 "+
+          className={"inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-medium transition-colors duration-150 "+
             (query.status===status?"border-primary bg-primary text-on-primary hover:bg-primary-hover":
               "border-border bg-surface text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text")}>
             {label} ({count})
