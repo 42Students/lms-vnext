@@ -119,6 +119,8 @@ const measure = `(allowed) => {
   for (const el of document.body.querySelectorAll('div,section,article,aside')) { if (!vis(el)) continue; const c = getComputedStyle(el); const rad = parseFloat(c.borderTopLeftRadius); if (rad >= 8 && parseFloat(c.borderTopWidth) === 1 && c.backgroundColor === 'rgb(255, 255, 255)') bump('card', 'r' + c.borderTopLeftRadius + ' pad' + c.paddingTop + '/' + c.paddingLeft + ' b' + c.borderTopColor + ' sh' + (c.boxShadow === 'none' ? 'none' : 'shadow')); }
   for (const h of document.body.querySelectorAll('h2,h3')) { if (!vis(h)) continue; const c = getComputedStyle(h); bump(h.tagName.toLowerCase(), 'fs' + c.fontSize + ' fw' + c.fontWeight + ' c' + c.color); }
 
+  const strings = new Set();
+  for (const el of document.body.querySelectorAll("h1,h2,h3,button,a,th,label,legend,summary,[role=tab]")) { if (!vis(el)) continue; const t = (el.innerText || "").replace(/\\s+/g, " ").trim(); if (t.length >= 2 && t.length <= 70) strings.add(el.tagName.toLowerCase() + "|" + t); }
   const iw = window.innerWidth;
   const inScroller = (el) => { let p = el.parentElement; while (p && p !== document.body) { const o = getComputedStyle(p).overflowX; const pr = p.getBoundingClientRect(); if ((o === 'auto' || o === 'scroll' || o === 'hidden') && pr.right <= iw + 1) return true; p = p.parentElement; } return false; };
   const offenders = [];
@@ -126,7 +128,7 @@ const measure = `(allowed) => {
   const taps = [];
   if (iw < 768) for (const el of document.body.querySelectorAll('[data-slot=button], input, select, textarea')) { if (['hidden','checkbox','radio','file'].includes(el.type)) continue; const r = el.getBoundingClientRect(); if (r.width < 1 || r.height < 1) continue; if (r.height < 44 || r.width < 44) { const c = getComputedStyle(el); if (c.visibility === 'hidden' || c.display === 'none') continue; taps.push(el.tagName.toLowerCase() + ' ' + Math.round(r.width) + 'x' + Math.round(r.height) + ' ' + ((el.innerText || el.getAttribute('aria-label') || el.placeholder || '').trim().slice(0, 18))); } }
   const responsive = { iw, scrollWidth: document.documentElement.scrollWidth, overflowPx: Math.max(0, document.documentElement.scrollWidth - iw), offenders, tapCount: taps.length, tapSamples: taps.slice(0, 4) };
-  return { elements: n, title: document.title, violations: Object.values(found), geo, responsive, text: (document.body.innerText || "").replace(/\\s+/g, " ").trim().slice(0, 140), h1: [...document.querySelectorAll("h1")].map((h) => { const s = getComputedStyle(h); return s.fontSize + "/" + s.fontWeight + "/" + s.color; }) };
+  return { elements: n, title: document.title, violations: Object.values(found), geo, responsive, strings: [...strings].slice(0, 220), text: (document.body.innerText || "").replace(/\\s+/g, " ").trim().slice(0, 140), h1: [...document.querySelectorAll("h1")].map((h) => { const s = getComputedStyle(h); return s.fontSize + "/" + s.fontWeight + "/" + s.color; }) };
 }`;
 
 async function main() {
