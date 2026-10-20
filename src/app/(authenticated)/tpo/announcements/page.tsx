@@ -157,8 +157,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
     items={[{value:"mine",label:"Your notices",href:"/tpo/announcements?tab="+tab.data},
       {value:"team",label:"All team notices",href:"/tpo/announcements?tab="+tab.data+"&mine=0"}]}/>:null}
   {result.status==="NOT_REGISTERED"?<Alert tone="warning">
-   <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
-   <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
+   <h2 className="font-semibold text-foreground">Announcements are temporarily unavailable</h2>
+   <p className="mt-2 text-sm text-body">College-wide announcements are currently unavailable. Personal notifications are still available separately.</p>
   </Alert>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}
@@ -273,7 +273,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <p className="mt-3 text-xs text-muted-foreground">
      {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)} IST</p>
    </li>)}
-  </ol>:<EmptyState title="No currently visible college-wide announcements from this sender."/>}
+  </ol>:<EmptyState title="No announcements from this sender yet"/>}
   {result.status==="READY"?<nav aria-label="Announcement pages"
     className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>

@@ -34,14 +34,14 @@ export default async function MentorSprintProgressPage({
     page: first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid sprint progress filters"} />
+    <PageHeader title="Sprint progress" description="Invalid sprint progress filters" />
     <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9">Clear filters</Link>
   </section>;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
   const data = await getMentorSprintProgress(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Mentor · Projects" title="Sprint progress"
+    <PageHeader title="Sprint progress"
       description="Registered sprint, release and task status across your current project assignments."
       actions={<Link data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Mentoring projects
@@ -106,7 +106,7 @@ export default async function MentorSprintProgressPage({
       </div>
       <p className="text-sm text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
-        description="No sprints matched the selected state and current Mentor assignments. Unmaterialized or missing pre-migration work is not counted." />
+        description="No sprints matched the selected state and current mentor assignments. Unmaterialized or missing pre-migration work is not counted." />
       : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
         <article key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
