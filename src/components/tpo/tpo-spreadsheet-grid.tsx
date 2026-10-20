@@ -69,6 +69,7 @@ export function TpoSpreadsheetGrid<Row>({
   return {minWidth:width,width,left:before,position:"sticky",zIndex:1,background:"var(--surface, white)"};
  }
  const visibleRowIds=orderedRows.map(rowKey);
+ const allowedIds=selection?.allIds??visibleRowIds;
  const selectAllIds=[...new Set(visibleRowIds.filter(id=>allowedIds.includes(id)))];
  const anchor=useRef<string|null>(null);
  const fullySelected=selectAllIds.length>0&&selectAllIds.every(id=>selection?.selected.includes(id));
@@ -90,7 +91,7 @@ export function TpoSpreadsheetGrid<Row>({
   selection.onChange(selectedGridIdsWithin(result.selected,allowedIds));
   anchor.current=result.anchor;
  }
- const allowedIds=selection?.allIds??visibleRowIds;
+
  const allowedCsv=allowedIds.join("\u001f");
  const selectedCsv=selection?.selected.join("\u001f")??"";
  useEffect(()=>{
