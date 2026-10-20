@@ -3,6 +3,7 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "./legacy-calendar-theme.module.css";
 import { Button } from "@/components/ui/button";
@@ -558,7 +559,7 @@ export async function PlacementCalendarWorkspace({
   const calendarFollowupsWritable =
     isTpo && process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow={
           isTpo
@@ -588,17 +589,16 @@ export async function PlacementCalendarWorkspace({
                   ? "/admin/placements"
                   : "/college/placements"
             }
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Placement operations →
           </Link>
         }
       />
 
-      {partialCalendar?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-4 text-sm">
+      {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry</Link>}>
         <p className="font-semibold text-warning-text">Calendar summary is partially unavailable. The events shown are from the successful calendar read; unavailable counts are not shown as zero.</p>
-        <Link href={calendarHref(basePath,audience,state,{})} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-link-text)]">Retry</Link>
-      </section>:null}
+      </Banner>:null}
 
       {calendarFollowupsWritable ? (
         <div className="inline-flex border-b border-border pb-2">
@@ -622,7 +622,7 @@ export async function PlacementCalendarWorkspace({
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-5">
        <h2 className="text-base font-semibold">Needs doing</h2>
-       <div className="grid gap-3 sm:grid-cols-3">
+       <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-3">
         <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
          className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow?overdue.length:"Unavailable"}</strong>Follow-ups overdue (last 90 days)
@@ -641,7 +641,7 @@ export async function PlacementCalendarWorkspace({
       </section>:null}
       <section
         aria-label="Calendar summary"
-        className="grid gap-3 border-y border-border sm:grid-cols-2 xl:grid-cols-4"
+        className="grid min-w-0 grid-cols-1 gap-3 border-y border-border md:grid-cols-2 xl:grid-cols-4"
       >
         {(
           isTpo
