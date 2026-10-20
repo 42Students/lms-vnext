@@ -17,7 +17,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
  const context=await getCurrentRequestContext();
  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
  const parsed=collegeLiveClassQuerySchema.safeParse(liveClassSearchParams(await searchParams));
- if(!parsed.success)return <div className="min-w-0 overflow-x-clip space-y-4">
+ if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="Live Classes"/>
   <ErrorState title="Invalid session filters" description="Invalid page, publication or search filter."
     action={<Link href="/college/live-classes" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
@@ -29,11 +29,13 @@ export default async function CollegeLiveClassesPage({searchParams}:{
     rows={data.items.map(item=>({title:item.title,course:item.courseName+" ("+item.courseCode+")",
      lesson:item.lessonName,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
      visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>} />
-  <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated}/>
-  <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,from:data.from,to:data.to})}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-    Export live-class schedule CSV (UTC)
-  </Link>
+  <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-start">
+    <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated}/>
+    <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,from:data.from,to:data.to})}
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
+      Export live-class schedule CSV (UTC)
+    </Link>
+  </div>
   <CollegeLiveClassesDirectory data={data} showHeader={false}/>
  </div>;
 }
