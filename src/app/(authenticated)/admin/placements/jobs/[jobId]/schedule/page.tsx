@@ -36,7 +36,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <ErrorState title="Invalid interview filters"
       description="Round kind, status or page is invalid. No records were loaded."
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/schedule"}
-        className="font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
+        className="font-semibold text-primary-text underline">Clear filters</Link>}/>
   </div>;
   const [data,appointments]=await Promise.all([
     listCollegeDriveInterviews(context,jobId,query),
@@ -56,7 +56,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<PageBackLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} label="Drive overview" />} />
-    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-4 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
         <Select name="kind" defaultValue={query.kind} className="min-w-0">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
