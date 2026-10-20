@@ -16,7 +16,7 @@ import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-rea
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { FilterChipLink } from "@/components/ui/filter-chip";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   TPO_AUDIT_KINDS,
@@ -220,11 +220,7 @@ export default async function TpoAuditPage({
        filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
       <nav aria-label="Quick looks" className="flex flex-wrap gap-2">
        <span className="self-center text-sm font-semibold">Quick looks</span>
-       {quickLooks.map(look=><Link key={look.label} href={quickHref(look.from,look.to)}
-        aria-current={query.from===look.from&&query.to===look.to?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">
-        {look.label}
-       </Link>)}
+       {quickLooks.map(look=><FilterChipLink key={look.label} href={quickHref(look.from,look.to)} selected={query.from===look.from&&query.to===look.to}>{look.label}</FilterChipLink>)}
       </nav>
       <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,count:item.count??undefined,href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
       <section aria-labelledby="section-audit-filters" className="min-w-0 border-b border-border pb-5">
