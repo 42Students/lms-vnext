@@ -24,7 +24,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
         These are not a substitute for official college-wide placement notices or dispute decisions.
       </p>
       {alerts.length === 0 ? (
-        <div role="status" className="mt-4 flex min-h-[180px] flex-col items-center justify-center gap-4 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
+        <div role="status" className="mt-4 flex min-h-[180px] flex-col items-center justify-center gap-4 px-6 py-12 text-center text-sm leading-[1.5] text-body">
           {filtered ? "No loaded personal placement alerts match this search." : "No personal placement alerts have been delivered to you yet."}{" "}
           This does not establish that your college has published no notices.
         </div>
@@ -34,11 +34,11 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
             <li key={alert.id} className="min-w-0 py-4 first:pt-0 last:pb-0">
               <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
-                  <p className="break-words text-[14px] font-semibold leading-[1.35] text-foreground md:text-[16px]">
+                  <p className="break-words text-[length:var(--lms-font-base)] font-semibold leading-[1.3] text-foreground md:text-[length:var(--lms-font-md)]">
                     {alert.title}
 
                   </p>
-                  <p className="mt-1 whitespace-pre-wrap break-words text-[13px] leading-[1.5] text-body md:text-[14px]">{alert.body}</p>
+                  <p className="mt-1 whitespace-pre-wrap break-words text-[length:var(--lms-font-sm)] leading-[1.5] text-body md:text-[length:var(--lms-font-base)]">{alert.body}</p>
                 </div>
                 <time dateTime={learnerAlertSafeDate(alert.createdAt).iso??undefined}
                   className="shrink-0 text-xs text-muted-foreground">{learnerAlertSafeDate(alert.createdAt).label}</time>
