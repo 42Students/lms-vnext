@@ -811,3 +811,41 @@ Complete files inspected using regex equivalents of `grep -nE '<(button|input|se
 Global A5/A6/A7/E8 remain [ ] per strict tick rule: no full icon/page link/visited-external audit, avatar/wordmark/title states and no browser phone/tablet/desktop screenshot or disabled/focus regression proof. Shared controls unmodified and CI not run.
 
 Next possible TPO-owned target: src/components/tpo/tpo-student-outcome-pill.tsx then unreviewed small TPO recruiter/companies controls; avoid other lanes' shell/UI files.
+
+## chat-12 2026-10-20 — Batch detail, students, registrations and history routes
+
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx — source-scoped comparison complete; no rendered browser or screenshot verification.
+
+### Legacy/vNext value table
+Legacy baseline: docs/design/old-lms-pages.md:6-10: one white canvas, 1px hairline row separators and contiguous KPI strip; docs/design/old-lms-shell.css:23,31-32,73: phone max767px and 44px tap; docs/design/old-lms-shell-spec.md:24-25: 36px desktop action and 9px radius; docs/design/legacy-styles/components___common.scss:68-75: teal underline/focusable links.
+| VNext file | Legacy property | VNext authored source | Result |
+|---|---|---|---|
+| src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx:14,24, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx:32,35, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/page.tsx:40,50,96, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx:35,81,108,155, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx:39,43,52,60, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx:18,26, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx | Hairlines, teal links, responsive 44px phone/36px md >=768px | src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx:15,21,23, shared classes min-h-11/md:min-h-9 or border-b/underline on existing actions | Source checked; visual comparison pending |
+
+### Per-file grep, JSX and responsive evidence
+Whole file source inspected. Equivalent `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE` and `grep -nE 'sm:|md:' FILE`. Counts correspond to raw controls/inline svg/hex; JSX Button/Link open-close and brace counts are static source checks.
+| File | Raw/svg/hex | Button pairs | Link pairs | Braces | sm/md |
+|---|---|---|---|---|---|
+| src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx | 0/0/0 | 0/0 | 2/2 | 34/34 | 0/3 |
+| src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx | 0/0/0 | 0/0 | 1/1 | 34/34 | 0/1 |
+| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | 0/0/0 | 0/0 | 9/9 | 90/90 | 0/6 |
+| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | 0/0/0 | 1/1 | 6/6 | 122/122 | 0/20 |
+| src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx | 0/0/0 | 1/1 | 4/4 | 68/68 | 0/14 |
+| src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx | 0/0/0 | 1/1 | 1/1 | 43/43 | 0/2 |
+| src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx | 0/0/0 | 1/1 | 3/3 | 34/34 | 0/2 |
+
+A5/A6/A7/E8 remain unticked: complete icon/avatar/link inventories, shared renderer measurements, actual phone/tablet screenshots and hover/focus/disabled interaction proof not available. No app/CI/typecheck executed.
+
+Exact next file for scoped TPO source sweep: `src/components/tpo/tpo-student-outcome-pill.tsx`.
