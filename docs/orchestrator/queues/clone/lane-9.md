@@ -40,10 +40,10 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
 - [x] `src/app/(authenticated)/admin/programs/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/at-risk/page.tsx`
-- [x] `src/app/(authenticated)/admin/projects/audit/page.tsx`
-- [x] `src/app/(authenticated)/admin/projects/page.tsx`
-- [x] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
-- [x] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
+- [ ] `src/app/(authenticated)/admin/projects/audit/page.tsx`
+- [ ] `src/app/(authenticated)/admin/projects/page.tsx`
+- [ ] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
+- [ ] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/submissions/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
