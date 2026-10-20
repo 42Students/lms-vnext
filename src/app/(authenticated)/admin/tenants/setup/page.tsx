@@ -29,14 +29,14 @@ export default async function SuperAdminTenantSetup({
 }:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-4 md:space-y-5">
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/dashboard" label="Dashboard"/>}/>
    <ErrorState title="Tenant setup access denied"
     description="Your account cannot configure Super Admin tenants."
     action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
  const parsed=parseSuperAdminTenantSetupQuery(await searchParams);
- if(!parsed.success)return <div className="min-w-0 space-y-6">
+ if(!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-5">
   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
   <ErrorState title="Invalid tenant setup step"
    description="Select a valid Tenant structure or Launch setup step."
@@ -65,7 +65,7 @@ export default async function SuperAdminTenantSetup({
   }
  }catch(error){
   if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-4 md:space-y-5">
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
@@ -76,14 +76,14 @@ export default async function SuperAdminTenantSetup({
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=can(context,"organization.manage");
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
- return <div className="min-w-0 max-w-full space-y-6">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+  <PageBackLink href="/admin/tenants" label="Tenant directory" />
   <PageHeader title="Tenant Setup"
-   description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
-   actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />} />
+   description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes." />
   <section aria-label="Tenant setup overview" className="grid min-w-0 gap-3 md:grid-cols-3">
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Current step</p>
-    <p className="mt-2 font-semibold">{tab==="STRUCTURE"?"1. Tenant structure":"2. Launch setup"}</p>
+    <p className="mt-2 break-words font-semibold">{tab==="STRUCTURE"?"1. Tenant structure":"2. Launch setup"}</p>
    </article>
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Creation</p>
@@ -101,35 +101,35 @@ export default async function SuperAdminTenantSetup({
     ]}/>
   {tab==="STRUCTURE"?<>
    <section aria-label="Create organization and college" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
-    <div className="min-w-0 space-y-3 border-b border-border pb-6">
-     <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create an organization</h2>
+    <div className="min-w-0 space-y-3 border-b border-border pb-4">
+     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Create an organization</h2>
      {orgCreate?<OrganizationCreateForm/>:
       <Banner tone="warning">Organization creation is not permitted in your selected administrative scope.</Banner>}
     </div>
-    <div className="min-w-0 space-y-3 border-b border-border pb-6">
-     <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create a college</h2>
+    <div className="min-w-0 space-y-3 border-b border-border pb-4">
+     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Create a college</h2>
      {creatable.length?<CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
       <Banner tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Banner>}
     </div>
    </section>
    <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
-    <div className="border-b border-border pb-4">
-     <div className="flex items-center justify-between gap-3">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Organizations</h2>
+    <div className="min-w-0 border-b border-border pb-4">
+     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+      <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Organizations</h2>
       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
-      {organizations.slice(0,20).map(o=><li key={o.id} className="border-b border-border py-2">{o.name}</li>)}
+      {organizations.slice(0,20).map(o=><li key={o.id} className="break-words border-b border-border py-2">{o.name}</li>)}
      </ul>
      {organizations.length>20?<p className="mt-2 text-xs text-muted-foreground">First 20 shown; use Manage all for the full directory.</p>:null}
     </div>
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Colleges</h2>
+      <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Colleges</h2>
       <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
-      {list?.items.map(item=><li key={item.id} className="border-b border-border py-2">
+      {list?.items.map(item=><li key={item.id} className="break-words border-b border-border py-2">
        <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.name}</Link>
        {" · "}{item.code} · {item.status}
       </li>)}
@@ -140,7 +140,7 @@ export default async function SuperAdminTenantSetup({
    </section>
    <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Continue to launch setup →</Link>
   </>:college?<>
-   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{college.name} · Launch setup</h2>
+   <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">{college.name} · Launch setup</h2>
    <Banner tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
     Persisted readiness: {summary.label}. {summary.detail}
    </Banner>
@@ -159,7 +159,7 @@ export default async function SuperAdminTenantSetup({
    </div>
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
-     <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Launch checklist</h2>
+     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Launch checklist</h2>
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2">

@@ -15,7 +15,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 export default async function AdminVerificationEntry() {
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-    return <div className="min-w-0 max-w-full space-y-6">
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
       <PageHeader title="Profile verification"/>
       <ErrorState title="Verification access denied"
         description="Your account cannot access Super Admin verification."
@@ -28,11 +28,11 @@ export default async function AdminVerificationEntry() {
   }
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
       <PageHeader
         title="Profile verification"
         description="Students' education and identity, checked against their documents."
-        actions={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Browse colleges</Link>}
+        actions={<Link href="/admin/colleges" className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Browse colleges</Link>}
       />
       <EmptyState title="Choose a college first"
         description="Choose a college at the top to see its students waiting for verification. A global or organization-only scope cannot authorize a college review." />
