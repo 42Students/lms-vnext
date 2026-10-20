@@ -14,16 +14,16 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regres
 - [x] `src/components/placements/tpo-interview-slot-planner.tsx`
 - [x] `src/components/tpo/tpo-batch-class-decision.tsx`
 - [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
-- [ ] `src/components/placements/tpo-round-check-in.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/public/browser-support-notice.tsx`
-- [ ] `src/components/ui/password-input.tsx`
-- [ ] `src/app/(authenticated)/loading.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-round-result-entry-form.tsx`
-- [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
-- [ ] `src/app/(authenticated)/admin/features/page.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/placements/tpo-round-check-in.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/public/browser-support-notice.tsx`
+- [x] `src/components/ui/password-input.tsx`
+- [x] `src/app/(authenticated)/loading.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-round-result-entry-form.tsx`
+- [x] `src/components/tpo/tpo-company-team-conversation.tsx`
+- [x] `src/app/(authenticated)/admin/features/page.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
 - [ ] `src/components/admin/super-admin-platform-block-action.tsx`
 - [ ] `src/components/courses/learner-course-discussion.tsx`
 - [ ] `src/app/(authenticated)/teach/not-found.tsx`
