@@ -32,7 +32,7 @@ export function HrProposalHistoryGrid({rows,scopeKey}:{
   mobilePrimaryKeys={["title","reference","status"]}
   storageKey={"hr-proposals:"+scopeKey}
   rowActions={row=><Link href={row.threadHref}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+   className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
     Open discussion
    </Link>}
  />;
