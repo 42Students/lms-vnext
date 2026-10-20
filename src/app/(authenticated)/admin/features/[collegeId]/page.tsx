@@ -52,7 +52,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
   if (!parsed) {
     return (
       <div className="space-y-6">
-        <PageHeader eyebrow="Super Admin · Module Access" title="Module Access" />
+        <PageHeader title="Module Access" />
         <ErrorState title="Invalid module access filters"
           description="The module, scope or requested page is invalid. No college module rules were loaded."
           action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
@@ -102,7 +102,6 @@ export default async function SuperAdminCollegeModuleAccessPage({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin · Module Access"
         title={`${college.name} · Access hierarchy`}
         description={`Inspect and update college rules for ${college.code}. Higher-priority locks and learner participation gates still apply.`}
         actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Feature Controls</Link>}

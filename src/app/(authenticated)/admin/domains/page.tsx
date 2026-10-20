@@ -32,7 +32,6 @@ export default async function SuperAdminDomainsPage() {
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          eyebrow="Super Admin"
           title="Tenant domains"
           description="Domain ownership and verification are managed inside a selected college safety scope."
         />
@@ -52,7 +51,6 @@ export default async function SuperAdminDomainsPage() {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
         title="Tenant domains"
         description="Manage verified hostnames for the selected college. Host ownership remains server-authorized."
       />
