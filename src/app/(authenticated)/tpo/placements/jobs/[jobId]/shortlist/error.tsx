@@ -7,6 +7,6 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   return <ErrorState
     title="\n        Couldn't load drive shortlist\n      "
     description="The persisted screening shortlist could not be retrieved. This is not\n        evidence of zero shortlisted applicants. Use Retry to load the current view."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    action={<Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>}
   />;
 }
