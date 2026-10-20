@@ -160,7 +160,7 @@ export function DriveDayRoster({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
         eyebrow="Drive day"
         title={
@@ -193,9 +193,12 @@ export function DriveDayRoster({
         ].map(([label, value], index) => (
           <div
             key={String(label)}
-            className={"min-w-0 p-3 sm:p-4 " + (index < 2 ? "border-b border-border xl:border-b-0 " : "") +
-              (index % 2 === 0 ? "border-r border-border " : "") +
-              (index === 1 || index === 2 ? "xl:border-r " : "xl:border-r-0 ")}
+            className={"min-w-0 p-3 sm:p-4 " +
+              (index < 3 ? "border-b border-border " : "") +
+              (index === 2 ? "md:border-b-0 " : "") +
+              (index % 2 === 0 ? "md:border-r md:border-border " : "") +
+              (index < 2 ? "xl:border-b-0 " : "") +
+              (index < 3 ? "xl:border-r xl:border-border " : "xl:border-r-0 ")}
           >
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
               {label}
@@ -222,7 +225,7 @@ export function DriveDayRoster({
 
         {rows.length === 0 ? (
           <div className="flex min-w-0 flex-col items-start gap-3 p-4 sm:p-6">
-            <p className="m-0 text-sm text-muted-foreground">No student matches your search.</p>
+            <p className="m-0 text-sm text-muted-foreground">{students.length === 0 ? "No students are assigned to this round yet." : "No student matches your search."}</p>
             {query.trim() ? <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => setQuery("")}>Clear search</Button> : null}
           </div>
         ) : (
