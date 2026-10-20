@@ -44,7 +44,7 @@ export default async function MentorProjectActivityHistoryPage({
       <section role="status" className="border-b border-border pb-4 text-sm text-body">
         Projects access is disabled. No project activity was loaded.
       </section> : <>
-      <FilterBar title="Filters"><form method="get"
+      <FilterBar title="Filters"><form method="get" role="search" aria-label="Recorded project activity filters"
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
         className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
         <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Event importance

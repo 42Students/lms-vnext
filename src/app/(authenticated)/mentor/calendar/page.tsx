@@ -47,7 +47,7 @@ export default async function MentorCalendarPage({searchParams}:{
         <Input type="search" name="search" form="mentor-calendar-filters" maxLength={100}
           defaultValue={parsed.data.search} placeholder="Meeting or project"/>
       </label>}>
-    <form id="mentor-calendar-filters" method="get" action="/mentor/calendar"
+    <form id="mentor-calendar-filters" method="get" role="search" aria-label="Mentor meeting filters" action="/mentor/calendar"
        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
       <label className="grid min-w-0 max-w-full gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Action needed
         <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 md:min-h-9 w-full max-w-full">
