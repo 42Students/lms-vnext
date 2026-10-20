@@ -2,6 +2,7 @@
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Dialog } from "@/components/ui/dialog";
+import { Disclosure } from "@/components/ui/disclosure";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -60,13 +61,13 @@ function KnownErrorCard({ item }: { item: KnownError }) {
   }
 
   return (
-    <article id={"known-error-"+item.id} className="scroll-mt-4 space-y-4 py-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <article id={"known-error-"+item.id} className="scroll-mt-4 min-w-0 space-y-4 py-5">
+      <div className="flex min-w-0 flex-col items-start gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="m-0 break-all font-mono text-xs text-muted-foreground">
             Signature {item.signatureHash.slice(0, 12)}…
           </p>
-          <h3 className="mt-2 flex flex-wrap items-center gap-2 text-base font-semibold text-foreground">
+          <h3 className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-base font-semibold text-foreground">
             <StatusBadge tone={item.fixStatus==="FIXED"?"success":item.fixStatus==="OPEN"?"warning":"info"}>{item.fixStatus}</StatusBadge>
             <StatusBadge tone={item.muted?"warning":"neutral"}>{item.muted ? "Muted" : "Unmuted"}</StatusBadge>
           </h3>
@@ -86,34 +87,46 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           <StatusBadge tone="error">Regressed</StatusBadge> Regression observed {formatInstant(item.regressedAt)}
         </p>
       ) : null}
-      <div className="grid gap-3 md:grid-cols-3">
-        <label className="block text-xs font-semibold text-body">
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
+        <Link href={"/tracker?context="+encodeURIComponent(knownErrorSafeSummary({
+          signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,
+          occurrences:item.occurrenceCount,affectedAccounts:item.affectedAccounts,
+          firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
+          issuePublicId:item.issuePublicId,
+        }).slice(0,450))+"&knownErrorId="+encodeURIComponent(item.id)}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">
+          Create tracker issue
+        </Link>
+      </div>
+      <Disclosure title="Triage and diagnostic actions" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
+      <div className="grid min-w-0 gap-3 md:grid-cols-3">
+        <label className="block min-w-0 text-xs font-semibold text-body">
           Triage note
           <Input
-            className="mt-1 min-h-11 md:min-h-9" value={note} maxLength={500}
+            className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" value={note} maxLength={500}
             onChange={(event) => setNote(event.target.value)}
             placeholder="Reason / owner update"
           />
         </label>
-        <label className="block text-xs font-semibold text-body">
+        <label className="block min-w-0 text-xs font-semibold text-body">
           Fix commit (optional)
           <Input
-            className="mt-1 min-h-11 md:min-h-9" value={commit} maxLength={64}
+            className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" value={commit} maxLength={64}
             onChange={(event) => setCommit(event.target.value)}
             placeholder="Git commit SHA"
           />
         </label>
-        <label className="block text-xs font-semibold text-body">
+        <label className="block min-w-0 text-xs font-semibold text-body">
           Tracker issue ID
           <Input
-            className="mt-1 min-h-11 md:min-h-9" value={issuePublicId} maxLength={32}
+            className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" value={issuePublicId} maxLength={32}
             onChange={(event) => setIssuePublicId(event.target.value)}
             placeholder="e.g. BT-123"
           />
         </label>
       </div>
-      <div className="flex flex-wrap gap-2">
-        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending}
           onClick={()=>void navigator.clipboard.writeText(knownErrorSafeSummary({
             signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,
             occurrences:item.occurrenceCount,affectedAccounts:item.affectedAccounts,
@@ -123,7 +136,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
             .catch(()=>showToast({tone:"error",title:"Could not copy diagnostic summary"}))}>
           Copy for Claude
         </Button>
-        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending}
           onClick={()=>{const sql=knownErrorSafeSql({
             signatureHash:item.signatureHash,environment:item.environment,
           });
@@ -134,20 +147,12 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           }}>
           Copy SQL to check the data
         </Button>
-        <Link href={"/tracker?context="+encodeURIComponent(knownErrorSafeSummary({
-          signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,
-          occurrences:item.occurrenceCount,affectedAccounts:item.affectedAccounts,
-          firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
-          issuePublicId:item.issuePublicId,
-        }).slice(0,450))+"&knownErrorId="+encodeURIComponent(item.id)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">
-          Create tracker issue
-        </Link>
-        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending || Boolean(item.acknowledgedAt)}
+
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending || Boolean(item.acknowledgedAt)}
           onClick={() => update({ action: "ACKNOWLEDGE" })}>
           {item.acknowledgedAt ? "Acknowledged" : "Acknowledge"}
         </Button>
-        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending}
           aria-expanded={item.muted ? undefined : confirmMute}
           onClick={() => {
             if (item.muted) void update({ action: "MUTE", muted: false });
@@ -155,14 +160,14 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           }}>
           {item.muted ? "Unmute" : "Mute"}
         </Button>
-        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending}
           onClick={() => update({
             action: "STATUS", status: "EXPECTED",
             ...(note.trim() ? { note } : {}),
           })}>
           Mark expected
         </Button>
-        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary"
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary"
           disabled={pending || (commit.trim() !== "" && !/^[0-9a-f]{7,64}$/i.test(commit.trim()))}
           onClick={() => update({
             action: "STATUS", status: "FIXED",
@@ -171,43 +176,45 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           })}>
           Mark fixed
         </Button>
-        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending}
           onClick={() => update({ action: "STATUS", status: "OPEN" })}>
           Reopen
         </Button>
-        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending}
           onClick={() => update({
             action: "LINK_ISSUE", issuePublicId: issuePublicId.trim() || null,
           })}>
           Save issue link
         </Button>
       </div>
+
+      </Disclosure>
       <Dialog open={confirmMute&&!item.muted}
         onOpenChange={next=>{if(!pending)setConfirmMute(next);}}
         title="Mute this error"
         description="Why is it safe to ignore? It comes back on its own if it suddenly spikes."
-        dismissible={!pending}>
-        <div className="space-y-3">
-          <label className="block text-sm text-body">
-            Reason (optional)
-            <Input className="mt-1 min-h-11 md:min-h-9" value={muteReason} maxLength={255}
-              onChange={(event) => setMuteReason(event.target.value)}
-              placeholder="Why this error is expected"
-            />
-          </label>
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" className="min-h-11 md:min-h-9" disabled={pending}
+        dismissible={!pending}
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending}
+              onClick={() => setConfirmMute(false)}>
+              Cancel
+            </Button>
+            <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending}
               onClick={() => void update({
                 action: "MUTE", muted: true,
                 ...(muteReason.trim() ? { reason: muteReason.trim() } : {}),
               })}>
               Mute
             </Button>
-            <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
-              onClick={() => setConfirmMute(false)}>
-              Cancel
-            </Button>
-          </div>
+          </div>}>
+        <div className="min-w-0 space-y-3">
+          <label className="block text-sm text-body">
+            Reason (optional)
+            <Input className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" value={muteReason} maxLength={255}
+              onChange={(event) => setMuteReason(event.target.value)}
+              placeholder="Why this error is expected"
+            />
+          </label>
         </div>
       </Dialog>
       {item.issuePublicId ? (
@@ -257,7 +264,7 @@ export function KnownErrorsWorkspace({
     <div id="known-errors" className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <p className="m-0 text-sm text-body">Last reviewed: {formatInstant(lastViewedAt)}</p>
-        <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending} loading={pending} onClick={markViewed}>
+        <Button variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} loading={pending} onClick={markViewed}>
           {pending ? "Saving…" : "Mark logs reviewed"}
         </Button>
       </div>
