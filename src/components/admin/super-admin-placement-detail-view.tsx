@@ -1,14 +1,16 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import type {SuperAdminPlacementDetail} from "@/modules/admin-ui/super-admin-placement-detail-model";
-export function SuperAdminPlacementDetailView({data}:{data:SuperAdminPlacementDetail}){
+export function SuperAdminPlacementDetailView({data,extraActions}:{data:SuperAdminPlacementDetail;extraActions?:ReactNode}){
  return <div className="min-w-0 space-y-5">
   <PageHeader title={data.title} description={data.subtitle}
    actions={<>
     <PageBackLink href={data.backHref} label="Back to directory" className="print:hidden" />
     {data.related?<Link href={data.related.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">{data.related.label} →</Link>:null}
+    {extraActions}
    </>} />
   <div className="flex flex-wrap items-center gap-2">
    <StatusBadge tone={data.status==="ACTIVE"||data.status==="ACCEPTED"?"success":"neutral"}>{data.status}</StatusBadge>
