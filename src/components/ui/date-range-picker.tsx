@@ -47,6 +47,7 @@ export function DateRangePicker({
 
   return (
     <div data-slot="date-range-picker" role="group" aria-label={`${startLabel} to ${endLabel}`}
+      aria-invalid={error || invalidOrder || undefined} aria-describedby={invalidOrder ? errorId : undefined}
       className={cx("grid min-w-0 gap-3 min-[768px]:grid-cols-2", className)}>
       <div className="grid min-w-0 gap-1.5">
         <label htmlFor={startId} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">

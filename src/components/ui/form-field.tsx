@@ -35,6 +35,6 @@ export function FormField({ id, label, required = false, helper, error, children
     </label>
     {associated}
     {helper ? <p id={`${id}-hint`} className="text-[13px] leading-5 text-[var(--lms-muted-text)]">{helper}</p> : null}
-    {error ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error-text)]">{error}</p> : null}
+    {error ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error)]">{error}</p> : null}
   </div>;
 }
