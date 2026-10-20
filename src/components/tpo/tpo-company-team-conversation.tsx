@@ -4,6 +4,8 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {Banner} from "@/components/ui/banner";
+import {LoadingState} from "@/components/ui/loading-state";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useRef,useState,type FormEvent} from "react";
 import Link from "next/link";
@@ -150,14 +152,13 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open in Team</Link>
    </div>
   </div>
-  {error?<p role="alert" className="text-sm text-error">{error} <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
-    type="button" onClick={()=>void load()}>Retry</Button></p>:null}
-  {!data&&!error?<p role="status" className="text-sm text-body">Loading company Team conversation…</p>:null}
+  {error?<Banner tone="error" action={<Button variant="secondary" type="button" onClick={()=>void load()}>Retry</Button>}>{error}</Banner>:null}
+  {!data&&!error?<LoadingState label="Loading company Team conversation…"/>:null}
   {data?.status==="NOT_REGISTERED"?<p role="status" className="text-sm text-body">
     Company Team messages are unavailable until the database migration is registered. No messages have been fabricated.
   </p>:null}
   {data?.status==="READY"?<>
-   {data.truncated?<p role="status" className="text-xs text-warning">Showing the latest 100 messages. Earlier history remains stored.</p>:null}
+   {data.truncated?<Banner tone="warning">Showing the latest 100 messages. Earlier history remains stored.</Banner>:null}
    {data.messages.some(m=>m.decision&&!m.deletedAt)?<aside aria-label="Pinned company Team decisions"
      className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
      <h3 className="font-semibold">Decided:</h3>
