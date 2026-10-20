@@ -11,3 +11,11 @@
 **Rebase-only preservation:** src/components/college/college-admin-profile-editor.tsx and src/components/college/college-faculty-schedule-reassign.tsx retain other lanes' newer layout, loading, and mobile changes while restoring only this lane's previously audited 13px/600/16px, neutral-400 label and 6px field-gap lines. This rebase reconciliation is not another polished surface.
 
 **Verification:** source-level check of JSX tag balance and existing imports/ids/routes/permissions/ARIA/behavior; no CI, runtime or side-by-side browser screenshots executed. Legacy tokens unchanged.
+
+## Surface 2 — `src/components/tpo/tpo-batch-inline-decision.tsx`
+
+**Problems found (9):** Override select and reason picker competed for narrow horizontal space; the reason could overflow; modal instructions repeated the title block rather than occupying its description position; confirmation controls sat inside the scrollable modal content; primary and secondary modal actions could cramp on 375px; invalid feedback appeared before the operator typed; review checkbox text was vertically misaligned; Save control stayed narrow on phone; feedback notices were flex items and could squeeze beside buttons.
+
+**Fixed:** Kept the eligibility decision, labels, audit acknowledgement, reason presets, freeform reason, save and undo behavior intact. The learner selector and reason now claim full phone width and share the row only where appropriate on tablet; moved existing modal guidance into Dialog.description and existing Cancel/Use reason controls into the sticky Dialog.footer; kept the existing primary/secondary wording and validation gate; error appears after invalid freeform entry; review checkbox aligns with first line; Save fills mobile width; feedback spans the row and the freeform reason wraps. Examined shared Dialog, Button, InlineNotice, Select, Textarea, FilterChip, Checkbox and child TpoBatchUndoControl; retained modal close behavior, API route, guarded action and router refresh. Code-only reasoning for empty, validation, loading, disabled, error, success, 375px and 768px; runtime/browser checks not run.
+
+**Files changed:** `src/components/tpo/tpo-batch-inline-decision.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
