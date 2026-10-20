@@ -26,7 +26,7 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
    description="Persisted offer and joining events. Recorded internal reasons are disclosed only within authorized college scope."/>
   <section aria-label="Current offer facts" className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5 print:overflow-visible">
    {facts.map(([name,value])=><div key={name} className="min-w-0 border-b border-border px-1 py-4">
-    <p className="text-xs text-muted-foreground">{name}</p><p className="mt-2 break-words font-semibold">{value}</p>
+    <p className="text-xs text-muted-foreground">{name}</p><p className="mt-2 break-words font-semibold">{name==="Current status"?<StatusBadge tone={value==="ACCEPTED"?"success":value==="DECLINED"?"error":value==="PENDING"?"warning":"neutral"}>{value}</StatusBadge>:value}</p>
    </div>)}
   </section>
   <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 print:hidden" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</Link>
