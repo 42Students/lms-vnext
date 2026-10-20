@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type KeyboardEvent, type ReactNode } from "react";
+import { useId, useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type KeyboardEvent, type ReactNode } from "react";
 import { Select } from "./select";
 import { Button } from "./button";
 import { cx } from "@/lib/class-names";
@@ -30,10 +30,15 @@ export function MultiSelect({
   onValuesChange, onChange, onKeyDown, className, value, defaultValue, disabled,
   ref: forwardedRef, ...props
 }: MultiSelectProps) {
+  const tagsId = useId();
   const selectRef = useRef<HTMLSelectElement | null>(null);
   const dispatchFromTag = useRef(false);
   const [uncontrolledValues, setUncontrolledValues] = useState<string[]>(() => valuesOf(defaultValue));
   const selected = value === undefined ? uncontrolledValues : valuesOf(value);
+  const describedBy = [...new Set([
+    ...(props["aria-describedby"]?.split(/\s+/).filter(Boolean) ?? []),
+    showSelectedTags && selected.length > 0 ? tagsId : null,
+  ].filter((token): token is string => Boolean(token)))].join(" ") || undefined;
   const rows = Number.isFinite(visibleRows) ? Math.max(2, Math.min(10, Math.trunc(visibleRows))) : 4;
 
   function bindRef(node: HTMLSelectElement | null) {
@@ -78,7 +83,7 @@ export function MultiSelect({
   }
   return (
     <div data-slot="multi-select-field" className={cx("min-w-0", className)}>
-      <Select {...props} ref={bindRef} multiple disabled={disabled} aria-readonly={readOnly || undefined}
+      <Select {...props} ref={bindRef} multiple disabled={disabled} aria-readonly={readOnly || undefined} aria-describedby={describedBy}
         value={value} defaultValue={defaultValue} size={rows} error={error}
         data-slot="multi-select" onChange={change} onKeyDown={keyDown}>
         {options.map(option => (
@@ -88,7 +93,7 @@ export function MultiSelect({
         ))}
       </Select>
       {showSelectedTags && selected.length > 0
-        ? <ul aria-label="Selected values" className="mt-2 flex min-w-0 flex-wrap gap-2">
+        ? <ul id={tagsId} aria-label="Selected values" className="mt-2 flex min-w-0 flex-wrap gap-2">
             {selected.map(item => {
               const option = options.find(candidate => candidate.value === item);
               const canRemove = !disabled && !readOnly && !option?.disabled;
