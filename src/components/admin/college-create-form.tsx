@@ -97,7 +97,7 @@ export function CollegeCreateForm({
       <div>
         <label
           htmlFor="college-organization"
-          className="mb-1.5 block text-[13px] font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           Organization
         </label>
@@ -118,7 +118,7 @@ export function CollegeCreateForm({
       <div>
         <label
           htmlFor="college-name"
-          className="mb-1.5 block text-[13px] font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           College Name
         </label>
@@ -135,7 +135,7 @@ export function CollegeCreateForm({
       <div>
         <label
           htmlFor="college-code"
-          className="mb-1.5 block text-[13px] font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           Unique ID / Code
         </label>
@@ -160,7 +160,7 @@ export function CollegeCreateForm({
           ["Address",addressLine1,setAddressLine1,255],["Address line 2",addressLine2,setAddressLine2,255],
           ["Landmark",landmark,setLandmark,255],["Pin Code",postalCode,setPostalCode,32],
           ["Country",country,setCountry,128],
-         ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-[13px] font-semibold text-body">
+         ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {label}<Input value={value} disabled={pending} onChange={e=>setter(e.target.value)} maxLength={maxLength}
            className="min-h-11 w-full md:min-h-9"/>
          </label>)}
