@@ -76,7 +76,7 @@ export default async function TpoJoiningStatusReportPage({
 
       <section
         aria-label="Joining outcome totals"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5"
+        className="grid gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5"
       >
         {[
           ["Accepted offers", totals.accepted],

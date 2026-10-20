@@ -63,7 +63,7 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
       </form>
       {!report.season ? <EmptyState title="No placement season" description="No results can be inferred without a recorded season." /> : (
         <>
-          <section className="grid gap-3 min-[992px]:grid-cols-3">
+          <section className="grid gap-3 min-[768px]:grid-cols-3">
             {([
               ["Placed learners", report.totals.placed],
               ["Confirmed joined learners", report.totals.joined],

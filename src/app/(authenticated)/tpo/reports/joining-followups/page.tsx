@@ -57,7 +57,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
     <Button type="submit" className="min-h-11 sm:min-h-9">Apply</Button>
   </form>
   {!report.season?<EmptyState title="No placement season" description="Joining follow-ups require a persisted placement season."/>:<>
-   <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Joining evidence">{Object.entries(report.counts).map(([label,n])=><StatTile key={label} label={label.replaceAll(/([A-Z])/g," $1").trim()} value={n} className="min-h-[104px]" />)}</section>
+   <section className="grid gap-3 min-[768px]:grid-cols-2 min-[1024px]:grid-cols-3" aria-label="Joining evidence">{Object.entries(report.counts).map(([label,n])=><StatTile key={label} label={label.replaceAll(/([A-Z])/g," $1").trim()} value={n} className="min-h-[104px]" />)}</section>
    <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
     Due means a persisted joining date on or before {report.todayIst} IST. Upcoming means a recorded calendar date strictly after today and within seven IST calendar days. No date is unknown, never late.
     Only ACCEPTED offers count; JOINED requires an explicit recorded outcome.

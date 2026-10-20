@@ -43,3 +43,4 @@
 - [x] 43. `src/app/(authenticated)/tpo/team/page.tsx`: team sorting/filter chips use 44/36px responsive tap targets; grep raw controls=0, StatTile=0; responsive source 1280/768/375, no screenshots.
 - [x] 44. `src/app/e2e/superadmin-login/page.tsx`: legacy e2e bookmark redirects to canonical login, no local rendered chrome; grep raw controls=0, StatTile=0; responsive source 1280/768/375, no screenshots.
 - [x] 45. `src/app/placements/page.tsx`: public placement figures use responsive 104px StatTile; grep raw controls=0, StatTile=1; responsive source 1280/768/375, no screenshots.
+- [x] 46. `src/app/superadmin-login/page.tsx`: legacy privileged bookmark redirects to canonical /login with no auth bypass; grep raw controls=0, PageHeader=0; shared login handles 1280/768/375.

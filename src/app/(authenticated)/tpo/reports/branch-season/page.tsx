@@ -77,7 +77,7 @@ export default async function TpoBranchSeasonPage({
         <EmptyState title="No placement seasons are recorded for this college." description="No branch rate can be calculated."/>
       ) : (
         <>
-          <section className="grid gap-3 sm:grid-cols-2" aria-label="Season branch totals"><StatTile label="Distinct applicants (all application states)" value={dashboard.totalApplicants} className="min-h-[104px]" /><StatTile label="Distinct learners with currently accepted offers" value={dashboard.totalAcceptedLearners} className="min-h-[104px]" /></section>
+          <section className="grid gap-3 min-[768px]:grid-cols-2" aria-label="Season branch totals"><StatTile label="Distinct applicants (all application states)" value={dashboard.totalApplicants} className="min-h-[104px]" /><StatTile label="Distinct learners with currently accepted offers" value={dashboard.totalAcceptedLearners} className="min-h-[104px]" /></section>
           {!dashboard.registrationAvailable ? (
             <Alert tone="warning">No migrated placement-pool registration table is available. Registered denominator and placement rate are unknown, not zero. The accepted-applicants / applicant ratio below is an explicitly different metric.</Alert>
           ) : null}

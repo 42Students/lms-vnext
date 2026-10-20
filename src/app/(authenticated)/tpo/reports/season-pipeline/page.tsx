@@ -92,7 +92,7 @@ export default async function TpoSeasonPipelinePage({
           description="Create a placement season to see a funnel. An absent season is not evidence of zero results." />
       ) : (
         <>
-          <section className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4" aria-label="Season pipeline counts">
+          <section className="grid gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-4" aria-label="Season pipeline counts">
             {cards.map(([label, value]) => (
               <StatTile key={label} label={label} value={value === null ? "Unavailable" : reportNumber(value)} className="min-h-[104px]" />
             ))}
