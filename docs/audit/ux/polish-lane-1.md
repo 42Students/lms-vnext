@@ -167,3 +167,27 @@
 **Problems fixed (10):** detached back action competed with heading; CSV export was styled primary next to task creation; ownership and date tabs consumed two disconnected rows; search controls broke unpredictably on phones; Search button not full-width at 375; pagination looked unnecessary on one page; row outcomes were poorly aligned on tablet; due/status badges cramped; edit form action floated among fields; route loading/error lost heading and recovery. Moved secondary actions into PageHeader, aligned two tab groups and search, kept schedule/complete controls as clear primary tasks, standardized row editor and mobile touch rhythm, suppressed single-page pagination, contextualized fallbacks. Existing scopes, export URL, queue pagers, mutation confirmation/guards, IDs and wording preserved.
 
 **Files:** `src/app/(authenticated)/tpo/follow-ups/page.tsx`, `src/app/(authenticated)/tpo/follow-ups/loading.tsx`, `src/app/(authenticated)/tpo/follow-ups/error.tsx`, `src/components/tpo/tpo-due-followup-workspace.tsx`, queue, proof. No code execution/CI.
+
+## Surface 32 — TPO Home
+
+**Reviewed:** `src/app/(authenticated)/tpo/home/page.tsx` both college fallback and placements-disabled states; full TPO date/greeting, optional-data status, linked overview metrics, priority Next up, seven legacy work rows and needs-attention badges; `TpoHomeReturnRefresh` auto/manual retry, partial read failures; loading/error and TPO layout. Source responsive review at 375/768/1280; no visual execution/CI.
+
+**Problems fixed (8):** four independently shadowed KPI cards contradicted single-canvas Home; cards competed with Next up; metrics had uneven 375px edges; content gap too large at tablet; Next up section heading rivalled greeting H1; fallback spacing felt detached; loading skeleton had no H1; full error had no contextual return. Replaced four linked metrics with one hairline-divided 2/4-column compact strip while preserving values, status, hrefs and accessible group; tightened content gutter; demoted Next up typography; added matching route fallback headers and recovery. All retrieval guards, legacy Home row IDs/data-testid, needs count semantics, active links and refresh state behavior unchanged.
+
+**Files:** `src/app/(authenticated)/tpo/home/page.tsx`, `src/app/(authenticated)/tpo/home/loading.tsx`, `src/app/(authenticated)/tpo/home/error.tsx`, queue, proof. Shared refresh and UI primitives source-reviewed, unchanged. No CI/tests.
+
+## Surface 33 — Recruiter conversation thread
+
+**Reviewed:** `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`, permission and unregistered-table/not-found states, 100-message window, IST date separators/sender/read statuses, empty log, bubble CSS, `TpoRecruiterMessageReply` with auto-read, quick replies, session draft, discard confirmation, Shift+Enter/send, POST pending/success/error, loading/error parent TPO layout. Source responsive review 375/768/1280; no runtime screenshot/CI.
+
+**Problems fixed (9):** duplicated message count in a detached paragraph; two sender identity lines in each bubble; no structured empty log; Quick replies took permanent high-priority space; multi-button compose actions cramped phones; Send competed with secondary actions; log had no subtle boundary; loading omitted conversation identity; generic error boundary gave no conversation destination. Put count next to H1, reduced repeated sender labels, used EmptyState, collapsed Quick replies into shared Disclosure, stacked full-width action buttons at 375, separated transcript from compose area, contextualized route fallbacks. Existing bubble legacy visual tokens, read/submit/draft/confirm semantics and accessible log preserved.
+
+**Files:** `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`, `src/app/(authenticated)/tpo/messages/[threadId]/loading.tsx`, `src/app/(authenticated)/tpo/messages/[threadId]/error.tsx`, `src/components/tpo/tpo-recruiter-message-reply.tsx`, queue, proof. No CI.
+
+## Surface 34 — Interview status actions
+
+**Reviewed:** scheduled/non-scheduled states, Completed/No Show controls, 409 version conflict, double-submit/busy handling, required reason validation and focus, open/cancel/confirm modal via shared ConfirmDialog, message success/error, 375/768 source layout. No runtime/CI.
+
+**Problems fixed (7):** actions wrapped into uneven narrow rows; both had weak mobile touch widths; completed action used danger-confirm visual even though it is not destructive; reason label duplicated within dialog; invalid confirm remained clickable; reason textarea lacked stable visible height; saved/failure messages looked identical and were duplicated inside the modal. Made phone actions full-width, selected positive primary vs destructive danger confirmation, required trimmed length before confirm, expanded note area and used semantically toned InlineNotice outside the dialog. Existing ID, expectedVersion, endpoint, status transition rules, dialog wording and restore behavior preserved.
+
+**Files:** `src/components/placements/college-interview-status-actions.tsx`, queue, proof. Shared Button/ConfirmDialog/Textarea/InlineNotice reviewed and unchanged. No CI.
