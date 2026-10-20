@@ -144,10 +144,10 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       ) : null}
       {creatableOrganizations.length>0?<CollegeBulkImport organizations={creatableOrganizations.map(x=>({id:x.id,name:x.name}))}/>:null}
       <form className="flex flex-wrap items-end gap-3 border-t border-border pt-4" method="get">
-       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-[13px] font-semibold text-body md:min-w-48">Search college, code, city or organization
+       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search college, code, city or organization
         <Input type="search" name="q" defaultValue={q} maxLength={100} />
        </label>
-       <label className="flex flex-col gap-1 text-[13px] font-semibold text-body">Rows per page
+       <label className="flex flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)}>
          {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
         </Select>
