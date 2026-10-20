@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import {TpoPrepPercentageEditor} from "@/components/tpo/tpo-prep-percentage-editor";
@@ -21,13 +22,13 @@ export default async function PrepSettings(){
  return <div className="min-w-0 space-y-4"><TpoSettingsNav active="prep-readiness"/>
   <PageHeader title="Prep readiness" />
   {communication.ready?<TpoPrepPercentageEditor key={context.membership?.collegeId??"unscoped"} initial={communication.prepThresholdPct} version={communication.version}/>:
-   <p role="status">Readiness percentage storage is unavailable.</p>}
-  {!data.ready?<p role="status" className="rounded border border-border p-4">Readiness settings storage is pending migration registration.</p>:
+   <Alert tone="warning">Readiness percentage storage is unavailable.</Alert>}
+  {!data.ready?<Alert tone="warning">Readiness settings storage is pending migration registration.</Alert>:
   <>
-   {!parsed.success?<p role="alert" className="text-sm">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</p>:null}
-   {!coursesResult.ok?<p role="alert" className="rounded-[var(--lms-canvas-radius)] border border-warning-border bg-warning-subtle p-3 text-sm">
+   {!parsed.success?<Alert tone="error">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</Alert>:null}
+   {!coursesResult.ok?<Alert tone="warning">
      Couldn&apos;t load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="font-semibold underline">Retry</a>
-   </p>:null}
+   </Alert>:null}
    {parsed.success&&coursesResult.ok?<TpoPrepReadinessEditor key={context.membership?.collegeId??"unscoped"} choices={courses} initial={{courseIds:initial.courseIds,minimumCompleted:initial.minimumCompleted}}
     expectedVersion={data.updatedAt?.toISOString()??"none"}/>:null}
   </>}
