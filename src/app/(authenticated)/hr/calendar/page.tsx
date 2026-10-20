@@ -345,9 +345,9 @@ export default async function HrCalendarPage({
             <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-end min-[768px]:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground">{heading}</p>
-                <p className="mt-1 text-sm text-body">
+                {view !== "week" ? <p className="mt-1 text-sm text-body">
                   {dateLabel(window.from)} – {dateLabel(window.to)} · IST
-                </p>
+                </p> : null}
               </div>
               <Tabs renderPanel={false} ariaLabel="Calendar views" value={view}
                 className="w-full min-[768px]:w-auto"
@@ -386,6 +386,7 @@ export default async function HrCalendarPage({
                   <form action="/hr/calendar" method="get"
                     className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-end">
                     <Input type="hidden" name="view" value={view} />
+                    <Input type="hidden" name="category" value={category} />
                     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                       Jump to date
                       <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
@@ -426,7 +427,7 @@ export default async function HrCalendarPage({
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text min-[768px]:min-h-9">Today</Link>} />
           ) : null}
 
-          {view !== "agenda" ? (
+          {view !== "agenda" && eventCount > 0 ? (
             <section
               aria-label={`${view} recruiter calendar`}
               className={styles.boardFrame}
@@ -558,7 +559,7 @@ export default async function HrCalendarPage({
             </section>
           ) : null}
 
-          {view === "agenda" ? (
+          {view === "agenda" && eventCount > 0 ? (
             <section
               aria-label="Recruiter calendar agenda"
               className="space-y-6"
@@ -593,7 +594,7 @@ export default async function HrCalendarPage({
                       : ""}
                   </h3>
 
-                  <div className="grid min-w-0 gap-x-6 gap-y-2 lg:grid-cols-2">
+                  <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">
                     {day.events.map((event) => (
                       <RecruiterCalendarEventCard key={event.id} event={event} />
                     ))}
