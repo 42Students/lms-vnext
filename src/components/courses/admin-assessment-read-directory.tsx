@@ -30,11 +30,11 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
     <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} />
     <form action={base} className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-3 print:hidden">
-      <label className="grid gap-1 text-sm font-semibold text-body">Assessment title
+      <label className="grid gap-1 text-xs font-semibold text-body">Assessment title
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Status
+      <label className="grid gap-1 text-xs font-semibold text-body">Status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option><option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
@@ -42,20 +42,20 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
           <option value="ARCHIVED">Archived</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Course code
+      <label className="grid gap-1 text-xs font-semibold text-body">Course code
         <Input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 md:min-h-9"/>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Audience
+      <label className="grid gap-1 text-xs font-semibold text-body">Audience
         <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
           <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
         </Select>
       </label>
-      {!assignment?<label className="grid gap-1 text-sm font-semibold text-body">Results
+      {!assignment?<label className="grid gap-1 text-xs font-semibold text-body">Results
         <Select name="results" defaultValue={data.query.results} className="min-h-11 md:min-h-9">
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </Select>
       </label>:null}
-      <Button variant="primary" type="submit" className="self-end">Filter</Button>
+      <Button variant="primary" type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
     </form>
     <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length ? <div className="divide-y divide-border border-y border-border">
@@ -96,7 +96,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
               deadlineReached={item.resultsReleaseReady}/>:null}
         </div>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
-          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline print:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline print:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Open offering builder / submissions →
         </Link>
       </article>)}
@@ -108,6 +108,6 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
         label={title + " pages"} showBoundaryLinks={false} />
     </div>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text print:hidden">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">← Courses</Link>
   </div>;
 }

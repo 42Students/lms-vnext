@@ -119,7 +119,7 @@ export function NotificationList({
               key={item.id}
               className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-[var(--lms-shadow-sm)] transition-[box-shadow,border-color] duration-200 hover:border-primary/25 hover:shadow-[var(--lms-shadow-md)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:p-6"
             >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge>{item.source === "ANNOUNCEMENT" ? "Announcement" : item.module}</StatusBadge>

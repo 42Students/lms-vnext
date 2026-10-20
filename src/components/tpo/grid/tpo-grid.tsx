@@ -48,7 +48,7 @@ const maxWidth=500;
 const cellValue=(value:string|number|null|undefined):string|number=>displayTpoGridCell(value);
 function compareNumberDate(kind:"number"|"date",a:unknown,b:unknown,descending=false):number{
  const convert=(value:unknown)=>{
-  if(value===null||value===undefined||value==="")return null;
+  if(value===null||value===undefined||(typeof value==="string"&&value.trim()===""))return null;
   if(kind==="number"){
    const numeric=typeof value==="number"?value:Number(String(value).replaceAll(/[,%]/g,""));
    return Number.isFinite(numeric)?numeric:null;

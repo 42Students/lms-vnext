@@ -46,7 +46,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <section aria-busy={busy} className="space-y-3 border-t border-border pt-4">
-  <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
+  <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" disabled={busy}
    aria-expanded={open} aria-controls={open?"admin-college-bulk-import-panel":undefined}
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div id="admin-college-bulk-import-panel" className="space-y-3">
@@ -58,17 +58,17 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    <label className="grid gap-1 text-[13px] font-semibold text-body print:hidden">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
-     className="font-mono" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
+     className="min-h-11 font-mono" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
      placeholder="name,code,city,state,country"/>
    </label>
-   <p id="admin-college-bulk-format" className="text-sm text-muted-foreground">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
+   <p id="admin-college-bulk-format" className="text-sm text-muted-foreground print:hidden">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
    {valid>0?<Alert tone="info">{valid} colleges ready</Alert>:null}
    {(error||validation)?<Alert tone="error">{error||validation}</Alert>:null}
-   <div className="flex flex-wrap gap-2">
+   <div className="flex flex-wrap gap-2 print:hidden">
     <Button type="button" className="min-h-11 md:min-h-9" loading={busy} disabled={busy||!valid} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
      >
      {busy?"Importing…":"Import colleges"}</Button>
-    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
+    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" disabled={busy}
      onClick={()=>csv?setConfirmDiscard(true):discard()}>Discard draft</Button>
    </div>
    {results.length>0?<div role="region" aria-label="College import results" className="min-w-0 space-y-2"><h3 className="font-semibold text-foreground">Import results</h3>

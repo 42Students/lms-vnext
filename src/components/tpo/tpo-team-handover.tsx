@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Select } from "@/components/ui/select";
 import {useRef,useState} from "react";
@@ -47,8 +48,8 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
    className="min-h-11 md:min-h-9">
    {busy?"Handing over…":"Hand over work"}
   </Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
   {dialog}
  </section>;
 }

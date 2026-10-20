@@ -1,6 +1,7 @@
 import {facultyAssignmentRoleLabel} from "@/modules/courses/college-courses-copy";
 import type {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
 import { Alert } from "@/components/ui/alert";
+import { StatusBadge } from "@/components/ui/status-badge";
 type Roster=Awaited<ReturnType<typeof listOfferingTeachingOverview>>;
 
 export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
@@ -18,8 +19,8 @@ export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
      {item.facultyName?.trim()||item.facultyEmail||"Unnamed Faculty"}</p>
     <p className="mt-1 text-sm text-body">
      Class: {item.sectionName} ({item.sectionCode})</p>
-    <p className="mt-1 text-xs text-muted-foreground">
-     {academicPeriodName} · {facultyAssignmentRoleLabel(item.role)}</p>
+    <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+     {academicPeriodName} <StatusBadge tone="neutral">{facultyAssignmentRoleLabel(item.role)}</StatusBadge></p>
    </li>)}
   </ul>}
   {roster.truncated?<Alert tone="info">

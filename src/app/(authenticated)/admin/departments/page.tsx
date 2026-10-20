@@ -56,7 +56,7 @@ export default async function SuperAdminDepartmentsPage() {
         title="Departments"
         description="Search, export and maintain departments inside the selected college safety scope."
       />
-      <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Academic Setup overview →</Link>
+      <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Academic Setup overview →</Link>
       <DepartmentCreateForm collegeId={collegeId} />
       <DepartmentDirectory rows={rows} />
     </div>
