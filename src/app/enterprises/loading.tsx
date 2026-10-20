@@ -1,6 +1,7 @@
+import { MarketingLayout } from "@/components/marketing/marketing-layout";
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 /** GR-19: loading is bounded by a visible recovery action. */
 export default function Loading() {
-  return <GracefulPageLoading />;
+  return <MarketingLayout><GracefulPageLoading /></MarketingLayout>;
 }
