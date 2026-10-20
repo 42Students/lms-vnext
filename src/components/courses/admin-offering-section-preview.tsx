@@ -27,8 +27,8 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
    <h2 className="text-lg font-semibold text-foreground">Section content</h2>
    <p className="text-sm text-muted-foreground">Select a class to see the shared and Section-specific learning items available in this Course Offering.</p>
   </div>
-  <form method="get" className="flex flex-wrap items-end gap-3">
-   <label className="grid min-w-56 flex-1 gap-1 text-xs font-semibold text-body">Section
+  <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
     <Select className="min-h-11 md:min-h-9"
      name="deliveryId" defaultValue={data.selected?.deliveryId??""}>
      <option value="">Showing every section&apos;s content together</option>
@@ -37,7 +37,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
      </option>)}
     </Select>
    </label>
-   <Button variant="primary" type="submit" className="min-h-11 justify-center md:min-h-9">View Section</Button>
+   <Button variant="primary" type="submit" className="min-h-11 w-full justify-center md:min-h-9 md:w-auto">View Section</Button>
   </form>
   {data.invalid?<Alert tone="error">The selected Section is unavailable for this Course Offering.</Alert>:null}
   {data.truncated?<Alert tone="info">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</Alert>:null}
