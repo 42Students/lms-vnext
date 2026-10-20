@@ -48,7 +48,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   {key:"type",header:"Type",cell:row=>row.kind},
   {key:"start",header:"Scheduled time",cell:row=>formatter.format(row.start)+" IST"},
   {key:"venue",header:"Mode / venue",cell:row=><span>{row.mode}<span className="block">{row.venue??"—"}</span></span>},
-  {key:"status",header:"Status",cell:row=><span><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":"neutral"}>{row.status}</StatusBadge>{row.conflict?<span className="block text-body">Conflict: this student has overlapping interviews.</span>:null}</span>},
+  {key:"status",header:"Status",cell:row=><span><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"error":"neutral"}>{row.status}</StatusBadge>{row.conflict?<span className="block text-body">Conflict: this student has overlapping interviews.</span>:null}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
     <Link href={"/college/placements/jobs/"+encodeURIComponent(row.jobId)+"/applications"}
       className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View applications</Link>

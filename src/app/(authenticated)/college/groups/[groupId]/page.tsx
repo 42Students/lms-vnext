@@ -100,7 +100,7 @@ export default async function CollegeGroupDetailPage({
             Status
           </p>
           <p className="mt-2">
-            <StatusBadge tone={group.status === "ACTIVE" ? "success" : "neutral"}>
+            <StatusBadge tone={group.status === "ACTIVE" ? "success" : group.status === "CLOSED" ? "warning" : "neutral"}>
               {label(group.status)}
             </StatusBadge>
           </p>

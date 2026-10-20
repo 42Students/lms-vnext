@@ -43,16 +43,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-17.md: file, number of 
 - [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
 - [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
 - [x] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
 - [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
 - [ ] `src/app/(authenticated)/hr/activity/page.tsx`
 - [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
