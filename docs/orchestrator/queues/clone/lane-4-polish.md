@@ -10,6 +10,8 @@ Polish checklist (apply every point to the surface and to every component it ren
 5. Mobile 375 and tablet 768: real layouts (stack, reorder, full-width primary action, 44px tap targets), nothing cramped or overflowing; overlays become full-width sheets on mobile.
 6. Keep exactly: legacy colours, radii, control sizes, fonts and wording (docs/design); keep ids, data-testid, aria labels, routes and behaviour; no new packages; valid TSX.
 
+Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, error.tsx, not-found.tsx and template.tsx in the same route folder, and check the nearest parent layout.tsx, as part of that same surface (they are the loading, error and missing states of that page). Tick the page only when its route files are done too.
+
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-4.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-4-b with [chat-4], ticking [x] in this queue in the same push.
 
 - [x] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx` (TPO page)
