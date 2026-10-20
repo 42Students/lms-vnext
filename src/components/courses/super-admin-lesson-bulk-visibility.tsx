@@ -27,11 +27,10 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{setPending(false);}
  }
- return <section aria-label="Lesson bulk visibility" className="space-y-3 border-b border-border pb-5">
-  <div className="flex flex-wrap items-center justify-between gap-3">
-   <h2 className="font-semibold text-foreground">Bulk lesson visibility</h2>
+ return <details aria-label="Lesson bulk visibility" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+  <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Bulk lesson visibility</summary>
+  <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
    <span role="status" className="text-sm text-muted-foreground">{selected.length} of {lessons.length} lessons selected</span>
-  </div>
   <p className="text-sm text-body">Show or hide student access to published lesson content; unpublished content stays unpublished. This is a bulk operation with a per-content failure report.</p>
   <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-10">
     <Checkbox checked={lessons.length>0&&selected.length===lessons.length}
@@ -46,14 +45,15 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
     </span>
    </label>)}
   </div></ScrollCue>
-  <div className="flex flex-wrap gap-2">
-   <Button type="button" className="min-h-11 md:min-h-9" disabled={pending||!selected.length} onClick={()=>void mutate(true)}>{pending?"Saving…":"Show selected"}</Button>
-   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending||!selected.length} onClick={()=>void mutate(false)}>Hide selected</Button>
+  <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row">
+   <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!selected.length} onClick={()=>void mutate(true)}>{pending?"Saving…":"Show selected"}</Button>
+   <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!selected.length} onClick={()=>void mutate(false)}>Hide selected</Button>
   </div>
   {error?<Alert tone="error">{error}</Alert>:null}
   {report?<Alert tone={report.failures.length?"warning":"success"} role="status">
    <p>{report.changed} content records updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
    {report.failures.length?<ul className="list-disc pl-5">{report.failures.slice(0,25).map(row=><li key={row.id}>Lesson update was not applied. Review the selection and retry.</li>)}</ul>:null}
   </Alert>:null}
- </section>;
+  </div>
+ </details>;
 }
