@@ -72,14 +72,14 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  const visibleRows=generalHistoryResult && !generalHistoryResult.ok && generalThread
   ?result.items.map(row=>row.id===generalThread.id?{...row,preview:null}:row)
   :result.items;
- return <div className="min-w-0 max-w-full space-y-6">
+ return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
   <RecruiterConversationLiveRefresh/>
   <PageHeader title="Messages"
    description={result.status==="READY"
     ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
     : "Conversations with the placement cell, one per drive, plus a general one."}
    actions={<Link href="/hr/notifications"
-     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>}/>
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(g=>({
@@ -91,9 +91,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <Banner tone="warning">
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
      </Banner>:null}
-   {decisionNotices.length>0?<section aria-label="Drive request decisions"
-     className="border-b border-border pb-4">
-    <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Drive request decisions</h2>
+   {decisionNotices.length>0?<details className="min-w-0 border-b border-border pb-4">
+    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Drive request decisions</summary>
     <p className="mt-1 text-xs text-muted-foreground">Approval, changes requested and declined decisions for your own requests.</p>
     <ul className="mt-3 space-y-3">{decisionNotices.map(item=><li key={item.id}
       className="border-b border-border py-3 last:border-b-0">
@@ -105,7 +104,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </Link>
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
     </li>)}</ul>
-   </section>:null}
+   </details>:null}
    {result.choices.length>1?<NeedsDoingChips label="College conversations:"
       selectedKey={result.collegeId}
       items={result.choices.map(grant=>({
@@ -148,16 +147,16 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
-   <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-2">
+   <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
-    <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
+    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className={"min-w-0 w-full basis-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:basis-auto md:flex-none "+inboxStyles.searchField}>Search by drive or message
+    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:basis-auto md:flex-none "+inboxStyles.searchField}>Search by drive or message
      <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
@@ -186,15 +185,15 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
-   {result.items.length?<ol className="divide-y divide-border border-y border-border">
-    {visibleRows.map(row=><li key={row.id} className="min-w-0 px-1 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
+   {result.items.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
+    {visibleRows.map(row=><li key={row.id} className="min-w-0 py-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
      <Link href={"/hr/conversations/"+row.id}
-      className="block min-h-9 max-md:min-h-11 break-words font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
+      className="block min-h-11 min-w-0 break-words font-semibold md:min-h-9 text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}
-     {row.preview?<p className="mt-2 break-words text-sm text-body">
+     {row.preview?<p className="mt-2 line-clamp-2 break-words text-sm leading-6 text-body">
       {row.preview.senderType==="RECRUITER"?"You: ":"Placement cell: "}{row.preview.text}
      </p>:null}
-     <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
+     <p className="mt-1 text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
    </ol>:<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college."/>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">

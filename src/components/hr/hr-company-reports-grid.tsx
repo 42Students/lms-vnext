@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { TpoGrid } from "@/components/tpo/grid/tpo-grid";
-import { StatusBadge } from "@/components/ui/status-badge";
 import type { TpoGridColumn } from "@/modules/placements/tpo-grid-model";
 
 /** Read-only, server-authorized and pagination-scoped company hiring totals. */
@@ -40,7 +39,6 @@ export function HrCompanyReportsGrid({rows,scopeKey}:{
     storageKey={"hr-company-report:"+scopeKey}
     mobilePrimaryKeys={["drive","status","applied","offered"]}
     rowActions={row=><div className="flex flex-wrap items-center gap-2">
-      <StatusBadge tone={row.status==="PUBLISHED"?"success":"neutral"}>{row.status}</StatusBadge>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(row.id)}
         className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Open drive
