@@ -709,12 +709,12 @@ export default async function HrPlacementJobPage({
               <p className="text-xs text-muted-foreground">
                {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
               </p>
-              <nav aria-label="Selection history pages" className="flex gap-3 text-sm">
+              {selectionPage.pages>1 ? <nav aria-label="Selection history pages" className="flex gap-3 text-sm">
                {selectionPage.page>1?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page-1)+returnQuery}
                 className="text-primary-text underline inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous selections</Link>:null}
                {selectionPage.page<selectionPage.pages?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page+1)+returnQuery}
                 className="text-primary-text underline inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next selections</Link>:null}
-              </nav>
+              </nav> : null}
             </section>:null}
           {offers.length ? <HrJobOffersGrid
             scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id].join(":")}
