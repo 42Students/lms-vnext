@@ -41,7 +41,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
   document.addEventListener("pointerdown",outside);
   return ()=>document.removeEventListener("pointerdown",outside);
  },[popupOpen]);
- return <div ref={rootRef} data-slot="searchable-select" className="relative min-[768px]:col-span-2"
+ return <div ref={rootRef} data-slot="searchable-select" className="relative md:col-span-2"
   onBlur={event=>{
    if(!event.currentTarget.contains(event.relatedTarget)){setPopupOpen(false);setActiveIndex(-1);}
   }}>
@@ -67,7 +67,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={popupOpen&&status==="ready"&&items.length>0}
    aria-controls={popupOpen&&status==="ready"&&items.length>0?id+"-choices":undefined}
    aria-activedescendant={popupOpen&&status==="ready"&&activeIndex>=0&&activeIndex<items.length?`${id}-choice-${activeIndex}`:undefined}
-   className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
+   className="mt-1 min-h-11 md:min-h-9 w-full"/>
   {status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
   {status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
     No catalog suggestions found. You can still save your own skill name.
