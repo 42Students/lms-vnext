@@ -249,9 +249,9 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 :where([data-slot="table"], [data-slot="data-table"])
   [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
-  /* Important override is needed: legacy-skin.css:513-514 gives every
-     nested scrollbar thumb a generic important 1px-radius style. The
-     admin table/tab exception must retain its 2px radius and 20% gray. */
+  /* Legacy-skin.css:511-514 gives a generic important thumb fill and
+     a normal 1px radius. This narrower exception keeps the measured admin
+     20% gray fill and 2px radius (admin-list-pages.scss:102-105,250-253). */
   background-color: rgba(0, 0, 0, 0.2) !important;
   border-radius: 2px !important;
 }
@@ -264,9 +264,9 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   height: 3px;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
-  /* Important override is needed: legacy-skin.css:513-514 gives every
-     nested scrollbar thumb a generic important 1px-radius style. The
-     admin table/tab exception must retain its 2px radius and 20% gray. */
+  /* Legacy-skin.css:511-514 gives a generic important thumb fill and
+     a normal 1px radius. This narrower exception keeps the measured admin
+     20% gray fill and 2px radius (admin-list-pages.scss:102-105,250-253). */
   background-color: rgba(0, 0, 0, 0.2) !important;
   border-radius: 2px !important;
 }
