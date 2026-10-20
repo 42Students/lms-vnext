@@ -91,7 +91,7 @@ export default async function MentorTeamHistoryPage({
               <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{item.displayName}</h2>
-                  <StatusBadge tone="neutral">{item.state}</StatusBadge>
+                  <StatusBadge tone={item.endedAt ? "neutral" : "success"}>{item.state}</StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body">
                   {item.roleLabel || item.role}
