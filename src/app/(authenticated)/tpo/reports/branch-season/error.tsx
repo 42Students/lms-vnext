@@ -7,6 +7,6 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   return <ErrorState
     title="Couldn't load branch evidence"
     description="Persisted season, offer or application evidence could not be read. Missing data is not interpreted as a zero placement rate."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    action={<Button type="button" className="w-full sm:w-auto" onClick={reset}>Retry</Button>}
   />;
 }

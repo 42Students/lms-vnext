@@ -58,7 +58,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
      {CAMPAIGN_DRAFT_UNAVAILABLE}
     </p>:drafts.rows.length===0?
     <p role="status" className="text-sm text-body">No email campaigns yet.</p>:
-    <ul className="grid min-w-0 gap-3 md:grid-cols-2">
+    <ul className="grid min-w-0 gap-3 lg:grid-cols-2">
      {drafts.rows.map(item=><li key={item.campaign_id}
       className="border-b border-border py-4">
       <Link className="inline-flex min-h-11 min-w-0 items-center break-words font-semibold text-link underline lms-inline-link md:min-h-9"
@@ -79,7 +79,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   </section>
   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
-  {result.rows.length ? <ol aria-label="recruiters campaigns entries" className="grid min-w-0 gap-3 md:grid-cols-2">
+  {result.rows.length ? <ol aria-label="recruiters campaigns entries" className="grid min-w-0 gap-3 lg:grid-cols-2">
     {result.rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
       <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}

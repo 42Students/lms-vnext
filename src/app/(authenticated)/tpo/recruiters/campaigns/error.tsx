@@ -7,6 +7,6 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   return <ErrorState
     title="Couldn't load emails"
     description="Receipt history could not be read; this is not evidence of zero sends."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    action={<Button type="button" className="w-full sm:w-auto" onClick={reset}>Retry</Button>}
   />;
 }
