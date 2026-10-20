@@ -11,6 +11,7 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import {EmptyState} from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoJoiningFollowups} from "@/modules/placements/tpo-joining-followup-service";
@@ -56,13 +57,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
     <Button type="submit" className="min-h-11 sm:min-h-9">Apply</Button>
   </form>
   {!report.season?<EmptyState title="No placement season" description="Joining follow-ups require a persisted placement season."/>:<>
-   <section className="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Joining evidence">
-    {Object.entries(report.counts).map(([label,n])=><div key={label}
-     className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-     <p className="text-xs text-body">{label.replaceAll(/([A-Z])/g," $1")}</p>
-     <p className="mt-1 text-xl font-semibold tabular-nums text-foreground">{n}</p>
-    </div>)}
-   </section>
+   <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Joining evidence">{Object.entries(report.counts).map(([label,n])=><StatTile key={label} label={label.replaceAll(/([A-Z])/g," $1").trim()} value={n} className="min-h-[104px]" />)}</section>
    <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
     Due means a persisted joining date on or before {report.todayIst} IST. Upcoming means a recorded calendar date strictly after today and within seven IST calendar days. No date is unknown, never late.
     Only ACCEPTED offers count; JOINED requires an explicit recorded outcome.
@@ -71,7 +66,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
    {!report.rows.length?<EmptyState title="No matching joining follow-ups"
     description="No accepted offers remain in the selected open state."/>:
     <section className="grid gap-3" aria-label="Pending and deferred joining offers">
-     {report.rows.map(o=><article key={o.offerId} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+     {report.rows.map(o=><article key={o.offerId} className="min-w-0 border-b border-border px-1 py-4">
        <h2 className="font-semibold text-foreground">{o.companyName} · {o.roleTitle}</h2>
        <p className="mt-1 text-sm text-body">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
        <p className="mt-1 text-sm text-body">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>

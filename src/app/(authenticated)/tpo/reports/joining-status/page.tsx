@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoReportRecordLinks } from "@/components/placements/tpo-report-record-links";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import {
   ReportCsvLink,
   ReportFilters,
@@ -84,17 +85,7 @@ export default async function TpoJoiningStatusReportPage({
           ["Did not join", totals.didNotJoin],
           ["Pending / unrecorded", totals.pending],
         ].map(([label, value]) => (
-          <div
-            key={label}
-            className="border-b border-border py-4"
-          >
-            <p className="text-xs font-semibold uppercase text-body">
-              {label}
-            </p>
-            <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">
-              {reportNumber(Number(value))}
-            </p>
-          </div>
+          <StatTile key={label} label={String(label)} value={reportNumber(Number(value))} className="min-h-[104px]" />
         ))}
       </section>
 

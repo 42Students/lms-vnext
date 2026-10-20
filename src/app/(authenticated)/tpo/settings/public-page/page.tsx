@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import Link from "next/link";
@@ -32,8 +33,7 @@ export default async function PublicPlacementSettingsPage({
  return <div className="space-y-6">
   <TpoSettingsNav active="public-page"/>
   <section className="border-t border-border pt-5">
-   <PageHeader title="Public placements" />
-   <p className="mt-2 text-sm text-body">{view.label}</p>
+   <PageHeader title="Public placements" description={view.label} />
    {updated==="1"?<InlineNotice tone="success" message={view.enabled?"Your placements page is live":"Your placements page is off"}/>:null}
    <p className="mt-2 text-sm text-body">
     The public page displays live, college-scoped results from the last 12 months only after you opt in.
@@ -55,14 +55,7 @@ export default async function PublicPlacementSettingsPage({
     {published?<p className="text-xs text-muted-foreground">Published as of {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(published.publishedAt))}.</p>:null}
     {published&&content.about?<p className="whitespace-pre-wrap text-sm text-body">{content.about}</p>:null}
     <div className="grid gap-3 min-[768px]:grid-cols-2">
-     {content.metricKeys.map(key=><div key={key} className="border-b border-border px-1 py-3">
-      <p className="text-xs text-muted-foreground">{PUBLIC_METRIC_LABELS[key]}</p>
-      <p className="mt-1 font-semibold">{formatPublicPlacementMetric(key,{
-       population:published?.population??null,placed:published?.placed??null,
-       offers:published?.offers??null,employers:published?.employers??null,
-       highestCtcInr:published?.highestCtcInr??null,medianCtcInr:published?.medianCtcInr??null,
-      })}</p>
-     </div>)}
+     {content.metricKeys.map(key=><StatTile key={key} label={PUBLIC_METRIC_LABELS[key]} value={formatPublicPlacementMetric(key,{population:published?.population??null,placed:published?.placed??null,offers:published?.offers??null,employers:published?.employers??null,highestCtcInr:published?.highestCtcInr??null,medianCtcInr:published?.medianCtcInr??null})} className="min-h-[104px]" />)}
     </div>
    </section>
    <TpoPublicPlacementContentEditor initial={content}/>
