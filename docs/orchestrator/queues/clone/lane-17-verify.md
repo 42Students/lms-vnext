@@ -40,10 +40,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-17.md: surface | regre
 - [x] `src/app/(authenticated)/admin/settings/auth/page.tsx`
 - [x] `src/app/(authenticated)/admin/settings/page.tsx`
 - [x] `src/app/(authenticated)/admin/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
-- [ ] `src/app/(authenticated)/admin/verification/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/admin/verification/page.tsx`
 - [ ] `src/app/(authenticated)/admin/videos/page.tsx`
 - [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
 - [ ] `src/components/admin/college-feature-rule-editor.tsx`
