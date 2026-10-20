@@ -84,9 +84,8 @@ export function PlacementSeasonManager({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    const data = new FormData(
-      event.currentTarget,
-    );
+    const form = event.currentTarget;
+    const data = new FormData(form);
     setPending(true);
     try {
       await request(
@@ -113,7 +112,7 @@ export function PlacementSeasonManager({
         description:
           "New placement drives will now bind to this active season.",
       });
-      event.currentTarget.reset();
+      form.reset();
       router.refresh();
     } catch (error) {
       showToast({
