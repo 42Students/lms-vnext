@@ -36,30 +36,31 @@ export function CollegeOfferingMetadataAction({offering}:{
       }catch(err){setError(err instanceof Error?err.message:"Offering edit failed");}
     });
   }
-  return <div className="space-y-1">{confirmation}
+  return <div className="min-w-0 space-y-[var(--lms-space-2)]">{confirmation}
     <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(true)}
-      className="min-h-11 md:min-h-9">Edit</Button>
-    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Edit offering "+offering.courseName} dismissible={!pending} footer={<>
-<Button variant="secondary" type="button" onClick={()=>setOpen(false)} disabled={pending}
+      className="min-h-11 w-full md:min-h-9 md:w-auto">Edit</Button>
+    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Edit offering "+offering.courseName} dismissible={!pending} footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
+          <Button variant="secondary" type="button" onClick={()=>setOpen(false)} disabled={pending}
             className="min-h-11 md:min-h-9">Cancel</Button>
           <Button variant="primary" type="button" onClick={save} disabled={pending}
             className="min-h-11 md:min-h-9" loading={pending}>
             {pending?"Saving…":"Confirm edit"}</Button>
-</>}>
-        <label className="grid gap-1 text-sm font-semibold text-body">Offering type
+        </div>}>
+        <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+        <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body md:col-span-2">Offering type
           <Select value={type} disabled={pending} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}>
             <option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
           </Select></label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Credits (optional)
+        <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body">Credits (optional)
           <Input type="number" min={1} max={30} value={credits} disabled={pending}
             onChange={e=>setCredits(e.target.value)}/>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Display order
+        <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body">Display order
           <Input type="number" min={0} max={10000} required value={displayOrder} disabled={pending}
             onChange={e=>setDisplayOrder(e.target.value)}/>
         </label>
-        {error?<Alert tone="error">{error}</Alert>:null}
-        
+        {error?<div className="min-w-0 md:col-span-2"><Alert tone="error">{error}</Alert></div>:null}
+        </div>
     </Dialog>
     {!open&&error?<Alert tone="error">{error}</Alert>:null}
   </div>;

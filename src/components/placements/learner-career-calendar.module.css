@@ -321,8 +321,8 @@
   .nav > button { width: 100%; }
   .period { grid-column: 1 / -1; min-width: 0; margin: 0; order: -1; }
   .legend { flex-wrap: nowrap; overflow-x: auto; padding: 12px; }
-  .legendChip { flex-shrink: 0; min-height: 32px !important; }
-  .agenda { padding: 12px; gap: 16px; }
+  .legendChip { flex-shrink: 0; min-height: 44px !important; }
+  .agenda { padding: 0; gap: 16px; }
   .mobileRow { display: flex; flex-direction: column; gap: 8px; min-height: 44px; }
 }
 @media (min-width: 768px) {

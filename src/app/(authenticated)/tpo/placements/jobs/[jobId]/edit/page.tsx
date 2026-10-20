@@ -2,6 +2,7 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {Alert} from "@/components/ui/alert";
 import {TpoDriveEditForm} from "@/components/placements/tpo-drive-edit-form";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -16,9 +17,9 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
   if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();
   throw error;
  }
- return <div className="min-w-0 space-y-5">
-  <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Drive workspace</Link>
-  <PageHeader eyebrow="TPO · Drives" title="Edit drive" description={"Update "+job.title+" carefully. Save changes before returning to the drive."}/>
+ return <div className="min-w-0 space-y-4">
+  <PageHeader eyebrow="TPO · Drives" title="Edit drive" description={"Update "+job.title+" carefully. Save changes before returning to the drive."}
+    actions={<PageBackLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)} label="Drive workspace" />}/>
   {job.editable?<TpoDriveEditForm job={job}/>:<Alert tone="warning" aria-label="Drive edit unavailable">
    <p>{job.status==="CLOSED"||job.status==="CANCELLED"
     ?"This drive is closed: nothing here can be changed. To run it again, open Create drive and pick it under Clone a past drive."
