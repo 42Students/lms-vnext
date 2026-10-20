@@ -51,8 +51,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-11.md: surface | regre
 - [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
 - [x] `src/components/placements/tpo-drive-change-requests.tsx`
 - [x] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/placements/tpo-joining-update-form.tsx`
-- [ ] `src/components/placements/tpo-round-check-in.tsx`
+- [x] `src/components/placements/tpo-joining-update-form.tsx`
+- [x] `src/components/placements/tpo-round-check-in.tsx`
 - [ ] `src/components/placements/tpo-selection-import.tsx`
 - [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
 - [ ] `src/components/tpo/tpo-batch-invitation-control.tsx`
