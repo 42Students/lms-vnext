@@ -74,13 +74,13 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       </label>:null}
       {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
-        <Button variant="secondary" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setSearch("")}>Clear search</Button>
+        <Button variant="secondary" type="button"  onClick={()=>setSearch("")}>Clear search</Button>
       </div>:null}
       {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No matching records. Clear search to restore the full list.</p>:null}
       {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
       <div className="space-y-3">
         {visibleRows.map(({row,index}) => (
-          <fieldset key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3 min-[768px]:p-4">
+          <fieldset key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3 md:p-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
             <Button variant="secondary" type="button" className="mb-3 min-h-11 min-[768px]:min-h-9 px-3"
               aria-expanded={!collapsedIds.includes(row.id)}

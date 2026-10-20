@@ -164,8 +164,8 @@ export default async function SuperAdminPeoplePage({
         </Select>
        </label>
        <PageSizeSelect name="pageSize" defaultValue={pageSize} options={[10,20,50]} />
-       <Button type="submit" className="min-h-11 md:min-h-[var(--lms-control-height)]">Search</Button>
-       <Link href="/admin/people" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+       <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
+       <Link href="/admin/people" className="inline-flex min-h-11 items-center md:min-h-9 justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
       <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
