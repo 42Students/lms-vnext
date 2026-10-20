@@ -211,7 +211,7 @@ export function ProjectParticipantListControls({
       </Button>
       {!mentor || hasFilters ? <Link
         href={basePath}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle"
+        className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle"
       >
         Clear filters
       </Link> : null}
