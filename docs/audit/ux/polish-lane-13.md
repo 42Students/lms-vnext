@@ -265,3 +265,13 @@
 **Changes:** file selection and Upload are primary; optional title/description/resource linkage inside a native disclosure with all original fields; live progress and Cancel enabled only during XHR, reset native file input after success/discard, group file management behind accessible disclosure while keeping Open/Retry visible, align full-width mobile actions and wrap filenames. Use shared Alerts with tone/role and surface delete errors inside confirm. Preserve MIME/size validation, safe signed URLs, grant expiry, status retries, existing labels, access and routes. Source-only review, no CI/browser.
 
 **Files:** file panel, queue, proof.
+
+## 42. Shared project workspace (Learner, Mentor, Admin)
+
+**Surface:** `src/components/projects/project-workspace.tsx`; inspected complete 1,673-line composite across Summary, Overview, Team, Sprints, Tasks, Resources, Meetings, Readiness, Delivery and Audit, with PageHeader, Tabs/ScrollCue, role-gated read-only, imported editing/confirmation controls, conditional empty/error/warning, signed evidence links and 375/768/1280 source CSS. The latest main already incorporated another lane's flattening of roster, task, release, sprint, submission and meeting rows, task disclosure improvements and 44px mobile links; those changes were preserved without replacement.
+
+**Problems fixed (5 in this pass):** four nested StatTile cards repeated the outer legacy canvas border, inconsistent KPI padding within an otherwise hairline layout, summary metrics spread into oversized single-column blocks at phone widths, long final submission statuses did not wrap predictably in tiles, and generic stat-card chrome competed with the workspace's actual actions.
+
+**Changes:** replace only the 4-instance local Metric wrapper with a continuous two-column phone/four-column desktop hairline KPI strip, keeping every label, value, caption and number formatting. All other lane-improved row geometry, actions, statuses, routes, aria relationships, role permissions, read-only behavior and overlays remain unchanged. Static source inspection only; no runtime/CI or screenshots.
+
+**Files:** project-workspace.tsx, lane queue, proof.
