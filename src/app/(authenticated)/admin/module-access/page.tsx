@@ -41,8 +41,8 @@ export default async function SuperAdminModuleAccessPage({
       description="Select a college to inspect the existing inherited module access rules."
       actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Feature Controls</Link>}/>
     <section aria-label="Module Access overview" className="border-b border-border pb-5">
-      <p className="text-sm font-semibold">Effective access · {scopeLabel}</p>
-      <h2 className="mt-1 text-base font-semibold">Optional module access hierarchy</h2>
+      <p className="text-sm font-semibold text-body">Effective access · {scopeLabel}</p>
+      <h2 className="mt-1 text-base font-semibold text-foreground">Optional module access hierarchy</h2>
       <dl className="mt-3 grid gap-3 text-sm md:grid-cols-3">
         <div><dt>Hierarchy scopes</dt><dd className="font-semibold">Global, organization, college, department, program, batch, class and learner</dd></div>
         <div><dt>Students in largest scope</dt><dd className="font-semibold">{scopeMetrics.largestLearnerScope} active learners in the visible colleges</dd></div>
@@ -50,7 +50,7 @@ export default async function SuperAdminModuleAccessPage({
       </dl>
     </section>
     <form method="get" className="grid grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
-      <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
+      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         College
         <Input type="search" name="q" maxLength={100} defaultValue={result.q}
           className="w-full"/>

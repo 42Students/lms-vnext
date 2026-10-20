@@ -31,7 +31,7 @@ export function FormField({ id, label, required = false, helper, error, children
   return <div data-slot="form-field" className="min-w-0 space-y-[6px] text-[13px]">
     <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       {label}{required ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
-      {required ? <span className="sr-only">required</span> : null}
+      {required ? <span className="sr-only"> required</span> : null}
     </label>
     {associated}
     {helper ? <p id={`${id}-hint`} className="text-[13px] leading-5 text-[var(--lms-muted-text)]">{helper}</p> : null}

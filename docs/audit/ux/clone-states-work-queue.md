@@ -1399,3 +1399,35 @@ At start: origin/main `a7616350ee830c5e187533defabafb477a27172e`; chat-5 branch 
 **Scoped re-read source grep equivalents:** 46 shared `<Alert` opens and 46 closes; 19 `<InlineNotice` calls; 17 `<EmptyState` occurrences across 38 page/control files; 13 raw role=status/alert for bounded metadata, listbox and disabled controls (three styled exemptions). No whole-project zero-count claim. Three shared primitives now use `--lms-radius-control:6px` matching legacy `$radius-control:6px`, and InlineNotice's focus dismiss uses a 3px offset matching legacy accessibility. F3/F4/F5 remain unticked until missing proofs are supplied, especially 640–767px/real tablet visual comparison and state timing.
 
 **Exact next file:** `src/components/tpo/tpo-prep-readiness-editor.tsx`. Next after that: `src/components/tpo/tpo-job-types-editor.tsx`, `src/components/tpo/tpo-grid-filter-panel.tsx`, then unconverted role-notice controls across other portals. Keep the north star: *new vNext module inside old LMS*, pixel-level, no page-content edits. Do not push to main.
+
+
+## Chat-5 2026-10-20 next TPO control batch — 20 TSX
+
+Source files below were migrated, pushed only to `chatgpt/chat-5-b` with `[chat-5]` commits, independently re-fetched, source-grep-counted, paired-tag balanced and compared against old LMS value tokens (all 20 per-file tables in `docs/audit/ux/clone-states.md`). Logic tokens (`apiFetch`, `fetch`, `onClick`, `onChange`, `disabled`, `href`, form action/method) retain the exact baseline occurrence counts. Each of these is a **finished source migration**, **not** a verified F3/F4/F5 pixel clone; keep strict status open until browser responsiveness and complete repo-wide grep are proven.
+
+- [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-job-types-editor.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-optional-emails-editor.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-prep-percentage-editor.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-after-college-editor.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-my-notification-preferences-editor.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-notice-audience-picker.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-students-assign-prep.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-batch-decision-control.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-batch-inline-decision.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-batch-lifecycle-control.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-timed-debar-control.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-team-away-form.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-team-follow-controls.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-students-bulk-add.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+- [ ] `src/components/tpo/tpo-students-bulk-debar.tsx` — source migrated / re-fetched; strict tick OPEN: live phone/tablet side-by-side + all legacy hover/active/focus/disabled + repo-wide grep
+
+**Scoped source proof:** 3 Alert opens / 3 closes, 1 Banner open / 1 close, 39 InlineNotice references, 5 EmptyState references, 13 exempt native in-place role=status and **0 raw role=alert** in these 20 sources. Original error/empty text and business conditions retained; no TSX compile, app execution, CI, tests, or runtime viewport snapshots.
+
+**Next exact file** `src/components/tpo/tpo-team-forms.tsx`; next `src/components/tpo/tpo-team-handover.tsx` and `src/components/tpo/tpo-campaign-compose.tsx`.
+
+North star remains: vNext looks like a new module inside the old LMS, pixel-level clone of every tiny detail. Do not equate source updates with strict visual parity.

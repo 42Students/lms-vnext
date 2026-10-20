@@ -38,7 +38,7 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader  title="Lecture Halls" />
     <ErrorState title="Invalid lecture hall filters"
       description="Search, status, capacity or page selection is invalid. No records were loaded."
-      action={<Link href="/admin/lecture-halls" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+      action={<Link href="/admin/lecture-halls" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
 
   const [halls, departments] = await Promise.all([
@@ -70,26 +70,26 @@ export default async function SuperAdminLectureHallsPage({
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
     <section aria-label="Lecture hall filters" className="space-y-4 border-b border-border pb-4">
       <form action="/admin/lecture-halls" method="get" className="flex flex-wrap items-end gap-3">
-        <label className="grid gap-1 text-sm font-semibold">Room name
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room name
           <Input type="search" name="q" maxLength={100} defaultValue={query.q}
-            placeholder="Search halls" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+            placeholder="Search halls" className="min-h-11 min-[768px]:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-sm font-semibold">Status
-          <Select name="status" defaultValue={query.status} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+          <Select name="status" defaultValue={query.status} className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold">Department
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
           <Select name="departmentId" defaultValue={query.departmentId ?? ""}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="min-h-11 min-[768px]:min-h-9">
             <option value="">All departments</option>
             {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold">Room type
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room type
           <Select name="roomType" defaultValue={query.roomType}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All types</option>
             <option value="CLASSROOM">Classroom</option><option value="LECTURE_HALL">Lecture Hall</option>
             <option value="LAB">Laboratory</option><option value="SEMINAR_HALL">Seminar Hall</option>
@@ -97,21 +97,21 @@ export default async function SuperAdminLectureHallsPage({
             <option value="CONFERENCE_ROOM">Conference Room</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold">Rows per page
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
           <Select name="pageSize" defaultValue={query.pageSize}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="min-h-11 min-[768px]:min-h-9">
             {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
           </Select>
         </label>
         <Button type="submit">Search</Button>
-        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text">Clear</Link>
       </form>
       <div className="flex flex-wrap gap-2">
-        <a href={csvHref} download className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export CSV</a>
+        <a href={csvHref} download className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export CSV</a>
         <form action="/admin/lecture-halls" method="get">
           {Object.entries(query).map(([name,value]) =>
             value !== undefined && value !== ""
-              ? <input key={name} type="hidden" name={name} value={String(value)} />
+              ? <Input key={name} type="hidden" name={name} value={String(value)} />
               : null)}
           <Button type="submit" variant="secondary">Refresh</Button>
         </form>

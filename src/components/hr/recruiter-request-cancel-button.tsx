@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -39,8 +40,8 @@ export function RecruiterRequestCancelButton({requestId,collegeId,updatedAt}:{
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title="Cancel this drive request?" confirmLabel="Cancel request" pending={busy}
    description="The placement cell will no longer review it." onConfirm={cancel}>
-   {notice?<p role="alert" className="text-sm text-error">{notice}</p>:null}
+   {notice?<InlineNotice tone={notice==="Request cancelled."?"success":"error"} message={notice}/>:null}
   </ConfirmDialog>
-  {notice?<p role="status" className="mt-2 text-xs text-body">{notice}</p>:null}
+  {notice?<InlineNotice tone={notice==="Request cancelled."?"success":"error"} message={notice}/>:null}
  </div>;
 }

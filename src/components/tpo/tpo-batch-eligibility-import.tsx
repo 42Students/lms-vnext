@@ -96,8 +96,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    Import eligibility decisions
   </Button>
   <Drawer open={importOpen} onOpenChange={setImportOpen} title="Import eligibility decisions"
-    dismissible={!busy}><div className="space-y-3">
-   <div className="flex items-center justify-between gap-3">
+    dismissible={!busy}><div className="min-w-0 space-y-3">
+   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
     <h3 className="font-semibold">Import eligibility</h3>
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>setImportOpen(false)}
      >Close</Button>
@@ -112,13 +112,13 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Download a template</a>
   </div>
   <label className="block text-sm print:hidden">CSV contents
-   <Textarea className="mt-1 min-h-32 font-mono text-xs"
+   <Textarea className="mt-1 min-h-32 w-full min-w-0 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={1500000}/>
   </label>
   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void previewChanges()} >{busy?"Working…":"Preview import"}</Button>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
-   {unresolved>0?<p role="alert" className="text-sm text-warning-text">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
+   {unresolved>0?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-warning-text">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
    <div className="print:hidden"><Tabs ariaLabel="Import preview filters" renderPanel={false} controlledOnly
     value={previewTab} onValueChange={next=>{setPreviewTab(next as "ALL"|"MATCHED"|"UNUSABLE");setPreviewPage(1);}}
     items={[{value:"ALL",label:"All",count:preview.preview.length},
@@ -158,7 +158,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    </div>
    <Button variant="secondary" type="button" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
    <label className="flex min-h-11 items-start gap-2 text-sm text-body">
-     <Checkbox className="mt-1 h-4 w-4 accent-primary"
+     <Checkbox className="mt-1"
        checked={acknowledged} disabled={busy}
        onChange={event=>setAcknowledged(event.target.checked)}/>
      I reviewed the matched learners and understand that applying these decisions will be audited.
@@ -167,7 +167,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy||preview.ready===0||unresolved>0||!acknowledged} onClick={()=>void commit()}
     >Confirm matched decisions</Button>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {lastActionId?<TpoBatchUndoControl batchId={batchId} actionId={lastActionId}/>:null}
   </div></Drawer>

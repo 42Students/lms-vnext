@@ -55,6 +55,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     <span id="minimum-attendance-help" className="text-xs font-normal text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </label>
   </div>
+  <p className="hidden text-sm text-body print:block">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
   <Button variant="primary" type="button" loading={saving} disabled={saving} onClick={requestSave}
    className="min-h-11 md:min-h-9 print:hidden">{saving?"Saving…":"Save attendance policy"}</Button>
   {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
