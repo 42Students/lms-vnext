@@ -54,8 +54,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regres
 - [x] `src/components/tpo/tpo-header-indicators.tsx`
 - [x] `src/components/ui/form-grid.tsx`
 - [x] `src/components/ui/otp-input.tsx`
-- [ ] `src/components/ui/search-field.tsx`
-- [ ] `src/app/(authenticated)/hr/loading.tsx`
+- [x] `src/components/ui/search-field.tsx`
+- [x] `src/app/(authenticated)/hr/loading.tsx`
 - [ ] `src/app/(authenticated)/college-admin/layout.tsx`
 - [ ] `src/app/(authenticated)/hr/not-found.tsx`
 - [ ] `src/app/(authenticated)/teacher/layout.tsx`
