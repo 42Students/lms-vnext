@@ -31,7 +31,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
    const target=event.target;
    if(!(target instanceof Element))return;
    const anchor=target.closest("a[href]");
-   if(!(anchor instanceof HTMLAnchorElement))return;
+   if(!(anchor instanceof HTMLAnchorElement)||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
    const destination=new URL(anchor.href,window.location.href);
    if(destination.origin!==window.location.origin || (destination.pathname===window.location.pathname &&
       destination.search===window.location.search && destination.hash===window.location.hash))return;
@@ -90,20 +90,20 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   }else setNotice("Could not send. "+feedback);
   }finally{submitPendingRef.current=false;setSending(false);}
  }
- return <form ref={formRef} onSubmit={submit} className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
-  <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply to placement cell</h2>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+ return <form ref={formRef} onSubmit={submit} className="min-w-0 max-w-4xl space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
+  <h2 className="text-lg font-semibold leading-7 text-foreground">Reply to placement cell</h2>
+  <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">Message
    <Textarea value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
     rows={4} disabled={sending} aria-invalid={body.trim().length>4000}
-    className="w-full"
+    className="min-h-32 w-full"
     placeholder="Write a message to the placement cell"/>
   </label>
   <p className="text-xs text-muted-foreground">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
-  <div className="flex min-w-0 flex-wrap items-center gap-3">
+  <div className="flex min-w-0 flex-col items-stretch gap-2 min-[768px]:flex-row min-[768px]:items-center">
   <Button type="submit" disabled={sending} loading={sending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
    {sending?"Sending…":"Send reply"}
   </Button>
