@@ -35,7 +35,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
  const jobs=operations?operations.jobs.filter(r=>[r.job.title,r.job.company.name].some(v=>v.toLocaleLowerCase().includes(text))).slice(0,5):[];
  const hasMatches=foundBatches.length+named.students.length+named.recruiters.length+named.companies.length+jobs.length>0;
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="TPO" title="Find a student, recruiter or company" description="Search your college records. Search does not execute actions or navigate to arbitrary pages."/>
+  <PageHeader  title="Find a student, recruiter or company" description="Search your college records. Search does not execute actions or navigate to arbitrary pages."/>
   <form action="/tpo/find" method="get" className="flex min-w-0 flex-wrap gap-2">
    <label className="min-w-0 flex-1 text-sm">Record name
     <Input type="search" name="q" defaultValue={rawText??""} maxLength={100} required
@@ -44,29 +44,29 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
   </form>
   {invalid?<Alert tone="error">Search must contain 2–100 characters.</Alert>:!text?<EmptyState title="Type a name or a roll number, for example 21CS001"/>:<>
    {!hasMatches?<EmptyState title={"No student, recruiter, company or drive matches \""+(rawText??"")+"\""}/>:null}
-   <section className="space-y-2"><h2 className="font-semibold">Batches ({foundBatches.length}{batches.batches.length>30?"+":""})</h2>
+   <section className="min-w-0 space-y-2 border-b border-border pb-4"><h2 className="font-semibold">Batches ({foundBatches.length}{batches.batches.length>30?"+":""})</h2>
     {foundBatches.length===0?<p className="text-sm">No matching batches.</p>:<ul className="divide-y divide-border border-y border-border">{foundBatches.map(b=><li key={b.id} className="p-3 text-sm">
       <Link href={"/tpo/batches/"+b.id} className="text-link underline lms-inline-link">{b.name} · {b.program}</Link></li>)}</ul>}
    </section>
-   <section className="space-y-2"><h2 className="font-semibold">Students ({named.students.length})</h2>
+   <section className="min-w-0 space-y-2 border-b border-border pb-4"><h2 className="font-semibold">Students ({named.students.length})</h2>
     {named.students.length===0?<p className="text-sm">No matching students.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.students.slice(0,5).map(s=><li key={s.id} className="p-3 text-sm">
        <Link href={"/tpo/students?q="+encodeURIComponent(s.rollNumber??s.name??"")+"&student="+encodeURIComponent(s.id)} className="text-link underline lms-inline-link">{s.name??"Student"}{s.rollNumber?" · "+s.rollNumber:""}{s.branch?" · "+s.branch:""}</Link>
       </li>)}</ul>}
    </section>
-   <section className="space-y-2"><h2 className="font-semibold">Recruiter Leads ({named.recruiters.length})</h2>
+   <section className="min-w-0 space-y-2 border-b border-border pb-4"><h2 className="font-semibold">Recruiter Leads ({named.recruiters.length})</h2>
     {named.recruiters.length===0?<p className="text-sm">No matching recruiter leads.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.recruiters.slice(0,5).map(lead=><li key={lead.id} className="p-3 text-sm">
        <Link href={"/tpo/recruiters/"+lead.id} className="text-link underline lms-inline-link">{lead.name}</Link>
       </li>)}</ul>}
    </section>
-   <section className="space-y-2"><h2 className="font-semibold">Companies ({named.companies.length})</h2>
+   <section className="min-w-0 space-y-2 border-b border-border pb-4"><h2 className="font-semibold">Companies ({named.companies.length})</h2>
     {named.companies.length===0?<p className="text-sm">No matching companies.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.companies.slice(0,5).map(company=><li key={company.id} className="p-3 text-sm">
        <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)} className="text-link underline lms-inline-link">{company.name}</Link>
       </li>)}</ul>}
    </section>
-   <section className="space-y-2"><h2 className="font-semibold">Drives ({jobs.length})</h2>
+   <section className="min-w-0 space-y-2 border-b border-border pb-4"><h2 className="font-semibold">Drives ({jobs.length})</h2>
     {jobs.length===0?<p className="text-sm">No matching drives.</p>:<ul className="divide-y divide-border border-y border-border">{jobs.map(r=><li key={r.job.id} className="p-3 text-sm">
      <Link href={"/tpo/placements/jobs/"+r.job.id} className="text-link underline lms-inline-link">{r.job.title} · {r.job.company.name} · {r.job.status.replaceAll("_"," ")}</Link></li>)}</ul>}
    </section>

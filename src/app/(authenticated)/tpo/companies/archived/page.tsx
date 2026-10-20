@@ -13,16 +13,16 @@ export default async function ArchivedCompanyRelationshipsPage() {
   }
   await requireTpoBatchActor(context);
   const { rows, truncated } = await listArchivedTpoCompanyRelationships(context);
-  return <div className="space-y-5">
+  return <div className="min-w-0 space-y-5">
     <Link href="/tpo/companies" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       ← Companies directory
     </Link>
-    <PageHeader eyebrow="TPO · Companies" title="Archived company relationships"
+    <PageHeader  title="Archived company relationships"
       description="Relationships archived for your own college; these remain available for authorized restoration." />
     {truncated ? <p role="status" className="text-sm text-body">
       Showing only the first 100 archived relationships. This is not a complete list.
     </p> : null}
-    {rows.length === 0 ? <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
+    {rows.length === 0 ? <p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
       No archived college-company relationships are recorded.
     </p> : <ul className="divide-y divide-border border-y border-border bg-surface">
       {rows.map((row) => <li key={row.companyId} className="flex flex-wrap items-center justify-between gap-3 py-4 text-sm">

@@ -27,9 +27,9 @@ export default async function TpoLearnerParticipationPage({
   const timedDebarments=await listTpoMemberDebarments(context,learner.membershipId);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-5"
       <PageHeader
-        eyebrow="TPO · Students"
+        
         title="Placement participation decision"
         description={
           learner.displayName +
