@@ -86,10 +86,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
   {first(raw.noticeSuccess)==="DELETED"?<InlineNotice tone="success" message="Deleted. Its notices were taken back."/>:null}
   {noticeError?<InlineNotice tone="error" message={noticeError}/>:null}
   {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={sent.createdAt.toISOString()}/>:null}
-  {result.status==="READY" && tab.data==="yours"?<TpoNoticeComposerDialog><section className="space-y-4">
-   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Compose a college notice</h2>
-   <p className="mt-1 text-sm text-body leading-[22px]">Only active college members can see published notices; this form does not send email or SMS.</p>
-   <form method="get" action="/tpo/announcements"
+  {result.status==="READY" && tab.data==="yours"?<TpoNoticeComposerDialog><section aria-labelledby="section-compose-a-college-notice" className="space-y-4">
+   <h2 id="section-compose-a-college-notice" className="font-semibold text-foreground">Compose a college notice</h2>
+   <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
+   <form role="search" method="get" action="/tpo/announcements"
      className="mt-3 flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border border-border p-3"
      aria-label="Announcement audience preview">
      <Input type="hidden" name="tab" value="yours"/>
@@ -157,9 +157,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
     items={[{value:"mine",label:"Your notices",href:"/tpo/announcements?tab="+tab.data},
       {value:"team",label:"All team notices",href:"/tpo/announcements?tab="+tab.data+"&mine=0"}]}/>:null}
   {result.status==="NOT_REGISTERED"?<Alert tone="warning">
-   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Announcement storage pending</h2>
-   <p className="mt-2 text-sm text-body leading-[22px]">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
-  </Alert>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
+   <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
+   <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
+  </Alert>:result.items.length?<ol aria-label="tpo announcements entries" className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
     <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{row.title}{row.isPinned?" · Pinned":""}
      {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs text-primary-text">New</span>:null}

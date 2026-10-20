@@ -81,7 +81,7 @@ export default async function TpoActorAuditPage({
       Domain-history and share events remain on the original Audit log. An empty result
       does not prove no action occurred in a domain without an activity writer.
     </p>
-    <form action="/tpo/audit/actors" method="get"
+    <form role="search" aria-label="audit actors filters" action="/tpo/audit/actors" method="get"
       className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-3">
       {([
         ["actorId", "Actor user UUID", "00000000-0000-4000-8000-000000000000"],

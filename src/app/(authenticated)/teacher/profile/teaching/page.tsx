@@ -24,7 +24,7 @@ export default async function FacultyTeachingProfilePage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid teaching profile filters"} />
-    <Link href="/teacher/profile/teaching" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
+    <Link href="/teacher/profile/teaching" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
       Clear filters
     </Link>
   </section>;
@@ -34,11 +34,11 @@ export default async function FacultyTeachingProfilePage({
     <PageHeader title="Current teaching assignments"
       description={"Registered teaching deliveries for "+data.title+" in this college."}
       actions={<Link href="/teacher/profile"
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Profile overview
       </Link>} />
-    <section className="border-b border-border py-5">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">College-managed employment details</h2>
+    <section aria-labelledby="section-college-managed-employment-details" className="border-b border-border py-5">
+      <h2 id="section-college-managed-employment-details" className="text-base font-semibold text-foreground">College-managed employment details</h2>
       <dl className="mt-3 grid gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Academic title</dt>
           <dd className="mt-1 text-sm font-semibold">{data.academicTitle||"Not provided"}</dd></div>
@@ -49,7 +49,7 @@ export default async function FacultyTeachingProfilePage({
         These fields are read-only. College administrators maintain employment records.
       </p>
     </section>
-    <form method="get" action="/teacher/profile/teaching"
+    <form role="search" aria-label="profile teaching filters" method="get" action="/teacher/profile/teaching"
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
       <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-neutral-400)] leading-4">Search current teaching
         <Input name="search" type="search" defaultValue={data.query.search}
@@ -59,7 +59,7 @@ export default async function FacultyTeachingProfilePage({
       <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
         Search
       </Button>
-      <Link href="/teacher/profile/teaching" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
+      <Link href="/teacher/profile/teaching" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
         Clear
       </Link>
     </form>
@@ -79,7 +79,7 @@ export default async function FacultyTeachingProfilePage({
             Academic period status: {row.academicPeriodStatus}
           </p>
           <Link href={"/teacher/courses/"+encodeURIComponent(row.deliveryId)+"/home"}
-            className="mt-3 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="mt-3 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Open assigned course →
           </Link>
         </article>)}</div>}
@@ -87,9 +87,9 @@ export default async function FacultyTeachingProfilePage({
       <p className="text-sm text-muted-foreground leading-[22px]">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page>1 && <Link href={ownFacultyTeachingHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Previous</Link>}
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Previous</Link>}
         {data.page<data.totalPages && <Link href={ownFacultyTeachingHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Next</Link>}
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">
