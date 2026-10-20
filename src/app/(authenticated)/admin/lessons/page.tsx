@@ -30,7 +30,7 @@ export default async function SuperAdminLessonsPage({
   if (!parsed.success) return <div className="space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
-      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Clear filters</Link>} />
+      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-6">
@@ -48,7 +48,7 @@ export default async function SuperAdminLessonsPage({
     <ErrorState title="Lessons unavailable"
       description="The lesson directory could not be loaded. Your filters have not changed."
       action={<Link href={adminLearningHref("LESSONS",parsed.data)}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Retry loading lessons</Link>} />
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry loading lessons</Link>} />
   </div>;
   const data=dataResult.value;
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
@@ -58,7 +58,7 @@ export default async function SuperAdminLessonsPage({
     <PageHeader title="Lessons"
       description="Authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion."
       actions={<a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[var(--lms-font-base)] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export lessons.csv</a>}
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] leading-5 text-[var(--lms-primary-text)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export lessons.csv</a>}
     />
     
     <form className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-5">
@@ -74,7 +74,7 @@ export default async function SuperAdminLessonsPage({
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
     </form>
-    <Link className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text" href="/admin/lessons">Clear filters</Link>
+    <Link className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
     {filtersResult.status==="rejected"?<Alert tone="warning">
       Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
@@ -100,7 +100,7 @@ export default async function SuperAdminLessonsPage({
             expectedSequence={lesson.sequence} canMoveUp={lesson.sequence>0} canMoveDown={true}/>
         </div>:null}
         <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
-          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]">
           Open offering to add lessons →
         </Link>
       </article>)}
@@ -111,6 +111,6 @@ export default async function SuperAdminLessonsPage({
         hrefForPage={page=>adminLearningHref("LESSONS",{...data.query,page})}
         label="Lesson pages" showBoundaryLinks={false}/>
     </div>
-    <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Courses</Link>
   </div>;
 }

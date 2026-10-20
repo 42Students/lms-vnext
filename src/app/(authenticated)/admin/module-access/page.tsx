@@ -31,7 +31,7 @@ export default async function SuperAdminModuleAccessPage({
     <PageHeader title="Module Access"/>
     <ErrorState title="Invalid feature filters"
       description="The search or page value is invalid."
-      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
+      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:underline">Clear filters</Link>}/>
   </div>;
   const result=await listSuperAdminFeatureControls(context,parsed);
   const scopeMetrics=await getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id));
@@ -39,8 +39,8 @@ export default async function SuperAdminModuleAccessPage({
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
-      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Feature Controls</Link>}/>
-    <section aria-label="Module Access overview" className="border-b border-border pb-6">
+      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Feature Controls</Link>}/>
+    <section aria-label="Module Access overview" className="border-b border-border pb-5">
       <p className="text-sm font-semibold text-body">Effective access · {scopeLabel}</p>
       <h2 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Optional module access hierarchy</h2>
       <dl className="mt-3 grid gap-3 text-sm md:grid-cols-3">
@@ -56,7 +56,7 @@ export default async function SuperAdminModuleAccessPage({
           className="w-full"/>
       </label>
       <Button type="submit">Filter</Button>
-      <Link className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-primary-text md:min-h-9"
+      <Link className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         href="/admin/module-access">Clear filters</Link>
     </form>
     <p role="status" className="text-sm text-body">
@@ -70,7 +70,7 @@ export default async function SuperAdminModuleAccessPage({
           <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{college.name}</h2>
           <p className="mt-1 text-sm text-body">{college.code}</p>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:underline">
             Module Access →
           </Link>
         </article>)}
