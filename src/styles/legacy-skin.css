@@ -270,6 +270,7 @@
   color: var(--lms-neutral-900) !important;
   font-family: inherit !important;
   font-size: 20px !important;
+  line-height: 30px !important;
   font-weight: 600 !important;
 }
 /* Legacy: components___typo.scss:28-40 (.h3 sizes 16/18/20);
@@ -281,6 +282,7 @@
   color: var(--lms-neutral-900) !important;
   font-family: inherit !important;
   font-size: 16px !important;
+  line-height: 26px !important;
   font-weight: 600 !important;
 }
 /* Legacy: components___variables.scss:24,176-189
@@ -319,6 +321,7 @@
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h1):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 24px !important;
+    line-height: 32px !important;
   }
 }
 @media (min-width: 768px) {
@@ -326,11 +329,13 @@
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h2):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 22px !important;
+    line-height: 32px !important;
   }
   /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h3):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 18px !important;
+    line-height: 28px !important;
   }
 }
 @media (min-width: 992px) {
@@ -338,11 +343,13 @@
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h2):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 30px !important;
+    line-height: 40px !important;
   }
   /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h3):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 20px !important;
+    line-height: 30px !important;
   }
 }
 
