@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
@@ -93,8 +95,8 @@ export default async function TpoUnplacedReportPage({
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-       {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
-       {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+       {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+       {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
        <label className="grid gap-1 text-sm">Batch
         <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9">
          <option value="">All current batches</option>
@@ -115,27 +117,12 @@ export default async function TpoUnplacedReportPage({
       <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/unplaced" />
 
-      <section className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-          <p className="text-xs font-semibold uppercase text-body">
-            Unplaced in selected scope
-          </p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
-            {reportNumber(unplaced.length)}
-          </p>
-        </div>
-        <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-          <p className="text-xs font-semibold uppercase text-body">
-            Current placement-pool registrations
-          </p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
-            {reportNumber(workspace.report.metrics.registered)}
-          </p>
-          <p className="mt-1 text-xs text-body">
-            See Placement Summary for the overall registered denominator.
-          </p>
-        </div>
-      </section>
+      <SummaryStrip label="Unplaced learner report summary" steps={[
+        {label:"Unplaced in selected scope",value:reportNumber(unplaced.length)},
+        {label:"Current placement-pool registrations",
+          value:reportNumber(workspace.report.metrics.registered),
+          note:"See Placement Summary for the overall registered denominator."},
+      ]}/>
 
       <ReportScopeNote note={workspace.detailScopeNote} />
       <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
