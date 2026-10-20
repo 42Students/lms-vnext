@@ -496,15 +496,15 @@ export function AdminAttendanceWorkspace({
           </section>
 
           <section className="min-w-0">
-            <Table scrollLabel="College attendance monthly grid" className="min-w-[56rem] text-sm">
+            <Table scrollLabel="College attendance monthly grid">
               <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
-              <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
+              <thead>
                 <tr>
-                  <th className="sticky left-0 z-20 bg-surface-subtle px-4 py-3">
+                  <th className="sticky left-0 z-20 bg-surface px-4">
                     Learner
                   </th>
                   {sessionDays.map(({ day, sessions, weekday, isSunday }) => (
-                    <th key={day} scope="col" className={"min-w-16 px-2 py-3 text-center "+(isSunday?"bg-surface-subtle":"")}
+                    <th key={day} scope="col" className={"min-w-16 px-2 text-center "+(isSunday?"bg-surface-subtle":"")}
                       title={sessions.length?String(sessions.length) + " session(s)":"No class scheduled"}>
                       <span className="block">{day.slice(8)}</span><span className="block text-xs font-normal">{weekday}</span>
                       {sessions.length > 1 ? (
@@ -514,14 +514,14 @@ export function AdminAttendanceWorkspace({
                       ) : null}
                     </th>
                   ))}
-                  <th className="px-4 py-3 text-center"
+                  <th className="px-4 text-center"
                     aria-label={ADMIN_ATTENDANCE_COPY.monthPercentAria}
                     title={ADMIN_ATTENDANCE_COPY.monthPercentTooltip}>
                     {ADMIN_ATTENDANCE_COPY.monthPercentHeader}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody>
                 {data.grid.roster.map(
                   (learner) => {
                     const percent =
