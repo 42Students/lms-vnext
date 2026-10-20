@@ -118,9 +118,9 @@ export function TpoAuditSavedViews({filters}:{filters:{
  }
  async function remove(){
   if(!selectedView||busy)return;
-  setConfirmDelete(false);
-  await mutate({action:"DELETE",id:selectedView.id,
+  const result = await mutate({action:"DELETE",id:selectedView.id,
    expectedRevision:selectedView.revision},"Saved view deleted.");
+  if(result)setConfirmDelete(false);
  }
  return <Disclosure title={`Saved audit views (${views.length}/12)`} className="border-y border-border py-3">
   <p className="mt-1 text-xs text-muted-foreground">
@@ -162,7 +162,9 @@ export function TpoAuditSavedViews({filters}:{filters:{
   <ConfirmDialog open={confirmDelete} onOpenChange={next=>{if(!busy)setConfirmDelete(next);}}
    title="Delete saved audit view?" description="Delete this saved audit view?"
    confirmLabel="Delete view" confirmVariant="danger" pending={busy}
-   onConfirm={()=>void remove()}/>
+   onConfirm={()=>void remove()}>
+   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  </ConfirmDialog>
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
  </Disclosure>;
