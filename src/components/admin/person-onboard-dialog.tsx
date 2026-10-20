@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -48,6 +49,7 @@ export function PersonOnboardDialog({
     onboardingRoleSelection(forcedRole),
   );
   const [pending, startTransition] = useTransition();
+  const inFlightRef=useRef(false);
 
   function reset() {
     setDisplayName("");setFirstName("");setLastName("");
@@ -65,8 +67,11 @@ export function PersonOnboardDialog({
   }
 
   function submit() {
+    if(pending||inFlightRef.current)return;
     if(forcedRole&&!indianMobileToE164(phoneE164)){showToast({tone:"error",title:"Check mobile number",description:"Mobile number must be 10 digits"});return;}
+    inFlightRef.current=true;
     startTransition(async () => {
+      try {
       const response = await fetch("/api/people/onboard", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -105,6 +110,8 @@ export function PersonOnboardDialog({
           "The canonical user and college membership are ready. No invitation or message was sent.",
       });
       router.refresh();
+      }catch{showToast({tone:"error",title:"Onboarding failed",description:"The person could not be onboarded. Check the fields and try again."});}
+      finally{inFlightRef.current=false;}
     });
   }
 
@@ -115,7 +122,8 @@ export function PersonOnboardDialog({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(!pending)setOpen(next);}}
+        dismissible={!pending}
         title={forcedRole === "FACULTY" ? "Register New Faculty" : "Onboard person"}
         description="Create or reuse a canonical identity and an active college membership. No external invitation is sent."
         footer={
@@ -144,16 +152,16 @@ export function PersonOnboardDialog({
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {forcedRole?<div className="grid min-w-0 gap-[var(--lms-space-4)] md:col-span-2 md:grid-cols-2">
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First Name
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First Name
               <Input className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required onChange={e=>setFirstName(e.target.value)} placeholder="First name"/>
             </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last Name
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last Name
               <Input className="min-h-11 md:min-h-9" value={lastName} maxLength={120} required onChange={e=>setLastName(e.target.value)} placeholder="Last name"/>
             </label>
           </div>:<div className="min-w-0 md:col-span-2">
             <label
               htmlFor={`onboard-name-${collegeId}`}
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Display name
             </label>
@@ -171,7 +179,7 @@ export function PersonOnboardDialog({
           <div>
             <label
               htmlFor={`onboard-phone-${collegeId}`}
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Phone
             </label>
@@ -189,7 +197,7 @@ export function PersonOnboardDialog({
           <div>
             <label
               htmlFor={`onboard-email-${collegeId}`}
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Email · optional
             </label>
@@ -229,6 +237,7 @@ export function PersonOnboardDialog({
                     {roleLabel(role)}
                   </span>
                   <Checkbox
+                    disabled={pending}
                     checked={roles.includes(role)}
                     onChange={() => toggleRole(role)}
                     className="size-5"

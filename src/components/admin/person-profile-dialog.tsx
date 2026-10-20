@@ -1,9 +1,11 @@
 "use client";
 
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
+import { useRouter } from "next/navigation";
 import type { MembershipRole } from "@/modules/identity/constants";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -32,6 +34,8 @@ export function PersonProfileDialog({
   disabled?: boolean;
 }) {
   const { showToast } = useToast();
+  const router=useRouter();
+  const saveInFlightRef=useRef(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -127,8 +131,10 @@ export function PersonProfileDialog({
   }
 
   function save() {
-    if (pending || loading || loadError) return;
+    if (pending || saveInFlightRef.current || loading || loadError) return;
+    saveInFlightRef.current=true;
     startTransition(async () => {
+      try {
       const requests: Promise<Response>[] = [];
 
       if (hasLearner) {
@@ -188,6 +194,8 @@ export function PersonProfileDialog({
         title: "Profile updated",
         description: `${displayName}'s membership profile was saved.`,
       });
+      router.refresh();
+      }finally{saveInFlightRef.current=false;}
     });
   }
 
@@ -200,7 +208,7 @@ export function PersonProfileDialog({
       <Button
         variant="secondary"
         size="sm"
-        className="min-h-11 md:min-h-9"
+        className="min-h-11 w-full sm:w-auto md:min-h-9"
         disabled={disabled}
         onClick={openDialog}
       >
@@ -252,7 +260,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`roll-${membershipId}`}
-                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Roll number
                   </label>
@@ -268,7 +276,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`registration-${membershipId}`}
-                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Registration number
                   </label>
@@ -292,7 +300,7 @@ export function PersonProfileDialog({
                 <div className="md:col-span-2">
                   <label
                     htmlFor={`department-${membershipId}`}
-                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Primary department
                   </label>
@@ -317,7 +325,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`employment-${membershipId}`}
-                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Employment type
                   </label>
@@ -334,7 +342,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`title-${membershipId}`}
-                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Academic title
                   </label>

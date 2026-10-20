@@ -50,7 +50,7 @@ export function SuperAdminFacultyScheduleReassignAction({
   }
   return <div className="min-w-0 space-y-[var(--lms-space-3)] print:hidden">
     <Button variant="secondary" size="md" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||choices.length===0}
-      onClick={()=>{setOpen(true);setError("");}}>
+      onClick={()=>{setOpen(true);setError("");setReport(null);}}>
       Reassign class schedules
     </Button>
     {report?<Alert tone="success" className="max-w-prose">
@@ -58,14 +58,14 @@ export function SuperAdminFacultyScheduleReassignAction({
       {report.skippedConflicts>0?" "+report.skippedConflicts+" conflicting session(s) kept with the original faculty.":""}
     </Alert>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
-    <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}}
+    <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} dismissible={!pending}
       title="Reassign class schedules"
       description={"Move future scheduled sessions from "+sourceName+" to another active faculty member. Conflicts are skipped, never double-booked."}
       footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
         <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button className="min-h-11 md:min-h-9" disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
       </div>}>
-      <label htmlFor={id} className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Replacement faculty</label>
+      <label htmlFor={id} className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Replacement faculty</label>
       <Select id={id} className="min-h-11 w-full md:min-h-9"
         value={replacementMembershipId} onChange={event=>setReplacementMembershipId(event.target.value)}>
         <option value="">Select faculty</option>
@@ -75,7 +75,7 @@ export function SuperAdminFacultyScheduleReassignAction({
         Only the first 500 active faculty choices are shown. Use the faculty roster filters to find other colleagues.
       </p>:null}
     </Dialog>
-    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+    <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!pending)setConfirmOpen(next);}}
       title="Reassign upcoming class schedules?"
       description={sourceName+" → "+(target?.displayName??"faculty")+
         ". Only upcoming scheduled sessions without a target timetable conflict will be moved; audit history stays preserved."}

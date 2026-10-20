@@ -201,7 +201,7 @@ export function PersonMembershipActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden sm:justify-end">
         <PersonProfileDialog
           membershipId={membershipId}
           collegeId={collegeId}
@@ -286,6 +286,7 @@ export function PersonMembershipActions({
                   checked={checked}
                   disabled={
                     Boolean(rolePending) ||
+                    roleRequestPending.current ||
                     lifecyclePending ||
                     currentStatus === "ENDED"
                   }
@@ -304,7 +305,7 @@ export function PersonMembershipActions({
       <Dialog
         open={suspendOpen}
         onOpenChange={next => { if (!lifecycleRequestPending.current && !lifecyclePending) setSuspendOpen(next); }}
-        dismissible={!lifecyclePending}
+        dismissible={!lifecyclePending&&!lifecycleRequestPending.current}
         title={`Suspend ${displayName}`}
         description="Suspension blocks this college membership without disabling the canonical user or their other college memberships."
         footer={
@@ -340,12 +341,12 @@ export function PersonMembershipActions({
       >
         <label
           htmlFor={`suspension-reason-${membershipId}`}
-          className="mb-[6px] block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4"
+          className="mb-[var(--lms-space-2)] block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4"
         >
           Suspension reason
         </label>
         <Textarea
-          className="min-h-11 w-full md:min-h-9"
+          className="min-h-24 w-full"
           id={`suspension-reason-${membershipId}`}
           value={suspensionReason}
           onChange={(event) =>
