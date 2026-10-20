@@ -134,6 +134,24 @@
   font-size: 14px !important;
 }
 
+/* Native number chrome
+ * Old components___form.scss:13-20 removes Chromium/WebKit spin arrows, while
+ * retaining keyboard increments, wheel events and native validity semantics.
+ * Only style controls inside the authenticated canvas; [data-unskin] escapes.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input[type="number"]):not(:where([data-unskin], [data-unskin] *)) {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input[type="number"]):not(:where([data-unskin], [data-unskin] *))::-webkit-inner-spin-button,
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input[type="number"]):not(:where([data-unskin], [data-unskin] *))::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* FORM INTERACTIONS
  * Legacy: components___form.scss:130-143 (2px teal 15% focus halo,
  * invalid #ef4444 border and 6% fill, invalid focus 20% red halo);
