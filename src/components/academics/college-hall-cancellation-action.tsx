@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {hallCancellationPrompt} from "@/modules/academics/college-hall-cancel-model";
+import {Input} from "@/components/ui/input";
 export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}:{
   hallId:string;sessionId:string;title:string;updatedAt:string;
 }){
