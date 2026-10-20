@@ -1811,3 +1811,65 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 ```
 
 **Responsive source coverage:** CSS `min-h-11` = 44px for 0–767px and `md:min-h-9` = 36px at 768px+, per locally overridden controls. Wrapped link groups stay flex-wrapped; table/panel print exclusions do not change client behavior. The platform-wide account block now uses a shared ConfirmDialog instead of browser `window.confirm` (single confirmed mutation remains). The original code for `super-admin-placement-oversight-nav.tsx` contained undefined `active`/`items` and an unimported `Link`, corrected in the shared-Tabs consumer without changing shared UI. **No actual phone/tablet/print screenshot, browser tests, strict TypeScript, lint, CI, or native PDFs rendered. G4/G5 category items remain `[ ]`.**
+
+## Replacement chat-6 continued — Recruiter accounts and company identity actions
+
+- [x] **Source-complete** `src/components/admin/super-admin-hr-accounts.tsx`: Recruiter accounts: search/status/page-size filters 44px phone/36px desktop, action Buttons 44/36, CSV-style legacy pager links with teal 2px/3px focus; mobile cards avoid double print and DataTable is printable. Roles and account actions unchanged. Readback corrected one missing disabled JSX brace.
+- [x] **Source-complete** `src/components/admin/super-admin-company-merge.tsx`: Company merge: native browser window.confirm replaced by shared ConfirmDialog with dangerous confirmation, server POST and eligibility checks untouched; selectors 44px/36px, mutating controls paper-hidden; success closes modal.
+- [x] **Source-complete** `src/components/admin/super-admin-college-company-actions.tsx`: Scoped company create and relationship trust/archive action controls 44px/36px, create form inputs 44px/36px, mutation controls print-hidden; ConfirmDialog guards retained.
+- [ ] **Next exact file:** `src/components/admin/super-admin-hr-account-dialog.tsx` — continue through its form/Select/Checkbox focus/disabled/loading states, then `src/components/admin/super-admin-hr-detail-drawer.tsx`.
+
+Legacy references and measured values: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` specifies mobile 44px minimum until 767px; `docs/design/ui-clone-checklist.md:46-47` documents desktop 36px/9px control and 14px/650 label; `docs/design/legacy-styles/components___accessibility.scss:18-21` generic keyboard focus is teal solid 2px, offset 3px. These **do not** include authenticated PDF, email or actual legacy recruiter account dialog screenshots.
+
+
+#### `src/components/admin/super-admin-hr-accounts.tsx`
+| State/property | Old LMS file:line exact value | vNext file:line source property | Evidence |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/super-admin-hr-accounts.tsx:614, 622, 629, 631, 657, 672, 690, 701, 714, 723 (+11 more)` `min-h-11` where locally sized | Source property only |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14px/650 | `src/components/admin/super-admin-hr-accounts.tsx:614, 622, 629, 631, 657, 672, 690, 701, 714, 723 (+11 more)` `md:min-h-9` where locally sized | Source property only |
+| Keyboard focus | `components___accessibility.scss:18-21`: 2px teal, 3px offset | `src/components/admin/super-admin-hr-accounts.tsx:727, 772, 836, 852` explicit 3px focus anchor where present; inherited shared Button otherwise | Exact computed styles, all hover/disabled states OPEN |
+| Loading/error/empty | `old-lms-pages.md:9`: compact hairline result/table state | `src/components/admin/super-admin-hr-accounts.tsx:813` DataTable if present, alerts `:974`, statuses `:663, 670` | Existing data/logic preserved; no runtime execution |
+| Print separation | No checked-in historical email/PDF/offer print fixture | `src/components/admin/super-admin-hr-accounts.tsx:610, 657, 685, 777, 785, 799, 821` screen interaction chrome hidden, result data still available | G5 provider template and paper visual parity OPEN |
+| Regression scope | No complete historical behavioral fixtures | Recruiter accounts: search/status/page-size filters 44px phone/36px desktop, action Buttons 44/36, CSV-style legacy pager links with teal 2px/3px focus; mobile cards avoid double print and DataTable is printable. Roles and account actions unchanged. Readback corrected one missing disabled JSX brace. | Static source diff/readback; no CI |
+
+
+#### `src/components/admin/super-admin-company-merge.tsx`
+| State/property | Old LMS file:line exact value | vNext file:line source property | Evidence |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/super-admin-company-merge.tsx:35, 41, 47` `min-h-11` where locally sized | Source property only |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14px/650 | `src/components/admin/super-admin-company-merge.tsx:35, 41, 47` `md:min-h-9` where locally sized | Source property only |
+| Keyboard focus | `components___accessibility.scss:18-21`: 2px teal, 3px offset | `src/components/admin/super-admin-company-merge.tsx:none` explicit 3px focus anchor where present; inherited shared Button otherwise | Exact computed styles, all hover/disabled states OPEN |
+| Loading/error/empty | `old-lms-pages.md:9`: compact hairline result/table state | `src/components/admin/super-admin-company-merge.tsx:none` DataTable if present, alerts `:55`, statuses `:56` | Existing data/logic preserved; no runtime execution |
+| Print separation | No checked-in historical email/PDF/offer print fixture | `src/components/admin/super-admin-company-merge.tsx:33` screen interaction chrome hidden, result data still available | G5 provider template and paper visual parity OPEN |
+| Regression scope | No complete historical behavioral fixtures | Company merge: native browser window.confirm replaced by shared ConfirmDialog with dangerous confirmation, server POST and eligibility checks untouched; selectors 44px/36px, mutating controls paper-hidden; success closes modal. | Static source diff/readback; no CI |
+
+
+#### `src/components/admin/super-admin-college-company-actions.tsx`
+| State/property | Old LMS file:line exact value | vNext file:line source property | Evidence |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/super-admin-college-company-actions.tsx:31, 35, 37, 39, 42, 45, 78, 83` `min-h-11` where locally sized | Source property only |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14px/650 | `src/components/admin/super-admin-college-company-actions.tsx:31, 35, 37, 39, 42, 45, 78, 83` `md:min-h-9` where locally sized | Source property only |
+| Keyboard focus | `components___accessibility.scss:18-21`: 2px teal, 3px offset | `src/components/admin/super-admin-college-company-actions.tsx:none` explicit 3px focus anchor where present; inherited shared Button otherwise | Exact computed styles, all hover/disabled states OPEN |
+| Loading/error/empty | `old-lms-pages.md:9`: compact hairline result/table state | `src/components/admin/super-admin-college-company-actions.tsx:none` DataTable if present, alerts `:none`, statuses `:none` | Existing data/logic preserved; no runtime execution |
+| Print separation | No checked-in historical email/PDF/offer print fixture | `src/components/admin/super-admin-college-company-actions.tsx:31, 33, 75` screen interaction chrome hidden, result data still available | G5 provider template and paper visual parity OPEN |
+| Regression scope | No complete historical behavioral fixtures | Scoped company create and relationship trust/archive action controls 44px/36px, create form inputs 44px/36px, mutation controls print-hidden; ConfirmDialog guards retained. | Static source diff/readback; no CI |
+
+### Source grep proof (complete three-file reads)
+
+| File | Native button/input/select/textarea/table | Literal hex CSS | Shared Button open/close |
+|---|---|---:|---:|
+| `src/components/admin/super-admin-hr-accounts.tsx` | 0/0/0/0/0 | 0 | 13/13 |
+| `src/components/admin/super-admin-company-merge.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/super-admin-college-company-actions.tsx` | 0/0/0/0/0 | 0 | 5/5 |
+
+Checkout reproduction (**not executed**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ 'src/components/admin/super-admin-hr-accounts.tsx' \
+ 'src/components/admin/super-admin-company-merge.tsx' \
+ 'src/components/admin/super-admin-college-company-actions.tsx'
+```
+
+**Responsive proof:** vNext source classes use 44px `min-h-11` before 768px, `md:min-h-9` 36px at 768px and above. Recruiter list's phone cards are hidden from print while the canonical `DataTable` prints, but print cannot include filtered records not in the current page. Native company merge confirmation was deliberately converted to shared `ConfirmDialog` so it uses the old-style modal skin rather than browser chrome. Modal copy and server mutation endpoint preserved. Raw native tag, hardcoded hex, and Button pair counts cover exactly these sources only.
+
+**Still open / no G4/G5 tick:** Complete old visual state tables, screenshot comparisons, global grep, provider-hosted HTML and actual PDF/email output. No application, TypeScript strict, lint, tests, CI or browser print executed.
