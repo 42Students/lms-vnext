@@ -15,7 +15,7 @@ export function ListRow({ title, detail, icon, pill, action, className, ...props
   return <li {...props} data-slot="list-row"
     className={cx("flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] last:border-b-0", className)}>
     <div className="flex min-w-0 flex-1 items-center gap-[var(--lms-space-3)]">
-      {icon ? <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-100)]">{icon}</span> : null}
+      {icon ? <span aria-hidden="true" className="mr-[5px] flex size-[34px] shrink-0 items-center justify-center rounded-[6px] bg-[var(--lms-neutral-100)]">{icon}</span> : null}
       <div className="min-w-0">
         <div className="text-[14px] font-semibold leading-5 text-[var(--lms-heading)]">{title}</div>
         {detail ? <div className="mt-1 break-words text-[12px] leading-[18px] text-[var(--lms-neutral-500)]">{detail}</div> : null}

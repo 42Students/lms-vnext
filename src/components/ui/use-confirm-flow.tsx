@@ -22,7 +22,7 @@ export function useConfirmFlow() {
     resolve?.(approved);
   }
   const dialog = <ConfirmDialog open={message !== null} title={message ?? ""}
-    description={message ?? ""} onOpenChange={open => { if (!open) finish(false); }}
+    onOpenChange={open => { if (!open) finish(false); }}
     confirmLabel="Confirm" onConfirm={() => finish(true)} />;
   return { askConfirm, dialog };
 }
