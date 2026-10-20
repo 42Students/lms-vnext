@@ -53,28 +53,36 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
       count:tab.count===null?undefined:tab.count,
       href:"/admin/inbound-mail?"+url.toString()};
     })}/>
-  <form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-   <label className="min-w-0 flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+  <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
+   <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-w-0" placeholder="Sender, subject or message body"/></label>
-   <label className="min-w-0 flex-1 basis-48 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recipient inbox
-    <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-w-0" placeholder="inbox@example.edu"/></label>
-   <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Status
-    <Select name="status" defaultValue={parsed.data.status} className="mt-1 w-full">
-     <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
-    </Select></label>
-   <Button type="submit">Filter</Button>
-   <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
+   <Button type="submit" className="w-full min-[768px]:w-auto">Filter</Button>
+   {data.items.length>0?<Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white min-[768px]:min-h-9 min-[768px]:w-auto">Clear</Link>:null}
+   <details className="min-w-0 min-[768px]:col-span-3" open={Boolean(parsed.data.recipient)}>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Recipient inbox · Status</summary>
+    <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] min-[768px]:grid-cols-2">
+     <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recipient inbox
+      <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-w-0" placeholder="inbox@example.edu"/></label>
+     <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <Select name="status" defaultValue={parsed.data.status} className="mt-1 w-full">
+       <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
+      </Select></label>
+    </div>
+   </details>
   </form>
   <InboundMailList rows={data.items.map(x=>({
    id:x.id,receivedAt:x.receivedAt.toISOString(),fromAddress:x.fromAddress,
    toAddress:x.toAddress,subject:x.subject,bodyPlain:x.bodyPlain,status:x.status,version:x.version,
   }))}/>
-  <nav aria-label="Inbox pages" className="flex flex-wrap justify-between gap-3 text-sm">
-   <span>{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span><div className="flex flex-wrap gap-3">
-   {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
-     className={n===data.page?"inline-flex min-h-11 md:min-h-9 min-w-11 md:min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]":"inline-flex min-h-11 md:min-h-9 min-w-11 md:min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}>{n}</Link>)}
-   {data.page>1?<Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white font-[650]" href={next(data.page-1)}>Previous</Link>:null}
-   {data.hasMore?<Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white font-[650]" href={next(data.page+1)}>Next</Link>:null}
+  <nav aria-label="Inbox pages" className="flex min-w-0 flex-col gap-[var(--lms-space-3)] text-sm min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
+   <span className="min-w-0 text-body">{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span>
+   <div className="flex w-full min-w-0 items-center gap-[var(--lms-space-2)] min-[768px]:w-auto">
+    {data.page>1?<Link className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white font-[650] min-[768px]:min-h-9" href={next(data.page-1)}>Previous</Link>:null}
+    <div className="flex min-w-0 flex-1 items-center gap-[var(--lms-space-2)] overflow-x-auto pb-1 min-[768px]:flex-none min-[768px]:overflow-visible min-[768px]:pb-0">
+     {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
+       className={n===data.page?"inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:min-w-9":"inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:min-w-9"}>{n}</Link>)}
+    </div>
+    {data.hasMore?<Link className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white font-[650] min-[768px]:min-h-9" href={next(data.page+1)}>Next</Link>:null}
    </div>
   </nav>
  </div>;

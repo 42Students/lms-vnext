@@ -10,6 +10,8 @@ Polish checklist (apply every point to the surface and to every component it ren
 5. Mobile 375 and tablet 768: real layouts (stack, reorder, full-width primary action, 44px tap targets), nothing cramped or overflowing; overlays become full-width sheets on mobile.
 6. Keep exactly: legacy colours, radii, control sizes, fonts and wording (docs/design); keep ids, data-testid, aria labels, routes and behaviour; no new packages; valid TSX.
 
+Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, error.tsx, not-found.tsx and template.tsx in the same route folder, and check the nearest parent layout.tsx, as part of that same surface (they are the loading, error and missing states of that page). Tick the page only when its route files are done too.
+
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-18.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-18-b with [chat-18], ticking [x] in this queue in the same push.
 
 - [ ] `src/components/placements/tpo-request-bulk-decision.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
@@ -48,3 +50,15 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-18.md: surface | probl
 - [ ] `src/components/tpo/tpo-after-college-editor.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/activity/notification-list.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/groups/college-study-member-actions.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/admin/super-admin-legacy-group-tabs.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/college/college-legacy-group-tabs.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/placements/college-drive-legacy-nav.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/public/browser-support-notice.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/public/public-page-loading.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/ui/button-group.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/ui/input-group.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/components/ui/password-input.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [ ] `src/app/(authenticated)/teach/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [ ] `src/app/(authenticated)/teacher/loading.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [ ] `src/app/(authenticated)/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [ ] `src/app/(authenticated)/loading.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
