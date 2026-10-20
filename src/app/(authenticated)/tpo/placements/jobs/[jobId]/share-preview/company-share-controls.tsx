@@ -112,20 +112,20 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   {!ready?<Alert tone="warning">
    External sharing is unavailable until its audited database migration is registered.
   </Alert>:<>
-   <div className="flex flex-wrap items-end gap-3">
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expires in days
+   <div className="flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expires in days
      <Select value={days} onChange={event=>changeExpiry(event.target.value)}
       className="w-full">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
      </Select>
     </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Please shortlist by
+    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Please shortlist by
      <Input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
       />
     </label>
-    <fieldset className="w-full rounded-[var(--lms-control-radius)] border border-border p-3">
+    <fieldset className="w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3">
      <legend className="px-1 text-sm font-semibold">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
-     <div className="grid gap-2 sm:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
+     <div className="grid min-w-0 gap-2 min-[768px]:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
       <label key={key} className="inline-flex min-h-11 items-center gap-2 text-sm">
        <Checkbox checked={selectedColumns.includes(key)}
         disabled={pending||(!selectedColumns.includes(key)&&selectedColumns.length>=11)}
@@ -135,7 +135,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
       </label>)}</div>
     </fieldset>
     <Button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
-     >
+     className="w-full min-[768px]:w-auto">
      Create expiring link
     </Button>
    </div>
@@ -148,13 +148,13 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     <Input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
      className="mt-2 w-full"/>
     <Button type="button" variant="link" onClick={()=>void copyLink()}
-     className="mt-2 min-h-11 md:min-h-9">Copy URL</Button>
+     className="mt-2 min-h-11 w-full md:min-h-9 md:w-auto">Copy URL</Button>
     {copyState==="COPIED"?<InlineNotice tone="success" message="Copied to clipboard."/>:null}
     {copyState==="MANUAL_COPY"?<InlineNotice tone="info" message="Clipboard unavailable. Select the URL field above and copy it manually."/>:null}
    </div>:null}
    {links.length>0?<ul className="space-y-2">{links.map(link=><li key={link.id}
     className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2 text-sm">
-    <span>Link {link.id.slice(0,8)} · Expiry {link.expiresAt.slice(0,10)} ·
+    <span className="min-w-0 break-words">Link {link.id.slice(0,8)} · Expiry {link.expiresAt.slice(0,10)} ·
      {companyShareLifecycleLabel(companyShareLifecycleStatus(link,asOf))}</span>
     <span className="text-xs text-muted-foreground">
      {link.audit.views} views · {link.audit.exports} CSV downloads
