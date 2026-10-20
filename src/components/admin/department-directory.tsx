@@ -69,7 +69,7 @@ export function DepartmentDirectory({
       <h2 className="m-0 text-base font-semibold text-foreground">{DEPARTMENT_COPY.existingTitle}</h2>
       <div className="flex flex-wrap items-end justify-between gap-3 print:hidden">
         <div className="min-w-48 flex-1">
-          <label htmlFor="department-directory-search" className="mb-1.5 block text-[13px] font-semibold text-body">
+          <label htmlFor="department-directory-search" className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search departments
           </label>
           <Input
@@ -84,11 +84,11 @@ export function DepartmentDirectory({
           />
         </div>
         <div className="flex flex-wrap items-end gap-2">
-          <label htmlFor="department-directory-page-size" className="grid gap-1 text-[13px] font-semibold text-body">
+          <label htmlFor="department-directory-page-size" className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground md:min-h-9">
+              className="min-h-11 w-full md:min-h-9">
               {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
             </Select>
           </label>

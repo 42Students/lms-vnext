@@ -184,7 +184,7 @@ export function TenantDomainManager({
           <div>
             <label
               htmlFor="tenant-domain-host"
-              className="mb-1.5 block text-sm font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               College hostname
             </label>
@@ -399,7 +399,7 @@ export function TenantDomainManager({
           }
         }}
       >
-        {deleteTarget?.isPrimary ? <label className="grid gap-2 text-sm font-semibold text-body">Type the full primary hostname
+        {deleteTarget?.isPrimary ? <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type the full primary hostname
           <Input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
             onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />

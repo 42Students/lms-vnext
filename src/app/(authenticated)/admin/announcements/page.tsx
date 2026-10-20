@@ -43,7 +43,7 @@ export default async function AnnouncementsPage({
   if (!params) {
     return <div className="min-w-0 space-y-5">
       <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
-      <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-4 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline">Reset filters</Link></p>
+      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline">Reset filters</Link></p>
     </div>;
   }
 
@@ -55,7 +55,7 @@ export default async function AnnouncementsPage({
           title="Announcements"
           description="Migration 0076 registers the announcement tables; this environment has not enabled the verified DB10 runtime flag."
         />
-        <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-4">
+        <div role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
           <p className="mt-2 text-sm text-body">Apply and verify migration 0076, then explicitly set DB10_ANNOUNCEMENTS_READY=DB10_VERIFIED. No announcement DB reads or writes are attempted while disabled.</p>
         </div>
@@ -141,7 +141,7 @@ export default async function AnnouncementsPage({
       />
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
-        <label className="text-sm font-semibold text-body">Visibility
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1">
             <option value="">All visible states</option>
             <option value="LIVE">Live</option>
@@ -150,27 +150,27 @@ export default async function AnnouncementsPage({
             <option value="DELETED">Deleted only</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">Pinned
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pinned
           <Select name="pinned" defaultValue={params.pinned ?? ""} className="mt-1">
             <option value="">All notices</option><option value="PINNED">Pinned only</option><option value="UNPINNED">Not pinned</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">Published by
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Published by
           <Select name="senderType" defaultValue={params.senderType ?? ""} className="mt-1">
             <option value="">All senders</option>{ANNOUNCEMENT_SENDER_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">Audience type
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience type
           <Select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1">
             <option value="">All audiences</option>
             {(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"] as const).map(type => <option key={type} value={type}>{type}</option>)}
           </Select>
         </label>
-        <label className="min-w-0 w-full flex-1 text-sm font-semibold text-body md:min-w-[14rem]">Search announcement title or message
+        <label className="min-w-0 w-full flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-56">Search announcement title or message
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
         </label>
         <Button type="submit">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:bg-primary-subtle md:min-h-9">Clear</Link>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>
       </form>
       <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
         ...(includeDeleted ? {deleted:"1"} : {}),
@@ -181,10 +181,10 @@ export default async function AnnouncementsPage({
         ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">Export this filtered page (CSV)</Link>
+      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-5">
-       <h2 className="text-lg font-semibold">Placement-cell read receipts</h2>
+       <h2 className="text-lg font-semibold text-foreground">Placement-cell read receipts</h2>
        <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read.</p>
        <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
         const receipt=receipts.get(row.id)!;
@@ -201,7 +201,7 @@ export default async function AnnouncementsPage({
         })}/>
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground">
+          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Older announcements
           </Link>
         </div>
