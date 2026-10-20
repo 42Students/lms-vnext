@@ -29,9 +29,9 @@ export default async function PublicPlacementSettingsPage({
  const content=contentRead.available?contentRead.value:{ready:false as const,about:"",metricKeys:DEFAULT_PUBLIC_METRICS,updatedAt:null};
  const raw=await searchParams;
  const updated=Array.isArray(raw.updated)?raw.updated[0]:raw.updated;
- return <div className="space-y-6">
+ return <div className="min-w-0 space-y-6">
   <TpoSettingsNav active="public-page"/>
-  <section className="border-t border-border pt-5">
+  <section className="min-w-0 space-y-3">
    <PageHeader title="Public placements" />
    <p className="mt-2 text-sm text-body">{view.label}</p>
    {updated==="1"?<InlineNotice tone="success" message={view.enabled?"Your placements page is live":"Your placements page is off"}/>:null}
@@ -48,7 +48,7 @@ export default async function PublicPlacementSettingsPage({
     </Alert>}
    {value.ready&&!view.canEnable&&!view.enabled?<Alert tone="warning">Public statistics cannot be enabled without a recorded cohort of at least five.</Alert>:null}
    <section aria-label="Published placement preview" className="mt-5 space-y-3 border-t border-border pt-4">
-    <h2 className="font-semibold">How your public placements look</h2>
+    <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">How your public placements look</h2>
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
     {!view.enabled?<Alert tone="info">Publication is off; this preview does not make any statistics public.</Alert>:null}
     {view.enabled&&!published?<Alert tone="warning">{preview?.available?"Not enough data yet. There is no current published snapshot to preview. Figures remain withheld.":"The published preview could not be loaded. Figures remain withheld."}</Alert>:null}
@@ -66,7 +66,7 @@ export default async function PublicPlacementSettingsPage({
     </div>
    </section>
    <TpoPublicPlacementContentEditor initial={content}/>
-   <Link href="/placements" className="mt-4 inline-block text-sm text-link underline">
+   <Link href="/placements" className="mt-4 inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
      Open public placements page
    </Link>
   </section>
