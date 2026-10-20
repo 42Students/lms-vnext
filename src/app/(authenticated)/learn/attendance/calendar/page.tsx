@@ -79,11 +79,11 @@ export default async function LearnerAttendanceCalendarPage({
       </Link>} />
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
       className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
-      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month
         <DateInput mode="month" name="month" defaultValue={data.query.month}
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
           className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All accessible Courses</option>
@@ -93,7 +93,7 @@ export default async function LearnerAttendanceCalendarPage({
             </option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={data.query.status}
           className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All status types</option>
