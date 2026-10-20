@@ -139,7 +139,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.isActive?"success":"neutral"}>{row.isActive?"Active":"Inactive"}</StatusBadge>},
           {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeSemesterRowActions row={row}/>},
         ]}
-        empty={<p className="text-sm text-body">No semesters found. Create a program first, then add semesters.</p>}
+        empty={<EmptyState title="No semesters found" description="No semesters match these filters. Create a program first, then add semesters."/>}
       />
     </section>
     <Pagination label="Semester pages" page={data.query.page} pageCount={data.totalPages}

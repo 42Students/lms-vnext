@@ -103,26 +103,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-4.md: file, number of i
 - [x] `src/app/(authenticated)/admin/quizzes/error.tsx`
 - [x] `src/app/(authenticated)/admin/quizzes/page.tsx`
 - [x] `src/app/(authenticated)/admin/resources/error.tsx`
-- [ ] `src/app/(authenticated)/admin/semester-courses/error.tsx`
-- [ ] `src/app/(authenticated)/admin/semester-courses/page.tsx`
-- [ ] `src/app/(authenticated)/admin/semesters/error.tsx`
-- [ ] `src/app/(authenticated)/admin/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/students/error.tsx`
-- [ ] `src/app/(authenticated)/admin/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/error.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
-- [ ] `src/app/(authenticated)/admin/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/videos/error.tsx`
-- [ ] `src/app/(authenticated)/college-admin/departments/error.tsx`
-- [ ] `src/app/(authenticated)/college-admin/programs/error.tsx`
-- [ ] `src/app/(authenticated)/college/academics/error.tsx`
-- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/activity/[eventId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/semester-courses/error.tsx`
+- [x] `src/app/(authenticated)/admin/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/semesters/error.tsx`
+- [x] `src/app/(authenticated)/admin/semesters/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/auth/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/students/error.tsx`
+- [x] `src/app/(authenticated)/admin/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/error.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/admin/verification/page.tsx`
+- [x] `src/app/(authenticated)/admin/videos/error.tsx`
+- [x] `src/app/(authenticated)/college-admin/departments/error.tsx`
+- [x] `src/app/(authenticated)/college-admin/programs/error.tsx`
+- [x] `src/app/(authenticated)/college/academics/error.tsx`
+- [x] `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx`
+- [x] `src/app/(authenticated)/college/activity/[eventId]/error.tsx`
 - [ ] `src/app/(authenticated)/college/activity/error.tsx`
 - [ ] `src/app/(authenticated)/college/activity/page.tsx`
 - [ ] `src/app/(authenticated)/college/announcements/error.tsx`
