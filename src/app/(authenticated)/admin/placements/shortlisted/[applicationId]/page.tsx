@@ -19,7 +19,7 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
    collegeId:selected.collegeId,organizationId:selected.organizationId,
  })){
   return <div className="min-w-0 space-y-5">
-   <PageHeader eyebrow="Super Admin · Placements" title="Shortlisted applicant"
+   <PageHeader title="Shortlisted applicant"
     actions={<PageBackLink href="/admin/placements/shortlisted" label="Back to shortlisted applicants" />}/>
    <ErrorState title="Select a college to continue"
     description="An active Super Admin with a selected college is required to view shortlisted applicant details."
@@ -31,7 +31,7 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
   detail=await getSuperAdminShortlistedDetail(context,id);
  }catch{
   return <div className="min-w-0 space-y-5">
-   <PageHeader eyebrow="Super Admin · Placements" title="Shortlisted applicant"
+   <PageHeader title="Shortlisted applicant"
     actions={<PageBackLink href="/admin/placements/shortlisted" label="Back to shortlisted applicants" />}/>
    <ErrorState title="Shortlisted applicant unavailable"
     description="This applicant detail could not be loaded. Your selected college has not changed."

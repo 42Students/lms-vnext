@@ -25,7 +25,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
     .catch(()=>({ok:false as const})):null;
  const data=lookup&&lookup.ok?lookup.value:null;
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
+  <PageHeader title="Student placement lookup"
    actions={<>
     <PageBackLink href="/admin/placements" label="Placement overview" />
     <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Analytics</Link>
