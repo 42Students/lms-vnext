@@ -99,3 +99,13 @@
 - Regressions found/fixed: 0. Read page/error/loading, HR layout, lane-14 proof, RecruiterPlacementPortfolio and HrRecruiterDrivesGrid/TpoGrid, PageHeader and authorized recruiter job service. Request a drive remains primary; portfolio empty state and mobile/desktop split are scoped correctly.
 - Extra clutter/alignment: 0; no further safe visual change warranted.
 - Files changed: verified, no change. Static only; no CI.
+
+## 21. `src/app/(authenticated)/hr/profile/page.tsx`
+- Regressions found/fixed: 0. Read page, error/loading, HR parent layout, lane-14 proof, RecruiterProfileDetailsEditor save/conflict/dirty-leave states, RecruiterProfileAccess confirm/leave, responsive DataTable and status/empty primitives. Verified props, user + profile version tokens, scoped grant IDs, privacy and visual density at legacy breakpoints.
+- Extra clutter/alignment: 0; personal fields, account metadata and read-only grant inventory already have separate hierarchy and bounded widths.
+- Files changed: verified, no change. Source-only, no runtime/CI.
+
+## 22. `src/app/(authenticated)/hr/round-results/page.tsx`
+- Regressions found/fixed: 0. Read page/error/loading, HR layout, lane-14 proof, HrRoundResultsGrid/TpoGrid, Tabs and recruiter result projection/query/URL models. Checked job/round UUID guards, no-job and no-round states, outcome filters, authorized candidate projection and read-only grid semantics.
+- Extra clutter/alignment: 0; drive selection, round tabs and result filters remain appropriately progressive, with responsive row controls and a filtered-empty recovery link.
+- Files changed: verified, no change. Source-only, no CI.
