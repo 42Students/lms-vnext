@@ -53,21 +53,21 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
   ["Round records",preview.counts.rounds],
   ["Offer versions",preview.counts.offers],
  ] as const;
- return <form onSubmit={submit} className="space-y-4 border-b border-border pb-5">
+ return <form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-6">
   <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
-  <p className="text-sm text-body">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
-  <dl className="grid grid-cols-1 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-3">
+  <p className="max-w-prose text-sm text-body">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
+  <dl className="grid min-w-0 grid-cols-3 gap-3 border-y border-border">
    {consequences
-    .map(([label,n])=><div key={label} className="border-b border-border p-3 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0">
-     <dt className="text-xs text-body">{label}</dt><dd className="text-2xl font-semibold tabular-nums">{n}</dd>
+    .map(([label,n])=><div key={label} className="min-w-0 px-1 py-4">
+     <dt className="text-xs text-body">{label}</dt><dd className="break-words text-2xl font-semibold tabular-nums">{n}</dd>
     </div>)}
   </dl>
-  <label className="block text-sm font-semibold text-body">Reason for closure (audited)
+  <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">Reason for closure (audited)
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
-    className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/></label>
+    className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/></label>
   <p className="text-xs text-body">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
   {error?<InlineNotice tone="error" message={error}/>:null}
-  <Button type="submit" disabled={pending} >
+  <Button type="submit" disabled={pending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
    {pending?"Closing…":"Review and close drive"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
     title="Close this drive?"
