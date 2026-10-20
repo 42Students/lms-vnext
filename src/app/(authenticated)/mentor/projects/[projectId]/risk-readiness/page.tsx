@@ -62,14 +62,14 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       </p>
       <form method="get" action={base+"/risk-readiness"}
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Show
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Show
           <Select name="focus" defaultValue={data.query.focus}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All evidence</option><option value="RISK">Attention only</option>
             <option value="READINESS">Readiness gaps only</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
           <Select name="taskPriority" defaultValue={data.query.taskPriority}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All task priorities</option>
