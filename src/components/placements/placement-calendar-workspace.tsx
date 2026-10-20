@@ -1064,11 +1064,10 @@ export async function PlacementCalendarWorkspace({
       ) : null}
 
       {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
-        {bookings?.failed ? <section role="alert" className="border-l-2 border-error bg-error-subtle p-4">
-          <p>Could not load candidate interviews right now. The calendar is still available.</p>
-          <Link href={calendarHref(basePath,audience,state,{})}
-           className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-link-text)] focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
-        </section> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
+        {bookings?.failed ? <Banner tone="error" action={<Link href={calendarHref(basePath,audience,state,{})}
+           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry interviews</Link>}>
+          Could not load candidate interviews right now. The calendar is still available.
+        </Banner> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
        </PlacementPanelErrorBoundary> : null}
       <section
         aria-label="Calendar agenda"
