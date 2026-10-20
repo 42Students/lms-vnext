@@ -29,14 +29,14 @@ export default async function SuperAdminTenantSetup({
 }:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/dashboard" label="Dashboard"/>}/>
    <ErrorState title="Tenant setup access denied"
     description="Your account cannot configure Super Admin tenants."
     action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
  const parsed=parseSuperAdminTenantSetupQuery(await searchParams);
- if(!parsed.success)return <div className="min-w-0 space-y-5">
+ if(!parsed.success)return <div className="min-w-0 space-y-6">
   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
   <ErrorState title="Invalid tenant setup step"
    description="Select a valid Tenant structure or Launch setup step."
@@ -65,7 +65,7 @@ export default async function SuperAdminTenantSetup({
   }
  }catch(error){
   if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
@@ -101,12 +101,12 @@ export default async function SuperAdminTenantSetup({
     ]}/>
   {tab==="STRUCTURE"?<>
    <section aria-label="Create organization and college" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
-    <div className="min-w-0 space-y-3 border-b border-border pb-5">
+    <div className="min-w-0 space-y-3 border-b border-border pb-6">
      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create an organization</h2>
      {orgCreate?<OrganizationCreateForm/>:
       <Banner tone="warning">Organization creation is not permitted in your selected administrative scope.</Banner>}
     </div>
-    <div className="min-w-0 space-y-3 border-b border-border pb-5">
+    <div className="min-w-0 space-y-3 border-b border-border pb-6">
      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create a college</h2>
      {creatable.length?<CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
       <Banner tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Banner>}
@@ -162,7 +162,7 @@ export default async function SuperAdminTenantSetup({
      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Launch checklist</h2>
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Inspect persisted readiness →</Link>
     </div>
-    <ol className="grid min-w-0 gap-x-5 gap-y-2 md:grid-cols-2">
+    <ol className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{step.title}</h3>

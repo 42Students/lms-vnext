@@ -49,17 +49,17 @@ export default async function TenantDirectory({searchParams}:{
  }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
  const statuses = ["ACTIVE", "ARCHIVED", "ALL"] as const;
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
     <Link href="/admin/domains"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Domains</Link>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Domains</Link>
     <Link href="/admin/tenants/setup"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Get this college ready to go live</Link>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Get this college ready to go live</Link>
     <TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
     <Link href="/admin/tenants/create"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       Create an organization and its colleges
     </Link>
    </div>} />

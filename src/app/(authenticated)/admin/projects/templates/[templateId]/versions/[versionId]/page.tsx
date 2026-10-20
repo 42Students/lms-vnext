@@ -19,7 +19,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
   const ids = templateVersionComparisonParamsSchema.safeParse(await params);
   if (!ids.success) notFound();
   if (!can(context,"project-template.read")) {
-    return <div className="min-w-0 space-y-5">
+    return <div className="min-w-0 space-y-6">
       <PageHeader title="Template version comparison"/>
       <ErrorState title="Template history access denied"
         description="Only an authorized administrator can read global template version snapshots."
@@ -31,7 +31,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
   catch (error) {
     if (error instanceof ProjectsServiceError &&
       (error.code === "PROJECT_TEMPLATE_NOT_FOUND" || error.code === "PROJECT_TEMPLATE_VERSION_NOT_FOUND")) notFound();
-    return <div className="min-w-0 space-y-5">
+    return <div className="min-w-0 space-y-6">
       <PageHeader title="Template version comparison"/>
       <ErrorState title="Template history unavailable"
         description="The version comparison could not be loaded. No private version content is shown."

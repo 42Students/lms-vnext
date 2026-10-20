@@ -24,7 +24,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
     .then(value=>({ok:true as const,value}))
     .catch(()=>({ok:false as const})):null;
  const data=lookup&&lookup.ok?lookup.value:null;
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title="Student placement lookup"
    actions={<>
     <PageBackLink href="/admin/placements" label="Placement overview" />
@@ -49,7 +49,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
    <EmptyState title="Select a college to continue" description="Choose a college in the header above to look up student placements."/>
   </div>:null}
   {data&&!data.students.length?<EmptyState title="No matching college students." description="Name, roll number or email" />:null}
-  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-5 last:border-0">
+  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-4 last:border-0">
    <div className="flex flex-wrap items-center justify-between gap-2">
     <div><h2 className="font-semibold text-[var(--lms-heading)]">{person.name??person.roll??"Student"}</h2>
      <p className="text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>
