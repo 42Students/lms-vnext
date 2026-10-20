@@ -42,19 +42,19 @@ export default async function FacultyAssessmentResultsPage({
       </div>} />
     <form method="get" action="/teacher/results"
       className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-3 min-[1280px]:grid-cols-4">
-      <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Search
+      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           
           placeholder="Assessment, course code or Section" />
       </label>
-      <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Type
+      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
         <Select name="kind" defaultValue={data.query.kind} >
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Teaching Section
+      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
         <Select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""} >
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
@@ -64,13 +64,13 @@ export default async function FacultyAssessmentResultsPage({
           ))}
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Status
+      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={data.query.status} >
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Due date
+      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
         <Select name="due" defaultValue={data.query.due} >
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
@@ -78,14 +78,14 @@ export default async function FacultyAssessmentResultsPage({
           <option value="UNDATED">No due date</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Sort
+      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={data.query.sort} >
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Records per page
+      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Records per page
         <Select name="pageSize" defaultValue={data.query.pageSize} >
           <option value="5">5</option><option value="10">10</option>
         </Select>

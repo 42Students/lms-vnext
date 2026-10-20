@@ -63,14 +63,14 @@ export default async function MentorTeamCoveragePage({
       : <>
         <FilterBar title="Filters"><form method="get" action="/mentor/team-coverage"
           className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project search
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-              className="min-h-11 md:min-h-9  text-foreground"
+              className="min-h-11 md:min-h-9"
               placeholder="Project name" />
           </label>
-          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Team coverage
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team coverage
             <Select name="filter" defaultValue={data.query.filter}
-              className="min-h-11 md:min-h-9  text-foreground">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All projects</option>
               <option value="NO_LEARNERS">No active learners</option>
               <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
@@ -82,21 +82,21 @@ export default async function MentorTeamCoveragePage({
               <option value="SINGLE_MENTOR">Exactly one active Mentor</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project state
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project state
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 md:min-h-9 ">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All current assignments</option>
               <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
               <option value="COMPLETED">Completed</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">My Mentor assignment
-            <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9 ">
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
+            <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9">
               <option value="ALL">All assignments</option><option value="PRIMARY">Primary Mentor</option><option value="SUPPORTING">Supporting Mentor</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Team-size order
-            <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 ">
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team-size order
+            <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9">
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </Select>
           </label>
