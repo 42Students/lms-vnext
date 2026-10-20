@@ -79,3 +79,12 @@
 **Files changed:** assessment-health `page.tsx`, `error.tsx`, `loading.tsx`, queue and proof; nearest faculty course layout and inherited not-found states checked.
 
 **Verification boundary:** static state/class review only; no runtime or CI.
+
+## 09 · Teacher / Section assignments management
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
+**Problems found (8):** unconstrained draft selector, overlarge secondary heading, stacked fields wasting tablet width, create/edit/publish/archive actions conflicting at 375px, methods fieldset nested as another card, empty resources using a full-page state within the form, resource rows unaligned on narrow devices, and route error with custom non-legacy padding and no safe exit.
+
+**Fix:** place title/instructions and side-by-side due date/points in one responsive form grid; keep draft selector bounded and accessible; use one row of full-width phone actions and compact desktop actions; remove the nested method card and list resource links as separated aligned rows with safe touch targets and a compact empty message; align retry/back actions to PageHeader. Preserved unsaved-switch/archive confirmations, per-assignment method loading, validation, submissions restrictions, pending state and authoring APIs. Reviewed nearest parent access layout and route loading; no route-local not-found/template existed.
+
+**Files changed:** assignment editor, method picker, resource links, manage/error.tsx, manage/loading.tsx, queue and proof.
+**Verification:** static TypeScript/JSX inspection; runtime, tests and CI deliberately not run.
