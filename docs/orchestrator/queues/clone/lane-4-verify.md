@@ -38,12 +38,12 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-4.md: surface | regres
 - [x] `src/app/(authenticated)/college-admin/programs/page.tsx`
 - [x] `src/app/(authenticated)/dashboard/page.tsx`
 - [x] `src/app/(authenticated)/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/[...legacy]/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/departments/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/programs/page.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/[...legacy]/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/departments/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/programs/page.tsx`
+- [x] `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
+- [x] `src/app/(authenticated)/teach/courses/page.tsx`
 - [ ] `src/components/hr/hr-drive-draft-form.tsx`
 - [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
 - [ ] `src/components/hr/recruiter-conversation-live-refresh.tsx`
