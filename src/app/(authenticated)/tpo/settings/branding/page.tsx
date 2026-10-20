@@ -91,7 +91,7 @@ export default async function TpoPlacementBrandingPage() {
     );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <TpoSettingsNav active="branding" />
 
       <PageHeader
@@ -188,7 +188,7 @@ export default async function TpoPlacementBrandingPage() {
 
       <section
         aria-labelledby="placement-brand-colors"
-        className="space-y-3"
+        className="space-y-3 border-t border-border pt-5"
       >
         <div>
           <h2

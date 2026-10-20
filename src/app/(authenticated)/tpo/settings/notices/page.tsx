@@ -28,17 +28,16 @@ export default async function TpoStudentNoticesSettings(){
   hasMore:announcements.status==="READY"&&announcements.hasMore});
  return <div className="min-w-0 space-y-5">
   <div className="print:hidden"><TpoSettingsNav active="notices"/></div>
-  <PageHeader title="Student Notices & Preparation" />
-  <p className="text-sm text-body">Use registered placement announcements and preparation settings. This page does not enable email/SMS delivery, bulk learner targeting or unregistered configuration switches.</p>
+  <PageHeader title="Student Notices & Preparation" description="Use registered placement announcements and preparation settings. This page does not enable email/SMS delivery, bulk learner targeting or unregistered configuration switches." />
   <section className="space-y-3 border-t border-border pt-5">
-   <h2 className="font-semibold">College placement notices</h2>
-   <p className="text-sm" role="status">{view.publishedSummary}</p>
+   <h2 className="text-lg font-semibold text-foreground">College placement notices</h2>
+   <p className="text-sm text-body" role="status">{view.publishedSummary}</p>
    <p className="text-xs text-muted-foreground">The count describes only the current announcements reader result, not confirmed individual delivery or read receipts.</p>
    <Link href={view.noticeHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Manage actual placement announcements</Link>
   </section>
   <section className="space-y-3 border-t border-border pt-5">
-   <h2 className="font-semibold">Preparation &amp; readiness</h2>
-   <p role="status" className="text-sm">{view.prepSummary}</p>
+   <h2 className="text-lg font-semibold text-foreground">Preparation &amp; readiness</h2>
+   <p role="status" className="text-sm text-body">{view.prepSummary}</p>
    <Link href={view.prepHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Configure available preparation courses</Link>
   </section>
   {communication.ready?<TpoSmsCapEditor key={ctx.membership?.collegeId??"unscoped"} initial={communication.smsMonthlyCap} version={communication.version}/>:
@@ -49,7 +48,7 @@ export default async function TpoStudentNoticesSettings(){
     notifyNudges:communication.notifyNudges,notifyPrepAssigned:communication.notifyPrepAssigned,
    }} version={communication.version}/>:null}
    <section className="space-y-2 border-t border-border pt-5">
-    <h2 className="font-semibold">SMS</h2>
+    <h2 className="text-lg font-semibold text-foreground">SMS</h2>
     <p className="text-sm font-medium">Always sent (email and SMS), never counted against the limit</p>
     <div className="flex flex-wrap gap-2">{["Round scheduled or changed",
      "Offer released, expiring, expired or withdrawn","Drive cancelled",
@@ -58,7 +57,7 @@ export default async function TpoStudentNoticesSettings(){
     <p className="text-xs text-muted-foreground">These are legacy notification categories. Actual email/SMS delivery is not certified without provider status.</p>
    </section>
   <section className="space-y-2 border-t border-border pt-5">
-   <h2 className="text-lg font-semibold">Emails switched on</h2>
+   <h2 className="text-lg font-semibold text-foreground">Emails switched on</h2>
    <Alert tone="warning">Couldn&apos;t check which emails are switched on.</Alert>
    <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
    <Link href="/tpo/settings/templates" className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">View available message templates</Link>

@@ -19,15 +19,15 @@ export default async function PrepSettings(){
  const courses=coursesResult.rows;
  const parsed=tpoPrepConfigSchema.safeParse(data.config??{courseIds:[],minimumCompleted:0});
  const initial=parsed.success?parsed.data:{courseIds:[],minimumCompleted:0};
- return <div className="min-w-0 space-y-4"><TpoSettingsNav active="prep-readiness"/>
-  <PageHeader title="Prep readiness" />
+ return <div className="min-w-0 space-y-5"><TpoSettingsNav active="prep-readiness"/>
+  <PageHeader title="Prep readiness" description="Set the readiness percentage and required preparation-course choices for this college." />
   {communication.ready?<TpoPrepPercentageEditor key={context.membership?.collegeId??"unscoped"} initial={communication.prepThresholdPct} version={communication.version}/>:
    <Alert tone="warning">Readiness percentage storage is unavailable.</Alert>}
   {!data.ready?<Alert tone="warning">Readiness settings storage is pending migration registration.</Alert>:
   <>
    {!parsed.success?<Alert tone="error">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</Alert>:null}
    {!coursesResult.ok?<Alert tone="warning">
-     Couldn&apos;t load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="font-semibold underline">Retry</a>
+     Couldn&apos;t load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</a>
    </Alert>:null}
    {parsed.success&&coursesResult.ok?<TpoPrepReadinessEditor key={context.membership?.collegeId??"unscoped"} choices={courses} initial={{courseIds:initial.courseIds,minimumCompleted:initial.minimumCompleted}}
     expectedVersion={data.updatedAt?.toISOString()??"none"}/>:null}
