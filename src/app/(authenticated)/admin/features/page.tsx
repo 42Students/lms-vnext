@@ -77,7 +77,6 @@ export default async function SuperAdminFeaturesPage({
     return (
       <div className="min-w-0 space-y-5">
         <PageHeader
-          eyebrow="Super Admin · Tenant Controls"
           title="Feature Controls"
           description="College module access, policy inheritance and guarded inline changes."
         />
@@ -121,7 +120,6 @@ export default async function SuperAdminFeaturesPage({
   return (
     <div className="min-w-0 space-y-5">
       <PageHeader
-        eyebrow="Super Admin · Tenant Controls"
         title="Feature Controls"
         description="Effective college-level access for the three optional modules configured in vNext: Projects, Placements and Electives. Values are resolved using the existing persisted-rule inheritance and source defaults."
       />
@@ -129,10 +127,10 @@ export default async function SuperAdminFeaturesPage({
       <section aria-label="Feature Controls overview" className="border-t border-border pt-5">
         <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
         <h2 className="mt-1 text-base font-semibold text-foreground">Optional modules by college</h2>
-        <dl className="mt-3 grid gap-0 divide-y divide-border border-y border-border text-sm md:grid-cols-3 md:divide-y-0">
-          <div><dt>Colleges in scope</dt><dd className="font-semibold">{result.total} matching current filters</dd></div>
-          <div><dt>Projects on</dt><dd className="font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
-          <div><dt>Placements on</dt><dd className="font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
+        <dl className="mt-3 grid gap-0 divide-y divide-border border-y border-border text-sm md:grid-cols-3 md:divide-x md:divide-y-0">
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges in scope</dt><dd className="mt-2 font-semibold">{result.total} matching current filters</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
         </dl>
       </section>
       <section className="border-t border-border pt-5">
