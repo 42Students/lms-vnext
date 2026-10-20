@@ -691,86 +691,9 @@ No app execution or CI/browser/screenshot verification. Global A5–A7/E8 remain
 
 **Post-write source scans** for `recruiter-result-controls.tsx` (829 lines), `recruiter-result-review-grid.tsx` (46 lines), `known-errors-workspace.tsx` (274 lines): native control/table, inline 3–8-digit hex, authored `h1`, custom overlay counts **0/0/0/0 for each**. Result editor tag pairs: `div` 11/11, `article` 1/1, `label` 6/6. New grid has no intrinsic JSX row/control element (one shared TpoGrid and row-action Link only). Source proves `md:` starts at 768px, with single-column candidates and form controls below 768px. **No CI, TypeScript compile, Playwright, screenshots, or old-LMS measured states were run. E8 stays unticked.**
 
-### File-scope grep and responsive source evidence
-Filenames above were fully fetched from branch chatgpt/chat-12-b. Regex-equivalent grep: `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`; responsive equivalent `grep -nE 'sm:|md:' FILE` (this is a scoped source scan, not repository-wide). JSX Button and Link opening/closing counts and brace counts were checked.
-| File | Raw controls/SVG/hex | JSX Button; Link balanced | Braces | sm/md breakpoint tokens |
-|---|---|---|---|---|
-| src/app/(authenticated)/tpo/students/page.tsx | 0/0/0 | 2/2; 17/17 | 318/318 | 0/36 |
-| src/components/tpo/tpo-bulk-action-panel.tsx | 0/0/0 | 18/18; 1/1 | 254/254 | 0/3 |
-| src/components/tpo/tpo-bulk-action-preview.tsx | 0/0/0 | 1/1; 0/0 | 37/37 | 0/3 |
-| src/components/tpo/tpo-selected-review-queue.tsx | 0/0/0 | 4/4; 1/1 | 20/20 | 0/1 |
-| src/components/tpo/tpo-grid-column-chooser.tsx | 0/0/0 | 4/4; 0/0 | 31/31 | 0/4 |
-| src/components/tpo/tpo-grid-filter-panel.tsx | 0/0/0 | 2/2; 0/0 | 55/55 | 0/5 |
+**Remaining dependency:** `src/components/tpo/grid/tpo-grid.tsx` imports ag-grid 36.x, while `package.json` has no declared `ag-grid-react` or `ag-grid-community` dependency as read on this lane. This is an upstream integration blocker; no package manifest or shared UI file was modified.
 
-All six remain dependent on actual phone (360/767px), tablet (768/1024px) and desktop browser screenshot/focus/hover/disabled validation for pixel-level acceptance. Global A5/A6/A7/E8 untouched and unticked. Shared UI/tokens and API permissions were not altered; no CI/typecheck/app run. Next inspect TPO students detail pages and company memory routes.
 
-## chat-12 2026-10-20 — Company directory/detail and learner history/participation
-
-- [x] src/app/(authenticated)/tpo/companies/page.tsx — source-level old LMS canvas/metrics/link and 768px responsive comparison completed; browser unverified.
-- [x] src/app/(authenticated)/tpo/companies/[companyId]/page.tsx — source-level old LMS canvas/metrics/link and 768px responsive comparison completed; browser unverified.
-- [x] src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx — source-level old LMS canvas/metrics/link and 768px responsive comparison completed; browser unverified.
-- [x] src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx — source-level old LMS canvas/metrics/link and 768px responsive comparison completed; browser unverified.
-
-### Property/value comparison table
-| File | Legacy source and values | Current authored source locator and values | Result |
-|---|---|---|---|
-| src/app/(authenticated)/tpo/companies/page.tsx | old-lms-pages.md:6,7,8 and 9: one outer white canvas, hairline rows and continuous funnel/metric strip; old-lms-shell.css:23,31,73: 44px phone controls, 768px tablet; old-lms-shell-spec.md:24-25 36px desktop; components___common.scss:68-75 teal underlined links | 66: <Link href="/tpo/companies" className="lms-inline-link mt-4 inline-flex min-h-11; 132: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-; 138: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-; 167: className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:bor; 181: className="grid gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_au | Source aligned; screenshot and browser interactions pending |
-| src/app/(authenticated)/tpo/companies/[companyId]/page.tsx | old-lms-pages.md:6,7,8 and 9: one outer white canvas, hairline rows and continuous funnel/metric strip; old-lms-shell.css:23,31,73: 44px phone controls, 768px tablet; old-lms-shell-spec.md:24-25 36px desktop; components___common.scss:68-75 teal underlined links | 92: className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibo; 104: className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-contr; 108: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-; 139: className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-contr; 144: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms- | Source aligned; screenshot and browser interactions pending |
-| src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx | old-lms-pages.md:6,7,8 and 9: one outer white canvas, hairline rows and continuous funnel/metric strip; old-lms-shell.css:23,31,73: 44px phone controls, 768px tablet; old-lms-shell-spec.md:24-25 36px desktop; components___common.scss:68-75 teal underlined links | 52: <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 items; 63: className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-contr; 78: <div key={label} className="min-w-0 border-b border-r border-border bg-surface p; 103: className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold ; 219: <Link href={href(history.page - 1)} className="lms-inline-link inline-flex min-h | Source aligned; screenshot and browser interactions pending |
-| src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx | old-lms-pages.md:6,7,8 and 9: one outer white canvas, hairline rows and continuous funnel/metric strip; old-lms-shell.css:23,31,73: 44px phone controls, 768px tablet; old-lms-shell-spec.md:24-25 36px desktop; components___common.scss:68-75 teal underlined links | 41: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-; 83: <Link href={journey.history} className="lms-inline-link inline-flex min-h-11 ite; 84: <Link href={journey.roster} className="lms-inline-link inline-flex min-h-11 item | Source aligned; screenshot and browser interactions pending |
-
-### Scoped source grep and responsive proof
-Each complete file fetched from branch. Grep-equivalent: `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`, `grep -nE 'sm:|md:' FILE`. JSX opening and closing Button/Link counts and curly delimiters source-matched (not a TypeScript compiler or browser test).
-| File | Raw/SVG/hex | Button; Link balance | Braces | sm/md |
-|---|---|---|---|---|
-| src/app/(authenticated)/tpo/companies/page.tsx | 0/0/0 | 1/1; 8/8 | 63/63 | 0/12 |
-| src/app/(authenticated)/tpo/companies/[companyId]/page.tsx | 0/0/0 | 0/0; 12/12 | 129/129 | 0/12 |
-| src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx | 0/0/0 | 0/0; 5/5 | 88/88 | 0/6 |
-| src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx | 0/0/0 | 0/0; 3/3 | 32/32 | 0/3 |
-
-No CI, app execution, responsive screenshots or interaction testing. Global A5–A7/E8 remain unticked per strict rule; no claim all pages are pixel-matched. Next: Company Management, People, Contact Log, Feedback and Students Requests/Preparation views.
-
-## chat-12 2026-10-20 — TPO Student Requests and Company management/details
-
-- [x] src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-- [x] src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-- [x] src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-- [x] src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-- [x] src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-- [x] src/app/(authenticated)/tpo/companies/archived/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-- [x] src/app/(authenticated)/tpo/students/preparation-plan/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-- [x] src/app/(authenticated)/tpo/students/preparation-prep/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-- [x] src/app/(authenticated)/tpo/students/requests/page.tsx — source-level legacy style parity (link affordances, 44px/36px controls, hairline rows, 768px breakpoint) with recorded source proof below; rendered acceptance open.
-
-### VNext versus legacy value/source comparison
-Legacy files: docs/design/old-lms-pages.md:6-10 (one white canvas, no normal nested cards, 1px hairline separated rows, contiguous KPI strip and toolbar), docs/design/old-lms-shell.css:23,26-32,73 (max767px phone, min768px tablet, 44px tap), docs/design/old-lms-shell-spec.md:24-25 (36px desktop/9px action radius), legacy-styles/components___common.scss:68-75 (teal links with underline-hover and keyboard focus).
-| File | Legacy property | VNext source locations and authored values | Source status |
-|---|---|---|---|
-| src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 23: className="lms-inline-link inline-flex min-h-11 items-center font-semibold  | Source aligned, pixel inspection pending |
-| src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 23: <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm ; 33: : <ul className="divide-y divide-border border-y border-border"> | Source aligned, pixel inspection pending |
-| src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 44: className="lms-inline-link inline-flex min-h-11 items-center text-sm font-s; 72: <section className="min-w-0 border-y border-border">; 73: <h2 className="border-b border-border px-5 py-4 text-lg font-semibold text-; 84: className="lms-inline-link inline-flex min-h-11 items-center font-semibold  | Source aligned, pixel inspection pending |
-| src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 60: className="lms-inline-link inline-flex min-h-11 items-center text-sm font-s; 99: className="mt-2 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius; 108: className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border b; 133: <Link href={href(log.page - 1)} className="lms-inline-link inline-flex min- | Source aligned, pixel inspection pending |
-| src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 33: className="lms-inline-link inline-flex min-h-11 items-center text-sm text-l; 42: className="border-b border-border py-4"> | Source aligned, pixel inspection pending |
-| src/app/(authenticated)/tpo/companies/archived/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 17: <Link href="/tpo/companies" className="lms-inline-link inline-flex min-h-11; 27: </p> : <ul className="divide-y divide-border border-y border-border bg-surf; 31: className="lms-inline-link inline-flex min-h-11 items-center font-semibold  | Source aligned, pixel inspection pending |
-| src/app/(authenticated)/tpo/students/preparation-plan/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 22: <Link href="/tpo/students/preparation-prep" className="lms-inline-link inli; 31: <Link href="/tpo/settings/prep-readiness" className="lms-inline-link inline | Source aligned, pixel inspection pending |
-| src/app/(authenticated)/tpo/students/preparation-prep/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 23: <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 ; 24: <Link href="/tpo/students/preparation-plan" className="lms-inline-link ml-3 | Source aligned, pixel inspection pending |
-| src/app/(authenticated)/tpo/students/requests/page.tsx | 1px hairline and old 768px phone/tablet boundary; 44px phone/36px desktop link | 132: className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semi; 177: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(-; 186: className="flex flex-wrap gap-2 border-b border-border pb-3"; 190: className="lms-inline-link inline-flex min-h-11 items-center border-b-2 bor | Source aligned, pixel inspection pending |
-
-### Full file-scoped grep and source responsive proof
-Full files fetched directly from branch. `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`; `grep -nE 'sm:|md:' FILE`. Checked JSX Button/Link opening and closing occurrence balance plus all curly delimiter counts. No executable build/test.
-| File | Raw/svg/hex | Button; Link | Braces | sm/md |
-|---|---|---|---|---|
-| src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx | 0/0/0 | 0/0; 1/1 | 17/17 | 0/1 |
-| src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx | 0/0/0 | 0/0; 1/1 | 25/25 | 0/1 |
-| src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx | 0/0/0 | 0/0; 4/4 | 42/42 | 0/4 |
-| src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx | 0/0/0 | 1/1; 3/3 | 57/57 | 0/5 |
-| src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx | 0/0/0 | 0/0; 1/1 | 32/32 | 0/1 |
-| src/app/(authenticated)/tpo/companies/archived/page.tsx | 0/0/0 | 0/0; 2/2 | 15/15 | 0/2 |
-| src/app/(authenticated)/tpo/students/preparation-plan/page.tsx | 0/0/0 | 0/0; 2/2 | 22/22 | 0/2 |
-| src/app/(authenticated)/tpo/students/preparation-prep/page.tsx | 0/0/0 | 0/0; 6/6 | 33/33 | 0/5 |
-| src/app/(authenticated)/tpo/students/requests/page.tsx | 0/0/0 | 1/1; 12/12 | 108/108 | 0/18 |
-
-These records do not tick A5–A7/E8 globally; no phone/tablet screenshot proof, no runtime hover/focus/disabled verification, no CI or app execution. Next TPO remaining company/student error/loading and ancillary controls, then revisit global icons and links.
 
 ## chat-12 2026-10-20 — Whole batch pages (classes, rules, overview, students, registrations and histories)
 
