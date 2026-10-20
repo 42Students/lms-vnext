@@ -19,7 +19,7 @@ export const PopoverPanel = forwardRef<HTMLElement, PopoverPanelProps>(
     return <section {...rest} ref={ref} role="dialog" aria-modal={false} aria-label={label}
       onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && event.key === "Escape" && onDismiss) { event.preventDefault(); event.stopPropagation(); onDismiss(); } }}
       data-slot={rest["data-slot"] ?? "popover"}
-      className={cx("min-w-0 rounded-[6px] border border-[var(--lms-canvas-border)] bg-white shadow-[var(--lms-dropdown-shadow)]", className)}>
+      className={cx("min-w-[100px] min-h-[150px] rounded-[6px] border border-[var(--lms-canvas-border)] bg-white px-6 py-4 shadow-[var(--lms-dropdown-shadow)] max-[767px]:rounded-[14px] max-[767px]:p-4", className)}>
       {children}
     </section>;
   },
@@ -59,7 +59,7 @@ export function PopoverListbox({ label, children, className, onDismiss, onKeyDow
     options[next]?.focus();
   }
   return <div {...props} onKeyDown={handleKey} data-slot="popover-listbox" role="listbox" aria-label={label}
-    className={cx("min-w-0 overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-2 shadow-[var(--lms-overlay-shadow)]", className)}>
+    className={cx("min-w-0 min-h-[120px] max-h-[200px] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white px-0 py-[5px] shadow-[0_14px_16px_rgba(0,0,0,0.04)] [&_[role=option]]:min-h-11 [&_[role=option]]:px-[10px] [&_[role=option]]:py-[5px] [&_[role=option]:hover]:bg-[#d1f1f1] [&_a:hover]:bg-[#d1f1f1] [&_button:hover]:bg-[#d1f1f1]", className)}>
     {children}
   </div>;
 }
