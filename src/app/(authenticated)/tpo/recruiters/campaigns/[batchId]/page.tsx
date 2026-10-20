@@ -17,7 +17,7 @@ export default async function BatchDetail({params}:{params:Promise<{batchId:stri
  return <div className="min-w-0 space-y-6">
   <PageHeader title="Delivery batch"
     description={batch.purpose+" · Provider acceptance is not recipient delivery."}/>
-  <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text">Back to history</Link>
+  <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to history</Link>
   <section className="border-b border-border py-5">
    <p className="text-sm text-body">{batch.finalizedAt?"Finalized":"Not finalized"} · {batch.actualReceipts} persisted receipts of {batch.total} intended</p>
    <section aria-label="Delivery receipts" className="mt-4 grid grid-cols-2 gap-3 min-[768px]:grid-cols-4">

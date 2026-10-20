@@ -40,7 +40,7 @@ export default async function FacultyDiscussionHistoryPage({
       </label>
       <Button type="submit" variant="primary">Filter</Button>
       <Link href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
     </form>
     <p className="text-sm text-body" role="status" aria-live="polite">{data.total} recorded event{data.total===1?"":"s"}</p>
     {data.items.length===0?<EmptyState title="No registered moderation history"
@@ -59,9 +59,9 @@ export default async function FacultyDiscussionHistoryPage({
       <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page>1&&<Link href={facultyDiscussionHistoryHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
+          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
         {data.page<data.totalPages&&<Link href={facultyDiscussionHistoryHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
+          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">
