@@ -348,15 +348,15 @@ export default async function HrPlacementJobPage({
       {filters.tab === "overview" && !requestsTab && !discussionTab ? (
         <section className="space-y-4 border-b border-border pb-4 md:pb-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
+            <div><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Drive overview</h2>
               <p className="mt-1 text-sm text-body">Employer-visible pipeline for this college. Applicants are limited to records shared by the placement cell; offer history may contain multiple versions per recipient.</p></div>
             {driveOverview.readOnly ? <StatusBadge tone="neutral">Read-only closed drive</StatusBadge> :
               <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" || driveOverview.deadlineState === "PASSED" ? "warning":"info"}>
                 {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
-          <section aria-label="What students see" className="border-b border-border pb-4 md:pb-5">
-            <h3 className="font-semibold text-foreground">What students see</h3>
+          <section aria-label="What students see" className="border-b border-border pb-4 sm:pb-5">
+            <h3 className="font-semibold text-[var(--lms-heading)]">What students see</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Student-facing draft facts are shown for reference. Exact publication and application access are controlled by the placement cell.
             </p>
@@ -382,8 +382,8 @@ export default async function HrPlacementJobPage({
             </dl>
           </section>
           <section aria-labelledby="recruiter-shared-funnel-title"
-            className="border-b border-border pb-4 md:pb-5">
-            <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
+            className="border-b border-border pb-4 sm:pb-5">
+            <h3 id="recruiter-shared-funnel-title" className="font-semibold text-[var(--lms-heading)]">Hiring pipeline</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
               Assessment and interview steps show recorded applied results; “—” means this drive has no such round. Offered/Hired count distinct employer-visible recipients, not historical offer versions.
@@ -414,7 +414,7 @@ export default async function HrPlacementJobPage({
             </li>)}
           </ol>
           <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
-            <h3 className="font-semibold text-foreground">Next</h3>
+            <h3 className="font-semibold text-[var(--lms-heading)]">Next</h3>
             <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
             <Link href={recruiterDriveNextAction(driveOverview).tab
                ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab+returnQuery
@@ -465,7 +465,7 @@ export default async function HrPlacementJobPage({
           {value:"messages",label:"Messages",href:hrDriveMessagesHref(workspace.job.id)}]}/>
       {discussionTab?<section aria-label="Drive discussion" className="space-y-4 border-b border-border pb-4 md:pb-5">
         <RecruiterConversationLiveRefresh/>
-        <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
+        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Discussion</h2>
         <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters&apos; conversations.</p>
         {requestData?.party==="COMPANY"&&requestData.requests.length>0?
           <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm">
@@ -496,8 +496,8 @@ export default async function HrPlacementJobPage({
           <Button type="submit">Open drive discussion</Button>
         </form>}
       </section>:null}
-      {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 border-b border-border pb-4 md:pb-5">
-        <h2 className="text-lg font-semibold text-foreground">Requests</h2>
+      {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 border-b border-border pb-4 sm:pb-5">
+        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Requests</h2>
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
         {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
           userId={context.user.id} requests={requestData.requests}/> :
@@ -506,7 +506,7 @@ export default async function HrPlacementJobPage({
       {filters.tab === "applicants" ? (
         <section className="space-y-4 border-b border-border pb-4 md:pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
+            <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Shared applicants</h2>
             {applicants.rows.some(row=>row.status==="SUBMITTED") ? <Link
               href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1"+returnQuery}
               className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -614,7 +614,7 @@ export default async function HrPlacementJobPage({
                 </div>
               ) : null}
               {focused&&!driveOverview.readOnly?<div className="mt-5 space-y-3">
-                <h4 className="font-semibold text-foreground">Round results for this applicant</h4>
+                <h4 className="font-semibold text-[var(--lms-heading)]">Round results for this applicant</h4>
                 <p className="text-xs text-muted-foreground">Draft decisions are sent for placement-cell verification. Only the placement cell can apply official outcomes.</p>
                 <RecruiterResultControls key={selectedApplicant.id} focusApplicantId={selectedApplicant.id} rounds={resultControlRounds
                   .filter(round=>round.participants.some(person=>person.applicationId===selectedApplicant.id))
@@ -648,7 +648,7 @@ export default async function HrPlacementJobPage({
       {filters.tab === "offers" ? (
         <section className="space-y-4 border-b border-border pb-4 md:pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
+            <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Job offers · read only</h2>
             {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/offers/export?offerState="+filters.offerState}
               className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Export offers CSV
@@ -668,8 +668,8 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xl font-bold text-foreground">{item.value}</p>
             </div>)}
           </div>
-          <section className="space-y-2 border-b border-border pb-4 md:pb-5">
-            <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
+          <section className="space-y-2 border-b border-border pb-4 sm:pb-5">
+            <h3 className="font-semibold text-[var(--lms-heading)]">Selection readiness across all rounds · read only</h3>
             {driveOverview.readOnly ? <p role="status" className="text-sm text-body">
               This drive is finished, so a selection list can no longer be sent.
             </p> : null}
@@ -683,8 +683,8 @@ export default async function HrPlacementJobPage({
                 status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status),
               href:"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}))}/>
           {(filters.offerState==="ALL"||["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState))?
-            <section aria-label="Placement-cell selection history" className="space-y-3 border-b border-border pb-4 md:pb-5">
-              <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
+            <section aria-label="Placement-cell selection history" className="space-y-3 border-b border-border pb-4 sm:pb-5">
+              <h3 className="font-semibold text-[var(--lms-heading)]">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
               {selectionRows.length ? <HrJobSelectionGrid
                 scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id].join(":")}
@@ -748,7 +748,7 @@ export default async function HrPlacementJobPage({
       ) : null}
       {filters.tab === "rounds" || filters.tab === "overview" ? <section>
         <div className="mb-3">
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
             Hiring rounds
           </h2>
           {driveOverview.readOnly
@@ -770,8 +770,8 @@ export default async function HrPlacementJobPage({
               : "Stage employer outcomes here. The college placement team retains final apply authority."}
           </p>
         </div>
-        {filters.tab==="rounds"?<section className="mb-5 space-y-3 border-b border-border pb-4 md:pb-5">
-          <h3 className="font-semibold text-foreground">Scheduled rounds and potential time conflicts</h3>
+        {filters.tab==="rounds"?<section className="mb-5 space-y-3 border-b border-border pb-4 sm:pb-5">
+          <h3 className="font-semibold text-[var(--lms-heading)]">Scheduled rounds and potential time conflicts</h3>
           <p className="text-sm text-body">IST times from this employer-owned drive. Overlap is calculated only for rounds with recorded durations; room and interviewer availability is unknown.</p>
           <RecruiterRoundInlineEditor jobId={workspace.job.id}
             readOnly={driveOverview.readOnly}
@@ -805,7 +805,7 @@ export default async function HrPlacementJobPage({
           </ul>
           {roundSchedule.length?<div className="grid gap-3 md:grid-cols-2">
             {roundSchedule.map(round=><article key={round.id} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
-              <h4 className="font-semibold text-foreground">{round.sequence}. {round.name}</h4>
+              <h4 className="font-semibold text-[var(--lms-heading)]">{round.sequence}. {round.name}</h4>
               <p className="mt-1 text-sm text-body">{formatRoundTime(round.startsAt)} IST</p>
               <p className="text-xs text-muted-foreground">{round.endsAt?"Ends "+formatRoundTime(round.endsAt)+" IST":"Duration not recorded"}</p>
               <p className="text-xs text-muted-foreground">{round.mode??"Mode not set"} · {round.venue??"Venue not set"}</p>
@@ -831,7 +831,7 @@ export default async function HrPlacementJobPage({
 
         {filters.tab === "rounds" ? <section className="mt-6 space-y-4 border-b border-border pb-4 md:pb-5">
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Results from table</h3>
+            <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Results from table</h3>
             <p className="mt-1 text-sm text-body">Authorized, placement-cell-shortlisted candidates only. STAGED means awaiting college review; APPLIED means official college-applied outcome.</p>
           </div>
           {workspace.rounds.length ? <>

@@ -49,7 +49,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   return <div className="min-w-0 space-y-[16px]">
     <PageHeader title={quiz.title} actions={<PageBackLink href="/learn/allQuizzes" label="All Quizzes"/>} />
     <section aria-labelledby="quiz-attempt-history-heading" className="border-b border-border py-[16px]">
-      <h2 id="quiz-attempt-history-heading" className="text-base font-semibold text-foreground">Attempt history</h2>
+      <h2 id="quiz-attempt-history-heading" className="text-base font-semibold text-[var(--lms-heading)]">Attempt history</h2>
       <p className="mt-2 text-sm text-body">
         Attempts are recorded against your current college membership. Results appear only after Faculty publishes them.
       </p>
@@ -57,7 +57,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
         Not attempted · No quiz attempt is recorded for you in this course.
       </p> : <ol className="mt-4 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {attempts.map(attempt=><li key={attempt.id} className="min-w-0 py-[var(--lms-space-4)]">
-          <h3 className="text-sm font-semibold text-foreground">Attempt {attempt.attemptNumber}</h3>
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Attempt {attempt.attemptNumber}</h3>
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
           <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={attempt.resultsVisible?"success":"neutral"}>{attempt.resultsVisible?"Results published":"Results pending"}</StatusBadge>{learnerAttemptResultLabel(attempt)}</p>
           <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
@@ -70,7 +70,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     </section>
     {selected ? <section className="border-b border-border py-[16px]">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold text-foreground">Attempt {selected.attemptNumber} result</h2>
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Attempt {selected.attemptNumber} result</h2>
         <Link href={historyUrl} className="inline-flex min-h-11 items-center text-sm text-primary-text underline hover:text-primary-hover md:min-h-9">Close detail</Link>
       </div>
       <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
@@ -79,7 +79,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
       ) : <div className="mt-4 divide-y divide-border border-y border-border">
         {selected.answers.map((answer,index)=><article key={answer.id}
           className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-          <h3 className="text-sm font-semibold text-foreground">
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
             Question {index+1}: {answer.prompt}
           </h3>
           <p className="mt-2 text-sm text-body">
