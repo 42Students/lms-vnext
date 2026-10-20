@@ -147,7 +147,11 @@ export function LearnerNotificationsInbox({
             className="mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11 w-full"/>
         </label>
         <FilterChip type="button" aria-pressed={unread==="unread"}
-          onClick={()=>selectUnread(unread==="unread"?"all":"unread")} className="min-h-[var(--lms-control-height)] max-md:min-h-11">
+          onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
+          className={"!min-h-11 rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] "+
+            (unread==="unread"
+              ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-white enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-white"
+              : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[rgba(38,186,199,0.4)] enabled:hover:!bg-[rgba(38,186,199,0.05)] enabled:hover:!text-[var(--lms-primary)]")}>
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </FilterChip>
         <Button type="button" onClick={applySearch}
