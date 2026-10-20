@@ -8,7 +8,6 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {facultyLiveClassesHref,facultyLiveClassesQuerySchema} from "@/modules/courses/faculty-live-classes-model";
 import {getFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-service";
 import {Button} from "@/components/ui/button";
-import {Select} from "@/components/ui/select";
 type Params={view?:string|string[];deliveryId?:string|string[];page?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function Page({searchParams}:{searchParams:Promise<Params>}){
