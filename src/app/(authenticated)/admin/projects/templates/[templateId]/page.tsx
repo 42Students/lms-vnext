@@ -27,7 +27,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
   if (!id.success) notFound();
   if (!can(context,"project-template.read")) {
     return <div className="min-w-0 space-y-5">
-      <PageHeader title="Project template" actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
+      <PageHeader title="Project template"/>
       <ErrorState title="Project template access denied"
         description="The active administrator does not have permission to view global project templates."
         action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
@@ -39,7 +39,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
   } catch (error) {
     if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND") notFound();
     return <div className="min-w-0 space-y-5">
-      <PageHeader title="Project template" actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
+      <PageHeader title="Project template"/>
       <ErrorState title="Project template unavailable"
         description="This template could not be loaded. No version or college assignment details are shown."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(id.data)}
@@ -49,6 +49,10 @@ export default async function SuperAdminProjectTemplateDetailPage({
 
   return (
     <div className="min-w-0 space-y-6">
+      <ProjectAdminNav
+        basePath="/admin/projects"
+        active="templates"
+      />
       <PageHeader
         title={detail.template.title}
         description={
@@ -56,7 +60,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
           "Global project template."
         }
         actions={
-          <div className="flex w-full min-w-0 flex-wrap items-center gap-2 md:w-auto md:justify-end">
+          <div className="flex flex-wrap items-center gap-2">
             <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
             <StatusBadge
               tone={
@@ -97,7 +101,6 @@ export default async function SuperAdminProjectTemplateDetailPage({
           </div>
         }
       />
-      <ProjectAdminNav basePath="/admin/projects" active="templates" />
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active="overview"
