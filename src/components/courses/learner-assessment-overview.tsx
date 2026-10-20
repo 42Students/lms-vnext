@@ -2,6 +2,7 @@
 import { StatTile } from "@/components/ui/stat-tile";
 import styles from "./learner-assessment-metrics.module.css";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
@@ -196,10 +197,10 @@ export function LearnerAssessmentOverview({
       description="Quizzes appear once your college puts you in a class or section." />;
   }
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
-    return <div role="alert" className="rounded-lg border border-border bg-surface p-4">
-      <p>Couldn&apos;t load your class, so quizzes can&apos;t be shown.</p>
-      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
-    </div>;
+    return <Alert tone="error" role="alert">
+      Couldn&apos;t load your class, so quizzes can&apos;t be shown.
+      <Link href="/learn/allQuizzes" className="inline-flex min-h-11 w-fit items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry</Link>
+    </Alert>;
   }
   if (items.length === 0) {
     return (
@@ -663,15 +664,12 @@ export function LearnerAssessmentOverview({
                 {(!selectedAssignment.dueAt ||
                 new Date(selectedAssignment.dueAt).getTime() <=
                   currentNowMs) ? (
-                  <div
-                    role="status"
-                    className="rounded-lg border border-warning bg-[var(--lms-warning-subtle)] p-4 text-sm text-body"
-                  >
+                  <Alert tone="warning" role="status">
                     <strong className="text-foreground">
                       {selectedAssignment.dueAt ? "Submissions are closed" : "Submission unavailable"}
                     </strong>{" "}
                     {selectedAssignment.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}
-                  </div>
+                  </Alert>
                 ) : null}
 
                 {selectedAssignment.dueAt && new Date(selectedAssignment.dueAt).getTime() > currentNowMs ? (
