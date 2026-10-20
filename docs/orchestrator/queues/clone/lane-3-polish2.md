@@ -16,7 +16,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-3.md: surface | proble
 
 
 - [x] `src/components/academics/college-term-mapping-manager.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
-- [ ] `src/components/courses/college-assignment-create.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/components/courses/college-assignment-create.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/courses/learner-course-discussion.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/tracker/audit-finding-status-action.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/placements/tpo-trust-toggle.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
