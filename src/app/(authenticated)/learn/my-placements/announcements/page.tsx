@@ -239,7 +239,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-semibold text-foreground">
           Search loaded personal alerts
           <Input type="search" name="alertQ" defaultValue={alertQ} maxLength={80}
-            placeholder="Title or message" className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/>
+            placeholder="Title or message" className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
         <Button className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text" type="submit">Search alerts</Button>
       </form>
