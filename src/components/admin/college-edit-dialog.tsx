@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -41,10 +42,14 @@ export function CollegeEditDialog({
   const [landmark,setLandmark]=useState(college.landmark??"");
   const [postalCode,setPostalCode]=useState(college.postalCode??"");
   const [pending, startTransition] = useTransition();
+  const inFlightRef=useRef(false);
 
 
   function save() {
+    if(inFlightRef.current||pending||!name.trim())return;
+    inFlightRef.current=true;
     startTransition(async () => {
+      try {
       const response = await fetch(
         `/api/colleges/${college.id}`,
         {
@@ -81,6 +86,11 @@ export function CollegeEditDialog({
         title: "College updated",
       });
       router.refresh();
+      } catch {
+        showToast({tone:"error",title:"College update failed",description:"The college could not be updated."});
+      } finally {
+        inFlightRef.current=false;
+      }
     });
   }
 
@@ -89,7 +99,7 @@ export function CollegeEditDialog({
       <Button
         variant="secondary"
         size="sm"
-        className="min-h-11 md:min-h-9 print:hidden"
+        className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden"
         onClick={() => {
           setName(college.name);
           setCity(college.city ?? "");
@@ -105,7 +115,8 @@ export function CollegeEditDialog({
 
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(!pending)setOpen(next);}}
+        dismissible={!pending}
         title={`Edit ${college.name}`}
         description={`College code ${college.code} and organization ownership are intentionally immutable here.`}
         footer={
@@ -135,7 +146,7 @@ export function CollegeEditDialog({
           <div className="md:col-span-2">
             <label
               htmlFor={`college-name-${college.id}`}
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               College name
             </label>
@@ -153,7 +164,7 @@ export function CollegeEditDialog({
           <div>
             <label
               htmlFor={`college-city-${college.id}`}
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               City
             </label>
@@ -171,7 +182,7 @@ export function CollegeEditDialog({
           <div>
             <label
               htmlFor={`college-state-${college.id}`}
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               State
             </label>
@@ -189,7 +200,7 @@ export function CollegeEditDialog({
           <div className="md:col-span-2">
             <label
               htmlFor={`college-country-${college.id}`}
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Country
             </label>
@@ -209,7 +220,7 @@ export function CollegeEditDialog({
            ["Landmark",landmark,setLandmark,255],
            ["Pin Code",postalCode,setPostalCode,32],
           ] as const).map(([field,value,setter,maxLength])=><label key={field}
-           className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
+           className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
            <Input className="min-h-11 md:min-h-9" value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
           </label>)}
         </div>
