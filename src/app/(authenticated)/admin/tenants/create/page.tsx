@@ -35,11 +35,11 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
  const orgCreate=can(context,"organization.manage");
  const params=await searchParams;
  const preferredId=preferredNewTenantOrganization(params.organizationId,creatable);
- return <div className="min-w-0 space-y-5"
+ return <div className="min-w-0 space-y-6">
   <PageHeader title="Create the customer, then make one college launch-ready"
    description="Creating organizations and colleges is a platform-level action. Domains, branding and readiness checks are college-specific, so the current scope is always visible before you edit."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />}/>
-  <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Create organization">
+  <section className="min-w-0 space-y-3 border-b border-border pb-5" aria-label="Create organization">
    <h2 className="text-lg font-semibold">Create an organization and its colleges</h2>
    {orgCreate?<OrganizationCreateForm advanceToCollege/>:
     <Banner tone="warning">Organization creation is unavailable in your selected administrative scope.</Banner>}

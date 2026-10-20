@@ -33,7 +33,7 @@ export default async function CollegeGroupRulePreviewPage({
     throw error;
   }
   const { group, criteria, projection } = result;
-  return <div className="min-w-0 overflow-x-clip space-y-5"
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader
       title={"Rule preview · " + group.name}
       description="Read-only eligibility preview. No membership changes, refresh or rule edits are performed."
@@ -51,18 +51,18 @@ export default async function CollegeGroupRulePreviewPage({
     ]}/>
     <section aria-label="Configured criteria" className="space-y-3 border-t border-border pt-5">
       <h2 className="text-lg font-semibold text-foreground">Persisted rule criteria</h2>
-      <dl className="grid min-w-0 gap-0 border-y border-border md:grid-cols-2">
-        <div className="min-w-0 border-b border-border px-3 py-3"><dt className="text-xs text-muted-foreground">Programs allowed</dt>
+      <dl className="grid min-w-0 gap-3 md:grid-cols-2">
+        <div><dt className="text-xs text-muted-foreground">Programs allowed</dt>
           <dd className="font-semibold text-foreground">{criteria.allowedProgramIds.length || "Not restricted"}</dd></div>
-        <div className="min-w-0 border-b border-border px-3 py-3"><dt className="text-xs text-muted-foreground">Cohorts allowed</dt>
+        <div><dt className="text-xs text-muted-foreground">Cohorts allowed</dt>
           <dd className="font-semibold text-foreground">{criteria.allowedCohortIds.length || "Not restricted"}</dd></div>
-        <div className="min-w-0 border-b border-border px-3 py-3"><dt className="text-xs text-muted-foreground">Minimum CGPA</dt>
+        <div><dt className="text-xs text-muted-foreground">Minimum CGPA</dt>
           <dd className="font-semibold text-foreground">{criteria.minCgpa ?? "Not restricted"}</dd></div>
-        <div className="min-w-0 border-b border-border px-3 py-3"><dt className="text-xs text-muted-foreground">Maximum active backlogs</dt>
+        <div><dt className="text-xs text-muted-foreground">Maximum active backlogs</dt>
           <dd className="font-semibold text-foreground">{criteria.maxActiveBacklogs ?? "Not restricted"}</dd></div>
-        <div className="min-w-0 border-b border-border px-3 py-3"><dt className="text-xs text-muted-foreground">Passing years</dt>
+        <div><dt className="text-xs text-muted-foreground">Passing years</dt>
           <dd className="font-semibold text-foreground">{criteria.allowedPassingYears.length || "Not restricted"}</dd></div>
-        <div className="min-w-0 border-b border-border px-3 py-3"><dt className="text-xs text-muted-foreground">Auto-refresh configured</dt>
+        <div><dt className="text-xs text-muted-foreground">Auto-refresh configured</dt>
           <dd className="font-semibold text-foreground">{result.autoRefresh ? "Yes" : "No"}</dd></div>
       </dl>
       <p className="text-sm text-muted-foreground">

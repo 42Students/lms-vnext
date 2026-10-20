@@ -110,6 +110,7 @@ export default async function SuperAdminPeoplePage({
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
+          eyebrow="Super Admin"
           title="People"
           description="People administration requires a college safety scope."
         />
@@ -138,11 +139,12 @@ export default async function SuperAdminPeoplePage({
   }
 
   return (
-    <div className="min-w-0 space-y-5"
+    <div className="space-y-6">
       <PageHeader
+        eyebrow="Super Admin"
         title="People"
         description="Canonical people and memberships inside the selected college safety scope."
-        actions={<div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
+        actions={<div className="flex flex-wrap items-center gap-[var(--lms-space-2)]">
           <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
           <PersonOnboardDialog collegeId={collegeId} />
         </div>}
