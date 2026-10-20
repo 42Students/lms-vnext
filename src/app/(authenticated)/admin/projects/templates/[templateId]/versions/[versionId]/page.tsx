@@ -6,6 +6,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Banner } from "@/components/ui/banner";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
+import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import {SuperAdminTemplateRollbackControl} from "@/components/projects/super-admin-template-rollback-control";
 import {can} from "@/modules/permissions/policy";
 import { ProjectsServiceError } from "@/modules/projects/errors";
@@ -20,7 +21,8 @@ export default async function TemplateVersionComparisonPage({ params }: {
   if (!ids.success) notFound();
   if (!can(context,"project-template.read")) {
     return <div className="min-w-0 space-y-5">
-      <PageHeader title="Template version comparison"/>
+      <PageHeader title="Template version comparison"
+        actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
       <ErrorState title="Template history access denied"
         description="Only an authorized administrator can read global template version snapshots."
         action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
@@ -32,7 +34,8 @@ export default async function TemplateVersionComparisonPage({ params }: {
     if (error instanceof ProjectsServiceError &&
       (error.code === "PROJECT_TEMPLATE_NOT_FOUND" || error.code === "PROJECT_TEMPLATE_VERSION_NOT_FOUND")) notFound();
     return <div className="min-w-0 space-y-5">
-      <PageHeader title="Template version comparison"/>
+      <PageHeader title="Template version comparison"
+        actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
       <ErrorState title="Template history unavailable"
         description="The version comparison could not be loaded. No private version content is shown."
         action={<PageBackLink href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"} label="Back to version history" />}/>
@@ -42,6 +45,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
     <PageHeader title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`}
       actions={<PageBackLink href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`} label="Version history" />} />
+    <SuperAdminTemplateTabs templateId={detail.template.id} active="versions" />
     <Banner tone="info">This snapshot is read-only. Publication state and college assignments are managed separately.</Banner>
     {detail.changes.length ? <section aria-label="Changed fields" className="space-y-4">
       {detail.changes.map(change => <article key={change.label} className="min-w-0 border-b border-border py-4">
@@ -49,7 +53,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {[{ label: "Current", value: change.current }, { label: "Selected version", value: change.selected }].map(value =>
             <div key={value.label} className="min-w-0"><h3 className="text-sm font-semibold text-body">{value.label}</h3>
-              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 overflow-y-auto overscroll-contain whitespace-pre-wrap break-all rounded-[var(--lms-canvas-radius)] bg-muted p-3 text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{value.value}</pre></div>)}
+              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 w-full min-w-0 overflow-y-auto overscroll-contain whitespace-pre-wrap break-words border-y border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-xs leading-5 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{value.value}</pre></div>)}
         </div>
       </article>)}
     </section> : <EmptyState title="No content differences" description="No content differences from the current version."/>}
