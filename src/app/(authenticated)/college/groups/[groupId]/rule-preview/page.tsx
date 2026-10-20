@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import {
   CollegeRulePreviewError,
   previewCollegeGroupRule,
@@ -33,31 +35,20 @@ export default async function CollegeGroupRulePreviewPage({
   const { group, criteria, projection } = result;
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader
-      eyebrow="College Admin · Student Groups"
       title={"Rule preview · " + group.name}
       description="Read-only eligibility preview. No membership changes, refresh or rule edits are performed."
-      actions={<Link href={"/college/groups/" + encodeURIComponent(group.id)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-        Back to group
-      </Link>}
+      actions={<PageBackLink href={"/college/groups/" + encodeURIComponent(group.id)} label="Back to group"/>}
     />
     {projection.incomplete ? (
       <ErrorState title="Preview candidate cap reached"
         description="More than 1,000 active learners were eligible for evaluation. Counts below describe only the first 1,000 records; they are not college-wide totals." />
     ) : null}
-    <section aria-label="Rule eligibility summary" className="grid min-w-0 gap-4 border-t border-border pt-4 md:grid-cols-2 lg:grid-cols-4">
-      {[
-        ["Candidates examined", projection.examined],
-        ["Rule matches", projection.matched],
-        ["Matches already active", projection.alreadyActive],
-        ["Matches not currently active", projection.potentiallyNew],
-      ].map(([title, value]) => (
-        <div key={title} className="min-w-0 border-b border-border pb-3">
-          <p className="text-xs font-semibold text-muted-foreground">{title}</p>
-          <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
-        </div>
-      ))}
-    </section>
+    <SummaryStrip label="Rule eligibility summary" steps={[
+      {label:"Candidates examined",value:projection.examined},
+      {label:"Rule matches",value:projection.matched},
+      {label:"Matches already active",value:projection.alreadyActive},
+      {label:"Matches not currently active",value:projection.potentiallyNew},
+    ]}/>
     <section aria-label="Configured criteria" className="space-y-3 border-t border-border pt-5">
       <h2 className="text-lg font-semibold text-foreground">Persisted rule criteria</h2>
       <dl className="grid min-w-0 gap-3 md:grid-cols-2">
@@ -76,7 +67,7 @@ export default async function CollegeGroupRulePreviewPage({
       </dl>
       <p className="text-sm text-muted-foreground">
         {result.lastRunAt
-          ? "Last persisted rule run: " + result.lastRunAt.toISOString() + " · " + (result.lastRunMatched ?? "unknown") + " matches"
+          ? "Last persisted rule run: " + new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(result.lastRunAt)+" IST" + " · " + (result.lastRunMatched ?? "unknown") + " matches"
           : "No completed rule refresh is recorded."}
       </p>
     </section>
