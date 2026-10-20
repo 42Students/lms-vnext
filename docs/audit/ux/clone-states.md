@@ -1014,3 +1014,230 @@ rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g 'loading.tsx'
 - [ ] **No individual strict completion box ticked** without running required repo-wide grep and rendered responsive/visual checks. "Source migrated" does not equal pixel-cloned.
 
 **Exact next file:** `src/components/tpo/tpo-team-forms.tsx`, followed by `src/components/tpo/tpo-team-handover.tsx` and `src/components/tpo/tpo-campaign-compose.tsx`.
+
+
+## Chat-5 2026-10-20 — 15 TPO messaging, team and campaign files, next source-migration batch
+
+**Branch and baseline:** At the start, `chatgpt/chat-5-b` was 0 ahead and 444 commits behind `main` `75cef123a9bafdf9126daaeb23556f66cb878caa`. Fast-forwarded only the chat-5 branch non-forcibly to that main SHA, then pushed **only to `chatgpt/chat-5-b`** with `[chat-5]` file updates. Main has been receiving concurrent lane merges; no writes directly to main. Source work only: 15 distinct TSX files in `src/components/tpo`, not a claim of complete F3/F4/F5 parity or completed browser pixel verification.
+
+### Source grep and JSX integrity — per file
+
+This bounded file-by-file table is from exact source files **re-fetched after GitHub writes** and scanned for matching JSX opening/closing tags and native ARIA roles. It is not output of repository-wide `rg`; checkout and executable code have not been run.
+
+| TPO TSX source | Alert opens/closes | InlineNotice | EmptyState | Plain native role status | Decorated native role status/alert | First converted line | Responsive source evidence |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `tpo-team-forms.tsx` | 0/0 | 3 | 0 | 1 | 0 | 95 | 80: `min-h-11 md:min-h-9`; 92: `w-full`; 166: `min-h-11 md:min-h-9` |
+| `tpo-team-handover.tsx` | 0/0 | 2 | 0 | 0 | 0 | 51 | 38: `min-w-0`; 41,48: `min-h-11 md:min-h-9` |
+| `tpo-team-assign-unowned.tsx` | 0/0 | 2 | 0 | 0 | 0 | 59 | 40: `flex-wrap`; 41: `min-w-0`; 43: `min-h-11 md:min-h-9` |
+| `tpo-team-message-actions.tsx` | 0/0 | 2 | 0 | 0 | 0 | 39 | 28: `flex-wrap`; 34: `w-full`; 40: `min-h-11 md:min-h-9` |
+| `tpo-team-decision-toggle.tsx` | 0/0 | 1 | 0 | 0 | 0 | 31 | 26: `inline-flex min-w-0 flex-wrap` on valid div wrapper; 28: `min-h-11 md:min-h-8` |
+| `tpo-team-rename.tsx` | 0/0 | 1 | 0 | 0 | 0 | 36 | 29,34,39: `min-h-11 md:min-h-9` |
+| `tpo-company-team-composer.tsx` | 0/0 | 1 | 0 | 0 | 0 | 60 | 54: `min-w-0`; 62: `min-h-11 md:min-h-9` |
+| `tpo-team-open-read.tsx` | 1/1 | 0 | 0 | 0 | 0 | 26 | 26: `flex-row flex-wrap`; 28: `min-h-11 md:min-h-9` retry |
+| `tpo-team-ask-panel.tsx` | 2/2 | 2 | 1 | 0 | 0 | 49 | 36: `flex-wrap`; 90: `min-w-0`; 96: `min-h-11 md:min-h-9` |
+| `tpo-new-followup-modal.tsx` | 0/0 | 1 | 0 | 0 | 0 | 120 | 15: `min-h-11 w-full md:min-h-9`; 123: 44px cancel; 124: disabled Save |
+| `tpo-new-recruiter-conversation.tsx` | 0/0 | 1 | 1 | 0 | 0 | 115 | 86: `min-h-11 w-full`; 93: `flex-wrap`; 100: `min-h-28 w-full` |
+| `tpo-recruiter-message-reply.tsx` | 0/0 | 2 | 0 | 1 | 0 | 98 | 70,84: `flex-wrap`; 77: `min-h-28 w-full`; 88: `min-h-11 md:min-h-9` |
+| `tpo-campaign-send-control.tsx` | 1/1 | 1 | 0 | 1 | 0 | 39 | 47: `min-h-11 min-[768px]:min-h-9`; disabled send guard retained |
+| `tpo-campaign-compose.tsx` | 4/4 | 2 | 0 | 4 | 0 | 89 | 17: `min-h-11 w-full min-[768px]:min-h-9`; 122: `break-words`; 141: disabled Save |
+| `tpo-due-followup-workspace.tsx` | 1/1 | 2 | 1 | 0 | 0 | 130 | 41: `min-h-11 w-full md:min-h-9`; 146: `md:grid-cols-2`; 191: `flex-wrap` |
+| **15-file total** | **9/9** | **23** | **3** | **7** | **0** | — | Static, not rendered |
+
+**Scoped interpretation:** Raw `role="alert"` instances across these 15 source files = **0**; seven native polite `role="status"` labels remain intentionally for decision state, draft feedback, campaign audience figures, send counts or confirmation prompts. None uses bespoke decorated status panel markup. Converted Alert JSX pairs were re-read after each touched opening/closing tag. One extra semantics correction was made to `tpo-team-decision-toggle.tsx`: the outer `span` became `div.inline-flex` because `InlineNotice` is a block-level `div` and invalid nesting would otherwise occur. `tpo-team-forms.tsx` also had four duplicate Input/Select/Textarea/Button imports eliminated so each shared UI component is imported once.
+
+**Repeatable whole-repo commands for checkout execution (NOT executed in this turn):**
+```sh
+rg -n 'role="(alert|status)"|<(Alert|InlineNotice|EmptyState)\\b|</Alert>' src/components/tpo src/app
+rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g 'loading.tsx'
+rg -n 'sm:|md:|min-\\[768px\\]:|min-w-0|flex-wrap|break-words' src/components/tpo -g '*.tsx'
+```
+
+### File-by-file old LMS value comparisons and responsive/no-regression source checks
+
+#### `src/components/tpo/tpo-team-forms.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| success state default | `components___variables.scss:67–68` — `#059669`, `rgba(5,150,105,.10)` | `globals.css:47–48`; `inline-notice.tsx:9` uses `--lms-success-subtle` | MATCH base hue and fill; dismiss timeout/animation parity OPEN |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-team-forms.tsx` 80: `min-h-11 md:min-h-9`; 92: `w-full`; 166: `min-h-11 md:min-h-9`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **3**; `<EmptyState` **0**; `role="status"` native **1** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **95**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-team-handover.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| success state default | `components___variables.scss:67–68` — `#059669`, `rgba(5,150,105,.10)` | `globals.css:47–48`; `inline-notice.tsx:9` uses `--lms-success-subtle` | MATCH base hue and fill; dismiss timeout/animation parity OPEN |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-team-handover.tsx` 38: `min-w-0`; 41,48: `min-h-11 md:min-h-9`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **2**; `<EmptyState` **0**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **51**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-team-assign-unowned.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| success state default | `components___variables.scss:67–68` — `#059669`, `rgba(5,150,105,.10)` | `globals.css:47–48`; `inline-notice.tsx:9` uses `--lms-success-subtle` | MATCH base hue and fill; dismiss timeout/animation parity OPEN |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-team-assign-unowned.tsx` 40: `flex-wrap`; 41: `min-w-0`; 43: `min-h-11 md:min-h-9`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **2**; `<EmptyState` **0**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **59**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-team-message-actions.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-team-message-actions.tsx` 28: `flex-wrap`; 34: `w-full`; 40: `min-h-11 md:min-h-9`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **2**; `<EmptyState` **0**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **39**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-team-decision-toggle.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-team-decision-toggle.tsx` 26: `inline-flex min-w-0 flex-wrap` on valid div wrapper; 28: `min-h-11 md:min-h-8`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **1**; `<EmptyState` **0**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **31**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-team-rename.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-team-rename.tsx` 29,34,39: `min-h-11 md:min-h-9`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **1**; `<EmptyState` **0**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **36**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-company-team-composer.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-company-team-composer.tsx` 54: `min-w-0`; 62: `min-h-11 md:min-h-9`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **1**; `<EmptyState` **0**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **60**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-team-open-read.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-team-open-read.tsx` 26: `flex-row flex-wrap`; 28: `min-h-11 md:min-h-9` retry; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **1** and `</Alert>` **1**; `<InlineNotice` **0**; `<EmptyState` **0**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **26**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-team-ask-panel.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| warning state default | `components___variables.scss:69–70` — `#d97706`, `rgba(217,119,6,.10)` | `globals.css:49–50`; `alert.tsx:12` uses `--lms-warning-subtle` | MATCH base hue and fill; border and layout pixels OPEN |
+| empty state default | `old-lms-pages.md:6` — single white canvas with no extra nested card | `empty-state.tsx:5–9` — transparent background, no inner card; centered text and word wrapping | MATCH no extra card by source; precise whitespace/typography OPEN |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-team-ask-panel.tsx` 36: `flex-wrap`; 90: `min-w-0`; 96: `min-h-11 md:min-h-9`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **2** and `</Alert>` **2**; `<InlineNotice` **2**; `<EmptyState` **1**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **49**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-new-followup-modal.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-new-followup-modal.tsx` 15: `min-h-11 w-full md:min-h-9`; 123: 44px cancel; 124: disabled Save; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **1**; `<EmptyState` **0**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **120**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| empty state default | `old-lms-pages.md:6` — single white canvas with no extra nested card | `empty-state.tsx:5–9` — transparent background, no inner card; centered text and word wrapping | MATCH no extra card by source; precise whitespace/typography OPEN |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-new-recruiter-conversation.tsx` 86: `min-h-11 w-full`; 93: `flex-wrap`; 100: `min-h-28 w-full`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **1**; `<EmptyState` **1**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **115**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-recruiter-message-reply.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| success state default | `components___variables.scss:67–68` — `#059669`, `rgba(5,150,105,.10)` | `globals.css:47–48`; `inline-notice.tsx:9` uses `--lms-success-subtle` | MATCH base hue and fill; dismiss timeout/animation parity OPEN |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-recruiter-message-reply.tsx` 70,84: `flex-wrap`; 77: `min-h-28 w-full`; 88: `min-h-11 md:min-h-9`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **0** and `</Alert>` **0**; `<InlineNotice` **2**; `<EmptyState` **0**; `role="status"` native **1** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **98**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-campaign-send-control.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| warning state default | `components___variables.scss:69–70` — `#d97706`, `rgba(217,119,6,.10)` | `globals.css:49–50`; `alert.tsx:12` uses `--lms-warning-subtle` | MATCH base hue and fill; border and layout pixels OPEN |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-campaign-send-control.tsx` 47: `min-h-11 min-[768px]:min-h-9`; disabled send guard retained; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **1** and `</Alert>` **1**; `<InlineNotice` **1**; `<EmptyState` **0**; `role="status"` native **1** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **39**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-campaign-compose.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| warning state default | `components___variables.scss:69–70` — `#d97706`, `rgba(217,119,6,.10)` | `globals.css:49–50`; `alert.tsx:12` uses `--lms-warning-subtle` | MATCH base hue and fill; border and layout pixels OPEN |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| success state default | `components___variables.scss:67–68` — `#059669`, `rgba(5,150,105,.10)` | `globals.css:47–48`; `inline-notice.tsx:9` uses `--lms-success-subtle` | MATCH base hue and fill; dismiss timeout/animation parity OPEN |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-campaign-compose.tsx` 17: `min-h-11 w-full min-[768px]:min-h-9`; 122: `break-words`; 141: disabled Save; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **4** and `</Alert>` **4**; `<InlineNotice` **2**; `<EmptyState` **0**; `role="status"` native **4** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **89**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+#### `src/components/tpo/tpo-due-followup-workspace.tsx`
+
+| Compared property | Old LMS evidence/value | vNext actual evidence/value | Verification |
+| --- | --- | --- | --- |
+| warning state default | `components___variables.scss:69–70` — `#d97706`, `rgba(217,119,6,.10)` | `globals.css:49–50`; `alert.tsx:12` uses `--lms-warning-subtle` | MATCH base hue and fill; border and layout pixels OPEN |
+| error state default | `components___variables.scss:71–72` — `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51–52` same token; `inline-notice.tsx:8` / `alert.tsx:13` use `--lms-error-subtle` | MATCH base hue and fill; exact border opacity/text metrics not yet proven |
+| success state default | `components___variables.scss:67–68` — `#059669`, `rgba(5,150,105,.10)` | `globals.css:47–48`; `inline-notice.tsx:9` uses `--lms-success-subtle` | MATCH base hue and fill; dismiss timeout/animation parity OPEN |
+| empty state default | `old-lms-pages.md:6` — single white canvas with no extra nested card | `empty-state.tsx:5–9` — transparent background, no inner card; centered text and word wrapping | MATCH no extra card by source; precise whitespace/typography OPEN |
+| Radius / spacing | `components___variables.scss:133` control radius 6px; `:116–123` spacing 4/8/12/16/24/32/40/48px | `globals.css:836` radius 6px; `alert.tsx:18`, `inline-notice.tsx:33` use radius, px16 / py12 | Radius MATCH; notice padding/space-7,8 precise parity OPEN |
+| Phone, tablet, text wrapping | `components___antddesign.scss:21` mobile max-width 767px; `components___variables.scss:139` min touch target 44px | `tpo-due-followup-workspace.tsx` 41: `min-h-11 w-full md:min-h-9`; 146: `md:grid-cols-2`; 191: `flex-wrap`; `alert.tsx:18` min-w-0/max-w-full, `inline-notice.tsx:33–34` min-w-0/break-words | Static responsive source **checked**; rendered 320px, 767px, 768px, 1024px still OPEN |
+| Focus/hover/active/disabled | `components___accessibility.scss:19–23`: focus ring 2px, offset 3px; `:43–58` active scale .98 on role button | `inline-notice.tsx:36`: 2px/3px for dismiss; original Button/FilterChip/input handlers and disabled guard counts unchanged | Partial focus source MATCH; screenshot/interaction proof OPEN |
+
+**Scoped grep proof from re-fetched `chatgpt/chat-5-b` file:** `<Alert` **1** and `</Alert>` **1**; `<InlineNotice` **2**; `<EmptyState` **1**; `role="status"` native **0** (unchanged plain counts, itemized result or draft progress, not bespoke bordered banners); decorated raw status/alert **0**; raw `role="alert"` **0**. First converted shared JSX: line **130**. Source-level no-regression comparison against `75cef123a9bafdf9126daaeb23556f66cb878caa` found identical counts for `apiFetch`, `fetch(`, `onClick=`, `onChange=`, `disabled=`, `href=`, `action=`, `method=`, and mutation method tokens. **No TS parser, browser, CI, tests or runtime build executed.**
+
+
+### Strict-tick gap register
+
+- [ ] **F3 OPEN:** shared error/warning/success fills and 6px control radius token-level match old LMS; rendered border widths/opacities, text baselines, button focus/hover/active/disabled/loading and whole-repo zero bespoke instances have **not** been proved.
+- [ ] **F4 OPEN:** no broader route loading/spinner/shimmer timing or reduced-motion browser proof in this batch.
+- [ ] **F5 OPEN:** three empty-state sites migrated, but entire application 403/404/500/maintenance/offline/session-expired and actual viewport comparisons still open.
+- [ ] **Per-file strict tick OPEN:** values/grep/responsive **source** proof is not equivalent to side-by-side 320px/767px/1024px screenshots or executed functionality. No CI, tests, app build, TS compile or browser run.
+
+**Next exact file:** `src/components/tpo/tpo-company-team-conversation.tsx` (mixed company team loading, migration gate, truncated history, threaded message responses), followed by `src/components/tpo/tpo-selected-review-queue.tsx`.
