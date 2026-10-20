@@ -5,6 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Disclosure} from "@/components/ui/disclosure";
 import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
 import {CollegeAdminLifecycleAction} from "@/components/admin/college-admin-lifecycle-action";
 import {listCollegeAdminSessionTargets} from "@/modules/colleges/admin-session-service";
@@ -16,15 +17,17 @@ export default async function CollegeAdministratorsPage({params}:{
  const collegeId=(await params).collegeId;
  const context=await getCurrentRequestContext();
  const data=await listCollegeAdminSessionTargets(context,collegeId);
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title={data.college.name+" · Admins"}
    description="Manage college administrators and placement-cell officers in this college. New accounts use the canonical college membership workflow."
-   actions={<div className="flex w-full min-w-0 flex-wrap items-center gap-2 md:w-auto md:justify-end">
+   actions={<div className="flex w-full min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:w-auto md:flex-row md:items-center md:justify-end">
     <PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)} label="College setup"/>
-    <PersonOnboardDialog collegeId={collegeId} forcedRole="COLLEGE_ADMIN"/>
-    <PersonOnboardDialog collegeId={collegeId} forcedRole="TPO"/>
+    <div className="grid min-w-0 w-full gap-[var(--lms-space-2)] sm:grid-cols-2 md:w-auto">
+      <PersonOnboardDialog collegeId={collegeId} forcedRole="COLLEGE_ADMIN"/>
+      <PersonOnboardDialog collegeId={collegeId} forcedRole="TPO"/>
+    </div>
    </div>}/>
-  <section aria-label="College administrator directory" className="border-t border-border pt-4">
+  <section aria-label="College administrator directory" className="min-w-0 border-t border-border pt-[var(--lms-space-4)]">
    <h2 className="mb-3 font-semibold">College Admin and TPO accounts</h2>
    <DataTable<(typeof data.items)[number]> caption="College Admin and TPO accounts" rows={data.items} getRowKey={item=>item.userId}
     empty={<EmptyState title="No administrator accounts" description="No active College Admin or TPO accounts in this college."/>}
@@ -33,7 +36,7 @@ export default async function CollegeAdministratorsPage({params}:{
       {key:"email",header:"Email",mobilePriority:"secondary",cell:item=><span className="break-all">{item.email??"Not recorded"}</span>},
       {key:"roles",header:"Roles",mobilePriority:"secondary",cell:item=>item.roles.join(", ")},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"warning"}>{item.status==="ACTIVE"?"Enabled":"Suspended"}</StatusBadge>},
-      {key:"access",header:"Access",mobilePriority:"action",cell:item=><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")}/>},
+      {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")}/></Disclosure>},
       {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)} className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">View active devices</Link>},
       {key:"history",header:"History",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"} className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">View history</Link>},
     ]}/>

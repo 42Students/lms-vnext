@@ -1,11 +1,8 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
-import {Suspense} from "react";
-import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -63,16 +60,14 @@ export default async function TpoPerformanceIntelligencePage({
     (paramsCsv.size ? "?" + paramsCsv.toString() : "");
 
   return (
-    <div data-tpo-presentation-report className="space-y-5">
-      <TpoReportPresentation />
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/intelligence" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Company funnel and compensation"
         description="Observed applications and offer decisions by employer, plus explicitly defined annual CTC measures."
         actions={
           <a href={csvHref}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 sm:w-auto text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Export intelligence CSV
           </a>
         }
@@ -118,7 +113,8 @@ export default async function TpoPerformanceIntelligencePage({
           highest accepted full-time CTC. Unknown packages are excluded from
           averages, not treated as zero.
         </p>
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        <Disclosure title="Compensation metrics" className="border-y border-border py-3">
+          <div className="pt-3 grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3">
           {([
             ["Accepted full-time offer versions", compensation.acceptedFullTimeOfferVersions],
             ["Versions with known CTC", compensation.knownPackageOfferVersions],
@@ -130,12 +126,13 @@ export default async function TpoPerformanceIntelligencePage({
             ["Best-per-learner median annual CTC", reportCurrency(compensation.uniqueLearnerBestMedianInr)],
             ["Best-per-learner highest annual CTC", reportCurrency(compensation.uniqueLearnerBestHighestInr)],
           ] as const).map(([name, value]) => (
-            <article key={name} className="border-b border-border py-4">
+            <div key={name} className="min-w-0 border-b border-border py-3">
               <h3 className="text-xs font-semibold text-muted-foreground">{name}</h3>
               <p className="mt-2 text-xl font-bold tabular-nums text-foreground">{value}</p>
-            </article>
+            </div>
           ))}
         </div>
+        </Disclosure>
         <ReportTable
           title="Accepted full-time offer CTC distribution"
           headings={["Annual CTC band", "Offer versions"]}

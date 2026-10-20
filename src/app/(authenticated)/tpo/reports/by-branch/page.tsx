@@ -48,22 +48,17 @@ export default async function TpoByBranchReportPage({
   });
 
   return (
-    <div data-tpo-presentation-report className="min-w-0 space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="By branch"
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-branch"].description}
-        actions={
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <Link href="/tpo/reports/branch-season" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">View applicant and accepted-offer evidence by season →</Link>
           <ReportCsvLink workspace={workspace} kind="by-branch" />
-        }
+        </div>}
       />
 
-      <Link
-        href="/tpo/reports/branch-season"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-      >
-        View applicant and accepted-offer evidence by season →
-      </Link>
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}

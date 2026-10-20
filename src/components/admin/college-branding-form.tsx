@@ -142,7 +142,7 @@ export function CollegeBrandingForm({
     <div className="grid min-w-0 grid-cols-1 gap-6 min-[992px]:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={save}
-        className="min-w-0 space-y-5 border-t border-[var(--lms-canvas-border)] pt-4 print:hidden"
+        className="min-w-0 space-y-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] print:hidden"
       >
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
@@ -180,6 +180,7 @@ export function CollegeBrandingForm({
           chosen automatically so it always stays readable.
         </p>
 
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
         {FIELDS.map((field) => (
           <label key={field.key} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -204,9 +205,10 @@ export function CollegeBrandingForm({
             ) : null}
           </label>
         ))}
+        </div>
 
         {canEdit ? (
-          <Button type="submit" loading={saving} disabled={saving} className="min-h-11 md:min-h-9">
+          <Button type="submit" loading={saving} disabled={saving} className="min-h-11 w-full md:min-h-9 md:w-auto">
             {saving ? "Saving…" : "Save branding"}
           </Button>
         ) : (

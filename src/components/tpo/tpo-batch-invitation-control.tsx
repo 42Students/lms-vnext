@@ -114,13 +114,13 @@ export function TpoBatchInvitationControl(props: Props) {
   if (props.invitedAt) {
     const deadlinePassed = props.deadlinePassed;
     const sameDeadline = date === (props.deadline?.slice(0,10) ?? "");
-    return <section aria-label="Registration deadline" className="min-w-0 space-y-3 border-y border-border py-4">
+    return <section aria-label="Registration deadline" className="min-w-0 space-y-3 border-y border-[var(--lms-canvas-border)] py-4">
       <h2 className="font-semibold">{deadlinePassed ? "Registration closed" : "Registration is open"}</h2>
       <label htmlFor="batch-move-date" className="block text-sm">Register by</label>
-      <Input className="min-h-11 max-w-xs md:min-h-9" id="batch-move-date" aria-label="Registration deadline" type="date"
+      <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id="batch-move-date" aria-label="Registration deadline" type="date"
         value={date} min={props.minDate} onChange={event => setDate(event.target.value)}
         />
-      <div className="flex flex-wrap gap-2">
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Button variant="primary" type="button" disabled={busy || !date || date < props.minDate || sameDeadline}
           onClick={() => void saveDeadline(false)}
           >
@@ -159,7 +159,7 @@ export function TpoBatchInvitationControl(props: Props) {
   return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Invite batch">
     <h2 className="font-semibold">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
     <label className="block text-sm" htmlFor="batch-register-by">{TPO_INVITATION_COPY.dateLabel}</label>
-    <Input className="min-h-11 max-w-xs md:min-h-9" id="batch-register-by" aria-label="Registration deadline" type="date" value={date} min={props.minDate}
+    <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id="batch-register-by" aria-label="Registration deadline" type="date" value={date} min={props.minDate}
       onChange={event => setDate(event.target.value)}
        />
     <Button variant="primary" type="button" onClick={() => void invite()}

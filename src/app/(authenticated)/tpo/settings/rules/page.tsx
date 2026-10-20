@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -84,8 +85,8 @@ export default async function TpoPlacementRulesSettingsPage({
   if (selectedPage === null) {
     return (
       <div className="min-w-0 space-y-6">
-        <TpoSettingsNav active="rules" />
         <PageHeader title="Placement rules" />
+        <TpoSettingsNav active="rules" compact />
         <ErrorState
           title="Invalid placement rules filters"
           description="The requested job page is invalid. No placement job records were loaded."
@@ -107,10 +108,10 @@ export default async function TpoPlacementRulesSettingsPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <TpoSettingsNav active="rules" />
+      <PageHeader title="Placement rules" />
+      <TpoSettingsNav active="rules" compact />
 
       <section className="space-y-2">
-        <PageHeader title="Placement rules" />
         <p className="text-sm leading-6 text-body">
           The college-wide offer policy and
           job-specific eligibility criteria.
@@ -120,7 +121,8 @@ export default async function TpoPlacementRulesSettingsPage({
         </p>
       </section>
 
-      <section className="border-t border-border pt-5">
+      <Disclosure title="Current college-wide offer policy" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
+      <section className="min-w-0 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             College-wide offer policy
@@ -163,6 +165,7 @@ export default async function TpoPlacementRulesSettingsPage({
             : "No custom rules are saved yet. Current defaults count released offers, allow one held offer, require a 40% uplift and at least 48 hours to respond."}
         </p>
       </section>
+      </Disclosure>
 
       <TpoCollegeRulesControl rules={{
         countsAsPlacedAt: rules.countsAsPlacedAt,
@@ -172,9 +175,10 @@ export default async function TpoPlacementRulesSettingsPage({
         version: rulesVersion,
       }} />
 
+      <Disclosure title="Fixed eligibility and participation behavior" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section className="space-y-4">
         <div>
-          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <h3 className="sr-only">
             Fixed eligibility and participation behavior
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -211,6 +215,7 @@ export default async function TpoPlacementRulesSettingsPage({
           ))}
         </div>
       </section>
+      </Disclosure>
 
       <section className="space-y-4">
         <div>
@@ -273,7 +278,8 @@ export default async function TpoPlacementRulesSettingsPage({
                   </StatusBadge>
                 </div>
 
-                <dl className="mt-4 grid gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+                <Disclosure title="Eligibility details" className="mt-3 min-w-0" contentClassName="min-w-0 pt-3">
+                <dl className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   <RuleValue
                     label="Minimum CGPA"
                     value={formatTpoEligibilityThreshold(
@@ -343,6 +349,7 @@ export default async function TpoPlacementRulesSettingsPage({
                     value={job.missingEvidencePolicy}
                   />
                 </dl>
+                </Disclosure>
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
                   <p className="m-0 text-xs leading-5 text-muted-foreground">
@@ -398,6 +405,7 @@ export default async function TpoPlacementRulesSettingsPage({
         </nav>
       </section>
 
+      <Disclosure title="Rules data sources" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Sources: placement_college_rules,
         placement_job_eligibility_policies,
@@ -407,6 +415,7 @@ export default async function TpoPlacementRulesSettingsPage({
         placement rules, academic thresholds,
         eligibility decisions, or registration.
       </p>
+      </Disclosure>
     </div>
   );
 }

@@ -126,7 +126,7 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
   <p className="hidden text-sm print:block">New recruiter access duration: {months} months</p>
   <p className="text-xs text-muted-foreground">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===months}
-   className="min-h-11 min-[768px]:min-h-9 print:hidden">Save</Button>
+   className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;

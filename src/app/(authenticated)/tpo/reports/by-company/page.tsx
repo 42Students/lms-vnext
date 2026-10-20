@@ -3,13 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
-import {Suspense} from "react";
-import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { buildTpoCompanyReportLinks } from "@/modules/placements/tpo-company-report-links-model";
@@ -67,27 +63,24 @@ export default async function TpoByCompanyReportPage({
   const companyLinks=buildTpoCompanyReportLinks(view.rows);
   const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page});
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="By company"
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-company"].description}
-        actions={<div className="flex flex-wrap items-center gap-2">
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <ReportCsvLink workspace={workspace} kind="by-company" />
           <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
             jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})}
-            className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
             Export visible companies CSV
           </a>
         </div>}
       />
 
-      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/by-company" />
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/by-company" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <ReportMetrics metrics={workspace.report.metrics} />
-      <form action="/tpo/reports/by-company" method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+      <form action="/tpo/reports/by-company" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 w-full flex-1 gap-[6px] min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search company name
@@ -103,8 +96,10 @@ export default async function TpoByCompanyReportPage({
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
             <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option><option value="HIGHEST_CTC_DESC">Highest accepted full-time CTC (high first)</option>
           </Select>
-        </label><Button type="submit" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</Button>
+        </label><Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:w-auto md:min-h-[var(--lms-control-height)]">Apply</Button>
       </form>
+
+      <ReportMetrics metrics={workspace.report.metrics} />
       <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope; the visible-companies CSV matches this search, order and page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
       {view.total===0&&companyReportHasUserFilters(view.query)?<EmptyState title="No company records match these filters within the selected reporting scope." action={

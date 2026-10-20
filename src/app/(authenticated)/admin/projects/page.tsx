@@ -18,6 +18,7 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import { Tabs } from "@/components/ui/tabs";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
+import { Dropdown } from "@/components/ui/dropdown";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -37,7 +38,7 @@ export default async function SuperAdminProjectsPage({
   // The /admin layout is not an authorization substitute. Reject a disabled
   // or non-Super-Admin actor before any project or template service call.
   if (!isSuperAdmin(context)) {
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="Project workspaces" actions={<PageBackLink href="/admin/projects" label="Projects" />} />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
@@ -49,7 +50,7 @@ export default async function SuperAdminProjectsPage({
 
   if (!collegeId) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-4">
         <PageHeader
           title="Project workspaces"
           description="Live projects, each run by a mentor with a team of students."
@@ -69,7 +70,7 @@ export default async function SuperAdminProjectsPage({
 
   const parsed = parseAdminProjectsQuery(await searchParams);
   if (!parsed.success) {
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<PageBackLink href="/admin/projects" label="Projects" />} />
@@ -116,7 +117,7 @@ export default async function SuperAdminProjectsPage({
     if (query.page) retryParams.set("page", String(query.page));
     if (query.pageSize) retryParams.set("pageSize", String(query.pageSize));
     const suffix = retryParams.toString();
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<PageBackLink href="/admin/projects" label="Projects" />} />
@@ -132,27 +133,23 @@ export default async function SuperAdminProjectsPage({
   const templates=templatesResult.ok?templatesResult.value:[];
 
   return (
-    <div className="min-w-0 space-y-6">
-      <PageHeader
-        title="Project workspaces"
-        description="Live projects, each run by a mentor with a team of students."
-        actions={
-          <div className="flex min-w-0 w-full flex-col items-stretch justify-end gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center">
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href="/admin/projects/workspaces/new">Create workspace</Link>
-            <CreateProjectControl
-              collegeId={collegeId}
-              basePath="/admin/projects"
-              templates={templates.map((template) => ({
-                templateId: template.templateId,
-                title: template.title,
-                version: template.version,
-                summary: template.summary,
-              }))}
-            />
+    <div className="min-w-0 space-y-4">
+      <PageHeader title="Project workspaces"
+        description="Live projects, each run by a mentor with a team of students." />
+      <div className="flex min-w-0 flex-wrap items-center gap-2 print:hidden">
+        <CreateProjectControl
+          collegeId={collegeId} basePath="/admin/projects"
+          templates={templates.map(template=>({
+            templateId:template.templateId,title:template.title,
+            version:template.version,summary:template.summary,
+          }))} />
+        <Dropdown trigger="More" label="Project workspace actions" align="end" mobileSheet>
+          <div className="grid min-w-0 gap-2">
+            <Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">Create workspace</Link>
+            <Link href="/admin/projects/reassign-mentor" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">Bulk reassign mentor</Link>
           </div>
-        }
-      />
+        </Dropdown>
+      </div>
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
 
       {!templatesResult.ok ? <Banner tone="warning">
@@ -171,6 +168,7 @@ export default async function SuperAdminProjectsPage({
           memberCount:item.memberCount,progressPercent:item.progressPercent,updatedAt:item.updatedAt,
         }))}/>} />
       <ProjectAdminWorkspaceList
+        compactAdmin
         view={view}
         items={result.items.map((project) => ({
           id: project.id,

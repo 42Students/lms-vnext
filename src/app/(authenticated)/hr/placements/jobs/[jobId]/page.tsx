@@ -271,7 +271,7 @@ export default async function HrPlacementJobPage({
       : null;
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-4">
       <RecruiterDriveFocusRefresh />
       <Link href={returnTo} className="inline-flex min-h-9 max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         ← Back to Drives
@@ -287,7 +287,7 @@ export default async function HrPlacementJobPage({
             "Date to be decided")}
       />
 
-      <section aria-label="Hiring drive status and key facts" className="border-b border-border pb-6">
+      <section aria-label="Hiring drive status and key facts" className="min-w-0 border-b border-border pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge
             tone={
@@ -309,10 +309,10 @@ export default async function HrPlacementJobPage({
             {workspace.job.workMode.toLowerCase()}
           </StatusBadge>
         </div>
-        <p className="mt-4 text-sm leading-6 text-body">
+        <p className="mt-3 max-w-4xl whitespace-pre-wrap break-words text-sm leading-6 text-body">
           {workspace.job.description}
         </p>
-        <div className="mt-4 grid gap-3 text-sm text-body md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-3 grid min-w-0 gap-x-6 gap-y-2 text-sm text-body min-[768px]:grid-cols-2 xl:grid-cols-4">
           <p className="m-0">
             <span className="font-semibold text-foreground">
               Locations:
@@ -345,6 +345,16 @@ export default async function HrPlacementJobPage({
         </div>
       </section>
 
+      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={filters.tab}
+        items={[{value:"overview",label:"Overview",href:`/recruiter/drives/${workspace.job.id}?tab=overview${returnQuery}`},
+          {value:"applicants",label:"Applicants",count:applicants.counts.all,
+           href:`/recruiter/drives/${workspace.job.id}?tab=applicants${returnQuery}`},
+          {value:"rounds",label:"Rounds & interviews",href:`/recruiter/drives/${workspace.job.id}?tab=rounds${returnQuery}`},
+          {value:"offers",label:"Offers",count:offersTotal,href:`/recruiter/drives/${workspace.job.id}?tab=offers${returnQuery}`},
+          {value:"requests",label:"Requests",count:requestData?.requests.length,
+           href:`/recruiter/drives/${workspace.job.id}?tab=requests${returnQuery}`},
+          {value:"discussion",label:"Discussion",href:`/recruiter/drives/${workspace.job.id}?tab=discussion${returnQuery}`},
+          {value:"messages",label:"Messages",href:hrDriveMessagesHref(workspace.job.id)}]}/>
       {filters.tab === "overview" && !requestsTab && !discussionTab ? (
         <section className="space-y-4 border-b border-border pb-4 md:pb-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -355,8 +365,20 @@ export default async function HrPlacementJobPage({
                 {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
-          <section aria-label="What students see" className="border-b border-border pb-4 md:pb-6">
-            <h3 className="font-semibold text-foreground">What students see</h3>
+          <div className="min-w-0 border-b border-border pb-4">
+            <h3 className="font-semibold text-[var(--lms-heading)]">Next</h3>
+            <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
+            <Link href={recruiterDriveNextAction(driveOverview).tab
+               ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab+returnQuery
+               : recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
+              className="mt-3 inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              {recruiterDriveNextAction(driveOverview).label}
+            </Link>
+          </div>
+          <section aria-label="What students see" className="border-b border-border pb-4">
+            <details className="min-w-0">
+             <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">What students see</summary>
+             <div className="mt-2 min-w-0">
             <p className="mt-1 text-xs text-muted-foreground">
               Student-facing draft facts are shown for reference. Exact publication and application access are controlled by the placement cell.
             </p>
@@ -380,6 +402,8 @@ export default async function HrPlacementJobPage({
                   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(workspace.job.applicationDeadline)+" IST":"Not specified"}
               </dd></div>
             </dl>
+             </div>
+            </details>
           </section>
           <section aria-labelledby="recruiter-shared-funnel-title"
             className="border-b border-border pb-4 md:pb-6">
@@ -413,17 +437,7 @@ export default async function HrPlacementJobPage({
               <span className="mt-1 block">{step.label}</span>
             </li>)}
           </ol>
-          <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
-            <h3 className="font-semibold text-[var(--lms-heading)]">Next</h3>
-            <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
-            <Link href={recruiterDriveNextAction(driveOverview).tab
-               ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab+returnQuery
-               : recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
-              className="mt-3 inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-              {recruiterDriveNextAction(driveOverview).label}
-            </Link>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <dl className="grid min-w-0 gap-x-6 gap-y-3 border-y border-border py-3 md:grid-cols-2 lg:grid-cols-3">
             {[
               {label:"Shared applications (capped)",value:driveOverview.shared},
               {label:"Active shortlist",value:driveOverview.active},
@@ -431,11 +445,11 @@ export default async function HrPlacementJobPage({
               {label:"Evaluative rounds completed",value:driveOverview.completedRounds+" / "+driveOverview.totalRounds},
               {label:"Issued offers (capped)",value:driveOverview.issuedOffers},
               {label:"Accepted offers (capped)",value:driveOverview.acceptedOffers},
-            ].map(card=><div key={card.label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3">
-              <p className="text-xs text-muted-foreground">{card.label}</p>
-              <p className="mt-1 text-xl font-bold tabular-nums text-foreground">{card.value}</p>
+            ].map(card=><div key={card.label} className="min-w-0">
+              <dt className="text-xs text-muted-foreground">{card.label}</dt>
+              <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{card.value}</dd>
             </div>)}
-          </div>
+          </dl>
           <div className="flex flex-wrap gap-3 text-sm">
             <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants"+returnQuery} className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review applicants</Link>
             <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery} className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Rounds & results</Link>
@@ -443,7 +457,9 @@ export default async function HrPlacementJobPage({
           </div>
         </section>
       ) : null}
-      <div className="flex flex-wrap gap-3">
+      <details className="min-w-0">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Hire again</summary>
+        <div className="mt-2 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
         <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
           className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Hire again
@@ -452,17 +468,8 @@ export default async function HrPlacementJobPage({
           className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Request another drive
         </Link>
-      </div>
-      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={filters.tab}
-        items={[{value:"overview",label:"Overview",href:`/recruiter/drives/${workspace.job.id}?tab=overview${returnQuery}`},
-          {value:"applicants",label:"Applicants",count:applicants.counts.all,
-           href:`/recruiter/drives/${workspace.job.id}?tab=applicants${returnQuery}`},
-          {value:"rounds",label:"Rounds & interviews",href:`/recruiter/drives/${workspace.job.id}?tab=rounds${returnQuery}`},
-          {value:"offers",label:"Offers",count:offersTotal,href:`/recruiter/drives/${workspace.job.id}?tab=offers${returnQuery}`},
-          {value:"requests",label:"Requests",count:requestData?.requests.length,
-           href:`/recruiter/drives/${workspace.job.id}?tab=requests${returnQuery}`},
-          {value:"discussion",label:"Discussion",href:`/recruiter/drives/${workspace.job.id}?tab=discussion${returnQuery}`},
-          {value:"messages",label:"Messages",href:hrDriveMessagesHref(workspace.job.id)}]}/>
+        </div>
+      </details>
       {discussionTab?<section aria-label="Drive discussion" className="space-y-4 border-b border-border pb-4 md:pb-6">
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Discussion</h2>
@@ -542,9 +549,9 @@ export default async function HrPlacementJobPage({
                     "&page="+filters.page+"&applicant="+encodeURIComponent(applicant.id)+returnQuery,
                 }))}/>
             </div>
-            <div className="grid gap-3 md:hidden">
+            <div className="grid min-w-0 divide-y divide-border border-y border-border md:hidden">
             {applicants.rows.map(applicant => (
-              <article key={applicant.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+              <article key={applicant.id} className="min-w-0 py-4">
                 <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
                 {applicant.rollNumber?<p className="mt-1 text-xs text-body">Roll no. {applicant.rollNumber}</p>:null}
@@ -760,7 +767,7 @@ export default async function HrPlacementJobPage({
             Add, change or remove rounds
           </Link>
           <Link href={"/recruiter/drives/"+workspace.job.id+"/interview-slots"}
-            className="ml-2 mt-2 inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="mt-2 inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Interview slots
           </Link>
 </div>}

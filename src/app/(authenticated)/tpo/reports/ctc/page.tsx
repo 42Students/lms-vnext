@@ -1,11 +1,8 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
-import {Suspense} from "react";
-import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
+import {Disclosure} from "@/components/ui/disclosure";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -65,23 +62,21 @@ export default async function TpoCtcReportPage({
   ];
 
   return (
-    <div data-tpo-presentation-report className="space-y-4">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         title="Packages"
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/ctc"].description}
         actions={<ReportCsvLink workspace={workspace} kind="ctc" />}
       />
 
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/ctc" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/ctc" />
 
       <section
         aria-label="Compensation metrics"
-        className="grid gap-2 md:grid-cols-2 xl:grid-cols-3"
+        className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-4"
       >
-        {metrics.map(([label, value]) => (
+        {metrics.slice(0,4).map(([label, value]) => (
           <div
             key={label}
             className="min-w-0 border-b border-border py-4"
@@ -96,6 +91,14 @@ export default async function TpoCtcReportPage({
         ))}
       </section>
 
+      <Disclosure title="Additional compensation metrics" className="border-b border-border pb-3">
+        <div className="grid min-w-0 grid-cols-2 gap-3 pt-3 lg:grid-cols-3">
+          {metrics.slice(4).map(([label,value])=><div key={label} className="min-w-0 border-b border-border py-3">
+            <p className="text-xs font-semibold uppercase text-body">{label}</p>
+            <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">{value}</p>
+          </div>)}
+        </div>
+      </Disclosure>
       <ReportScopeNote note={workspace.detailScopeNote} />
       <ReportBarChart title="Accepted full-time offers by annual package band" units="offers"
        rows={ctc.bands.map(band=>({label:band.label,value:band.offers}))}/>
