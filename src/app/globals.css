@@ -347,7 +347,7 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-topbar-avatar-hover: #d4f0f2;
   --lms-topbar-heading: #18212f;
   --lms-canvas-border: #e5e9f0;
-  --lms-table-header: #fafbfc;
+  --lms-table-header: #ffffff;
   --lms-control-height: 36px;
   --lms-tab-gap: 20px;
   --lms-control-radius: 9px;
@@ -576,27 +576,31 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [role="menuitem"]:hover:not([aria-disabled="true"]) { background: var(--lms-primary-subtle); }
 [data-slot="data-table"] table {
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 20px;
   font-variant-numeric: tabular-nums;
 }
 [data-slot="data-table"] thead { background: var(--lms-table-header); }
 [data-slot="data-table"] th {
-  padding: 11px 16px;
+  padding: 0 16px 11px;
   background: var(--lms-table-header);
-  color: #54505d;
+  color: var(--lms-neutral-400);
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
   border-bottom: 1px solid var(--lms-canvas-border);
 }
 [data-slot="data-table"] td {
-  padding: 10px 16px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--lms-canvas-border);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 20px;
 }
-[data-slot="data-table"] tbody tr:hover { background: var(--lms-table-hover); }
+[data-slot="data-table"] tbody tr:hover { background: transparent; }
+@media (min-width: 768px) {
+  [data-slot="data-table"] :is(th, td):first-child { padding-left: 0; }
+  [data-slot="data-table"] :is(th, td):last-child { padding-right: 0; }
+}
 [data-slot="pagination"] [aria-current="page"] {
   color: var(--lms-primary-text);
   border-color: var(--lms-primary);
@@ -732,7 +736,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   }
 }
 @media (min-width: 640px) {
-  [data-slot="data-table"] td { padding: 10px 16px; }
+  [data-slot="data-table"] td { padding: 12px 16px; }
 }
 @media (max-width: 639px) {
   [data-slot="data-table"] td { padding: 4px 0; }
@@ -972,7 +976,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="data-table"] th,
 [data-slot="table"] th {
   color: #a9a7ae;
-  background: #fafbfc;
+  background: var(--lms-table-header);
   font-weight: 600;
 }
 [data-slot="data-table"] tbody tr,
@@ -980,7 +984,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   transition: background-color 150ms ease;
 }
 @media (min-width: 640px) {
-  [data-slot="data-table"] td { padding: 10px 16px; }
+  [data-slot="data-table"] td { padding: 12px 16px; }
 }
 [data-slot="status-badge"],
 [data-slot="badge"] {
