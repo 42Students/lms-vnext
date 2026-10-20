@@ -40,7 +40,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
   const bookingOptions = result?.hall.status === "ACTIVE"
     ? await listRecurringPreviewOptions(await getCurrentRequestContext()) : null;
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="College Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
+    <PageHeader title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<Link href="/college/lecture-halls"
         className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link">Back to lecture halls</Link>} />
@@ -60,7 +60,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
       : !result ? <p className="border-b border-border pb-5 text-sm text-body">
         Select an IST date range to inspect persisted sessions and configured capacity.
       </p> : <>
-        <section className="grid gap-3 - sm:grid-cols-3 border-t border-border pt-5">
+        <section className="grid min-w-0 gap-3 md:grid-cols-3 border-t border-border pt-5">
           <p className="text-sm text-body"><span className="font-semibold">Capacity:</span> {result.hall.capacity} seats</p>
           <p className="text-sm text-body"><span className="font-semibold">Status:</span> {result.hall.status}</p>
           <p className="text-sm text-body"><span className="font-semibold">Scheduled:</span> {result.sessions.length}{result.truncated ? "+" : ""} sessions</p>
@@ -74,7 +74,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
           {result.sessions.length === 0 ? <p className="border-b border-border pb-5 text-sm text-body">
             No persisted scheduled sessions overlap this date range. This is not confirmation that the hall is free for booking.
           </p> : <ul className="space-y-3">{result.sessions.map(item =>
-            <li key={item.id} className="rounded-[8px] border border-border bg-surface p-4">
+            <li key={item.id} className="border-b border-border py-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <h3 className="font-semibold text-foreground">{item.title}</h3>
                 {item.hasConflict ? <strong className="text-sm text-error">Potential conflict</strong> :

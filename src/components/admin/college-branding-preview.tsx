@@ -33,18 +33,18 @@ function SignInStylePreview({
       aria-label={mobile ? "Mobile sign-in illustration" : "Desktop sign-in illustration"}
       className={
         mobile
-          ? "mx-auto flex h-[360px] w-[235px] max-w-full items-center justify-center overflow-hidden rounded-[2rem] border-[7px] border-border p-3 shadow-none"
-          : "flex min-h-[360px] items-center justify-center overflow-hidden rounded-[var(--college-card-radius,8px)] border border-border p-5"
+          ? "mx-auto flex aspect-[47/72] w-full max-w-56 max-w-full items-center justify-center overflow-hidden rounded-3xl border-4 border-border p-3 shadow-none"
+          : "flex min-h-80 items-center justify-center overflow-hidden rounded-[var(--college-card-radius,8px)] border border-border p-5"
       }
       style={canvasStyle}
     >
       <div
         className={
           mobile
-            ? "w-full rounded-[var(--lms-canvas-radius)] bg-surface p-4 shadow-lg"
-            : "w-full max-w-[320px] rounded-[var(--lms-canvas-radius)] bg-surface p-7 shadow-lg"
+            ? "w-full rounded-[var(--lms-canvas-radius)] border-t-4 bg-surface p-4 shadow-lg"
+            : "w-full max-w-xs rounded-[var(--lms-canvas-radius)] border-t-4 bg-surface p-6 shadow-lg"
         }
-        style={{ borderTop: "4px solid " + branding.secondary }}
+        style={{ borderTopColor: branding.secondary }}
       >
         {branding.logoUrl ? (
           // An existing pure helper has verified the public HTTPS logo URL.
@@ -85,7 +85,7 @@ function SignInStylePreview({
         >
           Continue
         </div>
-        <p className="mt-3 text-center text-[10px] text-muted-foreground">
+        <p className="mt-3 text-center text-xs text-muted-foreground">
           Illustration only · No live sign-in
         </p>
       </div>
@@ -196,7 +196,7 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Support email</dt>
             <dd className="mt-1 text-body">
               {branding.supportEmail ? (
-                <a href={"mailto:" + branding.supportEmail} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                <a href={"mailto:" + branding.supportEmail} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                   {branding.supportEmail}
                 </a>
               ) : "Not configured"}
@@ -208,7 +208,7 @@ export function CollegeBrandingPreview({
               {branding.supportPhone ? (
                 <a
                   href={"tel:" + branding.supportPhone.replaceAll(/[ ()-]/g, "")}
-                  className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                  className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                 >
                   {branding.supportPhone}
                 </a>
@@ -220,7 +220,7 @@ export function CollegeBrandingPreview({
             <dd className="mt-1 text-body">
               {branding.termsUrl ? (
                 <a href={branding.termsUrl}
-                   className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open terms link</a>
+                   className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open terms link</a>
               ) : "Not configured"}
             </dd>
           </div>
@@ -229,7 +229,7 @@ export function CollegeBrandingPreview({
             <dd className="mt-1 text-body">
               {branding.privacyUrl ? (
                 <a href={branding.privacyUrl}
-                   className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open privacy link</a>
+                   className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open privacy link</a>
               ) : "Not configured"}
             </dd>
           </div>

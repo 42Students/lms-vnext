@@ -8,6 +8,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
 import {SummaryStrip} from "@/components/ui/summary-strip";
+import {EmptyState} from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {DataTable, type DataTableColumn} from "@/components/ui/data-table";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -99,7 +100,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    <section aria-label="College interview appointments">
     <DataTable caption="College interview appointments" columns={columns}
       rows={data.rows} getRowKey={row=>row.id}
-      empty={<p role="status" className="text-sm text-body">No interviews match these filters.</p>} />
+      empty={<EmptyState title="No matching interviews" description="No interviews match these filters."/>} />
    </section>
    <nav aria-label="Interview result pages" className="flex gap-4 text-sm">
     {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Previous</Link>:null}

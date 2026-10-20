@@ -65,7 +65,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
      <Button type="button" variant="secondary" disabled={pending} onClick={()=>setConfirmLock(true)}
       >Lock submission</Button>:null}
    </>}>
-   <label className="block text-[13px] font-semibold text-body">Feedback for the learner
+   <label className="block text-[var(--lms-font-sm)] font-semibold text-body">Feedback for the learner
     <Textarea maxLength={6000} value={feedback} disabled={pending}
       onChange={event=>setFeedback(event.target.value)} rows={4}
       className="mt-2 w-full"

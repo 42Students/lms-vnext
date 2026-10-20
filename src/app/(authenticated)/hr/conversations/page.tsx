@@ -1,3 +1,4 @@
+import inboxStyles from "@/components/hr/recruiter-conversations-legacy.module.css";
 import { EmptyState } from "@/components/ui/empty-state";
 import {Disclosure} from "@/components/ui/disclosure";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
@@ -7,7 +8,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ErrorState } from "@/components/ui/error-state";
-import { Alert } from "@/components/ui/alert";
+import { Banner } from "@/components/ui/banner";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
 import {redirect} from "next/navigation";
@@ -87,9 +88,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     }))}/>
   </section>:<>
    {decisionNoticeResult && !decisionNoticeResult.ok?
-     <Alert tone="warning">
+     <Banner tone="warning">
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
-     </Alert>:null}
+     </Banner>:null}
    {decisionNotices.length>0?<section aria-label="Drive request decisions"
      className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Drive request decisions</h2>
@@ -156,7 +157,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className="min-w-0 w-full basis-full text-sm text-body md:w-[220px] md:basis-auto md:flex-none">Search by drive or message
+    <label className={"min-w-0 w-full basis-full text-sm text-body md:basis-auto md:flex-none "+inboxStyles.searchField}>Search by drive or message
      <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full"/></label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
@@ -198,9 +199,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    </ol>:<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college."/>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
     {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
    </nav>
   </>}
  </div>;

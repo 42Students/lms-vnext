@@ -24,7 +24,7 @@ export default async function SuperAdminElectivesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader  title="Electives" />
     <ErrorState title="Invalid elective filters" description="Search and status must use supported values."
-      action={<Link href="/admin/electives" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   const [data, options] = await Promise.all([
@@ -63,14 +63,14 @@ export default async function SuperAdminElectivesPage({
             {Array.from({length:12},(_,i)=>i+1).map(n=><option key={n} value={n}>{n}</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary font-[650]">Filter</Button>
+        <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end">Filter</Button>
       </form>
       <form method="get" action="/admin/electives" aria-label="Refresh elective directory">
         {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
         <Input type="hidden" name="status" value={data.query.status} />
         {data.query.programId?<Input type="hidden" name="programId" value={data.query.programId}/>:null}
         {data.query.semesterNumber?<Input type="hidden" name="semesterNumber" value={data.query.semesterNumber}/>:null}
-        <Button variant="secondary" type="submit" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Refresh</Button>
+        <Button variant="secondary" type="submit" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center px-4">Refresh</Button>
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
       {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
@@ -102,6 +102,6 @@ export default async function SuperAdminElectivesPage({
       </div> : <EmptyState title="No elective slots" description="No persisted elective slots match the current college and filters." />}
       {data.truncated ? <p className="text-sm text-muted-foreground">Showing only 200 matching elective slots. Narrow the search for older entries.</p> : null}
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline min-[768px]:min-h-9">← Academic overview</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">← Academic overview</Link>
   </div>;
 }

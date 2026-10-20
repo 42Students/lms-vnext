@@ -10,7 +10,7 @@ export function RecruiterApplicantReviewDrawer({
 }: { closeHref: string; title: string; children: ReactNode }) {
   const router = useRouter();
   return <Drawer open onOpenChange={next => { if (!next) router.replace(closeHref); }}
-    title={title} description="Shared applicant review" dismissible historyMode="route">
-    <div className="min-w-0 space-y-4">{children}</div>
+    title={title} description="Shared applicant review" dismissible historyMode="route" bodyClassName="min-w-0 space-y-4">
+    {children}
   </Drawer>;
 }

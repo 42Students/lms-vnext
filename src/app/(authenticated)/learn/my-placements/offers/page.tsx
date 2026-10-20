@@ -50,9 +50,9 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 ];
 
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
-const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[14px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-5 text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
 // Legacy mobile (<768px): one-line horizontally scrolling filter strip (SCSS:56-74).
-const placementFilterNavClass = "min-w-0 max-w-[calc(100vw-48px)] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
+const placementFilterNavClass = "min-w-0 max-w-full flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
 
 export default async function LearnerOffersPage({
   searchParams,
@@ -226,7 +226,7 @@ export default async function LearnerOffersPage({
       ) : null}
       {!requestRead.available ? <p role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
-        <section role="status" className="flex min-h-[180px] min-w-0 flex-col items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
+        <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (

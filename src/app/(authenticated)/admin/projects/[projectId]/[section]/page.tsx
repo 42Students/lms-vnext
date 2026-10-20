@@ -14,14 +14,14 @@ export default async function SuperAdminProjectSectionRoute({
   const query = await searchParams;
   const one = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
   return (
+    <div className="min-w-0 max-w-full overflow-x-clip">
     <AdminProjectSectionPage
       projectId={projectId}
       section={section}
       basePath="/admin/projects"
       from={one(query.from)}
       reason={one(query.reason)}
-
-
     />
+    </div>
   );
 }

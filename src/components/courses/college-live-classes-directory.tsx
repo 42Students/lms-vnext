@@ -12,14 +12,14 @@ import {collegeLiveClassHref} from "@/modules/courses/college-live-classes-model
 import {liveClassIstSchedule} from "@/modules/courses/college-live-classes-model";
 import type {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
 type Data=Awaited<ReturnType<typeof listCollegeContentAggregate>>;
-export function CollegeLiveClassesDirectory({data}:{data:Data}){
+export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;showHeader?:boolean}){
  return <div className="space-y-5">
-  <PageHeader title="Live Classes"
+  {showHeader?<PageHeader title="Live Classes"
     description="Saved lesson sessions in your college. Meeting links are available only through authorized course workspaces."
     actions={<CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
      rows={data.items.map(item=>({title:item.title,course:item.courseName+" ("+item.courseCode+")",
       lesson:item.lessonName,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
-      visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>}/>
+      visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>}/>:null}
   <form method="get" action="/college/live-classes"
     className="flex flex-wrap items-end gap-3 border-b border-border pb-4 print:hidden">
     <label className="grid min-w-0 flex-1 gap-1 text-xs font-semibold text-body">

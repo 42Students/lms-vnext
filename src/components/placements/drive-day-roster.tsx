@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -28,8 +29,7 @@ type Student = {
   room: string | null;
 };
 
-const inputClass =
-  "min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 max-[767px]:min-h-11";
 
 export function DriveDayRoster({
   round,
@@ -184,7 +184,7 @@ export function DriveDayRoster({
         }
       />
 
-      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
         {[
           ["On roster", counts.total],
           ["Checked in", counts.present],
@@ -207,7 +207,7 @@ export function DriveDayRoster({
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border p-4">
-          <input
+          <Input
             className={inputClass}
             value={query}
             onChange={(event) =>

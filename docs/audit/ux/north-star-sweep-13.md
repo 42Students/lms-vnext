@@ -742,3 +742,289 @@ Same measured sources: `components___form.scss:110-142` (13px/600/16px muted gra
 
 - [ ] Visual screenshot pixel comparison, browser-computed CSS, TypeScript/build, live interaction/keyboard QA, tests and CI **not performed** (owner no-CI/no-runtime requirement).
 - [ ] **Next exact file:** `src/app/(authenticated)/admin/students/page.tsx` (then `src/app/(authenticated)/admin/semester-courses/page.tsx`).
+
+
+## 2026-10-20 — chat-13: fifteen additional whole-file source sweeps, A (1–8)
+
+Reference: `docs/design/old-lms-shell.css:55-79` (68px white bar, #e7ecf2 divider and <=767px mobile); `docs/design/old-lms-pages.md` (one white page canvas, flat content sections); `components___form.scss:110-142` (13px/600/16px label; 14px/400/20px, 10px field, teal focus); `components___variables.scss` (#e5e9f0 divider, #eff8fa hover, 44px phone); `src/app/globals.css:327-345,622-677` (9px control, 36px desktop, dark primary #0a7c88/hover #086873). Content and authorization untouched.
+
+### - [x] `src/app/(authenticated)/admin/students/page.tsx` — completed whole-file source parity
+
+| Exact legacy property/state | Current vNext value, source line and proof |
+
+| --- | --- |
+
+| Canvas: white #fff on #f1f4f9 shell, #e5e9f0 thin divider, no outer card duplication | Register anchor now uses dark solid --lms-button-primary (#0a7c88), white ink and dark hover; Manage memberships uses white border and teal focus. Register/Bulk headings semantic foreground. Source line 65. Page remains inside shared authenticated canvas. |
+
+| Form: 13px/600/16px muted labels, 14px/400/20px input, 10px radius, teal 2px focus | No editable page-local form; filters/editors are delegated. No bespoke field palette introduced. |
+
+| Action: 9px control, #0a7c88 white primary; white outlined secondary, teal #eff8fa hover, 2px focus | 3 hover and 6 focus selector mentions; action treatment detailed above. |
+
+| Responsive: >=44px <=767px, 36px >=768px, flex-wrap and mobile stack | Two header links 44px phone/36px >=768px; flex-wrap. Static counts: min-h-11=2, md/min-[768px] min-h-9=2, sm:=0. |
+
+| Disabled, error, empty, loading and selected handling | Delegated to PageHeader, ErrorState; existing conditionals/handlers untouched; no runtime claims. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/students/page.tsx' | wc -l` → **0**; literal hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0, SHA `fa6e80ceca4a`. Source breakpoints inspected; browser screenshots not run.
+
+### - [x] `src/app/(authenticated)/admin/semester-courses/page.tsx` — completed whole-file source parity
+
+| Exact legacy property/state | Current vNext value, source line and proof |
+
+| --- | --- |
+
+| Canvas: white #fff on #f1f4f9 shell, #e5e9f0 thin divider, no outer card duplication | Denied-state return link uses underlined teal, 2px keyboard focus; warning remains flat left stripe; term mapper and directory directly in one canvas. Source line 21. Page remains inside shared authenticated canvas. |
+
+| Form: 13px/600/16px muted labels, 14px/400/20px input, 10px radius, teal 2px focus | No editable page-local form; filters/editors are delegated. No bespoke field palette introduced. |
+
+| Action: 9px control, #0a7c88 white primary; white outlined secondary, teal #eff8fa hover, 2px focus | 0 hover and 3 focus selector mentions; action treatment detailed above. |
+
+| Responsive: >=44px <=767px, 36px >=768px, flex-wrap and mobile stack | 44px mobile/36px tablet return control; one-column min-w-0 root. Static counts: min-h-11=1, md/min-[768px] min-h-9=1, sm:=0. |
+
+| Disabled, error, empty, loading and selected handling | Delegated to PageHeader, ErrorState, EmptyState; existing conditionals/handlers untouched; no runtime claims. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/semester-courses/page.tsx' | wc -l` → **0**; literal hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0, SHA `c835e8f2b90f`. Source breakpoints inspected; browser screenshots not run.
+
+### - [x] `src/app/(authenticated)/admin/academics/page.tsx` — completed whole-file source parity
+
+| Exact legacy property/state | Current vNext value, source line and proof |
+
+| --- | --- |
+
+| Canvas: white #fff on #f1f4f9 shell, #e5e9f0 thin divider, no outer card duplication | All five header actions changed from verbose field-hover CSS to white outlined 9px action with teal border/background hover and 2px focus, preserving all routes. Source line 24. Page remains inside shared authenticated canvas. |
+
+| Form: 13px/600/16px muted labels, 14px/400/20px input, 10px radius, teal 2px focus | No editable page-local form; filters/editors are delegated. No bespoke field palette introduced. |
+
+| Action: 9px control, #0a7c88 white primary; white outlined secondary, teal #eff8fa hover, 2px focus | 10 hover and 15 focus selector mentions; action treatment detailed above. |
+
+| Responsive: >=44px <=767px, 36px >=768px, flex-wrap and mobile stack | Five 44px phone/36px tablet actions; flex-wrap. Static counts: min-h-11=5, md/min-[768px] min-h-9=5, sm:=0. |
+
+| Disabled, error, empty, loading and selected handling | Delegated to PageHeader, EmptyState; existing conditionals/handlers untouched; no runtime claims. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/academics/page.tsx' | wc -l` → **0**; literal hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0, SHA `9e2a4a9e0b16`. Source breakpoints inspected; browser screenshots not run.
+
+### - [x] `src/app/(authenticated)/admin/assignments/page.tsx` — completed whole-file source parity
+
+| Exact legacy property/state | Current vNext value, source line and proof |
+
+| --- | --- |
+
+| Canvas: white #fff on #f1f4f9 shell, #e5e9f0 thin divider, no outer card duplication | Export CSV secondary action uses white border and teal hover/focus; creation-options failure flattened to left warning stripe instead of nested rounded panel. Source line 52. Page remains inside shared authenticated canvas. |
+
+| Form: 13px/600/16px muted labels, 14px/400/20px input, 10px radius, teal 2px focus | No editable page-local form; filters/editors are delegated. No bespoke field palette introduced. |
+
+| Action: 9px control, #0a7c88 white primary; white outlined secondary, teal #eff8fa hover, 2px focus | 2 hover and 3 focus selector mentions; action treatment detailed above. |
+
+| Responsive: >=44px <=767px, 36px >=768px, flex-wrap and mobile stack | Export 44px phone/36px tablet, shared assessment table. Static counts: min-h-11=1, md/min-[768px] min-h-9=1, sm:=0. |
+
+| Disabled, error, empty, loading and selected handling | Delegated to PageHeader, ErrorState, EmptyState; existing conditionals/handlers untouched; no runtime claims. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/assignments/page.tsx' | wc -l` → **0**; literal hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0, SHA `6f5c1f83508c`. Source breakpoints inspected; browser screenshots not run.
+
+### - [x] `src/app/(authenticated)/admin/attendance/page.tsx` — completed whole-file source parity
+
+| Exact legacy property/state | Current vNext value, source line and proof |
+
+| --- | --- |
+
+| Canvas: white #fff on #f1f4f9 shell, #e5e9f0 thin divider, no outer card duplication | Invalid-month Reset action uses white outline, 9px control radius, teal hover and 2px focus; unchanged attendance workspace and policy. Source line 64. Page remains inside shared authenticated canvas. |
+
+| Form: 13px/600/16px muted labels, 14px/400/20px input, 10px radius, teal 2px focus | No editable page-local form; filters/editors are delegated. No bespoke field palette introduced. |
+
+| Action: 9px control, #0a7c88 white primary; white outlined secondary, teal #eff8fa hover, 2px focus | 2 hover and 3 focus selector mentions; action treatment detailed above. |
+
+| Responsive: >=44px <=767px, 36px >=768px, flex-wrap and mobile stack | Reset 44px phone/36px tablet; shared responsive attendance grid. Static counts: min-h-11=1, md/min-[768px] min-h-9=1, sm:=0. |
+
+| Disabled, error, empty, loading and selected handling | Delegated to PageHeader, ErrorState, EmptyState; existing conditionals/handlers untouched; no runtime claims. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/attendance/page.tsx' | wc -l` → **0**; literal hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0, SHA `382d4167e00d`. Source breakpoints inspected; browser screenshots not run.
+
+### - [x] `src/app/(authenticated)/admin/audit/page.tsx` — completed whole-file source parity
+
+| Exact legacy property/state | Current vNext value, source line and proof |
+
+| --- | --- |
+
+| Canvas: white #fff on #f1f4f9 shell, #e5e9f0 thin divider, no outer card duplication | Audit Findings action retains outlined white surface; invalid-filter Clear action now has underlined teal ink and 2px keyboard focus; ActivityPage handles events. Source line 20. Page remains inside shared authenticated canvas. |
+
+| Form: 13px/600/16px muted labels, 14px/400/20px input, 10px radius, teal 2px focus | No editable page-local form; filters/editors are delegated. No bespoke field palette introduced. |
+
+| Action: 9px control, #0a7c88 white primary; white outlined secondary, teal #eff8fa hover, 2px focus | 2 hover and 6 focus selector mentions; action treatment detailed above. |
+
+| Responsive: >=44px <=767px, 36px >=768px, flex-wrap and mobile stack | Both actions min 44px phone/36px tablet. Static counts: min-h-11=2, md/min-[768px] min-h-9=2, sm:=0. |
+
+| Disabled, error, empty, loading and selected handling | Delegated to PageHeader, ErrorState; existing conditionals/handlers untouched; no runtime claims. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/audit/page.tsx' | wc -l` → **0**; literal hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0, SHA `fd9b809bbd70`. Source breakpoints inspected; browser screenshots not run.
+
+### - [x] `src/app/(authenticated)/admin/courses/page.tsx` — completed whole-file source parity
+
+| Exact legacy property/state | Current vNext value, source line and proof |
+
+| --- | --- |
+
+| Canvas: white #fff on #f1f4f9 shell, #e5e9f0 thin divider, no outer card duplication | Course invalid-filter link now uses 2px focus and underlined teal offset-4; existing Courses/Content navigation is shared Tabs, not custom cards. Source line 50. Page remains inside shared authenticated canvas. |
+
+| Form: 13px/600/16px muted labels, 14px/400/20px input, 10px radius, teal 2px focus | No editable page-local form; filters/editors are delegated. No bespoke field palette introduced. |
+
+| Action: 9px control, #0a7c88 white primary; white outlined secondary, teal #eff8fa hover, 2px focus | 1 hover and 3 focus selector mentions; action treatment detailed above. |
+
+| Responsive: >=44px <=767px, 36px >=768px, flex-wrap and mobile stack | Clear action 44px phone/36px tablet; Tabs manage narrow screens. Static counts: min-h-11=1, md/min-[768px] min-h-9=1, sm:=0. |
+
+| Disabled, error, empty, loading and selected handling | Delegated to PageHeader, ErrorState, EmptyState, Tabs; existing conditionals/handlers untouched; no runtime claims. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/courses/page.tsx' | wc -l` → **0**; literal hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0, SHA `dead8ba5221e`. Source breakpoints inspected; browser screenshots not run.
+
+### - [x] `src/app/(authenticated)/admin/departments/page.tsx` — completed whole-file source parity
+
+| Exact legacy property/state | Current vNext value, source line and proof |
+
+| --- | --- |
+
+| Canvas: white #fff on #f1f4f9 shell, #e5e9f0 thin divider, no outer card duplication | Academic Setup overview link now uses teal underline/hover/focus, preserving DepartmentCreateForm/Directory under one PageHeader. Source line 59. Page remains inside shared authenticated canvas. |
+
+| Form: 13px/600/16px muted labels, 14px/400/20px input, 10px radius, teal 2px focus | No editable page-local form; filters/editors are delegated. No bespoke field palette introduced. |
+
+| Action: 9px control, #0a7c88 white primary; white outlined secondary, teal #eff8fa hover, 2px focus | 1 hover and 3 focus selector mentions; action treatment detailed above. |
+
+| Responsive: >=44px <=767px, 36px >=768px, flex-wrap and mobile stack | Back link 44px phone/36px tablet; shared responsive department editor. Static counts: min-h-11=1, md/min-[768px] min-h-9=1, sm:=0. |
+
+| Disabled, error, empty, loading and selected handling | Delegated to PageHeader, EmptyState; existing conditionals/handlers untouched; no runtime claims. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/departments/page.tsx' | wc -l` → **0**; literal hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0, SHA `d48a5b2173e9`. Source breakpoints inspected; browser screenshots not run.
+
+
+## 2026-10-20 — chat-13: fifteen additional whole-file source sweeps, B (9–15)
+
+Same explicit reference matrix: old LMS 13px/600/16px neutral-400 labels (#a9a7ae); 10px field radius with 14px text and 2px teal focus; #fff surface/#e5e9f0 dividers/#eff8fa hover; 9px action radius, solid #0a7c88 primary with white text and #086873 hover; 44px mobile min target <=767px, 36px from 768px. Source: `docs/design/legacy-styles/components___form.scss:110-142`, `components___variables.scss`, `old-lms-shell.css:55-79`, `old-lms-pages.md`, shared `src/app/globals.css:327-345,622-677`. No CI or app execution.
+
+### - [x] `src/app/(authenticated)/admin/faculty/page.tsx` — complete whole-file visual source check
+
+| Exact legacy value/state | Current vNext source and proof |
+
+| --- | --- |
+
+| One white page canvas, thin #e5e9f0 dividers and distinct object rows only | Faculty-register heading now semantic foreground; the membership-management action uses underlined teal text, underline-offset-4, visible keyboard focus, and primary hover. Shared roster has no duplicate canvas wrapper. Source line 20. No new outer card wrapper. |
+
+| Form labels: 13px/600/16px, #a9a7ae; field default/focus/error with 14px/400, 10px radius | No page-local form labels: delegated editor and roster/links use common form components. No hard-coded field palette introduced. |
+
+| Action hover/focus: #0a7c88 solid primary, white outlined secondary, #eff8fa hover, 9px radius, 2px focus | 1 hover and 3 keyboard-focus style mentions, using shared semantic tokens and the action states described above. |
+
+| Responsive: min 44px <=767px, normal 36px >=768px, wrapping instead of overflow | Link 44px phone / 36px >=768px; flex-wrap around dialog and link. Static scan: 1 mobile min-h-11 selectors, 1 md/min-[768px] min-h-9, 0 leftover sm: variants. |
+
+| Loading, disabled, invalid/empty, selected, keyboard behavior | Existing delegated shared roster/list controls delegates or semantic error/empty routes retained; no change to query, permissions or mutations. Browser interactions not run. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/faculty/page.tsx' | wc -l` → **0**; hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0. SHA `fb5f4f60cf07`. Responsive assertions are from source selectors, not rendered pixel comparisons.
+
+### - [x] `src/app/(authenticated)/admin/faculty-assignment/page.tsx` — complete whole-file visual source check
+
+| Exact legacy value/state | Current vNext source and proof |
+
+| --- | --- |
+
+| One white page canvas, thin #e5e9f0 dividers and distinct object rows only | Section heading uses semantic foreground. Create teaching assignment link uses shared-style 9px border, white surface, teal hover and 2px focus; replaces 640px sm threshold with the measured 768px threshold. Source line 22. No new outer card wrapper. |
+
+| Form labels: 13px/600/16px, #a9a7ae; field default/focus/error with 14px/400, 10px radius | No page-local form labels: delegated editor and roster/links use common form components. No hard-coded field palette introduced. |
+
+| Action hover/focus: #0a7c88 solid primary, white outlined secondary, #eff8fa hover, 9px radius, 2px focus | 2 hover and 3 keyboard-focus style mentions, using shared semantic tokens and the action states described above. |
+
+| Responsive: min 44px <=767px, normal 36px >=768px, wrapping instead of overflow | Link 44px <=767px / 36px >=768px; action row flex-wrap; scoped read directory delegated. Static scan: 1 mobile min-h-11 selectors, 1 md/min-[768px] min-h-9, 0 leftover sm: variants. |
+
+| Loading, disabled, invalid/empty, selected, keyboard behavior | Existing delegated shared roster/list controls delegates or semantic error/empty routes retained; no change to query, permissions or mutations. Browser interactions not run. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/faculty-assignment/page.tsx' | wc -l` → **0**; hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0. SHA `92b971bb6644`. Responsive assertions are from source selectors, not rendered pixel comparisons.
+
+### - [x] `src/app/(authenticated)/admin/hr/page.tsx` — complete whole-file visual source check
+
+| Exact legacy value/state | Current vNext source and proof |
+
+| --- | --- |
+
+| One white page canvas, thin #e5e9f0 dividers and distinct object rows only | Recruiter invalid-filter Reset link now uses 9px outlined white button, teal foreground/border hover and 2px focus; formerly static body-colored with no hover/focus. Recruiter account list remains shared component. Source line 58. No new outer card wrapper. |
+
+| Form labels: 13px/600/16px, #a9a7ae; field default/focus/error with 14px/400, 10px radius | No page-local form labels: delegated editor and roster/links use common form components. No hard-coded field palette introduced. |
+
+| Action hover/focus: #0a7c88 solid primary, white outlined secondary, #eff8fa hover, 9px radius, 2px focus | 2 hover and 3 keyboard-focus style mentions, using shared semantic tokens and the action states described above. |
+
+| Responsive: min 44px <=767px, normal 36px >=768px, wrapping instead of overflow | Reset 44px phone /36px >=768px; other account list responsiveness delegated to SuperAdminHrAccounts. Static scan: 1 mobile min-h-11 selectors, 1 md/min-[768px] min-h-9, 0 leftover sm: variants. |
+
+| Loading, disabled, invalid/empty, selected, keyboard behavior | Existing PageHeader, ErrorState delegates or semantic error/empty routes retained; no change to query, permissions or mutations. Browser interactions not run. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/hr/page.tsx' | wc -l` → **0**; hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0. SHA `30e24a9b3f07`. Responsive assertions are from source selectors, not rendered pixel comparisons.
+
+### - [x] `src/app/(authenticated)/admin/programs/page.tsx` — complete whole-file visual source check
+
+| Exact legacy value/state | Current vNext source and proof |
+
+| --- | --- |
+
+| One white page canvas, thin #e5e9f0 dividers and distinct object rows only | Academic Setup secondary CTA gets 9px border, white background, teal border/subtle hover and 2px focus at 768px breakpoint rather than 640px. Denied/error retry links use underlined teal and keyboard focus. Source line 60. No new outer card wrapper. |
+
+| Form labels: 13px/600/16px, #a9a7ae; field default/focus/error with 14px/400, 10px radius | No page-local form labels: delegated editor and roster/links use common form components. No hard-coded field palette introduced. |
+
+| Action hover/focus: #0a7c88 solid primary, white outlined secondary, #eff8fa hover, 9px radius, 2px focus | 2 hover and 9 keyboard-focus style mentions, using shared semantic tokens and the action states described above. |
+
+| Responsive: min 44px <=767px, normal 36px >=768px, wrapping instead of overflow | All three route actions min 44px <=767px, 36px >=768px; AdminProgramDirectory remains a direct flat canvas child. Static scan: 3 mobile min-h-11 selectors, 3 md/min-[768px] min-h-9, 0 leftover sm: variants. |
+
+| Loading, disabled, invalid/empty, selected, keyboard behavior | Existing PageHeader, ErrorState, EmptyState delegates or semantic error/empty routes retained; no change to query, permissions or mutations. Browser interactions not run. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/programs/page.tsx' | wc -l` → **0**; hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0. SHA `815da2205ad4`. Responsive assertions are from source selectors, not rendered pixel comparisons.
+
+### - [x] `src/app/(authenticated)/admin/quizzes/page.tsx` — complete whole-file visual source check
+
+| Exact legacy value/state | Current vNext source and proof |
+
+| --- | --- |
+
+| One white page canvas, thin #e5e9f0 dividers and distinct object rows only | Quiz CSV outline now has teal hover border/background and a shared 2px teal focus outline/offset rather than 3px local offset and custom text-blue outline. Creation unavailable remains left-warning stripe, not nested warning card. Source line 53. No new outer card wrapper. |
+
+| Form labels: 13px/600/16px, #a9a7ae; field default/focus/error with 14px/400, 10px radius | No page-local form labels: delegated editor and roster/links use common form components. No hard-coded field palette introduced. |
+
+| Action hover/focus: #0a7c88 solid primary, white outlined secondary, #eff8fa hover, 9px radius, 2px focus | 2 hover and 3 keyboard-focus style mentions, using shared semantic tokens and the action states described above. |
+
+| Responsive: min 44px <=767px, normal 36px >=768px, wrapping instead of overflow | CSV min 44px phone/36px >=768px; assessment directory delegates responsive content. Static scan: 1 mobile min-h-11 selectors, 1 md/min-[768px] min-h-9, 0 leftover sm: variants. |
+
+| Loading, disabled, invalid/empty, selected, keyboard behavior | Existing PageHeader, ErrorState, EmptyState delegates or semantic error/empty routes retained; no change to query, permissions or mutations. Browser interactions not run. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/quizzes/page.tsx' | wc -l` → **0**; hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0. SHA `184fd046d7e3`. Responsive assertions are from source selectors, not rendered pixel comparisons.
+
+### - [x] `src/app/(authenticated)/admin/verification/page.tsx` — complete whole-file visual source check
+
+| Exact legacy value/state | Current vNext source and proof |
+
+| --- | --- |
+
+| One white page canvas, thin #e5e9f0 dividers and distinct object rows only | Browse colleges action now uses white outlined 9px radius, teal hover border/background, 2px keyboard focus; page keeps PageHeader + EmptyState on one canvas and never assumes a college scope. Source line 35. No new outer card wrapper. |
+
+| Form labels: 13px/600/16px, #a9a7ae; field default/focus/error with 14px/400, 10px radius | No page-local form labels: delegated editor and roster/links use common form components. No hard-coded field palette introduced. |
+
+| Action hover/focus: #0a7c88 solid primary, white outlined secondary, #eff8fa hover, 9px radius, 2px focus | 2 hover and 3 keyboard-focus style mentions, using shared semantic tokens and the action states described above. |
+
+| Responsive: min 44px <=767px, normal 36px >=768px, wrapping instead of overflow | Action min 44px phone/36px >=768px; no fixed-width cards or table on empty-state page. Static scan: 1 mobile min-h-11 selectors, 1 md/min-[768px] min-h-9, 0 leftover sm: variants. |
+
+| Loading, disabled, invalid/empty, selected, keyboard behavior | Existing PageHeader, ErrorState, EmptyState delegates or semantic error/empty routes retained; no change to query, permissions or mutations. Browser interactions not run. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/verification/page.tsx' | wc -l` → **0**; hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 0/0, Select 0/0. SHA `58fe4ce30d77`. Responsive assertions are from source selectors, not rendered pixel comparisons.
+
+### - [x] `src/app/(authenticated)/admin/people/directory/page.tsx` — complete whole-file visual source check
+
+| Exact legacy value/state | Current vNext source and proof |
+
+| --- | --- |
+
+| One white page canvas, thin #e5e9f0 dividers and distinct object rows only | Four query-field labels have exact muted #a9a7ae, 13px/600/16px legacy contract; raw hidden tab input replaced with shared Input while preserving hidden state, old deep-teal ad hoc link tokens replaced by semantic primary text and focus, 36px breakpoint moved to >=768px. Membership rows still flat border-b. Source line 79. No new outer card wrapper. |
+
+| Form labels: 13px/600/16px, #a9a7ae; field default/focus/error with 14px/400, 10px radius | 4 explicit labels: `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]`. No hard-coded field palette introduced. |
+
+| Action hover/focus: #0a7c88 solid primary, white outlined secondary, #eff8fa hover, 9px radius, 2px focus | 2 hover and 21 keyboard-focus style mentions, using shared semantic tokens and the action states described above. |
+
+| Responsive: min 44px <=767px, normal 36px >=768px, wrapping instead of overflow | 11 mobile min-h-11 controls and 10 tablet 36px overrides; filter grid one column phone, two >=768px, five wide; cards stack phone, two-column tablet. Static scan: 11 mobile min-h-11 selectors, 10 md/min-[768px] min-h-9, 0 leftover sm: variants. |
+
+| Loading, disabled, invalid/empty, selected, keyboard behavior | Existing PageHeader, ErrorState, EmptyState, StatusBadge, Tabs, Pagination delegates or semantic error/empty routes retained; no change to query, permissions or mutations. Browser interactions not run. |
+
+**Grep proof:** `rg -o '<(button|input|select|textarea)\b' 'src/app/(authenticated)/admin/people/directory/page.tsx' | wc -l` → **0**; hex `#[0-9A-Fa-f]{3,8}\b` → **0**; `style=\{` → **0**. JSX Button 1/1, Select 3/3. SHA `edc4966310b2`. Responsive assertions are from source selectors, not rendered pixel comparisons.
+
+**Batch completion:** 15 new full files, each with value/state table, grep and responsive CSS-source evidence. Zero raw native controls, zero literal hex style values, zero inline style overrides across the 15 source scans. Nested dialogs, content, data permissions and API bindings were not modified; all remain subject to separate runtime verification.
+
+- [ ] **Unverified:** computed style/screenshots against old LMS at 375/768/1366px, real keyboard/tap behavior, TypeScript build, test suite and CI (intentionally not run).
+
+- [ ] **Next exact file:** `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx` — next unticked Super Admin college-detail shell and tab-strip; then `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`.

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import {useEffect,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {safeTpoShellCounters,shellUnreadBadge} from "./shell-counts-model";
@@ -22,6 +23,6 @@ export function TpoTopbarMessages(){
  },[]);
  return <Link href="/tpo/messages" aria-label={"Messages"+(count!==null?", "+count+" unread":"")}
   className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
-  Messages {shellUnreadBadge(count)?<span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs tabular-nums">{shellUnreadBadge(count)}</span>:null}
+  Messages {shellUnreadBadge(count)?<Badge tone="error" className="shrink-0 px-2 py-0.5 tabular-nums">{shellUnreadBadge(count)}</Badge>:null}
  </Link>;
 }
