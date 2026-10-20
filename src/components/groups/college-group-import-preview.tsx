@@ -1,7 +1,7 @@
 "use client";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Alert } from "@/components/ui/alert";
@@ -15,12 +15,14 @@ type Result = {
 
 export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
   const [csv, setCsv] = useState("email\n");
+  const csvRevision = useRef(0);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
   const [reading, setReading] = useState(false);
   async function load(file: File | null) {
     if (!file) return;
+    const revision = ++csvRevision.current;
     setError("");
     setResult(null);
     if (file.size > 131072) {
@@ -28,20 +30,22 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       return;
     }
     setReading(true);
-    try { setCsv(await file.text()); }
-    catch { setError("The selected CSV could not be read."); }
+    try { const next = await file.text(); if (revision === csvRevision.current) setCsv(next); }
+    catch { if (revision === csvRevision.current) setError("The selected CSV could not be read."); }
     finally { setReading(false); }
   }
   function preview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setResult(null);
+    const revision = csvRevision.current;
+    const submittedCsv = csv;
     startTransition(async () => {
       try {
         const response = await fetch("/api/college/groups/import-preview", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ groupId, csv }),
+          body: JSON.stringify({ groupId, csv: submittedCsv }),
         });
         const payload: unknown = await response.json();
         if (!response.ok) {
@@ -50,9 +54,9 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
             ? payload.error : "Import preview failed";
           throw new Error(code);
         }
-        setResult(payload as Result);
+        if (revision === csvRevision.current) setResult(payload as Result);
       } catch (cause) {
-        setError(cause instanceof Error ? cause.message : "Unable to preview CSV");
+        if (revision === csvRevision.current) setError(cause instanceof Error ? cause.message : "Unable to preview CSV");
       }
     });
   }
@@ -71,7 +75,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">CSV contents</summary>
         <label className="mt-3 grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CSV contents
           <Textarea rows={8} maxLength={131072} value={csv}
-            onChange={(event) => { setCsv(event.target.value); setResult(null); }}
+            onChange={(event) => { csvRevision.current++; setCsv(event.target.value); setResult(null); setError(""); }}
             className="font-mono text-sm" />
         </label>
       </details>
