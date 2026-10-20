@@ -40,7 +40,7 @@ export default async function MentorBoardReviewPage({
       <section role="status" className="border-b border-border pb-4">
         Projects access is disabled; no tasks were loaded.
       </section>:<>
-      <section aria-label="Registered task counts" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <section aria-label="Registered task counts" className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
         {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
           <article key={status} className="rounded-xl border border-border bg-surface p-3">
             <h2 className="text-xs font-semibold text-muted-foreground">{status.replaceAll("_"," ")}</h2>
@@ -112,7 +112,7 @@ export default async function MentorBoardReviewPage({
           <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
             No registered Sprint matches the selected Sprint filter.
           </p>:
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             {data.sprintSummaries.slice(0,6).map(sprint=>
               <article key={sprint.id} className="rounded-xl border border-border bg-surface p-4">
                 <h3 className="break-words font-semibold">{sprint.title}</h3>
