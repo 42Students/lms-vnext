@@ -43,7 +43,10 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    const response=await apiFetch<{id?:string;query?:TpoBatchSavedFilter}>(api,{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),
    });
-   await load();setNotice("Saved batch views updated.");router.refresh();
+   await load();setNotice("Saved batch views updated.");
+   if(payload.action==="CREATE"){setName("");setPinned(false);}
+   if(payload.action==="DELETE"){setSelected("");setName("");}
+   router.refresh();
    return response;
   }catch{setError("Could not save the batch view. Check the name and filters, then try again.");return null;}
   finally{inFlightRef.current=false;setBusy(false);}
