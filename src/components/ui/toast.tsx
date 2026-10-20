@@ -55,7 +55,7 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
     "--lms-toast-visual-height": viewport ? `${viewport.height}px` : "100dvh",
     "--lms-toast-visual-bottom": viewport ? `${viewport.bottom}px` : "0px",
     bottom: "calc(var(--lms-toast-visual-bottom) + var(--lms-toast-navigation-offset, 0px) + max(1rem, env(safe-area-inset-bottom)))",
-    maxHeight: "max(1px, calc(var(--lms-toast-visual-height) - max(1rem, env(safe-area-inset-top)) - max(1rem, env(safe-area-inset-bottom))))",
+    maxHeight: "max(1px, calc(var(--lms-toast-visual-height) - var(--lms-toast-navigation-offset, 0px) - max(1rem, env(safe-area-inset-top)) - max(1rem, env(safe-area-inset-bottom))))",
   } as CSSProperties;
   return <div data-slot="toast-stack" role="region"
     aria-label="Notifications, scroll to review all notices"

@@ -58,7 +58,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regre
 - [x] `src/components/ui/popover.tsx`
 - [x] `src/components/ui/select.tsx`
 - [x] `src/components/ui/split-button.tsx`
-- [ ] `src/components/ui/toast.tsx`
+- [x] `src/components/ui/toast.tsx`
 - [ ] `src/components/ui/tooltip.tsx`
 - [ ] `src/components/ui/use-confirm-flow.tsx`
 - [ ] `src/components/auth/membership-recovery.tsx`
