@@ -9,6 +9,8 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Disclosure} from "@/components/ui/disclosure";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 import {InlineNotice} from "@/components/ui/inline-notice";
 
 import { useState } from "react";
@@ -185,16 +187,16 @@ export function TpoStudentsBulkAdd({
         <EmptyState title="No open drives are available." description="Create or publish a drive before adding learners."/>
       ) : (
         <>
-          <label className="grid gap-1 text-sm">Search open drives
-            <Input type="search" value={driveSearch} onChange={event=>setDriveSearch(event.target.value)}
+          <label className="grid min-w-0 gap-1 text-sm">Search open drives
+            <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="search" value={driveSearch} onChange={event=>setDriveSearch(event.target.value)}
              
              placeholder="Search company or drive"/>
           </label>
-          {visibleDrives.length===0?<EmptyState title="No open drives match your search."/>:null}
-          <div className="grid gap-3 md:grid-cols-2">
-            <label className="text-sm font-semibold text-foreground">
+          {visibleDrives.length===0?<p role="status" className="text-sm text-muted-foreground">No open drives match your search.</p>:null}
+          <div className="grid min-w-0 gap-3 md:grid-cols-2">
+            <label className="min-w-0 text-sm font-semibold text-foreground">
               Published drive
-              <Select className="mt-1" 
+              <Select className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" 
                 value={driveId} disabled={busy}
                 onChange={(event) => void loadRoles(event.target.value)}>
                 <option value="">Choose a drive</option>
@@ -205,9 +207,9 @@ export function TpoStudentsBulkAdd({
                 ))}
               </Select>
             </label>
-            <label className="text-sm font-semibold text-foreground">
+            <label className="min-w-0 text-sm font-semibold text-foreground">
               Active role
-              <Select className="mt-1" 
+              <Select className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" 
                 value={roleOptionId} disabled={busy || roles.length === 0}
                 onChange={(event) => setRoleOptionId(event.target.value)}>
                 {roles.length === 0 ? <option value="">Select a drive first</option> : null}
@@ -216,36 +218,38 @@ export function TpoStudentsBulkAdd({
             </label>
           </div>
           {roleError ? <InlineNotice tone="error" message={roleError}/> : null}
-          <div className="max-h-80 min-w-0 space-y-1 overflow-auto overscroll-contain border-y border-border py-2">
+          <ScrollCue axis="y" label="Learners available for drive" className="min-w-0 border-y border-border" viewportClassName="max-h-80 space-y-0 overflow-auto overscroll-contain py-2">
             {learners.map((learner) => (
-              <label key={learner.membershipId} className="flex min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] p-2 text-sm hover:bg-surface-secondary">
-                <Checkbox  className="h-4 w-4"
+              <label key={learner.membershipId} className="flex min-h-11 min-w-0 flex-wrap items-start gap-2 border-b border-border p-2 text-sm last:border-b-0 hover:bg-[var(--lms-neutral-50)]">
+                <Checkbox  className="mt-1 shrink-0"
                   checked={selected.includes(learner.membershipId)}
                   disabled={busy || !drives.length}
                   onChange={(event) => toggle(learner.membershipId, event.target.checked)}/>
-                <span className="flex-1 font-semibold text-foreground">
+                <span className="min-w-0 flex-1 break-words font-semibold text-foreground">
                   {learner.displayName}
                   <span className="ml-2 font-normal text-muted-foreground">{learner.branchName}</span>
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="max-w-full break-words text-xs text-muted-foreground">
                   {learner.readinessSignal.replaceAll("_", " ").toLowerCase()}
                 </span>
               </label>
             ))}
-          </div>
+          </ScrollCue>
+          <Disclosure title="Include ineligible students" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
           <label className="flex min-h-11 items-start gap-2 text-sm">
-            <Checkbox  checked={includeIneligible} disabled={busy}
+            <Checkbox  className="mt-1 shrink-0" checked={includeIneligible} disabled={busy}
               onChange={event=>{setIncludeIneligible(event.target.checked);setError("");}}/>
             Add students who are not eligible anyway, with a recorded inclusion reason
           </label>
-          {includeIneligible?<label className="grid gap-1 text-sm">Required reason for inclusion
-            <Textarea value={overrideReason} disabled={busy} maxLength={500}
+          {includeIneligible?<label className="grid min-w-0 gap-1 text-sm">Required reason for inclusion
+            <Textarea className="w-full min-w-0" value={overrideReason} disabled={busy} maxLength={500}
              onChange={event=>setOverrideReason(event.target.value)}
              />
           </label>:null}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-sm text-body">{pageSelected.length} learner(s) selected</span>
-            <Button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
+          </Disclosure>
+          <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <span className="min-w-0 break-words text-sm text-body">{pageSelected.length} learner(s) selected</span>
+            <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
                 includeIneligible&&overrideReason.trim().length<3}
               onClick={() => void preview()}
               >
@@ -262,24 +266,27 @@ export function TpoStudentsBulkAdd({
           "? Eligibility and participation are checked individually by the server. "+
           (includeIneligible?"The inclusion reason will be audited; college, cohort, debarment and proof guards still apply.":
           "Ineligible learners will not be added.")+" Existing applications are preserved."}
-        footer={<><Button variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button disabled={busy||guardedPending||!pageSelected.length||pageSelected.length>200||!roleOptionId||
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={busy||guardedPending} disabled={!pageSelected.length||pageSelected.length>200||!roleOptionId||
             includeIneligible&&overrideReason.trim().length<3||reviewedSelection!==selectionFingerprint} onClick={()=>void submit()}>
             {busy?"Checking learners…":"Confirm add selected"}
-          </Button></>}>
+          </Button>
+        </div>}>
         <p role="status" className="text-sm">{alreadyAppliedCount===null?
          "Existing applications have not been checked yet.":
          alreadyAppliedCount+" of them already applied."}</p>
-        <p className="text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>
+        <p className="mt-2 text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>
+        {error?<InlineNotice tone="error" message={error}/>:null}
       </Dialog>
-      {error ? <InlineNotice tone="error" message={error}/> : null}
+      {error&&!confirmOpen ? <InlineNotice tone="error" message={error}/> : null}
       {results.length > 0 ? (
         <div aria-live="polite" className="space-y-2">
           <h3 className="text-sm font-semibold text-foreground">Per-learner result</h3>
-          <ul className="max-h-60 divide-y divide-border overflow-auto rounded-[var(--lms-control-radius)] border border-border text-sm">
+          <ul className="max-h-60 min-w-0 divide-y divide-border overflow-auto border-y border-border text-sm">
             {results.map((result) => (
-              <li key={result.membershipId} className="flex flex-wrap gap-2 p-3">
-                <span className="font-semibold text-foreground">
+              <li key={result.membershipId} className="flex min-w-0 flex-wrap gap-2 px-2 py-3">
+                <span className="min-w-0 break-words font-semibold text-foreground">
                   {names.get(result.membershipId) ?? "Selected learner"}
                 </span>
                 <span className="text-body">{formatTpoStudentsBulkOutcome(result)}</span>

@@ -14,6 +14,7 @@ type Result={id:string;status:"assigned"|"duplicate"|"skipped"};
 export function TpoStudentsAssignPrep(){
  const selection=useTpoStudentsSelection();
  const [courses,setCourses]=useState<Course[]>([]);
+ const [loading,setLoading]=useState(true);
  const [offeringId,setOfferingId]=useState(""),[dueAt,setDueAt]=useState("");
  const [confirm,setConfirm]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [results,setResults]=useState<Result[]>([]);
@@ -22,6 +23,7 @@ export function TpoStudentsAssignPrep(){
   try{const r=await apiFetch<{courses:Course[]}>("/api/placements/tpo/students/prep",{cache:"no-store"});
    setCourses(r.courses);
   }catch{setError("Preparation courses could not be loaded. Retry the roster to check access.");}
+  finally{setLoading(false);}
  });},[]);
  const picked=selection?.selected??[];
  async function submit(){
@@ -44,28 +46,35 @@ export function TpoStudentsAssignPrep(){
  return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Assign preparation course">
   <h2 className="font-semibold">Assign prep</h2>
   <p className="text-sm">Choose a college course and an optional due date for up to 100 selected students per batch. Existing assignments are skipped; students receive an in-app notice.</p>
-  <p role="status" className="text-xs">{picked.length} students selected. {picked.length>100?"The first 100 will be checked in this batch.":""}</p>
-  <div className="flex min-w-0 flex-wrap gap-3">
-   <label className="grid min-w-0 flex-1 gap-1 text-sm">Preparation course
-    <Select value={offeringId} onChange={e=>setOfferingId(e.target.value)} disabled={pending}
+  <p role="status" className="break-words text-xs text-muted-foreground">{picked.length} students selected. {picked.length>100?"The first 100 will be checked in this batch.":""}</p>
+  {loading?<p role="status" className="text-sm text-body">Loading preparation courses…</p>:null}
+  {!loading&&courses.length===0&&!error?<p role="status" className="text-sm text-body">No preparation courses are available for assignment.</p>:null}
+  <div className="grid min-w-0 gap-3 md:grid-cols-2">
+   <label className="grid min-w-0 gap-1 text-sm">Preparation course
+    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={offeringId} onChange={e=>setOfferingId(e.target.value)} disabled={pending||loading}
      >
      <option value="">Choose a course</option>
      {courses.map(course=><option key={course.id} value={course.id}>{course.name} · {course.code}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm">Due date and time (IST, optional)
-    <Input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)} />
+   <label className="grid min-w-0 gap-1 text-sm">Due date and time (IST, optional)
+    <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="datetime-local" disabled={pending} value={dueAt} onChange={e=>setDueAt(e.target.value)} />
    </label>
   </div>
   {dueAt&&!tpoPrepDueAtUtc(dueAt)?<InlineNotice tone="error" message="Choose a valid IST due date."/>:null}
-  <Button variant="secondary" type="button" disabled={pending||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>setConfirm(true)}
+  <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||loading||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>setConfirm(true)}
    >Review prep assignments</Button>
   <Dialog open={confirm} onOpenChange={v=>{if(!pending)setConfirm(v);}}
    title="Assign preparation course?"
    description={"Assign this course to the first "+Math.min(100,picked.length)+" selected students, skipping existing assignments? Learners will be notified."}
-   footer={<><Button variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
-    <Button disabled={pending} onClick={()=>void submit()}>{pending?"Saving…":"Confirm assignments"}</Button></>}>
-   <p className="text-sm">Due date: {dueAt?dueAt+" IST":"No due date"}. Review the learner roster and course before confirming.</p>
+   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending} onClick={()=>void submit()}>{pending?"Saving…":"Confirm assignments"}</Button>
+   </div>}>
+   <div className="min-w-0 space-y-2 text-sm"><p className="break-words">Course: {courses.find(course=>course.id===offeringId)?.name??"Choose a course"}</p>
+    <p className="break-words">Due date: {dueAt?dueAt+" IST":"No due date"}. Review the learner roster and course before confirming.</p>
+    {error&&!confirm?<InlineNotice tone="error" message={error}/>:null}
+   </div>
   </Dialog>
   {notice?<InlineNotice tone="success" message={notice}/>:null}
   {results.some(row=>row.status==="skipped")?<p className="text-sm">Some students belong to another cohort or are no longer active. No cross-college assignment was created.</p>:null}
