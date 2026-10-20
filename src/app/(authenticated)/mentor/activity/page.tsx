@@ -1,4 +1,5 @@
 import { Pagination } from "@/components/ui/pagination";
+import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -86,11 +87,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Page size
-          <Select name="pageSize" defaultValue={String(data.pageSize)} className="min-h-11 md:min-h-9 max-w-full">
-            <option value="20">20</option><option value="50">50</option>
-          </Select>
-        </label>
+        <PageSizeSelect label="Page size" name="pageSize" defaultValue={String(data.pageSize)} options={[20,50]} />
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply</Button>
         <Link href="/mentor/activity" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>

@@ -50,7 +50,7 @@ export default async function MentorProjectTimelinePage({
           key: status, label: status==="ALL"?"All Sprint states":status,
           href: mentorTimelineHref({...data.query,sprintStatus:status,page:1}),
         }))} />
-      <p className="text-sm text-body">
+      <p role="status" aria-live="polite" className="text-sm text-body">
         {data.total} registered release{data.total===1?"":"s"} match.
       </p>
       {data.items.length===0?<EmptyState title="No matching registered Releases"
@@ -65,7 +65,7 @@ export default async function MentorProjectTimelinePage({
           </div>
           {release.sprints.length===0
             ?<p className="mt-3 text-sm text-body">No registered Sprints in this Release.</p>
-            :<ol className="mt-3 divide-y divide-[var(--lms-canvas-border)]">{release.sprints.map(sprint=>
+            :<ol aria-label="Sprints in this release" className="mt-3 divide-y divide-[var(--lms-canvas-border)]">{release.sprints.map(sprint=>
               <li key={sprint.id} className="min-w-0 py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="font-semibold text-foreground">
