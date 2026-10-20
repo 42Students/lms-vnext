@@ -22,9 +22,9 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-18.md: surface | regre
 - [x] `src/components/placements/tpo-mark-own-notification-read.tsx`
 - [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/super-admin-college-company-actions.tsx`
-- [ ] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/resource-progress-control.tsx`
-- [ ] `src/components/admin/college-signin-method-form.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/admin/super-admin-college-company-actions.tsx`
+- [x] `src/components/courses/college-assignment-create.tsx`
+- [x] `src/components/courses/resource-progress-control.tsx`
+- [x] `src/components/admin/college-signin-method-form.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
