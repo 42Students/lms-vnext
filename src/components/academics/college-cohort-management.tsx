@@ -246,13 +246,13 @@ export function CollegeCohortRowActions({ row, periods }: {
     </Button>
     <Dropdown trigger="More" label="Batch lifecycle actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
       <div className="grid min-w-0 gap-[var(--lms-space-2)]">
-    {row.status === "ACTIVE" && <Button variant="secondary" type="button"
+    {row.status === "ACTIVE" && <Button role="menuitem" variant="secondary" type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
       onClick={graduate}
       >
       Mark graduated
     </Button>}
-    <Button variant="secondary" type="button" disabled={pending || row.status!=="PLANNED" ||
+    <Button role="menuitem" variant="secondary" type="button" disabled={pending || row.status!=="PLANNED" ||
         row.activeSections>0 || row.activeEnrolledLearners>0} onClick={retire}
       title={row.activeSections>0 || row.activeEnrolledLearners>0
         ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
