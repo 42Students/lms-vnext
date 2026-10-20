@@ -88,58 +88,74 @@ export function FacultyAttendanceScheduleEditor({
     finally{setBusy(false);setConfirmOpen(false);}
   }
   return <section aria-label="Faculty attendance session scheduling"
-    className="min-w-0 space-y-3 pt-3">
-    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Schedule an attendance session</h2>
-    <p className="text-xs text-muted-foreground">
-      Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
-      Only sessions you scheduled and have not marked for attendance can be rescheduled.
-    </p>
-    <div className="grid min-w-0 gap-3 md:grid-cols-2">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">Action
+    className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
+    <div className="min-w-0 space-y-1">
+      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Schedule an attendance session</h2>
+      <p className="m-0 max-w-prose text-[13px] leading-5 text-muted-foreground">
+        Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
+        Only sessions you scheduled and have not marked for attendance can be rescheduled.
+      </p>
+    </div>
+    <div className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2">
+      <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4">Action
         <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
-          className="text-base md:text-sm">
+          disabled={busy} className="min-w-0 text-base md:text-sm">
           <option value="CREATE">Schedule</option>
           <option value="RESCHEDULE" disabled={eligible.length===0}>Reschedule</option>
         </Select>
       </label>
-      {action==="RESCHEDULE"?<label className="grid gap-1 text-[13px] font-semibold leading-4">Unmarked session
-        <Select value={id} onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)applyExistingSession(next);}}
-          className="text-base md:text-sm">
+      {action==="RESCHEDULE"?<label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4">Unmarked session
+        <Select value={id} disabled={busy}
+          onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)applyExistingSession(next);}}
+          className="min-w-0 text-base md:text-sm">
           {eligible.map(s=>
             <option key={s.id} value={s.id}>{s.title}</option>)}
         </Select>
       </label>:null}
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">Session title
+    </div>
+    <div className="grid min-w-0 gap-4 md:grid-cols-2">
+      <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 md:col-span-2">Session title
         <Input value={title} onChange={e=>setTitle(e.target.value)}
-          maxLength={160} className="text-base md:text-sm" />
+          disabled={busy} maxLength={160} className="min-w-0 text-base md:text-sm" />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">Location
-        <Input value={location} onChange={e=>setLocation(e.target.value)}
-          maxLength={240} className="text-base md:text-sm" />
+      <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4">Start (IST)
+        <Input type="datetime-local" value={startsAt} disabled={busy}
+          onChange={e=>setStartsAt(e.target.value)} className="min-w-0 w-full text-base md:text-sm" />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">Start (IST)
-        <Input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-          className="text-base md:text-sm" />
-      </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4">End (IST)
-        <Input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-          className="text-base md:text-sm" />
+      <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4">End (IST)
+        <Input type="datetime-local" value={endsAt} disabled={busy}
+          onChange={e=>setEndsAt(e.target.value)} className="min-w-0 w-full text-base md:text-sm" />
       </label>
     </div>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4">Description
-      <Textarea value={description} onChange={e=>setDescription(e.target.value)}
-        maxLength={1000} className="text-base md:text-sm" />
-    </label>
-    <Button type="button" variant="primary" loading={busy} onClick={()=>void save()}
-      disabled={busy||unchanged||action==="RESCHEDULE"&&!selected}>
-      {busy?"Saving…":"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
-    </Button>
-    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+    <details key={action + (selected?.id ?? "")} defaultOpen={Boolean(location || description)}
+      className="min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
+      <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        Additional session details
+      </summary>
+      <div className="grid min-w-0 gap-4 pb-3 pt-2">
+        <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4">Location
+          <Input value={location} onChange={e=>setLocation(e.target.value)}
+            disabled={busy} maxLength={240} className="min-w-0 text-base md:text-sm" />
+        </label>
+        <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4">Description
+          <Textarea value={description} onChange={e=>setDescription(e.target.value)}
+            disabled={busy} maxLength={1000} className="min-w-0 text-base md:text-sm" />
+        </label>
+      </div>
+    </details>
+    {unchanged?<p role="status" className="m-0 text-[13px] text-muted-foreground">No schedule details have changed.</p>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
+    {success?<Alert tone="success">{success}</Alert>:null}
+    <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <Button type="button" variant="primary" loading={busy} onClick={()=>void save()}
+        className="w-full sm:w-auto" disabled={busy||unchanged||(action==="RESCHEDULE"&&!selected)}>
+        {busy?"Saving…":"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
+      </Button>
+    </div>
+    <ConfirmDialog open={confirmOpen}
+      onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
       title={"Confirm "+(action==="CREATE"?"schedule":"reschedule")+" this Faculty attendance session?"}
       confirmLabel={"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
       confirmVariant="primary" pending={busy} onConfirm={()=>void save(true)}/>
-    {unchanged?<p role="status" className="text-xs text-muted-foreground">No schedule details have changed.</p>:null}
-    {error?<Alert tone="error">{error}</Alert>:null}
-    {success?<Alert tone="success">{success}</Alert>:null}
   </section>;
 }
