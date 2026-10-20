@@ -4,7 +4,7 @@ import { cx } from "@/lib/class-names";
 /** Semantic progression list; keeps timeline hairlines on the shared canvas. */
 export function Timeline({ children, className, ...props }: ComponentPropsWithRef<"ol">) {
   return <ol {...props} data-slot="timeline"
-    className={cx("relative space-y-5 border-l-2 border-[var(--lms-canvas-border)] pl-5", className)}>
+    className={cx("relative space-y-[var(--lms-space-5)] border-l border-[var(--lms-canvas-border)] pl-[var(--lms-space-5)]", className)}>
     {children}
   </ol>;
 }
