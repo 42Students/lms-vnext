@@ -28,7 +28,7 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
     });
   }
   return <div className="mt-3 flex flex-wrap items-end gap-2">
-    <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold text-body">Cancellation reason
+    <label className="grid min-w-48 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Cancellation reason
       <Input value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
         className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
     </label>
