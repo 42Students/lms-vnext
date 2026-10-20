@@ -8,7 +8,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { AssignmentFileOpenControl } from "@/components/courses/assignment-file-open-control";
 import { AssignmentSubmissionControl } from "@/components/courses/assignment-submission-control";
 import { PageHeader } from "@/components/ui/page-header";
-import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Alert } from "@/components/ui/alert";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
@@ -30,11 +29,12 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const overview = await getLearnerAssessmentOverview(await getCurrentRequestContext());
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
-  if (resolution.kind === "choose") return <div className="min-w-0 space-y-6">
-    <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← All Assignments</Link>} />
-    <ul className="divide-y divide-border border-y border-border">
-      {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
-        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+  if (resolution.kind === "choose") return <div className="min-w-0 space-y-4">
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 max-w-full items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← All Assignments</Link>
+    <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
+    <ul className="min-w-0 divide-y divide-border border-y border-border">
+      {resolution.options.map(option => <li key={option.deliveryId} className="min-w-0 py-2">
+        <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           href={"/learn/allAssignments/" + encodeURIComponent(path.assignmentId) + "?deliveryId=" + encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -46,39 +46,40 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   });
   if (!item) notFound();
   const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
-  return <div className="space-y-6">
-    <PageHeader title={item.title} actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← All Assignments</Link>} />
-    <div className="grid gap-4 md:grid-cols-2">
-      <section aria-labelledby="assignment-due-title" className="border-b border-border py-4">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 max-w-full items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← All Assignments</Link>
+    <PageHeader title={item.title} />
+    <div className="grid min-w-0 grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-x-4 gap-y-2 border-b border-border pb-4 md:gap-x-6 md:pb-6">
+      <section aria-labelledby="assignment-due-title" className="min-w-0">
         <h2 id="assignment-due-title" className="text-xs font-semibold text-muted-foreground">Due</h2>
-        <p className="mt-2 text-foreground">{formatDate(item.dueAt)}</p>
+        <p className="mt-1 break-words text-foreground">{formatDate(item.dueAt)}</p>
       </section>
-      <section className="border-b border-border py-4">
+      <section className="min-w-0">
         <h2 className="text-xs font-semibold text-muted-foreground">Points</h2>
-        <p className="mt-2 text-foreground">{item.maxPoints}</p>
+        <p className="mt-1 text-foreground">{item.maxPoints}</p>
       </section>
     </div>
-    <section className="border-b border-border py-4 md:py-6">
+    <section className="min-w-0 space-y-3 border-b border-border pb-4 md:pb-6">
       <h2 className="font-semibold text-[var(--lms-heading)]">Instructions & resources</h2>
-      <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">
+      <p className="max-w-prose whitespace-pre-wrap break-words text-sm text-body">
         {item.description || "Your faculty hasn't added any resources to this assignment yet."}
       </p>
-      {!materials.available ? <Alert tone="warning" className="mt-3" role="status">Assignment resources are temporarily unavailable. Your assignment and submission are unchanged.</Alert> : null}
-      {materials.links.length>0 ? <ul className="mt-3 space-y-2" aria-label="Instructor resources">
-        {materials.links.map(link=><li key={link.id} className="text-sm">
+      {!materials.available ? <Alert tone="warning" role="status">Assignment resources are temporarily unavailable. Your assignment and submission are unchanged.</Alert> : null}
+      {materials.links.length>0 ? <ul className="min-w-0 divide-y divide-border" aria-label="Instructor resources">
+        {materials.links.map(link=><li key={link.id} className="min-w-0 py-1 text-sm">
           <a href={link.href} rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Open link: {link.title}
           </a>
         </li>)}
       </ul> : null}
     </section>
-    <section className="border-b border-border py-4 md:py-6">
+    <section className="min-w-0 space-y-3">
       <h2 className="font-semibold text-[var(--lms-heading)]">Your submission</h2>
-      {item.submissionId ? <div className="mt-3 space-y-3 text-sm text-body">
+      {item.submissionId ? <div className="min-w-0 space-y-3 text-sm text-body">
         <p role="status" className="flex flex-wrap items-center gap-2"><StatusBadge tone="success">Submitted</StatusBadge>{formatDate(item.submittedAt)}</p>
         {item.submissionType === "TEXT" ? (
-          <p className="whitespace-pre-wrap break-words rounded-[var(--lms-control-radius)] bg-surface-subtle p-4">{item.submissionText}</p>
+          <p className="max-w-prose whitespace-pre-wrap break-words border-l-2 border-border bg-surface-subtle py-3 pl-4 pr-2">{item.submissionText}</p>
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
           learnerAssessmentSubmittedLinkHref(item.submissionUrl) ? (
             <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
@@ -88,11 +89,11 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
           )
         ) : <AssignmentFileOpenControl key={item.submissionId}
           submissionId={item.submissionId} enabled={assignmentFilesRuntimeEnabled()} />}
-        {item.gradePublished ? <div className="border-t border-[var(--lms-canvas-border)] bg-surface py-[var(--lms-space-4)]">
+        {item.gradePublished ? <div className="min-w-0 space-y-2 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
           <p className="font-semibold text-foreground">Published grade: {learnerAssignmentPublishedGradeLabel(item.pointsAwarded,item.maxPoints)}</p>
-          <p className="mt-2 whitespace-pre-wrap break-words">{item.feedback || "No written feedback was provided."}</p>
+          <p className="max-w-prose whitespace-pre-wrap break-words">{item.feedback || "No written feedback was provided."}</p>
         </div> : <p className="flex flex-wrap items-center gap-2"><StatusBadge tone="neutral">Not published</StatusBadge>Grade and feedback are not published yet.</p>}
-      </div> : <div className="mt-3">
+      </div> : <div className="min-w-0 space-y-3">
         {!item.dueAt || item.dueAt.getTime() <= overview.snapshotNowMs ? (
           <Alert tone="warning">
             {item.dueAt ? "Submissions are closed" : "Submission unavailable · deadline missing"}
@@ -100,10 +101,10 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : null}
         {item.dueAt && item.dueAt.getTime() > overview.snapshotNowMs ? (
           <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
-        ) : <div className="mt-2 space-y-2">
+        ) : <div className="space-y-2">
           <p className="text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>
           <Button type="button" variant="secondary" disabled aria-disabled="true"
-            className="min-h-11 md:min-h-9">
+            className="min-h-11 w-full md:min-h-9 md:w-auto">
             {item.dueAt?"Submission closed":"Unavailable"}
           </Button>
         </div>}
