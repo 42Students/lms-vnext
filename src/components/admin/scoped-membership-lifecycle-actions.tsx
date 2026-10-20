@@ -58,7 +58,7 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
    onConfirm={()=>{if(confirming)void change(confirming);}}>
     {error?<p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{error}</p>:null}
    </ConfirmDialog>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error&&confirming===null?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
  </div>;
 }
