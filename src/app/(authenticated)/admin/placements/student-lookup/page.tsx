@@ -61,7 +61,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
     getRowKey={row=>row.uxKey}
     columns={[
       {key:"job",header:"Company / drive",mobilePriority:"primary",cell:row=>row.company+" · "+row.job},
-      {key:"application",header:"Application",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="SUBMITTED"?"info":row.applicationStatus==="WITHDRAWN"?"neutral":"warning"}>{row.applicationStatus}</StatusBadge>},
+      {key:"application",header:"Application",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="SUBMITTED"?"info":row.applicationStatus==="WITHDRAWN"?"neutral":row.applicationStatus==="REJECTED"?"error":"warning"}>{row.applicationStatus}</StatusBadge>},
       {key:"offer",header:"Offer",mobilePriority:"secondary",cell:row=>row.offerStatus?<StatusBadge tone={row.offerStatus==="ACCEPTED"?"success":row.offerStatus==="DECLINED"?"neutral":"info"}>{row.offerStatus}</StatusBadge>:"None"},
       {key:"joining",header:"Joining",mobilePriority:"secondary",cell:row=>row.joining??"Not recorded"},
     ]}
