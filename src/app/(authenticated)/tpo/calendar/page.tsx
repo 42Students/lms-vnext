@@ -49,20 +49,6 @@ export default async function TpoCalendarPage({
   </div>;
   return (
     <div className="min-w-0 space-y-4">
-      <nav aria-label="Calendar actions" className="flex min-w-0 flex-wrap items-center gap-2">
-      <Link href="/tpo/calendar/export"
-        className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        Export upcoming rounds CSV →
-      </Link>
-      <Link href="/tpo/calendar/interviews"
-        className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        Interview schedule readiness →
-      </Link>
-      <Link href="/tpo/calendar/rounds"
-        className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        Create, reschedule or cancel a drive round →
-      </Link>
-      </nav>
       <PlacementCalendarWorkspace
         context={context}
         collegeId={context.membership.collegeId}
