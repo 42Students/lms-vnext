@@ -25,7 +25,7 @@ export default async function AdminDeviceSessionsPage({params}:{
    actions={<div className="flex flex-wrap items-center gap-2">
     <PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="Admins"/>
     <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Administrator activity history →</Link>
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Administrator activity history →</Link>
    </div>}/>
   <p role="status" className="text-sm text-body">{data.devices.length} active session(s), up to 100 shown.</p>
   <DataTable<DeviceRow> caption="Active administrator device sessions" rows={data.devices} getRowKey={row=>row.id}

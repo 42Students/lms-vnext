@@ -33,7 +33,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     <PageHeader title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
+      action={<Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
   </div>;
   const organizations = await listOrganizations(context);
   const {q,pageSize}=filters;
@@ -107,7 +107,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
        </ul>
        {!archived.length?<EmptyState title="No archived organizations" description="No archived organizations in this scope."/>:null}
       </Disclosure>:null}
-      <FilterBar title="Organization filters"><form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
+      <FilterBar title="Organization filters"><form method="get" role="search" aria-label="Search organizations" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search organizations
         <Input type="search" name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="w-full" />
@@ -118,8 +118,8 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         </Select>
        </label>
        <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
-       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear search</Link>
-       <Link href={href(page)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Refresh</Link>
+       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>
+       <Link href={href(page)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Refresh</Link>
       </form></FilterBar>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
       <DataTable caption="Existing Organizations" empty={<EmptyState
