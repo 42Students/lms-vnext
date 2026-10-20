@@ -86,8 +86,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
       </div>
       <nav aria-label="Placement notice views" className="flex flex-wrap gap-3">
-        <a href="#college-notices" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Announcements</a>
-        <a href="#personal-updates" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
+        <a href="#college-notices" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Announcements</a>
+        <a href="#personal-updates" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
       </nav>
       <div id="college-notices" className="scroll-mt-24"/>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
@@ -220,9 +220,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       )}
       {pages.total > 0 ? <nav aria-label="College notice pages" className="flex flex-wrap items-center gap-3 text-sm">
         <p className="text-muted-foreground">{pages.from}–{pages.to} of {pages.total} loaded matching notices</p>
-        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text">Previous</Link> : null}
+        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Previous</Link> : null}
         <span aria-current="page">Page {pages.page} of {pages.pages}</span>
-        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text">Next</Link> : null}
+        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Next</Link> : null}
       </nav> : null}
       <div id="personal-updates" className="scroll-mt-24"/>
       <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
