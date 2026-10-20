@@ -53,5 +53,5 @@ export function RouteTransition({children}:{children:ReactNode}) {
  useEffect(()=>{setLeaving(false);},[pathname]);
  return <div key={pathname} data-slot="route-content" data-route-portal={learnerRoute?"learner":"other"} data-route-entry={learnerRoute||facultyRoute?"true":undefined}
    data-route-transitioning={learnerRoute&&leaving?"true":undefined} aria-busy={learnerRoute&&leaving?true:undefined}
-   className="lms-shell-route-content">{children}</div>;
+   className="lms-shell-route-content min-w-0 max-w-full">{children}</div>;
 }
