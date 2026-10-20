@@ -795,3 +795,27 @@ Phone <=767px: chip and Select have 44px touch floor, active chips selected and 
 E8 stays [ ]: no browser screenshot, compilation, CI, tests or full old TpoGrid value comparison; AG Grid packages are still undeclared in package.json. This section certifies source changes only.
 
 Next exact file: src/components/tpo/tpo-students-spreadsheet.tsx — verify E8 roster header and its authorized 48px selection, sorting, toolbar and phone cards.
+
+
+### 2026-10-20 chat-14 — roster selection visuals and caller coverage
+
+| Property/state | Old-LMS source / required value | Current file & value | Static result |
+|---|---|---|---|
+| Selection column | `ui-clone-checklist.md:57` pinned 48px, filtered selectable rows | `tpo-students-spreadsheet.tsx:228` delegates server-scoped `allIds` to `TpoGrid`, whose native and fallback selection columns are exactly 48px | Source contract matched |
+| Mobile grid breakpoint | `old-lms-shell.css:23,73` phone <=767px, desktop >=768px | `tpo-students-spreadsheet.tsx:31-34` browser-only `next/dynamic ssr:false`, TpoGrid fallback `md:hidden` and Quartz `md:block` | Responsive boundary matched; no viewport screenshot |
+| Bulk note checkbox partial state | Legacy Ant checkbox distinguishes checked/indeterminate; max 100 notes per action | `tpo-students-spreadsheet.tsx:200-204` page checkbox now `indeterminate` for partly selected visible roster, including when 100-of-more-than-100 are selected | Partial/checked semantics source matched |
+| Bulk note phone layout | Interactive controls have 44px target at <=767px (`components___antddesign.scss:1081-1100`) | `tpo-students-spreadsheet.tsx:200-210` 44px row labels and checkboxes; note list one column phone, md two, xl three; max-height 176px with scroll | Touch floor and responsive source proof |
+| Page export authorization | No TPO export outside authorized IDs | `tpo-students-spreadsheet.tsx:115-142` `selectedScoped` validated against shared authorized IDs; 200-ID XLSX safety rule; CSV uses selected visible page rows only | API routes and permissions unchanged |
+| Empty/loading/error | Spreadsheets show a busy placeholder, blocked export and recoverable selection | `tpo-students-spreadsheet.tsx:31-34,126-142,191-197,248-252` loading status, CSV error, selection count and off-page student recovery | States preserved, browser interaction untested |
+
+Full-file fetched-source grep equivalents: `tpo-students-spreadsheet.tsx` has **3 Button open/3 close**, **2 self-closing Checkbox**, **1 Disclosure pair**, **1 Select pair**, **0 native button/table/details**; `indeterminate` is applied only to the bulk note visible-page chooser. Old per-student action links and keyboard copy/edit controls remain. `GridWorkspace` / `TpoGrid` call sites use the same authorized data `rows` / `sortedRows` and existing per-storageKey `tpo-students-columns-v1`.
+
+Reproduce in checkout (not executed by this connector-only lane):
+```sh
+grep -nE 'indeterminate|checked=\{rows.length|<TpoGrid|<GridWorkspace|ssr:false|mobilePrimaryKeys|selectedScoped|<Disclosure' src/components/tpo/tpo-students-spreadsheet.tsx
+grep -nE '<(button|table|details)([[:space:]>])|<Button|</Button>|<Checkbox|<Select|</Select>' src/components/tpo/tpo-students-spreadsheet.tsx
+```
+
+Phone <=767px: 44px choice labels, one-column note list, fallback card grid. Tablet >=768px: two-column note list and Quartz grid; wide >=1280px: three-column note choices. Checked/indeterminate, keyboard focus, loading and error remain source-backed. Exact legacy per-cell colors/row heights and rendered hover/selected state are not certified. No CI, compiler, app or browser executed; E8 remains [ ] because AG Grid packages are undeclared and legacy TpoGrid source is unavailable.
+
+**Next exact file:** `src/components/tpo/tpo-applications-spreadsheet.tsx` for applicants' E8 role-safe selection, 48px column, footer/action link semantics and 768px card fallback.
