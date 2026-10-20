@@ -217,8 +217,16 @@ export function TpoSpreadsheetGrid<Row>({
       <dl className="mt-2 space-y-2">{mobileExtra.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2"><dt className="font-semibold">{col.label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]" title={col.tooltip?.(row)}>{displayTpoGridCell(col.read(row))}</dd></div>)}</dl>
     </Disclosure>:null}
     {rowActions ? mobileActionsCollapsible ?
-      <Dropdown mobileSheet align="end" label="Spreadsheet row actions" trigger="Actions">
-       <div role="group" aria-label="Row actions" className="min-w-0 space-y-2">{rowActions(row)}</div>
+      <Dropdown mobileSheet align="end" label={"Actions for "+(openPrimary?.ariaLabel(row)??rowKey(row))} trigger="Actions">
+       <div role="group" aria-label={"Row actions for "+(openPrimary?.ariaLabel(row)??rowKey(row))}
+         className="min-w-0 space-y-2 break-words [overflow-wrap:anywhere]">
+         {rowActions(row)}
+         <Button variant="ghost" type="button" className="min-h-11 w-full justify-center md:min-h-9"
+           onClick={event=>{
+             const root=event.currentTarget.closest("details");
+             if(root){root.open=false;root.querySelector("summary")?.focus();}
+           }}>Close actions</Button>
+       </div>
       </Dropdown> :
       <div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>
     : null}
