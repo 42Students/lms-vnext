@@ -1,4 +1,6 @@
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
+import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -22,15 +24,15 @@ export default async function FacultyDiscussionHistoryPage({
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getFacultyDiscussionHistory(context,parsed.data);
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Faculty · Discussion audit" title="Discussion moderation history"
       description={[data.delivery.courseName,data.delivery.sectionName].join(" · ")}
       actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-        className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
         Discussions
       </Link>} />
-    <form role="search" aria-label="discussion history filters" method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded action
+    <form role="search" aria-label="discussion history filters" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded action
         <Select name="action" defaultValue={data.query.action}
           className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           <option value="ALL">All moderation and reply actions</option>
@@ -39,28 +41,30 @@ export default async function FacultyDiscussionHistoryPage({
           <option value="REPLY">Faculty replies</option>
         </Select>
       </label>
-      <Button type="submit" variant="primary" className="w-full min-[768px]:w-auto">Filter</Button>
+      <Button type="submit" variant="primary" className="w-full sm:w-auto">Filter</Button>
       <Link href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+        className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
     </form>
     <p className="text-sm text-body leading-[22px]" role="status" aria-live="polite">{data.total} recorded event{data.total===1?"":"s"}</p>
     {data.items.length===0?<EmptyState title="No registered moderation history"
       description="No persisted moderation or Faculty reply events match this Section and filter. Records before event tracking are unavailable, not reconstructed."/>:
       <ol aria-label="discussion history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="min-w-0 bg-transparent py-4">
-          <p className="font-semibold text-foreground">{item.action}</p>
-          <p className="mt-2 text-xs text-muted-foreground leading-5">
+          <Badge tone="neutral">{item.action}</Badge>
+          <p className="mt-2 text-sm leading-5 text-body">
             {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.occurredAt)} IST
           </p>
-          <p className="mt-1 text-xs text-muted-foreground leading-5">
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
             {item.actorMembershipId?"Recorded member action":"System/unknown actor"}
           </p>
         </li>)}</ol>}
-    <Pagination label="Discussion history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyDiscussionHistoryHref({...data.query,page})} />
-    <p className="text-xs text-muted-foreground leading-5">
-      This is an audit of registered pin changes, deletions and Faculty replies, not a full message history.
-      A learner may delete their own message; deletion events cannot prove that Faculty
-      performed the action. Removed message text and personal details are not exposed.
-    </p>
+    {data.totalPages > 1 ? <Pagination label="Discussion history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyDiscussionHistoryHref({...data.query,page})} /> : null}
+    <Disclosure title="About this moderation history" className="border-t border-border">
+      <p className="max-w-3xl px-2 pb-2 text-xs leading-5 text-muted-foreground">
+        This is an audit of registered pin changes, deletions and Faculty replies, not a full message history.
+        A learner may delete their own message; deletion events cannot prove that Faculty
+        performed the action. Removed message text and personal details are not exposed.
+      </p>
+    </Disclosure>
   </div>;
 }
