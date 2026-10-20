@@ -39,3 +39,33 @@
 - **Regressions found/fixed:** 1. Route's `error.tsx` rendered GracefulErrorBoundary's full branded public shell inside authenticated AppShell, duplicating page landmarks and canvas. Enabled `insideShell` and HR-style local recovery href, preserving retry/security/error logging. Read authenticated layout, loading/error/no optional not-found or template, ReportFilters/ReportMetrics/ReportScopeNote, CollegeHiringFunnel and CollegeReportNavigation plus shared SummaryStrip, select/table/metric components and relevant query/tenant scope; no lost routes or copy.
 - **Extra clutter/alignment fixes:** Recovery now uses the single college canvas with responsive primary retry and secondary home, without extra framed panel. Existing report filters, funnel and disclosures remain.
 - **Files changed:** `src/app/(authenticated)/college/hiring-dashboard/error.tsx`; queue and proof. Source 375/768; no CI.
+
+## Surface 9 — `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- **Regressions found/fixed:** 2 unused imports, `DateInput` and `next/link`, present in the page despite only shared Input/Button being used; removed to keep strict TypeScript/noUnusedLocals compatible. Reviewed chat-9 polish proof; authorization/404 and 31-day range schema, class options, hall session list, booking and cancel controls and their date/time pickers and API/optimistic update patterns. Verified loading/error boundaries, absent optional not-found/template and nearest college layout.
+- **Extra clutter/alignment fixes:** Demoted h1-sized "flagged bookings" subheading to a section-sized title; maintained the same wording and room capacity/status badges, full-width phone filters and warning/empty/truncation states. Source-checked 375/768, no runtime.
+- **Files changed:** `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`; queue/proof.
+
+## Surface 10 — `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- **Regressions found/fixed:** 0. Compared chat-9 proof; read page/loading/error, parent college layout, LectureHallManager's create/edit/archive/restore Dialog/ConfirmDialog, Dropdown/Menu, export/query model, pagination and shared fields/tables. Preserved manage permission, form names/validation, safe cancellation and archive safeguards, result filtering and 375/768 responsiveness.
+- **Extra clutter/alignment fixes:** Verified, no source change: four always-visible filters, bounded advanced disclosure, consistent 44px phone actions, single table and pagination. Loading/error recoveries have a clear path.
+- **Files changed:** Queue and verification proof only; no CI.
+
+## Surface 11 — `src/app/(authenticated)/college/lessons/page.tsx`
+- **Regressions found/fixed:** 0. Compared chat-9 polish proof and read the page, route loading/error (no optional template or not-found), CollegeLearningDirectory including all lesson/progress filter fields, desktop/mobile rows and page links, CollegeLessonCreateControl, archived-lesson restore, per-record/bulk visibility controls, shared DataTable/Pagination/PageHeader and college scope error. Checked strict imports, forms, preserved CSV export routes, protected POST/visibility mutations, asynchronous feedback and responsive 375/768 states.
+- **Extra clutter/alignment fixes:** None necessary; the 40-plus advanced filters and page size are behind the native disclosure, search and primary lesson creation remain prominent and results have separate responsive layouts.
+- **Files changed:** Queue and verification proof only; no runtime/CI.
+
+## Surface 12 — `src/app/(authenticated)/college/live-classes/page.tsx`
+- **Regressions found/fixed:** 1. Route error boundary rendered the full public GracefulErrorBoundary inside the authenticated canvas, duplicating header/landmarks. Added `insideShell` and a live-class local home destination while keeping original error reporting, reset, copy and stale-chunk recovery. Reviewed prior chat-9 proof, page/loading/error, CollegeLiveClassesDirectory, CollegeContentAuthoringControl and CollegeContentCsvExport, content preview and authenticated permissions. Confirmed CSV links, IST schedule text, all filter keys, creation/update/status workflows and mobile navigation remain intact.
+- **Extra clutter/alignment fixes:** Single-canvas error state replaces duplicated public screen; the default page already has one heading, primary schedule launcher and collapsed optional filters.
+- **Files changed:** `src/app/(authenticated)/college/live-classes/error.tsx`, queue/proof. Source 375/768 only, no CI.
+
+## Surface 13 — `src/app/(authenticated)/college/page.tsx`
+- **Regressions found/fixed:** 0. Read chat-9 polish proof, full college dashboard, loading/error/not-found and parent auth/college layouts, seven independent `Promise.allSettled` feeds, CollegeEditDialog, SetupChecklist, DashboardCards, SectionFailure, ClosingQuizzesCard and QuickActions with shared DataTable/PageHeader/EmptyState. Checks: missing-scope, tenant membership, independent failure semantics, navigation, edit modal pending/error success and 375/768 source states; no changed data, URLs or copy.
+- **Extra clutter/alignment fixes:** Six nested section headings used the same 30px/40px style as the page h1. Demoted them to 16px/24px legacy section headings while preserving all headings and disclosure hierarchy.
+- **Files changed:** `src/app/(authenticated)/college/page.tsx`; queue/proof. No runtime or CI.
+
+## Surface 14 — `src/app/(authenticated)/college/people/manage/page.tsx`
+- **Regressions found/fixed:** 1. The visible "Clear" link navigated to `/college/people`, the contacts directory, rather than clearing the current manage-directory filters; updated its href to `/college/people/manage`. Checked page/loading/error, parent college shell, membership scope/roles, filter query and pager, DataTable, PersonOnboardDialog (role defaults, validation/loading/success), PersonMembershipActions (roles, suspend, reactivate, end with server receipt verification), ProfileDialog and shared Dialog/Menu controls; copy and mutation routes unchanged.
+- **Extra clutter/alignment fixes:** Existing collapsed secondary actions, aligned responsive search controls and full-width mobile primary are retained; corrected destination keeps user in one workflow.
+- **Files changed:** `src/app/(authenticated)/college/people/manage/page.tsx`; queue/proof. Source 375/768, no CI.
