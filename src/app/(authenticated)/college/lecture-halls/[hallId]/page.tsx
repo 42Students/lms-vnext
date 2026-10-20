@@ -1,5 +1,3 @@
-import { DateInput } from "@/components/ui/date-input";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -71,7 +69,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
           classes={bookingOptions.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}
           faculty={bookingOptions.faculty} /> : null}
         <section aria-label="Hall scheduled sessions" className="min-w-0 space-y-3">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{result.conflictCount} flagged booking{result.conflictCount === 1 ? "" : "s"} in selected range</h2>
+          <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">{result.conflictCount} flagged booking{result.conflictCount === 1 ? "" : "s"} in selected range</h2>
           {result.truncated ? <p role="status" className="text-sm text-warning">More than 500 sessions match. This is a truncated read; conflict counts may be incomplete. Select a shorter range.</p> : null}
           {result.sessions.length === 0 ? <p className="border-b border-border pb-5 text-sm text-body">
             No persisted scheduled sessions overlap this date range. This is not confirmation that the hall is free for booking.
