@@ -32,7 +32,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  const {kind,page:auditPage}=parsed.data;
  const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
  return <div className="min-w-0 space-y-5">
-  <Link href={back} className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">
+  <Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
    Back to company-share preview
   </Link>
   <PageHeader title="Company-share access history" />
@@ -57,12 +57,12 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
       {key:"action",header:"Action",mobilePriority:"secondary",cell:entry=>entry.kind},
       {key:"when",header:"UTC timestamp",mobilePriority:"secondary",cell:entry=>entry.at},
     ]}/>}
-  {result.ready?<nav aria-label="Access history pages" className="flex flex-wrap gap-4 text-sm">
+  {result.ready?<nav aria-label="Access history pages" className="flex min-w-0 flex-wrap items-center gap-3 text-[13px]">
    <span>{result.total} events · Page {result.page} of {result.totalPages}, 25 per page</span>
    {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Previous</Link>:null}
    {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
-    className="font-semibold text-[var(--lms-teal-deep)] underline">Next</Link>:null}
+    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">Next</Link>:null}
   </nav>:null}
  </div>;
 }
