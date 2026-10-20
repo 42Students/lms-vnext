@@ -15,7 +15,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
   await requireTpoBatchActor(context);
   const { rows, truncated } = await listArchivedTpoCompanyRelationships(context);
   return <div className="min-w-0 space-y-4 md:space-y-6">
-    <Link href="/tpo/companies" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    <Link href="/tpo/companies" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       ← Companies directory
     </Link>
     <PageHeader  title="Archived company relationships"
@@ -27,7 +27,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
       {rows.map((row) => <li key={row.companyId} className="flex flex-wrap items-center justify-between gap-3 py-4 text-sm">
         <span className="font-semibold text-foreground">{row.name}</span>
         <Link href={"/tpo/companies/" + encodeURIComponent(row.companyId) + "/manage"}
-          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review / restore →</Link>
+          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Review / restore →</Link>
       </li>)}
     </ul>}
   </div>;

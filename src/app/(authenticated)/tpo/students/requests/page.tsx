@@ -131,7 +131,7 @@ export default async function TpoStudentRequestsPage({
           </p>
           <Link
             href="/tpo/students/requests"
-            className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >
             Clear filters
           </Link>
@@ -176,7 +176,7 @@ export default async function TpoStudentRequestsPage({
         actions={
           <Link
             href="/tpo/students"
-            className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >
             Students intelligence
           </Link>
@@ -189,14 +189,14 @@ export default async function TpoStudentRequestsPage({
       >
         <Link
           href="/tpo/students"
-          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Students roster
         </Link>
         <Link
           href="/tpo/students/requests"
           aria-current="page"
-          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-primary px-4 py-2 text-sm font-[650] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-primary px-4 py-2 text-sm font-[650] text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Requests
         </Link>
@@ -207,7 +207,7 @@ export default async function TpoStudentRequestsPage({
           href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize))}
           aria-current={!query.status ? "page" : undefined}
           className={
-            "min-w-0 border-b border-r p-4 last:border-r-0 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary " +
+            "min-w-0 border-b border-r p-4 last:border-r-0 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] " +
             (!query.status
               ? "border-primary bg-primary-subtle"
               : "border-border bg-surface")
@@ -227,7 +227,7 @@ export default async function TpoStudentRequestsPage({
               query.status === status ? "page" : undefined
             }
             className={
-              "min-w-0 border-b border-r p-4 last:border-r-0 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary " +
+              "min-w-0 border-b border-r p-4 last:border-r-0 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] " +
               (query.status === status
                 ? "border-primary bg-primary-subtle"
                 : "border-border bg-surface")
@@ -313,7 +313,7 @@ export default async function TpoStudentRequestsPage({
           </div>
           <Link
             href="/tpo/students/requests"
-            className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >
             Clear filters
           </Link>
@@ -331,7 +331,7 @@ export default async function TpoStudentRequestsPage({
                 ...baseFilters,
                 page: 1,
               })}
-              className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+              className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
             >
               First page
             </Link>
@@ -358,7 +358,7 @@ export default async function TpoStudentRequestsPage({
                   {formatRequestedAt(request.requestedAt)} IST
                 </time>
                 <Link href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
-                  className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                  className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                   Open placement job
                 </Link>
                 {request.status==="PENDING" ? <TpoRequestDecisionControl
@@ -433,7 +433,7 @@ export default async function TpoStudentRequestsPage({
                     <td className="px-4 py-4">
                       <Link
                         href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
-                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                       >
                         Open placement job →
                       </Link>
@@ -470,7 +470,7 @@ export default async function TpoStudentRequestsPage({
                   ...baseFilters,
                   page: data.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Previous
               </Link>
@@ -482,7 +482,7 @@ export default async function TpoStudentRequestsPage({
                   ...baseFilters,
                   page: data.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Next
               </Link>
