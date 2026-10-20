@@ -6,6 +6,8 @@ import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable} from "@/components/ui/data-table";
 import {Tabs} from "@/components/ui/tabs";
+import {Disclosure} from "@/components/ui/disclosure";
+import {EmptyState} from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -44,8 +46,8 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
         ["ALL","All batches"],["ACTIVE","Active batches"],["INACTIVE","Show inactive"],["COMPLETED","Show completed"],
       ] as const).map(([value,label])=>({value,label,href:pageUrl({...data.query,status:value,page:1})}))}/>
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
-        <form action="/admin/batches" method="get" role="search" aria-label="Batch filters" className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-0 w-full md:min-w-48 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <form action="/admin/batches" method="get" role="search" aria-label="Batch filters" className="grid min-w-0 items-end gap-[var(--lms-space-3)] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 md:min-h-9">
@@ -53,11 +55,13 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </Select>
           </label>
-          <label className="grid min-w-0 w-full md:min-w-40 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search batches
             <Input type="search" name="q" defaultValue={data.query.q}
               className="min-h-11 md:min-h-9"/>
           </label>
+          <Disclosure title="More filters" defaultOpen={data.query.status!=="ALL" || data.query.pageSize!==25}
+            className="min-w-0 min-[768px]:col-span-4" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] min-[768px]:grid-cols-2">
           <label className="grid min-w-0 w-full md:min-w-36 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select name="status" defaultValue={data.query.status}
@@ -70,17 +74,18 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
               {[10,25,50,100].map(n=><option value={n} key={n}>{n}</option>)}
             </Select>
           </label>
-          <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
-          <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
-          <Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>
+          </Disclosure>
+          <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+          <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>
+          <Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>
         </form>
       </section>
 
-      <section aria-label="Manage batches" className="space-y-3 pt-2">
+      <section aria-label="Manage batches" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Manage batches</h2>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage batches" rows={data.items} getRowKey={row=>row.id}
-          empty={<p role="status">No matching batches on this page.</p>}
+          empty={<EmptyState title="No matching batches on this page." />}
           columns={[
             {key:"batch",header:"Batch",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
