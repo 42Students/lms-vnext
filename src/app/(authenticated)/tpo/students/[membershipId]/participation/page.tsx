@@ -80,8 +80,8 @@ export default async function TpoLearnerParticipationPage({
       </section>
 
       <nav aria-label="Student placement journey" className="flex flex-wrap gap-3">
-        <Link href={journey.history} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View placement history and round outcomes →</Link>
-        <Link href={journey.roster} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Student roster</Link>
+        <Link href={journey.history} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View placement history and round outcomes →</Link>
+        <Link href={journey.roster} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Student roster</Link>
       </nav>
 
       <TpoDebarControl
