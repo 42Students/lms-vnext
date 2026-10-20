@@ -52,11 +52,11 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  function close(){seq.current++;setDetail(null);setMessage("");}
  return <section aria-label="Why a learner sees a module" className="border-b border-border pb-5">
   <h2 className="font-semibold">Why can&apos;t a student see a module?</h2>
-  <label className="mt-3 grid gap-1 text-sm font-semibold text-body">
+  <label className="mt-3 grid gap-1 text-sm font-semibold text-body print:hidden">
    Why can&apos;t a student see a module? Search…
    <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Name or roll number" autoComplete="off"
-    className="min-h-11 w-full sm:min-h-9"/>
+    className="min-h-11 w-full md:min-h-9"/>
   </label>
   {loading?<p role="status" className="mt-2 text-sm text-body">Searching learners…</p>:null}
   {search.trim().length>1&&!loading&&!suggestions.length&&!message?
@@ -76,7 +76,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      <div><h3 className="text-lg font-semibold">{detail.displayName||"Unnamed learner"}</h3>
       <p className="text-sm text-body">{detail.rollNumber||"No roll number"}</p>
      </div>
-     <Button type="button" variant="secondary" onClick={close} aria-label="Close student explanation">Close</Button>
+     <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={close} aria-label="Close student explanation">Close</Button>
     </div>
     <section aria-label="Placement participation" className="rounded-md border border-border p-3 text-sm">
      <h4 className="font-semibold">Placement cell decision</h4>
@@ -97,12 +97,12 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
         membershipId={detail.membershipId} module={rule.module} stored={rule.stored}
         locked={rule.locked} blocked={rule.blocked}/>)}
      </article>)}</div>
-    <Button type="button" variant="secondary"
+    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
      onClick={()=>void lookup(search,detail.membershipId)} disabled={loading}>
      Recheck access after a change
     </Button>
     <p className="text-xs text-body">This reads persisted learner access. It does not sign in as the student.</p>
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
      href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(detail.membershipId)}>
      Open full access trace →
     </Link>
