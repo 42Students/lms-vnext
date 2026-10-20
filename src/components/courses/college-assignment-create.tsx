@@ -9,6 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Disclosure} from "@/components/ui/disclosure";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {ALL_ASSIGNMENT_METHODS,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
@@ -35,6 +36,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const lock=useRef(false);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const chosen=lessons.find(x=>x.id===lessonId);
+ const pointsValid=Number.isInteger(Number(points))&&Number(points)>=1&&Number(points)<=10000;
  const sections=useMemo(()=>deliveries.filter(d=>d.offeringId===chosen?.offeringId),
    [deliveries,chosen?.offeringId]);
  function discardDraft(){
@@ -86,7 +88,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
   finally{lock.current=false;setPending(false);}
  }
- return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
+ return <section className="min-w-0 space-y-4 border-b border-border pb-4">
   <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
    <p className="min-w-0 text-[var(--lms-font-base)] text-[var(--lms-body-text)]">Create a shared or Section-specific assignment draft.</p>
    <Button type="button" variant="primary" disabled={!lessons.length||pending}
@@ -95,60 +97,65 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">
    Create an active course offering and lesson before adding an assignment.</p>:null}
-  {opened?<div className="grid gap-3 md:grid-cols-2">
-   <label className="grid gap-1 text-xs font-semibold text-body">Course / Lesson
+  {opened?<div role="region" aria-label="Create assignment draft" className="grid min-w-0 gap-3 sm:grid-cols-2">
+   <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">Course / Lesson
     <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
-     className="min-h-11 md:min-h-9">
+     className="min-h-11 w-full md:min-h-9">
      {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}
      </option>)}
     </Select></label>
-   <label className="grid gap-1 text-xs font-semibold text-body">Audience
+   <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">Audience
     <Select value={deliveryId} disabled={pending} onChange={e=>setDeliveryId(e.target.value)}
-     className="min-h-11 md:min-h-9">
+     className="min-h-11 w-full md:min-h-9">
      <option value="">All currently eligible sections (shared offering)</option>
      {sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
       {section.sectionName} ({section.sectionCode})
      </option>)}
     </Select></label>
-   <label className="grid gap-1 text-xs font-semibold text-body">Title
+   <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">Title
     <Input required maxLength={200} value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-1 text-xs font-semibold text-body">Points
+     className="min-h-11 w-full md:min-h-9"/></label>
+   <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">Points
     <Input type="number" min={1} max={10000} value={points} disabled={pending}
      onChange={e=>setPoints(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-1 text-xs font-semibold text-body">Deadline (IST, optional until publishing)
-    <Input type="datetime-local" value={dueAt} disabled={pending}
-     onChange={e=>setDueAt(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-1 text-xs font-semibold text-body md:col-span-2">Instructions
-    <Textarea rows={3} maxLength={10000} value={description} disabled={pending}
-     onChange={e=>setDescription(e.target.value)}
-     className="min-h-24"/></label>
-   <p className="text-xs text-muted-foreground md:col-span-2" role="status">Audience: {deliveryId?
+     className="min-h-11 w-full md:min-h-9"/></label>
+   <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
     "All currently eligible Sections in the selected Course Offering"}.
     Draft assignments are hidden until they are published.</p>
-   <div className="md:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
-   <label className="flex min-h-11 items-center gap-2 text-sm md:col-span-2">
+   <Disclosure title="Instructions and submission settings" className="min-w-0 border-t border-border py-2 sm:col-span-2" contentClassName="pt-3">
+    <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+   <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">Deadline (IST, optional until publishing)
+    <Input type="datetime-local" value={dueAt} disabled={pending}
+     onChange={e=>setDueAt(e.target.value)}
+     className="min-h-11 w-full md:min-h-9"/></label>
+   <label className="grid min-w-0 gap-1 text-xs font-semibold text-body sm:col-span-2">Instructions
+    <Textarea rows={3} maxLength={10000} value={description} disabled={pending}
+     onChange={e=>setDescription(e.target.value)}
+     className="min-h-24 w-full"/></label>
+
+   <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
+    </div>
+   </Disclosure>
+   <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm sm:col-span-2">
     <Checkbox checked={keepOpen} disabled={pending}
      onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
    </label>
-   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:col-span-2 md:flex-row md:items-center md:justify-end">
+   <div className="flex min-w-0 flex-col-reverse gap-2 sm:col-span-2 sm:flex-row sm:items-center sm:justify-end">
     <Button type="button" variant="secondary" disabled={pending} onClick={close}
-     className="min-h-11 w-full md:min-h-9 md:w-auto">Cancel</Button>
-    <Button type="button" loading={pending} disabled={pending||!chosen||!title.trim()} onClick={()=>setConfirmCreate(true)}
-     className="min-h-11 w-full md:min-h-9 md:w-auto">
+     className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel</Button>
+    <Button type="button" loading={pending} disabled={pending||!chosen||!title.trim()||!pointsValid} onClick={()=>{setError("");setConfirmCreate(true);}}
+     className="min-h-11 w-full sm:w-auto md:min-h-9">
      {pending?"Creating…":"Create draft"}</Button>
    </div>
   </div>:null}
-  <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
+  <ConfirmDialog open={confirmCreate} onOpenChange={next=>{if(!pending)setConfirmCreate(next);}}
    title="Create assignment as a draft?" description="Learners cannot submit until published."
-   confirmLabel="Create draft" confirmVariant="primary" pending={pending} confirmDisabled={!chosen||!title.trim()} onConfirm={()=>void create()}>
+   confirmLabel="Create draft" confirmVariant="primary" pending={pending} confirmDisabled={!chosen||!title.trim()||!pointsValid} onConfirm={()=>void create()}>
    {error?<Alert tone="error">{error}</Alert>:null}
   </ConfirmDialog>
-  <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard unsaved assignment changes?"
+  <ConfirmDialog open={confirmDiscard} onOpenChange={next=>{if(!pending)setConfirmDiscard(next);}} title="Discard unsaved assignment changes?"
    description="Unsaved assignment details will be discarded." confirmLabel="Discard draft"
    confirmVariant="danger" pending={pending} onConfirm={discardDraft}/>
   {error?<Alert tone="error">{error}</Alert>:null}
