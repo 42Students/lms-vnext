@@ -61,12 +61,18 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     offeringId:first(params.offeringId)||undefined,
     deliveryId:first(params.deliveryId)||undefined,
   });
-  return <div className="min-w-0 max-w-full space-y-4">
-    <PageHeader title="Progress" actions={<Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-      Export recorded course activity CSV
-    </Link>} />
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+    <PageHeader title="Progress" actions={
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+        <Link href="/college/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+          Course offerings
+        </Link>
+        <Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+          Export recorded course activity CSV
+        </Link>
+      </div>} />
     <CollegeLearnerProgressReport data={report}/>
-    <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} />
+    <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
   </div>;
 }
