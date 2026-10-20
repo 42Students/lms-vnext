@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -273,12 +274,10 @@ export default async function LearnerOffersPage({
           }))}
         />
       )}
-      {paginated.total>0 ? <nav aria-label="Offer results pagination" className="flex flex-wrap items-center gap-3 text-sm">
-        <p className="text-muted-foreground">{paginated.from}–{paginated.to} of {paginated.total} matching offers</p>
-        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Previous</Link> : null}
-        <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
-        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Next</Link> : null}
-      </nav> : null}
+      {paginated.total>0 ? <div className="space-y-2">
+        <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">{paginated.from.toLocaleString("en-IN")}–{paginated.to.toLocaleString("en-IN")} of {paginated.total.toLocaleString("en-IN")} matching offers</p>
+        <Pagination label="Offer results pagination" page={paginated.page} pageCount={paginated.pages} hrefForPage={pageUrl} />
+      </div> : null}
       <section aria-label="How offers work at your college" className="min-w-0 border-b border-border py-4 md:py-6">
         <h2 className="font-semibold text-foreground">How offers work at your college</h2>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
