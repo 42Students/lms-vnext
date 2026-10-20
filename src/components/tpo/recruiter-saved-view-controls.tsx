@@ -8,7 +8,7 @@ type SavedView={
  id:string;name:string;note:string|null;query_json:Record<string,string>;
  columns_json:EngageColumn[];pinned:boolean;updated_at:string;
 };
-const button="min-h-11 max-w-full break-words px-3 text-sm";
+const button="min-h-11 max-w-full break-words px-3 text-sm md:min-h-9";
 export function RecruiterSavedViewControls({columns}:{columns:readonly EngageColumn[]}){
  const [views,setViews]=useState<SavedView[]>([]);
  const [ready,setReady]=useState<boolean|null>(null);
@@ -89,9 +89,9 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
    !ready?<p role="status" className="text-sm">Saved views are unavailable until storage is registered.</p>:<>
    <div className="grid min-w-0 grid-cols-1 items-center gap-2 md:grid-cols-2 xl:grid-cols-3">
     <Input aria-label="View name" maxLength={100} placeholder="View name" value={name}
-     onChange={e=>setName(e.target.value)} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3"/>
+     onChange={e=>setName(e.target.value)} className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9"/>
     <Input aria-label="View note" maxLength={500} placeholder="Note (optional)" value={note}
-     onChange={e=>setNote(e.target.value)} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3"/>
+     onChange={e=>setNote(e.target.value)} className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9"/>
     <Button variant="secondary" type="button" disabled={busy||!name.trim()||views.length>=100} className={button}
      onClick={()=>void apply("CREATE")}>Save current view</Button>
    </div>
@@ -104,7 +104,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
       </Button>)}
     </nav>:null}
     <label className="block text-sm">Open saved view
-     <Select className="mt-1 min-h-11 w-full max-w-sm rounded-[var(--lms-control-radius)] border border-border px-3"
+     <Select className="mt-1 min-h-11 w-full max-w-sm rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9"
       value={selected} onChange={e=>{
        setSelected(e.target.value);setDeleteReview(null);
        const view=views.find(item=>item.id===e.target.value);
@@ -114,9 +114,9 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
       {views.map(view=><option key={view.id} value={view.id}>{view.pinned?"★ ":""}{view.name}</option>)}
      </Select>
     </label>
-    {active?<div className="grid min-w-0 grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
-     <label className="min-w-0 text-sm">Rename view<Input maxLength={100} className="ml-2 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
-     <label className="min-w-0 text-sm">Note<Input maxLength={500} className="ml-2 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
+    {active?<div className="grid min-w-0 grid-cols-1 gap-3 border-t border-border pt-3 md:grid-cols-2 xl:grid-cols-3">
+     <label className="min-w-0 text-sm">Rename view<Input maxLength={100} className="mt-1 min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
+     <label className="min-w-0 text-sm">Note<Input maxLength={500} className="mt-1 min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
      <Button variant="secondary" type="button" className={button} onClick={()=>open(active)}>Open</Button>
      <Button variant="secondary" type="button" className={button} disabled={busy||!editingName.trim()} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</Button>
      <Button variant="secondary" type="button" className={button} disabled={busy||(!active.pinned&&views.filter(view=>view.pinned).length>=5)} onClick={()=>void apply("PIN",active)}>
