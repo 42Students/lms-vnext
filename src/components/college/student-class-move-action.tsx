@@ -67,27 +67,28 @@ export function StudentClassMoveAction({ membershipId, name }: {
       }
     });
   }
-  return <div className="text-left">
+  return <div className="min-w-0 text-left">
     <Button variant="secondary" type="button" onClick={load} disabled={busy}
       className="min-h-11 md:min-h-9">
       Move class
     </Button>
-    <Dialog open={open} onOpenChange={next=>{if(!busy)setOpen(next);}} title={"Move class for "+name} dismissible={!busy} footer={<>
-<Button variant="secondary" type="button" onClick={() => setOpen(false)}
-          className="min-h-11 md:min-h-9" disabled={busy}>Cancel</Button>
-<Button variant="primary" type="button" disabled={!canMove || busy} onClick={submit}
-          className="min-h-11 md:min-h-9" loading={busy}>Confirm move</Button>
-</>}>
-      <p className="mb-2 text-xs text-body">Same batch and academic period only</p>
+    <Dialog open={open} onOpenChange={next=>{if(!busy)setOpen(next);}} title={"Move class for "+name} dismissible={!busy} footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+      <Button variant="secondary" type="button" onClick={() => setOpen(false)}
+        className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}>Cancel</Button>
+      <Button variant="primary" type="button" disabled={!canMove || busy} onClick={submit}
+        className="min-h-11 w-full sm:w-auto md:min-h-9" loading={busy}>Confirm move</Button>
+    </div>}>
+      <p className="mb-[var(--lms-space-3)] text-xs leading-5 text-body">Same batch and academic period only</p>
       {loaded && loaded.options.every(item => item.id === loaded.current.sectionId) ?
         <EmptyState title="No eligible classes" description="No other eligible class is available in the current batch and period."/> : null}
-      {loaded ? <Select aria-label={"Destination class for " + name}
+      {loaded ? <Select className="w-full" aria-label={"Destination class for " + name}
         value={targetId} disabled={busy} onChange={e => setTargetId(e.target.value)}>
         <option value="">Choose destination</option>
         {loaded.options.filter(item => item.id !== loaded.current.sectionId).map(item =>
           <option key={item.id} value={item.id}>{item.name} (capacity {item.capacity ?? "unlimited"})</option>)}
-      </Select> : busy?<Skeleton variant="row" label="Loading classes"/>:<EmptyState title="No classes loaded" description="No class data loaded"/>}
-      {error ? <Alert tone="error" className="my-2">{error}</Alert> : null}
+      </Select> : busy?<Skeleton variant="row" label="Loading classes"/>:!error ? <EmptyState title="No classes loaded" description="No class data loaded"/> : null}
+      {error ? <div className="space-y-[var(--lms-space-2)]"><Alert tone="error">{error}</Alert>
+        <Button variant="secondary" type="button" onClick={load} disabled={busy} className="min-h-11 w-full sm:w-auto md:min-h-9">Retry</Button></div> : null}
       {canMove?<Alert tone="info" className="mt-2">{moveConfirmation}</Alert>:null}
       
     </Dialog>
