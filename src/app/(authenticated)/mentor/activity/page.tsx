@@ -109,9 +109,9 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             <PageSizeSelect label="Page size" name="pageSize" defaultValue={String(data.pageSize)} options={[20,50]} />
           </div>
         </Disclosure>
-        <div className="flex min-w-0 justify-start">
+        {hasActiveFilters ? <div className="flex min-w-0 justify-start">
           <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
-        </div>
+        </div> : null}
       </form>
       <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 md:flex-row md:items-center md:justify-between">
         <p className="m-0 text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>

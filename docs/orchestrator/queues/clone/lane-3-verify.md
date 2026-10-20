@@ -9,16 +9,16 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-3.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-3-b with [chat-3] after every 2 surfaces.
 
-- [ ] `src/app/(authenticated)/mentor/activity/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/courses/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/fileExplorer/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/profile/page.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/page.tsx`
+- [x] `src/app/(authenticated)/mentor/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/mentor/calendar/page.tsx`
+- [x] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/courses/page.tsx`
+- [x] `src/app/(authenticated)/mentor/fileExplorer/page.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/page.tsx`
+- [x] `src/app/(authenticated)/mentor/page.tsx`
+- [x] `src/app/(authenticated)/mentor/profile/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
