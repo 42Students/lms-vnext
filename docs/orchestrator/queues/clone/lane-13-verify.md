@@ -15,12 +15,12 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-13.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx`
+- [x] `src/app/(authenticated)/tpo/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/preview/page.tsx`
