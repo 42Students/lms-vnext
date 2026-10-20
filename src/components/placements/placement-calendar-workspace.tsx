@@ -355,7 +355,7 @@ function CalendarEventCard({
   const href = eventHref(event, audience);
 
   return (
-    <article className="border-b border-border py-4 sm:py-5">
+    <article className="border-b border-border py-4 md:py-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="m-0 text-xs font-bold uppercase tracking-wide text-[var(--lms-link-text)]">
@@ -766,7 +766,7 @@ export async function PlacementCalendarWorkspace({
           ].join(":")}
           action={basePath}
           method="get"
-          className="mt-5 grid gap-3 border-t border-border pt-5 sm:grid-cols-2 xl:grid-cols-4"
+          className="mt-5 grid gap-3 border-t border-border pt-5 md:grid-cols-2 xl:grid-cols-4"
         >
           <input
             type="hidden"
@@ -901,7 +901,7 @@ export async function PlacementCalendarWorkspace({
 
       <section
         aria-label="Next scheduled calendar event"
-        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5"
+        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
