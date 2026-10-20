@@ -29,7 +29,7 @@ export default async function MentorTeamMeetingsPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid meeting history filters"} />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);
@@ -39,15 +39,15 @@ export default async function MentorTeamMeetingsPage({
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
       description={data.enabled?data.projectTitle:"Projects access is disabled. No private team or meeting data was loaded."}
       actions={<Link data-unskin="" href={board}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Team workspace
       </Link>} />
     {!data.enabled?<section role="status"
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No private team or meeting data was loaded.
     </section>:<>
-      <section className="border-b border-border pb-5">
-        <h2 className="text-base font-semibold text-foreground">Active team coverage</h2>
+      <section aria-labelledby="section-active-team-coverage" className="border-b border-border pb-5">
+        <h2 id="section-active-team-coverage" className="text-base font-semibold text-foreground">Active team coverage</h2>
         <dl className="mt-4 grid gap-3 md:grid-cols-3">
           <div><dt className="text-xs text-muted-foreground">Learners</dt>
             <dd className="mt-1 text-xl font-semibold">{data.team.learners}</dd></div>
@@ -62,7 +62,7 @@ export default async function MentorTeamMeetingsPage({
           role grants. No private member identities are loaded.
         </p>
       </section>
-      <FilterBar title="Filters"><form method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
+      <FilterBar title="Filters"><form role="search" aria-label="team meetings filters" method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting status
           <Select name="status" defaultValue={data.query.status}
@@ -104,12 +104,12 @@ export default async function MentorTeamMeetingsPage({
           Filter
         </Button>
         <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
       </form></FilterBar>
       <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
         description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." />
-        :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
+        :<ol aria-label="team meetings entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
           <li key={meeting.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{meeting.title}</h2>
@@ -135,7 +135,7 @@ export default async function MentorTeamMeetingsPage({
               </div>:null}
             <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
               "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               View outcome notes
             </Link>
           </li>)}</ol>}

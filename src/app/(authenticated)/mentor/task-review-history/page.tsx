@@ -29,7 +29,7 @@ export default async function MentorTaskReviewHistoryPage({
   });
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid review history filters"} />
-    <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
@@ -38,14 +38,14 @@ export default async function MentorTaskReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Task Board" title="Reviewed task submissions"
       description="Registered task decisions on projects currently assigned to you."
       actions={<Link data-unskin="" href="/mentor/task-reviews"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Pending task reviews
       </Link>} />
     {!data.enabled ? <section role="status"
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Reviewed task history is unavailable.
     </section> : <>
-      <FilterBar title="Filters"><form action="/mentor/task-review-history" method="get"
+      <FilterBar title="Filters"><form role="search" aria-label="mentor task review history filters" action="/mentor/task-review-history" method="get"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
@@ -77,7 +77,7 @@ export default async function MentorTaskReviewHistoryPage({
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
-        <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">
+        <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">
           Clear
         </Link>
       </form></FilterBar>
@@ -86,7 +86,7 @@ export default async function MentorTaskReviewHistoryPage({
         <Link data-unskin="" href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,
             order:data.query.order,search:data.query.search}).toString()}
-          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-150 motion-reduce:transition-none">
+          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] transition-colors duration-150 motion-reduce:transition-none">
           Export reviewed task decisions CSV (max 200)
         </Link>
         {data.total>200?<span role="status">
@@ -95,7 +95,7 @@ export default async function MentorTaskReviewHistoryPage({
       </div>
       {data.items.length===0 ? <EmptyState title="No reviewed task submissions"
         description="No registered approved or changes-requested task versions match this filter and your current project assignments. Unmigrated history is not inferred." />
-      : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
+      : <ol aria-label="mentor task review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-foreground">{item.taskTitle}</h2>
@@ -109,12 +109,12 @@ export default async function MentorTaskReviewHistoryPage({
               }).format(item.reviewedAt)+" IST" : "date not recorded"}
           </p>
           <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Open authorized Board →
           </Link>
           <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+
             "/tasks/"+encodeURIComponent(item.taskId)+"/feedback"}
-            className="ml-4 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="ml-4 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Recorded feedback →
           </Link>
         </li>)}</ol>}
