@@ -38,7 +38,7 @@ export async function AcademicsSectionPage({
     });
 
   return (
-    <div className="min-w-0 max-w-full space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         eyebrow={eyebrow}
         title={workspace.section.name}
