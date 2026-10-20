@@ -87,7 +87,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
         </option>)}
       </Select>
       <Button type="button" variant="secondary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
-       disabled={Boolean(moving)||!destinations[row.learnerEnrollmentId]||destinations[row.learnerEnrollmentId]===row.classId}
+       disabled={Boolean(moving)||pendingRow!==null||!destinations[row.learnerEnrollmentId]||destinations[row.learnerEnrollmentId]===row.classId}
        onClick={()=>{setError(null);setPendingRow(row);}}>{moving===row.learnerEnrollmentId?"Moving…":"Move"}</Button>
      </div>},
    ]}/>
@@ -97,7 +97,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
    description="The active cohort roster and assignment will be updated; this action is audited."
    confirmLabel="Move" confirmVariant="primary" pending={Boolean(moving)}
    confirmDisabled={!pendingValid} onConfirm={()=>{if(pendingRow)void assign(pendingRow);}}>
-   <dl className="grid min-w-0 gap-3 px-4 py-4 text-sm md:grid-cols-2 md:px-6">
+   <dl className="grid min-w-0 gap-3 text-sm md:grid-cols-2">
     <div className="min-w-0"><dt className="text-xs font-semibold text-muted-foreground">Current class</dt>
      <dd className="mt-1 break-words text-body">{pendingRow?.classId?labels.get(pendingRow.classId)??"Unknown":"Not assigned"}</dd></div>
     <div className="min-w-0"><dt className="text-xs font-semibold text-muted-foreground">Move to</dt>
