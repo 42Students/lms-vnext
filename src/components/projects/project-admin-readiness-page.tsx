@@ -114,11 +114,13 @@ export async function ProjectAdminReadinessPage({
 
   return (
     <div className="min-w-0 space-y-4">
-      <PageHeader title="Submission readiness"
-        description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to."
-        actions={<PageBackLink href={basePath} label="Project workspaces" />} />
+      <div className="min-w-0">
+        <PageBackLink href={basePath} label="Project workspaces" />
+        <PageHeader title="Submission readiness"
+          description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to." />
+      </div>
       <ProjectAdminNav basePath={basePath} active="readiness" />
-      <Disclosure title="Select workspace" className="border-b border-border pb-4" defaultOpen={Boolean(selected || outsideScope)} contentClassName="space-y-3 pt-3">
+      <Disclosure title="Select workspace" className="border-b border-border pb-4" defaultOpen contentClassName="space-y-3 pt-3">
         {outsideScope ? <Banner tone="warning" role="alert">This workspace belongs to a different college — switch colleges in the header and try again.</Banner> : null}
         <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
         {selected ? <>

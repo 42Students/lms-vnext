@@ -174,6 +174,8 @@ export default async function SuperAdminProjectsPage({
           id: project.id,
           title: project.title,
           summary: project.summary,
+          templateTitle: templates.find(template => template.templateId === project.templateId)?.title ?? null,
+          riskReasons: project.riskReasons,
           status: project.status,
           updatedAt: project.updatedAt,
           mentorName: project.mentorName,
