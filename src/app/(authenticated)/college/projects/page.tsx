@@ -140,7 +140,7 @@ export default async function CollegeProjectsPage({
         emptyDescription="Clear the filters, or create a Project from an assigned published template."
       />
 
-      <p role="status" className="text-sm tabular-nums text-muted-foreground">{result.total===0?"0 of 0 workspaces":`${(result.page-1)*(query.pageSize??25)+1}–${Math.min(result.page*(query.pageSize??25),result.total)} of ${result.total} workspaces`}</p>
+      <p role="status" className="text-sm tabular-nums text-muted-foreground">{result.total===0?"0 of 0 workspaces":`${((result.page-1)*(query.pageSize??25)+1).toLocaleString("en-IN")}–${Math.min(result.page*(query.pageSize??25),result.total).toLocaleString("en-IN")} of ${result.total.toLocaleString("en-IN")} workspaces`}</p>
       <ProjectAdminPagination
         basePath="/college/projects"
         query={query}
