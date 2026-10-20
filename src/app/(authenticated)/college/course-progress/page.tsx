@@ -1,4 +1,4 @@
-import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
+import { CollegeCourseMissingScope } from "@/components/courses/college-course-missing-scope";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
@@ -8,7 +8,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeProgressQuerySchema } from "@/modules/courses/college-learning-directory-model";
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
-import {collegeProgressCsvHref} from "@/modules/courses/college-progress-export-model";
+import { collegeProgressCsvHref } from "@/modules/courses/college-progress-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -50,7 +50,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
       <PageHeader title="Progress" />
       <ErrorState title="Invalid course progress filters"
         description="The search, offering status or page is invalid. No activity was loaded."
@@ -61,9 +61,9 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     offeringId:first(params.offeringId)||undefined,
     deliveryId:first(params.deliveryId)||undefined,
   });
-  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
     <PageHeader title="Progress" actions={
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Link href="/college/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Course offerings
         </Link>
