@@ -39,15 +39,15 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
     onClose={() => { if (open) onOpenChange(false); if (opener.current?.isConnected) opener.current.focus(); }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
     style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px" } as CSSProperties}
-    className={cx("fixed inset-x-0 top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none w-full max-w-none border-0 bg-surface p-0 text-foreground shadow-[-4px_0_24px_rgba(0,0,0,0.12)] backdrop:bg-[#1e363f]/10 md:top-[var(--lms-visual-top)] md:bottom-auto md:right-0 md:left-auto md:w-[min(600px,100vw)] md:border-l md:border-[var(--lms-canvas-border)]", inlineDesktop ? "sm:!static sm:!inset-auto sm:!block sm:!h-auto sm:!max-h-none sm:!w-full sm:!max-w-none sm:!border-0 sm:!bg-transparent sm:!shadow-none" : "", className)}>
-    <div className={cx("flex h-full min-h-0 flex-col overflow-hidden", inlineDesktop ? "sm:!h-auto sm:!overflow-visible" : "")}>
-      <header data-slot="drawer-header" className={cx("flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] p-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-[var(--lms-canvas-padding)]", inlineDesktop ? "sm:!hidden" : "")}>
+    className={cx("fixed top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none border-0 bg-surface p-0 text-foreground backdrop:bg-[#1e363f]/10 md:bottom-auto", side === "left" ? "left-0 right-auto w-[82%] max-w-[300px] shadow-[4px_0_16px_rgba(0,0,0,0.12)] md:w-[min(600px,100vw)] md:max-w-none md:border-r md:border-[var(--lms-canvas-border)]" : "inset-x-0 w-full max-w-none shadow-[-4px_0_24px_rgba(0,0,0,0.12)] md:left-auto md:right-0 md:w-[min(600px,100vw)] md:border-l md:border-[var(--lms-canvas-border)]", inlineDesktop ? "md:!static md:!inset-auto md:!block md:!h-auto md:!max-h-none md:!w-full md:!max-w-none md:!border-0 md:!bg-transparent md:!shadow-none" : "", className)}>
+    <div className={cx("flex h-full min-h-0 flex-col overflow-hidden", inlineDesktop ? "md:!h-auto md:!overflow-visible" : "")}>
+      <header data-slot="drawer-header" className={cx("flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] p-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-[var(--lms-canvas-padding)]", inlineDesktop ? "md:!hidden" : "")}>
         {headerLeading ? <div data-slot="drawer-leading" className="shrink-0">{headerLeading}</div> : null}
         <div className="min-w-0"><h2 id={titleId} className={cx("m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.35] text-[var(--lms-heading)]", headerLeading ? "sr-only" : "")}>{title}</h2>
           {description ? <p id={descriptionId} className="mt-[var(--lms-space-1)] text-[13px] leading-5 text-[var(--lms-body-text)]">{description}</p> : null}</div>
         {dismissible ? <Button className="min-h-11 min-w-11 shrink-0 rounded-full bg-surface p-0 text-[var(--lms-muted-text)] hover:bg-[var(--lms-neutral-100)]" variant="ghost" aria-label="Close drawer" onClick={() => onOpenChange(false)}><OverlayCloseIcon /></Button> : null}
       </header>
-      <ScrollCue axis="y" label={`${title} drawer content`} className={cx("min-h-0 flex-1", inlineDesktop ? "sm:!flex-none sm:!overflow-visible" : "")} viewportClassName={cx("h-full min-h-0 overscroll-contain p-4 md:p-[var(--lms-canvas-padding)]", inlineDesktop ? "sm:!h-auto sm:!overflow-visible sm:!p-0" : "", bodyClassName)}>{children}</ScrollCue>
+      <ScrollCue axis="y" label={`${title} drawer content`} className={cx("min-h-0 flex-1", inlineDesktop ? "md:!flex-none md:!overflow-visible" : "")} viewportClassName={cx("h-full min-h-0 overscroll-contain p-4 md:p-[var(--lms-canvas-padding)]", inlineDesktop ? "md:!h-auto md:!overflow-visible md:!p-0" : "", bodyClassName)}>{children}</ScrollCue>
       {footer ? <footer data-slot="drawer-footer" className="flex shrink-0 flex-wrap items-center justify-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:px-[var(--lms-canvas-padding)]">{footer}</footer> : null}
     </div>
   </dialog>;
@@ -71,10 +71,10 @@ export function ResponsiveFilterDrawer({
 }) {
   useEffect(() => {
     const media = typeof window.matchMedia === "function"
-      ? window.matchMedia("(min-width: 640px)") : null;
+      ? window.matchMedia("(min-width: 768px)") : null;
     const closeOnDesktop = () => {
       if (!open) return;
-      if (media?.matches ?? window.innerWidth >= 640) {
+      if (media?.matches ?? window.innerWidth >= 768) {
         onOpenChange(false);
         // The launcher is hidden at desktop sizes; do not force focus on it.
         if (launcher.current?.matches(":focus-visible")) launcher.current.blur();
