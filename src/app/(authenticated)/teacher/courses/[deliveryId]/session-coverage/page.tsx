@@ -20,7 +20,7 @@ export default async function FacultySessionCoveragePage({
         </div>)}
     </section>
     <section className="space-y-3" aria-label="Persisted session history">
-      <h2 className="text-lg font-semibold">Recent scheduled sessions</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recent scheduled sessions</h2>
       {data.shown.length===0?<EmptyState title="No scheduled sessions"
         description="No persisted class sessions were found for this authorized Section."/>:
         <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.shown.map(row=><li key={row.id}

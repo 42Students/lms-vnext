@@ -58,7 +58,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   rows={visible.map(student=>({id:student.membershipId,name:student.name,rollNumber:student.rollNumber}))}
  />
  <section aria-label="Placement journey" className="space-y-3 border-b border-border pb-4">
-  <h2 className="font-semibold">Placement journey</h2>
+  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Placement journey</h2>
   <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
    {([["Students",journey.total],["Eligible",journey.eligible],
       ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],

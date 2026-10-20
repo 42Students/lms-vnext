@@ -86,7 +86,7 @@ export default async function FacultyNotificationsPage({
         }))}
       />
       <section aria-labelledby="faculty-personal-notifications" className="space-y-4">
-        <h2 id="faculty-personal-notifications" className="text-lg font-semibold text-foreground">
+        <h2 id="faculty-personal-notifications" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Personal notifications
         </h2>
         <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
