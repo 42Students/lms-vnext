@@ -1,10 +1,12 @@
 "use client";
 import { Radio } from "@/components/ui/radio";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox as NativeCheckbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
@@ -214,7 +216,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     <option value="">Create new draft</option>
     {visibleQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
    </Select></label>
-  {quizSearch.trim()&&visibleQuizzes.length===0?<p role="status" className="text-sm text-body">No matching quizzes. Clear the search to see all Section quizzes.</p>:null}
+  {quizSearch.trim()&&visibleQuizzes.length===0?<EmptyState title="No matching quizzes" description="Clear the search to see all Section quizzes."/>:null}
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
    <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</Button>:null}
@@ -259,7 +261,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    {previewOpen?<div id="faculty-quiz-preview" className="mt-3 space-y-4">
     <Checkbox label="Show answer key to faculty" checked={previewAnswers}
        onChange={e=>setPreviewAnswers(e.target.checked)}/>
-    {!questions.length?<p role="status" className="text-sm">No questions yet.</p>:null}
+    {!questions.length?<EmptyState title="No questions yet." />:null}
     {questions.map((question,index)=><fieldset key={index}
      className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
      <legend className="text-sm font-semibold">Question {index+1} · {question.points} point(s)</legend>
@@ -267,7 +269,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      {question.options.map((option,i)=><label key={i}
       className="flex items-start gap-2 text-sm text-body">
       {question.type === "SINGLE_CHOICE" ? <Radio 
-       name={"preview-question-"+index} disabled/> : <Checkbox 
+       name={"preview-question-"+index} disabled/> : <NativeCheckbox 
        name={"preview-question-"+index} disabled/>}
       <span>{option.text||"Option not entered"}</span>
       {previewAnswers&&option.correct?<span className="text-xs font-semibold text-success">(Correct)</span>:null}
@@ -281,7 +283,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   </label>
   <Checkbox label="Show only questions needing correction" checked={invalidOnly}
      onChange={e=>setInvalidOnly(e.target.checked)}/>
-  {matchingQuestions.length===0?<p role="status" className="text-sm text-body">No questions match these review filters. Clear the search or invalid-only filter to view the entire bank.</p>:null}
+  {matchingQuestions.length===0?<EmptyState title="No questions match these review filters" description="Clear the search or invalid-only filter to view the entire bank."/>:null}
   {matchingQuestions.map(({q,i})=><fieldset key={i} disabled={!editable}
    className="min-w-0 max-w-full space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <legend className="text-sm font-semibold">Question {i+1}</legend>
@@ -365,12 +367,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <p className="font-semibold">Draft review: {review.questionCount} questions · {review.optionCount} options · {review.totalPoints} total points</p>
    <p>{review.missingCorrect===0?"Every question has a correct answer selected.":review.missingCorrect+" question(s) need a correct answer."}</p>
    <p>{reviewIssues.invalidQuestions===0?"All question formats pass validation.":reviewIssues.invalidQuestions+" question(s) need editing before save."}</p>
-   {reviewIssues.overLimit?<p role="alert" className="text-error">Total points exceed the 10,000-point limit.</p>:null}
+   {reviewIssues.overLimit?<Alert tone="error">Total points exceed the 10,000-point limit.</Alert>:null}
    <p className="text-xs text-muted-foreground">Review these draft values before saving or publishing.</p>
   </div>
   {chosen?.status==="DRAFT"&&dirtyDraft?
     <p role="status" className="text-sm text-body">You have unsaved changes. Save the draft before publishing.</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   {facultyQuizCanRetryDetails(detailsFailed,chosen?.id,pending) ?
     <Button variant="secondary" type="button" onClick={()=>{if(facultyQuizRetryNeedsConfirmation(dirtyDraft,pending)){
        askConfirm("Discard unsaved Quiz metadata and retry loading the saved question bank?",()=>void choose(selected));return;
@@ -379,7 +381,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text">
       Reload Quiz questions
     </Button> : null}
-  {success?<p role="status" className="text-sm text-body">{success}</p>:null}
+  {success?<Alert tone="success">{success}</Alert>:null}
   <div className="flex flex-wrap gap-3">
    {facultyQuizMayResetDraft(dirtyDraft,pending)?<Button variant="secondary" type="button" onClick={resetDraft}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm">Discard unsaved edits</Button>:null}
@@ -430,7 +432,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      <Textarea value={pastedChoices} onChange={event=>setPastedChoices(event.target.value)}
        rows={8} maxLength={40000} aria-label="Answer choices" />
    </label>
-   {error?<p role="alert" className="mt-3 text-sm text-foreground">{error}</p>:null}
+   {error?<Alert tone="error" className="mt-3">{error}</Alert>:null}
  </Dialog>
  <ConfirmDialog open={confirmRequest!==null} onOpenChange={open=>{if(!open&&!pending)dismissConfirm();}}
      title={confirmRequest?.title??"Confirm Quiz action"} confirmVariant={confirmRequest?.variant??"danger"} pending={pending}
