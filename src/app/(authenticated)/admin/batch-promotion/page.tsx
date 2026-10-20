@@ -51,25 +51,25 @@ export default async function SuperAdminBatchPromotionPage({
     <PageHeader  title="Batch Promotion"
       description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Class moves are managed separately in the batch roster." />
     <form method="get" className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 lg:grid-cols-4">
-      <label className="grid gap-1 text-[13px] font-semibold text-body">Program
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
           className="min-h-11 min-[768px]:min-h-9">
           <option value="">All programs</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold text-body">Batch
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
         <Select name="cohortId" defaultValue={input.data.cohortId ?? ""}
           className="min-h-11 min-[768px]:min-h-9">
           <option value="">Select a batch</option>
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold text-body">Academic year start override
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year start override
         <Input name="yearStart" type="number" min={1900} max={9998} step={1}
           defaultValue={input.data.yearStart ?? ""} className="min-h-11 min-[768px]:min-h-9" />
       </label>
-      <label className="flex min-h-11 items-center gap-2 text-[13px] font-semibold text-body">
+      <label className="flex min-h-11 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
       <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end">Preview</Button>
