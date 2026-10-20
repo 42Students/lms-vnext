@@ -52,3 +52,9 @@ Verified other lane's polish-lane-6.md entry and full report, MetricBar props, f
 ## 14. src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx
 Read entire page and other lane polish-lane-6.md proof, shared SuperAdminPlacementDetailView, PageHeader/BackLink, status badges, contextual links, exact membership application audit service behavior, local loading/error/not-found and parent admin. Related actions disclosure retains both route destinations and direct drive navigation; stage history uses unique ids, safe dates and 375/768 breakpoints. No JSX/import/prop/copy/permission regression confirmed, and no further clutter issue. Source only, no CI. Files: queue/proof.
 
+
+## 21. src/app/(authenticated)/admin/placements/job-settings/[jobId]/page.tsx
+Verified full route, super-admin job settings detail service/policy flags, shared SuperAdminPlacementDetailView and its PageHeader, status, PageBackLink, route loading/error/not-found and parent admin layout. Compared polish-lane-6.md. No malformed JSX/export/prop, changed policy copy or unauthorized links found; scoped missing record and empty/no-restriction read-only rows, long identifiers, 375/768 fact grid and status group remain legible. No extra fixes, source only, no CI. Files: queue/proof.
+
+## 22. src/app/(authenticated)/admin/placements/job-settings/page.tsx
+Compared polish-lane-6.md evidence to page, typed job policy read service, compact AdminScopedReadPage including shared search/CSV and pagination, scoped read guards, route loading/error (not-found/template absent) and parent layout. Five statuses, missing-policy display, form GET filters and detail links use valid props/route and preserve labels. No broken JSX, missing import, duplicate attr or alignment regression at 375/768/empty/error. No edits; source only, no CI. Files: queue/proof.
