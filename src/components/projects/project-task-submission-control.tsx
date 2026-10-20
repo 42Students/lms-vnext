@@ -36,6 +36,7 @@ export function ProjectTaskSubmissionControl({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    if (disabled || pending) return;
     setError(null);
 
     try {
@@ -159,6 +160,7 @@ export function ProjectTaskSubmissionControl({
               loading={pending}
               disabled={
                 pending ||
+                disabled ||
                 !submissionUrl.trim()
               }
             >
