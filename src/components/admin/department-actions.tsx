@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -39,9 +40,13 @@ export function DepartmentActions({
     else setOpen(false);
   }
   const [pending, startTransition] = useTransition();
+  const inFlightRef=useRef(false);
 
   function rename() {
+    if(pending||inFlightRef.current||!nextName.trim())return;
+    inFlightRef.current=true;
     startTransition(async () => {
+      try {
       const response = await fetch(
         `/api/college/departments/${departmentId}`,
         {
@@ -70,11 +75,16 @@ export function DepartmentActions({
         title: DEPARTMENT_COPY.updatedMessage,
       });
       router.refresh();
+      }catch{showToast({tone:"error",title:DEPARTMENT_COPY.updateFailed});}
+      finally{inFlightRef.current=false;}
     });
   }
 
   function archive() {
+    if(pending||inFlightRef.current||hasDependencies)return;
+    inFlightRef.current=true;
     startTransition(async () => {
+      try {
       const response = await fetch(
         `/api/college/departments/${departmentId}`,
         { method: "DELETE", headers: { "content-type": "application/json" }, body: JSON.stringify({ confirm: true }) },
@@ -128,6 +138,8 @@ export function DepartmentActions({
           `${name} is no longer active.`,
       });
       router.refresh();
+      }catch{setArchiveError("Department was not deleted. Move or remove its programs, courses, faculty before deleting. Refresh and retry after resolving dependencies.");showToast({tone:"error",title:"Archive blocked",description:"The department could not be archived."});}
+      finally{inFlightRef.current=false;}
     });
   }
 
@@ -137,6 +149,7 @@ export function DepartmentActions({
       <Button
         variant="secondary"
         size="sm"
+        disabled={pending}
         onClick={() => {
           setNextName(name);
           setOpen(true);
@@ -156,7 +169,8 @@ export function DepartmentActions({
       </div>
       <Dialog
         open={open}
-        onOpenChange={(next) => next ? setOpen(true) : requestEditClose()}
+        onOpenChange={(next) => next ? (pending?undefined:setOpen(true)) : requestEditClose()}
+        dismissible={!pending}
         title={DEPARTMENT_COPY.editTitle}
         description="Department names stay unique within the active college."
         footer={
@@ -202,7 +216,8 @@ export function DepartmentActions({
         onConfirm={() => { setDiscardOpen(false); setOpen(false); setNextName(name); }} />
       <Dialog
         open={archiveOpen}
-        onOpenChange={setArchiveOpen}
+        onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
+        dismissible={!pending}
         title="Archive department"
         description={`Archive ${name}? This is allowed only when it has no active programs, faculty assignments, or courses.`}
         footer={
@@ -218,7 +233,7 @@ export function DepartmentActions({
             </Button>
             <Button
               variant="danger"
-              disabled={pending}
+              disabled={pending||hasDependencies}
               onClick={archive}
             >
               {pending
