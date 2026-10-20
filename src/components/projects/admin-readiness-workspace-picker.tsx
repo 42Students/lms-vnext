@@ -18,7 +18,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
  const count=Math.max(1,Math.ceil(matching.length/pageSize)),current=Math.min(page,count);
  const rows=matching.slice((current-1)*pageSize,current*pageSize);
  return <form method="get" action={action} className={"space-y-3 "+styles.legacy}>
-  <label className="block text-[13px] font-semibold text-body">Search workspace title or ID
+  <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search workspace title or ID
    <Input value={search} onChange={e=>{setSearch(e.target.value);setPage(1)}}
     placeholder="Search workspace" className="mt-1 min-h-11 w-full md:min-h-9"/></label>
   <fieldset className="max-h-64 min-w-0 space-y-1 overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
