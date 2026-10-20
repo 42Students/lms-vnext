@@ -45,7 +45,7 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
  return <section aria-label="Academic scope inventory" className="mt-4 space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h3 className="font-semibold text-foreground">Academic hierarchy</h3>
-   <div className="flex gap-2 text-sm print:hidden">
+   <div className="flex flex-wrap gap-2 text-sm print:hidden">
     <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</Button>
     <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</Button>
    </div>

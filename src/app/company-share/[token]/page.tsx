@@ -26,7 +26,7 @@ export default async function CompanySharePage({
     action={<Link href={"/company-share/"+encodeURIComponent(token)}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Try again</Link>}/>
  </main>;
- if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:py-10`}>
+ if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] md:py-10`}>
   <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 md:p-6">
    <PageHeader title="Enter the 6-digit share code" />
    <p className="text-sm text-body">Ask the placement cell for the code sent separately with this company share link.</p>
@@ -59,10 +59,11 @@ export default async function CompanySharePage({
   mobilePriority: index===0?"primary":"secondary",
   cell: row=>row.cells[key]??"Not recorded",
  }));
- return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-5 px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-5`}>
-  <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 sm:grid-cols-3">
+ return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-5 px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] md:px-5`}>
+  <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 md:grid-cols-3">
    {Array.from({length:18},(_,index)=><span key={index} className="block w-[150%] -rotate-30 whitespace-nowrap">{result.companyName} · confidential</span>)}
   </div>
+  <div className="min-w-0 space-y-5 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
   <section aria-label="Shared applicant summary">
    <p className="text-sm text-muted-foreground">42Students · Company applicant share</p>
    <PageHeader title={"Shared with "+result.companyName} />
@@ -83,7 +84,7 @@ export default async function CompanySharePage({
     className="flex min-w-0 flex-wrap items-end gap-3 border-y border-border py-4">
     <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner name
      <Input name="q" type="search" defaultValue={result.search} maxLength={80}
-      className="w-full sm:w-64" placeholder="Name contains..." />
+      className="w-full md:w-64" placeholder="Name contains..." />
     </label>
     <Button type="submit">Apply search</Button>
     <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</a>
@@ -104,5 +105,6 @@ export default async function CompanySharePage({
    href={publicApplicantExportHref(token,result.search)}>
    Download list (CSV, up to 500 applicants)
   </a>
+  </div>
  </main>;
 }
