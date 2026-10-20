@@ -190,10 +190,12 @@ export function DriveDayRoster({
           ["Checked in", counts.present],
           ["Not here yet", counts.waiting],
           ["Absent", counts.absent],
-        ].map(([label, value]) => (
+        ].map(([label, value], index) => (
           <div
             key={String(label)}
-            className="border-b border-border p-4 last:border-b-0 md:border-r md:last:border-r-0 lg:border-b-0"
+            className={"min-w-0 p-3 sm:p-4 " + (index < 2 ? "border-b border-border xl:border-b-0 " : "") +
+              (index % 2 === 0 ? "border-r border-border " : "") +
+              (index === 1 || index === 2 ? "xl:border-r " : "xl:border-r-0 ")}
           >
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
               {label}
@@ -219,9 +221,10 @@ export function DriveDayRoster({
         </div>
 
         {rows.length === 0 ? (
-          <p className="m-0 p-6 text-sm text-muted-foreground">
-            No student matches your search.
-          </p>
+          <div className="flex min-w-0 flex-col items-start gap-3 p-4 sm:p-6">
+            <p className="m-0 text-sm text-muted-foreground">No student matches your search.</p>
+            {query.trim() ? <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => setQuery("")}>Clear search</Button> : null}
+          </div>
         ) : (
           <div className="divide-y divide-border">
             {rows.map((student) => (
@@ -255,9 +258,10 @@ export function DriveDayRoster({
                   </p>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="grid min-w-0 grid-cols-2 gap-2 md:flex md:flex-wrap">
                   <Button
                     size="sm"
+                    className="w-full min-w-0 md:w-auto"
                     disabled={
                       pendingId !== null ||
                       student.attendance ===
@@ -274,6 +278,7 @@ export function DriveDayRoster({
                   </Button>
                   <Button
                     size="sm"
+                    className="w-full min-w-0 md:w-auto"
                     variant="danger"
                     disabled={
                       pendingId !== null ||
