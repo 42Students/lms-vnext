@@ -127,7 +127,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   return <section className="space-y-4 border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
     <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
-    <form onSubmit={prepare} className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+    <form onSubmit={prepare} className="grid min-w-0 gap-4 md:max-w-4xl md:grid-cols-2">
       <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required value={programId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
@@ -147,7 +147,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber})</option>)}
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Courses to Add
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Courses to Add
         <Select multiple size={8} value={selectedIds}
           disabled={!termId} onChange={event => setDraftByTerm(current => ({
             ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
@@ -158,8 +158,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           Choose multiple courses; already-mapped courses are excluded. Selection is retained per semester.
         </span>
       </label>
-      <div className="flex items-end">
-        <Button type="submit" disabled={pending || !termId || !selectedIds.length}>
+      <div className="flex items-end md:col-span-2 md:justify-end">
+        <Button className="w-full md:w-auto" type="submit" disabled={pending || !termId || !selectedIds.length}>
           {TERM_MAPPING_COPY.addButton}
         </Button>
       </div>
@@ -214,7 +214,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                     onChange={event=>setEditing({...editing,position:event.target.value})}
                     className="block min-h-[var(--lms-control-height)] w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button variant="secondary" type="submit" disabled={pending}
                     >Save</Button>
                   <Button variant="secondary" type="button" disabled={pending} onClick={()=>setEditing(null)}
