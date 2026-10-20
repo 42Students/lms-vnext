@@ -44,8 +44,8 @@ export default async function TpoReportsPage({
   const parsedSearch=tpoReportGallerySearchSchema.safeParse(first(query.q)??"");
   const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
   if(!parsedSearch.success||!parsedGroup.success)return <section className="space-y-3">
-    <Alert tone="error">
     <PageHeader title="Invalid report search" />
+    <Alert tone="error">
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
     <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">
       Clear search
