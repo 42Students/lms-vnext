@@ -85,12 +85,12 @@ export function LearnerGeneralRequests({
   <label className="grid gap-1 text-sm font-semibold text-body">Why are you requesting this?
    <Textarea className={box} rows={3} maxLength={2000} value={reason} onChange={e=>setReason(e.target.value)}/>
   </label>
-  <Button className="max-md:min-h-11" type="button" disabled={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send request"}</Button>
+  <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send request"}</Button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <h3 className="font-semibold">Request history</h3>
   {!rows.length?<p role="status" className="text-sm">No other placement requests recorded yet.</p>:
-   <ul className="space-y-2">{rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-3 text-sm last:border-b-0">
+   <ul className="divide-y divide-border">{rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-3 text-sm last:border-b-0">
     <strong>{row.kind.replaceAll("_"," ")}</strong> · {row.status.replaceAll("_"," ")}
     <p className="break-words">{row.reason}</p>
     {row.decisionNote?<p>Placement cell: {row.decisionNote}</p>:null}

@@ -364,8 +364,8 @@ export function LearnerPlacementRequests({
         </div>
       </div>
 
-      <div role="group" aria-label="What do you need?" className="grid min-w-0 gap-5 py-5 xl:grid-cols-2">
-        <div id="round-reschedule" className="min-w-0 scroll-mt-24 rounded-lg border border-border bg-muted p-4">
+      <div role="group" aria-label="What do you need?" className="grid min-w-0 gap-4 py-4 xl:grid-cols-2">
+        <div id="round-reschedule" className="min-w-0 scroll-mt-24 border-t border-border pt-4">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Round reschedule
           </h3>
@@ -509,7 +509,7 @@ export function LearnerPlacementRequests({
           )}
         </div>
 
-        <div className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
+        <div className="min-w-0 border-t border-border pt-4">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Offer deadline extension
           </h3>

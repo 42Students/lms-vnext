@@ -26,7 +26,7 @@ export default async function HrMessagesPage({searchParams}:{
  if(!query.success)return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Notifications"
    actions={<Link href="/hr/conversations"
-     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9 md:w-auto">Recruiter conversations</Link>}/>
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto">Recruiter conversations</Link>}/>
   <ErrorState title="Invalid inbox filter" description="Review the college, search and unread options."
    action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9">Reset</Link>}/>
  </div>;
@@ -38,7 +38,7 @@ export default async function HrMessagesPage({searchParams}:{
   <PageHeader title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."
    actions={<>
-     <Link href="/hr/conversations" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     <Link href="/hr/conversations" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto">
        Open recruiter conversations
      </Link>
      {result.status==="READY"?<Link
@@ -68,12 +68,12 @@ export default async function HrMessagesPage({searchParams}:{
        {value:"true",label:"Unread only",href:"/hr/notifications?collegeId="+
          encodeURIComponent(result.collegeId)+"&unreadOnly=true&q="+encodeURIComponent(query.data.q)},
      ]}/>
-   <form action="/hr/notifications" method="get" role="search" aria-label="Search recruiter notifications" className="flex min-w-0 flex-wrap items-end gap-2">
+   <form action="/hr/notifications" method="get" role="search" aria-label="Search recruiter notifications" className="flex min-w-0 flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
      <Input type="hidden" name="collegeId" value={result.collegeId} />
      <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
      <Input id="hr-notification-search" type="search" name="q" defaultValue={query.data.q} maxLength={120}
-       placeholder="Search drive titles" className="min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none" />
+       placeholder="Search drive titles" className="min-h-11 min-w-0 w-full md:min-h-9 md:max-w-sm md:flex-1" />
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
@@ -91,9 +91,9 @@ export default async function HrMessagesPage({searchParams}:{
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
        <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
-         <li key={row.id} className="min-w-0 px-1 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
-           <div className="flex flex-wrap justify-between gap-2">
-             <span className="text-sm text-body">{row.label}{row.unread?<StatusBadge tone="info" className="ml-2">Unread</StatusBadge>:null}</span>
+         <li key={row.id} className="min-w-0 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
+           <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
+             <span className="min-w-0 break-words text-sm text-body">{row.label}{row.unread?<StatusBadge tone="info" className="ml-2">Unread</StatusBadge>:null}</span>
              <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
            </div>
            {row.unread?<HrNotificationReadButton notificationId={row.id}

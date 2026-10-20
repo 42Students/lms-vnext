@@ -1,5 +1,9 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function Loading() {
-  return <GracefulPageLoading label="Loading archived…" shape="directory" />;
+  return <div className="min-w-0 space-y-4">
+    <PageHeader title="Archived company relationships" />
+    <GracefulPageLoading label="Loading archived…" shape="directory" />
+  </div>;
 }

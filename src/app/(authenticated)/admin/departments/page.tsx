@@ -1,5 +1,4 @@
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DepartmentCreateForm } from "@/components/admin/department-create-form";
 import { DepartmentDirectory } from "@/components/admin/department-directory";
@@ -19,7 +18,6 @@ export default async function SuperAdminDepartmentsPage() {
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          
           title="Departments"
           description="Department administration requires a college safety scope."
         />
@@ -53,7 +51,6 @@ export default async function SuperAdminDepartmentsPage() {
       <PageHeader
         title="Departments"
         description="Search, export and maintain departments inside the selected college safety scope."
-        actions={<Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Academic Setup overview →</Link>}
       />
       <AcademicSetupSteps step={1} />
       <DepartmentCreateForm collegeId={collegeId} />

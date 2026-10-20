@@ -271,7 +271,7 @@ export default async function HrPlacementJobPage({
       : null;
 
   return (
-    <div className="min-w-0 max-w-full space-y-4">
+    <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
       <RecruiterDriveFocusRefresh />
       <Link href={returnTo} className="inline-flex min-h-9 max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         ← Back to Drives
@@ -309,7 +309,7 @@ export default async function HrPlacementJobPage({
             {workspace.job.workMode.toLowerCase()}
           </StatusBadge>
         </div>
-        <p className="mt-3 max-w-4xl whitespace-pre-wrap break-words text-sm leading-6 text-body">
+        <p className="mt-3 max-w-3xl whitespace-pre-wrap break-words text-sm leading-6 text-body">
           {workspace.job.description}
         </p>
         <div className="mt-3 grid min-w-0 gap-x-6 gap-y-2 text-sm text-body min-[768px]:grid-cols-2 xl:grid-cols-4">
@@ -427,7 +427,7 @@ export default async function HrPlacementJobPage({
               </li>)}
             </ol>
           </section>
-          <ol aria-label="Drive progress" className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-6">
+          <ol aria-label="Drive progress" className="grid min-w-0 grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-6">
             {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
               aria-current={step.state==="CURRENT"?"step":undefined}
               className={step.state==="CURRENT"
@@ -639,7 +639,7 @@ export default async function HrPlacementJobPage({
                 "Showing " + applicantsPage.first + "–" + applicantsPage.last}
               {" of " + stageCounts[filters.stage]}
             </span>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {filters.page > 1 ? (
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)+returnQuery}
                   className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>
@@ -662,7 +662,7 @@ export default async function HrPlacementJobPage({
             </Link>:null}
           </div>
           <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include only issued offer records, and the table loads 15 at a time. Pre-issue selections appear separately below. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid min-w-0 gap-3 md:grid-cols-3">
             {[
               {label:"Recorded offers",value:offerSummary.recorded},
               {label:"Awaiting learner reply",value:offerSummary.awaitingReply},
@@ -738,7 +738,7 @@ export default async function HrPlacementJobPage({
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
               {" of " + offersPage.total}
             </span>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {filters.offerPage > 1 ? <Link
                 href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)+returnQuery}
                 className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">

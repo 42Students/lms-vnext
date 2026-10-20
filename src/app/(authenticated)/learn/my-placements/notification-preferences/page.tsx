@@ -7,7 +7,7 @@ import { getCandidatePreferences } from "@/modules/placements/candidate-preferen
 export default async function LearnerPlacementNotificationPreferencesPage(){
   const context=await getCurrentRequestContext();
   const preferences=await getCandidatePreferences(context);
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-5">
     <Link href="/learn/my-placements" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline">
       ← Back to My Placements
     </Link>

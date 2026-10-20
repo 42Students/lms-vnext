@@ -60,42 +60,42 @@ export function LearnerPlacementNotificationSettings({initial}:{
       These choices apply only to placement opportunity matching and application
       updates. Essential college, academic and security messages are not controlled here.
     </p>
-    <div className="mt-5 min-w-0 divide-y divide-border border-y border-border">
-      <label className={"flex min-h-11 min-w-0 cursor-pointer items-start gap-3 px-2 py-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(matching?"bg-primary-subtle":"bg-surface hover:bg-surface-subtle")}>
+    <div className="mt-4 divide-y divide-border border-t border-border">
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(matching?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={matching} onChange={e=>setMatching(e.target.checked)}
           disabled={pending} className="mt-1" />
-        <span className="min-w-0"><span className="block break-words font-semibold text-foreground">Matching opportunities</span>
+        <span><span className="block font-semibold text-foreground">Matching opportunities</span>
           <span className="mt-1 block text-sm text-body">
             Choose whether to receive matching placement-job notifications.
           </span></span>
       </label>
-      <label className={"flex min-h-11 min-w-0 cursor-pointer items-start gap-3 px-2 py-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(updates?"bg-primary-subtle":"bg-surface hover:bg-surface-subtle")}>
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(updates?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={updates} onChange={e=>setUpdates(e.target.checked)}
           disabled={pending} className="mt-1" />
-        <span className="min-w-0"><span className="block break-words font-semibold text-foreground">Application updates</span>
+        <span><span className="block font-semibold text-foreground">Application updates</span>
           <span className="mt-1 block text-sm text-body">
             Choose whether to receive application-stage notifications.
           </span></span>
       </label>
     </div>
-    <div className="mt-5 flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+    <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!changed || pending} onClick={()=>setConfirm(true)}>
         Review changes
       </Button>
-      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="link" disabled={pending} onClick={()=>router.refresh()}>Reload saved choices</Button>
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Reload saved choices</Button>
       {changed ? <span className="text-xs text-body">Unsaved changes</span>
         : <span className="text-xs text-muted-foreground">No changes to save</span>}
     </div>
     <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open)}}
       title="Confirm placement notification choices"
       description="Only the two placement notification preferences will change. Other placement preferences remain intact."
-      footer={<div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end">
+      footer={<div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Keep current choices</Button>
-        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending || !changed} onClick={()=>void save()}>
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || !changed} onClick={()=>void save()}>
           {pending?"Saving…":"Confirm and save"}
         </Button>
       </div>}>
-      <p className="min-w-0 break-words text-sm leading-6 text-body">
+      <p className="text-sm leading-6 text-body">
         Matching opportunities: {matching?"On":"Off"}.
         Application updates: {updates?"On":"Off"}.
       </p>

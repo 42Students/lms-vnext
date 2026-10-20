@@ -63,7 +63,7 @@ export default async function LearnerPlacementJobsPage() {
   ]);
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader title="Drives" actions={(
         <Link href="/learn/my-placements/rules?from=drives"
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">

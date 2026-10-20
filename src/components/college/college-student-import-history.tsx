@@ -56,14 +56,14 @@ export function CollegeStudentImportHistory(){
  }
  return <>
   <Button variant="secondary" type="button" onClick={()=>{setOpen(true);void load(1);}}
-   className="min-h-11 md:min-h-9">
+   className="min-h-11 w-full md:min-h-9 md:w-auto">
    Bulk import history</Button>
   <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else close();}} title="Bulk import history" footer={<Button variant="secondary" type="button" onClick={close}
-      className="min-h-11 md:min-h-9">Close</Button>}>
+      className="min-h-11 w-full md:min-h-9 md:w-auto">Close</Button>}>
     
     {error?<Alert tone="error">{error}</Alert>:null}
     {busy?<Skeleton variant="row" label="Loading import history"/>:null}
-    <DataTable<Receipt> caption="Bulk import history" rows={rows} getRowKey={row=>row.id}
+    {!busy&&!error?<DataTable<Receipt> caption="Bulk import history" rows={rows} getRowKey={row=>row.id}
       columns={[
         {key:"when",header:"When",cell:row=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
           timeZone:"Asia/Kolkata"}).format(new Date(row.when)),mobilePriority:"primary"},
@@ -72,15 +72,13 @@ export function CollegeStudentImportHistory(){
         {key:"partial",header:"Partial",cell:row=>row.partial,mobilePriority:"secondary"},
         {key:"failed",header:"Failed",cell:row=>row.failed,mobilePriority:"secondary"},
       ]}
-      empty={busy?<Skeleton variant="row" label="Loading import history"/>:
-        error?<Alert tone="error">{error}</Alert>:
-        <EmptyState title="No bulk import history" description="No bulk imports have been recorded yet."/>}/>
-    <nav aria-label="Import history pages" className="flex justify-between gap-3 text-sm">
+      empty={<EmptyState title="No bulk import history" description="No bulk imports have been recorded yet."/>}/>:null}
+    <nav aria-label="Import history pages" className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-3)] text-sm">
      <Button variant="secondary" type="button" disabled={page<=1||busy} onClick={()=>void load(page-1)}
-      className="min-h-11 md:min-h-9">Previous</Button>
-     <span className="py-2">Page {page}</span>
+      className="min-h-11 flex-1 md:min-h-9 md:flex-none">Previous</Button>
+     <span className="shrink-0 py-[var(--lms-space-2)] text-center">Page {page}</span>
      <Button variant="secondary" type="button" disabled={!hasNext||busy} onClick={()=>void load(page+1)}
-      className="min-h-11 md:min-h-9">Next</Button>
+      className="min-h-11 flex-1 md:min-h-9 md:flex-none">Next</Button>
     </nav>
   </Dialog>
  </>;

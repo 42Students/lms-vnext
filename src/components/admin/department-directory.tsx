@@ -2,8 +2,8 @@
 
 import { Select } from "@/components/ui/select";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Disclosure } from "@/components/ui/disclosure";
 import { DepartmentActions } from "@/components/admin/department-actions";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -55,12 +55,10 @@ export function DepartmentDirectory({
 }: {
   rows: readonly DepartmentDirectoryRow[];
 }) {
-  const router = useRouter();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [nameOrder, setNameOrder] = useState<"ASC" | "DESC">("ASC");
-  const [refreshing, startRefresh] = useTransition();
   const ordered = filterDepartmentRows(rows, search);
   const filtered = nameOrder === "DESC" ? [...ordered].reverse() : ordered;
   const result = pageDepartmentRows(filtered, page, pageSize);
@@ -70,24 +68,21 @@ export function DepartmentDirectory({
   return (
     <section className="space-y-4" aria-label={DEPARTMENT_COPY.existingTitle}>
       <h2 className="m-0 text-base font-semibold text-foreground">{DEPARTMENT_COPY.existingTitle}</h2>
-      <div className="flex flex-wrap items-end justify-between gap-3 print:hidden">
-        <div className="min-w-48 flex-1">
-          <label htmlFor="department-directory-search" className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
+      <div className="flex min-w-0 flex-col gap-3 print:hidden sm:flex-row sm:items-end">
+        <div className="min-w-0 flex-1">
+          <label htmlFor="department-directory-search" className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search departments
           </label>
-          <Input
-            id="department-directory-search"
-            placeholder="Search departments"
-            value={search}
-            className="min-h-11 md:min-h-9"
-            onChange={(event) => {
-              setSearch(event.target.value);
-              setPage(1);
-            }}
-          />
+          <Input id="department-directory-search" placeholder="Search departments"
+            value={search} className="min-h-11 w-full md:min-h-9"
+            onChange={(event) => { setSearch(event.target.value); setPage(1); }} />
         </div>
-        <div className="flex flex-wrap items-end gap-2">
-          <label htmlFor="department-directory-page-size" className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        {search.trim() ? <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+          onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
+        <Disclosure title="View options" className="min-w-0 sm:self-end"
+          contentClassName="flex min-w-0 flex-col gap-3 pb-3 pt-2 sm:min-w-48">
+          <label htmlFor="department-directory-page-size"
+            className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
@@ -95,27 +90,13 @@ export function DepartmentDirectory({
               {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
             </Select>
           </label>
-          {search.trim() ? <Button size="sm" variant="secondary" onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
           {filtered.length ? (
-            <a
-              href={exportHref}
-              download="departments.csv"
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-            >
+            <a href={exportHref} download="departments.csv"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Export CSV
             </a>
-          ) : (
-            <Button size="sm" variant="secondary" disabled>Export CSV</Button>
-          )}
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled={refreshing}
-            onClick={() => startRefresh(() => router.refresh())}
-          >
-            {refreshing ? "Refreshing…" : "Refresh"}
-          </Button>
-        </div>
+          ) : <Button size="sm" variant="secondary" disabled>Export CSV</Button>}
+        </Disclosure>
       </div>
 
       <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
@@ -147,11 +128,11 @@ export function DepartmentDirectory({
         </p>
       ) : null}
       {result.total > 0 ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground print:hidden">
+        <div className="flex flex-col items-stretch justify-between gap-3 text-sm text-muted-foreground print:hidden sm:flex-row sm:items-center">
           <span>
             Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}
           </span>
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
             <Button
               size="sm" variant="secondary"
               disabled={result.page === 1}
