@@ -72,8 +72,8 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download CSV template
       </a>
-      <div className="mt-3 grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3 print:hidden">
-        <label className="grid gap-1 text-sm font-semibold">Program
+      <div className="mt-3 grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 min-[992px]:grid-cols-3 print:hidden">
+        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
             className="min-h-11 md:min-h-9">
@@ -81,7 +81,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold">Batch
+        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
             className="min-h-11 md:min-h-9">
@@ -90,7 +90,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               <option key={option.id} value={option.id}>{option.name}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold">Class/Section
+        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
           <Select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
             className="min-h-11 md:min-h-9">
@@ -107,7 +107,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
             if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
             setCsv(await file.text()); setReport(null); setConfirm(false); setError(null);
           }} />
-      <label className="mt-4 grid gap-2 text-sm font-semibold text-body print:hidden">
+      <label className="mt-4 grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">
         CSV contents
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
