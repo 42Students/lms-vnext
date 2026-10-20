@@ -20,7 +20,7 @@ export default async function AccountSecurityPage() {
   const rows = await listActiveSessions(session.userId).catch(() => null);
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="Signed-in devices"
         description="Every place you're signed in. Sign out any device you don't recognise."
@@ -28,11 +28,12 @@ export default async function AccountSecurityPage() {
       {rows === null ? (
         <ErrorState description="Your current session could not be listed."
           action={<Link href="/account/security"
-            className="inline-flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Try again</Link>}/>
+            className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Try again</Link>}/>
       ) : rows.length === 0 ? (
         <EmptyState
           title="No active devices"
           description="Your current session could not be listed."
+          action={<Link href="/account/security" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Try again</Link>}
         />
       ) : (
         <DeviceList

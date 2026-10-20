@@ -71,20 +71,20 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   }catch{setFeedback("Could not save your profile. Your changes are still here; try again.");}
   finally{window.clearTimeout(timeout);busyRef.current=false;setBusy(false);}
  }
- return <form onSubmit={e=>void save(e)} className="min-[768px]:col-span-2 space-y-3">
-  <div className="grid gap-3 min-[768px]:grid-cols-2">
+ return <form onSubmit={e=>void save(e)} className="min-w-0 space-y-4">
+  <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
-    <label key={key} className="grid gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">{label}
+    <label key={key} className="grid min-w-0 gap-2 text-sm font-semibold text-body">{label}
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
       value={form[key]} disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?160:100}
       onChange={e=>update(key,e.target.value)}
-      className="min-h-11 min-[768px]:min-h-9 w-full"/>
+      className="min-h-11 w-full min-[768px]:min-h-9"/>
     </label>)}
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
   {dirty?<p role="status" className="text-sm font-semibold">Unsaved changes</p>:null}
   <Button type="submit" loading={busy} disabled={busy||!dirty}
-    className="min-h-11 min-[768px]:min-h-9">
+    className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
    {busy?"Saving…":"Save changes"}</Button>
   {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className={feedback==="Profile saved"?"text-sm text-success":"text-sm text-error"}>{feedback}</p>:null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
