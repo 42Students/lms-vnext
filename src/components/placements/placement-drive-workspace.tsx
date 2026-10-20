@@ -272,7 +272,9 @@ export async function PlacementDriveWorkspace({
           " · " + headerFacts.status
         }
         actions={
-          <Dropdown mobileSheet align="end" label="Drive actions" trigger="Actions" className="w-full md:w-auto">
+          <div className="flex min-w-0 w-full flex-col gap-[var(--lms-space-2)] sm:w-auto sm:flex-row sm:items-center">
+          {!isTpo ? <Link href={"/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Applications</Link> : null}
+          <Dropdown mobileSheet align="end" label="Drive actions" trigger="Actions" className="w-full sm:w-auto">
             <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" tabIndex={0}
               className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
@@ -377,6 +379,7 @@ export async function PlacementDriveWorkspace({
             </Link>
             </div>
           </Dropdown>
+          </div>
         }
       />
       {isTpo?<TpoDriveRefreshControl/>:null}
@@ -387,8 +390,8 @@ export async function PlacementDriveWorkspace({
         Could not load: Publication readiness. Publishing is unavailable until these checks recover.
         Refresh the drive to try again.
        </Alert>:null}
-      <section aria-label="Drive status and details" className="border-b border-border pb-6">
-        <div className="flex flex-wrap items-center gap-2 text-sm">
+      <section aria-label="Drive status and details" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm">
           <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{headerFacts.status}</StatusBadge>
           <span>{headerFacts.applicationMode}</span>
           <span>· {headerFacts.workMode}</span>
@@ -396,7 +399,7 @@ export async function PlacementDriveWorkspace({
           <StatusBadge tone="info">{headerFacts.category}</StatusBadge>
           {headerFacts.recordedOutside?<strong>Recorded: happened outside</strong>:null}
         </div>
-        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-body">
+        <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-wrap gap-x-[var(--lms-space-4)] gap-y-[var(--lms-space-2)] text-sm text-body">
           <span>Pay: {headerFacts.ctc}</span>
           <span>Applications close: {headerFacts.deadline}</span>
         </div>
@@ -426,10 +429,10 @@ export async function PlacementDriveWorkspace({
                 new Date(job.legacyPostingDetails.campusPool.reportingTime))}</p>
           ):null}
           {job.legacyPostingDetails.campusPool?.travelNote?(
-            <p className="mt-2 whitespace-pre-wrap text-sm text-body">Travel: {job.legacyPostingDetails.campusPool.travelNote}</p>
+            <p className="mt-2 whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body">Travel: {job.legacyPostingDetails.campusPool.travelNote}</p>
           ):null}
           {job.legacyPostingDetails.skillsWanted?.length?(
-            <p className="mt-2 text-sm text-body">Requested skills: {job.legacyPostingDetails.skillsWanted.join(", ")}</p>
+            <p className="mt-2 break-words [overflow-wrap:anywhere] text-sm text-body">Requested skills: {job.legacyPostingDetails.skillsWanted.join(", ")}</p>
           ):null}
           <p className="mt-2 text-xs text-muted-foreground">Supplementary details do not automatically create a venue, travel booking or eligibility rule.</p>
         </section>
@@ -707,7 +710,7 @@ export async function PlacementDriveWorkspace({
           : "Remind eligible registered students who have not applied. Once per day, and only before the deadline."}</p>
         <TpoRemindNonApplicants jobId={jobId}/>
       </section>:null}
-      <section id="drive-request-actions">
+      <section id="drive-request-actions" className="min-w-0"> 
       <PlacementRequestQueue
         requests={placementRequests.map(
           (row) => ({
@@ -770,13 +773,13 @@ export async function PlacementDriveWorkspace({
         <div className="pt-3"><PlacementDriveDayOverview driveDay={driveDay} embedded /></div>
       </details>
       {roundOrder?<TpoRoundReorder jobId={jobId} readiness={roundOrder}/>:null}
-      <section id="drive-round-actions">
+      <section id="drive-round-actions" className="min-w-0">
       <PlacementDriveControls
         data={controlData}
         scheduleWarnings={scheduleWarnings}
       />
       </section>
-      <PlacementOfferControls
+      <div className="min-w-0"><PlacementOfferControls
         jobId={jobId}
         isTpo={hasMembershipRole(context, "TPO")}
         jobTitle={job.title}
@@ -830,7 +833,7 @@ export async function PlacementDriveWorkspace({
               : null,
           }),
         )}
-      />
+      /></div>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {collegeDriveCloseAction,collegeDriveReopenAction,type CollegeLegacyDriveStatus} from
   "@/modules/placements/college-legacy-drive-settings-model";
 
@@ -48,20 +49,20 @@ export function CollegeLegacyDriveSettings({
     }catch(error){setFeedback(error instanceof Error?error.message:"Could not reopen drive");}
     finally{setBusy(false);}
   }
-  return <section className="space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
+  return <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
     <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Drive status</h2>
-    <p className="font-medium">{status}</p>
+    <StatusBadge tone={status==="PUBLISHED"?"success":status==="DRAFT"?"warning":"neutral"}>{status}</StatusBadge>
     {action?<div className="space-y-3">
       {confirmation==="CLOSE"?<div className="space-y-3" role="group" aria-label={action.confirmation}>
         <p>{action.confirmation}</p>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Button type="button" disabled={busy} onClick={closeDrive}
-            className="min-h-11 min-[768px]:min-h-9">Yes</Button>
+            className="min-h-11 w-full sm:w-auto md:min-h-9">Yes</Button>
           <Button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-            variant="secondary" className="min-h-11 min-[768px]:min-h-9">No</Button>
+            variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">No</Button>
         </div>
       </div>:<Button type="button" disabled={busy}
-        onClick={()=>setConfirmation("CLOSE")} variant="secondary" className="min-h-11 min-[768px]:min-h-9">
+        onClick={()=>setConfirmation("CLOSE")} variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">
         {action.label}
       </Button>}
     </div>:null}
@@ -69,13 +70,13 @@ export function CollegeLegacyDriveSettings({
       {confirmation==="REOPEN"?<div role="group" aria-label={reopen.confirmation} className="space-y-3">
         <p>{reopen.confirmation}</p>
         <Button type="button" disabled={busy} onClick={()=>void reopenDrive()}
-          className="min-h-11 min-[768px]:min-h-9">
+          className="min-h-11 w-full sm:w-auto md:min-h-9">
           {busy?"Reopening…":"Yes, reopen"}
         </Button>
         <Button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-          variant="secondary" className="ml-2 min-h-11 min-[768px]:min-h-9">Cancel</Button>
+          variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel</Button>
       </div>:<Button type="button" disabled={busy} onClick={()=>setConfirmation("REOPEN")}
-        variant="secondary" className="min-h-11 min-[768px]:min-h-9">{reopen.label}</Button>}
+        variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">{reopen.label}</Button>}
     </div>:null}
     {feedback?<p role="status">{feedback}</p>:null}
   </section>;
