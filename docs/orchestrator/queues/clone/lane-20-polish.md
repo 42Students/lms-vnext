@@ -40,7 +40,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-20.md: surface | probl
 - [x] `src/components/shell/topbar/tpo-find-suggestions.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
 - [x] `src/components/shell/topbar/tpo-notification-cluster.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
 - [x] `src/components/shell/topbar/tpo-quick-create.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
-- [ ] `src/components/shell/tpo-mobile-footer.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
+- [x] `src/components/shell/tpo-mobile-footer.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
 - [ ] `src/components/shell/tpo-topbar-messages.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
 - [ ] `src/app/maintenance/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/offline/page.tsx` (Other page (super admin, public, auth, misc))
