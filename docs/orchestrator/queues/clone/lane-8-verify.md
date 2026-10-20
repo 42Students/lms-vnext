@@ -9,8 +9,8 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-8.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-8-b with [chat-8] after every 2 surfaces.
 
-- [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
-- [ ] `src/components/placements/tpo-request-decision-control.tsx`
+- [x] `src/components/placements/tpo-request-bulk-decision.tsx`
+- [x] `src/components/placements/tpo-request-decision-control.tsx`
 - [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
 - [ ] `src/components/profile/learner-profile-workspace.tsx`
 - [ ] `src/components/profile/learner-skill-catalog-input.tsx`
