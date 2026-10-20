@@ -14,7 +14,7 @@ export type CollegeContactProfileView = {
   version: number;
 };
 
-const inputClass = "min-h-11 sm:min-h-9 w-full";
+const inputClass = "min-h-11 md:min-h-9 w-full";
 
 export function CollegeContactProfileForm({ initial }: {
   initial: CollegeContactProfileView;
@@ -62,8 +62,8 @@ export function CollegeContactProfileForm({ initial }: {
   }
 
   return <form onSubmit={submit}
-    className="grid max-w-3xl gap-4 border-t border-border pt-5 sm:grid-cols-2">
-    <label className="grid gap-2 text-sm font-semibold text-body sm:col-span-2">
+    className="grid max-w-3xl gap-4 border-t border-border pt-5 md:grid-cols-2">
+    <label className="grid gap-2 text-sm font-semibold text-body md:col-span-2">
       Public college display name
       <Input required maxLength={160} className={inputClass} value={name}
         onChange={event => setName(event.target.value)} />
@@ -92,15 +92,15 @@ export function CollegeContactProfileForm({ initial }: {
         value={privacy} onChange={event => setPrivacy(event.target.value)}
         placeholder="https://college.example.edu/privacy" />
     </label>
-    {error ? <p role="alert" className="text-sm text-error sm:col-span-2">
+    {error ? <p role="alert" className="text-sm text-error md:col-span-2">
       {error}. If this profile changed elsewhere, refresh before retrying.
     </p> : null}
-    {success ? <p role="status" className="text-sm text-success sm:col-span-2">
+    {success ? <p role="status" className="text-sm text-success md:col-span-2">
       {success}
     </p> : null}
-    <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
+    <div className="flex flex-wrap items-center gap-3 md:col-span-2">
       <Button disabled={pending} type="submit"
-        className="min-h-11 sm:min-h-9">
+        className="min-h-11 md:min-h-9">
         {pending ? "Saving…" : "Confirm and save changes"}
       </Button>
       <Button disabled={pending} type="button" onClick={() => {
@@ -110,11 +110,11 @@ export function CollegeContactProfileForm({ initial }: {
         setTerms(initial.termsUrl ?? "");
         setPrivacy(initial.privacyUrl ?? "");
         setError(null);
-      }} variant="secondary" className="min-h-11 sm:min-h-9">
+      }} variant="secondary" className="min-h-11 md:min-h-9">
         Reset
       </Button>
     </div>
-    <p className="text-xs leading-5 text-muted-foreground sm:col-span-2">
+    <p className="text-xs leading-5 text-muted-foreground md:col-span-2">
       Only display name and public support/policy fields are editable here.
       College code, private addresses, account contacts, sign-in images and branding colours are unchanged.
       A stale version is rejected rather than overwriting a concurrent update.

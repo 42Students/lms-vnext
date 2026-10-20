@@ -26,7 +26,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
   }
-  return <div className="min-w-0 overflow-x-clip space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title={data.person.name}
       description="College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure."
       actions={<div className="flex flex-wrap gap-3">
@@ -35,7 +35,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
         <PageBackLink href="/college/faculty" label="Back to faculty"/>
       </div>} />
-    <section className="border-t border-border pt-5">
+    <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">Faculty record</h2>
       <dl className="mt-4 grid min-w-0 gap-4 text-sm md:grid-cols-2">
         <div><dt className="text-muted-foreground">Title</dt><dd>{data.person.academicTitle ?? "Not recorded"}</dd></div>
@@ -44,7 +44,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <div><dt className="text-muted-foreground">Membership</dt><dd><StatusBadge tone={data.person.status==="ACTIVE"?"success":"warning"}>{data.person.status}</StatusBadge></dd></div>
       </dl>
     </section>
-    <section className="border-t border-border pt-5">
+    <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
       <form method="get" className="mt-3 flex flex-wrap items-end gap-3"
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>

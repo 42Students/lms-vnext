@@ -17,6 +17,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -115,7 +116,7 @@ export default async function ElectiveRoster({
     }
     redirect(back + (error ? "?error=" + encodeURIComponent(error) : "?updated=faculty"));
   }
-  return <main className="min-w-0 overflow-x-clip space-y-5">
+  return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader eyebrow="College Admin · Electives"
       title={"Offering roster · " + slot.name}
       description="Student state, source, joining date and confirmed movement between offerings."
@@ -137,13 +138,13 @@ export default async function ElectiveRoster({
       {assignments.map(item => <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
         <span>{item.displayName ?? item.membershipId} · {item.role}</span>
         {!archived && <form action={changeFaculty}>
-          <input type="hidden" name="action" value="END" />
-          <input type="hidden" name="assignmentId" value={item.id} />
+          <Input type="hidden" name="action" value="END" />
+          <Input type="hidden" name="assignmentId" value={item.id} />
           <Button type="submit" variant="danger" className="min-h-11 md:min-h-9">Remove faculty</Button>
         </form>}
       </div>)}
       {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-3">
-        <input type="hidden" name="action" value="ASSIGN" />
+        <Input type="hidden" name="action" value="ASSIGN" />
         <label className="grid gap-1 text-sm">Faculty
           <Select name="membershipId" required defaultValue="" >
             <option value="" disabled>Choose faculty</option>
@@ -180,8 +181,8 @@ export default async function ElectiveRoster({
             cell: member => !archived && ["ACTIVE", "WAITLISTED"].includes(member.state)
               ? <div className="grid gap-2">
                 {targets.length > 0 && <form action={mutate} className="flex flex-wrap items-center gap-2">
-                  <input type="hidden" name="action" value="MOVE" />
-                  <input type="hidden" name="membershipId" value={member.membershipId} />
+                  <Input type="hidden" name="action" value="MOVE" />
+                  <Input type="hidden" name="membershipId" value={member.membershipId} />
                   <Select name="targetOfferingId" required defaultValue=""
                     aria-label="Move to another offering"
                     >
@@ -195,8 +196,8 @@ export default async function ElectiveRoster({
                   <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Move</Button>
                 </form>}
                 <form action={mutate} className="flex flex-wrap items-center gap-2">
-                  <input type="hidden" name="action" value="REMOVE" />
-                  <input type="hidden" name="membershipId" value={member.membershipId} />
+                  <Input type="hidden" name="action" value="REMOVE" />
+                  <Input type="hidden" name="membershipId" value={member.membershipId} />
                   <label className="inline-flex min-h-11 items-center gap-2">
                     <Checkbox name="confirm" value="yes" required /> Confirm removal
                   </label>
@@ -207,5 +208,5 @@ export default async function ElectiveRoster({
       />
       {detail.members.length >= 500 && <p className="text-xs text-muted-foreground">Showing first 500 members.</p>}
     </section>
-  </main>;
+  </div>;
 }
