@@ -54,7 +54,7 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
   const bounds = {
     "--lms-toast-visual-height": viewport ? `${viewport.height}px` : "100dvh",
     "--lms-toast-visual-bottom": viewport ? `${viewport.bottom}px` : "0px",
-    bottom: "calc(var(--lms-toast-visual-bottom) + max(1rem, env(safe-area-inset-bottom)))",
+    bottom: "calc(var(--lms-toast-visual-bottom) + var(--lms-toast-navigation-offset, 0px) + max(1rem, env(safe-area-inset-bottom)))",
     maxHeight: "max(1px, calc(var(--lms-toast-visual-height) - max(1rem, env(safe-area-inset-top)) - max(1rem, env(safe-area-inset-bottom))))",
   } as CSSProperties;
   return <div data-slot="toast-stack" role="region"
@@ -219,11 +219,11 @@ export function ToastAction({ title, children, tone = "info" }: {
   tone?: ToastTone;
 }) {
   return <div data-slot="toast-action" role={tone === "error" ? "alert" : "status"}
-    className={cx("flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[tone])}>
+    className={cx("flex min-w-0 flex-col items-stretch gap-3 rounded-[var(--lms-canvas-radius)] sm:flex-row sm:flex-wrap sm:items-center sm:justify-between border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[tone])}>
     <div className="flex min-w-0 items-center gap-3">
       <span aria-hidden="true" className={cx("h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[tone])} />
       <p className="min-w-0 break-words text-sm text-[var(--lms-body-text)]">{title}</p>
     </div>
-    <div className="shrink-0">{children}</div>
+    <div className="min-w-0 max-[639px]:w-full max-[639px]:[&>*]:w-full sm:shrink-0">{children}</div>
   </div>;
 }
