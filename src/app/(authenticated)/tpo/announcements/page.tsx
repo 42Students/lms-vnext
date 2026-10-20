@@ -289,7 +289,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     {tab.data==="yours"?<TpoNoticeReadProgress id={row.id}/>:null}
    </li>)}
   </ol>:<EmptyState title="No announcements from this sender yet"/>}
-  {result.status==="READY"?<nav aria-label="Announcement pages"
+  {result.status==="READY"&&(result.page>1||result.hasMore)?<nav aria-label="Announcement pages"
     className="flex min-w-0 flex-col items-stretch gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex w-full flex-wrap gap-2 sm:w-auto">
