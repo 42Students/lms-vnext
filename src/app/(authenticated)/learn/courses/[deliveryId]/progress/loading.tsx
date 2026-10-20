@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function LearnerCourseDrilldownLoading() {
@@ -7,7 +7,7 @@ export default function LearnerCourseDrilldownLoading() {
       <PageHeader
         title="Course progress"
         description="Retrieving records from your authorized course enrollment." />
-      <LoadingState label="Loading course information…" />
+      <GracefulPageLoading label="Loading course information…" shape="directory" />
     </div>
   );
 }
