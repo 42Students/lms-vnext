@@ -29,3 +29,7 @@
 ## 5. Mentor · Course detail legacy bookmark
 
 **Surface:** `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`. Inspected the whole source, optional catchall route candidates (`loading`, `error`, `not-found`, `template`: absent), nearest course layout (absent), and the inherited Mentor role guard. The only operation is a server `redirect("/mentor/projects")`; no on-screen page, loading state, overlay, control, headings, tables or actions are rendered at 375/768/1280. **Problems found: 0; fixes: none.** Maintained exact URL capture and redirect behavior rather than adding an intermediate UI. Files changed: this proof and lane checklist only; no browser/CI.
+
+## 6. Mentor · Courses legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/courses/page.tsx`; reviewed its complete page and all four candidate route states (no loading/error/not-found/template files), inherited Mentor and authenticated layouts. Server-only `redirect("/mentor")` is the **entire** implementation: no rendered DOM, page, form, overlay, hover/focus, loading, empty state or viewport-specific content exists. **Problems found: 0. Changes: none.** Kept the different `/mentor` redirect exactly as written (distinct from the course-detail redirect) to protect legacy routes/permissions. Files changed: lane-13 polish queue and this proof only; no browser/CI.
