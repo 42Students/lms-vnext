@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -29,12 +30,12 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
   return <div className="space-y-5">
     {showHeader ? <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} /> : null}
-    <form action={base} className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-3 print:hidden">
-      <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Assessment title
+    <FilterBar title="Assessment filters"><form action={base} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-3 print:hidden">
+      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment title
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Status
+      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option><option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
@@ -42,23 +43,23 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
           <option value="ARCHIVED">Archived</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Course code
+      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course code
         <Input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 md:min-h-9"/>
       </label>
-      <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Audience
+      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
         <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
           <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
         </Select>
       </label>
-      {!assignment?<label className="grid gap-1 text-sm font-semibold leading-5 text-body">Results
+      {!assignment?<label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Results
         <Select name="results" defaultValue={data.query.results} className="min-h-11 md:min-h-9">
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </Select>
       </label>:null}
       <Button variant="primary" type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
-    </form>
+    </form></FilterBar>
     <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
-    {data.items.length ? <div className="divide-y divide-border border-y border-border">
+    {data.items.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {data.items.map(item => <article key={item.id} className="min-w-0 py-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>

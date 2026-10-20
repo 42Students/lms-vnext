@@ -48,14 +48,13 @@ export default async function SuperAdminAssignmentsPage({
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 space-y-4">
-    <PageHeader title="Assignments" />
-    <a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">Export assignments.csv</a>
+    <PageHeader title="Assignments" actions={<a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">Export assignments.csv</a>} />
     {lessonsResult.status==="fulfilled"
       ?<CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>
       :<Alert tone="warning" role="status">
         Assignment creation options are temporarily unavailable. Existing assignments remain visible.
       </Alert>}
-    <AdminAssessmentDirectory data={data} />
+    <AdminAssessmentDirectory data={data} showHeader={false} />
   </div>;
 }
