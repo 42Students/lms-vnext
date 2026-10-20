@@ -116,7 +116,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      }))} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Download .ics</a>:null}
      {row.status==="SCHEDULED"?<>
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>open(row)}
@@ -135,30 +135,30 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {success?<Banner tone="success">{success}</Banner>:null}
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}>
-    <h3 className="text-lg font-semibold">{editing?"Edit interview":"Schedule interview"}</h3>
-    <label className="grid gap-1 text-sm">Round<Select value={roundId} disabled={Boolean(editing)}
+    <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round<Select value={roundId} disabled={Boolean(editing)}
      onChange={e=>setRoundId(e.target.value)} className="w-full">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
     </Select></label>
-    <label className="grid gap-1 text-sm">Candidate<Select value={applicationId} disabled={Boolean(editing)}
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Candidate<Select value={applicationId} disabled={Boolean(editing)}
      onChange={e=>setApplicationId(e.target.value)} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
     <div className="grid min-w-0 gap-3 md:grid-cols-2">
-     <label className="grid gap-1 text-sm">Date & time (IST)<Input type="datetime-local" required value={start}
+     <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>setStart(e.target.value)} className="w-full"/></label>
-     <label className="grid gap-1 text-sm">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
+     <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
       onChange={e=>setDuration(Number(e.target.value))} className="w-full"/></label>
     </div>
-    <label className="grid gap-1 text-sm">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
      className="w-full">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></Select></label>
-    <label className="grid gap-1 text-sm">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
      <Input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
       className="w-full"/></label>
-    <label className="grid gap-1 text-sm">Interviewer (optional)<Input value={interviewer}
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interviewer (optional)<Input value={interviewer}
      onChange={e=>setInterviewer(e.target.value)} className="w-full"/></label>
-    {editing?<label className="grid gap-1 text-sm">Reason for change<Textarea rows={2} value={reason}
+    {editing?<label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for change<Textarea rows={2} value={reason}
      onChange={e=>setReason(e.target.value)} className="w-full"/></label>:null}
     {error?<Banner tone="error">{error}</Banner>:null}
     <div className="flex flex-wrap gap-3">
