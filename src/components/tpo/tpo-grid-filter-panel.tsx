@@ -3,7 +3,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {useRouter,usePathname,useSearchParams} from "next/navigation";
-import {useState} from "react";
+import {useId,useState} from "react";
 import {BottomSheet} from "@/components/ui/bottom-sheet";
 import {updateTpoGridQuery} from "@/modules/placements/tpo-grid-model";
 import {activeTpoGridFilterCount,invalidTpoGridFilterValue,resolvedTpoGridFilterValue} from "@/modules/placements/tpo-grid-filter-state";
@@ -12,6 +12,7 @@ export type TpoFilterField={key:string;label:string;urlKey?:string;allValue?:str
 export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter students"}:{fields:readonly TpoFilterField[];mobileSheet?:boolean;title?:string}){
  const router=useRouter(),pathname=usePathname(),query=useSearchParams();
  const [sheetOpen,setSheetOpen]=useState(false);
+ const filterPanelId=useId();
  const activeCount=activeTpoGridFilterCount(new URLSearchParams(query.toString()),fields);
  function update(field:TpoFilterField,value:string){
   const key=field.urlKey??"filter."+field.key;
@@ -43,13 +44,13 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
  </>;
  const wrapper="w-full min-w-0 space-y-3 border-y border-border py-3";
  return mobileSheet?<div className="w-full min-w-0">
-  <Button variant="secondary" type="button" aria-expanded={sheetOpen} aria-controls="tpo-grid-student-filters"
+  <Button variant="secondary" type="button" aria-expanded={sheetOpen} aria-controls={filterPanelId}
    onClick={()=>setSheetOpen(true)}
    className="min-h-11 md:hidden">
    {title} ({activeCount})
   </Button>
   <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title={title}>
-   <div id="tpo-grid-student-filters" aria-label={title} className={wrapper}>{content}</div>
+   <div id={filterPanelId} aria-label={title} className={wrapper}>{content}</div>
   </BottomSheet>
   <aside aria-label="Grid filters" className={wrapper+" hidden md:block"}>{content}</aside>
  </div>:<aside aria-label="Grid filters" className={wrapper}>{content}</aside>;
