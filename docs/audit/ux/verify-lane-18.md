@@ -72,3 +72,48 @@
 ## Verify2 surface 2 — `src/components/tpo/grid/grid-workspace.tsx`
 - Regressions fixed: 1. Export/copy used `selection.selected.length` even when every selected id was on another page, producing empty CSV/TSV despite visible authorized rows and a “visible rows” action. Switched to `selectedPage.length` so off-page selection doesn't blank an otherwise visible export. Checked GridWorkspace's TpoGridFilterPanel, column chooser, FilterChip, export serializer, query state, selected ids and toolbar controls against TPO grid legacy rules.
 - Clutter/alignment: verified, no additional visual changes; narrow toolbar tools remain in disclosure and phone controls are 44px. Files changed: `src/components/tpo/grid/grid-workspace.tsx`, queue, proof. Static-only, no CI.
+
+
+## Verify2 surface 3 — `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- Regressions fixed: 1. Standalone desktop keyboard/Copy visible TSV incorrectly copied an empty selection when selected IDs existed only on another page. Scope selected-copy semantics to selected **current** ordered rows; otherwise copy authorized visible page. Reviewed TpoGrid fallback consumer, row selection helpers, sorting, memory restore, Table/ScrollCue, Dropdown mobile actions, mobile cards and column controls; prior grid clone evidence in docs/audit/ux/clone-sheets.md and polish reference.
+- Clutter/alignment: verified, no change; native table and mobile list retain their single page canvas semantics, focus/caption and 44px controls. Files: grid, queue, proof. Source only; no CI.
+
+## Verify2 surface 4 — `src/components/placements/tpo-joining-update-form.tsx`
+- Regressions fixed: 2. Correcting a DEFERRED/DID_NOT_JOIN result reopened with JOINED silently selected, potentially submitting an unintended outcome; initialize the selection from existing recorded status. Prevent confirmation onOpenChange changing the dialog while a save is pending. Reviewed useGuardedAction/apiFetch, ConfirmationDialog, Disclosure, form fields, joining tracker page/loading/error and parent TPO layout; original lane-1 polish proof.
+- Clutter/alignment: verified, no extra changes; two-column corrected form, full-width 44px mobile CTA and optional notes are preserved. Files: joining form, queue and proof; source only, no CI.
+
+
+## Verify2 surface 5 — `src/components/tpo/tpo-batch-invitation-control.tsx`
+- Regressions fixed: 1. Explicitly prevent clear-deadline confirmation state from toggling while save is pending (in addition to shared ConfirmDialog's pending dismiss guard). Reviewed eligibility/invitable, first invite/move/clear/reopen, reminder notice/error, min-date/version input, TPO batches/[batchId] caller, modal and shared Input/Checkbox/Button against lane-1 batch polish and batch rules evidence.
+- Extra clutter/alignment: verified, no change. Responsive one-column date and mobile full-width action rows and non-competing reminder controls intact; legacy copy and endpoint payload unchanged. Files: invitation control, queue, proof; no CI.
+
+## Verify2 surface 6 — `src/components/placements/college-drive-legacy-nav.tsx`
+- Regressions fixed: 0. Read CollegeDriveLegacyNav, route tab model, shared Tabs/ScrollCue, college/placements/jobs/[jobId]/layout, inherited college layout and the previous lane-18 polish entry. Model paths, aria-current, label, nav landmark and print exclusion remain valid.
+- Extra clutter/alignment: verified, no change; 16px bottom rhythm, tablet/phone scroll and one tab strip match legacy hierarchy. Files: queue/proof only; source-only, no CI.
+
+
+## Verify2 surface 7 — `src/components/ui/input-group.tsx`
+- Regressions fixed: 0. Read complete InputGroup, React DOM div props and native Input wrapper/aria contracts, disabled/invalid/focus states, overflow at 375/768 and original docs/audit/ux/polish-lane-18.md proof. Search confirms no current direct app consumers; public export preserved.
+- Extra clutter/alignment: verified, no change; outer 10px chrome, 8px gaps, constrained interactive adornment width and shrink-safe slot retained. Files: queue and proof only; no CI.
+
+## Verify2 surface 8 — `src/app/(authenticated)/error.tsx`
+- Regressions fixed: 0. Read authenticated error boundary, GracefulErrorBoundary (stale chunk guard, request reference, protected error copy, reset/home and reporting), parent authenticated layout with one PageCanvas, route loading and old-lane-18 polish proof. No lost error/reset prop, import, aria role or duplicate public shell.
+- Extra clutter/alignment: verified, no change; in-shell page head and full-width 44px mobile actions remain aligned. Files: queue/proof only; source-only, no CI.
+
+
+## Verify2 surface 9 — `src/components/placements/super-admin-bulk-drive-actions.tsx`
+- Regressions fixed: 0. Inspected preview-versus-confirm guard, status-filtered 25-item selections, id-scoped payload, skipped-only retry, partial result/offer warning, checkbox and ConfirmDialog states. Read actual Super Admin drives page, contextual loading/error, parent admin layout, legacy tokens and prior lane-6 polish. No JSX/import/prop, label or route regression detected.
+- Extra clutter/alignment: verified, no change; large bulk panel stays under disclosure, bounded 44px checklist and mobile action stack remain consistent. Files: queue/proof only; source review, no CI.
+
+## Verify2 surface 10 — `src/components/placements/tpo-mark-own-notification-read.tsx`
+- Regressions fixed: 0. Inspected notification unread CAS request, scoped POST, pending guarded confirmation, success toast, inline error and useToast/ConfirmDialog contract against polish-lane-2 and overlay evidence. Repository search returned no direct current caller; component remains an exported, syntactically valid optional control.
+- Extra clutter/alignment: verified, no change; full-width 44px phone trigger and responsive error region intact. Files: queue/proof only; source review, no CI.
+
+
+## Verify2 surface 11 — `src/components/tpo/tpo-batch-rule-editor.tsx`
+- Regressions fixed: 0. Read TpoBatchRuleEditor in TPO batch workspace; reviewed college baseline, all five overrides, typed numeric/select fields, inherited reset, guarded save/version, read-only mode, error/notice and unsaved navigation ConfirmDialog. Compared lane-2 polish evidence; service and form names, modal copy and href behavior preserved.
+- Extra clutter/alignment: verified, no change; 375px single column, 768px label/control wrap, 44px phone actions and hairline separated rules already match legacy. Files: queue/proof only; no CI.
+
+## Verify2 surface 12 — `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- Regressions fixed: 0. Reviewed query parser/strict membership UUID, selected college access trace model/service shapes, resolved winner and scope-chain DataTable, CopyFindingForClaude, FilterBar, StatusBadge/Disclosure, pagination and authorization, parent Admin layout, trace loading/error/not-found and prior lane-19 page verification; no JSX/import/route/copy regression.
+- Extra alignment fixes: 2 related source changes — root and invalid-filter page rhythm 16px on phone/24px on tablet, also mirrored in route loading; previously mobile always used 24px. No behavior, field name or copy change. Files: `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`, `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`, queue, proof. Source review only, no CI/browser.

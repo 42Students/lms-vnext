@@ -164,7 +164,8 @@ export function TpoSpreadsheetGrid<Row>({
   router.replace(pathname+(next.size?"?"+next.toString():""));
  }
  function copyVisibleRows(){
-  const included=orderedRows.filter(row=>!selection?.selected.length||selection.selected.includes(rowKey(row)));
+  const selectedOnPage=orderedRows.some(row=>selection?.selected.includes(rowKey(row)));
+  const included=orderedRows.filter(row=>!selectedOnPage||selection?.selected.includes(rowKey(row)));
   if(typeof navigator==="undefined"||!navigator.clipboard?.writeText){
    setClipboardMessage("Clipboard unavailable. Use Export CSV instead.");
    return;
