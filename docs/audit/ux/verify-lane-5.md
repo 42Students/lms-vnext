@@ -111,3 +111,17 @@
 - Extra clutter/alignment fixes: 0. Redirect-only page has no redundant navigation, canvas or form. Responsive 375/768 shared bounds and 44px recovery targets retained.
 - Inspected entrypoint, loading/error/not-found, recruiter/authenticated parent layouts, GracefulPageLoading/GracefulErrorBoundary/PageHeader and `polish-lane-15.md` evidence. No local template.
 - Files changed: queue and proof only. Source review without tests or CI.
+
+## Surface 17 — Recruiter profile
+- Surface: recruiter/profile alias of HR profile.
+- Regressions fixed: 0. Reviewed profile detail editor, edit/save/leave guards and expectedVersion tokens, profile and contact status, read-only college grants table, mobile grant-management disclosure, error/retry; current markup keeps editable details first, explanations disclosed and actions near related colleges.
+- Extra clutter/alignment fixes: 0; no source changes. Responsive 375px one-column, 768px two-column editor and mobile grant actions retain 44/36px controls.
+- Read HR profile page, RecruiterProfileDetailsEditor, RecruiterProfileAccess, DataTable/StatusBadge/EmptyState/PageHeader/ConfirmActionDialog, recruiter+HR loading/error and parent layouts, with `polish-lane-15.md` evidence; local not-found/template/layout absent. Source-only/no CI.
+- Files changed: queue and evidence.
+
+## Surface 18 — Independent audit finding details
+- Surface: `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`.
+- Regressions fixed (1): error output from `IndependentFindingActions` still appeared in ordinary foreground instead of legacy error ink. Preserved `role=alert` and switched to tokenized `text-error` so failed save is distinguishable.
+- Extra clutter/alignment fixes (2): editor controls now share a readable 3xl width without consuming entire desktop canvas, and Save details uses the shared Button loading dots while pending. Summary/status/update action remain above deep notes, source metadata, history and fix commits in separate keyboard disclosures.
+- Read full route, IndependentFindingActions six mutation/confirm/error branches, IndependentFindingCopyAction, TrackerAdminNav and status model, shared Input/Select/Textarea/ConfirmDialog/PageHeader/BackLink/StatusBadge, finding loading/error and authenticated parent layout. Checked prior `polish-lane-15.md`; local not-found/template/layout absent. 375/768 source review; no execution/CI.
+- Files changed: `src/components/tracker/independent-finding-actions.tsx`, queue and evidence.
