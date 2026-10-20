@@ -7,6 +7,6 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   return <ErrorState
     title="\n        Couldn't load Placements · Jobs\n      "
     description="The requested records could not be retrieved. A load failure does not\n        mean there are no records or that a reported total is zero."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    action={<Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>}
   />;
 }
