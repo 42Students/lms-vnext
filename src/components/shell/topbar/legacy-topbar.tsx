@@ -38,12 +38,12 @@ export function LegacyTopbar({
   const pathname = usePathname() ?? "/";
   const config = topbarConfigForPath(pathname);
   return <header className={style.bar} aria-label="Application top bar">
-    <div className="shrink-0 md:hidden">
+    <div className="min-w-0 shrink-0 md:hidden">
       <ShellWidgetBoundary name="Mobile navigation" fallbackHref="/dashboard">
         <MobileNavigation items={navigation}/>
       </ShellWidgetBoundary>
     </div>
-    <div className={style.command + " " + (!config.newHref ? style.commandNoNew : "")}>
+    <div className={style.command + " min-w-0 " + (!config.newHref ? style.commandNoNew : "")}>
       {config.portal === "tpo" && tpoCollegeId
         ? <Suspense fallback={<Link href="/tpo/placements/new" className={style.new} aria-label="New placement work">
             <PlusIcon/><span className={style.newLabel}>New</span>
@@ -59,7 +59,7 @@ export function LegacyTopbar({
         <TopbarNotifications key={config.portal} config={config}/>
       </ShellWidgetBoundary>
     </div>
-    <div className={style.accountArea}>
+    <div className={style.accountArea + " min-w-0 shrink-0"}>
       <TopbarOrganizationSwitcher organizationName={organizationName}
         memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}
         choices={adminScopeChoices} scope={adminScope}/>
