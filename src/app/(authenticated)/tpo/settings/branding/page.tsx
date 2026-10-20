@@ -6,6 +6,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -92,12 +93,15 @@ export default async function TpoPlacementBrandingPage() {
 
   return (
     <div className="min-w-0 space-y-6">
-      <TpoSettingsNav active="branding" />
-
       <PageHeader
         title="Placement Branding"
         description="Review your college's existing name, public logo and brand colours. Manage your placement email signature."
       />
+      <TpoSettingsNav active="branding" compact />
+
+      {communication.ready?<TpoEmailSignatureEditor initial={communication.emailSignature} version={communication.version}/>:
+       <Alert tone="warning">Email signature settings are not available in this database.</Alert>}
+      <Disclosure title="Existing college branding" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-5)] pt-[var(--lms-space-2)]">
 
       <section className="border-t border-border pt-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -159,7 +163,7 @@ export default async function TpoPlacementBrandingPage() {
         </div>
 
         {branding.logoPreviewUrl ? (
-          <div className="mt-5 flex min-h-32 items-center justify-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 md:p-6">
+          <div className="mt-[var(--lms-space-4)] flex min-h-32 min-w-0 items-center justify-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-[var(--lms-space-4)]">
             {/* Same validated public HTTPS image pattern
                 used by the college sign-in page. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -205,7 +209,7 @@ export default async function TpoPlacementBrandingPage() {
           </p>
         </div>
 
-        <div className="grid gap-3 min-[768px]:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] min-[768px]:grid-cols-2">
           <BrandColor
             label="Primary colour"
             field={branding.primaryColor}
@@ -217,8 +221,6 @@ export default async function TpoPlacementBrandingPage() {
         </div>
       </section>
 
-      {communication.ready?<TpoEmailSignatureEditor initial={communication.emailSignature} version={communication.version}/>:
-       <Alert tone="warning">Email signature settings are not available in this database.</Alert>}
       <section className="border-t border-border pt-4 text-sm leading-6 text-body">
         <h2 className="m-0 text-sm font-semibold text-foreground">
           Source and scope
@@ -247,6 +249,7 @@ export default async function TpoPlacementBrandingPage() {
         communications branding and full legacy
         parity require separate verification.
       </p>
+      </Disclosure>
     </div>
   );
 }

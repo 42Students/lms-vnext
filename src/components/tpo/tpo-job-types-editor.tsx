@@ -6,6 +6,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {Disclosure} from "@/components/ui/disclosure";
 import {TpoCustomJobTypeRename} from "./tpo-custom-job-type-rename";
 import {TpoCustomJobTypePlaced} from "./tpo-custom-job-type-placed";
 import {useRouter} from "next/navigation";
@@ -39,19 +40,19 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
  }
  return <section className="min-w-0 space-y-4 border-t border-border pt-4">
   <h3 className="font-semibold">Manage job types</h3>
-  <form className="flex flex-wrap items-end gap-2" onSubmit={event=>{
+  <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" onSubmit={event=>{
    event.preventDefault();if(label.trim().length<2||countsAsPlaced===null||atLimit||busy)return;
    void send("/api/placements/tpo/settings/job-types","POST",{label:label.trim(),countsAsPlaced});
   }}>
-   <label className="min-w-0 flex-1 text-sm">New job type
-    <Input className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">New job type
+    <Input className="min-h-11 w-full min-[768px]:min-h-9"
      maxLength={40} minLength={2} value={label} disabled={busy} onChange={event=>setLabel(event.target.value)}/>
    </label>
-   <fieldset className="space-x-3 text-sm"><legend>Does an offer of this type count as placed?</legend>
+   <fieldset className="min-w-0 space-y-[var(--lms-space-2)] text-sm"><legend>Does an offer of this type count as placed?</legend>
     <label><Radio name="placed" checked={countsAsPlaced===true} onChange={()=>setCountsAsPlaced(true)}/> Yes</label>
     <label><Radio name="placed" checked={countsAsPlaced===false} onChange={()=>setCountsAsPlaced(false)}/> No</label>
    </fieldset>
-   <Button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 min-[768px]:min-h-9">Add job type</Button>
+   <Button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Add job type</Button>
   </form>
   <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
   <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
@@ -71,14 +72,16 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
   </div>
   <p role="status" className="text-xs text-muted-foreground">{visible.length} of {types.length} custom job types</p>
   {visible.length===0?<EmptyState title={tpoJobTypesEmptyMessage(types.length,search,status)}/>:
-   <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border py-3">
+   <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
     <div className="min-w-0 space-y-2"><span className="block break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>
-     <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
-     <TpoCustomJobTypePlaced id={item.id} label={item.label} version={item.updatedAt} value={item.countsAsPlaced}/>
+     <Disclosure title="Edit job type" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-2)] pt-[var(--lms-space-2)]">
+      <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
+      <TpoCustomJobTypePlaced id={item.id} label={item.label} version={item.updatedAt} value={item.countsAsPlaced}/>
+     </Disclosure>
     </div>
     <Button type="button" variant="secondary" disabled={busy} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
       active:!item.active,expectedVersion:item.updatedAt,
-    })} className="min-h-11 min-[768px]:min-h-9">
+    })} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
       {item.active?"Switch off":"Reactivate"}
     </Button></li>)}</ul>}
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
