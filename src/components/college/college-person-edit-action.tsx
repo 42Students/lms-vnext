@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
-import {useState,useTransition,type FormEvent} from "react";
+import {useRef,useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -27,6 +27,9 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   membershipId:string;kind:Kind;departments?:Department[];
 }){
   const router=useRouter();
+  const requestId=useRef(0);
+  const saving=useRef(false);
+  function close(){if(pending||saving.current)return;requestId.current+=1;setOpen(false);}
   const {ask,confirmation}=useCollegeConfirmation();
   const [open,setOpen]=useState(false);
   const [loading,setLoading]=useState(false);
@@ -37,20 +40,22 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   const base="/api/college/people/"+encodeURIComponent(membershipId)+"/edit";
   const field="min-h-11 w-full min-w-0 md:min-h-9";
   async function load(){
+    const request=++requestId.current;
     setLoading(true);setError("");setSuccess("");setPerson(null);setOpen(true);
     try{
       const result=await apiFetch<{person:Person}>(base+"?kind="+kind,{cache:"no-store"});
       if(!result.person)throw Error("Profile details unavailable");
-      setPerson(result.person as Person);
-    }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
-    finally{setLoading(false);}
+      if(request===requestId.current)setPerson(result.person as Person);
+    }catch(reason){if(request===requestId.current)setError(reason instanceof Error?reason.message:friendlyApiError({}));}
+    finally{if(request===requestId.current)setLoading(false);}
   }
   function patch(key:keyof Person,value:string){
     setPerson(current=>current?{...current,[key]:value}:current);
   }
   async function submit(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();if(!person)return;
-    if(!(await ask("Save these changes to this college profile?")))return;
+    event.preventDefault();if(!person||pending||saving.current)return;
+    saving.current=true;
+    if(!(await ask("Save these changes to this college profile?"))){saving.current=false;return;}
     start(async()=>{
       setError("");setSuccess("");
       try{
@@ -69,8 +74,9 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             }),
           })});
         setSuccess(kind==="FACULTY"?"Faculty updated successfully!":"Student updated successfully!");
-        router.refresh();setOpen(false);
+        router.refresh();requestId.current+=1;setOpen(false);
       }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
+      finally{saving.current=false;}
     });
   }
   return <div className="inline-block">{confirmation}
@@ -79,7 +85,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
     </Button>
     {success&&<Alert tone="success" className="mt-2">{success}</Alert>}
-    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending}>
+    <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending}>
         
         {loading&&<Skeleton variant="form" count={4} label="Loading profile"/>}
         {error&&<Alert tone="error" className="my-2">{error}</Alert>}
@@ -88,17 +94,17 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
           </p>
           <label className="grid gap-1 text-sm">Name
-            <Input value={person.name} readOnly className={field+" opacity-70"}/>
+            <Input disabled={pending} value={person.name} readOnly className={field+" opacity-70"}/>
           </label>
           <label className="grid gap-1 text-sm">Login Mobile
-            <Input value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
+            <Input disabled={pending} value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
           </label>
           <label className="grid gap-1 text-sm">Login Email
-            <Input value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
+            <Input disabled={pending} value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
           </label>
           {kind==="FACULTY"?<>
             <label className="grid gap-1 text-sm">Department
-              <Select className={field} value={person.primaryDepartmentId??""}
+              <Select disabled={pending} className={field} value={person.primaryDepartmentId??""}
                 onChange={e=>patch("primaryDepartmentId",e.target.value)}>
                 <option value="">No department</option>
                 {person.primaryDepartmentId&&!departments.some(d=>d.id===person.primaryDepartmentId)&&
@@ -107,7 +113,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               </Select>
             </label>
             <label className="grid gap-1 text-sm">Faculty Type
-              <Select className={field} value={person.employmentType??""}
+              <Select disabled={pending} className={field} value={person.employmentType??""}
                 onChange={e=>patch("employmentType",e.target.value)}>
                 <option value="">Not specified</option>
                 {person.employmentType&&!LEGACY_FACULTY_TYPES.some(v=>v===person.employmentType)&&
@@ -116,51 +122,51 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               </Select>
             </label>
             <label className="grid gap-1 text-sm">Academic title
-              <Input className={field} maxLength={128} value={person.academicTitle??""}
+              <Input disabled={pending} className={field} maxLength={128} value={person.academicTitle??""}
                 onChange={e=>patch("academicTitle",e.target.value)}/>
             </label>
           </>:<>
             <label className="grid gap-1 text-sm">Roll Number
-              <Input className={field} maxLength={128} value={person.rollNumber??""}
+              <Input disabled={pending} className={field} maxLength={128} value={person.rollNumber??""}
                 onChange={e=>patch("rollNumber",e.target.value)}/>
             </label>
             <label className="grid gap-1 text-sm">Registration Number
-              <Input className={field} maxLength={128} value={person.registrationNumber??""}
+              <Input disabled={pending} className={field} maxLength={128} value={person.registrationNumber??""}
                 onChange={e=>patch("registrationNumber",e.target.value)}/>
             </label>
           </>}
           <label className="grid gap-1 text-sm">Gender
-            <Select className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
+            <Select disabled={pending} className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
               {["","Male","Female","Other","Prefer not to say"].map(value=>
                 <option key={value} value={value}>{value||"Not specified"}</option>)}
             </Select>
           </label>
           <label className="grid gap-1 text-sm">Date of Birth
-            <Input className={field} type="date" value={person.dateOfBirth}
+            <Input disabled={pending} className={field} type="date" value={person.dateOfBirth}
               onChange={e=>patch("dateOfBirth",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm">Contact mobile
-            <Input className={field} maxLength={32} value={person.contactPhone}
+            <Input disabled={pending} className={field} maxLength={32} value={person.contactPhone}
               onChange={e=>patch("contactPhone",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm">Contact email
-            <Input className={field} type="email" value={person.contactEmail}
+            <Input disabled={pending} className={field} type="email" value={person.contactEmail}
               onChange={e=>patch("contactEmail",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm md:col-span-2">Address
-            <Textarea className="min-w-0" rows={2} maxLength={1000}
+            <Textarea disabled={pending} className="min-w-0" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm md:col-span-2">Bio
-            <Textarea className="min-w-0" rows={3} maxLength={3000}
+            <Textarea disabled={pending} className="min-w-0" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>
           <div className="flex min-w-0 flex-col-reverse gap-2 border-t border-border pt-3 sm:flex-row sm:justify-end md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
+            <Button variant="secondary" type="button" disabled={pending} onClick={close}
+              className="min-h-11 md:min-h-9">Cancel</Button>
             <Button variant="primary" type="submit" disabled={pending} loading={pending} className="min-h-11 md:min-h-9">
               {pending?"Saving…":"Save changes"}
             </Button>
-            <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-              className="min-h-11 md:min-h-9">Cancel</Button>
           </div>
         </form>}
     </Dialog>
