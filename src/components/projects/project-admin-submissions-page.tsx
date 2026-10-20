@@ -99,9 +99,9 @@ export async function ProjectAdminSubmissionsPage({
     if(query.pageSize)params.set("pageSize",String(query.pageSize));
     const suffix=params.toString();
     return <div className="space-y-6">
-      <ProjectAdminNav basePath={basePath} active="submissions"/>
       <PageHeader title="Submissions dashboard"
         description="Final project deliverables across all workspaces."/>
+      <ProjectAdminNav basePath={basePath} active="submissions"/>
       <ErrorState title="Submissions unavailable"
         description="The submissions list could not be loaded. Your filters have not changed."
         action={<Link href={queuePath+(suffix?"?"+suffix:"")}
@@ -111,10 +111,6 @@ export async function ProjectAdminSubmissionsPage({
 
   return (
     <div className="space-y-6">
-      <ProjectAdminNav
-        basePath={basePath}
-        active="submissions"
-      />
       <PageHeader
         title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
@@ -126,6 +122,7 @@ export async function ProjectAdminSubmissionsPage({
           {key:"DRAFT_REVISING",label:"Draft (revising)",href:projectAdminSubmissionHref(queuePath,query,"DRAFT_REVISING"),tone:"info"},
         ]}
       />
+      <ProjectAdminNav basePath={basePath} active="submissions" />
       <Tabs
         ariaLabel="Submission categories"
         renderPanel={false}
