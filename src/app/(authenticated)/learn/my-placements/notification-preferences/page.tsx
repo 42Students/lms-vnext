@@ -8,11 +8,11 @@ export default async function LearnerPlacementNotificationPreferencesPage(){
   const context=await getCurrentRequestContext();
   const preferences=await getCandidatePreferences(context);
   return <div className="min-w-0 space-y-6">
-    <PageHeader title="Placement notifications"
-      description="Manage the two registered placement notification preferences for your active Learner membership." />
-    <Link href="/learn/my-placements" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+    <Link href="/learn/my-placements" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
       ← Back to My Placements
     </Link>
+    <PageHeader title="Placement notifications"
+      description="Manage the two registered placement notification preferences for your active Learner membership." />
     <LearnerPlacementNotificationSettings key={preferences.updatedAt?.toISOString()??"defaults"}
       initial={{
         notifyMatchingJobs:preferences.notifyMatchingJobs,
