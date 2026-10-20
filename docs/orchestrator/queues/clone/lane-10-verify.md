@@ -13,12 +13,12 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regre
 - [x] `src/components/shell/admin-scope-switcher.tsx`
 - [x] `src/components/shell/app-shell.tsx`
 - [x] `src/components/shell/learner-faculty-mobile-footer.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/shell/learner-topbar-tools.tsx`
-- [ ] `src/components/shell/membership-switcher.tsx`
-- [ ] `src/components/shell/mobile-navigation.tsx`
-- [ ] `src/components/shell/page-title.tsx`
-- [ ] `src/components/shell/route-announcer.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/shell/learner-topbar-tools.tsx`
+- [x] `src/components/shell/membership-switcher.tsx`
+- [x] `src/components/shell/mobile-navigation.tsx`
+- [x] `src/components/shell/page-title.tsx`
+- [x] `src/components/shell/route-announcer.tsx`
 - [ ] `src/components/shell/route-progress.tsx`
 - [ ] `src/components/shell/route-transition.tsx`
 - [ ] `src/components/shell/shell-connectivity-notice.tsx`
