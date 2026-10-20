@@ -9,9 +9,9 @@ export default function LearnerQuizHistoryError({reset}:{
   return <div className="min-w-0 space-y-4">
     <PageHeader title={"Could not load quiz history"} />
     <Alert tone="error">No results can be inferred from a failed request.</Alert>
-    <div className="flex flex-wrap items-center gap-3">
-      <Button className="min-h-11 md:min-h-9" onClick={reset}>Retry</Button>
-      <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">All Quizzes</Link>
+    <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
+      <Link href="/learn/allQuizzes" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">All Quizzes</Link>
     </div>
   </div>;
 }
