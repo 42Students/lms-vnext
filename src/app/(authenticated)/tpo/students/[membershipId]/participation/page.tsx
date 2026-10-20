@@ -81,7 +81,7 @@ export default async function TpoLearnerParticipationPage({
 
       <nav aria-label="Student placement journey" className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Link href={journey.history} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">View placement history and round outcomes →</Link>
-        <Link href={journey.roster} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Student roster</Link>
+        <Link href={journey.roster} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">Student roster</Link>
       </nav>
 
       <section className="border-b border-border py-5">

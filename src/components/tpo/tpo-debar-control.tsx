@@ -80,10 +80,7 @@ export function TpoDebarControl({
   }
 
   return (
-    <section className="min-w-0 space-y-3 border-y border-border py-5">
-      <h2 className="m-0 text-lg font-semibold text-foreground">
-        Debar / remove learner restriction
-      </h2>
+    <section className="min-w-0 space-y-3 py-2">
       <p className="mt-2 text-sm leading-6 text-body">
         Debar records a learner-level Ineligible decision with a required reason.
         The student loses Placements self-service access and cannot submit new
