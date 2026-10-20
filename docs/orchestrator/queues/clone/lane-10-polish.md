@@ -15,8 +15,8 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-10.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-10-b with [chat-10], ticking [x] in this queue in the same push.
 
 - [x] `src/app/(authenticated)/college/profile/page.tsx` (College admin page)
-- [ ] `src/app/(authenticated)/college/programs/page.tsx` (College admin page)
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx` (College admin page)
+- [x] `src/app/(authenticated)/college/programs/page.tsx` (College admin page)
+- [x] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx` (College admin page)
 - [ ] `src/app/(authenticated)/college/projects/[projectId]/page.tsx` (College admin page)
 - [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx` (College admin page)
 - [ ] `src/app/(authenticated)/college/projects/at-risk/page.tsx` (College admin page)

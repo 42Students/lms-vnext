@@ -187,7 +187,7 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
                    ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
               : (workspace.project.summary ?? undefined)}
             actions={
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 {mode==="ADMIN"&&backHref?<PageBackLink href={backHref} label={backLabel??"Back to projects"}/>:null}
                 <StatusBadge
                   tone={tone(workspace.project.status)}
@@ -308,18 +308,18 @@ export function ProjectWorkspace({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       {mode!=="ADMIN"?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
 
       {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} backHref={mode==="ADMIN"?backHref:undefined} backLabel={backLabel} /> : null}
-      {mode === "ADMIN" ? (
+      {mode === "ADMIN" && !sectionBaseHref ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
           { label: workspace.project.title },
         ]} />
       ) : null}
       {sectionBaseHref ? (
-        <Tabs ariaLabel="Project workspace sections" renderPanel={false} value={activeSection}
+        <Tabs className="min-w-0" ariaLabel="Project workspace sections" renderPanel={false} value={activeSection}
           items={PROJECT_WORKSPACE_SECTIONS.map(section=>({
             value:section, label:PROJECT_WORKSPACE_SECTION_LABELS[section],
             href:sectionBaseHref+"/"+section+sectionQuerySuffix,
@@ -1419,7 +1419,7 @@ export function ProjectWorkspace({
         )}
       </section> : null}
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className={activeSection ? "grid min-w-0 gap-6" : "grid min-w-0 gap-6 xl:grid-cols-2"}>
         {show("resources") ? <section className="space-y-3">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>

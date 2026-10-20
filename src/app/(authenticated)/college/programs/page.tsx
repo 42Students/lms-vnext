@@ -28,7 +28,7 @@ export default async function CollegeProgramsPage() {
         description="Create, find and manage the programs in your college."
       />
       <section aria-label="Active programs" className="min-w-0">
-      <AdminProgramDirectory
+        <AdminProgramDirectory
         programs={programs.map((program) => ({
           id: program.id,
           name: program.name,
@@ -44,9 +44,7 @@ export default async function CollegeProgramsPage() {
         }))}
       />
       </section>
-      <section aria-label="Archived programs" className="min-w-0">
-        <CollegeArchivedPrograms programs={archived} />
-      </section>
+      <CollegeArchivedPrograms programs={archived} />
     </div>
   );
 }

@@ -14,8 +14,6 @@ export default async function CollegeProjectSectionRoute({
       projectId={projectId}
       section={section}
       basePath="/college/projects"
-
-
     />
   );
 }
