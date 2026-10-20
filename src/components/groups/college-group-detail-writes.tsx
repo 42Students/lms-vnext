@@ -4,6 +4,7 @@ import { Switch } from "@/components/ui/selection-controls";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {groupRuleCriteriaSchema} from "@/modules/groups/rule-evaluator";
@@ -25,9 +26,14 @@ export function CollegeGroupDetailWrites({
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
+  const [confirmation,setConfirmation]=useState<{body:Record<string,unknown>;prompt:string}|null>(null);
   const hasSpace=capacity===null||activeCount<capacity;
-  async function submit(body:Record<string,unknown>,prompt:string){
-    if(!window.confirm(prompt+" Group: "+groupName))return;
+  function submit(body:Record<string,unknown>,prompt:string){
+    setError("");setNotice("");setConfirmation({body,prompt});
+  }
+  async function commitChange(){
+    if(!confirmation||busy)return;
+    const {body}=confirmation;
     setBusy(true);setError("");setNotice("");
     try {
       const response=await fetch("/api/college/groups/"+encodeURIComponent(groupId)+"/detail-actions",{
@@ -38,6 +44,7 @@ export function CollegeGroupDetailWrites({
       if(!response.ok)throw new Error(json.error??"GROUP_CHANGE_FAILED");
       if(typeof json.groupVersion==="number")setGroupVersion(json.groupVersion);
       setNotice("Group change saved and audited.");
+      setConfirmation(null);
       router.refresh();
     }catch(reason){setError(reason instanceof Error?reason.message:"Group action failed.");}
     finally{setBusy(false);}
@@ -91,5 +98,10 @@ export function CollegeGroupDetailWrites({
     </div>
     {error?<Alert tone="error">{error}</Alert>:null}
     {notice?<Alert tone="success">{notice}</Alert>:null}
+    <ConfirmDialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy)setConfirmation(null);}}
+      title={confirmation?.prompt??"Confirm group change"}
+      description={"Group: "+groupName+". Changes are audited."}
+      confirmLabel="Confirm" confirmVariant="primary" pending={busy}
+      onConfirm={()=>void commitChange()}/>
   </section>;
 }
