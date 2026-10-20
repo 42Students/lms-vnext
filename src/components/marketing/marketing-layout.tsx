@@ -32,14 +32,14 @@ export function MarketingLayout({children}:{children:ReactNode}){
   </footer>
  </div>;
 }
-export function MarketingHero({eyebrow,title,description}:{eyebrow:string;title:string;description:string}){
+export function MarketingHero({eyebrow,title,description,showExploreLink=true}:{eyebrow:string;title:string;description:string;showExploreLink?:boolean}){
  return <section aria-labelledby="marketing-hero-heading" className="min-w-0 space-y-5 py-6 md:py-12">
    <p className="text-sm font-semibold uppercase tracking-wider text-primary-text">{eyebrow}</p>
    <h1 id="marketing-hero-heading" className="max-w-4xl break-words text-[30px] font-semibold leading-10 tracking-tight text-foreground">{title}</h1>
    <p className="max-w-3xl break-words text-base leading-7 text-body md:text-lg md:leading-8">{description}</p>
-   <div className="flex flex-wrap gap-3">
-    <Link href="/request-demo" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Request a demo</Link>
-    <Link href="/platform" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-5 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Explore the platform</Link>
+   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+    <Link href="/request-demo" className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Request a demo</Link>
+    {showExploreLink ? <Link href="/platform" className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-5 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Explore the platform</Link> : null}
    </div>
  </section>;
 }
