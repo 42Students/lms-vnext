@@ -187,7 +187,7 @@ export async function SuperAdminTemplateSubviewPage({
             <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
             {detail.template.status === "PUBLISHED" ? (
               <Link href={"/admin/projects/workspaces/new?templateId=" + encodeURIComponent(detail.template.id)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3.5 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                 Use this template · Create workspace →
               </Link>
             ) : null}
@@ -628,7 +628,7 @@ export async function SuperAdminTemplateSubviewPage({
                   </div>
 
                   <Link href={templateVersionComparisonHref(detail.template.id, version.id)}
-                    className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">
+                    className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     Compare changes and inspect snapshot →
                   </Link>
 
