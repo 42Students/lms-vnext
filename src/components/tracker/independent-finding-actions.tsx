@@ -52,7 +52,7 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
   }catch{setError(friendlyApiError({}));}
   finally{lock.current=false;setPending(false);setConfirmOpen(false);}
  }
- return <section className="space-y-3 border-b border-border pb-4" aria-label="Finding actions">
+ return <section className="min-w-0 max-w-3xl space-y-3 border-b border-border pb-4" aria-label="Finding actions">
   <h2 className="font-semibold text-foreground">Update finding</h2>
   <label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
    <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as Action)}
@@ -90,8 +90,8 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
   {(action==="COMMENT"||action==="STATUS")?<label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note or reason
     <Textarea rows={3} maxLength={1000} value={note} disabled={pending} onChange={e=>setNote(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
    </label>:null}
-  <Button variant="primary" type="button" onClick={()=>void submit()} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">{pending?"Saving…":"Save details"}</Button>
-  {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+  <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">{pending?"Saving…":"Save details"}</Button>
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
     title="Save this finding update? An immutable audit event will be recorded."
     confirmLabel="Save details" confirmVariant="primary" pending={pending}

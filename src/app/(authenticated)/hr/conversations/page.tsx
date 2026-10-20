@@ -187,8 +187,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.items.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
     {visibleRows.map(row=><li key={row.id} className="min-w-0 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
      <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><Link href={"/hr/conversations/"+row.id}
-      className="inline-flex min-h-11 min-w-0 flex-1 items-center break-words font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
-     {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}</div>
+      className="inline-flex min-h-11 min-w-0 flex-1 items-center break-words [overflow-wrap:anywhere] font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
+     {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="shrink-0 self-center">{row.unread} new</Badge>:null}</div>
      {row.preview?<p className="mt-1 line-clamp-2 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">
       {row.preview.senderType==="RECRUITER"?"You: ":"Placement cell: "}{row.preview.text}
      </p>:null}

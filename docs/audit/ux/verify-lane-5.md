@@ -69,3 +69,73 @@
 - Extra clutter/alignment fixes (1): parent page still presented two secondary reference destinations at full prominence above the drafting form despite other lane's disclosure proof. Moved only existing `View previously sent discussion proposals` and `Record an outside-platform drive` links under a native keyboard-operable `More drive destinations` disclosure. Back to Drives remains immediate. At 375px links use full-width targets; 768px they flow as compact links. Original hrefs and labels unchanged.
 - Inspected HR and recruiter new page/loading/error, complete `HrDriveDraftForm` including dialogs, shared Input/Select/Textarea/Button/InlineNotice/Alert/ConfirmDialog, draft/services and parent recruiter/authenticated layouts; no route-local template/layout/not-found; compared `polish-lane-15.md` evidence.
 - Files changed: `src/app/(authenticated)/hr/drives/new/page.tsx`, queue, proof. Source-only, no tests/CI.
+
+## Surface 11 — Recruiter Drives directory
+- Surface: `src/app/(authenticated)/recruiter/drives/page.tsx` alias of HR drives listing.
+- Regressions fixed (3): earlier polish proof claimed secondary proposals, deadline attention and optional employment filters were in keyboard-operable disclosures but page still rendered all of them expanded. Corrected the three UI hierarchy regressions with native details. Active employment/mode/deadline/sort filters expand automatically on navigations so selected values stay visible. All original form names and submitted GET values remain.
+- Extra clutter/alignment fixes (1): employer request records now use one hairline-divided list instead of per-request cards; all edit, cancel, copy and published drive actions retained. Filter fields use responsive 375px stack / 768px two-column / wide four-column layout; desktop and mobile button heights keep legacy scale.
+- Inspected 21kB HR listing, RecruiterPlacementPortfolio and HrRecruiterDrivesGrid/TpoGrid, RecruiterRequestCancelButton, HrUnsentDriveAlert, feedback, Tabs, Pagination, StatusBadge, Select, Button, EmptyState, Alert, recruiter+HR loading/error, recruiter/authenticated layouts and original `polish-lane-15.md` proof. No route-local template/not-found/layout.
+- Files changed: `src/app/(authenticated)/hr/drives/page.tsx`, queue, evidence. Source-only; no browser/test/CI.
+
+## Surface 12 — Recruiter Sent Drive Proposals
+- Surface: `src/app/(authenticated)/recruiter/drives/proposals/page.tsx` aliases HR sent proposal history.
+- Regressions fixed: 0. Full read confirmed authorized college selection, Zod query parsing, GET q/sort, CSV export, pagination, correct status copy, mobile rows, desktop HrProposalHistoryGrid, scoped conversation destinations, empty-state draft path, and stable test/aria fields.
+- Extra clutter/alignment fixes: 0. Correctly bounded 375px stacked filter buttons, 768px aligned controls, one readable history table and quiet export; no speculative redesign applied.
+- Inspected HR page, HrProposalHistoryGrid/TpoGrid, recruiter+HR loading/error, PageHeader/PageBackLink, NeedsDoingChips, Input/Select/Button/EmptyState and parent layouts against `polish-lane-15.md`; no local not-found/template/layout. Source-only, no execution/CI.
+- Files changed: queue and evidence only.
+
+## Surface 13 — Outside-platform recruiter drive
+- Surface: `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx` re-exporting HR record page.
+- Regressions fixed (1): previous proof said optional external HTTPS reference and staff notes were hidden in a disclosure but `RecordedOutsideForm` still displayed both always. Wrapped exactly those two controls in a native keyboard-operable details section without modifying input names, request POST or validation.
+- Extra clutter/alignment fixes: 0. Primary three fields remain first, mobile 375px one-column and tablet 768px two-column form remain, button 44/36px.
+- Read HR page and full RecordedOutsideForm, stored-result confirmation, no-college/invalid-scope guards, shared Input/Select/Textarea/Button/PageHeader/InlineNotice, HR and recruiter loading/error, parent layouts and `polish-lane-15.md`; no local template/not-found/layout.
+- Files changed: `src/components/placements/recorded-outside-form.tsx`, queue and proof. Source-only/no tests/CI.
+
+## Surface 14 — Recruiter Today home
+- Surface: recruiter/home alias of `src/app/(authenticated)/hr/home/page.tsx`.
+- Regressions fixed (1): other lane's proof promised hairline Next-up work rows yet code still used a two-column spaced grid, competing with actual primary action and weekly tasks. Replaced task grid with an unadorned divided list.
+- Extra clutter/alignment fixes (4): remove redundant borders/rounded mini-cards from deadline, upcoming-round and results-due rows, and unread conversation rows under their existing section dividers. All task text, relative IST dates, links, grant-scoped counts, quick-number disclosure and status badges unchanged.
+- Read full HR Today page, data model/service references, HrUnsentDriveAlert with confirmation, PageHeader/NeedsDoingChips/Badge/Alert/EmptyState/ErrorState/GracefulPageLoading, HR/recruiter loading/error, parent layouts and other lane's `polish-lane-15.md` entry; no local template/not-found/layout. 375px/768px source check, no CI or project execution.
+- Files changed: HR home page, queue and evidence.
+
+## Surface 15 — Recruiter Messages inbox
+- Surface: recruiter/messages re-export of `src/app/(authenticated)/hr/conversations/page.tsx`.
+- Regressions fixed (1): the prior polish proof claimed unread count badges aligned next to each conversation title but `mt-2` still displaced each badge below its link. Removed that stray margin, vertically centered badge without altering its aria label, and added overflow-safe wrapping for long conversation names.
+- Extra clutter/alignment fixes (1): long words in employer/drive names now wrap within the 375px title flex cell, preserving the 768px density and unread pill spacing. Filter GET query, tabs, general composer disclosure, mark-read action, inbox pagination, and error/empty recovery unchanged.
+- Inspected full HR conversations page, recruiter/HR loading/error, ReplyForm draft/leave confirmation, RecruiterDecisionReadButton, LiveRefresh, Disclosure/Tabs/ScrollCue/Badge/Banner/Input/Select/Button and recruiter/authenticated layouts; checked earlier `polish-lane-15.md` proof and local template/not-found/layout absence. Source-only, no tests/CI.
+- Files changed: HR conversation page, queue, evidence.
+
+## Surface 16 — Recruiter entrypoint
+- Surface: `src/app/(authenticated)/recruiter/page.tsx`.
+- Regressions fixed: 0. Redirect remains exactly `/hr/home`; PageHeader Today and branded graceful loading match redirect, scoped recruiter layout guards inactive actors, error recovery links to canonical Today, and in-shell not-found returns safely. Props/exports and JSX valid.
+- Extra clutter/alignment fixes: 0. Redirect-only page has no redundant navigation, canvas or form. Responsive 375/768 shared bounds and 44px recovery targets retained.
+- Inspected entrypoint, loading/error/not-found, recruiter/authenticated parent layouts, GracefulPageLoading/GracefulErrorBoundary/PageHeader and `polish-lane-15.md` evidence. No local template.
+- Files changed: queue and proof only. Source review without tests or CI.
+
+## Surface 17 — Recruiter profile
+- Surface: recruiter/profile alias of HR profile.
+- Regressions fixed: 0. Reviewed profile detail editor, edit/save/leave guards and expectedVersion tokens, profile and contact status, read-only college grants table, mobile grant-management disclosure, error/retry; current markup keeps editable details first, explanations disclosed and actions near related colleges.
+- Extra clutter/alignment fixes: 0; no source changes. Responsive 375px one-column, 768px two-column editor and mobile grant actions retain 44/36px controls.
+- Read HR profile page, RecruiterProfileDetailsEditor, RecruiterProfileAccess, DataTable/StatusBadge/EmptyState/PageHeader/ConfirmActionDialog, recruiter+HR loading/error and parent layouts, with `polish-lane-15.md` evidence; local not-found/template/layout absent. Source-only/no CI.
+- Files changed: queue and evidence.
+
+## Surface 18 — Independent audit finding details
+- Surface: `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`.
+- Regressions fixed (1): error output from `IndependentFindingActions` still appeared in ordinary foreground instead of legacy error ink. Preserved `role=alert` and switched to tokenized `text-error` so failed save is distinguishable.
+- Extra clutter/alignment fixes (2): editor controls now share a readable 3xl width without consuming entire desktop canvas, and Save details uses the shared Button loading dots while pending. Summary/status/update action remain above deep notes, source metadata, history and fix commits in separate keyboard disclosures.
+- Read full route, IndependentFindingActions six mutation/confirm/error branches, IndependentFindingCopyAction, TrackerAdminNav and status model, shared Input/Select/Textarea/ConfirmDialog/PageHeader/BackLink/StatusBadge, finding loading/error and authenticated parent layout. Checked prior `polish-lane-15.md`; local not-found/template/layout absent. 375/768 source review; no execution/CI.
+- Files changed: `src/components/tracker/independent-finding-actions.tsx`, queue and evidence.
+
+## Surface 19 — Independent audit findings list
+- Surface: `src/app/(authenticated)/tracker/audit-findings/page.tsx`.
+- Regressions fixed: 0. Verified Super Admin scope/permission gates, Zod view/status/severity/kind filters, native advanced disclosure opens when active, search/clear, mobile DataTable and authorized finding links, 50-row pagination, importer-state recovery and refused-file diagnostics disclosure. Names, ids, filters, links and badges unchanged.
+- Extra clutter/alignment fixes: 0. Existing 375px full-width submit and 768px paired controls, compact chips, hairline table and hidden low-priority importer panel remain usable.
+- Read full route, AuditFindingFilterMemory, TrackerAdminNav, DataTable/ScrollCue/Disclosure, NeedsDoingChips, Pagination, Tabs, Input/Select/Banner/EmptyState/ErrorState, loading/error, parent authenticated shell, and `polish-lane-15.md` evidence. Local template/not-found/layout absent. Verified with source inspection only.
+- Files changed: queue and evidence.
+
+## Surface 20 — Tracker issue detail
+- Surface: `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`.
+- Regressions fixed: 0. Status/issue identity and bounded description lead, Report context and sharing are disclosed, workflow editor/version guards and retest controls stay intact; private screenshots and activity cursors still open through scoped routes.
+- Extra clutter/alignment fixes (4): nearby logs loader now uses shared dotted loading state and a full-width 44px phone button; long log events/messages/paths wrap within mobile view instead of overflowing; message newlines retained and errors bounded, without changing API, log filter routes, issue data or copy.
+- Read issue page, complete TrackerWorkflowPanel, TrackerIssueLogsPanel, TrackerIssueCopyActions, TrackerAdminNav, PageHeader, StatusBadge, ThirdPartyLink, workflow model, loading/error and authenticated layout, and prior `polish-lane-15.md` entry. No local template/not-found/layout; 375px and 768px source-only review, no tests/CI.
+- Files changed: `src/components/tracker/tracker-issue-logs-panel.tsx`, queue, proof.
