@@ -19,7 +19,7 @@ export default async function MentorProjectReviewCompletenessPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title="Invalid review history selector" />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">
       Return to assigned projects
     </Link>
   </section>;
