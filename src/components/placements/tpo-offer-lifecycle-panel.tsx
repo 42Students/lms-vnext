@@ -129,16 +129,16 @@ export function TpoOfferLifecyclePanel({
       {eligible.length === 0 ? (
         <EmptyState title="No offers currently match this action." description="Nothing will be changed."/>
       ) : (
-        <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+        <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
           {eligible.map((offer) => (
-            <label key={offer.id} className="flex min-h-11 items-center gap-3 px-2 text-sm hover:bg-muted md:min-h-9">
+            <label key={offer.id} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2 px-2 py-1 text-sm hover:bg-muted md:min-h-9">
               <Checkbox
                 checked={ids.includes(offer.id)}
                 disabled={busy || (ids.length >= 200 && !ids.includes(offer.id)) ||
                   (statuses.length > 0 && !statuses.includes(offer.status))}
                 onChange={(event) => select(offer.id, event.target.checked)}
               />
-              <span className="font-medium text-foreground">{offer.label}</span>
+              <span className="min-w-0 flex-1 break-words font-medium text-foreground">{offer.label}</span>
               <span className="text-muted-foreground">{offer.status}</span>
             </label>
           ))}
@@ -179,15 +179,17 @@ export function TpoOfferLifecyclePanel({
           className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal text-foreground"
         />
       </label>
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <span className="text-sm text-body">{ids.length} / 200 selected</span>
-        <label className="flex items-start gap-2 text-sm text-body">
+        <label className="flex min-w-0 items-start gap-2 break-words text-sm text-body">
           <Checkbox checked={reviewed} disabled={busy}
             onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
           I reviewed the {selected.length} affected offer(s) and supporting evidence.
           This is an audited administrative action, not a learner self-response.
         </label>
         <Button
+          className="min-h-11 w-full sm:w-auto md:min-h-9"
+          loading={busy}
           type="button"
           disabled={!valid || busy || !reviewed}
           onClick={() => void submit()}
