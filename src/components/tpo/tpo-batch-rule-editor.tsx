@@ -82,39 +82,39 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   });
  }
  const number=(key:"maxHeldOffers"|"upliftPct"|"minResponseHours",label:string,min:number,max:number,suffix:string)=>
-  <div key={key} className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,230px)]">
+  <div key={key} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-[var(--lms-canvas-border)] py-4 md:grid-cols-[minmax(0,1fr)_minmax(0,300px)]">
    <div><strong className="text-sm">{label}</strong>
     <p className="text-xs text-body">College: {college[key]} {suffix}</p>
    </div>
-   <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
-    <Input className="min-h-11 w-full md:w-24 md:min-h-9" type="number" min={min} max={max} step={1} disabled={busy||readOnly}
+   <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap md:items-center">
+    <Input className="min-h-11 w-full min-w-0 md:w-24 md:min-h-9" type="number" min={min} max={max} step={1} disabled={busy||readOnly}
      aria-label={label} value={draft[key]??college[key]}
      onChange={event=>setRule(key,Number(event.target.value))}
      />
-    {draft[key]!==undefined?<Button variant="ghost" className="lms-inline-link min-h-11 w-full text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto" type="button" disabled={busy||readOnly}
+    {draft[key]!==undefined?<Button variant="ghost" className="lms-inline-link min-h-11 w-full min-w-0 justify-center px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto" type="button" disabled={busy||readOnly}
      onClick={()=>setRule(key,college[key])}
      >Use the college&apos;s</Button>:null}
    </div>
   </div>;
  return <section aria-label="Batch placement rules" className="min-w-0 space-y-[var(--lms-space-4)] border-y border-border py-[var(--lms-space-4)]">
-  <h2 className="font-semibold">Batch placement rules</h2>
-  <p className="text-sm text-body">{Object.keys(draft).length?batchName+" has its own rules":batchName+" follows the college rules"}</p>
+  <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">Batch placement rules</h2>
+  <p role="status" className="break-words text-sm text-body">{Object.keys(draft).length?batchName+" has its own rules":batchName+" follows the college rules"}</p>
   <p className="text-sm text-body">Change a rule only for this batch; everything you leave alone stays the college&apos;s. An internship offer never counts as placed.</p>
   {error?<InlineNotice tone="error" message={"Batch rules were not saved. "+error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
-  <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-t border-border py-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,230px)]">
+  <div className="grid min-w-0 items-end gap-3 border-t border-border py-4 md:grid-cols-[minmax(0,1fr)_minmax(0,300px)]">
    <div><strong className="text-sm">Counts as placed when</strong>
     <p className="text-xs text-body">College: {college.countsAsPlacedAt==="OFFER_ACCEPTED"?"the offer is accepted":"the offer is released"}</p>
    </div>
-   <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
-    <Select className="min-h-11 w-full md:min-h-9" aria-label="Counts as placed when" disabled={busy||readOnly}
+   <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap md:items-center">
+    <Select className="min-h-11 w-full min-w-0 md:min-h-9" aria-label="Counts as placed when" disabled={busy||readOnly}
      value={draft.countsAsPlacedAt??college.countsAsPlacedAt}
      onChange={event=>setRule("countsAsPlacedAt",event.target.value as TpoBatchRuleFields["countsAsPlacedAt"])}
      >
      <option value="OFFER_RELEASED">the offer is released</option>
      <option value="OFFER_ACCEPTED">the offer is accepted</option>
     </Select>
-    {draft.countsAsPlacedAt!==undefined?<Button variant="ghost" className="lms-inline-link min-h-11 w-full text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto" type="button" disabled={busy||readOnly}
+    {draft.countsAsPlacedAt!==undefined?<Button variant="ghost" className="lms-inline-link min-h-11 w-full min-w-0 justify-center px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto" type="button" disabled={busy||readOnly}
      onClick={()=>setRule("countsAsPlacedAt",college.countsAsPlacedAt)}
      >Use the college&apos;s</Button>:null}
    </div>
@@ -123,7 +123,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   {number("upliftPct","Once placed, can apply again for at least",0,200,"% more CTC")}
   {number("minResponseHours","Time to respond to an offer",12,168,"hours")}
   {readOnly?<p role="status" className="text-sm">Finished batches cannot change placement rules.</p>:null}
-  <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-4)] md:flex-row md:flex-wrap md:justify-end [&>button]:w-full md:[&>button]:w-auto">
+  <div className="flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-4 sm:flex-row sm:flex-wrap sm:justify-end [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
    <Button type="button" disabled={readOnly||busy||!changed}
     onClick={()=>void save(draft)} >
     {busy?"Saving…":"Save"}</Button>
