@@ -70,22 +70,22 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
   function decide(){if(!mode||!valid||guardedPending)return;void runGuarded(()=>decideWith(mode,decisionNote));}
   return <div className="min-w-0 text-sm">
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
+      <Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
         >Approve</Button>
       <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
         >Reject</Button>
     </div>
-    {!mode&&error?<InlineNotice tone="error" message={error}/>:null}
+    {!mode&&error?<div className="mt-[var(--lms-space-3)]"><InlineNotice tone="error" message={error}/></div>:null}
     <Dialog open={mode!==null} onOpenChange={value=>{if(!value&&!pending)setMode(null);}}
       title={mode==="APPROVE"?"Approve this request?":"Reject this request"}
       description={mode==="APPROVE"?impact(requestType):
         "The learner's current application, round or offer remains unchanged when this request is rejected."}
-      footer={<>
-        <Button variant="secondary" disabled={pending||guardedPending} onClick={()=>setMode(null)}>Cancel</Button>
-        <Button disabled={pending||guardedPending||!valid} onClick={decide}>
+      footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+        <Button variant="secondary" className="w-full sm:w-auto" disabled={pending||guardedPending} onClick={()=>setMode(null)}>Cancel</Button>
+        <Button className="w-full sm:w-auto" loading={pending||guardedPending} disabled={pending||guardedPending||!valid} onClick={decide}>
           {pending?"Saving…":mode==="APPROVE"?"Approve request":"Reject request"}
         </Button>
-      </>}>
+      </div>}>
       {mode==="REJECT"?<div className="space-y-3">
         <p className="text-sm font-semibold">Reason for rejection</p>
         <div role="group" aria-label="Rejection reasons" className="flex flex-wrap gap-2">
@@ -94,12 +94,12 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
         </div>
         {reason==="Other"?<label className="block text-sm font-semibold">Explain the rejection
           <Textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
-            disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
+            disabled={pending||guardedPending} rows={3} className="mt-[var(--lms-space-2)] w-full"/>
         </label>:null}
-        {!valid&&reason?"Enter a rejection reason of at least 3 characters.":null}
+        {!valid&&reason?<p role="status" className="text-[13px] leading-5 text-[var(--lms-error-text)]">Enter a rejection reason of at least 3 characters.</p>:null}
       </div>:mode==="APPROVE"?<label className="block text-sm font-semibold">Approval note (optional)
         <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
-          disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
+          disabled={pending||guardedPending} rows={3} className="mt-[var(--lms-space-2)] w-full"/>
       </label>:null}
       {error?<InlineNotice tone="error" message={error}/>:null}
     </Dialog>
