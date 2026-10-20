@@ -122,19 +122,19 @@ export default async function TpoLeadsReportPage({
       <ReportNavigation workspace={workspace} />
       <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
        <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
-       <Link href="/tpo/recruiters" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Open Engage →</Link>
-       <Link href="/tpo/companies" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Company memory →</Link>
+       <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 lms-inline-link">Open Engage →</Link>
+       <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 lms-inline-link">Company memory →</Link>
       </nav>
 
 
       <section aria-label="Recruiter engagement by company" className="space-y-3">
        <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
        <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A drive counts as run only when it has a completed round in the selected season/drive. Zero means no completed round is recorded, not proof that nothing occurred.</p>
-       <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
-        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
-        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-        <label className="grid min-w-60 flex-1 gap-1 text-sm font-semibold">Company
-         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 md:min-h-9">
+       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+        <label className="grid min-w-0 w-full flex-1 gap-1 text-sm font-semibold text-body sm:w-auto">Company
+         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9">
           <option value="">All companies</option>
           {companyEngagement.filter(row=>row.companyId).map(row=>
            <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}

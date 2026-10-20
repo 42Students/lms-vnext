@@ -33,7 +33,7 @@ export default async function FacultyTeachingProfilePage({
     <PageHeader title="Current teaching assignments"
       description={"Registered teaching deliveries for "+data.title+" in this college."}
       actions={<Link href="/teacher/profile"
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Profile overview
       </Link>} />
     <section className="border-b border-border py-5">
@@ -49,8 +49,8 @@ export default async function FacultyTeachingProfilePage({
       </p>
     </section>
     <form method="get" action="/teacher/profile/teaching"
-      className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Search current teaching
+      className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+      <label className="grid min-w-0 w-full gap-1 text-sm font-semibold leading-5 text-body">Search current teaching
         <Input name="search" type="search" defaultValue={data.query.search}
           placeholder="Course, Section or academic period" maxLength={120}
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>
