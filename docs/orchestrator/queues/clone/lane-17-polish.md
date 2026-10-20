@@ -46,3 +46,6 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-17.md: surface | probl
 - [ ] `src/components/placements/tpo-drive-selection-manager.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/placements/tpo-general-requests-panel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/placements/tpo-remind-non-applicants.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/groups/college-group-detail-writes.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/verification/TpoVerificationPanel.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)

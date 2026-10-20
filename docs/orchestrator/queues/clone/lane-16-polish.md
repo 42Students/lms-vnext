@@ -46,3 +46,6 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | probl
 - [ ] `src/components/courses/admin-course-actions.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/courses/admin-learning-structure-actions.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/courses/assignment-submission-control.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
