@@ -6,6 +6,8 @@ import {
   type FormEvent,
 } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -23,9 +25,6 @@ type AcademicEvidence = {
   source: "SELF" | "VERIFIED" | null;
   verifiedAt?: string | Date | null;
 };
-
-const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
 function numberOrNull(value: string) {
   if (!value.trim()) return null;
@@ -265,7 +264,7 @@ export function PlacementCandidateEvidenceEditor({
               </StatusBadge>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-3">
               {[
                 [
                   "cgpa",
@@ -327,11 +326,11 @@ export function PlacementCandidateEvidenceEditor({
                   <label
                     key={String(name)}
                   >
-                    <span className="mb-1 block text-xs font-semibold text-body">
+                    <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
                       {label}
                     </span>
-                    <input
-                      className={inputClass}
+                    <Input
+                      className="min-h-11 md:min-h-9"
                       name={String(name)}
                       type="number"
                       min={0}
@@ -347,8 +346,8 @@ export function PlacementCandidateEvidenceEditor({
                 ),
               )}
 
-              <label className="flex items-center gap-2 self-end pb-2 text-xs font-semibold text-body">
-                <input
+              <label className="flex items-center gap-2 self-end pb-2 text-[var(--lms-font-sm)] font-semibold text-body">
+                <Checkbox
                   type="checkbox"
                   checked={lateralEntry}
                   onChange={(event) =>
@@ -362,11 +361,11 @@ export function PlacementCandidateEvidenceEditor({
 
               {lateralEntry ? (
                 <label>
-                  <span className="mb-1 block text-xs font-semibold text-body">
+                  <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
                     Diploma %
                   </span>
-                  <input
-                    className={inputClass}
+                  <Input
+                    className="min-h-11 md:min-h-9"
                     name="diplomaPercentage"
                     type="number"
                     min={0}
@@ -380,11 +379,11 @@ export function PlacementCandidateEvidenceEditor({
                 </label>
               ) : (
                 <label>
-                  <span className="mb-1 block text-xs font-semibold text-body">
+                  <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
                     12th %
                   </span>
-                  <input
-                    className={inputClass}
+                  <Input
+                    className="min-h-11 md:min-h-9"
                     name="twelfthPercentage"
                     type="number"
                     min={0}
