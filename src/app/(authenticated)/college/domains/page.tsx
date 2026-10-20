@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {isSuperAdmin} from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
 import {
   TenantDomainManager,
   type TenantDomainClientRow,
@@ -32,9 +32,9 @@ export default async function CollegeDomainsPage() {
     redirect("/dashboard");
   }
 
-  if(!isSuperAdmin(context))return <section className="min-w-0 space-y-3">
+  if(!isSuperAdmin(context))return <section className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Tenant domains" description="Tenant domains and sign-in host changes are managed by a Super Admin."/>
-    <Alert tone="info">Ask a Super Admin to connect or verify a college hostname.</Alert>
+    <Alert tone="info" className="max-w-[75ch]">Ask a Super Admin to connect or verify a college hostname.</Alert>
    </section>;
 
   const domains = await listTenantDomainsWithRuntime(
@@ -43,7 +43,7 @@ export default async function CollegeDomainsPage() {
   );
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
       <PageHeader
         title="Tenant domains"
         description="Connect and verify college hostnames without changing the canonical tenant boundary."
