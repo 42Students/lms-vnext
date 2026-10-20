@@ -18,15 +18,16 @@ export default async function TpoNewPlacementPage({searchParams}:{
   }
   return (
     <div className="min-w-0 space-y-4">
-      <nav aria-label="Drive creation options" className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
-      <Link href="/tpo/placements/new/draft" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+
+      <PlacementJobCreateWorkspace
+        preFormActions={<nav aria-label="Drive creation options" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:flex-wrap sm:items-center">
+      <Link href="/tpo/placements/new/draft" className="inline-flex min-h-11 justify-center items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Quick draft: Step 1 →
       </Link>
-      <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+      <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 justify-center items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Record a drive that happened outside LMS
       </Link>
-      </nav>
-      <PlacementJobCreateWorkspace
+      </nav>}
         context={context}
         collegeId={context.membership.collegeId}
         eyebrow="TPO"
