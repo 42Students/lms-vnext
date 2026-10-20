@@ -33,7 +33,7 @@ function ActionLink({
   return (
     <Link
       href={href}
-      className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+      className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       <p className="m-0 text-sm font-semibold text-foreground">{label}</p>
       <p className="mt-1 text-xs text-muted-foreground">
