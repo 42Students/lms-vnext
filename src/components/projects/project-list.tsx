@@ -73,12 +73,12 @@ export function ProjectList({
   }
 
   return (
-    <div className={basePath==="/learn/projects"?"min-w-0 divide-y divide-border":"grid min-w-0 gap-4 min-[992px]:grid-cols-2 min-[1366px]:grid-cols-3"}>
+    <div className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"min-w-0 divide-y divide-border":"grid min-w-0 gap-4 min-[992px]:grid-cols-2 min-[1366px]:grid-cols-3"}>
       {items.map((item) => (
         <Link
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
-          className={basePath==="/learn/projects"?"group flex min-w-0 flex-col py-4 first:pt-0 last:pb-0 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-5":"group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:bg-[rgba(38,186,199,0.045)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
+          className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"group flex min-w-0 flex-col py-4 first:pt-0 last:pb-0 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-5":"group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:bg-[rgba(38,186,199,0.045)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -117,7 +117,7 @@ export function ProjectList({
 
           {item.courseLabel || item.phase || item.dueLabel ? (
             <p className="mt-2 text-xs font-semibold text-body">
-              {item.courseLabel ?? "Project"} • {item.mentorName ?? "Mentor not assigned"}
+              {item.courseLabel ?? "Project"}{item.mentorName ? " • " + item.mentorName : basePath==="/mentor/projects" ? "" : " • Mentor not assigned"}
               {item.phase ? " · " + item.phase : ""}
               {item.dueLabel ? " · " + item.dueLabel : ""}
             </p>
