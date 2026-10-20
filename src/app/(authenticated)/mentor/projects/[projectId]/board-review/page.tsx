@@ -53,27 +53,27 @@ export default async function MentorBoardReviewPage({
       </p>
       <form method="get" action={base+"/board-review"}
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
-        <label className="grid gap-1 text-sm">Search tasks or sprints
+        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2"/>
+            className="min-h-11 w-full md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-sm">Status
+        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={data.query.status}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
+            className="min-h-11 w-full md:min-h-9">
             {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm">Priority
+        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Priority
           <Select name="priority" defaultValue={data.query.priority??"ALL"}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
+            className="min-h-11 w-full md:min-h-9">
             {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm">Sprint
+        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Sprint
           <Select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
+            className="min-h-11 w-full md:min-h-9">
             <option value="ALL">All sprints</option>
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </Select>
@@ -109,7 +109,7 @@ export default async function MentorBoardReviewPage({
           Every Sprint also shows its total registered task count.
         </p>
         {data.sprintSummaries.length===0?
-          <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
+          <p className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body">
             No registered Sprint matches the selected Sprint filter.
           </p>:
           <div className="grid gap-3 md:grid-cols-2">

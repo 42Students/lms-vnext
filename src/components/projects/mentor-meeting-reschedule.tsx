@@ -12,6 +12,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {fromIstLocalInput,toIstLocalInput,mentorMeetingRescheduleSchema}
   from "@/modules/projects/mentor-meeting-reschedule-model";
 import {Input} from "@/components/ui/input";
+import styles from "./legacy-project-touch-actions.module.css";
 
 export function MentorMeetingReschedule(props:{
   projectId:string;meetingId:string;startsAt:string;endsAt:string;updatedAt:string;
@@ -49,8 +50,8 @@ export function MentorMeetingReschedule(props:{
       showToast({tone:"error",title:"Meeting not rescheduled",description:message});
     }finally{setPending(false);}
   }
-  return <>
-    <Button variant="secondary" size="sm" onClick={()=>{
+  return <div className={styles.legacy+" "+styles.contents}>
+    <Button variant="secondary" onClick={()=>{
       setStart(toIstLocalInput(props.startsAt));
       setEnd(toIstLocalInput(props.endsAt));setError(null);setOpen(true);
     }}>Reschedule</Button>
@@ -59,17 +60,17 @@ export function MentorMeetingReschedule(props:{
       <form onSubmit={event=>{
         event.preventDefault();if(parsed.success&&changed){setOpen(false);setConfirm(true);}
       }} className="grid gap-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">Start (IST)
+        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Start (IST)
           <Input data-slot="input" type="datetime-local" required value={start}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setStart(event.target.value)}
-            className="min-w-0 max-w-full"/>
+            className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">End (IST)
+        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">End (IST)
           <Input data-slot="input" type="datetime-local" required value={end}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setEnd(event.target.value)}
-            className="min-w-0 max-w-full"/>
+            className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
         </label>
         {!parsed.success?<p id={validationId} role="alert" className="text-sm text-foreground">
           Select valid start/end times, with a duration up to 12 hours.</p>:null}
@@ -91,5 +92,5 @@ export function MentorMeetingReschedule(props:{
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard reschedule changes?" description="You have unsaved project changes. Leave this page and discard them?"
       confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
-  </>;
+  </div>;
 }
