@@ -144,8 +144,9 @@ export default async function HomePage({
         ) : null}
       </header>
 
+      <a href="#sign-in-content" className={styles.skipLink}>Skip to sign in</a>
       <div className={styles.center}>
-        <section className={styles.card} aria-label="Sign in">
+        <section id="sign-in-content" tabIndex={-1} className={styles.card} aria-label="Sign in">
           {message ? (
             <div role="alert" className={`${styles.status} ${message.tone === "error" ? styles.statusError : styles.statusWarning}`}>
               <p className={styles.statusTitle}>{message.title}</p>
