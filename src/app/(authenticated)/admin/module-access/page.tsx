@@ -28,16 +28,16 @@ export default async function SuperAdminModuleAccessPage({
   requirePermission(context,"admin-scope.select");
   const parsed=parseAdminFeaturePageParams(await searchParams);
   if(!parsed)return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin" title="Module Access"/>
+    <PageHeader title="Module Access"/>
     <ErrorState title="Invalid feature filters"
       description="The search or page value is invalid."
-      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center font-semibold text-link">Clear filters</Link>}/>
+      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
   </div>;
   const result=await listSuperAdminFeatureControls(context,parsed);
   const scopeMetrics=await getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id));
   const scopeLabel=adminControlScopeTag(context.adminScope);
   return <div className="min-w-0 space-y-6">
-    <PageHeader eyebrow="Super Admin" title="Module Access"
+    <PageHeader title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
       actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Feature Controls</Link>}/>
     <section aria-label="Module Access overview" className="border-b border-border pb-5">
@@ -50,7 +50,7 @@ export default async function SuperAdminModuleAccessPage({
       </dl>
     </section>
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
-      <label className="grid min-w-0 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         College
         <Input type="search" name="q" maxLength={100} defaultValue={result.q}
           className="w-full"/>
@@ -70,7 +70,7 @@ export default async function SuperAdminModuleAccessPage({
           <h2 className="font-semibold text-foreground">{college.name}</h2>
           <p className="mt-1 text-sm text-body">{college.code}</p>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Module Access →
           </Link>
         </article>)}
