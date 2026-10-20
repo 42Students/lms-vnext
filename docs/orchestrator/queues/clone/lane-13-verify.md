@@ -56,8 +56,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-13.md: surface | regre
 - [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
 - [x] `src/components/tpo/tpo-audit-saved-views.tsx`
 - [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
-- [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
+- [x] `src/components/tpo/tpo-public-join-link-card.tsx`
 - [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
 - [ ] `src/components/academics/college-term-mapping-manager.tsx`
 - [ ] `src/components/courses/college-assignment-create.tsx`
