@@ -54,9 +54,9 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
  }
  return <section aria-label="College sign-in methods" className="space-y-4 border-t border-border pt-5">
   <h2 className="font-semibold text-foreground">Sign-in method</h2>
-  <fieldset disabled={!ready||saving} className="grid gap-3 print:hidden">
+  <fieldset disabled={!ready||saving} className="grid divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] print:hidden">
    <legend className="sr-only">Sign-in method</legend>
-   {choices.map(choice=><label key={choice.value} className={"flex min-h-14 items-center gap-3 rounded-[var(--lms-control-radius)] border p-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] "+(!ready||saving?"cursor-not-allowed opacity-60 ":"cursor-pointer ")+(selection===choice.value?"border-primary bg-primary-subtle":!ready||saving?"border-border bg-surface":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
+   {choices.map(choice=><label key={choice.value} className={"flex min-h-14 items-center gap-3 px-3 py-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[-2px] focus-within:outline-[var(--lms-primary-text)] "+(!ready||saving?"cursor-not-allowed opacity-60 ":"cursor-pointer ")+(selection===choice.value?"bg-primary-subtle":!ready||saving?"bg-surface":"bg-surface hover:bg-primary-subtle")}>
     <Radio className="size-5" name="signin-method" value={choice.value}
      checked={selection===choice.value} onChange={()=>setSelection(choice.value)}/>
     <span><strong className="block text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>

@@ -11,10 +11,10 @@ export function SuperAdminPlacementDetailView({data,extraActions}:{data:SuperAdm
     <PageBackLink href={data.backHref} label="Back to directory" className="print:hidden" />
     {data.related?<Link href={data.related.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] md:w-auto border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">{data.related.label} →</Link>:null}
    </>} />
-  <div className="flex min-w-0 flex-wrap items-center gap-2">
+  <div className="flex min-w-0 flex-wrap items-center gap-2 border-b border-[var(--lms-canvas-border)] pb-3">
    <StatusBadge tone={data.status==="ACTIVE"||data.status==="ACCEPTED"?"success":"neutral"}>{data.status}</StatusBadge>
   </div>
-  <dl className="grid min-w-0 gap-3 md:grid-cols-2">
+  <dl className="grid min-w-0 gap-x-4 gap-y-0 md:grid-cols-2">
    {data.facts.map(fact=><div key={fact.label} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
     <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{fact.label}</dt>
     <dd className="mt-2 break-words text-[14px] font-medium leading-5 text-foreground">{fact.value}</dd>
