@@ -39,7 +39,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
   </Alert>
   <nav aria-label="Interview coordination destinations" className="flex flex-wrap gap-3">
    <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Drive rounds"/>
-   <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm font-medium text-primary-text md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
+   <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm font-medium text-primary-text md:min-h-9 hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
   </nav>
   <>
    <section className="space-y-3 border-b border-border pb-4">
@@ -47,7 +47,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     {rounds.length===0?<Alert tone="warning">
      No pending or scheduled interview round is available for this drive.{" "}
      <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
-      className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review hiring rounds</Link>
+      className="font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review hiring rounds</Link>
      {" "}before proposing a slot.
     </Alert>:null}
     <RecruiterInterviewSlotForm action={action} rounds={rounds.map(row=>({
