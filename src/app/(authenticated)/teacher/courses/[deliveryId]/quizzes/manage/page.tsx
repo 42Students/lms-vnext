@@ -17,6 +17,8 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
    actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to course</Link>} />
   {workspace.lessons.length?<FacultyChoiceQuizBuilder deliveryId={deliveryId}
    lessons={workspace.lessons.map(l=>({id:l.id,name:l.name}))} quizzes={quizzes}/>:
-   <section role="status" className="min-w-0 border-b border-border py-6 text-sm text-body">No registered lessons are available for this Section. Publish a learning path first.</section>}
+   <section role="status" className="border-y border-[var(--lms-canvas-border)] bg-transparent py-4">No registered lessons are available for this Section. Publish a learning path first.</section>}
+  <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
+   className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to course</Link>
  </div>;
 }

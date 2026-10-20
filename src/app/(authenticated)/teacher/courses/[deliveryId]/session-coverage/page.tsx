@@ -23,8 +23,8 @@ export default async function FacultySessionCoveragePage({
       <h2 className="text-lg font-semibold">Recent scheduled sessions</h2>
       {data.shown.length===0?<EmptyState title="No scheduled sessions"
         description="No persisted class sessions were found for this authorized Section."/>:
-        <ol className="grid gap-2">{data.shown.map(row=><li key={row.id}
-          className="min-w-0 border-b border-border py-4">
+        <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.shown.map(row=><li key={row.id}
+          className="min-w-0 bg-transparent py-4">
           <p className="font-semibold break-words">{row.title}</p>
           <p className="mt-1 text-sm text-body">{row.label}</p>
           <time dateTime={row.startsAt} className="text-xs text-muted-foreground">

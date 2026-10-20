@@ -69,7 +69,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       description="No registered published Assignment or Quiz matches this Section and filter. Draft work and unsupported legacy results are not counted." />
     : <div className="grid gap-3">{data.items.map(item =>
       <article key={item.kind + ":" + item.id}
-        className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary motion-reduce:transition-none md:p-6">
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-semibold text-foreground">{item.title}</h2>
           <span className="text-xs font-semibold text-body">{item.kind}</span>
