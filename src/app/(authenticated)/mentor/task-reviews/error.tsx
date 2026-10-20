@@ -9,7 +9,7 @@ export default function Error({ reset }: {
   return <section role="alert" className="space-y-3">
     <PageHeader title={"Unable to load Mentor task reviews"} />
     <p className="mt-2 text-sm text-body">The read failed. It is not proof that data is absent.</p>
-    <Button type="button" variant="secondary" onClick={reset}>
+    <Button type="button" variant="secondary" className="mt-4 w-full md:w-auto" onClick={reset}>
       Retry
     </Button>
   </section>;
