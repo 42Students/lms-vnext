@@ -39,58 +39,54 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    router.refresh();
   }catch{setError("Could not save change request.");}finally{setBusy(false);}
  }
- return <div className="min-w-0 space-y-4">
-  {error?<InlineNotice tone="error" message={error}/>:null}
-  {success?<InlineNotice tone="success" message={success}/>:null}
-  <section aria-label="Change request composer" className="min-w-0 border-b border-border pb-4">
-   <details open={requests.length===0} className="group min-w-0">
-    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Suggest a change or ask the {party==="TPO"?"company":"placement cell"}</summary>
-    <div className="mt-3 min-w-0 space-y-3">
+ return <div className="min-w-0 space-y-6">
+  <details className="group border-b border-border pb-6" open={requests.length===0}>
+   <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-lg font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Suggest a change or ask the {party==="TPO"?"company":"placement cell"} <span aria-hidden="true" className="ml-2">⌄</span></summary>
+   <div className="mt-3 space-y-3">
    <p className="text-sm text-body">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 min-[768px]:grid-cols-2">
     <label className="grid gap-1 text-sm">Request type
      <Select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
-      className="min-h-11 min-[768px]:min-h-9"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
+      className="min-h-11 w-full min-[768px]:min-h-9"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
     <label className="grid gap-1 text-sm">Field
      <Select value={field} onChange={e=>setField(e.target.value as typeof field)}
-      className="min-h-11 min-[768px]:min-h-9">
+      className="min-h-11 w-full min-[768px]:min-h-9">
       {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
    <label className="grid gap-1 text-sm">Change or question
     <Textarea value={value} onChange={e=>setValue(e.target.value)} minLength={2} maxLength={2000} rows={3}
-     className="min-h-11 min-[768px]:min-h-9"/></label>
+     className="min-h-11 w-full min-[768px]:min-h-9"/></label>
    <label className="grid gap-1 text-sm">Why is this needed?
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={1000} rows={2}
-     className="min-h-11 min-[768px]:min-h-9"/></label>
-   <Button type="button" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto" disabled={busy||value.trim().length<2||reason.trim().length<3}
+     className="min-h-11 w-full min-[768px]:min-h-9"/></label>
+   <Button type="button" disabled={busy||value.trim().length<2||reason.trim().length<3}
     onClick={()=>void send({action:"CREATE",field,mode,proposedValue:value.trim(),reason:reason.trim()})}
-    variant="primary">
+    variant="primary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
     {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</Button>
-    </div>
-   </details>
-  </section>
-  <section className="min-w-0 space-y-3">
+   </div>
+  </details>
+  <section className="space-y-3">
    <h2 className="text-lg font-semibold">Change requests · {requests.length}</h2>
-   {!requests.length?<EmptyState title="No change requests for this drive." />:requests.map(item=>
+   {!requests.length?<EmptyState title="No change requests for this drive."/>:requests.map(item=>
     <article key={item.id} className="min-w-0 space-y-3 border-b border-border py-4">
-     <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
+     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <h3 className="min-w-0 break-words font-semibold">{item.field.replaceAll("_"," ")} · {item.mode.toLowerCase()}</h3>
       <strong className="inline-flex min-h-[22px] items-center rounded-[6px] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-2 text-xs font-semibold">{item.status.replaceAll("_"," ")}</strong>
      </div>
      <p className="whitespace-pre-wrap break-words text-sm">{item.proposedValue}</p>
      <p className="break-words text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
      {item.decisionNote?<Alert tone="info">Decision: {item.decisionNote}</Alert>:null}
-     <details className="min-w-0 border-t border-border pt-3">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Discussion</summary>
-      <div className="mt-2 min-w-0 space-y-2">
-      {item.messages.map(message=><p key={message.id} className="border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm break-words">
+     <details className="border-t border-border pt-3" open={item.status==="OPEN" && item.targetParty===party}>
+      <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Discussion <span aria-hidden="true" className="ml-2">⌄</span></summary>
+      <div className="mt-2 space-y-2">
+      {item.messages.map(message=><p key={message.id} className="border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
       <label className="grid gap-1 text-sm">Reply or decision explanation
        <Textarea maxLength={2000} value={notes[item.id]??""} onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
-        rows={2} className="min-h-11 min-[768px]:min-h-9"/></label>
-      <div className="grid grid-cols-1 gap-2 min-[768px]:flex min-[768px]:flex-wrap">
-       <Button type="button" className="min-h-11 min-[768px]:min-h-9" disabled={busy||!(notes[item.id]??"").trim()}
+        rows={2} className="min-h-11 w-full min-[768px]:min-h-9"/></label>
+      <div className="flex flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
+       <Button type="button" disabled={busy||!(notes[item.id]??"").trim()}
         onClick={()=>void send({action:"COMMENT",requestId:item.id,body:(notes[item.id]??"").trim()})}
         variant="secondary">Reply</Button>
        {item.status==="OPEN"&&item.targetParty===party?(
@@ -104,7 +100,6 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
         <Button type="button" className="min-h-11 min-[768px]:min-h-9" disabled={busy||(notes[item.id]??"").trim().length<3}
          onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
          variant="danger">Withdraw</Button>:null}
-      </div>
       </div>
      </details>
     </article>)}
