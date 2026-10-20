@@ -84,18 +84,18 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    </div>} />
   <form action="/admin/placements/drives" method="get"
    className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="grid w-full min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-44">Search by drive or company
+   <label className="grid w-full min-w-0 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-44">Search by drive or company
     <Input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
      className="min-h-11 w-full md:min-h-9"/>
    </label>
-   <label className="grid w-full min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-36">Status
+   <label className="grid w-full min-w-0 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-36">Status
     <Select name="status" defaultValue={parsed.data.status}
      className="min-h-11 w-full md:min-h-9">
      <option value="ALL">All</option><option value="DRAFT">Draft</option>
      <option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
     </Select>
    </label>
-   <label className="grid w-full min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-36">Rows per page
+   <label className="grid w-full min-w-0 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-36">Rows per page
     <Select name="pageSize" defaultValue={parsed.data.pageSize}
      className="min-h-11 w-full md:min-h-9">
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
