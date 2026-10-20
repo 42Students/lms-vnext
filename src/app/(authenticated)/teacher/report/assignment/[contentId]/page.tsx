@@ -106,10 +106,10 @@ export default async function FacultyAssignmentReportPage({
         ))}
       </div>
       <section className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
           Score distribution
         </h2>
-        {metrics.graded===0?<p role="status" className="mt-3 text-sm text-muted-foreground">
+        {metrics.graded===0?<p role="status" className="mt-3 text-sm text-muted-foreground leading-[22px]">
           No grades yet. Grade a submission to populate this score distribution.
         </p>:null}
         <div
@@ -145,7 +145,7 @@ export default async function FacultyAssignmentReportPage({
       </section>
 
       <section className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
           Submission timing
         </h2>
         <div className={"mt-4 "+styles.timing}>
@@ -158,7 +158,7 @@ export default async function FacultyAssignmentReportPage({
               key={label}
               className={styles.timingStat}
             >
-              <p className="text-xs font-semibold uppercase text-muted-foreground">
+              <p className="text-xs font-semibold uppercase text-muted-foreground leading-5">
                 {label}
               </p>
               <p className={styles.timingValue}>
@@ -185,11 +185,11 @@ export default async function FacultyAssignmentReportPage({
       })} />
 
       <section className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
           Not submitted
         </h2>
         {missingLearners.length === 0 ? (
-          <p className="mt-3 text-sm text-body">
+          <p className="mt-3 text-sm text-body leading-[22px]">
             Every currently eligible learner has submitted.
           </p>
         ) : (
@@ -199,7 +199,7 @@ export default async function FacultyAssignmentReportPage({
                 key={learner.membershipId}
                 className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3"
               >
-                <p className="m-0 text-sm font-semibold text-foreground">
+                <p className="m-0 text-sm font-semibold text-foreground leading-[22px]">
                   {facultyReportLearnerName(learner.displayName)}
                 </p>
                               </li>
@@ -209,8 +209,8 @@ export default async function FacultyAssignmentReportPage({
       </section>
 
       <section id="submissions" className="scroll-mt-16 border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">View submissions</h2>
-        <p className="mt-1 text-sm text-body">See who submitted and grade their work.</p>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">View submissions</h2>
+        <p className="mt-1 text-sm text-body leading-[22px]">See who submitted and grade their work.</p>
         <FacultyAssignmentReview
         filesEnabled={assignmentFilesRuntimeEnabled()}
           assignmentId={assignment.id}

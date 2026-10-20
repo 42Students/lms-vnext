@@ -35,12 +35,12 @@ export default async function FacultyStudentDetailPage({
           ? "Unknown" : data.summary.percent + "%"],
       ].map(([label, value]) =>
         <div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
-          <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+          <p className="text-xs font-semibold text-muted-foreground leading-5">{label}</p>
           <p className="mt-2 break-words font-semibold text-foreground">{value}</p>
         </div>)}
     </section>
     <section className="border-y border-[var(--lms-canvas-border)] bg-transparent py-5">
-      <h2 className="text-lg font-semibold text-foreground">Course attendance</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Course attendance</h2>
       <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
         {[
           ["Present", data.summary.present], ["Absent", data.summary.absent],
@@ -55,7 +55,7 @@ export default async function FacultyStudentDetailPage({
       </p>
     </section>
     <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">Session history</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Session history</h2>
       {data.sessions.length === 0
         ? <EmptyState title="No scheduled sessions"
             description="No scheduled class sessions exist for this Course delivery." />
@@ -66,7 +66,7 @@ export default async function FacultyStudentDetailPage({
               { key:"session", header:"Session", mobileLabel:"Session",
                 mobilePriority:"primary" as const,
                 cell:row=><div className="min-w-0 font-medium text-foreground">{row.title}
-                  {row.note?<p className="mt-1 max-w-sm whitespace-pre-wrap break-words text-xs font-normal text-body">Note: {row.note}</p>:null}
+                  {row.note?<p className="mt-1 max-w-sm whitespace-pre-wrap break-words text-xs font-normal text-body leading-5">Note: {row.note}</p>:null}
                 </div> },
               { key:"scheduled", header:"Scheduled", mobileLabel:"Scheduled",
                 mobilePriority:"secondary" as const, cell:row=>dateText(row.startsAt) },

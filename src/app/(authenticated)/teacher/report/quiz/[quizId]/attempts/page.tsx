@@ -45,20 +45,20 @@ export default async function FacultyQuizAttemptPage({
         Full Quiz report
       </Link>} />
     <section className="min-w-0 border-b border-border py-4">
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         {data.quiz.resultsPublished
           ? "Results are published for learners."
           : "Results are private to authorized Faculty; this page does not publish them."}
       </p>
-      <p className="mt-2 text-sm text-body">
+      <p className="mt-2 text-sm text-body leading-[22px]">
         {data.total} recorded attempt{data.total===1?"":"s"} in this teaching Section.
         Question accuracy below uses each learner&apos;s latest attempt, not every retake.
       </p>
     </section>
     <section className="min-w-0 border-b border-border py-5">
-      <h2 className="text-base font-semibold text-foreground">Question accuracy (latest attempts)</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Question accuracy (latest attempts)</h2>
       {data.questions.length===0
-        ? <p className="mt-3 text-sm text-muted-foreground">No registered Quiz questions.</p>
+        ? <p className="mt-3 text-sm text-muted-foreground leading-[22px]">No registered Quiz questions.</p>
         : <ul className="mt-3 grid gap-2">{data.questions.map(q=>
           <li key={q.id} className="min-w-0 border-b border-border py-3 text-sm text-body">
             <span className="font-semibold">{q.prompt}</span>
@@ -82,7 +82,7 @@ export default async function FacultyQuizAttemptPage({
       <Input type="hidden" name="deliveryId" value={data.query.deliveryId} />
       {data.query.order!=="NEWEST"?<Input type="hidden" name="order" value={data.query.order}/>:null}
       {data.query.view!=="ALL"?<Input type="hidden" name="view" value={data.query.view}/>:null}
-      <label className="grid min-w-0 flex-1 basis-56 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 flex-1 basis-56 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Search learner attempts
         <Input type="search" name="q" defaultValue={data.query.q} maxLength={120}
           placeholder="Learner name" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] w-full" />
@@ -96,19 +96,19 @@ export default async function FacultyQuizAttemptPage({
     : <ol className="divide-y divide-border border-y border-border">{data.items.map(item=>
       <li key={item.id} className="min-w-0 border-b border-border px-1 py-4 last:border-b-0 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <h2 className="font-semibold text-foreground">{item.learnerName}</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.learnerName}</h2>
           <span className="text-sm text-body">Attempt {item.attemptNumber}</span>
         </div>
-        <p className="mt-2 text-sm text-body">
+        <p className="mt-2 text-sm text-body leading-[22px]">
           Score {item.score}/{item.maxScore} · {item.correct}/{item.answered} answers correct
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-1 text-xs text-muted-foreground leading-5">
           Submitted {new Intl.DateTimeFormat("en-IN",{
             dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
           }).format(item.submittedAt)} IST
         </p>
         {item.questionResults.length===0
-          ? <p className="mt-2 text-sm text-body">No recorded question answers.</p>
+          ? <p className="mt-2 text-sm text-body leading-[22px]">No recorded question answers.</p>
           : <ul className="mt-3 space-y-2">{item.questionResults.map(result=>
             <li key={result.questionId} className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2 text-sm text-body">
               <span>{data.questions.find(q=>q.id===result.questionId)?.prompt??"Recorded question"}</span>
@@ -125,7 +125,7 @@ export default async function FacultyQuizAttemptPage({
           className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Next</Link>:null}
       </div>
     </nav>
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       This report is Faculty-only. Question selections and private learner-facing result links
       are not exposed, and no grade-visibility action is performed.
     </p>

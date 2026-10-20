@@ -35,14 +35,14 @@ export default async function MentorReviewOverviewPage({
   Delivery workspace</Link>}/>
  <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} role="search" aria-label="Delivery review filters"
  className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery status
+  <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery status
    <Select name="status" defaultValue={data.query.status}
     className="min-h-11 min-[768px]:min-h-9">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </Select>
   </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Written feedback
+  <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Written feedback
    <Select name="feedback" defaultValue={data.query.feedback}
     className="min-h-11 min-[768px]:min-h-9">
     <option value="ALL">Any</option>
@@ -50,7 +50,7 @@ export default async function MentorReviewOverviewPage({
     <option value="WITHOUT">Not recorded</option>
    </Select>
   </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact delivery version
+  <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact delivery version
    <Input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
     placeholder="All versions" className="min-h-11 min-[768px]:min-h-9"/>
@@ -71,40 +71,40 @@ export default async function MentorReviewOverviewPage({
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
  </div>
  <section className="border-b border-border pb-5">
- <h2 className="font-semibold">Recorded review coverage on this page</h2>
- <p className="mt-2 text-sm text-body">{data.counts.reviewed} reviewed version{data.counts.reviewed===1?"":"s"};
+ <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recorded review coverage on this page</h2>
+ <p className="mt-2 text-sm text-body leading-[22px]">{data.counts.reviewed} reviewed version{data.counts.reviewed===1?"":"s"};
  {" "}{data.counts.withFeedback} with written feedback.</p>
- <p className="mt-1 text-xs text-muted-foreground">
+ <p className="mt-1 text-xs text-muted-foreground leading-5">
  Counts apply to the current page of registered delivery versions. Feedback is optional for approval
  and required when changes are requested. Missing records are not assumed complete.
  </p></section>
- <p className="text-sm text-body">{data.total} registered delivery version{data.total===1?"":"s"}</p>
+ <p className="text-sm text-body leading-[22px]">{data.total} registered delivery version{data.total===1?"":"s"}</p>
  {data.items.length===0?<EmptyState title="No registered final delivery"
  description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history."/>
  :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
  <li key={item.id} className="py-[var(--lms-space-3)]">
  <div className="flex flex-wrap items-center justify-between gap-3">
- <h2 className="font-semibold">Delivery version {item.version}</h2>
+ <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Delivery version {item.version}</h2>
  <span className="text-xs font-semibold text-body">{item.status}</span></div>
- <p className="mt-2 text-sm text-body">{item.reviewLabel}</p>
+ <p className="mt-2 text-sm text-body leading-[22px]">{item.reviewLabel}</p>
  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
   "/deliveries/"+encodeURIComponent(item.id)+"/review"}
   className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
   View recorded review details
  </Link>
- <p className="mt-1 text-xs text-muted-foreground">
+ <p className="mt-1 text-xs text-muted-foreground leading-5">
  {item.submittedAt?"Submitted "+new Intl.DateTimeFormat("en-IN",{
  dateStyle:"medium",timeZone:"Asia/Kolkata",
  }).format(item.submittedAt)+" IST":"No recorded submission"}
  </p>
- <p className="mt-1 text-xs text-muted-foreground">
+ <p className="mt-1 text-xs text-muted-foreground leading-5">
  {item.reviewedAt?"Reviewed "+new Intl.DateTimeFormat("en-IN",{
  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(item.reviewedAt)+" IST":"No recorded review instant"}
  </p>
  </li>)}</ol>}
  <Pagination label="Delivery review history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewOverviewHref({...data.query,page})}/>
- <p className="text-xs text-muted-foreground">
+ <p className="text-xs text-muted-foreground leading-5">
  Only registered decision and feedback presence are shown. Historical missing versions,
  former assignments, reviewer authorship and raw private feedback are not inferred or exposed.
  This page cannot create or change reviews.

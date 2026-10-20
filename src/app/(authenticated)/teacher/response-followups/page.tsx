@@ -36,12 +36,12 @@ export default async function FacultyResponseFollowUpsPage({
       </Link>} />
     <form action="/teacher/response-followups" method="get"
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
           className="min-h-11 md:min-h-9">
           <option value="ALL">All</option>
@@ -49,7 +49,7 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="QUIZ">Quizzes</option>
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
         <Select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
           className="min-h-11 md:min-h-9">
           <option value="">All current Sections</option>
@@ -58,7 +58,7 @@ export default async function FacultyResponseFollowUpsPage({
           </option>)}
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={data.query.sort}
           className="min-h-11 md:min-h-9">
           <option value="RECENT_DUE">Most recently due</option>
@@ -66,7 +66,7 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="TITLE">Assessment title</option>
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessments per page
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessments per page
         <Select name="pageSize" defaultValue={data.query.pageSize}
           className="min-h-11 md:min-h-9">
           <option value="5">5</option><option value="10">10</option>
@@ -79,7 +79,7 @@ export default async function FacultyResponseFollowUpsPage({
         className="inline-flex min-h-11 md:min-h-9 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>
     </form>
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         {data.total} matching past-due published assessment{data.total === 1 ? "" : "s"}
       </p>
       <Link href={facultyFollowUpCsvHref({...data.query,page:data.page})}
@@ -93,16 +93,16 @@ export default async function FacultyResponseFollowUpsPage({
       <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
         className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary motion-reduce:transition-none md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div><h2 className="font-semibold text-foreground">{item.title}</h2>
-            <p className="mt-1 text-sm text-body">{item.courseName} · {item.sectionName} · {item.kind}</p>
+          <div><h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.title}</h2>
+            <p className="mt-1 text-sm text-body leading-[22px]">{item.courseName} · {item.sectionName} · {item.kind}</p>
           </div>
           <span className="text-sm font-semibold text-body">{item.missingCount} without a recorded response</span>
         </div>
-        {item.missingCount === 0 ? <p className="mt-3 text-sm text-body">
+        {item.missingCount === 0 ? <p className="mt-3 text-sm text-body leading-[22px]">
           Every learner in the current Section roster has a recorded response.
         </p>
         : <>
-          <h3 className="mt-4 text-sm font-semibold text-foreground">Learners without a recorded response</h3>
+          <h3 className="mt-4 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Learners without a recorded response</h3>
           <ul className="mt-2 grid gap-2 md:grid-cols-2">
             {item.missingPreview.map(learner =>
               <li key={learner.id} className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2 text-sm text-body">
@@ -110,7 +110,7 @@ export default async function FacultyResponseFollowUpsPage({
                 {learner.rollNumber ? " · Roll " + learner.rollNumber : ""}
               </li>)}
           </ul>
-          {item.hiddenCount > 0 ? <p className="mt-2 text-xs text-muted-foreground">
+          {item.hiddenCount > 0 ? <p className="mt-2 text-xs text-muted-foreground leading-5">
             {item.hiddenCount} additional learners; open the Section report for the complete list.
           </p> : null}
         </>}
@@ -120,7 +120,7 @@ export default async function FacultyResponseFollowUpsPage({
         </Link>
       </article>)}</div>}
     <nav aria-label="Assessment follow-up pages" className="flex items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
+      <p className="text-sm text-muted-foreground leading-[22px]">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyResponseFollowUpHref({...data.query,page:data.page-1})}
           className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Previous</Link>}
