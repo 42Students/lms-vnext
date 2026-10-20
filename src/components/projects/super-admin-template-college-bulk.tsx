@@ -76,18 +76,18 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    ) : (
     <>
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <span role="status" aria-live="polite" className="text-[13px] font-semibold leading-5 text-body">
+      <span role="status" className="text-[13px] font-semibold leading-5 text-body">
        {selectedItems.length} selected
       </span>
-      <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+      <div className="flex min-w-0 flex-wrap gap-2">
        <Button type="button" variant="ghost" size="sm"
-        className="min-h-11 w-full md:min-h-9 sm:w-auto"
+        className="min-h-11 md:min-h-9"
         disabled={pending||!allowed.length||selectedItems.length===allowed.length}
         onClick={()=>setSelected(allowed.map(row=>row.id))}>
         Select all on page
        </Button>
        <Button type="button" variant="ghost" size="sm"
-        className="min-h-11 w-full md:min-h-9 sm:w-auto"
+        className="min-h-11 md:min-h-9"
         disabled={pending||!selected.length}
         onClick={()=>setSelected([])}>
         Clear selection
@@ -97,13 +97,13 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
      <ul className="grid min-w-0 grid-cols-1 gap-x-[var(--lms-space-4)] lg:grid-cols-2">
       {colleges.map(college=>(
        <li key={college.id} className="min-w-0">
-        <label className={"flex min-h-11 min-w-0 items-start gap-[var(--lms-space-3)] border-b border-border px-2 py-[var(--lms-space-3)] text-sm leading-5 text-body transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary md:min-h-9 "+(college.canAssign?"cursor-pointer hover:bg-primary-subtle":"cursor-not-allowed")}>
+        <label className="flex min-h-11 min-w-0 cursor-pointer items-start gap-[var(--lms-space-3)] border-b border-border px-2 py-[var(--lms-space-3)] text-sm leading-5 text-body transition-colors hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary md:min-h-9">
          <Checkbox
           checked={selected.includes(college.id)}
           disabled={pending||!college.canAssign}
           className="mt-0.5"
           onChange={event=>setSelected(current=>
-           event.target.checked?(current.includes(college.id)?current:[...current,college.id]):current.filter(id=>id!==college.id)
+           event.target.checked?[...current,college.id]:current.filter(id=>id!==college.id)
           )}
          />
          <span className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
