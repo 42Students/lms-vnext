@@ -34,8 +34,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
 - [x] `src/components/tracker/tracker-quick-report-launcher.tsx`
 - [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
-- [ ] `src/components/ui/confirm-action-dialog.tsx`
-- [ ] `src/components/ui/confirm-dialog.tsx`
+- [x] `src/components/ui/confirm-action-dialog.tsx`
+- [x] `src/components/ui/confirm-dialog.tsx`
 - [ ] `src/components/ui/date-input.tsx`
 - [ ] `src/components/ui/drawer.tsx`
 - [ ] `src/components/ui/searchable-select.tsx`
