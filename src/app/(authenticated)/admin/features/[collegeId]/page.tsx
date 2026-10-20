@@ -130,7 +130,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </div>
           <Link
             href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Open learner access trace →
           </Link>
@@ -138,14 +138,14 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         View audited college module changes →
       </Link>
       <section className="grid gap-3 md:grid-cols-3">
         {modules.map((decision) => (
           <article
             key={decision.module}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6"
           >
             <h2 className="m-0 text-sm font-semibold text-foreground">
               {decision.label}
@@ -185,7 +185,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         ))}
       </section>
 
-      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4" aria-label="Filter stored module overrides">
+      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch" aria-label="Filter stored module overrides">
         <label className="grid gap-1 text-sm font-semibold text-body">Stored descendant module
           <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 sm:min-h-9">
             <option value="">All modules</option>
@@ -213,7 +213,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 sm:min-h-9"/>
         </label>
         <Button type="submit" className="min-h-11 sm:min-h-9">Filter overrides</Button>
-        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Reset</Link>
+        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset</Link>
       </form>
 
       <section className="min-w-0 space-y-3">
@@ -306,7 +306,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page > 1 ? (
               <Link
                 href={pageHref(result.page - 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               >
                 ← Previous
               </Link>
@@ -314,7 +314,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page < result.totalPages ? (
               <Link
                 href={pageHref(result.page + 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               >
                 Next →
               </Link>

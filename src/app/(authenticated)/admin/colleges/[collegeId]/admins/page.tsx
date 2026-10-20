@@ -34,8 +34,8 @@ export default async function CollegeAdministratorsPage({params}:{
       {key:"roles",header:"Roles",mobilePriority:"secondary",cell:item=>item.roles.join(", ")},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"warning"}>{item.status==="ACTIVE"?"Enabled":"Suspended"}</StatusBadge>},
       {key:"access",header:"Access",mobilePriority:"action",cell:item=><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")}/>},
-      {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">View active devices</Link>},
-      {key:"history",header:"History",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">View history</Link>},
+      {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)} className="inline-flex min-h-11 items-center text-link underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View active devices</Link>},
+      {key:"history",header:"History",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"} className="inline-flex min-h-11 items-center text-link underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View history</Link>},
     ]}/>
   </section>
   {data.truncated?<p role="status" className="text-sm text-warning">Showing the first 500 role records. This directory needs a narrower scope to show every administrator.</p>:null}
