@@ -103,9 +103,9 @@ export default async function TpoNotificationsPage({
             emptyText={inbox.query.view === "unread" ? "No unread notifications" : "Nothing yet"}
           />
           </div>
-          {firstPage&&olderUnread>0?<p role="status" className="text-sm text-muted-foreground">
+          {firstPage&&olderUnread>0?<Alert tone="info">
             {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
-          </p>:null}
+          </Alert>:null}
           {emptyNavigation?<Alert tone="info">Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link></Alert>:null}
           {nextHref ? (
             <div className="flex justify-center">
