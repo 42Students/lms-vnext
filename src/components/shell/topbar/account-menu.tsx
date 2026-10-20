@@ -10,7 +10,7 @@ import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import type { MembershipChoice } from "@/modules/identity/context-service";
 import { apiFetch } from "@/lib/api-fetch";
 import { AdminScopeSwitcher } from "../admin-scope-switcher";
-import { MembershipSwitcher } from "../membership-switcher";
+import { MembershipSwitcher, workspaceChoices } from "../membership-switcher";
 import { accountActionCopy, type AccountMenuVariant } from "../college-account-copy";
 import { topbarInitials } from "./portal-config";
 import { ChevronIcon } from "./icons";
@@ -40,9 +40,9 @@ export function TopbarAccountMenu({
   useEffect(() => {
     if (!open) return;
     // The legacy dropdown is an operable menu, not merely an avatar hover card.
-    const first = root.current?.querySelector<HTMLElement>(
-      '[data-slot="popover"] a[href]:not([aria-disabled="true"]), [data-slot="popover"] button:not(:disabled), [data-slot="popover"] input:not(:disabled), [data-slot="popover"] select:not(:disabled)'
-    );
+    const first = Array.from(root.current?.querySelectorAll<HTMLElement>(
+      '[data-slot="popover"] a[href]:not([aria-disabled="true"]), [data-slot="popover"] summary, [data-slot="popover"] button:not(:disabled), [data-slot="popover"] input:not(:disabled), [data-slot="popover"] select:not(:disabled)'
+    ) ?? []).find(element => element.getClientRects().length > 0);
     (first ?? root.current?.querySelector<HTMLElement>('[data-slot="popover"]'))?.focus();
     const onPointer = (event: PointerEvent) => {
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
@@ -124,7 +124,7 @@ export function TopbarAccountMenu({
       </div>
       {copy.accountHref ? <Link href={copy.accountHref}
         onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel}</Link> : null}
-      {adminScopeChoices || memberships.length > 1 ? <>
+      {adminScopeChoices || workspaceChoices(memberships).length > 1 ? <>
         <hr className={style.menuDivider}/>
         <p className={style.accountSectionHeading}>Switch workspace</p>
         {adminScopeChoices ? <AdminScopeSwitcher choices={adminScopeChoices} scope={scope} /> :
