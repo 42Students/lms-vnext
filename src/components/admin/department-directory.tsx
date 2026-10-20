@@ -135,6 +135,7 @@ export function DepartmentDirectory({
           <div className="flex w-full flex-wrap items-center justify-between gap-[var(--lms-space-2)] sm:w-auto sm:justify-end">
             <Button
               size="sm" variant="secondary"
+              className="min-h-11 md:min-h-9"
               disabled={result.page === 1}
               onClick={() => setPage(result.page - 1)}
             >
@@ -143,6 +144,7 @@ export function DepartmentDirectory({
             <span aria-live="polite">Page {result.page} of {result.pages}</span>
             <Button
               size="sm" variant="secondary"
+              className="min-h-11 md:min-h-9"
               disabled={result.page >= result.pages}
               onClick={() => setPage(result.page + 1)}
             >
