@@ -25,8 +25,8 @@ export function FacultyReportStudentTable({
   const formatDate = facultyReportIstTimestamp;
 
   return (
-    <section aria-label={title} className="space-y-3">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <section aria-label={title} className="min-w-0 space-y-3">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
           <p aria-live="polite" className="mt-1 text-xs text-muted-foreground">
@@ -34,7 +34,7 @@ export function FacultyReportStudentTable({
           </p>
         </div>
         {rows.length > 8 ? (
-          <label className="w-full max-w-sm text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="w-full min-w-0 text-[length:var(--lms-font-sm)] sm:max-w-sm font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search students
             <Input
               aria-label="Search report students"
@@ -77,12 +77,12 @@ export function FacultyReportStudentTable({
       )}
 
       {result.pages > 1 ? (
-        <nav aria-label="Report student pages" className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <nav aria-label="Report student pages" className="mt-4 flex min-w-0 items-center justify-between gap-2">
           <Button variant="secondary"
             type="button"
             disabled={result.page === 1}
             onClick={() => setRequestedPage(result.page - 1)}
-            className="min-h-11 md:min-h-9"
+            className="min-h-11 min-w-24 md:min-h-9"
           >
             Previous
           </Button>
@@ -91,7 +91,7 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page >= result.pages}
             onClick={() => setRequestedPage(result.page + 1)}
-            className="min-h-11 md:min-h-9"
+            className="min-h-11 min-w-24 md:min-h-9"
           >
             Next
           </Button>

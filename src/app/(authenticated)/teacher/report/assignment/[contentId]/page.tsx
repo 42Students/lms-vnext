@@ -44,10 +44,10 @@ export default async function FacultyAssignmentReportPage({
     metrics,
   } = report;
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-5">
       <PageHeader title={assignment.title} description={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
-        actions={<div className="flex flex-wrap items-center gap-3">
-          <Link href="/teacher/allAssignments" className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <Link href="/teacher/allAssignments" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         ← My Assignments
       </Link>
           <FacultyReportCsvDownload
@@ -60,7 +60,7 @@ export default async function FacultyAssignmentReportPage({
             assignmentId:assignment.id,deliveryId:assignment.deliveryId,
             filter:"ALL",page:1,
           })}
-          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
           Filter submissions and export
         </Link>
         </div>}
@@ -92,21 +92,21 @@ export default async function FacultyAssignmentReportPage({
           { title: "Not submitted", rows: missingLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
-      <div className={styles.stats}>
+      <dl aria-label="Assignment report summary" className="grid min-w-0 grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
           ["Submitted", `${metrics.submitted}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
           ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(assignment.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className={styles.stat}>
-            <p className={styles.statLabel}>{label}</p>
-            <p className={styles.statValue}>{value}</p>
+          <div key={label} className="min-w-0 py-4">
+            <dt className="text-xs font-semibold leading-5 text-muted-foreground">{label}</dt>
+            <dd className="mt-1 break-words text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">{value}</dd>
           </div>
         ))}
-      </div>
+      </dl>
       <section aria-labelledby="section-score-distribution" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 id="section-score-distribution" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 id="section-score-distribution" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Score distribution
         </h2>
         {metrics.graded===0?<p role="status" className="mt-3 text-sm text-muted-foreground leading-[22px]">
@@ -134,8 +134,8 @@ export default async function FacultyAssignmentReportPage({
                     const percent=Math.round(100*row.pointsAwarded/assignment.maxPoints);
                     return percent>=bucket.min&&percent<=bucket.max;
                   }).map(row=><li key={row.id} className="flex justify-between gap-3 text-body">
-                    <span>{facultyReportLearnerName(row.learnerDisplayName)}</span>
-                    <span>{row.pointsAwarded}/{assignment.maxPoints}</span>
+                    <span className="min-w-0 break-words">{facultyReportLearnerName(row.learnerDisplayName)}</span>
+                    <span className="shrink-0 tabular-nums">{row.pointsAwarded}/{assignment.maxPoints}</span>
                   </li>)}
                 </ul>
               </Disclosure>
@@ -145,10 +145,10 @@ export default async function FacultyAssignmentReportPage({
       </section>
 
       <section aria-labelledby="section-submission-timing" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 id="section-submission-timing" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 id="section-submission-timing" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Submission timing
         </h2>
-        <div className={"mt-4 "+styles.timing}>
+        <dl className="mt-3 grid min-w-0 grid-cols-3 gap-x-4 border-y border-[var(--lms-canvas-border)]">
           {[
             ["On time", metrics.onTime],
             ["Late", metrics.late],
@@ -156,17 +156,17 @@ export default async function FacultyAssignmentReportPage({
           ].map(([label, value]) => (
             <div
               key={label}
-              className={styles.timingStat}
+              className="min-w-0 py-4"
             >
-              <p className="text-xs font-semibold uppercase text-muted-foreground leading-5">
+              <dt className="text-xs font-semibold leading-5 text-muted-foreground">
                 {label}
-              </p>
-              <p className={styles.timingValue}>
+              </dt>
+              <dd className="mt-1 text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">
                 {value}
-              </p>
+              </dd>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
 
       <FacultyReportStudentTable title="Student scores" emptyMessage="No one has submitted this assignment yet." rows={submissions.map((submission) => {
@@ -185,7 +185,7 @@ export default async function FacultyAssignmentReportPage({
       })} />
 
       <section aria-labelledby="section-not-submitted" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 id="section-not-submitted" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 id="section-not-submitted" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Not submitted
         </h2>
         {missingLearners.length === 0 ? (
@@ -193,11 +193,11 @@ export default async function FacultyAssignmentReportPage({
             Every currently eligible learner has submitted.
           </p>
         ) : (
-          <ul className="mt-3 grid gap-2 min-[768px]:grid-cols-2">
+          <ul className="mt-3 grid min-w-0 gap-x-6 sm:grid-cols-2">
             {missingLearners.map((learner) => (
               <li
                 key={learner.membershipId}
-                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3"
+                className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3"
               >
                 <p className="m-0 text-sm font-semibold text-foreground leading-[22px]">
                   {facultyReportLearnerName(learner.displayName)}
@@ -209,7 +209,7 @@ export default async function FacultyAssignmentReportPage({
       </section>
 
       <section aria-labelledby="section-view-submissions" id="submissions" className="scroll-mt-16 border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 id="section-view-submissions" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">View submissions</h2>
+        <h2 id="section-view-submissions" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">View submissions</h2>
         <p className="mt-1 text-sm text-body">See who submitted and grade their work.</p>
         <FacultyAssignmentReview
         filesEnabled={assignmentFilesRuntimeEnabled()}
