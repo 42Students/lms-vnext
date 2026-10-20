@@ -43,12 +43,12 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-      <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Round kind
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
         <Select name="kind" defaultValue={query.kind} >
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
         </Select>
       </label>
-      <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Status
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={query.status} >
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}
