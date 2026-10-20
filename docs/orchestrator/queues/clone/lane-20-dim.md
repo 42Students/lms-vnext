@@ -53,36 +53,36 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-20.md: file, number of 
 - [x] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/templates/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/admin/semester-courses/page.tsx`
-- [ ] `src/app/(authenticated)/admin/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
-- [ ] `src/app/(authenticated)/admin/verification/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/page.tsx`
-- [ ] `src/app/(authenticated)/college/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/hr/activity/page.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
+- [x] `src/app/(authenticated)/admin/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/admin/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/semesters/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/auth/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/admin/verification/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/page.tsx`
+- [x] `src/app/(authenticated)/college/announcements/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/dashboard/page.tsx`
+- [x] `src/app/(authenticated)/hr/activity/page.tsx`
+- [x] `src/app/(authenticated)/hr/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/hr/company/page.tsx`
 - [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
 - [ ] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
