@@ -14,7 +14,7 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-19.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-19-b with [chat-19], ticking [x] in this queue in the same push.
 
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-batch-inline-decision.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-bell-panel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-bulk-action-panel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
