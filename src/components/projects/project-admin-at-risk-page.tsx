@@ -101,7 +101,7 @@ export async function ProjectAdminAtRiskPage({
             blockerReason:project.blockerReason,
             lastActivityAt:safeProjectAdminUtcIso(project.lastActivityAt),
           }))}/>} />
-      <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
+      
 
       {!result.items.length ? (
         <EmptyState title="No at-risk projects" description="No at-risk project workspaces match these filters."
@@ -148,22 +148,16 @@ export async function ProjectAdminAtRiskPage({
                 <strong>Active blocker: </strong>
                 <span className="whitespace-pre-wrap break-words">{project.blockerReason}</span>
               </Banner> : null}
-              <dl className="mt-3 grid min-w-0 gap-x-4 gap-y-2 text-sm text-body md:grid-cols-3">
-                <div><dt className="font-semibold">Severity</dt><dd>
-                  {project.riskReasons.length > 1 || project.blockerReason ? "Risk" : "Watch"}
-                </dd></div>
-                <div><dt className="font-semibold">Inactive</dt><dd>
+              <dl className="mt-3 text-sm text-body">
+                <div className="flex min-w-0 flex-wrap items-baseline gap-2"><dt className="font-semibold">Inactive</dt><dd>
                   <span aria-label={"Inactive for "+project.inactiveDays+" days"}>
                     {project.inactiveDays} {project.inactiveDays===1?"day":"days"}
                   </span>
                 </dd></div>
-                <div><dt className="font-semibold">Blocker</dt><dd className="break-words">
-                  {project.blockerReason ?? "—"}
-                </dd></div>
               </dl>
               <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold">
                 <Link href={basePath + "/" + project.id + "/summary?from=at-risk&reason=" +
-                  encodeURIComponent(project.riskReasons.some(reason => reason.startsWith("No activity in ")) ? "STALLED" : project.riskReasons.includes("Active blocker") || project.blockerReason ? "BLOCKER" : "REVIEW")}
+                  encodeURIComponent(project.riskReasons.join(", "))}
                   className="inline-flex min-h-11 items-center text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open</Link>
                 <Link href={basePath + "/reassign-mentor?fromMentorId=" +
                   encodeURIComponent(project.mentorMembershipId ?? "UNASSIGNED")}
@@ -171,7 +165,7 @@ export async function ProjectAdminAtRiskPage({
                   {project.mentorMembershipId ? "Reassign mentor" : "Assign mentor"}
                 </Link>
                 {project.riskReasons.includes("Pending review") ?
-                  <Link href={basePath + "/" + project.id + "/delivery?from=at-risk&reason=REVIEW"}
+                  <Link href={basePath + "/" + project.id + "/delivery?from=at-risk&reason=pending-review"}
                     className="inline-flex min-h-11 items-center text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review submission</Link> : null}
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -189,7 +183,7 @@ export async function ProjectAdminAtRiskPage({
         </div>
       )}
 
-
+      <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
       <ProjectAdminPagination
         basePath={basePath + "/at-risk"}
         query={query}
