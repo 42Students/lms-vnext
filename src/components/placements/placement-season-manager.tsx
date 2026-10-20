@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Disclosure } from "@/components/ui/disclosure";
 import { useToast } from "@/components/ui/toast";
 
 export type PlacementSeasonItem = {
@@ -43,6 +45,7 @@ export function PlacementSeasonManager({
   const { showToast } = useToast();
   const [pending, setPending] =
     useState(false);
+  const [confirmClose, setConfirmClose] = useState(false);
   const active = useMemo(
     () =>
       seasons.find(
@@ -131,14 +134,6 @@ export function PlacementSeasonManager({
 
   async function close() {
     if (!active) return;
-    if (
-      !window.confirm(
-        "Close this placement season? Draft or published drives must be closed or archived first.",
-      )
-    ) {
-      return;
-    }
-
     setPending(true);
     try {
       await request(
@@ -153,6 +148,7 @@ export function PlacementSeasonManager({
         description:
           "The season is now historical and its operational drives are read-only.",
       });
+      setConfirmClose(false);
       router.refresh();
     } catch (error) {
       showToast({
@@ -183,7 +179,7 @@ export function PlacementSeasonManager({
       </div>
 
       {active ? (
-        <div className="grid gap-4 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+        <div className="grid min-w-0 gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <p className="m-0 font-semibold text-foreground">
@@ -202,9 +198,9 @@ export function PlacementSeasonManager({
           <Button
             size="sm"
             variant="secondary"
-            className="w-full sm:w-auto"
+            className="min-h-11 w-full sm:w-auto md:min-h-9"
             disabled={pending}
-            onClick={close}
+            onClick={() => setConfirmClose(true)}
           >
             {pending
               ? "Closing…"
@@ -214,7 +210,7 @@ export function PlacementSeasonManager({
       ) : (
         <form
           onSubmit={create}
-          className="grid min-w-0 gap-4 py-5 sm:grid-cols-2 xl:grid-cols-4"
+          className="grid min-w-0 gap-3 py-4 sm:grid-cols-2"
         >
           <label>
             <span className="mb-1 block text-xs font-semibold text-body">
@@ -258,11 +254,11 @@ export function PlacementSeasonManager({
               required
             />
           </label>
-          <div className="sm:col-span-2 xl:col-span-4">
+          <div className="sm:col-span-2">
             <Button
               type="submit"
               size="sm"
-              className="w-full sm:w-auto"
+              className="min-h-11 w-full sm:w-auto md:min-h-9"
               disabled={pending}
             >
               {pending
@@ -277,10 +273,8 @@ export function PlacementSeasonManager({
         (season) =>
           season.status === "CLOSED",
       ) ? (
-        <div className="border-t border-border py-4">
-          <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            Historical seasons
-          </p>
+        <Disclosure title={"Historical seasons (" + seasons.filter(season => season.status === "CLOSED").length + ")"}
+          className="border-t border-border py-2" contentClassName="pb-3">
           <div className="mt-3 flex flex-wrap gap-2">
             {seasons
               .filter(
@@ -298,8 +292,15 @@ export function PlacementSeasonManager({
                 </StatusBadge>
               ))}
           </div>
-        </div>
+        </Disclosure>
       ) : null}
+      <ConfirmDialog open={confirmClose}
+        onOpenChange={open => { if (!open && !pending) setConfirmClose(false); }}
+        title="Close this placement season?"
+        description="Draft or published drives must be closed or archived first."
+        confirmLabel="Close season" cancelLabel="Keep active" confirmVariant="danger"
+        pending={pending} onConfirm={() => void close()}
+      />
     </section>
   );
 }

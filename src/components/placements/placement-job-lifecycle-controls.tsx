@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 
 type JobStatus =
@@ -156,152 +157,54 @@ export function PlacementJobLifecycleControls({
   }
 
   return (
-    <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
-      <div>
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="m-0 text-sm font-semibold text-foreground">
-            Opportunity lifecycle
+    <>
+      <section className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <h2 className="m-0 text-sm font-semibold text-foreground">Opportunity lifecycle</h2>
+            <StatusBadge tone={tone(status)}>{status}</StatusBadge>
+          </div>
+          <p className="mt-1 max-w-prose text-xs leading-5 text-body">
+            {status === "DRAFT"
+              ? "Finish eligibility and round planning, then publish when learner access should begin."
+              : status === "PUBLISHED"
+                ? "The opportunity is live. Closing stops new applications without deleting history."
+                : status === "CLOSED"
+                  ? "The opportunity is closed and may now be archived from active operations."
+                  : "Archived opportunities are retained as historical placement records."}
           </p>
-          <StatusBadge tone={tone(status)}>
-            {status}
-          </StatusBadge>
         </div>
-        <p className="mt-1 text-xs leading-5 text-body">
-          {status === "DRAFT"
-            ? "Finish eligibility and round planning, then publish when learner access should begin."
-            : status === "PUBLISHED"
-              ? "The opportunity is live. Closing stops new applications without deleting history."
-              : status === "CLOSED"
-                ? "The opportunity is closed and may now be archived from active operations."
-                : "Archived opportunities are retained as historical placement records."}
-        </p>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {status === "DRAFT" ? (
-          <>
-            <Button
-              size="sm"
-              disabled={pending}
-              onClick={publish}
-            >
-              {pending
-                ? "Publishing…"
-                : "Publish"}
-            </Button>
-            {confirmAction ===
-            "ARCHIVE" ? (
-              <>
-                <Button
-                  size="sm"
-                  variant="danger"
-                  disabled={pending}
-                  onClick={archive}
-                >
-                  Confirm archive
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={pending}
-                  onClick={() =>
-                    setConfirmAction(null)
-                  }
-                >
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <Button
-                size="sm"
-                variant="secondary"
-                disabled={pending}
-                onClick={() =>
-                  setConfirmAction(
-                    "ARCHIVE",
-                  )
-                }
-              >
-                Archive draft
+        {status !== "ARCHIVED" ? (
+          <div className="flex min-w-0 w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
+            {status === "DRAFT" ? (
+              <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={publish}>
+                {pending ? "Publishing…" : "Publish"}
               </Button>
-            )}
-          </>
+            ) : null}
+            {status === "PUBLISHED" ? (
+              <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+                disabled={pending} onClick={() => setConfirmAction("CLOSE")}>Close opportunity</Button>
+            ) : null}
+            {status === "DRAFT" || status === "CLOSED" ? (
+              <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+                disabled={pending} onClick={() => setConfirmAction("ARCHIVE")}>
+                {status === "DRAFT" ? "Archive draft" : "Archive"}
+              </Button>
+            ) : null}
+          </div>
         ) : null}
-
-        {status === "PUBLISHED" ? (
-          confirmAction === "CLOSE" ? (
-            <>
-              <Button
-                size="sm"
-                variant="danger"
-                disabled={pending}
-                onClick={close}
-              >
-                Confirm close
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                disabled={pending}
-                onClick={() =>
-                  setConfirmAction(null)
-                }
-              >
-                Keep live
-              </Button>
-            </>
-          ) : (
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={pending}
-              onClick={() =>
-                setConfirmAction("CLOSE")
-              }
-            >
-              Close opportunity
-            </Button>
-          )
-        ) : null}
-
-        {status === "CLOSED" ? (
-          confirmAction === "ARCHIVE" ? (
-            <>
-              <Button
-                size="sm"
-                variant="danger"
-                disabled={pending}
-                onClick={archive}
-              >
-                Confirm archive
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                disabled={pending}
-                onClick={() =>
-                  setConfirmAction(null)
-                }
-              >
-                Cancel
-              </Button>
-            </>
-          ) : (
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={pending}
-              onClick={() =>
-                setConfirmAction(
-                  "ARCHIVE",
-                )
-              }
-            >
-              Archive
-            </Button>
-          )
-        ) : null}
-      </div>
-    </section>
+      </section>
+      <ConfirmDialog open={confirmAction !== null}
+        onOpenChange={open => { if (!open && !pending) setConfirmAction(null); }}
+        title={confirmAction === "CLOSE" ? "Close opportunity?" : "Archive opportunity?"}
+        description={confirmAction === "CLOSE"
+          ? "The opportunity is live. Closing stops new applications without deleting history."
+          : "It is removed from active operations while historical records remain intact."}
+        confirmLabel={confirmAction === "CLOSE" ? "Confirm close" : "Confirm archive"}
+        cancelLabel={confirmAction === "CLOSE" ? "Keep live" : "Cancel"}
+        confirmVariant="danger" pending={pending}
+        onConfirm={() => { if (confirmAction === "CLOSE") void close(); else if (confirmAction === "ARCHIVE") void archive(); }}
+      />
+    </>
   );
 }
