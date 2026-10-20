@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
-import {friendlyApiError} from "@/lib/friendly-error";
+import { apiFetch } from "@/lib/api-fetch";
+import { friendlyApiError } from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -170,9 +170,9 @@ export function PlacementEmployerRelationships({
   }
 
   return (
-    <section className="min-w-0 border-b border-border pb-5">
-      <div className="border-b border-border pb-4">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+    <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+      <div className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
+        <h2 className="sr-only">
           Companies
         </h2>
         <p className="mt-1 text-sm text-body">
@@ -202,7 +202,7 @@ export function PlacementEmployerRelationships({
             return (
               <div
                 key={item.relationshipId}
-                className="grid min-w-0 gap-3 py-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-5"
+                className="grid min-w-0 items-start gap-[var(--lms-space-3)] py-[var(--lms-space-4)] lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-[var(--lms-space-4)]"
               >
                 <div className="min-w-0">
                   <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -247,7 +247,7 @@ export function PlacementEmployerRelationships({
 
                 <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-1">
                   <label>
-                    <span className="mb-1 block text-xs font-semibold text-body">
+                    <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
                       Relationship owner
                     </span>
                     <Select
@@ -318,7 +318,7 @@ export function PlacementEmployerRelationships({
                   </label>
                 </div>
 
-                <div className="flex min-w-0 flex-wrap items-center gap-2 border-t border-border pt-3 sm:justify-end lg:col-span-2 lg:border-t-0 lg:pt-0">
+                <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:justify-end lg:col-span-2 lg:border-t-0 lg:pt-0">
                   {item.companyStatus!=null && item.companyStatus!=="ACTIVE" ? (
                     <span role="status" className="text-sm text-muted-foreground">
                       This company is archived on the platform and cannot be restored here.
