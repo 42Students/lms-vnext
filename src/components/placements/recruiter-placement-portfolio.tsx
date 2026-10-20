@@ -91,14 +91,14 @@ export function RecruiterPlacementPortfolio({
 
   return (
     <>
-      {sheetScopeKey?<div className="hidden min-w-0 md:block">
+      {sheetScopeKey?<div className="hidden min-w-0 min-[768px]:block">
         <HrRecruiterDrivesGrid rows={sheetRows} scopeKey={sheetScopeKey}/>
       </div>:null}
-      <div className={sheetScopeKey?"grid gap-4 md:hidden":"grid gap-4"}>
+      <div className={sheetScopeKey?"grid gap-4 min-[768px]:hidden":"grid gap-4"}>
       {sortedJobs.map((item) => (
         <Card as="article"
           key={item.job.id}
-          className={cx("rounded-[var(--lms-radius-card)] border p-5", (unansweredRequests[item.job.id]??0)>0 ? "border-warning bg-[var(--lms-warning-subtle)]" : "border-border bg-surface")}
+          className={cx("border-b border-[var(--lms-canvas-border)] px-1 py-4", (unansweredRequests[item.job.id]??0)>0 ? "border-warning bg-[var(--lms-warning-subtle)]" : "border-border bg-surface")}
         >
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0">
@@ -117,7 +117,7 @@ export function RecruiterPlacementPortfolio({
                   {item.collegeName}
                 </span>
               </div>
-              <h2 className="mt-3 text-lg font-semibold text-foreground">
+              <h2 className="mt-3 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 {item.job.title}
               </h2>
               <p className="mt-1 text-sm text-body">
@@ -157,7 +157,7 @@ export function RecruiterPlacementPortfolio({
               </nav>
               {(unansweredRequests[item.job.id]??0)>0?<Link
                 href={"/recruiter/drives/"+item.job.id+"?tab=requests"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
-                className="mt-2 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-warning bg-[var(--lms-warning-subtle)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-warning bg-[var(--lms-warning-subtle)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Answer {unansweredRequests[item.job.id]} open {unansweredRequests[item.job.id]===1?"request":"requests"} →
               </Link>:null}
               <p className="mt-2 text-sm text-body">
@@ -180,13 +180,13 @@ export function RecruiterPlacementPortfolio({
             </Link>
           </div>
           <nav aria-label={"Actions for "+item.job.title}
-            className="mt-4 flex flex-wrap gap-3 border-t border-border pt-3">
+            className="mt-4 flex min-w-0 flex-wrap gap-3 border-t border-[var(--lms-canvas-border)] pt-3">
             <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               {item.job.status==="CLOSED"?"Hire again":"Hire again with changes"}
             </Link>
             <Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"/messages"}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Answer
             </Link>
           </nav>
