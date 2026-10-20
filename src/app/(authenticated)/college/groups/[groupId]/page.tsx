@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { CollegeStudyMemberActions } from "@/components/groups/college-study-member-actions";
 import { CollegeGroupDetailWrites } from "@/components/groups/college-group-detail-writes";
@@ -79,21 +80,14 @@ export default async function CollegeGroupDetailPage({
   })) ?? [];
 
   return (
-    <div className="min-w-0 max-w-full overflow-x-clip space-y-[16px]">
+    <div className="min-w-0 max-w-full space-y-[16px]">
       <PageHeader
         title={group.name}
         description={group.description ?? `${label(group.kind)} in ${detail.collegeName}`}
-        actions={
-          <Link
-            href="/college/groups"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-          >
-            All groups
-          </Link>
-        }
+        actions={<PageBackLink href="/college/groups" label="All groups" />}
       />
 
-      <section className="grid min-w-0 gap-[16px] pt-[16px] md:grid-cols-2 lg:grid-cols-5">
+      <section className="grid min-w-0 grid-cols-2 gap-[16px] border-b border-border pb-4 md:grid-cols-3 min-[992px]:grid-cols-5">
         <Stat title="Type" value={label(group.kind)} />
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -118,7 +112,9 @@ export default async function CollegeGroupDetailPage({
       </section>
 
       {group.selfJoinOpenFrom || rule ? (
-        <section className="grid min-w-0 gap-[16px] border-t border-border pt-[16px] md:grid-cols-3">
+        <details className="min-w-0 border-b border-border pb-3">
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Membership rule</summary>
+          <section className="grid min-w-0 gap-[16px] pt-3 md:grid-cols-3">
           <Stat
             title="Self-join window"
             value={
@@ -139,7 +135,8 @@ export default async function CollegeGroupDetailPage({
                 : "—"
             }
           />
-        </section>
+          </section>
+        </details>
       ) : null}
 
       {rule ? (
@@ -154,7 +151,7 @@ export default async function CollegeGroupDetailPage({
         </section>
       ) : null}
 
-      <section className="space-y-3">
+      <section className="min-w-0 space-y-3 border-b border-border pb-4">
         <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Members</h2>
         {members.length === 0 ? (
           <EmptyState title="No members yet" description="Nobody has joined this group." />
@@ -185,14 +182,18 @@ export default async function CollegeGroupDetailPage({
         )}
       </section>
 
-      {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Manage members</h2>
+      {group.kind === "STUDY_GROUP" ? <section className="min-w-0 space-y-3">
+        <details className="min-w-0 border-b border-border pb-4">
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage members</summary>
+          <div className="min-w-0 space-y-3 pt-3">
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Validate member CSV (dry run)
         </Link>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}
           members={members} available={available} />
+          </div>
+        </details>
       </section> : null}
 
       {group.kind === "STUDY_GROUP" ? <CollegeGroupDetailWrites
@@ -209,8 +210,9 @@ export default async function CollegeGroupDetailPage({
         initialAutoRefresh={rule?.autoRefresh??false}
       /> : null}
 
-      <section className="space-y-3">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recent activity</h2>
+      <section className="min-w-0 space-y-3">
+        <details className="min-w-0 border-b border-border pb-3">
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Recent activity</summary>
         {events.length === 0 ? (
           <EmptyState title="No activity yet" description="Membership changes appear here." />
         ) : (
@@ -235,6 +237,7 @@ export default async function CollegeGroupDetailPage({
             getRowKey={(row) => row.id}
           />
         )}
+        </details>
       </section>
     </div>
   );
