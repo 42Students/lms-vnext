@@ -24,8 +24,7 @@ export default async function CollegeGroupImportPreviewPage({
   }
   if (group.kind !== "STUDY_GROUP") notFound();
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="College Admin · Student groups"
-      title={"CSV validation · " + group.name}
+    <PageHeader title={"CSV validation · " + group.name}
       description="Preview learner membership import eligibility without creating or changing group members."
       actions={<PageBackLink href={"/college/groups/" + encodeURIComponent(group.id)} label="Back to group"/>} />
     <CollegeGroupImportPreview groupId={group.id} />

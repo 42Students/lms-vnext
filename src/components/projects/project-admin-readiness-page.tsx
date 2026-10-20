@@ -104,7 +104,7 @@ export async function ProjectAdminReadinessPage({
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
           <PageBackLink href={basePath} label="Project workspaces" />
           <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export overrides CSV</a></div>}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export overrides CSV</a></div>}
       />
       <ProjectAdminNav basePath={basePath} active="readiness" />
       <section className="border-b border-border pb-5">
@@ -137,7 +137,7 @@ export async function ProjectAdminReadinessPage({
         {outsideScope ? <Banner tone="warning" role="alert">This workspace belongs to a different college — switch colleges in the header and try again.</Banner> : null}
         <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
         {selected ? <>
-          <Link href={basePath+"/"+selected+"/readiness"} className="text-sm font-semibold text-primary-text underline">
+          <Link href={basePath+"/"+selected+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Manage override
           </Link>
           <h3 className="text-sm font-semibold">Releases</h3>
