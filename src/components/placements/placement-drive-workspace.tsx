@@ -55,12 +55,14 @@ export async function PlacementDriveWorkspace({
   eyebrow,
   openPublish = false,
   overview,
+  applicationsHref,
 }: {
   context: RequestContext;
   jobId: string;
   eyebrow?: string;
   openPublish?: boolean;
   overview?: ReactNode;
+  applicationsHref?: string;
 }) {
   const [
     driveDay,
@@ -273,7 +275,7 @@ export async function PlacementDriveWorkspace({
         }
         actions={
           <div className="flex min-w-0 w-full flex-col gap-[var(--lms-space-2)] sm:w-auto sm:flex-row sm:items-center">
-          {!isTpo ? <Link href={"/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Applications</Link> : null}
+          {!isTpo ? <Link href={applicationsHref ?? "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Applications</Link> : null}
           <Dropdown mobileSheet align="end" label="Drive actions" trigger="Actions" className="w-full sm:w-auto">
             <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" tabIndex={0}

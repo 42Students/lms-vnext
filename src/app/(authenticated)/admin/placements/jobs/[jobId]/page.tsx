@@ -26,6 +26,7 @@ export default async function AdminPlacementDrivePage({
     <PlacementDriveWorkspace
       context={context}
       jobId={jobId}
+      applicationsHref={"/admin/placements/jobs/" + encodeURIComponent(jobId) + "/applications"}
       overview={<SuperAdminDrivePipeline rows={pipeline} />}
     />
    </div>
