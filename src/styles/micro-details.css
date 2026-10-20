@@ -60,12 +60,13 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12);
 }
 
-/* Legacy: components___accessibility.scss:49-60 — 50ms touch press,
-   scale .98 and opacity .9. Avoid any dialog, input or press action that
-   already has its own transform; native cards remain interactive. */
-@media (hover: none) and (prefers-reduced-motion: no-preference) {
+/* Legacy: components___accessibility.scss:49-60,116-124 — on touch,
+   tappable cards press to .98 scale and .9 opacity. The visual pressed state
+   is preserved for reduced-motion users; only its 50ms tween is suppressed.
+   Exclude disabled/actions with their own component-specific transforms. */
+@media (hover: none) {
   main :where([role="button"]:not([data-slot="button"]):not([aria-disabled="true"]),
-    [data-slot="card"][role="button"]):active:not(:where([data-unskin], [data-unskin] *)) {
+    [data-slot="card"][role="button"]:not([aria-disabled="true"])):active:not(:where([data-unskin], [data-unskin] *)) {
     transform: scale(0.98);
     opacity: 0.9;
     transition: transform 0.05s ease, opacity 0.05s ease;
@@ -400,22 +401,22 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   }
 }
 
-/* Legacy: components___common.scss:141-147 — 200ms ease box-shadow on
-   .ln-card-hvr; legacy only applies this treatment to opted-in hover cards.
-   Restrict to explicit interactive card semantics so static page sections
-   remain flat per the old LMS single-canvas design. */
+/* Legacy: components___common.scss:141-147 — only cards explicitly
+   marked .ln-card-hvr receive a 200ms ease hover shadow. A generic role=button
+   adds focus/touch feedback in accessibility.scss, NOT a hover elevation:
+   avoid elevating every interactive [data-slot=card] by accident. */
 @media (hover: hover) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)):hover {
+  main .ln-card-hvr:not(:where([data-unskin], [data-unskin] *)):hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)) {
+  main .ln-card-hvr:not(:where([data-unskin], [data-unskin] *)) {
     transition: box-shadow 200ms ease;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr) {
+  main .ln-card-hvr {
     transition: none !important;
   }
 }
