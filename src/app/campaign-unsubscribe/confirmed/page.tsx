@@ -16,7 +16,7 @@ export default async function Unsubscribed({
             ? "This placement cell will not email you again."
             : "Your address has been suppressed from campaign email. Transactional account messages may use separate preferences."}
         </p>
-      <Link href="/" className="inline-flex min-h-11 items-center self-start md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Return home</Link>
+      <Link href="/" className="inline-flex min-h-11 items-center self-start md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Return home</Link>
       </Card>
     </main>
   );

@@ -421,7 +421,7 @@ export default async function TpoStudentsPage({
        </nav>
       </Dropdown>
 
-      <form action="/tpo/students" method="get"
+      <form role="search" aria-label="tpo students filters" action="/tpo/students" method="get"
         className="flex flex-wrap items-end gap-3 border-b border-border py-4">
         {/* Program and Class are selected in the single grid filter panel.
             Preserve them through this separate advanced-filter form. */}
@@ -594,13 +594,13 @@ export default async function TpoStudentsPage({
         <Link
           href="/tpo/students"
           aria-current="page"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Students roster
         </Link>
         <Link
           href="/tpo/students/requests"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Requests
         </Link>
@@ -652,7 +652,7 @@ export default async function TpoStudentsPage({
         </div>
 
         <p className="mt-3 text-sm text-body" aria-live="polite">Journey of the {summary.activeLearners} students in {query.batchId?"this batch":query.programId?"this program":query.branchId?"this branch":"placements"}.</p>
-        <div className="mt-5 grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-4" aria-label="Student placement journey">
+        <div role="group" className="mt-5 grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-4" aria-label="Student placement journey">
          {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="min-w-0 border-b border-r border-border bg-surface p-4 last:border-r-0">
           <h3 className="text-sm font-semibold">{step.label}</h3>
           <p className="mt-2 text-2xl font-bold tabular-nums">{step.count}</p>
@@ -859,7 +859,7 @@ export default async function TpoStudentsPage({
           </Link>
         </div>
 
-        <form
+        <form role="search" aria-label="tpo students filters"
           action="/tpo/students"
           method="get"
           className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2 lg:grid-cols-4"
