@@ -43,9 +43,9 @@ export default async function LearnerAttendanceCalendarPage({
     deliveryId:first(raw.deliveryId)??undefined,
     status:first(raw.status)??undefined,
   });
-  if(!parsed.success) return <section role="alert" className="space-y-3">
+  if(!parsed.success) return <section role="alert" className="min-w-0 space-y-4">
     <PageHeader title="Invalid attendance calendar filters" />
-    <Link href="/learn/attendance/calendar" className="text-primary-text underline">
+    <Link href="/learn/attendance/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
       Clear filters
     </Link>
   </section>;
@@ -74,7 +74,7 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+      actions={<Link href={sourceLink} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Attendance detail
       </Link>} />
     <form action="/learn/attendance/calendar" method="get"
@@ -106,7 +106,7 @@ export default async function LearnerAttendanceCalendarPage({
           Apply filters
         </Button>
         <Link href="/learn/attendance/calendar"
-          className="text-sm font-semibold text-primary-text">Clear</Link>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear</Link>
       </div>
     </form>
     <div className="grid gap-3 md:grid-cols-4" aria-label="Filtered attendance totals">
@@ -163,7 +163,7 @@ export default async function LearnerAttendanceCalendarPage({
               :"Your authorized Course sessions have no registered attendance records yet. This does not mean you were absent."} />
         : <ol className="grid gap-3 md:grid-cols-2">
           {data.rows.map(row=><li key={row.id}
-            className="rounded-xl border border-border bg-surface p-4">
+            className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none md:p-6">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <h3 className="font-semibold text-foreground">{row.title}</h3>
               <span className={"rounded-full px-2 py-1 text-xs font-semibold "+(statusClass[row.status]??"bg-muted text-body")}>
