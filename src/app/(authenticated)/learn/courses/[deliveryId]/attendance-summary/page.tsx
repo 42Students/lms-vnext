@@ -39,7 +39,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />
@@ -104,7 +104,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
               </div>
               <ul className="mt-3 grid gap-2 md:grid-cols-2">
                 {month.records.map((row) => (
-                  <li key={row.id} className="flex flex-wrap items-start justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+                  <li key={row.id} className="flex min-w-0 flex-wrap items-start justify-between gap-2 border-b border-border py-3">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground">{row.title}</p>
                       <time dateTime={row.startsAt.toISOString()}

@@ -25,13 +25,13 @@ export function PageHeader({ eyebrow, title, id, description, actions, needsDoin
   const heading = (
     <header
       data-slot="page-header"
-      className="mb-2 flex w-full min-w-0 flex-col items-stretch gap-2 border-b border-[var(--lms-canvas-border)] pb-4 md:mb-4 md:flex-row md:items-start md:justify-between md:gap-6 [--lms-page-header-title-size:20px] md:[--lms-page-header-title-size:28px]"
+      className="mb-2 flex w-full min-w-0 flex-col items-stretch gap-2 border-b border-[var(--lms-canvas-border)] pb-4 md:mb-4 md:flex-row md:items-start md:justify-between md:gap-6 [--lms-page-header-title-size:20px] md:[--lms-page-header-title-size:30px]"
     >
       <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 md:flex-row md:flex-wrap md:items-baseline md:gap-4">
         <h1
           id={id}
-          className="m-0 min-w-0 max-w-full shrink break-words text-[20px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-heading)] md:text-[28px]"
-          style={{ fontSize: "var(--lms-page-header-title-size, 28px)", fontWeight: 600 }}
+          className="m-0 min-w-0 max-w-full shrink break-words text-[20px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-heading)] md:text-[30px]"
+          style={{ fontSize: "var(--lms-page-header-title-size, 30px)", fontWeight: 600 }}
           title={title}
         >
           {title}
