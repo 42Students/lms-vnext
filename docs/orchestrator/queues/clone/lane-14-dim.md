@@ -43,16 +43,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-14.md: file, number of 
 - [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
 - [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
 - [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/college/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/lessons/page.tsx`
+- [x] `src/app/(authenticated)/college/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/college/people/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
