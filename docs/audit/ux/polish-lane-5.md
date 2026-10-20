@@ -78,3 +78,15 @@
 - Changes: leave lifecycle tabs and batch search prominent, group Status and Rows per page in More filters with active filter state shown automatically; arrange the filter row using responsive aligned columns and consistent full-width phone actions; collapse Create batch into a shared semantic Disclosure, retaining every input, mutation, validation, and feedback status; adjust the creation grid to two columns from 768 and three on wide screens; keep Edit visible and demote Graduate/Remove into a shared mobile-sheet-aware More menu without changing their permissions or confirmations; use shared EmptyState for no matches and normalize gutters.
 - Inspected: batches page, its loading/error boundaries, CollegeCohortCreateForm, CollegeCohortRowActions (dialog/confirm/empty/filled/pending), AcademicSetupSteps, DataTable, Tabs, Dropdown, Disclosure, Input/Select/Button, StatusBadge and legacy design tokens. Checked responsive source for 375/768/1280; no CI or browser screenshots.
 - Files: src/app/(authenticated)/admin/batches/page.tsx; src/components/academics/college-cohort-management.tsx; docs/orchestrator/queues/clone/lane-5-polish.md; docs/audit/ux/polish-lane-5.md.
+
+## Surface 10 — Classes directory
+
+Problems fixed (7): aligned class filters and actions; collapsed advanced status and page size; made table empty state actionable via shared component; demoted secondary schedule navigation; moved rarely-used class creation into Disclosure; retuned authoring grid for 375/768/1280; aligned creation action on mobile. Scanned page, CollegeClassCreate, CollegeClassRowActions (create/edit/discard), AcademicSetupSteps, DataTable, Disclosure, form controls, error/loading fallbacks and empty/filled/disabled states. Mobile 375: stacked filters/forms and full-width actions; tablet 768: two columns; desktop 1280: aligned fields and dense list. Existing copy, routes, IDs, mutations, warnings, statuses, tenant scope and legacy tokens preserved. No CI/browser validation.
+
+Files: `src/app/(authenticated)/admin/classes/page.tsx`, `src/components/academics/college-section-management.tsx`, queue and this proof.
+
+## Surface 11 — Administrator activity history
+
+Problems fixed (5): CSV export competed with navigation in title row; history pagination crowded the header affordances; event count lacked subdued hierarchy; list rows needed consistent vertical gutters; mobile actions needed a single leading-edge rhythm. Moved CSV export below the history table, kept the existing College admins back action visible, aligned pagination and reused the legacy 24px section rhythm. Reviewed page, route loading/error fallbacks, PageHeader, PageBackLink, DataTable, EmptyState, ErrorState and empty/invalid/filled/paginated states at 375/768/1280 in source. Preserved all wording, CSV URL, page parsing, permissions, accessibility labels, event values and table identity. No CI/runtime pixel verification.
+
+Files: `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`, queue, proof.

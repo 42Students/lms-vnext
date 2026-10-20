@@ -1,1 +1,2 @@
-export default function Loading(){return <p role="status">Loading prep readiness…</p>;}
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+export default function Loading(){return <GracefulPageLoading label="Loading prep readiness…"/>;}

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   attendanceEvidenceLabel,
   departmentInsightsHref,
@@ -42,7 +43,7 @@ export function CollegeDepartmentInsights({
         ? item.absent+" absent · "+item.late+" late · "+item.excused+" excused · "+item.medical+" medical"
         : item.preferenceProfiles+" profiles recorded"},
   ];
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
     <PageHeader
       title={title}
       description={attendance
@@ -60,22 +61,9 @@ export function CollegeDepartmentInsights({
         </Link>
       </>}
     />
-    {attendance && correctionPolicy ? (
-      <Alert tone="info" aria-label="College attendance correction policy">
-        <p className="font-semibold text-foreground">Attendance policy — read-only</p>
-        <p className="mt-1">Faculty marking/correction window: {correctionPolicy.correctionWindowHours} hours after class end.</p>
-        <p>Exam eligibility threshold: {correctionPolicy.eligibilityThresholdPercent}%.</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          College Admin correction permissions are separate from Faculty marking windows.
-          These settings are policy context, not department attendance percentages.
-        </p>
-        <Link href="/college/attendance/settings"
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Attendance policy settings</Link>
-      </Alert>
-    ) : null}
     <section aria-label="Department filters" className="border-b border-border pb-4">
       <form method="get" action={path} className="flex flex-wrap items-end gap-3">
-        <label className="grid w-full min-w-0 basis-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-[220px] md:basis-auto md:flex-none">
+        <label className="grid w-full min-w-0 basis-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:max-w-sm md:basis-auto md:flex-1">
           Department name
           <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"
@@ -92,7 +80,8 @@ export function CollegeDepartmentInsights({
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption={title}
         empty={<EmptyState title={data.total===0?"No matching departments":"No departments on this page"}
-          description={data.total===0?"No departments match these filters. No attendance or placement evidence is inferred.":"No departments exist on this page. Choose an earlier page."}/>}
+          description={data.total===0?"No departments match these filters. No attendance or placement evidence is inferred.":"No departments exist on this page. Choose an earlier page."}
+          action={<Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear</Link>} />}
       />
     </section>
     <nav aria-label="Department pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
@@ -106,6 +95,20 @@ export function CollegeDepartmentInsights({
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page + 1 })}>Next</Link> : null}
       </div>
     </nav>
+    {attendance && correctionPolicy ? (
+      <Disclosure title="Attendance policy — read-only" className="min-w-0" contentClassName="min-w-0 pb-[var(--lms-space-3)]">
+        <Alert tone="info" aria-label="College attendance correction policy">
+        <p className="mt-1">Faculty marking/correction window: {correctionPolicy.correctionWindowHours} hours after class end.</p>
+        <p>Exam eligibility threshold: {correctionPolicy.eligibilityThresholdPercent}%.</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          College Admin correction permissions are separate from Faculty marking windows.
+          These settings are policy context, not department attendance percentages.
+        </p>
+        <Link href="/college/attendance/settings"
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Attendance policy settings</Link>
+        </Alert>
+      </Disclosure>
+    ) : null}
     <p className="text-xs leading-5 text-muted-foreground">
       {attendance
         ? "Only persisted MARKED schedule sessions and explicit attendance-record statuses are counted. Present status may be implicit. Missing records, learner denominators, eligible sessions and percentages are not inferred. Cancelled events are excluded."

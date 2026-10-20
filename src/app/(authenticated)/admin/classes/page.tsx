@@ -5,6 +5,8 @@ import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable} from "@/components/ui/data-table";
+import {Disclosure} from "@/components/ui/disclosure";
+import {EmptyState} from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeClassCreate, CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { listCollegeClasses } from "@/modules/academics/college-structure-directory-service";
@@ -36,22 +38,25 @@ export default async function SuperAdminClassesPage({ searchParams }: {
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
       <section aria-label="Filter managed classes" className="border-b border-border pb-4">
-        <form method="get" action="/admin/classes" role="search" aria-label="Class filters" className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-0 w-full md:min-w-44 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+        <form method="get" action="/admin/classes" role="search" aria-label="Class filters" className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 md:min-h-9">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </Select>
           </label>
-          <label className="grid min-w-0 w-full md:min-w-40 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
+          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
             <Input type="search" name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-0 w-full md:min-w-44 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search class, program or batch
+          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search class, program or batch
             <Input name="q" type="search" defaultValue={data.query.q}
               className="min-h-11 md:min-h-9" />
           </label>
+          <Disclosure title="More filters" defaultOpen={Boolean(data.query.status!=="ALL" || data.query.pageSize!==25 || data.query.cohortCode)}
+            className="min-w-0 md:col-span-2 xl:col-span-4"
+            contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] md:grid-cols-2">
           <label className="grid min-w-0 w-full md:min-w-32 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
             <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
               {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
@@ -62,21 +67,22 @@ export default async function SuperAdminClassesPage({ searchParams }: {
               {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
             </Select>
           </label>
-          <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
-          <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
+          </Disclosure>
+          <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+          <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>
           <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>
         </form>
       </section>
-      <section aria-label="Manage classes" className="space-y-3 pt-2">
+      <section aria-label="Manage classes" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Manage classes</h2>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage classes" rows={data.items} getRowKey={row=>row.id}
-          empty={<p role="status">No matching classes on this page.</p>}
+          empty={<EmptyState title="No matching classes on this page." />}
           columns={[
             {key:"class",header:"Class",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
               <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Manage students →</Link>
-              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Schedule →</Link>
+              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="ml-[var(--lms-space-3)] mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Schedule →</Link>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
             {key:"batch",header:"Batch",mobilePriority:"secondary",cell:row=>row.cohortName},

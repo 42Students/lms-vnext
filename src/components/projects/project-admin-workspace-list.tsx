@@ -69,6 +69,8 @@ export function ProjectAdminWorkspaceList({
       <EmptyState
         title={emptyTitle}
         description={emptyDescription}
+        action={<Link href={basePath}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}
       />
     );
   }
@@ -105,20 +107,20 @@ export function ProjectAdminWorkspaceList({
     empty={<EmptyState title={emptyTitle} description={emptyDescription}/>}
   />;
   return (
-    <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-2 min-[1366px]:grid-cols-3">
+    <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
       {items.map((item) => (
         <article
           key={item.id}
-          className="flex min-h-60 flex-col rounded-[8px] border border-border bg-surface p-5"
+          className="flex min-w-0 flex-col rounded-[8px] border border-border bg-surface p-4 md:p-5"
         >
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
                 {item.templateTitle ? "Template: " + item.templateTitle : "No template — attach one"}
               </p>
               <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
                 <Link href={basePath+"/"+encodeURIComponent(item.id)}
-                  className="rounded-sm hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  className="inline-flex min-h-11 items-center break-words rounded-sm underline-offset-4 hover:text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                   {item.title}
                 </Link>
               </h2>
@@ -135,7 +137,7 @@ export function ProjectAdminWorkspaceList({
               "Project workspace."}
           </p>
 
-          <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border py-3 text-xs md:grid-cols-3 md:divide-x md:divide-y-0 [&>*]:min-w-0 [&>*]:px-2 [&>*]:py-2 md:[&>*]:py-0">
+          <div className="mt-4 grid min-w-0 grid-cols-2 gap-2 border-y border-border py-3 text-xs sm:grid-cols-3 [&>*]:min-w-0 [&>*]:py-1">
             <Metric
               label="Mentor"
               value={
@@ -164,17 +166,7 @@ export function ProjectAdminWorkspaceList({
             {formatProjectAdminUpdatedDateIst(item.updatedAt)}
           </p>
 
-          <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-4">
-            <Link
-              href={
-                basePath +
-                "/" +
-                encodeURIComponent(item.id)
-              }
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
-            >
-              Open workspace
-            </Link>
+          <div className="mt-auto flex min-w-0 items-center justify-end pt-4">
             <ProjectArchiveControl
               projectId={item.id}
               projectTitle={item.title}
