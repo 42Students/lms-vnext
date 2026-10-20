@@ -10,7 +10,7 @@ export default function MentorCalendarError({
     <PageHeader eyebrow="Mentor" title="Meetings" />
     <div className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <p className="text-sm text-body">We couldn’t load your meetings. Your project data has not been changed.</p>
-      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>
+      <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>
         Retry
       </Button>
     </div>
