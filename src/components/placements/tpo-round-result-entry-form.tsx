@@ -39,8 +39,8 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
   }catch(caught){setConfirmOpen(false);setError(caught instanceof Error?caught.message:"Result staging failed");}
   finally{setPending(false);}
  }
- const cls="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-foreground";
- return <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2">
+ const cls="min-h-11 max-[767px]:min-h-11 md:min-h-9";
+ return <form onSubmit={submit} className="grid gap-3 min-[768px]:grid-cols-2">
   <label className="text-sm text-body">Outcome
    <Select name="outcome" value={outcome} onChange={event=>setOutcome(event.target.value)} disabled={pending||saved} className={"mt-1 block w-full "+cls}>
     <option value="PASS">Pass</option><option value="FAIL">Fail</option>
@@ -49,12 +49,12 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
   {outcome==="HOLD"?<label className="text-sm text-body">Waitlist rank
    <Input name="waitlistRank" type="number" min="1" max="100000" step="1" required disabled={pending||saved} className={"mt-1 block w-full "+cls}/>
   </label>:null}
-  <label className="text-sm text-body sm:col-span-2">{outcome==="PASS"?"Internal result note":"Candidate-visible feedback"}
+  <label className="text-sm text-body min-[768px]:col-span-2">{outcome==="PASS"?"Internal result note":"Candidate-visible feedback"}
    <Textarea name="note" rows={2} minLength={1} maxLength={1000} required className={"mt-1 block w-full "+cls}/>
   </label>
-  {error?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
-  {saved?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="success" message="Result staged. Refresh to review the new version before another edit."/></div>:null}
-  <Button variant="primary" type="submit" disabled={pending||saved} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] disabled:opacity-50 sm:col-span-2 text-primary-foreground">
+  {error?<div className="min-w-0 min-[768px]:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
+  {saved?<div className="min-w-0 min-[768px]:col-span-2"><InlineNotice tone="success" message="Result staged. Refresh to review the new version before another edit."/></div>:null}
+  <Button variant="primary" type="submit" disabled={pending||saved} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] disabled:opacity-50 min-[768px]:col-span-2 text-primary-foreground">
    {pending?"Saving…":saved?"Result staged":"Confirm staged result"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
     title="Stage this round result?"
