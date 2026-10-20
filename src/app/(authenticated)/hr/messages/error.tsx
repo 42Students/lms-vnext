@@ -8,6 +8,6 @@ export default function HrMessagesError({reset}:{error:Error&{digest?:string};re
  return <>
   <PageHeader title="Messages"/>
   <ErrorState title="Could not load conversations" description="We could not retrieve your employer-college conversations. This does not mean your messages are missing or have been marked read."
-   action={<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Retry messages</Button>}/>
+   action={<Button type="button" variant="secondary" onClick={reset}>Retry messages</Button>}/>
  </>;
 }
