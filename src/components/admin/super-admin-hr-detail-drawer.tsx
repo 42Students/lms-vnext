@@ -173,7 +173,7 @@ export function SuperAdminHrDetailDrawer({
               </StatusBadge>
             </div>
 
-            <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+            <dl className="mt-4 grid gap-4 text-sm min-[768px]:grid-cols-2">
               <div>
                 <dt className="text-xs font-semibold text-muted-foreground">
                   Mobile
@@ -192,7 +192,7 @@ export function SuperAdminHrDetailDrawer({
                 </dd>
               </div>
 
-              <div className="sm:col-span-2">
+              <div className="min-[768px]:col-span-2">
                 <dt className="text-xs font-semibold text-muted-foreground">
                   Company
                 </dt>
@@ -264,7 +264,7 @@ export function SuperAdminHrDetailDrawer({
 
                 <label
                   htmlFor={`${id}-grant`}
-                  className="mb-1.5 mt-3 block text-xs font-semibold text-body"
+                  className="mb-1.5 mt-3 block text-[13px] font-semibold text-body"
                 >
                   College
                 </label>
@@ -297,10 +297,10 @@ export function SuperAdminHrDetailDrawer({
                   )}
                 </Select>
 
-                <label className="mb-1.5 mt-3 block text-xs font-semibold text-body">
+                <label className="mb-1.5 mt-3 block text-[13px] font-semibold text-body">
                  Until (optional)
                  <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
-                  className="mt-1 min-h-11 w-full sm:min-h-9"/>
+                  className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
                  {expiryError?<span role="alert" className="mt-1 block text-error">{expiryError}</span>:null}
                  <span className="mt-1 block font-normal text-muted-foreground">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
                 </label>
