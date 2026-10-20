@@ -93,29 +93,28 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   {key:"date",header:"Applied Date",mobilePriority:"secondary",
    cell:row=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.submittedAt))},
   {key:"age",header:"Age",mobilePriority:"secondary",cell:row=>row.ageDays+" days"},
-  {key:"match",header:"Match Score",mobilePriority:"secondary",
-   cell:()=> <span title="No persisted match score available">—</span>},
+
   {key:"status",header:"Current Status",mobilePriority:"secondary",cell:row=>row.stage},
   {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>
-   <Disclosure title="Manage" className="min-w-0 md:min-w-44"><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
-    <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)}
+   <Disclosure title="Manage" className="min-w-0 md:min-w-44"><div className="flex min-w-0 flex-col items-stretch gap-2 pb-2">
+    <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)} className="min-h-11 w-full md:w-auto md:min-h-9"
      >Details</Button>
     {row.stage==="REJECTED"?
      <Button type="button" disabled={busy||row.status!=="SUBMITTED"}
-      variant="secondary" onClick={()=>selectRow(row,"REINSTATE")}
+      variant="secondary" onClick={()=>selectRow(row,"REINSTATE")} className="min-h-11 w-full md:w-auto md:min-h-9"
       >Reinstate</Button>:
      <Select aria-label={"Move "+(row.name??"learner")+" to"} value=""
       disabled={busy||row.status!=="SUBMITTED"}
       onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
-      className="min-h-9 max-w-full text-base sm:text-sm">
+      className="min-h-11 w-full max-w-full text-base md:min-h-9 md:text-sm">
       <option value="">Move to...</option>
       {(transitions[row.stage]??[]).map(stage=><option key={stage} value={stage}>{stage}</option>)}
      </Select>}
    </div></Disclosure>},
  ];
  return <section className="space-y-4">
-  <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] text-sm sm:grid-cols-2 lg:grid-cols-[auto_auto_auto_minmax(0,1fr)_auto]">
+  <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] text-sm md:grid-cols-2 lg:grid-cols-[auto_auto_auto_minmax(0,1fr)_auto]">
    <label className="flex items-center gap-2"><Checkbox checked={allPage}
     disabled={busy||!eligible.length} onChange={e=>{setAllMatching(false);setSelected(e.target.checked?eligible.map(r=>r.id):[]);}} />
     Select all {eligible.length} on this page</label>
