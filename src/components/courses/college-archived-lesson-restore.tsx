@@ -4,6 +4,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Alert} from "@/components/ui/alert";
 
 /** COL-course-tabs-15: archived lessons remain visible and recoverable. */
 export function CollegeArchivedLessonRestore({id,name}:{id:string;name:string}){
@@ -22,13 +23,13 @@ export function CollegeArchivedLessonRestore({id,name}:{id:string;name:string}){
    setError("Lesson could not be restored. Check for a conflicting active lesson and try again.");
   }finally{setPending(false);}
  }
- return <span className="inline-flex flex-col gap-1">
+ return <span className="inline-flex flex-col items-start gap-1">
   <Button variant="ghost" type="button" disabled={pending} onClick={()=>setConfirming(true)}
    className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9">Restore</Button>
   <ConfirmDialog open={confirming} onOpenChange={setConfirming}
    title={"Restore "+name+"?"}
    description="Restoring makes the Lesson available in its active Learning Path. Historical progress and submissions are kept."
    confirmLabel="Restore Lesson" pending={pending} onConfirm={()=>void restore()}/>
-  {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
  </span>;
 }
