@@ -256,19 +256,19 @@ export function LearnerPlacementOffers({
 
   return (
     <section id="my-offers" className="scroll-mt-24 space-y-3">
-      <div>
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Offers
         </h2>
         <p className="mt-1 text-sm text-body">
           Review official offers separately from round results and track the joining outcome after acceptance.
         </p>
+        </div>
+        <Button className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9" type="button" variant="secondary" onClick={downloadOwnOffers}>
+          Export displayed offers CSV
+        </Button>
       </div>
-
-      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={downloadOwnOffers}
-        >
-        Export displayed offers CSV
-      </Button>
       {sortedOffers.length>LEARNER_OFFER_CSV_LIMIT ? (
         <p role="status" className="text-xs text-muted-foreground">
           CSV includes the first {LEARNER_OFFER_CSV_LIMIT} of {sortedOffers.length} offers in this view. Narrow your offer filters to export others.
@@ -282,7 +282,7 @@ export function LearnerPlacementOffers({
             className="scroll-mt-24 min-w-0 py-4 first:pt-0 last:pb-0 md:py-5"
           >
             <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {item.companyName}
                 </p>
@@ -302,7 +302,7 @@ export function LearnerPlacementOffers({
                     : ""}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
                 <StatusBadge
                   tone={
                     item.status ===
@@ -338,7 +338,7 @@ export function LearnerPlacementOffers({
               </div>
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-body">
+            <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 break-words text-sm text-body">
               {item.letterHref ? (
                 <a href={item.letterHref} rel="noopener noreferrer"
                   className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
@@ -352,19 +352,21 @@ export function LearnerPlacementOffers({
               ) : null}
             </div>
 
-            {learnerOfferApplicationHref(item.applicationId) ? (
-              <Link href={learnerOfferApplicationHref(item.applicationId)!}
-                className="mt-3 mr-4 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
-                View related application
-              </Link>
-            ) : null}
-            {learnerOfferHref(item.offerId) ? (
-              <Link href={learnerOfferHref(item.offerId)!}
-                className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
-                Link to this offer
-              </Link>
-            ) : null}
-            <div className="mt-4 grid min-w-0 gap-2 break-words text-sm text-body md:grid-cols-3">
+            <nav aria-label={`Offer links for ${item.companyName}`} className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              {learnerOfferApplicationHref(item.applicationId) ? (
+                <Link href={learnerOfferApplicationHref(item.applicationId)!}
+                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                  View related application
+                </Link>
+              ) : null}
+              {learnerOfferHref(item.offerId) ? (
+                <Link href={learnerOfferHref(item.offerId)!}
+                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                  Link to this offer
+                </Link>
+              ) : null}
+            </nav>
+            <div className="mt-3 grid min-w-0 gap-x-4 gap-y-2 break-words border-t border-border pt-3 text-sm text-body sm:grid-cols-2 lg:grid-cols-3">
               <p className="m-0">
                 <span className="font-semibold text-foreground">
                   Issued:
@@ -430,7 +432,7 @@ export function LearnerPlacementOffers({
             ) : null}
 
             {learnerOfferResponseTiming(item,snapshotNowIso).canRespond ? (
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                 <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                   size="sm"
                   disabled={
@@ -499,14 +501,14 @@ export function LearnerPlacementOffers({
         onOpenChange={open=>{if(!open&&pendingId===null)setExtensionOffer(null);}}
         title="Request an offer deadline extension"
         description="This sends an in-app request to your placement team; it does not change or accept the offer."
-        footer={<>
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId!==null} onClick={()=>setExtensionOffer(null)}>
             Keep current deadline
           </Button>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pendingId!==null} onClick={()=>void requestExtension()}>
             {pendingId!==null?"Submitting…":"Confirm extension request"}
           </Button>
-        </>}>
+        </div>}>
         {extensionOffer?<div className="space-y-3">
           <p className="text-sm font-semibold text-foreground">
             {extensionOffer.companyName} · {extensionOffer.roleTitle}
@@ -537,7 +539,7 @@ export function LearnerPlacementOffers({
         onOpenChange={(open) => { if (!open && pendingId === null) setDeclineOffer(null); }}
         title={declineOffer?"Decline "+declineOffer.companyName+"\u0027s offer?":"Decline offer?"}
         description="Declining is recorded as an official response and cannot be undone from the Learner workspace."
-        footer={<>
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
             Keep offer pending
           </Button>
@@ -545,7 +547,7 @@ export function LearnerPlacementOffers({
             onClick={() => { if (declineOffer) void respond(declineOffer.offerId, "DECLINE"); }}>
             {pendingId !== null ? "Saving…" : "Decline offer"}
           </Button>
-        </>}
+        </div>}
       >
         {declineOffer ? <div className="space-y-3">
           <p className="text-sm font-semibold text-foreground">
@@ -569,14 +571,14 @@ export function LearnerPlacementOffers({
         title={confirmOffer?"Accept "+confirmOffer.companyName+"\u0027s offer?":"Accept offer?"}
         description="Review the recorded offer terms. Acceptance is only submitted after you confirm."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId !== null}
               onClick={dismissAccept}>Keep offer pending</Button>
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
               onClick={() => { if (preview?.canConfirm) void respond(preview.offerId, "ACCEPT"); }}>
               {pendingId !== null ? "Saving…" : "Yes, accept"}
             </Button>
-          </>
+          </div>
         }
       >
         {preview ? (
@@ -586,7 +588,7 @@ export function LearnerPlacementOffers({
             <p>Annual CTC: {formatMoney(preview.annualCtcInr) ?? "Not specified"}</p>
             <p>Planned joining: {preview.joiningDate ?? "Not specified"}</p>
             <p>Response deadline: {formatWhen(preview.expiresAt) ?? "No expiry specified"}</p>
-            {acceptImpactBusy?<p role="status" className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>:null}
+            {acceptImpactBusy?<p role="status" aria-live="polite" className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>:null}
             {acceptImpactError?<p role="alert" className="text-sm text-error">{acceptImpactError}
               <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" variant="link" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}}>Retry impact preview</Button>
             </p>:null}

@@ -32,22 +32,24 @@ export function LearnerSupportCancel({requestId,expectedUpdatedAt}:{
     finally{setPending(false);}
   }
   return <>
-    <Button className="max-md:min-h-11" size="sm" variant="secondary" onClick={()=>{setError(null);setOpen(true);}}>
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="sm" variant="secondary" onClick={()=>{setError(null);setOpen(true);}}>
       Cancel pending request
     </Button>
     <Dialog open={open} onOpenChange={value=>{if(!pending)setOpen(value);}}
       title="Cancel placement request"
       description="Cancel this pending request? The original application, interview or offer will not change."
-      footer={<>
-        <Button className="max-md:min-h-11" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Keep request</Button>
-        <Button className="max-md:min-h-11" disabled={pending} onClick={()=>void confirm()}>
+      footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Keep request</Button>
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending} onClick={()=>void confirm()}>
           {pending?"Cancelling…":"Confirm cancellation"}
         </Button>
-      </>}>
-      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+      </div>}>
+      <div className="space-y-3 break-words">
       <p className="text-sm text-body">
         The placement team will no longer review this request. This action requires the latest request version.
       </p>
+      {error?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-error/30 bg-error-subtle p-3 text-sm text-error">{error}</p>:null}
+      </div>
     </Dialog>
   </>;
 }
