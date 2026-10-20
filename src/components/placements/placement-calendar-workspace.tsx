@@ -355,8 +355,8 @@ function CalendarEventCard({
   const href = eventHref(event, audience);
 
   return (
-    <article className="min-w-0 border-b border-border py-[var(--lms-space-4)] first:pt-0">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <article className="min-w-0 py-[var(--lms-space-4)]">
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="m-0 break-words text-xs font-semibold text-[var(--lms-muted-text)]">
             {event.companyName}
@@ -385,7 +385,7 @@ function CalendarEventCard({
             </p>
           ) : null}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex min-w-0 flex-wrap gap-2">
           <StatusBadge tone={eventTone(event)}>
             {eventTypeLabel(event)}
           </StatusBadge>
@@ -559,7 +559,7 @@ export async function PlacementCalendarWorkspace({
   const calendarFollowupsWritable =
     isTpo && process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title={
           isTpo
@@ -582,7 +582,7 @@ export async function PlacementCalendarWorkspace({
                   ? "/admin/placements"
                   : "/college/placements"
             }
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body sm:w-auto hover:border-primary hover:text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Placement operations →
           </Link>
@@ -604,7 +604,7 @@ export async function PlacementCalendarWorkspace({
         </p>
       ) : null}
 
-      {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-5">
+      {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-4">
        <h2 className="text-base font-semibold">Today</h2>
        {needsWindow?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
          <span className="font-semibold">{eventTime(event.startsAt)}</span>{" · "}{event.title}
@@ -613,19 +613,19 @@ export async function PlacementCalendarWorkspace({
          <p role="status" className="mt-2 text-sm text-warning-text">Today&apos;s schedule is unavailable.</p>}
        {needsWindow?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:null}
       </section>:null}
-      {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-5">
+      {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-4">
        <h2 className="text-base font-semibold">Needs doing</h2>
-       <div className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+       <div className="grid min-w-0 gap-0 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
         <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
-         className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
          <strong className="block text-lg">{needsWindow?overdue.length:"Unavailable"}</strong>Follow-ups overdue (last 90 days)
         </Link>
         <Link href={blockedRounds.length?basePath+"?view=week&date="+placementCalendarDayKey(blockedRounds[0].startsAt):basePath}
-         className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
          <strong className="block text-lg">{needsWindow&&blockedDays?.ready?blockedRounds.length:"Unavailable"}</strong>Rounds on a blocked date
         </Link>
         <Link href={busyDays.length?basePath+"?view=week&date="+busyDays[0][0]:basePath}
-         className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
          <strong className="block text-lg">{needsWindow?busyDays.length:"Unavailable"}</strong>Busy days (3 or more)
         </Link>
        </div>
@@ -634,7 +634,7 @@ export async function PlacementCalendarWorkspace({
       </section>:null}
       <section
         aria-label="Calendar summary"
-        className="grid gap-3 border-y border-border min-[768px]:grid-cols-2 min-[992px]:grid-cols-4"
+        className="grid min-w-0 grid-cols-2 overflow-hidden border border-border xl:grid-cols-4"
       >
         {(
           isTpo
@@ -651,7 +651,7 @@ export async function PlacementCalendarWorkspace({
         ).map(([label, count]) => (
           <div
             key={String(label)}
-            className="border-b border-border py-3"
+            className="min-w-0 border-b border-r border-border px-3 py-3 even:border-r-0 xl:border-b-0 xl:even:border-r xl:last:border-r-0"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {label}
@@ -878,7 +878,7 @@ export async function PlacementCalendarWorkspace({
         ) : null}
       </section>
 
-      {isTpo?<nav aria-label="Filter calendar by event type" className="flex flex-wrap gap-2">
+      {isTpo?<nav aria-label="Filter calendar by event type" className="flex min-w-0 flex-wrap gap-2">
  <FilterChipLink href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
    selected={!state.kind&&!state.kinds.length}>
    All events ({eventTypeCountsSource&&blockedDays?.ready?countSourceEvents.length+toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:"unavailable"})
@@ -903,7 +903,7 @@ export async function PlacementCalendarWorkspace({
 
       <section
         aria-label="Next scheduled calendar event"
-        className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5"
+        className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -932,7 +932,7 @@ export async function PlacementCalendarWorkspace({
                 summary.next,
                 audience,
               )!}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline sm:w-auto"
             >
               Open event →
             </Link>
@@ -1080,11 +1080,11 @@ export async function PlacementCalendarWorkspace({
        </PlacementPanelErrorBoundary> : null}
       <section
         aria-label="Calendar agenda"
-        className="space-y-4"
+        className="min-w-0 space-y-4"
       >
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">
+            <h2 className="m-0 text-base font-semibold text-foreground">
               {state.view === "agenda"
                 ? "Agenda"
                 : "Events in visible period"}
@@ -1119,7 +1119,7 @@ export async function PlacementCalendarWorkspace({
                   ? " · Today"
                   : ""}
               </h3>
-              <div className="grid min-w-0 gap-3 lg:grid-cols-2">
+              <div className="min-w-0 divide-y divide-border border-b border-border">
                 {group.events.map((event) => (
                   <CalendarEventCard
                     key={event.id}
