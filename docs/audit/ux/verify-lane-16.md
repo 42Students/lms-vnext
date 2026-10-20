@@ -86,3 +86,9 @@ Compared other-lane polish-lane-6.md entry against route, joining scoped read se
 
 ## 29. src/app/(authenticated)/admin/placements/new/page.tsx
 Read prior polish-lane-6.md proof, Super Admin new-drive route, create workspace (companies/season/academic options/clone disclosure), creation-form props, field groups, local backup/uncertain-submit safeguards, validation/create-round flows and route loading/error/admin layout. Checked no-scope, no-season, workspace data failure, edit/company mode, missing company, draft restore and responsive 375/768 action layout. No confirmed JSX/import/field-name or permission regression or extra alignment issue needing a code edit; existing create form retained. Source-only; no CI. Files: queue/proof.
+
+## 30. src/app/(authenticated)/admin/placements/offers/[offerId]/page.tsx
+Compared polish-lane-6.md evidence with offer detail page, selected-college offer detail service, shared SuperAdminPlacementDetailView and its header/badge/back/related link, local loading/error/not-found and parent admin layout. Inspected status/version/CTC/offer and joining dates, null values, scope not-found and mobile/desktop fact grid. No confirmed missing import, bad JSX, dropped props/copy, role or aria regression; no further visual fix. Source only; no CI. Files: queue/proof.
+
+## 31. src/app/(authenticated)/admin/placements/offers/page.tsx
+Reviewed polish-lane-6.md entry, offers directory page, scoped offer listing service and full AdminScopedReadPage search, status, pagination, compact results, link/empty/error/loading states, inherited layout. Preserved statuses, query params, read-only offer revision values, per-college guards and 375/768 compact rows. JSX/type contracts and mobile hierarchy were source-checked, no remaining verified regression or clutter issue requiring an edit. No CI. Files: queue/proof.
