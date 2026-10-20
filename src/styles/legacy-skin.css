@@ -371,6 +371,22 @@
   }
 }
 
+/* The legacy baseline is a white canvas. The tracker-only opt-in dark
+ * palette replaces its neutral ink; leave the original light LMS unchanged.
+ * globals.css:164-181 sets --lms-foreground and --lms-body-text for tracker.
+ * Without this exception h2-h6 would be forced to light-mode neutral-900
+ * (almost black) by the legacy typography declarations above. */
+:root[data-tracker-theme="dark"]
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h2, h3, h4, h5):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-foreground) !important;
+}
+:root[data-tracker-theme="dark"]
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h6):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-body-text) !important;
+}
+
 /* LINKS
  * Legacy: components___common.scss:68-75 (.ln-lnk-ul: primary teal,
  * weight 500, teal on hover with underline); components___variables.scss:10.
