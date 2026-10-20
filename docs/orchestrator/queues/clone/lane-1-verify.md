@@ -34,14 +34,14 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-1.md: surface | regres
 - [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx`
 - [ ] `src/app/(authenticated)/learn/notifications/page.tsx`
 - [ ] `src/app/(authenticated)/learn/page.tsx`
 - [ ] `src/app/(authenticated)/learn/placements/page.tsx`
