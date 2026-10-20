@@ -175,3 +175,13 @@
 **Changes:** keep search and Team coverage quick filter visible, disclose state/assignment/order and auto-expand when advanced filter active; one GET form with exact original names/options/behavior in mobile filter drawer; responsive two-column tablet alignment and full-width phone Filter; demote navigation, flatten summary tiles into an unboxed metric strip, compact project row headings and metric grid, add Projects/Clear recovery for empty, hide one-page pager, realign Retry. No role, data, metrics, links, labels or status semantics changed. Shared GracefulPageLoading already conforms. Source inspection includes 375/768/1280, no browser/CI.
 
 **Files:** page, error, queue, proof.
+
+## 33. Learner task progress controls
+
+**Surface:** `src/components/projects/learner-task-progress-control.tsx`; inspected rendered Button, Textarea, ToastProvider/ToastStack and projectMutation plus backend input schema for STATUS/MOVE_UP/MOVE_DOWN and blocked-note validation. Reviewed default statuses, pending, open/close blocker, success/error, disabled movement and 375/768 layouts.
+
+**Problems fixed (8):** five equal-priority buttons obscure Start work, movement controls mixed with state changes, narrow phone buttons wrap unevenly, Report blocker lacks announced expanded state, blocker form has no visual separation or aligned actions, input allows 4000 chars while the API accepts only 2000, empty two-character notes fail only on server, error messages can overflow.
+
+**Changes:** make Start work/Resolve blocker the only primary action; demote Move up/down to separate ghost group and retain disabled semantics, use 44px stacked full-width phone state controls and responsive blocker form, connect the disclosure trigger with aria-expanded/controls and a stable React useId, align Save/Cancel with 44px targets, match max 2000/min 3 server requirements, show count/help and invalidate incomplete notes, retain toasts, retry and exact API routes/status actions. No overlay/modal newly introduced or package added; checked JSX source and focus semantics, not live browser/CI.
+
+**Files:** component, queue, proof.
