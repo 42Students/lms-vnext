@@ -26,7 +26,7 @@ export default async function Page({params}:{
    :<ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.feedback.map(entry=><li key={entry.id}
     className="py-[var(--lms-space-4)]">
     <div className="flex flex-wrap items-center justify-between gap-2">
-     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></h2>
+     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":entry.status==="REJECTED"?"error":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></h2>
      <span className="text-xs text-muted-foreground">
       {entry.reviewedAt?new Intl.DateTimeFormat("en-IN",{
        dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",

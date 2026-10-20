@@ -22,7 +22,7 @@ export default async function MentorMeetingNotesPage({params}:{
       <h2 className="font-semibold">Persisted meeting outcome</h2>
       <p className="mt-2 text-sm text-body">
         {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-          timeZone:"Asia/Kolkata"}).format(m.startsAt)} IST · <StatusBadge tone={m.status==="COMPLETED"?"success":"neutral"}>{m.status}</StatusBadge>
+          timeZone:"Asia/Kolkata"}).format(m.startsAt)} IST · <StatusBadge tone={m.status==="COMPLETED"?"success":m.status==="CANCELLED"?"error":"neutral"}>{m.status}</StatusBadge>
       </p>
       {m.outcome?.trim()?
         <p className="mt-4 whitespace-pre-wrap break-words text-sm text-body">{m.outcome}</p>:
