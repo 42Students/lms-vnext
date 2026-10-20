@@ -28,7 +28,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   companyId:first(raw.companyId)||undefined,departmentId:first(raw.departmentId)||undefined,
   sort:first(raw.sort)??"UPCOMING",page:first(raw.page)??"1"};
  const valid=collegeInterviewFilters.safeParse(input);
- if(!valid.success)return <div className="space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>}/></div>;
+ if(!valid.success)return <div className="space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data);
  const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
   const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
@@ -51,13 +51,13 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   {key:"status",header:"Status",cell:row=><span><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":"neutral"}>{row.status==="SCHEDULED"?"Scheduled":row.status==="COMPLETED"?"Completed":row.status==="CANCELLED"?"Cancelled":row.status}</StatusBadge>{row.conflict?<span className="block text-body">Conflict: this student has overlapping interviews.</span>:null}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
     <Link href={"/college/placements/jobs/"+encodeURIComponent(row.jobId)+"/applications"}
-      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View applications</Link>
+      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View applications</Link>
     <CollegeInterviewStatusActions id={row.id} version={row.version} status={row.status}/>
   </div>},
  ];
  return <div className="space-y-6">
   <PageHeader title="Interviews"
-   description="Interview appointments across drives in the selected college." actions={data.ready?<><a href={build(1,"ics")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Download .ics</a><a href={build(1,"csv")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Export CSV</a></>:undefined}/>
+   description="Interview appointments across drives in the selected college." actions={data.ready?<><a href={build(1,"ics")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Download .ics</a><a href={build(1,"csv")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export CSV</a></>:undefined}/>
   {!data.ready?<Banner tone="warning">
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.
    </Banner>:<>
@@ -91,7 +91,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
      </Select>
     </label>
     <div className="flex min-w-0 flex-wrap items-end gap-3"><Button variant="primary" type="submit" className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto">Apply filters</Button>
-     <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
+     <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
     </div>
    </form>
    <div className="flex flex-wrap items-center gap-3">
@@ -105,9 +105,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       empty={<EmptyState title="No matching interviews" description="No interviews match these filters."/>} />
    </section>
    <nav aria-label="Interview result pages" className="flex min-w-0 flex-wrap items-center gap-4 text-sm">
-    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-h-11 md:min-h-9 inline-flex items-center">Previous</Link>:null}
+    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
     <span>Page {valid.data.page} of {data.pageCount}</span>
-    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-h-11 md:min-h-9 inline-flex items-center">Next</Link>:null}
+    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
    </nav>
   </>}
  </div>;
