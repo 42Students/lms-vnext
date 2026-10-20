@@ -1,4 +1,3 @@
-import { Pagination } from "@/components/ui/pagination";
 import {TpoCompaniesSpreadsheet} from "@/components/tpo/tpo-companies-spreadsheet";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -10,6 +9,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { TpoCompanyMemoryWorkspace } from "@/components/tpo/tpo-company-memory-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { TpoCompanyCreateForm } from "@/components/tpo/tpo-company-create-form";
 import { can } from "@/modules/permissions/policy";
 import {
@@ -126,20 +126,21 @@ export default async function TpoCompanyMemoryPage({
         title="Companies"
         description="Explore college-linked employers, recruiter contacts, drives, offers and confirmed joining outcomes. Company records and activity are read-only here; authorized TPOs may create or link an employer."
         actions={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-end">
             <TpoCompanyCreateForm />
-            <Link
-              href="/tpo/companies/archived"
-              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-            >
-              Archived relationships
-            </Link>
-            <Link
-              href="/tpo/recruiters"
-              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-            >
-              Recruiter leads
-            </Link>
+            <details className="group min-w-0 sm:relative">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 [&::-webkit-details-marker]:hidden">
+                Company links
+              </summary>
+              <nav aria-label="Other company destinations" className="mt-2 flex min-w-0 flex-col gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:absolute sm:right-0 sm:z-20 sm:w-52 sm:shadow-sm">
+                <Link href="/tpo/companies/archived" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  Archived relationships
+                </Link>
+                <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  Recruiter leads
+                </Link>
+              </nav>
+            </details>
           </div>
         }
       />
@@ -165,7 +166,7 @@ export default async function TpoCompanyMemoryPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0 md:border-b-0"
+            className="min-w-0 border-b border-border bg-surface px-4 py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"
           >
             <p className="text-sm font-semibold text-body leading-[22px]">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
@@ -179,7 +180,7 @@ export default async function TpoCompanyMemoryPage({
         <form role="search" aria-label="tpo companies filters"
           action="/tpo/companies"
           method="get"
-          className="grid gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
+          className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
           <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search companies
@@ -218,7 +219,7 @@ export default async function TpoCompanyMemoryPage({
 
           <Button
             type="submit"
-            className="self-end inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-11 w-full items-center justify-center self-end rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover md:min-h-9 xl:w-auto"
           >
             Search
           </Button>
@@ -249,28 +250,27 @@ export default async function TpoCompanyMemoryPage({
         </div>
 
         {page.items.length === 0 ? (
-          <div className="border-y border-border py-8">
-            <p className="text-sm text-body leading-[22px]">
-              {page.total > 0
+          <div className="border-y border-border py-3">
+            <EmptyState
+              title={page.total > 0
                 ? "This page is outside the available results."
                 : "No companies match these filters."}
-            </p>
-            <Link
-              href={companiesHref({
-                search: query.search,
-                pageSize: query.pageSize,
-                sort: query.sort,
-              })}
-              className="mt-3 inline-block font-semibold text-link hover:underline"
-            >
-              First page
-            </Link>
+              action={
+                <Link href={companiesHref({
+                  search: query.search,
+                  pageSize: query.pageSize,
+                  sort: query.sort,
+                })} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                  First page
+                </Link>
+              }
+            />
           </div>
         ) : (
           <TpoCompaniesSpreadsheet rows={page.items}/>
         )}
 
-        <nav
+        {page.totalPages > 1 ? <nav
           aria-label="Companies pagination"
           className="flex flex-wrap items-center justify-between gap-3"
         >
@@ -306,15 +306,18 @@ export default async function TpoCompanyMemoryPage({
               </Link>
             ) : null}
           </div>
-        </nav>
+        </nav> : null}
 
-        <p className="text-xs leading-5 text-muted-foreground">
+        <details className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
+          <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">About company counts</summary>
+          <p className="max-w-3xl pb-2 leading-5">
           Offer counts represent persisted offer records, including
           historical declined and withdrawn statuses. Confirmed joins
           count distinct learners with accepted offers and recorded
           JOINED outcomes. Free-text recruiter company names are
           deliberately not merged into canonical employer IDs.
-        </p>
+          </p>
+        </details>
       </section>
     </div>
   );
