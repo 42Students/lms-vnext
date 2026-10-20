@@ -25,19 +25,20 @@ export function PasswordInput({ error = false, className, ...props }: PasswordIn
     if (typeof forwardedRef === "function") forwardedRef(node);
     else if (forwardedRef) forwardedRef.current = node;
   }
+  const effectiveVisible = visible && !props.disabled;
   const generatedId = useId();
   const inputId = props.id ?? generatedId;
   return (
     <div data-slot="password-input" className="flex w-full min-w-0 items-stretch gap-[var(--lms-space-2)]">
-      <Input {...props} id={inputId} ref={bindField} type={visible ? "text" : "password"}
+      <Input {...props} id={inputId} ref={bindField} type={effectiveVisible ? "text" : "password"}
         error={error} className={cx("min-w-0 flex-1", className)} />
       <Button type="button" variant="secondary" disabled={props.disabled}
         aria-controls={inputId}
-        aria-label={visible ? "Hide password" : "Show password"}
-        aria-pressed={visible}
+        aria-label={effectiveVisible ? "Hide password" : "Show password"}
+        aria-pressed={effectiveVisible}
         className="min-w-[4rem] shrink-0 max-[767px]:min-h-11 max-[767px]:min-w-11 focus-visible:!outline-offset-[3px] focus-visible:!outline-[var(--lms-primary-text)]"
         onClick={() => { setVisible(current => !current); fieldRef.current?.focus(); }}>
-        {visible ? "Hide" : "Show"}
+        {effectiveVisible ? "Hide" : "Show"}
       </Button>
     </div>
   );
