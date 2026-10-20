@@ -67,9 +67,9 @@ export default async function TpoFailureReasonsPage({
       : "No placement season or matching drive data is available. No adverse outcome is inferred from missing data.";
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-5">
       <PageHeader
-        eyebrow="TPO · Reports"
+        
         title="Failure reasons"
         description="Recorded screening rejections, applied round failures, application withdrawals and offer declines or withdrawals, grouped by reason and drive."
         actions={

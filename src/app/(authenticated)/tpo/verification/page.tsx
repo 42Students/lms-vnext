@@ -26,7 +26,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const queue=await getTpoVerificationQueue(context,query);
  const directory=queue.available&&queue.enabled&&queue.permitted?await listTpoBatches(context):null;
  const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department] as const)??[])];
- return <div className="min-w-0 space-y-4">
+ return <div className="min-w-0 space-y-5">
   <PageHeader title="Verification" description="Review learner education and identity verification requests." />
   <nav className="flex flex-wrap items-center gap-3">
     <Link href="/tpo/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to students</Link>

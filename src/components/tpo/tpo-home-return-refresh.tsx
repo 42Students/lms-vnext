@@ -61,7 +61,7 @@ export function TpoHomeReturnRefresh(){
   {failed?<Alert tone="error" className="flex-row flex-wrap items-center gap-3">
     <span>Home refresh failed. Showing the last successful snapshot.</span>
     <Button variant="secondary" type="button" disabled={busy} onClick={()=>void refresh()}
-      className="min-h-9">Retry</Button>
+      className="min-h-11 md:min-h-9">Retry</Button>
   </Alert>:null}
  </div>;
 }
