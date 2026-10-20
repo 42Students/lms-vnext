@@ -14,19 +14,17 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
  if(!result?.selected)notFound();
  const student=result.selected;
  return <div className="min-w-0 space-y-6">
-  <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(membershipId)}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">← Learner access trace</Link>
   <PageHeader eyebrow="Super Admin · Module Access" title="Student overrides and locks"
-   description={"Stored membership rules for "+(student.displayName||"Unnamed learner")+" in "+result.college.name+". No email or mobile details are exposed."}/>
+   description={"Stored membership rules for "+(student.displayName||"Unnamed learner")+" in "+result.college.name+". No email or mobile details are exposed."} actions={<Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Learner access trace</Link>}/>
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history"}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     View module override and lock history →
   </Link>
-  <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 text-sm text-body">
+  <p className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
    These values are persisted at the learner membership scope. Inherit is not Off, and broader locked rules can override stored values. Placements ignores membership-level rules.
   </p>
-  <div className="grid min-w-0 gap-3 sm:grid-cols-3">
-   {studentRuleCards(student.modules).map(rule=><article key={rule.module} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+  <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
+   {studentRuleCards(student.modules).map(rule=><article key={rule.module} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">{rule.label}</h2>
     <p className="mt-2 text-sm text-body">Stored: {rule.state}{rule.locked?" · Locked":""}</p>
     <p className="mt-2 text-xs text-muted-foreground">{rule.consequence}</p>
