@@ -118,8 +118,8 @@ export default async function TpoScheduleConflictsPage({
           </div>
         )}
       </section>
-      <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-        <div className="border-b border-border p-4 md:p-6">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
+        <div className="border-b border-[var(--lms-canvas-border)] pb-3">
           <h2 className="text-lg font-semibold text-foreground">Cannot fully assess</h2>
         </div>
         {data.unassessable.length === 0 ? (
