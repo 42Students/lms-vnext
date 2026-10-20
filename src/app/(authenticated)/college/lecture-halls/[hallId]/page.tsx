@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { ErrorState } from "@/components/ui/error-state";
 import { CollegeHallBookingAction } from "@/components/academics/college-hall-booking-action";
 import { CollegeHallCancellationAction } from "@/components/academics/college-hall-cancellation-action";
@@ -40,12 +41,11 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
   }
   const bookingOptions = result?.hall.status === "ACTIVE"
     ? await listRecurringPreviewOptions(await getCurrentRequestContext()) : null;
-  return <div className="min-w-0 overflow-x-clip space-y-6">
+  return <div className="min-w-0 max-w-full overflow-x-clip space-y-4">
     <PageHeader title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
-      actions={<Link href="/college/lecture-halls"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link">Back to lecture halls</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-5">
+      actions={<PageBackLink href="/college/lecture-halls" label="Back to lecture halls"/>} />
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
         <Input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
           />
@@ -54,7 +54,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
         <Input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
           />
       </label>
-      <Button type="submit" >View schedule</Button>
+      <Button type="submit">View schedule</Button>
     </form>
     {!parsed.success && hasRange ? <ErrorState title="Invalid date range"
       description="Choose valid from/to dates in IST, up to 31 consecutive calendar days. No schedule was loaded." />
@@ -63,7 +63,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
       </p> : <>
         <section className="grid gap-3 border-t border-border pt-5 md:grid-cols-3">
           <p className="text-sm text-body"><span className="font-semibold">Capacity:</span> {result.hall.capacity} seats</p>
-          <p className="text-sm text-body"><span className="font-semibold">Status:</span> {result.hall.status}</p>
+          <p className="text-sm text-body"><span className="font-semibold">Status:</span> <StatusBadge tone={result.hall.status==="ACTIVE"?"success":"neutral"}>{result.hall.status}</StatusBadge></p>
           <p className="text-sm text-body"><span className="font-semibold">Scheduled:</span> {result.sessions.length}{result.truncated ? "+" : ""} sessions</p>
         </section>
         {bookingOptions ? <CollegeHallBookingAction hallId={result.hall.id}

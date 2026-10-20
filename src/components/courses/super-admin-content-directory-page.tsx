@@ -47,19 +47,19 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   :adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,
     offeringId:raw.offeringId,lessonId:raw.lessonId,deliveryId:raw.deliveryId,scope:raw.scope});
  const title=ADMIN_CONTENT_LABELS[kind];
- if(!parsed.success)return <div className="space-y-5">
+ if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
   <ErrorState title="Invalid content filters" description="Review search, status and page."
    action={<Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
- if(!isSuperAdmin(context))return <div className="space-y-5">
+ if(!isSuperAdmin(context))return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
   <ErrorState title="Content access denied"
    description="Your account cannot access Super Admin course content."
    action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
  </div>;
- if(!context.adminScope?.collegeId)return <div className="space-y-5">
+ if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+"."}/>
  </div>;
@@ -70,7 +70,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   listSuperAdminContentAuthoringLessons(context),
   listSuperAdminContentSectionOptions(context),
  ]);
- if(dataResult.status==="rejected")return <div className="space-y-5">
+ if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
   <ErrorState title="Content directory unavailable"
    description="The selected college content could not be loaded. Your filters are unchanged."
@@ -82,7 +82,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  const sections=sectionsResult.status==="fulfilled"?sectionsResult.value:[];
  const offerings=[...new Map(lessons.map(item=>[item.offeringId,{id:item.offeringId,name:item.courseCode+" · "+item.courseName}])).values()];
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4">
   <PageHeader title={title}
    description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}
    actions={<PageBackLink href="/admin/courses" label="Courses" />} />

@@ -25,7 +25,7 @@ export default async function CollegeCompaniesPage({
     redirect("/dashboard");
   }
   const parsed=parseCollegeCompaniesQuery(await searchParams);
-  if(!parsed.success) return <div className="space-y-5"><PageHeader title="Companies"/>
+  if(!parsed.success) return <div className="min-w-0 space-y-4"><PageHeader title="Companies"/>
     <ErrorState title="Invalid company search" description="Check search text or page."
       action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear company filters</Link>}/>
   </div>;
@@ -40,11 +40,11 @@ export default async function CollegeCompaniesPage({
   }
 
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives."
       actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</a>} />
     <CollegeCompanyCreate collegeId={collegeId}/>
-    <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
         <Input name="q" type="search" maxLength={100} defaultValue={query.q} className="min-h-11 w-full min-w-0 md:min-h-9" />
       </label>
@@ -87,7 +87,7 @@ export default async function CollegeCompaniesPage({
       }))}
       owners={owners}
     />
-    <nav aria-label="Company pages" className="flex flex-wrap items-center gap-4 text-sm">
+    <nav aria-label="Company pages" className="flex flex-wrap items-center gap-2 text-sm">
       <span>Page {query.page} of {data.totalPages}</span>
       {query.page>1?<Link href={collegeCompaniesHref({...query,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Previous</Link>:null}
       {query.page<data.totalPages?<Link href={collegeCompaniesHref({...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Next</Link>:null}
