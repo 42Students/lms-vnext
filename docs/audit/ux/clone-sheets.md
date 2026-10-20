@@ -892,3 +892,22 @@ grep -nE 'mobilePrimaryKeys|safeGridClipboardCell|Number.isFinite|<thead|text-li
 **STRICT TICK RULE:** E1 table category, E4 chips/status and E8 native/HR spreadsheets remain [ ] globally. These fifteen source files have source-backed value comparisons and responsive contracts, **not browser-proven pixel parity**. Exact legacy TpoGrid source/AG Grid dependency and per-state measured screenshots remain unresolved.
 
 **Next exact source file:** `src/components/tpo/grid/grid-sort.ts` — reconcile null ordering, float parsing and fallback/native comparator direction against legacy numerical/date grid sorting.
+
+
+### 2026-10-20 [chat-14] native/fallback whitespace-null comparator parity
+
+Two additional completed files (bringing this batch to **16 E8 source files**, plus the shared E4 needs-doing chip):
+
+| File | Legacy state/value | Current authored comparison | Source grep / responsive proof |
+|---|---|---|---|
+| `src/components/tpo/grid/grid-sort.ts` | E8 old sheet numeric/date-only sorting, missing/empty stays last, stable row order | `:18` now considers whitespace-only strings absent, like `""`, null and undefined; sortValue still used and number/date only sorts | GitHub full-file read: 34 lines, 1 trimmed-empty guard, 0 raw JSX/inline hex. Pure fallback comparator: same phone and desktop where fallback applies; no browser proof |
+| `src/components/tpo/grid/tpo-grid.tsx` | E8 native Quartz should sort identically to fallback, including whitespace/invalid numbers and no blank-first regression in descending order | `:49-64` comparator now treats whitespace-only string as null; prior `descending` compensates AG Grid reverse so null remains last in both directions; sortValue still read for formatted date/number | GitHub full-file read: 279 lines; 1 trimmed-empty guard, 2 Button open/close, 0 raw button/inline six-digit hex, `md:` twice. Native grid hidden below 768px; fallback above already guards whitespace. No compilation/viewport comparison |
+
+Reproducible source grep (NOT executed):
+```sh
+grep -nE 'value\.trim\(\)|sortKind|sortValue|descending|av===null|bv===null' src/components/tpo/grid/grid-sort.ts src/components/tpo/grid/tpo-grid.tsx
+```
+
+Legacy context: `docs/design/ui-clone-checklist.md:57` specifies only numeric/date sorts and E8 Quartz parity; `docs/design/old-lms-shell.css:23,73` gives mobile/desktop 767/768 boundary. No source claim of exact old grid comparator when the legacy TpoGrid JSX is unavailable. **E8 stays unticked**; runtime empty/ascending/descending screenshots and AG Grid dependency remain open.
+
+**Next exact file:** `src/components/tpo/grid/grid-selection.ts` — static review of Shift/Ctrl authorization and phone-checkbox consistency, then browser test handoff.
