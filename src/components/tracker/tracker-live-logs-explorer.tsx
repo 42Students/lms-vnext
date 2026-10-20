@@ -157,13 +157,13 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       </span>
     </div>
     <div className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-1 text-sm font-semibold">Time window
+      <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold md:w-auto md:basis-auto">Time window
         <Select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)} className="min-h-11 md:min-h-9">
           <option value="15">Last 15 minutes</option><option value="60">Last hour</option>
           <option value="360">Last 6 hours</option><option value="1440">Last 24 hours</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold">Minimum severity
+      <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold md:w-auto md:basis-auto">Minimum severity
         <Select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")} className="min-h-11 md:min-h-9">
           <option value="ERROR">Error and above</option>
           <option value="WARNING">Warning and above</option>

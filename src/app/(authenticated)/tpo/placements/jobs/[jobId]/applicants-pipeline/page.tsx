@@ -35,9 +35,10 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   channel:first(query.channel),eligibility:first(query.eligibility),flag:first(query.flag),
   sort:first(query.sort),submittedWithin:first(query.submittedWithin),
  });
- if(!filters.success)return <div className="space-y-4">
+ if(!filters.success)return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
     description="This URL contains unsupported applicant filters or page values. No applications were loaded."/>
+  <Alert tone="error">This URL contains unsupported applicant filters or page values. No applications were loaded.</Alert>
   <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">
     Reset applicant filters
   </Link>
@@ -46,7 +47,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  function pageHref(page:number){return {pathname:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline",
   query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,flag:data.flag,sort:data.sort,submittedWithin:data.submittedWithin,...(columns?{columns}:{}),page}};}
- return <div className="space-y-6">
+ return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader eyebrow="TPO · Drive applicants" title={data.job.title}
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."/>
   <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive</Link>
@@ -54,34 +55,34 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
    Review and export all matching applicants
   </Link>
-  <section className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-4" aria-label="Applicant pipeline counts">
+  <section className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-4" aria-label="Applicant pipeline counts">
    {Object.entries(data.counts).map(([label,count])=>
-    <div className="border-b border-border p-3 sm:border-r sm:border-b-0 sm:last:border-r-0" key={label}>
+    <div className="border-b border-[var(--lms-canvas-border)] p-[var(--lms-space-3)] min-[768px]:border-r min-[768px]:border-b-0 min-[768px]:last:border-r-0" key={label}>
       <p className="text-xs capitalize text-body">{label}</p>
       <p className="text-xl font-semibold tabular-nums text-foreground">{count}</p>
     </div>)}
   </section>
   <form action={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} method="get"
-   className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+   className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    {columns&&<input type="hidden" name="columns" value={columns}/>}
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Stage
-    <Select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full max-[767px]:min-h-11">
      {stages.map(s=><option key={s} value={s}>{s}</option>)}
     </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Name, roll, branch, batch, email, phone or role
     <Input name="search" defaultValue={data.search} maxLength={100}
-     className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/></label>
+     className="mt-2 block min-h-11 w-full max-[767px]:min-h-11"/></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Application channel
-    <Select name="channel" defaultValue={data.channel} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="channel" defaultValue={data.channel} className="mt-2 block min-h-11 w-full max-[767px]:min-h-11">
      <option value="ALL">All channels</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
     </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Eligibility evidence
-    <Select name="eligibility" defaultValue={data.eligibility} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="eligibility" defaultValue={data.eligibility} className="mt-2 block min-h-11 w-full max-[767px]:min-h-11">
      <option value="ALL">All evidence states</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · evidence missing</option>
     </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Applicant flags
-    <Select name="flag" defaultValue={data.flag} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="flag" defaultValue={data.flag} className="mt-2 block min-h-11 w-full max-[767px]:min-h-11">
      <option value="ALL">Any flag</option>
      <option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option>
@@ -89,12 +90,12 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Order by
-    <Select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full max-[767px]:min-h-11">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
     </Select></label>
    <label className="min-w-36 flex-1 text-sm font-semibold text-body">Submitted window
-    <Select name="submittedWithin" defaultValue={data.submittedWithin} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="submittedWithin" defaultValue={data.submittedWithin} className="mt-2 block min-h-11 w-full max-[767px]:min-h-11">
      <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
     </Select></label>

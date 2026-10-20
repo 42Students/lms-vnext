@@ -77,7 +77,7 @@ export default async function LearnerAssessmentResultsPage({
         Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
       </p>
       {paged.items.length === 0 ? (
-        <section role="status" className="flex min-h-[180px] flex-col items-start justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12">
+        <section role="status" className="flex min-h-44 flex-col items-start justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12">
           <h2 className="text-base font-semibold text-foreground">
             {results.counts.all === 0 ? "No official assessment results yet" : "No results in this category"}
           </h2>

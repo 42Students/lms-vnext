@@ -1,4 +1,5 @@
 import {PageHeader} from "@/components/ui/page-header";
+import bubbleStyles from "@/components/tpo/tpo-conversation-bubble.module.css";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -41,7 +42,7 @@ export default async function TpoRecruiterConversationPage({params}:{
       <p className="py-2 text-center text-xs font-semibold text-muted-foreground">
        {new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)}
       </p>:null}
-    <article className={"max-w-full min-[768px]:max-w-3xl rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6 "+(item.senderType==="TPO"?"ml-auto":"mr-auto")}>
+    <article className={bubbleStyles.bubble+" "+(item.senderType==="TPO"?bubbleStyles.mine:"")}>
      <p className="text-xs text-muted-foreground">{item.senderType==="TPO"?"You":"Recruiter"}</p>
      <p className="text-xs font-semibold text-muted-foreground">
       {item.senderType==="RECRUITER"?"Recruiter":"Placement cell"} ·

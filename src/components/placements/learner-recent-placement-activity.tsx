@@ -35,7 +35,7 @@ export function LearnerRecentPlacementActivity({
         No unsent decisions or employer-only notes are displayed.
       </p>
       {events.length === 0 ? (
-        <p role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
+        <p role="status" className="mt-4 flex min-h-[180px] items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
           No recorded placement activity yet. Apply to an eligible published
           drive to begin your placement journey.
         </p>

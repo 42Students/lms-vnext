@@ -23,7 +23,7 @@ export function gridSelectionClick(
   // filtered page for Ctrl/Meta and checkbox actions; never retain denied IDs.
   const prior = selectedGridIdsWithin(previouslySelected, allowedIds);
   if (rowIndex < 0 || !allowedIds.includes(rowId)) return { selected: prior, anchor: null };
-  const anchorIndex = anchorId === null ? -1 : visibleIds.indexOf(anchorId);
+  const anchorIndex = anchorId === null || !allowedIds.includes(anchorId) ? -1 : visibleIds.indexOf(anchorId);
   if (keys.shiftKey && anchorIndex >= 0) {
     const from = Math.min(rowIndex, anchorIndex);
     const to = Math.max(rowIndex, anchorIndex);
@@ -55,7 +55,7 @@ export function gridSelectionCheckbox(
   const previous = selectedGridIdsWithin(previouslySelected, allowedIds);
   const index = visibleIds.indexOf(rowId);
   if (index < 0 || !allowedIds.includes(rowId)) return { selected: previous, anchor: null };
-  const anchor = anchorId !== null ? visibleIds.indexOf(anchorId) : -1;
+  const anchor = anchorId !== null && allowedIds.includes(anchorId) ? visibleIds.indexOf(anchorId) : -1;
   const range = (shiftKey && anchor >= 0
     ? visibleIds.slice(Math.min(index, anchor), Math.max(index, anchor) + 1)
     : [rowId]).filter(id => allowedIds.includes(id));

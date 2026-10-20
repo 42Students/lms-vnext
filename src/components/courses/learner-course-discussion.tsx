@@ -428,7 +428,7 @@ export function LearnerCourseDiscussion({
           {moderate && canPost ? (
             <Button type="button" disabled={pinningId!==null}
               onClick={()=>void togglePin(pinned.id)}
-              variant="secondary" className="mt-3 min-h-11 text-xs md:min-h-9">
+              variant="secondary" className="mt-3 min-h-11 md:min-h-9">
               {pinningId===pinned.id?"Saving…":"Unpin pinned message"}
             </Button>
           ) : null}
@@ -527,7 +527,7 @@ export function LearnerCourseDiscussion({
                     aria-label={row.label}
                   >
                     <span className="h-px flex-1 bg-border" />
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                    <span className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       {row.label}
                     </span>
                     <span className="h-px flex-1 bg-border" />
@@ -544,7 +544,7 @@ export function LearnerCourseDiscussion({
                     {!row.grouped ? (
                       <div className="flex flex-wrap items-center gap-2">
                         <span aria-hidden="true" title={row.item.senderRole}
-                          className={"inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold "+
+                          className={"inline-flex size-8 shrink-0 items-center justify-center rounded-[50%] text-xs font-bold "+
                             (row.item.senderRole==="FACULTY"?"bg-primary-subtle text-primary-text":
                               row.item.isMine?"bg-success-subtle text-success":"bg-muted text-foreground")}>
                           {(row.item.isMine?"You":row.item.senderName).trim().charAt(0).toUpperCase()||"?"}

@@ -648,3 +648,150 @@ grep -nE 'min-h-11|md:min-h-8|sm:min-h-8|aria-current|aria-pressed|<Button|</But
 ```
 
 E4 remains [ ] globally until all chips, hover/disabled/count colors, responsive and pointer snapshots are checked against old LMS. No application/CI/TypeScript/browser run. This file has its own value table, JSX grep and phone/tablet source proof.
+
+
+## 2026-10-20 [chat-14] fifteen-file parity batch — E2/E4/E5 controls
+
+**Proof type:** full GitHub source-file reads and regex scans after each successful branch commit, not shell grep or browser screenshots. Reference old-lms-shell.css:23,73 establishes <=767px phone and >=768px tablet; components___antddesign.scss:243-280 defines mobile pagination 44x44/8px/42px and 4px gap; antddesign.scss:1081-1100 defines actionable phone targets 44px and clickable-tag padding 0 12px. No CI, test runner, compiler, browser or live rendered pixel verification was performed.
+
+### 1. `src/components/ui/pagination.tsx` — E2 link pagination rendered density
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Old Ant mobile pagination at legacy-styles/components___antddesign.scss:243-280: 44px square, 8px radius, 42px leading, 4px gap, Prev/Next + active numeric only |
+| Updated vNext | Page N of M remains announced through sr-only role=status but no longer creates a visible fourth label on phone |
+| Phone/tablet/wide | Phone <=767px 44px controls, 42px leading, four-point gaps; tablet >=768px 36px controls/full numeric window; >=1600 parent unchanged |
+| Focus/pressed/disabled/loading/empty | Disabled boundary links, safe hrefs and scroll opt-out unchanged |
+
+**Full-file grep equivalent:** SHA `395afc97116bf3d68b998211e78f6ed00e3aa0e4`, 88 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 0/0; FilterChip open/close = 0/0; Link elements = 5; md: tokens 14, sm: tokens 0; inline 6-digit hex 0.
+
+### 2. `src/components/ui/action-pagination.tsx` — E2 guarded client pager density
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Same exact Ant 44x44/8px/42px/4px phone targets and active-only numeric rule |
+| Updated vNext | Page N of M becomes sr-only role=status, retaining screen-reader notice while showing only previous/active/next on phone |
+| Phone/tablet/wide | Phone <=767px active page only, centered gap-1; tablet >=768px number buttons reappear at 36px; wide remains flexible |
+| Focus/pressed/disabled/loading/empty | onPageChange guard, pending disabled and edge limits unchanged |
+
+**Full-file grep equivalent:** SHA `be699abd3cd9998e3ea37afbc321dfdaff36cc8c`, 54 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 3/3; FilterChip open/close = 0/0; Link elements = 0; md: tokens 7, sm: tokens 0; inline 6-digit hex 0.
+
+### 3. `src/components/ui/filter-chip.tsx` — E4 pressed chip phone insets
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Ant clickable .ant-tag in components___antddesign.scss:1092-1100 uses min-height 44px and padding 0 12px through 767px. Compact status geometry in common.scss:995-1005: 6px radius, 12px bold |
+| Updated vNext | FilterChip button and FilterChipLink now both py-0 on phone with px-[12px], min-h-11; from md use px-[15px] and py-[2px], min-h-8; selected state/keyboard safe Link preserved |
+| Phone/tablet/wide | Phone 44px/12px horizontal/0 vertical; tablet >=768px 32px/15px/2px; wide scales without changes |
+| Focus/pressed/disabled/loading/empty | Clicked/disabled/hover/focus semantic state retained; no generated background or invalid href |
+
+**Full-file grep equivalent:** SHA `3314fda0a47a2eef087af9d5161d65ff5b866bde`, 71 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 1/1; FilterChip open/close = 0/0; Link elements = 1; md: tokens 6, sm: tokens 0; inline 6-digit hex 0.
+
+### 4. `src/components/courses/college-student-visibility-control.tsx` — E4 learner-content visibility status pill
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Legacy clickable badge: min-height 44px, px12 phone, 6px/12px-bold; guarded boolean status button |
+| Updated vNext | Replaced one unshared secondary Button with shared FilterChip, keeping aria-pressed={visible}, aria-label action.label, pending disabled and CAS version token |
+| Phone/tablet/wide | Phone <=767px 44px shared chip, tablet >=768px compact status chip with existing md:min-h-9 and max-width, wide unchanged |
+| Focus/pressed/disabled/loading/empty | Confirmation/PATCH/stale-version notice/refresh remain; label is Hide or Show based on current state |
+
+**Full-file grep equivalent:** SHA `854f2e72741b1b6d53cf9ab9a54b6f9ea0a409c3`, 51 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 0/0; FilterChip open/close = 1/1; Link elements = 0; md: tokens 1, sm: tokens 0; inline 6-digit hex 0.
+
+### 5. `src/components/courses/college-lesson-visibility-controls.tsx` — E4 college lesson visibility status chip
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Same clickable Ant .ant-tag phone touch geometry; legacy status toggles have selected/unselected ink and explicit confirmation |
+| Updated vNext | Replaced one standalone small primary/secondary choice with FilterChip driven by aria-pressed={visible}; retained visible, pending, confirm, optimistic version fields; bulk buttons still actions |
+| Phone/tablet/wide | Phone 44px chip, md >=768px 36px because caller preserves min-height; adjacent lesson select labels 44px, batch layout unchanged |
+| Focus/pressed/disabled/loading/empty | Single lesson PATCH and all bulk selection/error retry/confirmation remain unaffected |
+
+**Full-file grep equivalent:** SHA `5554f10a73f55529abb6426d02aae9b419e771f2`, 143 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 3/3; FilterChip open/close = 1/1; Link elements = 0; md: tokens 5, sm: tokens 0; inline 6-digit hex 0.
+
+### 6. `src/components/attendance/faculty-attendance-workspace.tsx` — E4 Present/Absent choice geometry
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Ant action controls require at least 44px phone target (antddesign.scss:1081-1100); old LMS uses one selected primary vs selected danger tone |
+| Updated vNext | Present/Absent action group now wraps flex on narrow screens and exposes role=group aria-label per learner; both buttons explicitly min-h-11 md:min-h-9; original variant danger vs primary kept |
+| Phone/tablet/wide | Phone two 44px choices wrap instead of clipping; tablet >=768px 36px compact buttons; desktop roster and modal panel unchanged |
+| Focus/pressed/disabled/loading/empty | Mutually exclusive aria-pressed values and markOne handler maintained; saving, closed window, errors unaffected |
+
+**Full-file grep equivalent:** SHA `f5b16cd6b08fcb74466e4bc225a50c1279e8dbbb`, 1284 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 14/14; FilterChip open/close = 0/0; Link elements = 0; md: tokens 9, sm: tokens 0; inline 6-digit hex 0.
+
+### 7. `src/components/placements/learner-career-calendar.tsx` — E4 calendar view choice active styling
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Old Ant pressed view switch needs mobile 44px and selected primary tint, disabled actions remain operable only when applicable |
+| Updated vNext | Removed duplicated className prop from view Button that caused conflicting styles; now single min-h-11 capitalize md:min-h-9 source applies; variant and aria-pressed kept |
+| Phone/tablet/wide | Phone 44px view cells without contradictory JSX class; md >=768px 36px, calendar CSS month-grid breakpoints intact; wide nav unchanged |
+| Focus/pressed/disabled/loading/empty | Day/month state, calendar export, event selection, empty and unauthorized links untouched |
+
+**Full-file grep equivalent:** SHA `40da49674db836ce1bda227fdabbdf80568f810d`, 387 lines; raw <button/input/select/textarea/details/table> = 1; Button open/close = 8/8; FilterChip open/close = 1/1; Link elements = 3; md: tokens 14, sm: tokens 0; inline 6-digit hex 0.
+
+### 8. `src/components/tpo/recruiter-inline-owner.tsx` — E4 recruiter owner editor compact trigger
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Old LMS 44px phone action target and 36px compact desktop, 8px rounded row affordance; common light hover background |
+| Updated vNext | Expanded owner editor trigger changes from min-h-11 always to min-h-11 md:min-h-9 while keeping 8px radius/200ms easing/ghost hover |
+| Phone/tablet/wide | Phone <=767px 44px, md >=768px 36px; owner select/Assign/Cancel already 44/36; narrow labels wrap in existing max-width |
+| Focus/pressed/disabled/loading/empty | Busy guard, onClick open, aria-expanded, optimistic owner assignment, cancel and error unchanged |
+
+**Full-file grep equivalent:** SHA `62f7747e2849b295deb6d52da839f85cf4f47cdd`, 64 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 3/3; FilterChip open/close = 0/0; Link elements = 0; md: tokens 4, sm: tokens 0; inline 6-digit hex 0.
+
+### 9. `src/components/tpo/recruiter-inline-stage.tsx` — E4 recruiter stage editor compact trigger
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Same legacy 44px phone, 36px desktop, radius 8px inline editor/action |
+| Updated vNext | Changed only trigger height to min-h-11 md:min-h-9; stage Select, reason Input and Apply/Cancel already use same responsive sizing |
+| Phone/tablet/wide | Phone 44px all choice controls, desktop 36px; edit-stage dropdown retains full width; wide unchanged |
+| Focus/pressed/disabled/loading/empty | Reason required for NOT_NOW, busy disable, error notice and stage request unchanged |
+
+**Full-file grep equivalent:** SHA `fea30f9ad00291ae77a5a040368ddb773e1d32df`, 52 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 3/3; FilterChip open/close = 0/0; Link elements = 0; md: tokens 5, sm: tokens 0; inline 6-digit hex 0.
+
+### 10. `src/components/tpo/tpo-team-ask-panel.tsx` — E4 placement-team ask actions
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Legacy Ant phone buttons all >=44px, desktop compact 36px, old LMS form 1px bordered white action affordances |
+| Updated vNext | Added min-h-11 md:min-h-9 to Mark done, Cancel ask and Ask someone submit; existing confirmation dialog/save and other buttons already min-height 44px |
+| Phone/tablet/wide | Phone action group flex-wrap and three 44px targets, md 36px and original notice/list layout; no new overflow |
+| Focus/pressed/disabled/loading/empty | Pending/valid submit disabled, confirmation/cancel note, completion updates and zero-state remain |
+
+**Full-file grep equivalent:** SHA `f3474c48950cd9af0881206da81a946a1069135f`, 123 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 5/5; FilterChip open/close = 0/0; Link elements = 0; md: tokens 7, sm: tokens 0; inline 6-digit hex 0.
+
+### 11. `src/components/tpo/tpo-audit-saved-views.tsx` — E4/E5 saved views filter inputs
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Old LMS filter controls have mobile >=44px, compact >=768px 36px; shared Disclosure has native summary/keyboard and border-y shell |
+| Updated vNext | Input view name and Select saved view now min-h-11 w-full md:min-h-9; five existing save/open/pin/rename/delete buttons already 44/36; disclosure retained |
+| Phone/tablet/wide | Phone <=767px 44px field and select inside wrap, tablet >=768px 36px controls with 160-180px flex bases; >=1600 original shell |
+| Focus/pressed/disabled/loading/empty | Max 12 saved views, disabled/unavailable/pending/recovery and delete ConfirmDialog unchanged |
+
+**Full-file grep equivalent:** SHA `6a5514412ecaeccb2f29ce1027a711bdb8e47a5a`, 169 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 5/5; FilterChip open/close = 0/0; Link elements = 0; md: tokens 7, sm: tokens 0; inline 6-digit hex 0.
+
+### 12. `src/components/tpo/tpo-timed-debar-control.tsx` — E4 timed debar confirmation action targets
+
+| Property/state | Exact legacy and authored value |
+|---|---|
+| Legacy source | Ant actions require >=44px phone; controlled date/number/select source already min-h-11 md:min-h-9 |
+| Updated vNext | Added min-h-11 md:min-h-9 to Review debarment, Review lift, dialog Cancel and Confirm to match adjacent fields |
+| Phone/tablet/wide | Phone all four 44px actions, tablet >=768px compact 36px; history rows and dialog remain within scrollable shell |
+| Focus/pressed/disabled/loading/empty | Debar guard, date or drives validation, pending/LIFT restrictions, confirm, notifications and history untouched |
+
+**Full-file grep equivalent:** SHA `4e8d5b88433a241ffc8ab428e0362812219a5cf6`, 100 lines; raw <button/input/select/textarea/details/table> = 0; Button open/close = 4/4; FilterChip open/close = 0/0; Link elements = 0; md: tokens 7, sm: tokens 0; inline 6-digit hex 0.
+
+### Suggested grep reproduction — not run locally
+```sh
+grep -nE 'sr-only|leading-\[42px\]|min-h-11|md:min-h-9|md:min-h-8|aria-pressed=|role="group"|<FilterChip|</FilterChip>' src/components/ui/{pagination,action-pagination,filter-chip}.tsx src/components/courses/{college-student-visibility-control,college-lesson-visibility-controls}.tsx
+grep -nE 'min-h-11|md:min-h-9|role="group"|aria-pressed|className=|<Button|<FilterChip' src/components/{attendance/faculty-attendance-workspace,placements/learner-career-calendar,tpo/recruiter-inline-owner,tpo/recruiter-inline-stage,tpo/tpo-team-ask-panel,tpo/tpo-audit-saved-views,tpo/tpo-timed-debar-control}.tsx
+```
+
+**STRICT TICK OUTCOME:** E2/E4/E5 remain [ ] category-wide. All twelve named files have authored changes and documented source-value/responsive/interaction preservation, but cannot be described as pixel-perfect or globally complete without browser source-vs-vNext screenshot comparisons, actual computed focus/hover/pending states and exhaustive per-page inventory. E8 remains [ ] in clone-sheets audit.
+
+**Next exact file:** `src/components/tpo/grid/view-memory.ts` — review persisted width/pin/visibility fallback and E8 selected-grid filter state; old legacy AG Grid dependency block remains.

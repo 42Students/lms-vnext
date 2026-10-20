@@ -22,7 +22,7 @@ export function InputGroup({ prefix, suffix, prefixInteractive = false, suffixIn
     <div {...props} data-slot="input-group" role={label ? "group" : props.role}
       aria-label={label ?? props["aria-label"]}
       className={cx(
-        "flex min-w-0 items-center gap-2 rounded-[var(--lms-field-radius)]",
+        "flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-field-radius)]",
         "border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3",
         "focus-within:border-[var(--lms-primary)] focus-within:shadow-[var(--lms-control-shadow)]",
         "has-[[aria-invalid=true]]:border-[var(--lms-error)]",

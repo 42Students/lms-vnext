@@ -31,12 +31,14 @@ export default async function CollegeResourcesPage({
     );
   }
   const authoring=await getCollegeContentAuthoringOptions(context,"RESOURCE");
-  return <main className="min-w-0 space-y-4">
+  return <div className="min-w-0 space-y-4">
+    <PageHeader title="Resources" eyebrow="College Admin · Courses & Content"
+      actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Lessons</Link>} />
     <CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>
     <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",parsed.data)}
       className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Export filtered resource metadata CSV
     </Link>
-    <CollegeContentAggregate data={await listCollegeContentAggregate(context, "RESOURCE", parsed.data)} />
-  </main>;
+    <CollegeContentAggregate showHeader={false} data={await listCollegeContentAggregate(context, "RESOURCE", parsed.data)} />
+  </div>;
 }

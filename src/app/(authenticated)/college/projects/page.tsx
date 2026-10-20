@@ -33,7 +33,7 @@ export default async function CollegeProjectsPage({
   const context = await getCurrentRequestContext();
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) {
-    return <div className="space-y-4">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="Workspaces" description="Select a college to continue."/>
       <ErrorState title="No college selected"
         description="Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page."
@@ -43,7 +43,7 @@ export default async function CollegeProjectsPage({
 
   const parsed = parseCollegeProjectsQuery(await searchParams);
   if (!parsed.success) {
-    return <div className="space-y-4">
+    return <div className="min-w-0 space-y-4">
       <PageHeader title="Workspaces" description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
@@ -100,7 +100,7 @@ export default async function CollegeProjectsPage({
    ...(query.pageSize?{pageSize:String(query.pageSize)}:{}),view,
   }).toString();
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <ProjectAdminNav
         basePath="/college/projects"
         active="workspaces"
@@ -109,14 +109,14 @@ export default async function CollegeProjectsPage({
         title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
-          className="inline-flex min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Create workspace
         </Link>}
       />
 
       <nav aria-label="Project workspace tools" className="flex min-w-0 flex-wrap gap-2">
-      <Link className="inline-flex min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
+      <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
+      <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
 
       <div className="min-w-0 space-y-2">
        <Tabs ariaLabel="Workspace display and archive" renderPanel={false}
@@ -140,7 +140,7 @@ export default async function CollegeProjectsPage({
         emptyDescription="Clear the filters, or create a Project from an assigned published template."
       />
 
-      <p role="status" className="text-sm text-muted-foreground">{result.total===0?"0 of 0 workspaces":`${(result.page-1)*(query.pageSize??25)+1}–${Math.min(result.page*(query.pageSize??25),result.total)} of ${result.total} workspaces`}</p>
+      <p role="status" className="text-sm tabular-nums text-muted-foreground">{result.total===0?"0 of 0 workspaces":`${(result.page-1)*(query.pageSize??25)+1}–${Math.min(result.page*(query.pageSize??25),result.total)} of ${result.total} workspaces`}</p>
       <ProjectAdminPagination
         basePath="/college/projects"
         query={query}

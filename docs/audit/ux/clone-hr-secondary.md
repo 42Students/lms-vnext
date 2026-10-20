@@ -611,3 +611,60 @@ grep -rnE '<(button|input|select|textarea|table)([ >])|<h1|#[0-9a-fA-F]{6}|fixed
 ```
 
 **Next file:** `src/app/(authenticated)/hr/colleges/error.tsx` — reconcile recruiter alias error fallback's normal page header, consistent module back-link and 44px phone link against original LMS; then the recruiter alias error family.
+
+
+## Chat-18 additional 16-file responsive work: tracker + recruiter actions (2026-10-20)
+
+The owner metric is fully completed visual files, not commit counts. This batch corrected **16 queue files** in three GitHub source commits and added `scripts/codemods/chat18-secondary-mobile-proof.cjs`. The table below supplies exact source assertions per file. These are **source-complete corrections**, not claims of pixel-level clone closure; [ ] remains until real browser comparison, including initial/default/hover/active/focus/disabled/busy/error states.
+
+### Grounded legacy value comparison
+
+| Property / state | Exact old LMS specification | Current scoped vNext source contract | Evidence |
+| --- | --- | --- | --- |
+| Mobile breakpoint | `docs/design/legacy-styles/components___listing-page-header.scss:131-164`, max-width **767px**; `old-lms-shell.css:73` | Scoped `w-full` and `min-h-11` baseline, `md:w-auto` and `md:min-h-9` at **768px+** | Declared source breakpoint matches |
+| Mobile field / action size | `components___listing-page-header.scss:150-164`: search min-height **44px**, create action fills row; mobile touch targets also 44px | `min-h-11 = 44px` in affected inputs/buttons; phone action `w-full` | Source dimensions match |
+| Ordinary desktop action height | `docs/design/old-lms-shell-spec.md:21-25`: **36px** outlined/primary controls | `md:min-h-9 = 36px`, `md:w-auto` | Source dimensions match |
+| Desktop listing search width | `components___listing-page-header.scss:87-101`: **220px** | Selected search/name/filter inputs: `md:w-[220px]` where mapped; dropdowns without a legacy width preserve intrinsic `md:w-auto` | Name/search width grounded; other field width is not claimed exact |
+| Single white canvas | `old-lms-shell-spec.md:3`: `#fff`, 1px `#e5e9f0`, **12px** canvas radius and **24px** padding; ordinary rows separated by hairlines (`old-lms-pages.md:4-9`) | `tracker-report-form.tsx` grouped location fieldset uses `border-y border-border py-4` instead of separate rounded border, no extra canvas | Structural correction; resolved token colour requires computed proof |
+| Default/hover/disabled | Legacy `listing-page-header.scss:98-121` 200ms border/hover transitions, hover primary and pale teal | All controls still delegate to `ui/Button`, `Input`, `Select`, `Textarea` (unchanged). Shared Button: primary/secondary hover, `disabled`, `aria-busy` and motion-reduce classes | No bespoke route-level control paint; inherited exact computed state still OPEN |
+| Keyboard focus | `old-lms-shell-spec.md:4-5`: teal outline; `listing-page-header.scss:94-101` 2px halo on field focus | Shared controls retain `focus-visible:outline-2`, error halo, no local suppression | Source state retained; computed ring colour OPEN |
+| Loading/error/empty | `old-lms-pages.md:4-11`: inline error/empty/list states inside the one canvas | Existing `InlineNotice`/`Alert`/`ConfirmDialog`/`ErrorState` ownership unchanged in modified files; no new overlays | No semantic state removal; default/error render OPEN |
+| Phone/tablet/desktop widths | Legacy 767px cutover | **375px**: w-full single column, min 44px. **768px**: md inline controls (36px), labels 220px where declared. **1280px**: same desktop declaration, wrap when needed. | Static responsive *declaration* proof, NOT 3 rendered screenshots |
+
+### Complete per-file source readback and responsiveness table
+
+Every relative path in this table is under `src/components/` — tracker entries under `tracker/`, recruiter entries under `hr/`.
+
+| Source file | VNext value / responsive change grounded in legacy targets above | Interactions / states retained | Source grep |
+| --- | --- | --- | --- |
+| `tracker-issue-bulk-actions.tsx` | Status selector 220px desktop, full-width phone; apply action 44/36px | Selected-count, empty/disabled, confirm flow intact | 0 own raw controls; 0 TSX hex |
+| `tracker-issue-saved-views.tsx` | View-name input 220px desktop, full-width phone; save action 44/36px | Empty list, max-12 and local storage logic intact | 0 own raw controls; 0 TSX hex |
+| `tracker-issue-logs-panel.tsx` | Load full-width phone, 44/36px; drill-through link 44/36px | Loading, empty and failed log states intact | 0 own raw controls; 0 TSX hex |
+| `tracker-report-form.tsx` | Form field 44px phone, 36px desktop; grouped fieldset hairlines, submit full phone | Receipt/error/draft/restored/disabled states untouched | 0 own raw controls; 0 TSX hex |
+| `tracker-workflow-panel.tsx` | Save/retest action full phone; two retest actions wrap, 44/36px | Version conflict, disabled, loading unchanged | 0 own raw controls; 0 TSX hex |
+| `independent-finding-actions.tsx` | 8 labels full width; 8 inputs 44/36px; save full phone | Dialog, save error, pending, transitions unchanged | 0 own raw controls; 0 TSX hex |
+| `audit-finding-status-action.tsx` | Status select full phone, desktop 220px; review full phone, 44/36px | Review confirm, disabled, success/failure unchanged | 0 own raw controls; 0 TSX hex |
+| `tracker-live-logs-explorer.tsx` | Time/severity labels full phone, intrinsic desktop width | List/empty/error/export state and actions unchanged | 0 own raw controls; 0 TSX hex |
+| `known-errors-workspace.tsx` | Four note/commit/issue/mute inputs 44px phone, 36px desktop | Existing list, confirmations and control semantics unchanged | 0 own raw controls; 0 TSX hex |
+| `tracker-telegram-manual-panel.tsx` | Four alert/digest/dialog buttons full phone 44px; compact desktop 36px | Configuration/disabled/dialog states unchanged | 0 own raw controls; 0 TSX hex |
+| `hr-notification-read-button.tsx` | Mark-read full-width phone 44px, auto desktop 36px; feedback stacks on phone | Pending, success and error unchanged | 0 own raw controls; 0 TSX hex |
+| `recruiter-conversation-read-control.tsx` | Acknowledge full phone width 44px; 36px desktop | Automatic POST receipt confirmation, retry and alert intact | 0 own raw controls; 0 TSX hex |
+| `recruiter-conversation-reply-form.tsx` | Send full phone width 44px; 36px desktop; min-w-0 form actions | Unsent draft confirmation, 4000 chars and reply receipt intact | 0 own raw controls; 0 TSX hex |
+| `recruiter-decision-read-button.tsx` | Decision acknowledgement full phone 44px, desktop 36px | Pending/acknowledged/failed states unchanged | 0 own raw controls; 0 TSX hex |
+| `tracker-issue-copy-actions.tsx` | Copy actions stack full-width phone 44px; horizontal desktop 36px | Clipboard success/failure notice unchanged | 0 own raw controls; 0 TSX hex |
+| `independent-finding-copy-action.tsx` | Copy-to-prompt full phone width 44px, compact desktop 36px | Copy notice and fallback unchanged | 0 own raw controls; 0 TSX hex |
+
+All 16 files were successfully fetched from the pushed branch *after* modification. Counts across their combined code were: **0 visible native `button/input/select/textarea/table`** (all use the shared UI primitives), **0 literal six-digit hex colours**, and no introduced root `h1` or custom full-screen overlay. All edits targeted existing Tailwind class strings and preserved API calls, request gating, authorization, keyboard handlers, route URLs, data shapes, and JSX tags. No render entrypoint, shared primitives or global stylesheet was edited.
+
+### Reproducible source verification and strict gap
+
+A guarded read-only proof was committed as `scripts/codemods/chat18-secondary-mobile-proof.cjs`. It expects **16** exact file paths, validates the key changed responsive class token(s) in each, and fails on any newly introduced native controls, `h1`, hard-coded TSX hex or hand-rolled dialog/fixed overlay. The proof is designed to be run later, but **was not executed in this lane**. It is NOT a TypeScript compiler, DOM accessibility audit or screenshot test.
+
+```sh
+node scripts/codemods/chat18-secondary-mobile-proof.cjs
+node scripts/codemods/chat18-secondary-parity-check.cjs
+```
+
+The missing strict-tick artifacts are computed values at default/hover/focus/active/disabled/busy/error in the live *original LMS* and *vNext*, actual **375px / 768px / 1280px** side-by-side captures and horizontal-overflow confirmation, plus TypeScript correctness. No CI or app execution occurred. Therefore **16 source-corrected queue files, zero newly visually CLOSED**. The overall strict checklist remains **10/87 ticked, 77/87 open**; no source-only correction is falsely marked pixel-perfect.
+
+**Exact next open source:** `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx` — replace remaining unscoped outlined links and ensure issue metadata/status/attachments/activity follow the old LMS hairline geometry. Then `src/app/(authenticated)/hr/company/page.tsx`.

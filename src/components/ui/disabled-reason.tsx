@@ -22,6 +22,7 @@ export function DisabledReason({ reason, children }: { reason: string; children:
   return (
     <span data-slot="disabled-reason" className="inline-flex min-w-0 flex-col gap-[var(--lms-space-1)] rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" title={reason}
       role={disabled ? "group" : undefined}
+      aria-disabled={disabled || undefined}
       tabIndex={disabled ? 0 : undefined}
       aria-describedby={disabled ? id : undefined}>
       {control}

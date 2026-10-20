@@ -235,7 +235,7 @@ export function LearnerJobsBrowse({
         </p>
       ):null}
 
-      {savedOnly && matchingItems.length===0?<div className="flex min-h-[180px] min-w-0 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
+      {savedOnly && matchingItems.length===0?<div className="flex min-h-44 min-w-0 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
         <h2 className="font-semibold text-foreground">No saved drives yet</h2>
         <p className="text-sm text-body">Save drives from All Drives by tapping the heart. They will appear here.</p>
         <Button variant="link" type="button" className="min-h-11 px-0"
@@ -249,7 +249,7 @@ export function LearnerJobsBrowse({
           </Link>
         </div>
       ) : empty.kind==="FILTERED_OUT" ? (
-        <div className="flex min-h-[180px] flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center" role="status">
+        <div className="flex min-h-44 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center" role="status">
           <p className="font-semibold text-foreground">{empty.title}</p>
           <p className="mt-2 text-sm text-body">{empty.description}</p>
           {empty.showReset ? <Button variant="link" type="button"

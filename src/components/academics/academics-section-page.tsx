@@ -19,7 +19,7 @@ export async function AcademicsSectionPage({
 }: {
   context: RequestContext;
   sectionId: string;
-  eyebrow: string;
+  eyebrow?: string;
   backHref: string;
 }) {
   const workspace =

@@ -27,14 +27,14 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
   }catch{setFeedback("Connection failure. No status change was confirmed.");}
   finally{setPending(false);setReview(false);}
  }
- return <div className="flex flex-wrap items-end gap-2">
-   <label className="grid gap-1 text-xs font-semibold text-body">Triage status
+ return <div className="flex min-w-0 flex-wrap items-end gap-2">
+   <label className="grid w-full min-w-0 basis-full gap-1 text-xs font-semibold text-body md:w-[220px] md:basis-auto">Triage status
     <Select value={status} disabled={pending} className="min-h-11 md:min-h-9" onChange={e=>setStatus(e.target.value as BugStatus)}
     >
       {BUG_STATUSES.map(item=><option key={item} value={item}>{item}</option>)}
     </Select>
    </label>
-   <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={!canChangeAuditFindingStatus(current,status,pending)} onClick={()=>setReview(true)}>Review status</Button>
+   <Button size="sm" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!canChangeAuditFindingStatus(current,status,pending)} onClick={()=>setReview(true)}>Review status</Button>
    {feedback?<p role="status" className="w-full text-xs text-body">{feedback}</p>:null}
    <ConfirmDialog open={review} onOpenChange={setReview} pending={pending} confirmLabel="Apply audited status"
     confirmDisabled={!canChangeAuditFindingStatus(current,status,pending)}

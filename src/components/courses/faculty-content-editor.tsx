@@ -124,26 +124,26 @@ export function FacultyContentEditor({ item }: { item: Item }) {
         </Button>}
       >
         <form id={"faculty-content-edit-" + item.id} onSubmit={save} className="space-y-4">
-          <label className="block text-[13px] leading-4 font-semibold text-body">
+          <label className="block text-xs leading-4 font-semibold text-body">
             Title
             <Input className="mt-1.5" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={255} required />
           </label>
-          <label className="block text-[13px] leading-4 font-semibold text-body">
+          <label className="block text-xs leading-4 font-semibold text-body">
             Points
             <Input className="mt-1.5" type="number" min={0} max={1000}
               value={points} onChange={(event)=>setPoints(event.target.value)} required/>
           </label>
-          <label className="block text-[13px] leading-4 font-semibold text-body">
+          <label className="block text-xs leading-4 font-semibold text-body">
             Notes
             <Textarea className="mt-1.5 min-h-24" value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={5000} />
           </label>
-          {item.contentType !== "VIDEO" ? <label className="block text-[13px] leading-4 font-semibold text-body">
+          {item.contentType !== "VIDEO" ? <label className="block text-xs leading-4 font-semibold text-body">
             {item.contentType === "YOUTUBE" ? "YouTube URL" : item.contentType === "LIVE_CLASS" ? "Meeting URL" : "Resource URL"}
             <Input className="mt-1.5" type="url" value={url} onChange={(event) => setUrl(event.target.value)}
               required={item.contentType !== "RESOURCE"} placeholder="https://…" />
           </label>:null}
           {item.contentType === "YOUTUBE" ? (
-            <label className="block text-[13px] leading-4 font-semibold text-body">
+            <label className="block text-xs leading-4 font-semibold text-body">
               Actual video duration (seconds)
               <Input className="mt-1.5" type="number" min={1} max={86400} value={duration}
                 onChange={(event) => setDuration(event.target.value)} required />
@@ -151,12 +151,12 @@ export function FacultyContentEditor({ item }: { item: Item }) {
           ) : null}
           {item.contentType === "LIVE_CLASS" ? (
             <div className="grid gap-3 md:grid-cols-2">
-              <label className="text-[13px] leading-4 font-semibold text-body">
+              <label className="text-xs leading-4 font-semibold text-body">
                 Start (IST)
                 <Input className="mt-1.5" type="datetime-local" value={starts}
                   onChange={(event) => setStarts(event.target.value)} required />
               </label>
-              <label className="text-[13px] leading-4 font-semibold text-body">
+              <label className="text-xs leading-4 font-semibold text-body">
                 End (IST)
                 <Input className="mt-1.5" type="datetime-local" value={ends}
                   onChange={(event) => setEnds(event.target.value)} required />

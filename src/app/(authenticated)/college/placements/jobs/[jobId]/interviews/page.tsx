@@ -9,6 +9,8 @@ import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-i
 import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-round-slot-action-service";
 import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
 import {Select} from "@/components/ui/select";
+import {EmptyState} from "@/components/ui/empty-state";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {Button} from "@/components/ui/button";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
@@ -33,14 +35,14 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     {key:"time",header:"Time",cell:item=>driveRoundTime(item.scheduledAt,item.timezone)},
     {key:"venue",header:"Venue",cell:item=>item.venue??"Not recorded"},
     {key:"mode",header:"Mode",cell:item=>item.mode??"Not recorded"},
-    {key:"status",header:"Status",cell:item=>item.status},
+    {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="CANCELLED"?"neutral":"info"}>{item.status}</StatusBadge>},
     {key:"slots",header:"Candidate slots",cell:()=>"See candidate interviews above"},
   ];
   return <div className="space-y-6">
     <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
-      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</Link>} />
-    <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end gap-4 rounded-[8px] border border-border p-4">
+      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Drive overview</Link>} />
+    <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end gap-4 border-b border-border pb-4">
       <label className="grid gap-1 text-sm">Round kind
         <Select name="kind" defaultValue={query.kind} >
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
@@ -52,7 +54,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
             <option key={status} value={status}>{status}</option>)}
         </Select>
       </label>
-      <Button type="submit" >Filter</Button>
+      <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}
@@ -60,12 +62,10 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     <section aria-label="Persisted interview rounds" className="space-y-2">
       <p role="status" className="text-sm text-body">{data.total} matching interview/GD rounds</p>
       <DataTable caption="Persisted interview rounds" columns={columns} rows={data.items}
-        getRowKey={item=>item.id} empty={<p role="status" className="text-sm text-body">
-          {data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}
-        </p>} />
+        getRowKey={item=>item.id} empty={<EmptyState title="No matching interview rounds" description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}/>} />
     </section>
-    <nav aria-label="Interview round pages" className="flex justify-between gap-3 text-sm">
-      <span>Page {query.page} of {data.totalPages}</span><div className="flex gap-3">
+    <nav aria-label="Interview round pages" className="flex flex-wrap justify-between gap-3 text-sm">
+      <span>Page {query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
         {query.page>1?<Link href={driveInterviewsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}
         {query.page<data.totalPages?<Link href={driveInterviewsHref(jobId,{...query,page:query.page+1})}>Next</Link>:null}
       </div>

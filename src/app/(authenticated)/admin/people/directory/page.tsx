@@ -32,7 +32,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  }:{invalid:true});
  if(!query.success) return <div className="space-y-4"><PageHeader eyebrow="Super Admin" title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
-   action={<Link href="/admin/people/directory" className="font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>}/>
+   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>
  </div>;
  const loaded=await listSuperAdminUsers(context,query.data)
   .then(value=>({ok:true as const,value}))
@@ -45,7 +45,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     ?"Your account can no longer view these membership records."
     :"These membership records could not be loaded. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
-    className="font-semibold text-[var(--lms-teal-deep)] underline">
+    className="font-semibold text-primary-text underline">
     {loaded.denied?"Back to dashboard":"Retry loading users"}
    </Link>}/>
  </div>;
@@ -60,14 +60,14 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
-   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Users without college memberships →</Link> : null}
+   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Users without college memberships →</Link> : null}
   <Tabs ariaLabel="People directory tabs" value={data.query.tab} renderPanel={false}
    items={tabs.map(tab=>({value:tab.id,label:tab.label,
     href:adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}))}/>
   <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">
-   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student accounts</Link>
-   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Faculty accounts</Link>
-   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Teaching assignments</Link>
+   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Student accounts</Link>
+   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Faculty accounts</Link>
+   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Teaching assignments</Link>
   </nav>
   <p className="text-xs text-muted-foreground">
    {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab==="FACULTY"?"Faculty memberships":"All permitted memberships"} ·
@@ -75,29 +75,29 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    {data.contactVisible?"Contact shown within the explicitly selected college.":"Email and phone are masked outside a selected college."}
   </p>
   <form method="get" className="grid gap-3 md:grid-cols-2 min-[1366px]:grid-cols-5">
-   <input type="hidden" name="tab" value={tabForm.hiddenTab} />
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Name or college
+   <Input type="hidden" name="tab" value={tabForm.hiddenTab} />
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name or college
     <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
-     className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
+     className="min-h-11 w-full md:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Role
-    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 w-full md:min-h-[var(--lms-control-height)]">
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 w-full md:min-h-9">
      {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Membership
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
     <Select name="membershipStatus" defaultValue={query.data.membershipStatus}
-     className="min-h-11 w-full md:min-h-[var(--lms-control-height)]">
+     className="min-h-11 w-full md:min-h-9">
      {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Platform
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform
     <Select name="platformStatus" defaultValue={query.data.platformStatus}
-     className="min-h-11 w-full md:min-h-[var(--lms-control-height)]">
+     className="min-h-11 w-full md:min-h-9">
      {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <Button type="submit" className="min-h-11 self-end md:min-h-[var(--lms-control-height)]">Filter</Button>
+   <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
@@ -114,7 +114,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      {row.roles.map(role=><StatusBadge key={role}>{role}</StatusBadge>)}
     </div>
     <Link href={`/admin/people/directory/${encodeURIComponent(row.membershipId)}`}
-     className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
      View membership →
     </Link>
     <p className="mt-2 text-xs text-muted-foreground">Membership updated {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.updatedAt)} IST</p>
@@ -122,6 +122,6 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   </div>:<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
   <Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminUsersHref({...data.query,page})}/>
-  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Membership management</Link>
+  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Membership management</Link>
  </div>;
 }

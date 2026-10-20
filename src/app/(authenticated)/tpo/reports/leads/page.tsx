@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert } from "@/components/ui/alert";
+import { Banner } from "@/components/ui/banner";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -144,7 +144,7 @@ export default async function TpoLeadsReportPage({
          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
        </form>
        <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
-       {!companyFilter.valid?<Alert tone="error">This company is not in the authorized college report. Clear the company filter.</Alert>:null}
+       {!companyFilter.valid?<Banner tone="error">This company is not in the authorized college report. Clear the company filter.</Banner>:null}
        <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
@@ -170,7 +170,7 @@ export default async function TpoLeadsReportPage({
 
       <section
         aria-label="Lead conversion metrics"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+        className="grid gap-3 md:grid-cols-2 xl:grid-cols-3"
       >
         {metrics.map(([label, value]) => (
           <div
@@ -205,7 +205,7 @@ export default async function TpoLeadsReportPage({
           Paused, unsubscribed and linked recruiter accounts are excluded.
           Missing contact evidence is not classified as quiet.
         </p>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {([
             ["Actionable leads", health.actionableLeads],
             ["Contacted in 14 days", health.contactedLast14Days],

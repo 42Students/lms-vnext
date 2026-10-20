@@ -77,14 +77,14 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
           {row.publicId} <span className="text-muted-foreground">({row.status.toLowerCase().replaceAll("_"," ")})</span>
         </label>)}
       </div>
-      <div className="flex flex-wrap items-end gap-3">
-        <label className="grid gap-1 text-sm font-semibold">Set status to…
+      <div className="flex min-w-0 flex-wrap items-end gap-3">
+        <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold md:w-[220px] md:basis-auto">Set status to…
           <Select value={status} onChange={event=>setStatus(event.target.value as BugStatus)}
-            disabled={busy}>
+            disabled={busy} className="min-h-11 md:min-h-9">
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
-        <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} className="min-h-11 md:min-h-9" onClick={()=>void apply()}
+        <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>void apply()}
          >
           {busy?"Updating…":"Apply to "+selected.length+" selected"}
         </Button>

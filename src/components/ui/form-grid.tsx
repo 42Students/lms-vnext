@@ -17,7 +17,7 @@ export function FormGrid({
 }: FormGridProps) {
   return (
     <div {...props} data-slot="form-grid" data-columns={columns} data-gap={gap}
-      className={cx("grid min-w-0 grid-cols-1", className)}>
+      className={cx("grid min-w-0 grid-cols-1 [&>*]:min-w-0", className)}>
       {children}
     </div>
   );
