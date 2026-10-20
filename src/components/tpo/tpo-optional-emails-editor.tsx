@@ -48,10 +48,10 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
  return <section className="space-y-3 border-t border-border pt-5">
   <h2 className="text-lg font-semibold text-foreground">Optional emails</h2>
   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
-  {fields.map(([key,label,help])=><label key={key} className={"flex min-h-12 cursor-pointer items-center justify-between gap-4 rounded-[var(--lms-control-radius)] border-b border-border px-3 py-2 text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] print:hidden "+(value[key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
-   <span><span className="font-medium">{label}</span><span className="block text-xs text-muted-foreground">{help}</span></span>
-   <Checkbox aria-label={label} checked={value[key]} disabled={busy}
-    onChange={e=>setValue(current=>({...current,[key]:e.target.checked}))}/>
+  {fields.map(([key,label,help])=><label key={key} className={"flex min-h-12 min-w-0 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border-b border-border px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] print:hidden "+(value[key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+   <span className="min-w-0 flex-1 break-words"><span className="font-medium">{label}</span><span className="block text-xs text-muted-foreground">{help}</span></span>
+   <span className="shrink-0"><Checkbox aria-label={label} checked={value[key]} disabled={busy}
+    onChange={e=>setValue(current=>({...current,[key]:e.target.checked}))}/></span>
   </label>)}
   <ul aria-label="Current optional email preferences" className="hidden space-y-2 text-sm print:block">{fields.map(([key,label,help])=><li key={key} className="break-words border-b border-border pb-2"><strong>{label}:</strong> {value[key]?"On":"Off"} · {help}</li>)}</ul>
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
