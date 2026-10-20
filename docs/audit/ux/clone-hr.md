@@ -65,10 +65,10 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/hr/messages/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/hr/messages/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
 - [ ] `src/app/(authenticated)/hr/not-found.tsx`
-- [ ] `src/app/(authenticated)/hr/notifications/error.tsx`
+- [x] `src/app/(authenticated)/hr/notifications/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/hr/notifications/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/error.tsx`
+- [x] `src/app/(authenticated)/hr/placements/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
 - [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx`
@@ -683,3 +683,9 @@ For each route listed below, complete fetched source shows exactly one shared `G
 - `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One unchanged shared GracefulErrorBoundary, source native/hex/h1/overlay 0/0/0/0, legacy `old-lms-pages.md:6-12` and mobile max 767px in `components___listing-page-header.scss:131-158`.
 - `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One unchanged shared GracefulErrorBoundary, source native/hex/h1/overlay 0/0/0/0, legacy `old-lms-pages.md:6-12` and mobile max 767px in `components___listing-page-header.scss:131-158`.
 - `src/app/(authenticated)/hr/drives/recorded-outside/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One unchanged shared GracefulErrorBoundary, source native/hex/h1/overlay 0/0/0/0, legacy `old-lms-pages.md:6-12` and mobile max 767px in `components___listing-page-header.scss:131-158`.
+
+
+#### Delegated HR error-only audit (2 files)
+
+- `src/app/(authenticated)/hr/notifications/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One unchanged shared GracefulErrorBoundary, source native/hex/h1/overlay 0/0/0/0, legacy `old-lms-pages.md:6-12` and mobile max 767px in `components___listing-page-header.scss:131-158`.
+- `src/app/(authenticated)/hr/placements/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One unchanged shared GracefulErrorBoundary, source native/hex/h1/overlay 0/0/0/0, legacy `old-lms-pages.md:6-12` and mobile max 767px in `components___listing-page-header.scss:131-158`.
