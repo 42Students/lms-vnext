@@ -44,20 +44,20 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regre
 - [x] `src/app/platform/page.tsx`
 - [x] `src/app/privacy-policy/page.tsx`
 - [x] `src/app/quiz/page.tsx`
-- [ ] `src/app/recruiter-invite/[token]/page.tsx`
-- [ ] `src/app/request-demo/page.tsx`
-- [ ] `src/app/superadmin-login/page.tsx`
-- [ ] `src/app/universities/page.tsx`
-- [ ] `src/components/auth/device-list.tsx`
-- [ ] `src/components/ui/bottom-sheet.tsx`
-- [ ] `src/components/ui/dialog.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
-- [ ] `src/components/ui/filter-bar.tsx`
-- [ ] `src/components/ui/menu.tsx`
-- [ ] `src/components/ui/modal.tsx`
-- [ ] `src/components/ui/popover.tsx`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/components/ui/split-button.tsx`
+- [x] `src/app/recruiter-invite/[token]/page.tsx`
+- [x] `src/app/request-demo/page.tsx`
+- [x] `src/app/superadmin-login/page.tsx`
+- [x] `src/app/universities/page.tsx`
+- [x] `src/components/auth/device-list.tsx`
+- [x] `src/components/ui/bottom-sheet.tsx`
+- [x] `src/components/ui/dialog.tsx`
+- [x] `src/components/ui/dropdown.tsx`
+- [x] `src/components/ui/filter-bar.tsx`
+- [x] `src/components/ui/menu.tsx`
+- [x] `src/components/ui/modal.tsx`
+- [x] `src/components/ui/popover.tsx`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/components/ui/split-button.tsx`
 - [ ] `src/components/ui/toast.tsx`
 - [ ] `src/components/ui/tooltip.tsx`
 - [ ] `src/components/ui/use-confirm-flow.tsx`
