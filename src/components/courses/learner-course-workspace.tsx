@@ -750,7 +750,9 @@ export function LearnerCourseWorkspace({
         </div>
       </section>
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <details className="border-b border-border pb-3">
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Learning progress breakdown</summary>
+        <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
           value={measuredProgress === null ? "Not measured" : `${measuredProgress}%`}
@@ -771,7 +773,8 @@ export function LearnerCourseWorkspace({
           value={summary.itemsMissed}
           detail="Closed quizzes remain visible in the learning path."
         />
-      </div>
+        </div>
+      </details>
 
       <Tabs
         ariaLabel="Learning path content filter"
