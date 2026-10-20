@@ -373,3 +373,11 @@
 **Fixed:** No source mutation necessary. Checked `hr/layout.tsx`'s recruiter authorization redirect, `hr/loading.tsx` directory skeleton/retry state, `hr/not-found.tsx` recovery link, authenticated shell's PageCanvas, shared GracefulErrorBoundary/ErrorState for failure, refresh, offline request reporting and focus. All routes, wording and privacy unchanged. Source only, no runtime/CI.
 
 **Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit-only).
+
+## Surface 45 — `src/app/(authenticated)/teach/layout.tsx`
+
+**Problems found (7):** Alternate faculty route had no route-content skip target unlike its sibling `/teacher`; no explicit min-width guard for long tables/teaching controls; no focus target for keyboard/assistive bypass; inconsistent faculty layout hierarchy; `/teach/error.tsx` nested a full-screen public error frame inside authenticated AppShell; its error recovery had duplicate brand/footer/canvas chrome; and its 375px/768px failure actions sat outside the one continuous legacy page surface.
+
+**Fixed:** Copied the already-audited faculty content skip-target structure from `/teacher/layout.tsx` into `/teach/layout.tsx`, preserving route permission gating and redirect, children, all IDs on children, and one single authenticated PageCanvas. Kept the skip link focus-only with 44px phone target and safe-area positioning, and wrapped route content in `min-w-0`/scroll-margin. Harmonized the sibling `/teach/error.tsx` by opting into `GracefulErrorBoundary insideShell` (same labels, reset, default destination, stale-chunk reload/reference/privacy); loading and not-found already use the correct in-canvas elements and destinations. Read nearest auth/teacher/teach layouts and GracefulErrorBoundary, GracefulPageLoading, PageHeader, Tabs, AppShell for large content, loading/error/404, keyboard focus, 375px and 768px. Source only, no runtime/CI.
+
+**Files changed:** `src/app/(authenticated)/teach/layout.tsx`; `src/app/(authenticated)/teach/error.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
