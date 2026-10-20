@@ -41,8 +41,8 @@ export function TpoStudentsSelectionSummary({visibleIds,totalCount}:{visibleIds:
  const selection=useTpoStudentsSelection();
  if(!selection)return null;
  const selectedCount=selection.selected.filter(id=>selection.allIds.includes(id)).length;
- return <p role="status" aria-live="polite" className="text-sm text-body">
+ return <p role="status" aria-live="polite" className="min-w-0 border-b border-border py-2 text-sm text-body">
   {visibleIds.length} shown of {totalCount} in this view · {selectedCount} selected of {totalCount}
-  {selection.notice?<span className="ml-2 font-semibold">{selection.notice}</span>:null}
+  {selection.notice?<span className="ml-2 inline-block break-words font-semibold text-warning-text">{selection.notice}</span>:null}
  </p>;
 }
