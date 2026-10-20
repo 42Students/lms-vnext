@@ -86,32 +86,32 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
    title="Manage students"
    description="Choose learners for this workspace. Changes are saved together only after confirmation.">
    <div className="space-y-4">
-    <div className="flex flex-wrap items-end gap-2">
-     <label className="grid flex-1 gap-1 text-sm font-semibold">Search learners
+    <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-end">
+     <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learners
       <Input value={search} onChange={event=>setSearch(event.target.value)} maxLength={120} placeholder="Name or email"/>
      </label>
-     <Button type="button" variant="secondary" disabled={searching||busy||!loaded} onClick={()=>void find()}>
+     <Button type="button" variant="secondary" className="w-full sm:w-auto" loading={searching} disabled={searching||busy||!loaded} onClick={()=>void find()}>
       {searching?"Searching…":"Search"}
      </Button>
     </div>
-    {loaded?<fieldset disabled={busy} className="max-h-64 space-y-2 overflow-y-auto rounded-lg border border-border p-3">
-     <legend className="text-sm font-semibold">Learners ({selected.length} selected)</legend>
-     {options.map(option=><label key={option.membershipId} className="flex min-h-10 items-center gap-2 text-sm">
+    {loaded?<fieldset disabled={busy} tabIndex={0} className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
+     <legend className="px-[var(--lms-space-2)] text-[13px] font-semibold leading-5">Learners ({selected.length} selected)</legend>
+     {options.map(option=><label key={option.membershipId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[13px] leading-5">
       <Checkbox className="size-4" checked={selected.includes(option.membershipId)}
        onChange={event=>setSelected(previous=>event.target.checked?
         [...previous,option.membershipId]:previous.filter(id=>id!==option.membershipId))}/>
-      <span>{option.displayName??option.email??"Learner"}</span>
+      <span className="min-w-0 break-words">{option.displayName??option.email??"Learner"}</span>
      </label>)}
      {!options.length?<p className="text-sm text-muted-foreground">No eligible learners available.</p>:null}
-    </fieldset>:<LoadingState label="Loading eligible learners…"/>}
-    <label className="grid gap-1 text-sm font-semibold">Role label (optional)
+    </fieldset>:searching?<LoadingState label="Loading eligible learners…"/>:error?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)
      <Input value={roleLabel} onChange={event=>setRoleLabel(event.target.value)} maxLength={120}/>
     </label>
-    <p className="text-sm text-body">Replace roster will keep selected learners and end the active membership of learners you unselect. Their earlier project work is retained. Class-managed teams must be changed through the class team workspace.</p>
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-    <div className="flex justify-end gap-2">
-     <Button type="button" variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
-     <Button type="button" disabled={busy||!loaded||!changed} onClick={()=>setConfirmOpen(true)}>
+    <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">Replace roster will keep selected learners and end the active membership of learners you unselect. Their earlier project work is retained. Class-managed teams must be changed through the class team workspace.</p>
+    {error&&loaded?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
+    <div className="flex flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+     <Button type="button" variant="secondary" className="w-full sm:w-auto" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
+     <Button type="button" className="w-full sm:w-auto" loading={busy} disabled={busy||!loaded||!changed} onClick={()=>setConfirmOpen(true)}>
       {busy?"Saving…":"Replace roster"}
      </Button>
     </div>
