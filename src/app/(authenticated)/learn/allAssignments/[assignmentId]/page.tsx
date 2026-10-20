@@ -31,8 +31,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
   if (resolution.kind === "choose") return <div className="min-w-0 space-y-6">
-    <PageBackLink href="/learn/allAssignments" label="All Assignments" />
-    <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
+    <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>} />
     <ul className="divide-y divide-border border-y border-border">
       {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
         <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
@@ -48,8 +47,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   if (!item) notFound();
   const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
   return <div className="space-y-6">
-    <PageBackLink href="/learn/allAssignments" label="All Assignments" />
-    <PageHeader title={item.title} />
+    <PageHeader title={item.title} actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>} />
     <div className="grid gap-4 md:grid-cols-2">
       <section className="border-b border-border py-4">
         <h2 className="text-xs font-semibold text-muted-foreground">Due</h2>
@@ -90,8 +88,8 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
           )
         ) : <AssignmentFileOpenControl key={item.submissionId}
           submissionId={item.submissionId} enabled={assignmentFilesRuntimeEnabled()} />}
-        {item.gradePublished ? <div className="border-t border-border pt-4">
-          <p className="flex flex-wrap items-center gap-2 font-semibold text-foreground"><StatusBadge tone="success">Published grade</StatusBadge>{learnerAssignmentPublishedGradeLabel(item.pointsAwarded,item.maxPoints)}</p>
+        {item.gradePublished ? <div className="border-t border-[var(--lms-canvas-border)] bg-surface py-[var(--lms-space-4)]">
+          <p className="font-semibold text-foreground">Published grade: {learnerAssignmentPublishedGradeLabel(item.pointsAwarded,item.maxPoints)}</p>
           <p className="mt-2 whitespace-pre-wrap break-words">{item.feedback || "No written feedback was provided."}</p>
         </div> : <p className="flex flex-wrap items-center gap-2"><StatusBadge tone="neutral">Not published</StatusBadge>Grade and feedback are not published yet.</p>}
       </div> : <div className="mt-3">

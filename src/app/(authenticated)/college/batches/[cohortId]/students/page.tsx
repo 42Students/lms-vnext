@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { notFound, redirect } from "next/navigation";
 import { and, eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";
@@ -74,13 +75,13 @@ export default async function CollegeBatchStudentsPage({
     <PageHeader title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
       actions={<PageBackLink href="/college/batches" label="Back to batches"/>} />
-    <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
-      <label className="grid min-w-0 w-full flex-1 gap-1 text-sm font-semibold text-body md:min-w-48">Name, roll or email
-        <Input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 min-w-0 md:min-h-9"
+    <FilterBar title="Filters"><form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
+      <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
+        <Input type="search" name="q" defaultValue={q} maxLength={100}
           />
       </label>
-      <label className="grid min-w-0 w-full gap-1 text-sm font-semibold text-body md:w-auto">Class/Section
-        <Select name="sectionId" defaultValue={sectionId ?? ""} className="min-h-11 min-w-0 md:min-h-9"
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
+        <Select name="sectionId" defaultValue={sectionId ?? ""}
           >
           <option value="">All classes</option>
           {classes.map(item => <option key={item.id} value={item.id}>
@@ -88,7 +89,7 @@ export default async function CollegeBatchStudentsPage({
         </Select>
       </label>
       <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
-    </form>
+    </form></FilterBar>
     <section aria-label="Students in this batch" className="min-w-0 space-y-3">
       <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
       <DataTable
