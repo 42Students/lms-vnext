@@ -41,7 +41,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
 
       <div
         aria-label="Season summary"
-        className="grid gap-3 min-[768px]:grid-cols-3"
+        className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3"
       >
         {[
           {
@@ -77,7 +77,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="m-0 text-lg font-semibold text-foreground">
+                  <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                     {season.name}
                   </h3>
                   <p className="mt-1 text-xs text-muted-foreground">
@@ -97,7 +97,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
                 </StatusBadge>
               </div>
 
-              <dl className="mt-4 grid gap-4 min-[768px]:grid-cols-2 lg:grid-cols-3">
+              <dl className="mt-4 grid gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
                 <div>
                   <dt className="text-xs font-semibold text-muted-foreground">
                     Start date
