@@ -684,7 +684,7 @@ export function SuperAdminHrAccounts({
         action="/admin/recruiters"
         className="flex flex-wrap items-end gap-3 print:hidden"
       >
-        <label className="grid min-w-52 flex-1 gap-1 text-[13px] font-semibold text-body">
+        <label className="grid min-w-52 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
           Search
           <Input
             className="min-h-11 md:min-h-9" name="q"
@@ -695,7 +695,7 @@ export function SuperAdminHrAccounts({
           />
         </label>
 
-        <label className="grid gap-1 text-[13px] font-semibold text-body">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
           Status
           <Select
             className="min-h-11 md:min-h-9" name="status"
@@ -708,7 +708,7 @@ export function SuperAdminHrAccounts({
           </Select>
         </label>
 
-        <label className="grid gap-1 text-[13px] font-semibold text-body">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
           Rows per page
           <Select
             className="min-h-11 md:min-h-9" name="pageSize"
