@@ -11,13 +11,13 @@ type Run = { when: string; students: number; created: number; failed: number };
 export function SuperAdminStudentImportHistory({ runs }: { runs: readonly Run[] }) {
   const [open, setOpen] = useState(false);
   return <>
-    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={() => setOpen(true)}>
+    <Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" onClick={() => setOpen(true)}>
       Import History
     </Button>
     <Dialog open={open} onOpenChange={setOpen} title="Bulk import history"
-      className="max-w-[48rem]" bodyClassName="min-h-0 overflow-hidden">
+      className="max-w-[48rem]" bodyClassName="min-w-0">
       <div role="region" aria-label="Bulk import history records" tabIndex={0}
-        className="min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] print:overflow-visible print:[mask-image:none]">
+        className="min-w-0 overflow-x-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] print:overflow-visible">
         <DataTable caption="Bulk import history records"
           rows={runs.map((run,index)=>({...run,index}))}
           getRowKey={run=>String(run.index)}
