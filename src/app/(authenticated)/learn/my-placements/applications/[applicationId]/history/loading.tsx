@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function LearnerApplicationSubpageLoading() {
@@ -8,7 +8,7 @@ export default function LearnerApplicationSubpageLoading() {
         title="Application status history"
         description="Checking your own persisted application."
       />
-      <LoadingState label="Loading application status history…" />
+      <GracefulPageLoading label="Loading application status history…" shape="directory" />
     </div>
   );
 }
