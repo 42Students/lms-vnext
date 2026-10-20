@@ -3,6 +3,7 @@ import {Select} from "@/components/ui/select";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Dropdown} from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 
 
 import { useMemo, useState, useTransition } from "react";
@@ -206,8 +207,8 @@ export function AnnouncementAdminWorkspace({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="space-y-3">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
+      <section className="min-w-0 space-y-[var(--lms-space-3)]">
         <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
         {items.length === 0 ? (
           <EmptyState title="No announcements" description={emptyMessage}/>
@@ -216,7 +217,7 @@ export function AnnouncementAdminWorkspace({
             const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;
             const safeLink = safeAnnouncementLink(item.message);
             return (
-              <article key={item.id} className="border-t border-border py-5">
+              <article key={item.id} className="min-w-0 border-t border-border py-[var(--lms-space-4)]">
                 <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
@@ -236,17 +237,15 @@ export function AnnouncementAdminWorkspace({
                       Sender: {item.senderType} · Version {item.version}
                     </p>
                   </div>
-                  <div className="flex min-w-0 shrink-0 flex-wrap items-center gap-2">
+                  <div className="flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
                     {!item.deletedAt ? (
                       <>
                         <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
                         <Dropdown trigger="More" label="Announcement actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
-                          <div className="grid min-w-0 gap-2">
-                        <Button role="menuitem" size="sm" variant="secondary" disabled={pending} onClick={() => mutate(item, "PIN")}>
-                          {item.isPinned ? "Unpin" : "Pin"}
-                        </Button>
-                        <Button role="menuitem" size="sm" variant="danger" disabled={pending} onClick={() => mutate(item, "DELETE")}>Delete</Button>
-                          </div>
+                          <Menu className="w-full min-w-0">
+                            <MenuItem disabled={pending} onClick={() => mutate(item, "PIN")}>{item.isPinned ? "Unpin" : "Pin"}</MenuItem>
+                            <MenuItem disabled={pending} onClick={() => mutate(item, "DELETE")}>Delete</MenuItem>
+                          </Menu>
                         </Dropdown>
                       </>
                     ) : (
@@ -271,11 +270,11 @@ export function AnnouncementAdminWorkspace({
         {targets.length === 0 ? (
           <p className="text-sm text-muted-foreground">Select a college scope before creating an announcement.</p>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Audience
               <Select
-                className="mt-1 min-h-11 w-full md:min-h-9"
+                className="min-h-11 w-full md:min-h-9"
                 value={target}
                 onChange={(event) => setTarget(event.target.value)}
               >
@@ -286,21 +285,21 @@ export function AnnouncementAdminWorkspace({
                 ))}
               </Select>
             </label>
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Title
-              <Input className="mt-1" value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
+              <Input className="w-full" value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
             </label>
-            <label className="md:col-span-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
               Message
-              <Textarea className="mt-1" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
+              <Textarea className="w-full" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
             </label>
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Schedule · local time
-              <Input className="mt-1" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
+              <Input className="w-full" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
             </label>
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Show until · local time
-              <Input className="mt-1" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
+              <Input className="w-full" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
             </label>
             <label className="flex min-h-11 items-center gap-3 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               <Checkbox checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
@@ -318,63 +317,10 @@ export function AnnouncementAdminWorkspace({
       </Disclosure>
 
 
-      <section className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
-        {items.length === 0 ? (
-          <EmptyState title="No announcements" description={emptyMessage}/>
-        ) : (
-          items.map((item) => {
-            const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;
-            const safeLink = safeAnnouncementLink(item.message);
-            return (
-              <article key={item.id} className="min-w-0 border-t border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-                <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
-                      <span>{item.receiverType} · {targetLabel}</span>
-                      {item.isPinned ? <span>· Pinned</span> : null}
-                      <span>· {item.visibilityState.charAt(0) + item.visibilityState.slice(1).toLowerCase()}</span>
-                    </div>
-                    <h3 className="mt-2 text-base font-semibold text-foreground">{item.title}</h3>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.message}</p>
-                    {item.buttonLabel&&item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?<a href={item.buttonUrl}
-                      className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-                      {item.buttonLabel} ↗
-                    </a>:null}
-                    {safeLink ? <a href={safeLink} className="mt-2 inline-flex min-h-11 items-center break-all text-sm font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open linked resource ↗</a> : null}
-                    {item.expiresAt ? <p className="mt-2 text-xs text-muted-foreground">Show until {new Date(item.expiresAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p> : null}
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      Sender: {item.senderType} · Version {item.version}
-                    </p>
-                  </div>
-                  <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] min-[768px]:shrink-0">
-                    {!item.deletedAt ? (
-                      <>
-                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
-                        <Dropdown trigger="More" label="Announcement actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
-                          <div className="grid min-w-0 gap-2">
-                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => mutate(item, "PIN")}>
-                          {item.isPinned ? "Unpin" : "Pin"}
-                        </Button>
-                        <Button size="sm" variant="danger" disabled={pending} onClick={() => mutate(item, "DELETE")}>Delete</Button>
-                          </div>
-                        </Dropdown>
-                      </>
-                    ) : (
-                      <Button size="sm" disabled={pending} onClick={() => mutate(item, "RESTORE")}>Restore</Button>
-                    )}
-                  </div>
-                </div>
-              </article>
-            );
-          })
-        )}
-      </section>
-
       {requiresPublicationConsent?<Dialog open={reviewPublish} onOpenChange={setReviewPublish} title="Confirm announcement publication"
        description="The selected recipients will see this notice when it becomes visible. This does not send external SMS or email."
-       footer={<><Button variant="secondary" disabled={pending} onClick={()=>setReviewPublish(false)}>Cancel</Button>
-         <Button disabled={pending} onClick={create}>{pending?"Publishing…":"Confirm and publish"}</Button></>}>
+       footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto"><Button variant="secondary" disabled={pending} onClick={()=>setReviewPublish(false)}>Cancel</Button>
+         <Button disabled={pending} onClick={create}>{pending?"Publishing…":"Confirm and publish"}</Button></div>}>
        <ul className="list-disc space-y-1 pl-5 text-sm text-body">
         {platformAnnouncementPublicationSummary({
           receiverType:splitTarget(target).receiverType,
@@ -390,10 +336,10 @@ export function AnnouncementAdminWorkspace({
         title="Edit announcement"
         description="Retargeting is re-authorized server-side against both the old and new tenant scope."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>Cancel</Button>
             <Button disabled={pending || !editing || (requiresPublicationConsent&&!editConsent)} onClick={saveEdit}>{pending ? "Saving…" : "Confirm reviewed changes"}</Button>
-          </>
+          </div>
         }
       >
         {editing ? (
@@ -402,12 +348,12 @@ export function AnnouncementAdminWorkspace({
               <Checkbox checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
             </label>:null}
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Audience
               <Select
                 name="target"
                 defaultValue={`${editing.receiverType}:${editing.receiverId}`}
-                className="mt-1 min-h-11 w-full md:min-h-9"
+                className="min-h-11 w-full md:min-h-9"
               >
                 {!targets.some(
                   (entry) =>
@@ -425,21 +371,21 @@ export function AnnouncementAdminWorkspace({
                 ))}
               </Select>
             </label>
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Title
-              <Input name="title" defaultValue={editing.title} maxLength={255} className="mt-1" />
+              <Input name="title" defaultValue={editing.title} maxLength={255} className="w-full" />
             </label>
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Message
-              <Textarea name="message" defaultValue={editing.message} maxLength={10000} className="mt-1" />
+              <Textarea name="message" defaultValue={editing.message} maxLength={10000} className="w-full" />
             </label>
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Schedule · local time
-              <Input name="scheduledAt" type="datetime-local" defaultValue={localInputValue(editing.scheduledAt)} className="mt-1" />
+              <Input name="scheduledAt" type="datetime-local" defaultValue={localInputValue(editing.scheduledAt)} className="w-full" />
             </label>
-            <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Show until · local time
-              <Input name="expiresAt" type="datetime-local" defaultValue={localInputValue(editing.expiresAt)} className="mt-1" />
+              <Input name="expiresAt" type="datetime-local" defaultValue={localInputValue(editing.expiresAt)} className="w-full" />
             </label>
             <label className="flex items-center gap-3 text-sm font-semibold text-body">
               <Checkbox name="isPinned" defaultChecked={editing.isPinned} />

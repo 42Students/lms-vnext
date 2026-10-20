@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
 import { CollegeClassCreate } from "@/components/academics/college-section-management";
+import { Disclosure } from "@/components/ui/disclosure";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -31,18 +32,24 @@ export default async function CollegeClassesPage({
     listCollegeClasses(context, parsed.data),
     listCollegeSectionOptions(context),
   ]);
-  return <CollegeStructureDirectory data={classes} prepend={<div className="min-w-0 space-y-4">
-    <div className="flex flex-wrap items-center gap-3">
-      <a href={classesExportHref(classes.query)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-        Export CSV
-      </a>
-      <span className="text-xs text-muted-foreground">Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.</span>
+  return <CollegeStructureDirectory data={classes} prepend={
+    <div className="min-w-0 space-y-[var(--lms-space-3)]">
+      <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
+      <Disclosure title="More class tools" contentClassName="pt-[var(--lms-space-3)]">
+        <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
+          <a href={classesExportHref(classes.query)}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
+            Export CSV
+          </a>
+          <Link href="/college/classes/recurring-preview"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
+            Preview recurring class schedule
+          </Link>
+        </div>
+        <p className="mt-[var(--lms-space-3)] max-w-[70ch] text-xs leading-5 text-muted-foreground">
+          Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.
+        </p>
+      </Disclosure>
     </div>
-    <Link href="/college/classes/recurring-preview"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-      Preview recurring class schedule
-    </Link>
-    <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
-    </div>} />;
+  } />;
 }

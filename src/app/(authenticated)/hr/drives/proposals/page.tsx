@@ -58,7 +58,7 @@ export default async function RecruiterDriveProposalHistory({
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
       page:data.page,sort:input.data.sort})}
-     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 min-[768px]:w-auto border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Export this page (summary CSV)
     </Link>:null}
    <p role="status" className="max-w-2xl text-sm text-body">

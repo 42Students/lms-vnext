@@ -73,7 +73,7 @@ export function TpoCompanyPersonEditor({
   }
 
   return (
-    <section className="space-y-4 border-b border-border pb-6">
+    <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
       <h2 className="text-base font-semibold text-foreground">Add or edit contact person</h2>
       <p className="text-sm text-body">
         Only contacts explicitly linked to this company appear. Email is required and
@@ -83,7 +83,7 @@ export function TpoCompanyPersonEditor({
       </p>
       <label className="block text-sm font-medium">Contact
         <Select value={selected} onChange={event => select(event.target.value)}
-          className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+          className="mt-1 block min-h-11 w-full md:min-h-9">
           <option value="NEW">Add new person</option>
           {contacts.filter(item => item.editable).map(item => (
             <option key={item.id} value={item.id}>{item.name}</option>
@@ -93,7 +93,7 @@ export function TpoCompanyPersonEditor({
       <div className="grid gap-3 md:grid-cols-2">
         <label className="text-sm font-medium">Name
           <Input value={name} maxLength={150} onChange={event => {setReviewing(false);setName(event.target.value);}}
-            className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+            className="mt-1 block min-h-11 w-full md:min-h-9" />
         </label>
         <label className="text-sm font-medium">Email
           <Input type="email" value={email} maxLength={150}
@@ -113,7 +113,7 @@ export function TpoCompanyPersonEditor({
       </Alert>:null}
       <Button variant="primary" type="button" onClick={() => void save()}
         disabled={busy || !name.trim() || !email.trim()}
-        className="min-h-9 px-4">
+        className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
         {busy ? "Saving..." : reviewing?"Confirm contact save":current ? "Review and save changes" : "Review and add contact"}
       </Button>
       {message ? <InlineNotice tone={message.startsWith("Network error")?"error":"success"} message={message}/> : null}

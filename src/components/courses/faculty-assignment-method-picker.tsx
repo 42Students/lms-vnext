@@ -5,7 +5,7 @@ import {ALL_ASSIGNMENT_METHODS,ASSIGNMENT_METHOD_LABELS,type AssignmentMethod}
 export function FacultyAssignmentMethodPicker({methods,onChange,disabled}:{
  methods:readonly AssignmentMethod[];onChange:(next:AssignmentMethod[])=>void;disabled:boolean;
 }){
- return <fieldset disabled={disabled} className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+ return <fieldset disabled={disabled} className="min-w-0 space-y-2 border-t border-border pt-4">
   <legend className="text-[13px] leading-4 font-semibold">Allowed submission methods</legend>
   <p className="text-xs text-muted-foreground">
    Choose how learners may submit. File and PDF uploads require the private storage service.

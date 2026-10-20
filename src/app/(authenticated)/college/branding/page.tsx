@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { getCollegeBranding } from "@/modules/colleges/branding-service";
 import { can } from "@/modules/permissions/policy";
-import {isSuperAdmin} from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
 
 export default async function CollegeBrandingPage() {
   const context = await getCurrentRequestContext();
@@ -23,18 +23,18 @@ export default async function CollegeBrandingPage() {
   });
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title="Branding"
         description="Logo, colours and support details shown on your college's sign-in page."
       />
-      <Alert tone="info">
+      <Alert tone="info" className="max-w-[80ch]">
         College contact details are managed in College profile. Sign-in branding, domains and logo changes are controlled by a Super Admin.
       </Alert>
       <section aria-label="College logo settings" className="min-w-0">
-      <CollegeLogoUploader collegeId={membership.collegeId} currentUrl={branding.uploadedLogoUrl} canEdit={canEdit}/>
+      <CollegeLogoUploader collegeId={membership.collegeId} currentUrl={branding.uploadedLogoUrl} canEdit={canEdit} />
       </section>
-      <section aria-label="Sign-in branding settings" className="min-w-0 border-t border-border pt-4">
+      <section aria-label="Sign-in branding settings" className="min-w-0">
       <CollegeBrandingForm
         key={membership.collegeId}
         collegeId={membership.collegeId}
