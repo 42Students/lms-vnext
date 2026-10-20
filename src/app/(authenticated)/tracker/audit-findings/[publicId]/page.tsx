@@ -51,15 +51,15 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
    candidates={candidates.items.filter(item=>item.id!==finding.id).map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
   <section className="border-b border-border pb-4">
    <h2 className="font-semibold">Audit event history</h2>
-   <ol className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=><li key={event.id} className="py-3">
+   {events.length?<ol className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=><li key={event.id} className="py-3">
     {event.action} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(event.createdAt)}
     {event.note?<p className="mt-1 whitespace-pre-wrap break-words">{event.note}</p>:null}
-   </li>)}</ol>
+   </li>)}</ol>:<p role="status" className="mt-3 border-y border-border py-5 text-sm text-muted-foreground">No audit events recorded.</p>}
   </section>
   <section className="border-b border-border pb-4">
    <h2 className="font-semibold">Fix commits</h2>
-   <ul className="mt-2 divide-y divide-border border-y border-border">{finding.fixCommits.map(commit=><li key={commit.repo+":"+commit.sha}
-    className="break-all py-3 text-sm text-body">{commit.repo} · {commit.sha}</li>)}</ul>
+   {finding.fixCommits.length?<ul className="mt-2 divide-y divide-border border-y border-border">{finding.fixCommits.map(commit=><li key={commit.repo+":"+commit.sha}
+    className="break-all py-3 text-sm text-body">{commit.repo} · {commit.sha}</li>)}</ul>:<p role="status" className="mt-2 border-y border-border py-5 text-sm text-muted-foreground">No fix commits recorded.</p>}
   </section>
  </div>;
 }
