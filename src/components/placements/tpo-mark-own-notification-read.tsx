@@ -25,15 +25,14 @@ export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId:
       setError(caught instanceof Error ? caught.message : "Could not mark notification read.");
     } finally { setBusy(false); }
   }
-  return <div>
-    <Button type="button" disabled={busy} onClick={() => setConfirmOpen(true)}
-      variant="secondary" className="min-h-11 md:min-h-9">
+  return <div className="min-w-0 space-y-2">
+    <Button type="button" disabled={busy} loading={busy} onClick={() => setConfirmOpen(true)}
+      variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto">
       {busy ? "Saving..." : "Mark read"}
     </Button>
     {error ? <InlineNotice tone="error" message={error}/> : null}
-    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+    <ConfirmDialog open={confirmOpen} onOpenChange={value => { if (!busy) setConfirmOpen(value); }}
       title="Mark placement notification as read?"
-      description="Mark this placement notification as read?"
       confirmLabel="Mark read" confirmVariant="primary"
       pending={busy} onConfirm={() => void markRead()}/>
   </div>;
