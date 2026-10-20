@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -105,7 +106,7 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
     className="ml-2">Cancel</Button>
   </div>:null}
-  {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+  {error?<Banner tone="error">{error}</Banner>:null}
   {dialog}
  </section>;
 }
