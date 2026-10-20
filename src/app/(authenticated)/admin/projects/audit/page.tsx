@@ -35,14 +35,11 @@ export default async function SuperAdminProjectAuditPage({
   if (!collegeId && !mayReadGlobalProjectAudit(context)) {
     return (
       <div className="min-w-0 space-y-6">
-        <ProjectAdminNav
-          basePath="/admin/projects"
-          active="audit"
-        />
         <PageHeader
           title="Project audit"
           description="Project audit requires an exact college safety scope."
         />
+        <ProjectAdminNav basePath="/admin/projects" active="audit" />
         <EmptyState
           title="Select a college scope"
           description="Choose a college in the Super Admin scope selector before reviewing project activity."
