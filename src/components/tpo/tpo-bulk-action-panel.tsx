@@ -43,6 +43,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [pastedRolls,setPastedRolls]=useState("");
  const [rollFeedback,setRollFeedback]=useState("");
  const [copyFeedback,setCopyFeedback]=useState("");
+ const [shareCopyFeedback,setShareCopyFeedback]=useState("");
  const [preview,setPreview]=useState<PreviewResponse|null>(null);
  const [plan,setPlan]=useState<PreviewPlan|null>(null);
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
@@ -123,6 +124,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     body:JSON.stringify({expiresInDays:shareDays,selectedApplicationIds:safeSelected}),
    });
    setCompanyShareUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
+   setShareCopyFeedback("");
    setShareConfirmOpen(false);
    router.refresh();
   }catch(error){setError(error instanceof Error?error.message:"Could not share selected candidates.");}
@@ -249,7 +251,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   {undoNotice?<p role="status" aria-live="polite" className="text-sm">{undoNotice}</p>:null}
   <div className="grid gap-3 md:grid-cols-2 print:hidden">
    <label className="min-w-0 text-sm font-semibold text-body">Action
-    <Select className="mt-1 w-full" value={action} disabled={busy}
+    <Select className="mt-1 min-h-11 w-full md:min-h-9" value={action} disabled={busy}
       onChange={e=>{setAction(e.target.value as Action);invalidate();}}
       >
      {options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
@@ -263,7 +265,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       <Button variant="secondary" type="button" disabled={busy} onClick={()=>{setNote("");invalidate();}}
        >Other</Button>
     </div>:null}
-    <Textarea className="mt-1 w-full" value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
+    <Textarea className="mt-1 w-full min-w-0" value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       />
    </label>:null}
@@ -309,7 +311,8 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
        onFocus={e=>e.currentTarget.select()} />
       <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
        onClick={()=>void navigator.clipboard.writeText(companyShareUrl).then(
-        ()=>setError("Link copied."),()=>setError("Select the link field and copy it manually."))}>Copy link</Button>
+        ()=>setShareCopyFeedback("Link copied."),()=>setShareCopyFeedback("Select the link field and copy it manually."))}>Copy link</Button>
+      {shareCopyFeedback?<p role="status" className="max-w-[65ch] break-words text-xs text-body">{shareCopyFeedback}</p>:null}
      </div>:null}
      {safeSelected.length>1?<Disclosure title={`Review selected applicants individually (${safeSelected.length})`} className="text-sm">
        <ScrollCue axis="y" label="Selected applicant review links" viewportClassName="max-h-40"><ol className="mt-2 space-y-2">
@@ -386,6 +389,6 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      </Button>
     </div>:null}
    </div>:null}
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<div className="min-w-0"><InlineNotice tone="error" message={error}/></div>:null}
  </section>;
 }
