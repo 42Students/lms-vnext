@@ -13,6 +13,29 @@ const toneClasses = {
   error: "bg-[var(--lms-error-subtle)] text-[var(--lms-error)]",
 } as const;
 
+/** Legacy palette for a learner attendance cell (unmarked stays neutral, never an absence). */
+export function attendanceStatusTone(status: string): NonNullable<StatusBadgeProps["tone"]> {
+  switch (status.toUpperCase()) {
+    case "PRESENT": return "success";
+    case "ABSENT": return "error";
+    case "LATE":
+    case "MEDICAL":
+    case "EXCUSED": return "warning";
+    case "SCHEDULED": return "info";
+    default: return "neutral";
+  }
+}
+
+/** Shared legacy status colours for the same application across detail and history. */
+export function applicationStatusTone(status: string): NonNullable<StatusBadgeProps["tone"]> {
+  const value = status.toUpperCase().replace(/[\s-]+/g, "_");
+  if (["SELECTED", "PLACED", "OFFERED", "ACCEPTED", "JOINED", "HIRED", "APPROVED", "SHORTLISTED"].includes(value)) return "success";
+  if (["REJECTED", "CANCELLED", "NOT_SELECTED", "DISQUALIFIED", "INELIGIBLE"].includes(value)) return "error";
+  if (["PENDING", "WAITLISTED", "UNDER_REVIEW", "WITHDRAWAL_REQUESTED", "DRAFT"].includes(value)) return "warning";
+  if (["SUBMITTED", "APPLIED", "REGISTERED", "IN_PROGRESS", "IN_REVIEW", "INTERVIEWING", "SCHEDULED"].includes(value)) return "info";
+  return "neutral";
+}
+
 export function StatusBadge({ children, tone = "neutral", className, ...props }: StatusBadgeProps) {
   const interactive = props.role === "button" || props.tabIndex !== undefined;
   const inactive = props["aria-disabled"] === true || props["aria-disabled"] === "true";
