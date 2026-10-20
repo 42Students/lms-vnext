@@ -44,7 +44,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-19.md: surface | probl
 - [x] `src/components/ui/date-input.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/ui/drawer.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/ui/searchable-select.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/verification/VerificationReviewDrawer.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/activity/notification-toolbar.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/verification/CollegeVerificationPanel.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/auth/connection-failure-notice.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
