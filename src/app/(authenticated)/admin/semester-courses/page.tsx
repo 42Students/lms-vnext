@@ -18,7 +18,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
   <PageHeader title="Semester–Course Mapping"/>
   <ErrorState title="Semester mapping access denied"
    description="Your account cannot access Super Admin semester mappings."
-   action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+   action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to dashboard</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
   <PageHeader title="Semester–Course Mapping" />
@@ -30,7 +30,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
   .then(value=>({ok:true as const,value}))
   .catch(()=>({ok:false as const}));
  const curriculum=curriculumResult.ok?curriculumResult.value:null;
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-5">
       <AcademicSetupSteps step={4} />
  {!curriculumResult.ok?<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
   Semester mapping editor is temporarily unavailable. The directory remains accessible.
