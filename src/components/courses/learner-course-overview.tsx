@@ -1,5 +1,6 @@
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { learnerUpcomingQuizEligible } from "@/modules/courses/learner-course-upcoming-quiz-model";
 import { learnerCourseHomeCompletion } from "@/modules/courses/learner-course-home-completion-model";
@@ -407,11 +408,10 @@ export function LearnerCourseOverview({
       </section>
 
       {!progressAvailability.hasDenominator ? (
-        <section role="status" aria-label="Course progress availability"
-          className="rounded-xl border border-warning bg-surface px-4 py-3 sm:px-5">
-          <h3 className="text-sm font-semibold text-foreground">Course progress not yet measurable</h3>
-          <p className="mt-1 text-sm text-body">{progressAvailability.detail}</p>
-        </section>
+        <Alert tone="warning" role="status" aria-label="Course progress availability"
+          title="Course progress not yet measurable">
+          {progressAvailability.detail}
+        </Alert>
       ) : null}
 
       <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-24 grid gap-4 border-t border-border pt-4 md:grid-cols-2 xl:grid-cols-4">
