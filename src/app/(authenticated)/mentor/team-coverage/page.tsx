@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -49,11 +50,13 @@ export default async function MentorTeamCoveragePage({
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const data = await getMentorTeamCoverage(context,parsed.data);
+  const hasFilters = Boolean(data.query.search || data.query.filter !== "ALL" || data.query.status !== "ALL" || data.query.assignment !== "ALL" || data.query.order !== "TITLE");
+  const hasAdvancedFilters = data.query.status !== "ALL" || data.query.assignment !== "ALL" || data.query.order !== "TITLE";
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
-      actions={<Link data-unskin="" href="/mentor/projects"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+      actions={<Link href="/mentor/projects"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Projects
       </Link>} />
     {!data.enabled
@@ -61,8 +64,8 @@ export default async function MentorTeamCoveragePage({
           Projects access is disabled for this membership. No team records were loaded.
         </section>
       : <>
-        <FilterBar title="Filters"><form role="search" aria-label="mentor team coverage filters" method="get" action="/mentor/team-coverage"
-          className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
+        <FilterBar title="Filters" activeCount={Number(hasFilters)}><form role="search" aria-label="mentor team coverage filters" method="get" action="/mentor/team-coverage"
+          className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
               className="min-h-11 md:min-h-9"
@@ -82,6 +85,7 @@ export default async function MentorTeamCoveragePage({
               <option value="SINGLE_MENTOR">Exactly one active Mentor</option>
             </Select>
           </label>
+          <Disclosure title="More team coverage filters" defaultOpen={hasAdvancedFilters} className="md:col-span-2" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project state
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
@@ -100,16 +104,19 @@ export default async function MentorTeamCoveragePage({
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </Select>
           </label>
-          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>
-          <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear</Link>
+          </Disclosure>
+          <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-2">
+            <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+            <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear</Link>
+          </div>
         </form></FilterBar>
-        <section aria-label="Registered team coverage summary" className="grid gap-3 min-[768px]:grid-cols-3">
+        <section aria-label="Registered team coverage summary" className="grid min-w-0 grid-cols-1 gap-x-6 gap-y-2 border-b border-border pb-3 sm:grid-cols-3">
            {([
              ["Current assigned projects",data.projectCount],
              ["Projects with no active learners",data.summary.zeroLearnerProjects],
              ["Projects without primary Mentor",data.summary.withoutPrimaryMentor],
            ] as const).map(([label,value])=>
-             <StatTile key={label} label={label} value={value} className="min-h-[104px]" />)}
+             <StatTile key={label} label={label} value={value} className="!min-h-0 !rounded-none !border-0 !bg-transparent !px-0 !py-2" />)}
          </section>
         <p className="text-sm text-body leading-[22px]">
           {data.total} matching project{data.total === 1 ? "" : "s"}
@@ -117,23 +124,25 @@ export default async function MentorTeamCoveragePage({
         {data.items.length === 0
           ? data.projectCount===0
             ? <EmptyState title="No currently assigned active projects"
-                description="There are no current non-archived project assignments for this mentor. No historical team or staffing status is inferred." />
+                description="There are no current non-archived project assignments for this mentor. No historical team or staffing status is inferred."
+                action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Projects</Link>} />
             : <EmptyState title="No projects match these filters"
-                description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments." />
+                description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments."
+                action={<Link href={hasFilters ? "/mentor/team-coverage" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">{hasFilters ? "Clear filters" : "Projects"}</Link>} />
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
             <article key={item.projectId} className="py-[var(--lms-space-3)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.title}</h2>
+                <h2 className="min-w-0 break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{item.title}</h2>
                 <span className="text-xs font-semibold text-body">{item.status}</span>
               </div>
-              <dl className="mt-4 grid gap-3 md:grid-cols-3">
+              <dl className="mt-3 grid grid-cols-1 gap-3 border-t border-border pt-3 sm:grid-cols-3">
                 <div>
                   <dt className="text-xs font-semibold text-muted-foreground">Active learners</dt>
-                  <dd className="mt-1 text-xl font-semibold tabular-nums">{item.learners}</dd>
+                  <dd className="mt-1 text-lg font-semibold tabular-nums">{item.learners}</dd>
                 </div>
                 <div>
                   <dt className="text-xs font-semibold text-muted-foreground">Active Mentors</dt>
-                  <dd className="mt-1 text-xl font-semibold tabular-nums">{item.mentors}</dd>
+                  <dd className="mt-1 text-lg font-semibold tabular-nums">{item.mentors}</dd>
                 </div>
                 <div>
                   <dt className="text-xs font-semibold text-muted-foreground">Active primary Mentor</dt>
@@ -157,7 +166,7 @@ export default async function MentorTeamCoveragePage({
                 </Link>
               </div>
             </article>)}</div>}
-        <Pagination label="Team coverage pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamCoverageHref({...data.query,page})}/>
+        {data.totalPages > 1 ? <Pagination label="Team coverage pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamCoverageHref({...data.query,page})}/> : null}
       </>}
     <p className="text-xs leading-5 text-muted-foreground">
       Counts include currently active project memberships backed by active college

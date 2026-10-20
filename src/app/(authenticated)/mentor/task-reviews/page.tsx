@@ -1,4 +1,5 @@
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -13,7 +14,7 @@ import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query
 import {
   mentorTaskReviewHref, mentorTaskReviewExportHref,
   mentorTaskReviewQuerySchema, mentorTaskReviewTargetHref,
-  mentorTaskReviewMobileLayout, mentorTaskReviewMobileFilters,
+  mentorTaskReviewMobileLayout,
 } from "@/modules/projects/mentor-task-review-model";
 
 type Params = {
@@ -46,16 +47,18 @@ export default async function MentorTaskReviewsPage({
   </section>;
 
   const data = await getMentorTaskReviews(context, parsed.data);
+  const hasFilters = Boolean(data.query.search || data.query.projectId || data.query.assignment !== "ALL" || data.query.priority !== "ALL" || data.query.age !== "ALL" || data.query.version !== undefined || data.query.order !== "NEWEST" || data.pageSize !== 20);
+  const hasAdvancedFilters = data.query.assignment !== "ALL" || data.query.priority !== "ALL" || data.query.age !== "ALL" || data.query.version !== undefined || data.query.order !== "NEWEST" || data.pageSize !== 20;
   return <div className={mentorTaskReviewMobileLayout}>
     <PageHeader eyebrow="Mentor · Projects" title="Task reviews"
       description="Submitted project tasks waiting for review across your assigned projects."
-      actions={<div className="flex flex-wrap items-center gap-3">
+      actions={<div className="flex flex-wrap items-center gap-x-4 gap-y-1">
         <Link href="/mentor/task-review-history"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Reviewed task history
         </Link>
         <Link href="/mentor/projects"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Projects
         </Link>
       </div>}
@@ -64,24 +67,25 @@ export default async function MentorTaskReviewsPage({
       Projects access is disabled for this membership. No task data was loaded.
     </section> : <>
       <form role="search" aria-label="mentor task reviews filters" method="get" action="/mentor/task-reviews"
-        className={mentorTaskReviewMobileFilters}>
+        className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Task or project
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9"
             placeholder="Search pending task reviews" />
         </label>
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+          <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full">
+            <option value="">All assigned projects</option>
+            {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
+          </Select>
+        </label>
+        <Disclosure title="More task review filters" defaultOpen={hasAdvancedFilters} className="md:col-span-2" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Page size
           <Select name="pageSize" defaultValue={String(data.pageSize)}
             className="min-h-11 md:min-h-9">
             <option value="20">20</option><option value="50">50</option>
-          </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
-          <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full">
-            <option value="">All assigned projects</option>
-            {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
           </Select>
         </label>
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
@@ -116,31 +120,28 @@ export default async function MentorTaskReviewsPage({
             <option value="OLDEST">Oldest first</option><option value="PRIORITY">Critical priority first</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
-          Filter
-        </Button>
-        <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">
-          Clear
-        </Link>
+        </Disclosure>
+        <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-2">
+          <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+          <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
+        </div>
       </form>
-      <div className="flex flex-wrap items-center gap-3 text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
+        <p className="text-sm text-body leading-[22px]">{data.total === 0 ? "No matching submissions" : "Showing " + data.first + "–" + data.last + " of " + data.total + " pending submissions"}</p>
+        <div className="flex flex-wrap items-center gap-3">
         <Link href={mentorTaskReviewExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 items-center font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Export pending task review metadata CSV (max 200)
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching task reviews.</span>:null}
+        </div>
       </div>
-      <p className="text-sm text-body leading-[22px]">
-        {data.total === 0
-          ? "No matching submissions"
-          : "Showing " + data.first + "–" + data.last +
-            " of " + data.total + " pending submissions"}
-      </p>
       {data.items.length === 0
         ? <EmptyState title="No pending task reviews"
             description={data.total > 0
               ? "This page is outside the matching result range. Return to page 1."
-              : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."} />
+              : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."}
+            action={data.total === 0 ? <Link href={hasFilters ? "/mentor/task-reviews" : "/mentor/task-review-history"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">{hasFilters ? "Clear filters" : "Reviewed task history"}</Link> : undefined} />
         : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
           <article key={item.id} className="py-[var(--lms-space-3)]">
             <p className="text-sm font-semibold text-foreground leading-[22px]">{item.taskTitle}</p>
@@ -162,15 +163,7 @@ export default async function MentorTaskReviewsPage({
           className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           Return to first matching page
         </Link>:null}
-      <nav aria-label="Task review pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-body leading-[22px]">Page {data.page} of {data.totalPages}</p>
-        <div className="flex gap-3">
-          {data.page > 1 && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]"
-            href={mentorTaskReviewHref({...data.query, page: data.page - 1})}>Previous</Link>}
-          {data.page < data.totalPages && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]"
-            href={mentorTaskReviewHref({...data.query, page: data.page + 1})}>Next</Link>}
-        </div>
-      </nav>
+      {data.totalPages > 1 ? <Pagination label="Task review pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page => mentorTaskReviewHref({...data.query,page})}/> : null}
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
       This view reads registered task submissions only.
