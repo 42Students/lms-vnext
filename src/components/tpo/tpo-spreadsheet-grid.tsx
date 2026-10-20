@@ -5,6 +5,8 @@ import {Button} from "@/components/ui/button";
 import {Dropdown} from "@/components/ui/dropdown";
 import { Table } from "@/components/ui/table";
 import { Disclosure } from "@/components/ui/disclosure";
+import { EmptyState } from "@/components/ui/empty-state";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from "react";
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
@@ -172,11 +174,14 @@ export function TpoSpreadsheetGrid<Row>({
     .catch(()=>setClipboardMessage("Clipboard unavailable. Use Export CSV instead."));
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
-  {!integratedWorkspace?<TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>:null}
-  {!integratedWorkspace&&rows.length>0?<Button variant="secondary" type="button" onClick={copyVisibleRows}>Copy visible TSV</Button>:null}
-  {sort?<Button variant="ghost" type="button" onClick={()=>setSort(null)} aria-label="Clear grid sorting">Clear grid sort</Button>:null}
-  {clipboardMessage?<p role="status" className="text-xs text-muted-foreground">{clipboardMessage}</p>:null}
-  {rows.length===0?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3">No matching records.</p>:<>
+  {!integratedWorkspace?<details className="min-w-0 border-b border-border pb-3">
+    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link md:min-h-9">Columns</summary>
+    <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
+   </details>:null}
+  {!integratedWorkspace&&rows.length>0?<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={copyVisibleRows}>Copy visible TSV</Button>:null}
+  {sort?<Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>setSort(null)} aria-label="Clear grid sorting">Clear grid sort</Button>:null}
+  {clipboardMessage?<InlineNotice tone={clipboardMessage.startsWith("Clipboard unavailable")?"error":"success"} message={clipboardMessage}/>:null}
+  {rows.length===0?<EmptyState title="No matching records."/>:<>
    <div className="hidden md:block" tabIndex={0} aria-label="TPO grid keyboard copy"
     onKeyDown={event=>{
      if(!(event.ctrlKey||event.metaKey)||event.key.toLowerCase()!=="c"||event.defaultPrevented)return;
@@ -194,7 +199,7 @@ export function TpoSpreadsheetGrid<Row>({
         : {key:col.key,direction:"asc"})}>
       {col.label}<span aria-hidden="true">{sort?.key===col.key?(sort.direction==="asc"?"↑":"↓"):"↕"}</span>
      </Button>:<span>{col.label}</span>}
-     {viewKey?<div className="mt-1 flex flex-wrap gap-2 text-xs font-normal">
+     {viewKey?<details className="mt-2 min-w-0 border-t border-border pt-1 text-xs font-normal"><summary className="min-h-9 cursor-pointer py-2 text-xs font-semibold text-link">Column tools</summary><div className="flex min-w-0 flex-wrap gap-2 pt-2">
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
        disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11 md:min-h-9 md:min-w-9">−</Button>
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.min(500,colWidth(col.key)+40)})}
@@ -202,7 +207,7 @@ export function TpoSpreadsheetGrid<Row>({
       <FilterChip type="button" onClick={()=>updateLayout(col.key,{pinned:!columnView[col.key]?.pinned})}
        aria-pressed={Boolean(columnView[col.key]?.pinned)} aria-label={(columnView[col.key]?.pinned?"Unpin ":"Pin ")+col.label}
        className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</FilterChip>
-     </div>:null}
+     </div></details>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
     <tbody>{orderedRows.map(row=><tr key={rowKey(row)} aria-selected={selection?.selected.includes(rowKey(row))||undefined}
      onClick={event=>{
@@ -211,11 +216,11 @@ export function TpoSpreadsheetGrid<Row>({
      }} className="cursor-default border-t border-border align-top aria-selected:bg-primary-subtle">{selection?<td className="sticky left-0 z-20 w-12 min-w-12 bg-surface px-2 py-2" ><Checkbox checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
    </Table></div>
    {selection?<label className="flex min-h-11 items-center gap-2 text-sm md:hidden"><Checkbox checked={fullySelected} indeterminate={partlySelected} onChange={event=>changePageSelection(event.target.checked)}/>Select all filtered students</label>:null}
-   <ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">{orderedRows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+   <ul aria-label="Current page TPO spreadsheet records" className="min-w-0 divide-y divide-border md:hidden">{orderedRows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-3 py-4">
     {selection?<label className="flex min-h-11 items-center gap-2 text-sm"><Checkbox checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/>Select student row</label>:null}
-    {(mobileActionsCollapsible?mobilePrimary:display).map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm" title={col.tooltip?.(row)}><strong>{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</span></div>)}
-    {mobileActionsCollapsible&&mobileExtra.length>0?<Disclosure title="More student details" className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
-      <dl className="mt-2 space-y-2">{mobileExtra.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2"><dt className="font-semibold">{col.label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]" title={col.tooltip?.(row)}>{displayTpoGridCell(col.read(row))}</dd></div>)}</dl>
+    {mobilePrimary.map(col=><div key={col.key} className="flex min-w-0 flex-col gap-1 text-sm sm:flex-row sm:justify-between sm:gap-3" title={col.tooltip?.(row)}><strong className="min-w-0 text-body">{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</span></div>)}
+    {mobileExtra.length>0?<Disclosure title="More student details" className="min-w-0 border-t border-border pt-2 text-sm" contentClassName="py-2">
+      <dl className="mt-2 space-y-2">{mobileExtra.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2"><dt className="font-semibold">{col.label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]" title={col.tooltip?.(row)}>{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="min-h-11 justify-start px-0 text-left text-link underline md:min-h-9" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</dd></div>)}</dl>
     </Disclosure>:null}
     {rowActions ? mobileActionsCollapsible ?
       <Dropdown mobileSheet align="end" label={"Actions for "+(openPrimary?.ariaLabel(row)??rowKey(row))} trigger="Actions">

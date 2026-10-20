@@ -204,9 +204,9 @@ export function GridWorkspace<Row>({
     onClick={()=>void copyRows()}><Image src="/assets/images/common/file-black.svg" alt="" aria-hidden="true" width={16} height={16}/>Copy {selectedPage.length?"selected":"visible"} rows</Button>
    {selection&&rollOf?<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" aria-expanded={pasteOpen}
     aria-controls={id+"-paste"} onClick={()=>setPasteOpen(value=>!value)}>Paste roll numbers</Button>:null}
-   {extraActions}
     </div>
    </details>
+   {extraActions}
   </div>
   {activeFilters.length?<div className="flex flex-wrap gap-2" aria-label="Active grid filters">
    {activeFilters.map(field=><FilterChip key={field.key} type="button" aria-pressed={true}
@@ -220,7 +220,7 @@ export function GridWorkspace<Row>({
    </FilterChip>)}
   </div>:null}
   {filterOpen&&filters.length?<div id={id+"-filters"}>
-   <TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet/>
+   <TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet autoOpenMobile onAutoClose={()=>setFilterOpen(false)}/>
   </div>:null}
   {viewsOpen&&savedViews?<div id={id+"-views"}>{savedViews}</div>:null}
   {columnsOpen?<div id={id+"-columns"}>

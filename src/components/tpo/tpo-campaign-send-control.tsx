@@ -34,26 +34,24 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
  if(status!=="DRAFT")return <p className="text-sm text-body">
   This campaign is {status.toLowerCase()}. Provider acceptance does not prove inbox delivery.
  </p>;
- return <section className="space-y-3 border-t border-border pt-4" aria-label="Campaign send">
+ return <section className="min-w-0 space-y-3 border-t border-border pt-4" aria-label="Campaign send">
   <h2 className="font-semibold">Send this campaign</h2>
   {!ready?<Alert tone="warning">
    Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.
    {" "}{CAMPAIGN_DELIVERY_UNAVAILABLE}
-  </Alert>:<p className="text-sm text-body">
+  </Alert>:<p className="max-w-prose break-words text-sm leading-6 text-body">
    This sends one email to each currently eligible recipient, excluding opt-outs, bounced and Not now leads.
    The system rechecks every contact before attempting delivery.
   </p>}
+  {ready&&recipients===0?<p role="status" className="text-sm text-muted-foreground">No eligible recipients are available for this campaign.</p>:null}
   <Button variant="primary" type="button" disabled={!ready||busy||recipients===0}
    className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
    onClick={()=>setConfirmOpen(true)}>{busy?"Sending…":"Send campaign"}</Button>
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
+  <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}} pending={busy}
     title={"Send to up to "+recipients+" selected recruiter emails?"}
     description="This cannot be undone." confirmLabel="Send campaign"
     onConfirm={()=>void sendCampaign()}/>
-  {outcome?<p role="status" className="text-sm">
-   {outcome.sent} accepted by provider · {outcome.failed} failed · {outcome.skipped} skipped.
-   Provider acceptance does not prove delivery.
-  </p>:null}
+  {outcome?<InlineNotice tone={outcome.failed?"info":"success"} message={outcome.sent+" accepted by provider · "+outcome.failed+" failed · "+outcome.skipped+" skipped. Provider acceptance does not prove delivery."}/>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
