@@ -67,13 +67,13 @@ export function ProjectReadinessOverrideForm({
   return (
     <>
       <form onSubmit={requestSave} className="space-y-3 border-b border-border pb-5">
-        <h2 className="text-lg font-semibold">{copy.overrideTitle}</h2>
+        <h2 className="text-lg font-semibold text-foreground">{copy.overrideTitle}</h2>
         {hasSubmission && state !== "CLEAR" ? (
           <p role="status" className="text-sm text-warning-text">
             Force Unlock/Block will have no effect here while a submission already exists.
           </p>
         ) : null}
-        <label className="block text-sm font-medium" htmlFor="project-readiness-override">{copy.stateLabel}</label>
+        <label className="block text-[13px] font-semibold text-body" htmlFor="project-readiness-override">{copy.stateLabel}</label>
         <Select
           id="project-readiness-override"
           className="w-full"
@@ -91,7 +91,7 @@ export function ProjectReadinessOverrideForm({
         </Select>
         {state !== "CLEAR" ? (
           <>
-            <label className="block text-sm font-medium" htmlFor="project-readiness-note">{copy.note}</label>
+            <label className="block text-[13px] font-semibold text-body" htmlFor="project-readiness-note">{copy.note}</label>
             <Textarea
               id="project-readiness-note"
               value={note}
@@ -105,7 +105,7 @@ export function ProjectReadinessOverrideForm({
             />
           </>
         ) : null}
-        <Button type="submit" variant="primary" disabled={pending} className="disabled:opacity-50">
+        <Button type="submit" variant="primary" disabled={pending} className="">
           {copy.submit}
         </Button>
         {feedback ? <p role="status" className="text-sm text-body">{feedback}</p> : null}

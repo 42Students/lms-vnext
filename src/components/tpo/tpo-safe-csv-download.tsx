@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useRef,useState} from "react";
 /** A failed export must never download HTML or JSON as if it were a CSV. */
 export function TpoSafeCsvDownload({href,filename,label}:{href:string;filename:string;label:string}){
@@ -39,6 +40,6 @@ export function TpoSafeCsvDownload({href,filename,label}:{href:string;filename:s
    className="min-h-11 md:min-h-9">
    {pending?"Preparing export…":label}
   </Button>
-  {error?<span role="alert" className="max-w-xs text-xs text-error">{error}</span>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </span>;
 }

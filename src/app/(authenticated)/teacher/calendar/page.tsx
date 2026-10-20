@@ -49,7 +49,7 @@ export default async function FacultyCalendarPage({
     <PageHeader title="Class Schedule" />
     <div className="flex justify-end">
       <Link href="/teacher/live-classes"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View live classes
       </Link>
     </div>
@@ -69,12 +69,12 @@ export default async function FacultyCalendarPage({
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className={monthStyles.toolbarForm}>
-        <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Month (IST)
           <Input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
              />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Teaching Section
           <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>

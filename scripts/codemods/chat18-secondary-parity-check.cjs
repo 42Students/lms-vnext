@@ -41,6 +41,11 @@ if(!same(exceptions.selector,["src/components/hr/recruiter-conversation-live-ref
  throw new Error("Unexpected overlay pattern; check whether it renders a custom overlay");
 const checks=[
  ["Recruiter 7-column board", "src/components/hr/recruiter-calendar-legacy.module.css", /\.board\[data-slot="calendar-grid"\]\s*\{[\s\S]*?grid-template-columns:\s*repeat\(7,\s*minmax\(150px,\s*1fr\)\);[\s\S]*?gap:\s*10px;/],
+ ["Audit detail back link belongs to the page head", "src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx", /<PageHeader title=\{finding\.title\}[\s\S]*?actions=\{<Link href="\/tracker\/audit-findings"/],
+ ["Reporter detail back link belongs to the page head", "src/app/(authenticated)/tracker/mine/[publicId]/page.tsx", /<PageHeader title=\{report\.publicId\}[\s\S]*?actions=\{<Link href="\/tracker\/mine"/],
+ ["Reporter new issue action belongs to the page head", "src/app/(authenticated)/tracker/mine/page.tsx", /<PageHeader title="My reports"[\s\S]*?actions=\{<Link href="\/tracker"/],
+ ["HR activity export sits in the legacy page head", "src/app/(authenticated)/hr/activity/page.tsx", /<PageHeader title="Hiring activity"[\s\S]*?actions=\{result\.status==="READY"\?<Link/],
+ ["HR notification actions sit in the legacy page head", "src/app/(authenticated)/hr/notifications/page.tsx", /<PageHeader title="Notifications"[\s\S]*?actions=\{<>/],
  ["Recruiter calendar occupied mobile days", "src/app/(authenticated)/hr/calendar/page.tsx", /min-\[861px\]:hidden/],
  ["Recruiter calendar seven columns at 861px", "src/app/(authenticated)/hr/calendar/page.tsx", /min-\[861px\]:grid/],
  ["Calendar current date blue", "src/components/hr/recruiter-calendar-legacy.module.css", /\.day\[data-today="true"\][\s\S]*?border-color:\s*#2f6fed;/],
@@ -54,4 +59,12 @@ const checks=[
 for(const [label,file,pattern] of checks){
  if(!pattern.test(read(file)))throw new Error(label+" source parity declaration missing");
 }
+// Strip CSS comments before checking computed display provenance. Source
+// comments may deliberately mention "display:grid" while the declaration
+// must remain owned by CalendarGrid so .hidden works at <=860px.
+const recruiterCss=read("src/components/hr/recruiter-calendar-legacy.module.css")
+  .replace(/\/\*[\s\S]*?\*\//g,"");
+const boardRule=recruiterCss.match(/\.board\[data-slot="calendar-grid"\]\s*\{([^}]+)\}/);
+if(!boardRule||/(?:^|;)\s*display\s*:/i.test(boardRule[1]))
+ throw new Error("Recruiter board overrides display and breaks mobile hidden state");
 process.stdout.write(JSON.stringify({counts,exceptions,checks:checks.map(c=>c[0]),scope:"source only — no browser/CI"},null,2)+"\n");

@@ -46,7 +46,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     {!data.enabled?<section role="status" className="border-b border-border pb-4">
       Projects are disabled. No private task, meeting or delivery evidence was loaded.
     </section>:<>
-      <section aria-label="Recorded workflow signals" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Recorded workflow signals" className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
         {metrics.map(([label,value])=>
           <article key={label} className="rounded-xl border border-border bg-surface p-4">
             <h2 className="text-xs font-semibold text-muted-foreground">{label}</h2>
@@ -62,22 +62,22 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       </p>
       <form method="get" action={base+"/risk-readiness"}
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">Show
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Show
           <Select name="focus" defaultValue={data.query.focus}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All evidence</option><option value="RISK">Attention only</option>
             <option value="READINESS">Readiness gaps only</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Task priority
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
           <Select name="taskPriority" defaultValue={data.query.taskPriority}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All task priorities</option>
             <option value="CRITICAL">Critical</option><option value="HIGH">High</option>
             <option value="MEDIUM">Medium</option><option value="LOW">Low</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href={base+"/risk-readiness"}
@@ -85,8 +85,8 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       </form>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
         description="No matching stored signals were found. This is not a certificate of project safety or completeness."/>:
-      <ol className="divide-y divide-border">{data.items.map(row=>
-        <li key={row.key} className="py-4">
+      <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
+        <li key={row.key} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="break-words font-semibold text-foreground">{row.title}</h2>
             <span className="text-xs font-semibold text-body">

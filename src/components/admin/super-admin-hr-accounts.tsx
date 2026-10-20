@@ -607,10 +607,11 @@ export function SuperAdminHrAccounts({
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (account) => (
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="flex flex-wrap justify-end gap-2 print:hidden">
           <Button
             variant="secondary"
             size="sm"
+            className="min-h-11 md:min-h-9"
             onClick={() => openDetail(account)}
           >
             View
@@ -618,15 +619,16 @@ export function SuperAdminHrAccounts({
           <Button
             variant="ghost"
             size="sm"
+            className="min-h-11 md:min-h-9"
             disabled={!account.accountManageable}
             title={!account.accountManageable?"This recruiter has grants outside the selected administrative scope":undefined}
             onClick={() => openEdit(account)}
           >
             Edit
           </Button>
-          {account.status!=="DISABLED"?<Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
+          {account.status!=="DISABLED"?<Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={pending||!account.accountManageable}
             onClick={()=>quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
-          <Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
+          <Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={pending||!account.accountManageable}
             onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
         </div>
       ),
@@ -652,7 +654,7 @@ export function SuperAdminHrAccounts({
         title="Recruiter accounts"
         description="Recruiter accounts: manage company links and college access. Account actions follow the current administrative scope."
         actions={
-          <Button onClick={openCreate}>
+          <Button className="min-h-11 md:min-h-9 print:hidden" onClick={openCreate}>
             Add recruiter
           </Button>
         }
@@ -661,13 +663,13 @@ export function SuperAdminHrAccounts({
       <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
       <section aria-label="Recruiter account lifecycle" className="space-y-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">Industry access</p>
-        <h2 className="text-base font-semibold">Recruiter account lifecycle</h2>
+        <h2 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h2>
         <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
       </section>
-      <h2 className="text-base font-semibold">Recruiter accounts</h2>
+      <h2 className="text-base font-semibold text-foreground">Recruiter accounts</h2>
       {!statusSummary&&<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
         Account totals are temporarily unavailable. The directory is still usable.
-        <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 sm:min-h-9">Retry totals</Button>
+        <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Retry totals</Button>
       </p>}
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
         ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled",statusSummary?.disabled],
@@ -680,12 +682,12 @@ export function SuperAdminHrAccounts({
         ].join("|")}
         method="get"
         action="/admin/recruiters"
-        className="flex flex-wrap items-end gap-3"
+        className="flex flex-wrap items-end gap-3 print:hidden"
       >
-        <label className="grid min-w-52 flex-1 gap-1 text-xs font-semibold text-body">
+        <label className="grid min-w-52 flex-1 gap-1 text-[13px] font-semibold text-body">
           Search
           <Input
-            name="q"
+            className="min-h-11 md:min-h-9" name="q"
             type="search"
             defaultValue={filters.q}
             maxLength={120}
@@ -693,10 +695,10 @@ export function SuperAdminHrAccounts({
           />
         </label>
 
-        <label className="grid gap-1 text-xs font-semibold text-body">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Status
           <Select
-            name="status"
+            className="min-h-11 md:min-h-9" name="status"
             defaultValue={filters.status}
           >
             <option value="">All statuses</option>
@@ -706,10 +708,10 @@ export function SuperAdminHrAccounts({
           </Select>
         </label>
 
-        <label className="grid gap-1 text-xs font-semibold text-body">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Rows per page
           <Select
-            name="pageSize"
+            className="min-h-11 md:min-h-9" name="pageSize"
             defaultValue={String(filters.pageSize)}
           >
             <option value="25">25</option>
@@ -718,11 +720,11 @@ export function SuperAdminHrAccounts({
           </Select>
         </label>
 
-        <Button type="submit">Apply filters</Button>
+        <Button type="submit" className="min-h-11 md:min-h-9">Apply filters</Button>
 
         <Link
           href="/admin/recruiters"
-          className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-muted"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Clear
         </Link>
@@ -767,12 +769,12 @@ export function SuperAdminHrAccounts({
                 filters.q || filters.status ? (
                   <Link
                     href="/admin/recruiters"
-                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body"
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                   >
                     Clear filters
                   </Link>
                 ) : (
-                  <Button onClick={openCreate}>
+                  <Button className="min-h-11 md:min-h-9 print:hidden" onClick={openCreate}>
                     Add recruiter
                   </Button>
                 )
@@ -780,7 +782,7 @@ export function SuperAdminHrAccounts({
             />
           ) : (
             <>
-              <div className="grid min-w-0 gap-3 lg:hidden" aria-label="Recruiter account cards">
+              <div className="grid min-w-0 gap-3 lg:hidden print:hidden" aria-label="Recruiter account cards">
                 {list.items.map((account) => (
                   <article key={account.userId} className="min-w-0 border-b border-border py-4 last:border-b-0">
                     <div className="flex flex-wrap items-start justify-between gap-2">
@@ -794,20 +796,20 @@ export function SuperAdminHrAccounts({
                       <div><dt className="text-xs text-muted-foreground">Company</dt><dd className="m-0 break-words">{account.companyName}</dd></div>
                       <div><dt className="text-xs text-muted-foreground">Colleges</dt><dd className="m-0 break-words">{account.grants.length ? account.grants.map((grant) => grant.collegeName).join(", ") : "No visible grants"}</dd></div>
                     </dl>
-                    <div className="mt-4 flex flex-wrap justify-end gap-2">
-                      <Button variant="secondary" size="sm" onClick={() => openDetail(account)}>View</Button>
-                      <Button variant="ghost" size="sm" disabled={!account.accountManageable}
+                    <div className="mt-4 flex flex-wrap justify-end gap-2 print:hidden">
+                      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" onClick={() => openDetail(account)}>View</Button>
+                      <Button variant="ghost" size="sm" className="min-h-11 md:min-h-9" disabled={!account.accountManageable}
            title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
            onClick={() => openEdit(account)}>Edit</Button>
-                      {account.status!=="DISABLED"?<Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
+                      {account.status!=="DISABLED"?<Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending||!account.accountManageable}
                         onClick={()=>quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
-                      <Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
+                      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending||!account.accountManageable}
                         onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
                     </div>
                   </article>
                 ))}
               </div>
-              <div className="hidden min-w-0 lg:block">
+              <div className="hidden min-w-0 lg:block print:block">
                 <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} rows={list.items} columns={columns} getRowKey={(account) => account.userId} />
               </div>
             </>
@@ -816,7 +818,7 @@ export function SuperAdminHrAccounts({
           {list.total > 0 ? (
             <nav
               aria-label="Recruiter account pages"
-              className="flex flex-wrap items-center justify-between gap-3 text-sm text-body"
+              className="flex flex-wrap items-center justify-between gap-3 text-sm text-body print:hidden"
             >
               <p className="m-0">
                 Showing {firstResult}–{lastResult}{" "}
@@ -831,12 +833,12 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page - 1,
                     )}
-                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold hover:bg-muted"
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
                   >
                     Previous
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 sm:min-h-9">
+                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 min-[768px]:min-h-9">
                     Previous
                   </span>
                 )}
@@ -847,12 +849,12 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page + 1,
                     )}
-                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold hover:bg-muted"
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
                   >
                     Next
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 sm:min-h-9">
+                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 min-[768px]:min-h-9">
                     Next
                   </span>
                 )}

@@ -20,6 +20,7 @@ export default async function CollegeSectionOperationsPage({
     <AcademicsSectionPage
       context={context}
       sectionId={sectionId}
+      eyebrow=""
       backHref="/college/academics"
     />
     </div>

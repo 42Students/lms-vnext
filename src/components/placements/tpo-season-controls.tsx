@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 type Season = {
   id: string;
@@ -24,6 +25,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
   const [edit, setEdit] = useState<Season | null>(null);
   const [form, setForm] = useState<FormValue>(empty);
   const [busy, setBusy] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const active = seasons.some((season) => season.status === "ACTIVE");
   function select(season: Season | null) {
@@ -39,11 +41,8 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
       setError("Complete the name, code and chronological date range.");
       return;
     }
-    if (!window.confirm(
-      edit
-        ? "Confirm change to this active season? Existing registration deadlines are not updated."
-        : "Create and activate this placement season? This does not open learner registration.",
-    )) return;
+    if (!reviewOpen) { setReviewOpen(true); return; }
+    setReviewOpen(false);
     setBusy(true);
     setError(null);
     try {
@@ -100,6 +99,13 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
         </Button>
       ))}
       {error ? <InlineNotice tone="error" message={error}/> : null}
+      <ConfirmDialog open={reviewOpen} onOpenChange={setReviewOpen}
+        title={edit ? "Confirm active season change?" : "Create and activate placement season?"}
+        description={edit
+          ? "Confirm change to this active season? Existing registration deadlines are not updated."
+          : "Create and activate this placement season? This does not open learner registration."}
+        confirmLabel={edit ? "Confirm edit" : "Activate season"}
+        confirmVariant="primary" pending={busy} onConfirm={() => void save()}/>
     </section>
   );
 }

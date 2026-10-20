@@ -19,22 +19,22 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
       const reason=row.reason??"Unavailable";(groups[reason]??=[]).push(row.label);
       return groups;
     },{}));
-  return <section aria-label="Bulk action preview" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 sm:p-4">
+  return <section aria-label="Bulk action preview" className="min-w-0 space-y-3 border-y border-border py-3 md:py-4">
     <h2 className="font-semibold">Review bulk action: {actionLabel}</h2>
     <p role="status" className="text-sm">{ready} ready; {rows.length - ready} skipped.</p>
-    <ul className="max-h-72 space-y-2 overflow-y-auto break-words text-sm">
-      {rows.map((row, i) => <li key={row.id + ":" + i} className="rounded-[var(--lms-control-radius)] border border-border p-2">
+    <ul className="max-h-72 min-w-0 divide-y divide-border overflow-y-auto overscroll-contain break-words text-sm">
+      {rows.map((row, i) => <li key={row.id + ":" + i} className="py-2">
         <strong>{row.label}</strong> — {row.status}{row.reason ? ": " + row.reason : ""}
       </li>)}
     </ul>
-    {groupedSkipped.length>0?<Disclosure title={`Left out: ${rows.length-ready} grouped by reason`} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+    {groupedSkipped.length>0?<Disclosure title={`Left out: ${rows.length-ready} grouped by reason`} className="border-t border-border py-3 text-sm">
       {groupedSkipped.map(([reason,names])=><div key={reason} className="mt-2">
        <h3 className="font-medium">{reason} ({names.length})</h3>
        <p className="break-words text-body">{names.join(", ")}</p>
       </div>)}
     </Disclosure>:null}
     <Button type="button" disabled={busy || ready === 0} onClick={onConfirm}
-      className="w-full sm:w-auto">
+      className="min-h-11 w-full md:min-h-9 md:w-auto">
       {busy ? "Applying…" : "Confirm " + actionLabel}
     </Button>
     {outcomes.length > 0 ? <div aria-live="polite" className="text-sm">

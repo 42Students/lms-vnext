@@ -150,15 +150,15 @@ export default async function SuperAdminPeoplePage({
         </div>}
       />
       <form method="get" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[1366px]:grid-cols-4">
-       <label className="grid gap-1 text-sm font-semibold">Search contacts
+       <label className="grid gap-1 text-[13px] font-semibold leading-4">Search contacts
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 w-full md:min-h-9"/>
        </label>
-       <label className="grid gap-1 text-sm font-semibold">Role
+       <label className="grid gap-1 text-[13px] font-semibold leading-4">Role
         <Select name="role" defaultValue={role} className="min-h-11 w-full md:min-h-9">
           {["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
        </label>
-       <label className="grid gap-1 text-sm font-semibold">Status
+       <label className="grid gap-1 text-[13px] font-semibold leading-4">Status
         <Select name="status" defaultValue={status} className="min-h-11 w-full md:min-h-9">
           {["ALL","ACTIVE","SUSPENDED","ENDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
@@ -171,7 +171,7 @@ export default async function SuperAdminPeoplePage({
       <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Browse platform users & roles →
       </Link>
-      <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+      <DataTable empty={<EmptyState title="No records to show." />}
         columns={columns}
         rows={people.items}
         getRowKey={(person) => person.membership.id}

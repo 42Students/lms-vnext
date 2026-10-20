@@ -130,7 +130,7 @@ export function DepartmentActions({
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 print:hidden">
       <Button
         variant="secondary"
         size="sm"
@@ -185,6 +185,7 @@ export function DepartmentActions({
           {DEPARTMENT_COPY.nameLabel}
         </label>
         <Input
+          className="min-h-11 md:min-h-9"
           id={`department-name-${departmentId}`}
           value={nextName}
           onChange={(event) =>
@@ -225,7 +226,7 @@ export function DepartmentActions({
           </>
         }
       >
-        {archiveError ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-error">{archiveError} <Button variant="ghost" type="button" disabled={pending} onClick={archive} >Retry delete</Button></p> : null}
+        {archiveError ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-error">{archiveError} <Button variant="ghost" type="button" className="min-h-11 md:min-h-9" disabled={pending} onClick={archive} >Retry delete</Button></p> : null}
         <p className="m-0 text-sm text-body">
           Existing dependencies are checked
           server-side immediately before the

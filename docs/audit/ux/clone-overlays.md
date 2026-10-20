@@ -773,3 +773,64 @@ Per-file **F2 source** passes for action menus. Evidence uses old-LMS SCSS value
 ### Cross-lane main reconciliation checkpoint
 
 While preparing the current main integration, reviewed actual branch-vs-main source diffs instead of blindly copying lane blobs. Preserved a newer main-only `FilterChip` import/usage and `sortDirection` metadata in `src/components/placements/report-interactive-table.tsx` while reapplying only the 44px disabled column-chooser rows. Preserved a newer main-only `Mark all read` button size class in `src/components/hr/hr-recruiter-bell.tsx` while reapplying dismissal and hover states. Confirmed other lane paths' main-only changed lines were the superseded styling/handling under this lane, not newly introduced content. **No TypeScript/build/runtime commands were executed.** F1/F2 remain [ ] for the outstanding checkout grep and responsive browser checks.
+
+
+## Chat-16 responsive recruiter and spreadsheet action sheets — 2026-10-20
+
+### Value-by-value table (this turn; F2 source stage, not visual approval)
+
+| Surface/property/state | Old LMS value/source | vNext value/source | Comparison |
+| --- | --- | --- | --- |
+| Mobile menu breakpoint | `docs/design/legacy-styles/components___notification-drawer.scss:23-24`: max **767px** for mobile drawer | `src/components/ui/dropdown.tsx:31-41,125-127`, `legacy-overlays.css:127-161`: `mobileSheet` fixed-bottom through **767px**, anchored menu ≥768 | Breakpoint matches related old overlay |
+| Mobile full-width drawer/sheet | `components___notification-drawer.scss:399-405`: panel width **100%** and negative horizontal shadow | `legacy-overlays.css:139-145`: fixed mobile sheet width **100%**, radius top12px; uses generic dropdown shadow instead of old drawer shadow | Full-width match; **shadow not exact drawer variant** |
+| Backdrop overlay | `components___antddesign.scss:143-145`: `rgba(30,54,63,.1)` | `legacy-overlays.css:131-137`: same on mobileSheet pseudo-scrim | Numeric match |
+| Backdrop and scroll limit | Related old notification scroll body `components___notification-drawer.scss:428-473`: flex scroll with safe bottom inset; height of the entire panel | `dropdown.tsx:125-127`: `max-height:70dvh` / safe-bottom; mobile row-action sheets scroll | Source safety present; **70dvh legacy equivalence not found** |
+| Mobile close hit area | `components___notification-drawer.scss:21-22,421-431`: minimum **44×44px** | `src/components/tpo/recruiter-leads-workspace.tsx:1102-1109`, `tpo-spreadsheet-grid.tsx:219-232`: explicit Close actions `min-h-11` and summary focus on close | 44px numeric match; close wording is vNext |
+| Action trigger hover | `components___notification-drawer.scss:18-19,41-49`: `rgba(0,0,0,.035)`, active `.06`, **200ms ease** | `src/components/tpo/recruiter-inline-stage.tsx:30-36`, `recruiter-inline-owner.tsx:46-51`: `min-h-11`, neutral hover/active, 200ms ease; busy/async state disabled | Numeric match with related old trigger; no recruiter-specific old row stylesheet located |
+| Editable stage/owner touch target | Old notification minimum **44px**, `notification-drawer.scss:21-22` | Stage and Owner editor buttons `min-h-11`, expanded select and action buttons retain pre-existing min44 at phone widths | Mobile numeric match, desktop selectors remain unchanged |
+| Action sheet nesting | Old mobile notification drawer uses labeled content and separate body/footer `notification-drawer.scss:145-173,317-340` | Recruiter card `role=group` named per lead, sheet content scrolls, Close actions focus summary; spreadsheet named per row | Group labels and close behaviour verified statically, **no exact container composition parity** |
+| Disabled/busy | Old SCSS has no recruiter stage/owner POST pending color contract | Stage button disabled while `busy`; Owner button disabled while `loading`; existing error role=alert and loading role=status preserved | Functional state reviewed, exact visual parity open |
+| Focus ring | `notification-drawer.scss:201-205`: 1px accent, offset1 for notification item | Buttons use shared `Button` focus-visible styling; Close restores summary focus; actual ring thickness differs by variant | **Not exact old notification row focus value** |
+| Expanded row label overflow | Legacy mobile `notification-drawer.scss:399-475`: 16px gutters, row content flex-min0, overflow scroll | New recruiter sheet group `min-w-0 break-words [overflow-wrap:anywhere]`; grid row actions same; long lead names not forced outside popup | Source containment, runtime unverified |
+
+### Source-responsive matrix (not screenshots)
+
+| Viewport | Recruiter lead action | Spreadsheet row action | Stage/owner editing |
+| --- | --- | --- | --- |
+| 280px/375px | `Dropdown mobileSheet` occupies full width, max70dvh; 44px Close; word wrapping and accessible lead-specific group label | Same bottom sheet, label names actual row, 44px Close and focus restored to summary | Buttons minimum44, expanded form controls min44 |
+| 640px/767px | Still mobile fixed bottom (not prematurely anchored at640), safe-area bottom | Same; rows render in card view at `md:hidden` | Mobile touch sizes unchanged |
+| 768px/1024px | Anchored popup, max72 (288px) by shared `md:` branch; trigger 44px for mobileSheet | Card rows disappear in favour of desktop table; no new duplicate row action button | Editor button remains44, expanded select/action controls desktop36 where explicitly set |
+| Keyboard/focus | Native summary opens; Escape closes own menu; Close actions restores summary focus; nested search/Select retains input arrows | Same, row-specific accessible label | Busy loading prevents extra stage/owner toggle, status/error remain available |
+| Empty/error | Not now requires reason; inline error role=alert, owner lookup failures kept | No row actions renders without supplied `rowActions`; no fake empty state | Original async errors untouched, source check only |
+
+### Coverage check — bounded connector source, **not checkout-wide git grep**
+
+Direct GitHub branch fetch inspected all of `src/components/tpo/recruiter-leads-workspace.tsx` (1212 lines before/after action edits), `recruiter-inline-stage.tsx`, `recruiter-inline-owner.tsx` and `tpo-spreadsheet-grid.tsx`; verified the shared Dropdown imports and paired opening/closing tags. Earlier GitHub indexed `<Dropdown` query enumerated 12 default-branch candidates, including recruiter and spreadsheet screens. This is **not** an exhaustive live checkout search, so `git grep -nE 'fixed inset-0|role="dialog"|<dialog([[:space:]>])' -- src` and broad overlay search remain required.
+
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx` — separate stage/owner actions have a named group, wrapped text, and explicit close with focus restore; action content/route unchanged.
+- [x] `src/components/tpo/recruiter-inline-stage.tsx` — 44px edit trigger, disabled busy, hover/pressed transition; named expanded editor.
+- [x] `src/components/tpo/recruiter-inline-owner.tsx` — 44px edit trigger, disabled loading, hover/pressed transition; named expanded editor.
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx` — mobile row action sheet now labeled by row and explicitly closes with focus restore; desktop table is unchanged.
+
+**F1 [ ], F2 [ ] remain unticked** under STRICT TICK RULE. Numeric source evidence does not replace actual responsive interaction/scroll snapshots; old sheet exit/timing and full page consumer inventory still unresolved.
+
+**Next file:** `src/components/placements/placement-drive-workspace.tsx` — remaining nested More dropdown behaviour on desktop/mobile (then verify other indexed consumers).
+
+
+## Chat-16 modal launchers inside shared action menus — 2026-10-20
+
+| Interaction/visual state | Old LMS source | Updated vNext source | Proof / limitation |
+| --- | --- | --- | --- |
+| Quick menu follow-up row | `docs/design/legacy-styles/components___notification-drawer.scss:18-22,41-49`: minimum **44px**, hover `rgba(0,0,0,.035)`, active `.06`, transition **200ms ease** | `src/components/tpo/tpo-new-followup-modal.tsx:107-118`: launcher **44px** on phone, 200ms neutral hover/pressed, preserves desktop 36px size | Matches comparable trigger numbers; exact old TPO +New item visual source not found |
+| Follow-up launcher opens nested modal | Old dropdown + modal design allows separate foreground dialog but SCSS does not specify click sequence | `tpo-new-followup-modal.tsx:105-112`: close nearest native `<details>` first, return focus to its summary, then open shared `Dialog` | Source focus/ownership corrected; browser verification missing |
+| Run-it-again nested action row | Same old notification minimum 44px and hover states | `src/components/placements/tpo-drive-clone-action.tsx:35-47`: 44px row with neutral hover/active and 200ms transition | Source numeric match to related old menu-action treatment |
+| Clone launcher opens ConfirmDialog | Old `components___antddesign.scss:899-906`: confirm content 15px 15px 5px, confirm buttons margin21px | `tpo-drive-clone-action.tsx:36-54` closes only enclosing dropdown before shared `ConfirmDialog`; shared `confirm-dialog.tsx` uses dedicated legacy confirm CSS `legacy-overlays.css:394-414` | Numeric modal skin matched where cited; foreground focus restoration browser-unverified |
+| Loading/disabled | Old menu stylesheet does not specify async guard policy | Follow-up launcher blocked during loading/saving; clone launcher disabled when pending; original async/error messages preserved | vNext state retained, old visual exact match unavailable |
+
+**Responsive source matrix:** At 280/375/640/767px, launchers remain min44px; follow-up primary popup is the shared phone native Dialog (viewport-32 width, 48px vertical safe margin), clone confirmation uses the same shared native dialog; any parent `mobileSheet` dropdown closes first. At 768/1024px, follow-up trigger min36px while clone row remains min44px; desktop parent dropdown closes before modal opening and summary receives focus. This is source code-path proof only, not real keyboard or screenshot proof.
+
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx` — launcher numeric style and dropdown-to-dialog handoff, without touching POST/confirm/draft routing logic.
+- [x] `src/components/placements/tpo-drive-clone-action.tsx` — clone CTA numeric style and dropdown-to-confirm modal focus handoff, no change to draft API.
+- [ ] F1/F2 categories: exhaustive checkout grep, render/dismiss/focus runtime, and exact legacy popup exit still missing.
+
+**Next file:** `src/components/placements/placement-drive-workspace.tsx`, to check nested More menu on mobile action-sheet scroll, followed by `src/components/tpo/recruiter-leads-workspace.tsx` check for nested menu focus.
