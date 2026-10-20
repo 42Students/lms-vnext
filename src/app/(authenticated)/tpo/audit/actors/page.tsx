@@ -92,14 +92,14 @@ export default async function TpoActorAuditPage({
           ["entityType", "Entity type", "placement_offer"],
         ] as const).map(([name, label, placeholder]) => <label key={name}
           className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-        {label}
-        <Input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
+          {label}
+          <Input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
           className="min-h-11 md:min-h-9 w-full"/>
         </label>)}
         {(["from", "to"] as const).map((name) => <label key={name}
-        className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-        {name === "from" ? "From (IST)" : "Through (IST)"}
-        <DateInput mode="date" name={name} defaultValue={parsed.data[name] ?? ""}
+          className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          {name === "from" ? "From (IST)" : "Through (IST)"}
+          <DateInput mode="date" name={name} defaultValue={parsed.data[name] ?? ""}
           className="min-h-11 md:min-h-9 w-full"/>
         </label>)}
       </div>
@@ -114,14 +114,14 @@ export default async function TpoActorAuditPage({
           </label>
           <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Sort date
-       <Select name="sort" defaultValue={parsed.data.sort}
+            <Select name="sort" defaultValue={parsed.data.sort}
         className="min-h-11 md:min-h-9 w-full">
         <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
        </Select>
       </label>
           <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
-        <Select name="pageSize" defaultValue={String(parsed.data.pageSize)}
+            <Select name="pageSize" defaultValue={String(parsed.data.pageSize)}
           className="min-h-11 md:min-h-9 w-full">
           {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
         </Select>
