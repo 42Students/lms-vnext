@@ -28,7 +28,7 @@ export function Select({ className, children, error = false, ...props }: SelectP
         "outline-none shadow-none transition-[border-color,box-shadow,background-color] duration-200 ease-[var(--lms-motion-ease)]",
         "enabled:hover:border-[var(--lms-field-hover-border)]",
         "focus-visible:border-[var(--lms-primary)] focus-visible:shadow-[var(--lms-control-shadow)]",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
+        "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
         "disabled:cursor-not-allowed disabled:select-none disabled:opacity-100",
         "disabled:border-[var(--lms-canvas-border)] disabled:bg-[var(--lms-neutral-50)] disabled:text-[var(--lms-neutral-400)]",
         "aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[rgba(239,68,68,0.06)]",
