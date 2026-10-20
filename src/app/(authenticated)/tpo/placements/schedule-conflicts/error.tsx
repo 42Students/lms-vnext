@@ -5,8 +5,8 @@ import { ErrorState } from "@/components/ui/error-state";
 
 export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return <ErrorState
-    title="\n        Couldn't load round schedule conflicts\n      "
-    description="Data could not be retrieved; no zero count or conflict-free conclusion\n        can be inferred from this failure."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    title="Couldn't load round schedule conflicts"
+    description="Data could not be retrieved; no zero count or conflict-free conclusion can be inferred from this failure."
+    action={<Button type="button" onClick={reset} className="w-full sm:w-auto">Retry</Button>}
   />;
 }
