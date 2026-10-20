@@ -90,7 +90,7 @@ export function ReportFilters({
         </Button>
       </form>
 
-      <form action={path} method="get" className="flex flex-wrap items-end gap-3">
+      <form action={path} method="get" className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         {workspace.selectedSeasonId ? (
           <Input
             type="hidden"
@@ -114,7 +114,7 @@ export function ReportFilters({
             ))}
           </Select>
         </label>
-        <Button variant="secondary" className="min-h-11 md:min-h-9"
+        <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
           type="submit"
           disabled={workspace.noSeason}
           

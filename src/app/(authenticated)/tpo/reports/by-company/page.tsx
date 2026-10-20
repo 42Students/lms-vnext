@@ -52,7 +52,7 @@ export default async function TpoByCompanyReportPage({
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/by-company"/>;
   const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{}),...(first(query.outcome)?{outcome:first(query.outcome)}:{})});
-  if(!viewQuery.success)return <section className="space-y-3"><PageHeader title="Invalid company report filters" /><Alert tone="error"><p className="mt-2 text-sm text-body">Check search length and page number.</p></Alert></section>;
+  if(!viewQuery.success)return <section className="space-y-3"><PageHeader title="Invalid company report filters" /><Alert tone="error"><p className="mt-2 text-sm text-body">Check search length and page number.</p><Link href="/tpo/reports/by-company" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Clear filters</Link></Alert></section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
     seasonId: first(query.seasonId) || undefined,
