@@ -134,7 +134,7 @@ export default async function ElectiveRoster({
     <section className="space-y-3 border-t border-border pt-4">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Faculty</h2>
       <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
-      {assignments.length === 0 && <EmptyState title="No faculty assigned" description="No faculty assigned."/>}
+      {assignments.length === 0 && <EmptyState title="No faculty assigned" description="Assign an eligible faculty member to this elective offering."/>}
       {assignments.map(item => <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
         <span>{item.displayName ?? item.membershipId} · {item.role}</span>
         {!archived && <form action={changeFaculty}>
@@ -167,7 +167,7 @@ export default async function ElectiveRoster({
         caption="Elective offering roster"
         rows={detail.members}
         getRowKey={member => member.membershipId}
-        empty={<EmptyState title="No students allocated" description="No students allocated."/>}
+        empty={<EmptyState title="No students allocated" description="No students have been allocated to this elective offering."/>}
         columns={[
           { key: "student", header: "Student", mobilePriority: "primary",
             cell: member => member.displayName ?? member.membershipId },

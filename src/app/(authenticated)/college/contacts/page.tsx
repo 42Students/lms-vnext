@@ -203,10 +203,10 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <section aria-label="Contacts" className="space-y-3">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
-   {results.items.length===0?<EmptyState title="No matching contacts" description="No matching contacts in this college."
+   {results.items.length===0?<EmptyState title="No matching contacts" description="No contacts in this college match the selected filters."
       action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters in this tab</Link>}/>:
     <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
-      caption="Contacts" empty={<EmptyState title="No matching contacts" description="No matching contacts in this college."
+      caption="Contacts" empty={<EmptyState title="No matching contacts" description="No contacts in this college match the selected filters."
         action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters in this tab</Link>}/>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
       columns={[
         {key:"name",header:"Name",mobileLabel:"Name",mobilePriority:"primary" as const,
