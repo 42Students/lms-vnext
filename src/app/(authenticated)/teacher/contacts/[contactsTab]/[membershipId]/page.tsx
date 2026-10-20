@@ -3,6 +3,7 @@ import {notFound} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Badge } from "@/components/ui/badge";
 import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-service";
 import { facultyContactRoleLabel,facultyContactDetailParamsSchema,facultyContactDetailHidden,facultyContactDirectoryQuery } from "@/modules/courses/faculty-contact-detail-model";
 
@@ -30,7 +31,7 @@ export default async function FacultyContactDetailPage({
     <PageHeader eyebrow="Faculty · Contacts" title={name}
       description="Active college directory contact · Read-only"
       actions={<Link href={back}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Back to Contacts
       </Link>} />
     <section className="border-b border-border pb-5">
@@ -45,9 +46,7 @@ export default async function FacultyContactDetailPage({
         ? <EmptyState title="No active roles recorded"
             description="This membership currently has no registered college role." />
         : <ul className="mt-4 flex flex-wrap gap-2">{contact.roles.map(role =>
-          <li key={role} className="rounded-full border border-border bg-surface-subtle px-3 py-2 text-sm text-body">
-            {facultyContactRoleLabel(role)}
-          </li>)}</ul>}
+          <li key={role} className="list-none"><Badge tone="neutral">{facultyContactRoleLabel(role)}</Badge></li>)}</ul>}
     </section>
     <p className="text-xs leading-5 text-muted-foreground">
       Only the public name, role and department are shown. Private contact details, profile sections,
