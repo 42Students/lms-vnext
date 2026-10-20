@@ -525,7 +525,7 @@ export function LearnerApplicationsBrowse({
           :"This changes the official status of your submitted application. This action cannot be undone here."}
         footer={
           <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
-            <Button variant="secondary" disabled={withdrawPending}
+            <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={withdrawPending}
               onClick={() => { setWithdrawTarget(null); setWithdrawError(null); }}>
               Keep application
             </Button>
