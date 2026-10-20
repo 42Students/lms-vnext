@@ -37,11 +37,13 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
     });
   }
   const field="min-h-11 md:min-h-9 min-w-0";
-  return <section className="border-t border-border pt-4" aria-label="Book lecture hall">
-    <h2 className="font-semibold text-foreground">Book class session</h2>
+  return <section className="min-w-0 border-t border-border pt-3" aria-label="Book lecture hall">
+    <details className="min-w-0">
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Book class session</summary>
+      <div className="min-w-0 space-y-3 pt-3">
     <p className="mt-2 text-sm text-body">Dates and times use IST. A booking is only confirmed after rechecking persisted overlaps.</p>
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
-      <form onSubmit={submit} className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+      <form onSubmit={submit} className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
           <Select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
             <option value="">Select class</option>
@@ -60,13 +62,14 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
           <DateInput className={field} required mode="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ends (IST)
           <DateInput className={field} required mode="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
-        <div className="sm:col-span-2 lg:col-span-3">
-          <Button variant="primary" type="submit" disabled={pending||!sectionId||!title.trim()}
-            >
+        <div className="md:col-span-2 min-[992px]:col-span-3">
+          <Button variant="primary" type="submit" loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!sectionId||!title.trim()}>
             {pending?"Booking…":"Confirm booking"}</Button>
         </div>
       </form>}
     {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
     {notice?<p role="status" className="mt-2 text-sm text-success">{notice}</p>:null}
+      </div>
+    </details>
   </section>;
 }
