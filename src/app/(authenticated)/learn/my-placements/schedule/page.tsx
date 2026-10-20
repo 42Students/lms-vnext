@@ -134,7 +134,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         </article>)}
       </section>:null}
       {view==="calendar"?<section aria-label="Calendar" className="space-y-2">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Calendar</h2>
+
         <Suspense fallback={<p role="status">Calendar</p>}>
           <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} surface="schedule" />
         </Suspense>

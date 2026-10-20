@@ -48,7 +48,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
       setError(cause instanceof Error?cause.message:LEARNER_REGISTRATION_COPY.failure);
     } finally {setBusy(false);}
   }
-  return <section id="registration" aria-label="Registration" className="min-w-0 space-y-3 border-b border-border pb-6">
+  return <section id="registration" aria-label="Registration" className="scroll-mt-24 min-w-0 space-y-3 border-b border-border pb-6">
     <h2 className="font-semibold">{LEARNER_REGISTRATION_COPY.title}</h2>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
