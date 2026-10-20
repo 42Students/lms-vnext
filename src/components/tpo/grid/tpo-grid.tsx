@@ -154,7 +154,7 @@ export function TpoGrid<Row>({
  const selectOne=(row:Row,checked:boolean,shift=false)=>{
   if(!selection)return;
   const id=rowKey(row);
-  const result=gridSelectionCheckbox(currentVisibleIds(),selection.selected,id,checked,anchor.current,shift);
+  const result=gridSelectionCheckbox(currentVisibleIds(),selection.selected,id,checked,anchor.current,shift,allowedIds);
   anchor.current=result.anchor;
   changeSelected(result.selected);
  };
@@ -167,7 +167,7 @@ export function TpoGrid<Row>({
    shiftKey:native.shiftKey,ctrlKey:native.ctrlKey,metaKey:native.metaKey,
   }:{};
   const id=rowKey(event.data);
-  const result=gridSelectionClick(currentVisibleIds(),selection.selected,id,anchor.current,modifiers);
+  const result=gridSelectionClick(currentVisibleIds(),selection.selected,id,anchor.current,modifiers,allowedIds);
   anchor.current=result.anchor;
   changeSelected(result.selected);
  };
@@ -204,7 +204,11 @@ export function TpoGrid<Row>({
    colId:col.key,headerName:col.label,field:undefined,
    minWidth, maxWidth, width:160,resizable:true,sortable:Boolean(col.sortKind),
    valueGetter:p=>p.data?col.read(p.data):null,
-   comparator:col.sortKind?(a,b)=>compareNumberDate(col.sortKind!,a,b):undefined,
+   comparator:col.sortKind?(a,b,nodeA,nodeB)=>compareNumberDate(
+    col.sortKind!,
+    col.sortValue&&nodeA.data?col.sortValue(nodeA.data):a,
+    col.sortValue&&nodeB.data?col.sortValue(nodeB.data):b,
+   ):undefined,
    tooltipValueGetter:p=>p.data?col.tooltip?.(p.data):undefined,
    cellRenderer:openPrimary?.columnKey===col.key
     ?(p:{data?:Row})=>p.data?<Button variant="ghost" className="px-0 text-left underline"
