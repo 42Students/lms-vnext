@@ -15,16 +15,16 @@
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
 - [x] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
-- [ ] `src/app/offline/page.tsx`
+- [x] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
+- [x] `src/app/offline/page.tsx`

@@ -5,6 +5,8 @@ import {DataTable} from "@/components/ui/data-table";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
+import {ErrorState} from "@/components/ui/error-state";
 import {batchDecisionLabel,batchSourceLabel,batchRegistrationLabel} from "@/modules/placements/tpo-batch-labels-model";
 import {studentJourneyForBatch} from "@/modules/placements/tpo-batch-student-journey-model";
 import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
@@ -32,9 +34,9 @@ const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export default async function BatchStudents({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{page?:string|string[];q?:string|string[];classId?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[];order?:string|string[]}>}){
  const {batchId}=await params,raw=await searchParams;
  const parsed=pageSchema.safeParse(Array.isArray(raw.page)?raw.page[0]:raw.page??1);
- if(!parsed.success)return <p role="alert">Invalid page number. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/batches/"+batchId+"/students"}>Start again</Link></p>;
+ if(!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid page number" description="Choose a valid roster page." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/batches/"+batchId+"/students"}>Start again</Link>}/></div>;
  const view=parseBatchStudentSearchParams(raw);
- if(!view.success)return <p role="alert">Invalid student search. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link></p>;
+ if(!view.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid student search" description="Check the roster filters and search values." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link>}/></div>;
  const ctx=await getCurrentRequestContext();
  const [result,batchScope,eligibility,registrationCounts]=await Promise.all([
   getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q,view.data.source==="LEARNER"),getTpoBatch(ctx,batchId),
@@ -54,7 +56,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <TpoBatchStudentKeyboardActions
   rows={visible.map(student=>({id:student.membershipId,name:student.name,rollNumber:student.rollNumber}))}
  />
- <section aria-label="Placement journey" className="space-y-3 border-b border-border py-4">
+ <section aria-label="Placement journey" className="space-y-3 border-b border-border pb-4">
   <h2 className="font-semibold">Placement journey</h2>
   <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
    {([["Students",journey.total],["Eligible",journey.eligible],
@@ -74,20 +76,20 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <p className="text-xs text-muted-foreground">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
  </section>
  {!finished&&journey.undecided!==null&&journey.undecided>0?
- <aside aria-label="Suggested placement action" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
+ <Alert tone="warning" title="Suggested placement action">
    <strong>Suggested: make them eligible</strong>
    <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
    <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
      className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show me</Link>
- </aside>:null}
+ </Alert>:null}
  <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
  <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Download blank eligibility import CSV (this page)</a>
- {finished?<p role="status" className="border-l-2 border-border bg-muted px-3 py-3 text-sm">This batch is finished. Eligibility decisions and import actions are read-only.</p>:<TpoBatchEligibilityImport batchId={batchId}/>}
+ {finished?<Alert tone="info">This batch is finished. Eligibility decisions and import actions are read-only.</Alert>:<TpoBatchEligibilityImport batchId={batchId}/>}
  {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
    target="STUDENTS" rows={visible.map(student=>({
     id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
    }))} />:null}
- <section aria-label="Batch student follow-up actions" className="grid gap-3 lg:grid-cols-2">
+ <section aria-label="Batch student follow-up actions" className="grid gap-2 lg:grid-cols-2">
   <TpoStudentNudgePanel rows={visible.map(student=>({
    id:student.membershipId,label:student.name+" · "+(student.rollNumber??"No roll number"),
    registered:student.registration?.choice==="PLACEMENTS",
@@ -102,7 +104,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<p role="status" className="text-sm">Registration records unavailable.</p>:null}
  <form action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
-  className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border py-3 md:grid-cols-2 xl:grid-cols-3">
+  className="grid min-w-0 grid-cols-1 items-end gap-2 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-sm">Class (on this page)
    <Select name="classId" defaultValue={view.data.classId??""}
     className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">

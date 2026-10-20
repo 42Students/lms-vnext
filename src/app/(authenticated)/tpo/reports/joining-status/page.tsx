@@ -53,7 +53,7 @@ export default async function TpoJoiningStatusReportPage({
   const { totals, byDrive, byCompany } = workspace.details.joining;
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Joining outcomes"
@@ -62,7 +62,7 @@ export default async function TpoJoiningStatusReportPage({
       />
 
       <Link href="/tpo/reports/joining-followups"
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
         Review joining follow-ups →
       </Link>
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-status" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
@@ -76,7 +76,7 @@ export default async function TpoJoiningStatusReportPage({
 
       <section
         aria-label="Joining outcome totals"
-        className="grid gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5"
+        className="grid min-w-0 gap-2 md:grid-cols-2 xl:grid-cols-5"
       >
         {[
           ["Accepted offers", totals.accepted],
