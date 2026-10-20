@@ -4,7 +4,7 @@ export const metadata: Metadata = {title:"Platform | 42 LMS",description:"One co
 export default function PlatformMarketingPage() {
  return <MarketingLayout>
   <MarketingHero eyebrow="42 LMS platform" title="One connected platform for learning, projects and placements."
-    description="A connected place for learning, guided projects, assessments, recruitment, and workforce development."/>
+    description="A connected place for learning, guided projects, assessments, recruitment, and workforce development." showExploreLink={false}/>
   <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={[
    {title:"Learner workspace",description:"Courses, skills, assessments, career planning and project work."},
    {title:"Faculty workspace",description:"Academic content, assignments, progress and course delivery."},
