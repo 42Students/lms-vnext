@@ -600,3 +600,38 @@ Fast-forwarded `chatgpt/chat-3-b` from `52a9f8e096c45e3e4767f833c84a27f64226df62
 | `src/app/(authenticated)/teacher/calendar/page.tsx` | 31,32,49,52 | 0 | 0 | 1/1 |
 
 Source query identical to part 1, applied to complete fetched GitHub files. Interactive contact pills replaced by shared linked `Tabs` (active value and original route href retained). `results` and `response-followups` previously referenced `Input` (both) and `Select` (results) without imports; imports were supplied. All recorded `Button` opening/closing counts balance. No browser parity claimed.
+
+
+### Route/component sweep part 3/3 — remaining pages and assessment editor
+
+| Full source file | Line examples for shared UI / value declarations | Raw control / confirm / hex hits | 640px `sm:` hits | Shared Button JSX open/close |
+|---|---|---:|---:|---:|
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx` | 19,20,25,28 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx` | 15,21 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx` | 37,41 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/courses/page.tsx` | 15,19,32 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/live-classes/page.tsx` | 20,24,38,40 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/notifications/page.tsx` | 73,95,98,112 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` | 27,28,45,49 | 4 (53:<input, 54:<input, 55:<input, 56:<input) | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx` | 27,28,41,44 | 3 (82:<input, 83:<input, 84:<input) | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx` | 31,34,46 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx` | 13,15,24 | 0 | 0 | 0/0 |
+| `src/components/courses/faculty-assessment-editor.tsx` | 207,273,286,301 | 0 | 0 | 3/3 |
+
+The only raw `<input>` instances in these 11 files are **4 invisible query-preservation inputs** in assignment submissions and **3 invisible query-preservation inputs** in Quiz attempts; no inline class/style. These intentionally retain native GET semantics and are exempted from a visible form-control audit. Two hand-built attempt navigation pill strips were replaced with the shared href-based `Tabs`. `faculty-assessment-editor.tsx` no longer calls `window.confirm`: save, archive and discard are guarded by a single shared `ConfirmDialog`, with explicit confirmed action dispatch and pending states. It preserves prior form values, unsaved-beforeunload guard, original REST requests and confirmed receipts. Only source verification—not executed interaction testing—is claimed.
+
+### Legacy value proof matrix for this bounded turn
+
+| Visual property and state | Legacy authoritative value | vNext mapped value and representative file:line | Source conclusion / gap |
+|---|---|---|---|
+| Primary/secondary button height on phone | `docs/design/legacy-styles/components___variables.scss:139` = 44px touch min; `pages___admin-list-pages.scss:193-213` phone max 767px | `min-h-11` = 44px applied to affected links/forms; `teacher/report/quiz/[quizId]/attempts/page.tsx` and `teacher/results/page.tsx` | Source declaration matches; default/hover/active/focus must still be rendered |
+| Control desktop baseline | Owner's `docs/orchestrator/queues/master-queue.md:5`: 36px, text 14px/650, 9px radius | `md:min-h-[var(--lms-control-height)]`; shared Button where action is a button; `admin/academics/page.tsx`, `teacher/calendar/page.tsx` | Source resolves through shared token; token's computed value pending |
+| 767px phone boundary | `components___variables.scss:148`: `$ssm:767px`; `pages___admin-list-pages.scss:193` max 767px | All changed grid/form rows shifted `sm:` (640px) to `md:` (768px); all **35** changed TSX files re-fetched have 0 remaining `sm:` | Responsive source mapping only; actual 375/767/768/991/1024px not rendered |
+| Field labels | `components___form.scss:110-114`: 600, 13px, 16px line-height | `text-[13px] font-semibold leading-4` in `teacher/results/page.tsx`, `teacher/response-followups/page.tsx`, `admin/people/directory/page.tsx` | Applied to touched labels; all other labels/shared tokens require computed check |
+| Canvas/list panels | `components___variables.scss:30,134`: #e5e9f0 border and 12px radius | `border-border`, `rounded-[var(--lms-canvas-radius)]` in `academics-overview.tsx` and report Disclosures | Token-based source match; inherited computed border/radius not verified |
+| Active tabs | `docs/design/old-lms-pages.md:4`: teal underline directly on canvas | `<Tabs renderPanel={false} ...>` in Contacts tabs and Quiz attempt filters | Shared Tab skin now in charge; actual active/hover focus pending |
+| Empty/error/confirm | Legacy shared skin; modal state requires disabled/loading/focus | `EmptyState` in four AcademicsOverview tables and membership audit; `Alert` in notifications and assessment editor; `ConfirmDialog` in assessment editor | Shared components used, but side-by-side rendered states and interaction testing pending |
+
+**Coverage proof scope:** Whole-file GitHub reads and exact regex counts recorded in three preceding tables (12 + 12 + 11 = **35 changed TSX files**). The scripted query equivalent is `git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9A-Fa-f]{3,8}' -- <35-listed-paths>`, not executed as a shell command; entire H portal/transitive coverage remains incomplete. **No lint/typecheck/tests/CI or browser run** per owner direction. 94 strict work-queue items remain unchecked; do not tick solely from source values. The 35 files are source-migrated, not pixel-certified.
+
+**Next exact queue file:** `src/components/courses/faculty-assignment-review.tsx`; thereafter `src/components/courses/faculty-quiz-question-editor.tsx` and Faculty/Teacher delegated routes with newly discovered exception cases, before demanding full-category strict tick proof.
