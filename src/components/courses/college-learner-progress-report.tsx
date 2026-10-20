@@ -31,14 +31,14 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    </p>
   </div>
   <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3 print:hidden">
-   <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold text-body">Class
+   <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Class
     <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
      className="min-h-11 md:min-h-9">
      <option value="">Select Class</option>
      {[...sections].map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
    </label>
-   <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold text-body">Course
+   <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Course
     <Select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
      name="offeringId" disabled={!sectionId}
      className="min-h-11 md:min-h-9">

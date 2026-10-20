@@ -19,19 +19,15 @@ export default async function CollegeAcademicsPage() {
   );
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-4 md:space-y-6">
       <PageHeader
         title="Academics"
         description="Programs, academic periods, Cohorts and period-specific Sections for your college."
-      />
-      <div className="border-b border-border pb-4">
-        <Link
-          href="/college/programs"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
-        >
+        actions={<Link href="/college/programs"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Open Programs directory
-        </Link>
-      </div>
+        </Link>}
+      />
       <section aria-label="College academic structure" className="min-w-0">
       <AcademicsOverview
         collegeId={membership.collegeId}

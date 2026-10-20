@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
+import { Tabs } from "@/components/ui/tabs";
 import {TenantRestoreAction} from "@/components/admin/tenant-restore-action";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
@@ -24,16 +25,16 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
  return <div className="min-w-0 space-y-5">
   <PageHeader title={item.name} description="Read-only tenant identity and setup links in the authorized scope."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
-  <nav aria-label="College tabs" className="flex flex-wrap items-center gap-3">
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}`}
-     aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-primary font-semibold text-link md:min-h-9">College</Link>
-   <Link href={`/activity?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Activity</Link>
+  <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
+   <Tabs ariaLabel="College tabs" renderPanel={false} value="college" items={[
+    {value:"college",label:"College",href:`/admin/colleges/${encodeURIComponent(item.id)}`},
+    {value:"activity",label:"Activity",href:`/activity?collegeId=${encodeURIComponent(item.id)}`},
+   ]}/>
    <Link href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Export activity CSV</Link>
-  </nav>
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export activity CSV</Link>
+  </div>
   <dl className="grid gap-4 border-t border-border pt-4 md:grid-cols-2">
-   {fields.map(([label,value])=><div key={label}><dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
+   {fields.map(([label,value])=><div key={label}><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}
   </dl>
   {item.status==="ARCHIVED"&&item.organizationStatus==="ACTIVE"?
