@@ -149,18 +149,15 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  }
  const height=(LAST-FIRST)*HEIGHT;
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
-  <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] md:flex-row md:items-end md:justify-between">
+  <div className="flex flex-wrap items-center justify-between gap-3">
    <h2 className="font-semibold">Week · 7 AM to 9 PM IST</h2>
-   <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:max-w-64">Find an event
+   <label className="text-sm">Find an event
     <Input type="search" value={filter} onChange={e=>setFilter(e.target.value)} maxLength={100}
-     className="w-full" placeholder="Company or event"/>
+     className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2" placeholder="Company or event"/>
    </label>
   </div>
-  <details className="group min-w-0 text-[13px] text-[var(--lms-body-text)]">
-   <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Calendar help</summary>
-   <p className="max-w-prose pb-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
-  </details>
-  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"min-w-0 overflow-x-auto overscroll-x-contain bg-surface focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] "+weekStyles.grid}>
+  <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
+  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain bg-surface "+weekStyles.grid}>
    <div className={"grid min-w-[56rem] "+weekStyles.weekColumns}>
     <div className={"sticky left-0 z-10 border-b border-r bg-surface "+weekStyles.corner}>IST</div>
     {days.map(day=><div key={day} className={"border-b border-r text-center text-xs font-semibold "+weekStyles.dayHead}>
@@ -220,30 +217,36 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     })}
    </div>
   </div>
-  {move?<Dialog open={Boolean(move)} onOpenChange={next=>{if(!next)setMove(null);}} title="Move follow-up" className="max-w-lg" bodyClassName="!p-[var(--lms-space-4)] md:!p-[var(--lms-canvas-padding)]">
+  {move?<Dialog open={Boolean(move)} onOpenChange={next=>{if(!next)setMove(null);}} title="Move follow-up" className="max-w-lg">
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
-      <div className="mt-[var(--lms-space-4)] flex justify-end"><Button variant="secondary" type="button" onClick={()=>setMove(null)} className="w-full md:w-auto">Close</Button></div>
+      <Button variant="secondary" type="button" onClick={()=>setMove(null)}
+        className="mt-3 min-h-11 md:min-h-9 px-4">Close</Button>
   </Dialog>:null}
   {!slot&&message?<InlineNotice tone="error" message={message}/>:null}
   {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next&&!saving)cancelDraft();}} dismissible={!saving} title="New recruiter follow-up" className="max-w-md">
-   <div className="space-y-[var(--lms-space-4)]">
+   <div className="space-y-3">
     {slot&&blocked.has(slot.slice(0,10))?<Alert tone="warning">This day is blocked for placement scheduling. Choose another date if possible.</Alert>:null}
     {!blockedDatesAvailable?<Alert tone="warning">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</Alert>:null}
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date and time (IST)
-     <Input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search recruiter lead
-     <Input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}} maxLength={120}/>
-     <Select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}>
+    <label className="grid gap-1 text-sm">Date and time (IST)
+     <Input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3"/></label>
+    <label className="grid gap-1 text-sm">Search recruiter lead
+     <Input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3" maxLength={120}/>
+     <Select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">
       <option value="">{loadingLeads?"Loading recruiters…":"Choose recruiter"}</option>
       {matches.map(lead=><option key={lead.id} value={lead.id}>{lead.name}{lead.companyName?" · "+lead.companyName:""}</option>)}
      </Select></label>
-    {!loadingLeads&&matches.length===0?<p role="status" className="text-[13px] leading-5 text-[var(--lms-body-text)]">No matching recruiter leads. Refine your search or add a recruiter lead first.</p>:null}
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note (optional)
-     <Textarea value={note} maxLength={500} rows={3} onChange={e=>setNote(e.target.value)}/></label>
+    <label className="grid gap-1 text-sm">Note (optional)
+     <Textarea value={note} maxLength={500} onChange={e=>setNote(e.target.value)}
+      className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
     {message?<InlineNotice tone="error" message={message}/>:null}
-    <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:flex-row sm:justify-end">
-     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft} className="w-full sm:w-auto">Cancel</Button>
-     <Button variant="primary" type="button" loading={saving} disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()} className="w-full sm:w-auto">{saving?"Saving…":"Add follow-up"}</Button>
+    <div className="flex justify-end gap-2">
+     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}
+      className="min-h-11 md:min-h-9 px-4">Cancel</Button>
+     <Button variant="primary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
+      className="min-h-11 md:min-h-9 px-4">{saving?"Saving…":"Add follow-up"}</Button>
     </div>
    </div>
   </Dialog>:null}

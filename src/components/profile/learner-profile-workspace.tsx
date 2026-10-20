@@ -1,5 +1,4 @@
 "use client";
-import { PageHeader } from "@/components/ui/page-header";
 
 import {LEARNER_EDUCATION_TYPES,learnerQualifyingExamSuggestions,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
@@ -130,10 +129,10 @@ function initials(name: string | null) {
 
 function Card({ id, title, action, children }: { id?: string; title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <section id={id} className="min-w-0 scroll-mt-24 border-b border-border pb-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <section id={id} className="min-w-0 scroll-mt-24 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+      <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
         <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{title}</h2>
-        {action}
+        {action ? <div className="w-full shrink-0 sm:w-auto [&_[data-slot=button]]:w-full sm:[&_[data-slot=button]]:w-auto">{action}</div> : null}
       </div>
       <div className="mt-4 min-w-0">{children}</div>
     </section>
@@ -531,8 +530,8 @@ export function LearnerProfileWorkspace(props: {
 
 
   return (
-    <div className="min-w-0 space-y-5">
-      <nav aria-label="Quick access to unfinished profile sections" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 md:hidden">
+    <div className="min-w-0 space-y-[var(--lms-space-5)]">
+      <nav aria-label="Quick access to unfinished profile sections" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:hidden">
         <h2 className="text-sm font-semibold text-foreground">Quick profile steps</h2>
         <p className="mt-1 text-xs text-body">Jump to an unfinished saved-profile section. These are suggestions, not verification requirements.</p>
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
@@ -543,43 +542,45 @@ export function LearnerProfileWorkspace(props: {
           </Link>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
       </nav>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
-        <Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
+      <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
+        <p className="min-w-0 text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
+        <Button className="w-full sm:w-auto" size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
           onClick={()=>{lastRefreshAt.current=Date.now();router.refresh();}}>
           Refresh saved profile
         </Button>
       </div>
       <section id="profile-introduction" className="scroll-mt-24 border-b border-border pb-5">
-        <div className="flex flex-col gap-5 md:flex-row md:items-center">
+        <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-4)] sm:flex-row sm:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[50%] bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
-            <PageHeader
-              
-              title={props.displayName || "Learner"}
-              description={document.headline || "Add a headline to introduce yourself."}
-            />
+            <div className="min-w-0">
+              <h2 className="min-w-0 break-words text-[20px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-heading)] md:text-[24px]">{props.displayName || "Learner"}</h2>
+              <p className="mt-[var(--lms-space-1)] break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{document.headline || "Add a headline to introduce yourself."}</p>
+            </div>
             <div className="mt-3 flex flex-wrap gap-2">
               {props.rollNumber ? <StatusBadge>Roll {props.rollNumber}</StatusBadge> : null}
               {props.registrationNumber ? <StatusBadge>Reg {props.registrationNumber}</StatusBadge> : null}
               <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>{percent}% complete</StatusBadge>
             </div>
           </div>
-          <Button className="min-h-11 md:min-h-9" variant="secondary" onClick={openDetails}>Edit profile</Button>
+          <Button className="w-full sm:w-auto" variant="secondary" onClick={openDetails}>Edit profile</Button>
         </div>
-        <div className="mt-5 grid gap-3 md:grid-cols-2">
-          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
+        <details className="mt-[var(--lms-space-4)] min-w-0 text-[var(--lms-body-text)]">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Profile image and resume</summary>
+          <div className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:grid-cols-2">
+          <div className="min-w-0">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/replace remains blocked until the shared Cloud Storage profile-asset workflow is live.</p>
           </div>
-          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
+          <div className="min-w-0">
             <p className="m-0 text-sm font-semibold text-foreground">Resume</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/import/remove remains explicitly blocked until Cloud Storage signing and cleanup are live.</p>
           </div>
-        </div>
+          </div>
+        </details>
       </section>
 
-      <section className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 md:p-5" aria-labelledby="learner-profile-checklist-title">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]" aria-labelledby="learner-profile-checklist-title">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
@@ -622,7 +623,9 @@ export function LearnerProfileWorkspace(props: {
             This is not a verification or placement eligibility decision.
           </p>
         )}
-        <ul className="mt-4 grid gap-2 md:grid-cols-2 lg:grid-cols-4">
+        <details className="mt-[var(--lms-space-4)] min-w-0">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Profile sections</summary>
+          <ul className="mt-[var(--lms-space-2)] grid gap-[var(--lms-space-2)] md:grid-cols-2 lg:grid-cols-3">
           {checklist.items.map(item => (
             <li key={item.section}>
               <Link
@@ -646,10 +649,11 @@ export function LearnerProfileWorkspace(props: {
               </Link>
             </li>
           ))}
-        </ul>
+          </ul>
+        </details>
       </section>
 
-      <div className="grid gap-5 xl:grid-cols-2">
+      <div className="grid gap-[var(--lms-space-5)] xl:grid-cols-2">
         <Card id="contacts" title="Contacts"
           action={<Button className="min-h-11 md:min-h-9" variant="secondary" onClick={openContacts}>Edit contact details</Button>}
         >
@@ -720,7 +724,7 @@ export function LearnerProfileWorkspace(props: {
             </p>
             {entries.length?<ul className="space-y-2">
               {entries.map(entry=><li key={entry.id}
-                className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-3">
+                className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
                 <p className="break-words text-sm font-semibold text-foreground">{entry.title}</p>
                 {entry.organization?<p className="mt-1 text-xs text-body">{entry.organization}</p>:null}
                 {entry.date?<p className="mt-1 text-xs text-body">{entry.date}</p>:null}
@@ -752,7 +756,7 @@ export function LearnerProfileWorkspace(props: {
                 {items.map((item) => {
                   const summary = itemTitle(section, item);
                   return (
-                    <div key={String(item.id)} className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
+                    <div key={String(item.id)} className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
                       <div className="min-w-0 flex-1">
                         <p className="m-0 break-words text-sm font-semibold text-foreground">{summary.primary}</p>
                         {summary.secondary ? <p className="mt-1 text-xs text-muted-foreground">{summary.secondary}</p> : null}
@@ -779,9 +783,7 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={(open) => {if(!open)closeContacts();}}
         title="Confirm contact details"
         description="Only the alternate phone and contact email in your profile will change. Your login phone and account email will not change."
-        footer={
-          <>
-            <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={contactPending}
+        footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&_[data-slot=button]]:w-full sm:[&_[data-slot=button]]:w-auto"><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={contactPending}
               onClick={closeContacts}>
               Keep current details
             </Button>
@@ -830,9 +832,9 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={open=>{if(!open)closeDetails();}}
         title="Edit learner profile"
         description="Account phone/email stay authoritative. These are your self-service profile fields."
-        footer={<><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button className="min-h-11 md:min-h-9" disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
+        footer={<><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button className="min-h-11 md:min-h-9" disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></div>}
       >
-        <div className="max-h-[65vh] space-y-6 overflow-y-auto pr-1">
+        <div className="min-w-0 space-y-[var(--lms-space-5)]">
           <fieldset className="grid gap-4">
             <legend className="text-sm font-semibold text-foreground">About</legend>
             <label className="text-xs font-semibold text-body">Headline<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.headline} onChange={(event) => setDetailsDraft({ ...detailsDraft, headline: event.target.value })} /></label>
@@ -889,11 +891,9 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={open=>{if(!open)closeShowcase();}}
         title={showcaseDraft?.kind==="award"?"Awards & Recognitions":"Publications & Research"}
         description="Save a learner-entered record. This does not verify the award or publication."
-        footer={<>
-          <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
+        footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&_[data-slot=button]]:w-full sm:[&_[data-slot=button]]:w-auto"><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
             onClick={closeShowcase}>Cancel</Button>
-          <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
-        </>}>
+          <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button></div>}>
         {showcaseDraft?<div className="grid gap-4">
           <label className="text-sm font-semibold text-body">Title
             <Input className="mt-1 min-h-11 md:min-h-9" maxLength={240} value={showcaseDraft.title}
@@ -923,12 +923,10 @@ export function LearnerProfileWorkspace(props: {
       <Dialog open={jobPrefsEditing}
         onOpenChange={open=>{if(!open)closeJobPreferences();}}
         title="Edit Job Preferences"
-        footer={<>
-          <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
+        footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&_[data-slot=button]]:w-full sm:[&_[data-slot=button]]:w-auto"><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
           <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
             {pending?"Saving…":"Save"}
-          </Button>
-        </>}>
+          </Button></div>}>
         <div className="grid gap-4">
           <label className="text-sm font-semibold text-body">Role Preference (multiple)
             <Input value={jobPrefsDraft.rolePreferences.join(", ")} maxLength={800}
@@ -964,7 +962,7 @@ export function LearnerProfileWorkspace(props: {
         open={collection !== null}
         onOpenChange={(open) => {if(!open)closeCollection();}}
         title={collection ? (editingId ? "Edit " : "Add ") + collectionLabels[collection] : "Edit profile entry"}
-        footer={<><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 md:min-h-9" disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
+        footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&_[data-slot=button]]:w-full sm:[&_[data-slot=button]]:w-auto"><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 md:min-h-9" disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></div>}
       >
         {collection ? (
           <div className="grid gap-4 md:grid-cols-2">
