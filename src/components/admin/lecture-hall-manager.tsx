@@ -179,8 +179,8 @@ export function LectureHallManager({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button onClick={() => open("new")}>{LECTURE_HALL_COPY.createTitle}</Button>
+      <div className="flex justify-end print:hidden">
+        <Button className="min-h-11 md:min-h-9" onClick={() => open("new")}>{LECTURE_HALL_COPY.createTitle}</Button>
       </div>
 
       {halls.length === 0 ? (
@@ -216,16 +216,16 @@ export function LectureHallManager({
               mobilePriority: "action",
               className: "text-right",
               cell: (hall) => (
-                <div className="flex flex-wrap justify-end gap-2">
+                <div className="flex flex-wrap justify-end gap-2 print:hidden">
                   <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                     Availability
                   </Link>
-                  <Button variant="secondary" size="sm" onClick={() => open(hall)}>
+                  <Button className="min-h-11 md:min-h-9" variant="secondary" size="sm" onClick={() => open(hall)}>
                     Edit
                   </Button>
                   {hall.status === "ACTIVE" ? (
-                    <Button variant="danger" size="sm" onClick={() => setArchiving(hall)}>
+                    <Button className="min-h-11 md:min-h-9" variant="danger" size="sm" onClick={() => setArchiving(hall)}>
                       Archive
                     </Button>
                   ) : (
@@ -254,10 +254,10 @@ export function LectureHallManager({
         description="Hall names stay unique among the college's active halls."
         footer={
           <>
-            <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>
+            <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={() => setEditing(null)}>
               Cancel
             </Button>
-            <Button disabled={pending} onClick={save}>
+            <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={save}>
               {pending ? "Saving…" : editing === "new" ? LECTURE_HALL_COPY.createButton : "Save hall"}
             </Button>
           </>
@@ -271,18 +271,18 @@ export function LectureHallManager({
           ) : null}
           <div>
             <label className={field} htmlFor="hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
-            <Input id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
+            <Input className="min-h-11 md:min-h-9" id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
           </div>
-          <div className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div>
               <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
-              <Input id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
+              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
                 onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
             </div>
             <div>
               <label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
-              <Select id="hall-type" value={draft.roomType}
+              <Select className="min-h-11 md:min-h-9" id="hall-type" value={draft.roomType}
                 onChange={(e) => setDraft({ ...draft, roomType: e.target.value })}>
                 {Object.entries(ROOM_TYPE_LABELS).map(([value, label]) => (
                   <option key={value} value={value}>{label}</option>
@@ -292,7 +292,7 @@ export function LectureHallManager({
           </div>
           <div>
             <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
-            <Select id="hall-dept" value={draft.departmentId}
+            <Select className="min-h-11 md:min-h-9" id="hall-dept" value={draft.departmentId}
               onChange={(e) => setDraft({ ...draft, departmentId: e.target.value })}>
               <option value="">Shared by all departments</option>
               {departments.map((d) => (
@@ -302,7 +302,7 @@ export function LectureHallManager({
           </div>
           <div>
             <label className={field} htmlFor="hall-desc">{LECTURE_HALL_COPY.descriptionLabel}</label>
-            <Input id="hall-desc" value={draft.description} maxLength={255} placeholder={LECTURE_HALL_COPY.descriptionPlaceholder}
+            <Input className="min-h-11 md:min-h-9" id="hall-desc" value={draft.description} maxLength={255} placeholder={LECTURE_HALL_COPY.descriptionPlaceholder}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
           </div>
         </div>
