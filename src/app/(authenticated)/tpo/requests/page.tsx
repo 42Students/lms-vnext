@@ -91,25 +91,25 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         <FilterChipLink key={status} href={href({...data.query,status,page:1})} selected={data.query.status===status}
           >{status==="PENDING"?"Waiting":status.charAt(0)+status.slice(1).toLowerCase()} · {statusCounts[status]}</FilterChipLink>)}
     </nav>
-    <form method="get" action="/tpo/requests" className="flex flex-wrap items-end gap-3 border-b border-border py-4">
-      <input type="hidden" name="status" value={data.query.status}/>
+    <form method="get" action="/tpo/requests" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border py-4 max-[767px]:flex-col max-[767px]:items-stretch">
+      <Input type="hidden" name="status" value={data.query.status}/>
       <label className="flex min-h-11 items-center gap-2 text-sm"><Checkbox name="urgentOnly" value="true" defaultChecked={data.query.urgentOnly===true}/> Urgent only</label>
-      <label className="text-sm">Request kind<Select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</Select></label>
-      <label className="text-sm">Drive<Select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind<Select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 w-full md:min-h-9">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</Select></label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive<Select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 w-full md:min-h-9">
        <option value="">All drives</option>
        {data.query.jobId&&!jobChoices.some(row=>row.job.id===data.query.jobId)?<option value={data.query.jobId}>Previously selected drive</option>:null}
        {jobChoices.map(row=><option value={row.job.id} key={row.job.id}>{row.company.name} · {row.job.title}</option>)}
       </Select></label>
-      <label className="min-w-0 flex-1 text-sm">Search student number, student, job or company
+      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student number, student, job or company
         <Input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full md:min-h-9" />
       </label>
-      <label className="text-sm">Page size
-        <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Page size
+        <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 w-full md:min-h-9">
           <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="500">500</option>
         </Select>
       </label>
-      <label className="text-sm">Age<Select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
-      <label className="text-sm">Order<Select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></Select></label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Age<Select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 w-full md:min-h-9"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order<Select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 w-full md:min-h-9"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></Select></label>
       <Button type="submit" >Apply</Button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-link underline">Clear search, age and drive filters</Link>
     </form>
