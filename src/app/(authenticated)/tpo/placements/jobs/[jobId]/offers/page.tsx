@@ -80,12 +80,12 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum package (LPA)
     <Input type="number" name="minCtcLpa" min={0} max={1000} step="0.01"
       defaultValue={parsed.data.minCtcLpa??""}
-      className="w-full sm:w-36"/>
+      className="w-full md:w-36"/>
    </label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum package (LPA)
     <Input type="number" name="maxCtcLpa" min={0} max={1000} step="0.01"
       defaultValue={parsed.data.maxCtcLpa??""}
-      className="w-full sm:w-36"/>
+      className="w-full md:w-36"/>
    </label>
    <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner, email, roll, batch, branch or role
     <Input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="w-full min-w-0"/>
