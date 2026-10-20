@@ -24,8 +24,11 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
   const lessons = data.kind === "LESSONS";
   const title = lessons ? COLLEGE_COURSE_TAB_COPY.lessonsTitle : COLLEGE_COURSE_TAB_COPY.progressTitle;
   const href = lessons ? "/college/lessons" : "/college/course-progress";
+  const activeAdvanced = Object.entries(data.query).some(([key,value]) =>
+    !["q","page","pageSize"].includes(key) && value != null && value !== "" && value !== "ALL"
+  );
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       {showHeader ? <PageHeader
         eyebrow="College Admin · Courses & Content"
         title={title}
@@ -38,8 +41,17 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
         }
       /> : null}
       {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
-      <section aria-label={title + " filters"} className="border-b border-border pb-5">
-        <form method="get" action={href} className="flex min-w-0 flex-wrap items-end gap-3">
+      <section aria-label={title + " filters"} className="min-w-0 border-b border-border pb-4">
+        <form method="get" action={href} className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-[minmax(0,1fr)_auto_auto]">
+          <label className="grid min-w-56 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Course or {lessons ? "lesson" : "cohort"}
+            <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
+              placeholder="Search registered records"
+              className="min-h-11 md:min-h-9" />
+          </label>
+          <details className="min-w-0 border-t border-border pt-2 md:col-span-3" open={activeAdvanced || undefined}>
+            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Advanced filters</summary>
+            <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-4">
           {lessons?<label className="grid min-w-32 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Rows per page
             <Select name="pageSize" defaultValue={data.query.pageSize}
@@ -47,12 +59,6 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
             </Select>
           </label>:null}
-          <label className="grid min-w-56 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Course or {lessons ? "lesson" : "cohort"}
-            <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-              placeholder="Search registered records"
-              className="min-h-11 md:min-h-9" />
-          </label>
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Parent program lifecycle
               <Select name="programStatus" defaultValue={data.query.programStatus}
@@ -533,8 +539,9 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               </Select>
             </label>
           ) : null}
-          <Button type="submit"
-            className="min-h-11 px-5 md:min-h-9">Filter</Button>
+            </div>
+          </details>
+          <Button type="submit" className="min-h-11 w-full px-5 md:min-h-9 md:w-auto">Filter</Button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Clear
           </Link>
@@ -651,7 +658,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
           </div>
         </>)}
       </section>
-      <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div className="flex min-w-0 flex-col items-stretch gap-3 text-sm md:flex-row md:items-center md:justify-between">
         <span className="text-muted-foreground">{data.total===0?0:Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
         <div className="flex flex-wrap items-center gap-2">
           {lessons&&data.totalPages>1?<form method="get" action={href} className="flex items-center gap-2">
