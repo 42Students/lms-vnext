@@ -137,7 +137,7 @@ export default async function LearnerOffersPage({
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
           Search my offers
           <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
-            placeholder="Employer or role" className="min-h-11 min-w-0" />
+            placeholder="Employer or role" className="min-h-11 min-w-0 md:min-h-9" />
         </label>
         <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
@@ -152,7 +152,7 @@ export default async function LearnerOffersPage({
         {expiry!=="all"?<Input type="hidden" name="expiry" value={expiry}/>:null}
         <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
           Sort my offers
-          <Select name="sort" defaultValue={order} className="min-h-11">
+          <Select name="sort" defaultValue={order} className="min-h-11 md:min-h-9">
             <option value="priority">Needs response first</option>
             <option value="newest">Newest issued</option>
             <option value="company">Company A–Z</option>
