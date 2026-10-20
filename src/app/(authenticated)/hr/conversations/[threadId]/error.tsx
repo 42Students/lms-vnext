@@ -13,7 +13,7 @@ export default function RouteError({ reset }: {
     <ErrorState
       title="Unable to load conversation"
       description="Message history could not be read. This does not mean there are no messages."
-      action={<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Retry</Button>}
+      action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
     />
   </>;
 }

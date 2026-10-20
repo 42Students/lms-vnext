@@ -12,7 +12,7 @@ export default function HrActivityError({ reset }: {
     <PageHeader title="Hiring activity" />
     <ErrorState title="Hiring activity could not load"
       description="The authorized employer history is unavailable. A failed read does not mean no events occurred. No applicant information has been loaded."
-      action={<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Retry hiring activity</Button>}
+      action={<Button type="button" variant="secondary" onClick={reset}>Retry hiring activity</Button>}
     />
   </>;
 }
