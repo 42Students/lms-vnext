@@ -141,3 +141,11 @@
 **Fix:** numeric two/three column summary strip, separated assessment rows with neutral type badges, secondary back control, collapsible score explanation, consistent error retry and privacy-safe local not-found. Preserved published-only scoring, unknown values, routes and authorization. Read loading and parent faculty/gradebook layouts; no local not-found before fix.
 
 **Files changed:** page, error, new not-found, queue and proof. Static inspection only; no tests/CI.
+
+## 16 · Teacher / Published gradebook directory
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
+**Problems found (9):** huge learner headings repeated down a report list, list cards detached by large gaps, filter wrapping awkwardly on phone, search controls without clear widths, exported CSV scope cluttering live result count, duplicate per-row borders, metrics single-column despite available tablet width, long published-score caveat occupying lower viewport, and generic padded error state.
+
+**Fix:** one legacy-style hairline-separated learner directory, 2/3-column score summaries, responsive search/filter/CSV controls, concise status counts with a secondary methodology disclosure and explicit CSV-scope explanation. Retain filtered search, bulk CSV export, page links, warning for assessment count cap, grade availability semantics, and privacy-safe learner links. Reviewed route/loading/inherited not-found, normalized data, Pagination, EmptyState and shared controls.
+
+**Files changed:** gradebook `page.tsx`, `error.tsx`, queue and proof. Static review only; no runtime/CI.
