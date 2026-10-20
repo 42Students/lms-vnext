@@ -90,7 +90,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
       <section aria-label="Tenant Settings overview" className="border-b border-border pb-5">
         <p className="text-sm font-semibold text-body">Runtime configuration · {scopeLabel}</p>
-        <h2 className="mt-1 text-base font-semibold text-foreground">Settings with explicit execution scope</h2>
+        <h2 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Settings with explicit execution scope</h2>
         <dl className="mt-3 grid gap-3 text-sm md:grid-cols-3">
           <div><dt>Documented controls</dt><dd className="font-semibold">{documentedControls} visible inventory settings</dd></div>
           <div><dt>Stored keys</dt><dd className="font-semibold">{editorData?.ready?editorData.entries.length:"Unavailable"} in this scope</dd></div>
@@ -169,7 +169,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <div>
             <h2
               id={`${section.id}-heading`}
-              className="text-lg font-semibold text-foreground"
+              className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]"
             >
               {section.title}
             </h2>
