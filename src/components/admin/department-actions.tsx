@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Dialog } from "@/components/ui/dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -131,7 +133,7 @@ export function DepartmentActions({
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 print:hidden">
+      <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
       <Button
         variant="secondary"
         size="sm"
@@ -142,15 +144,15 @@ export function DepartmentActions({
       >
         {DEPARTMENT_COPY.editButton}
       </Button>
-      <Button
-        variant="danger"
-        size="sm"
-        disabled={pending || hasDependencies}
-        title={hasDependencies ? "Move or remove its programs, courses, faculty before deleting." : "Archive this department"}
-        onClick={() => { setArchiveError(""); setArchiveOpen(true); }}
-      >
-        Archive
-      </Button>
+      <Dropdown label="Department actions" trigger="More" align="end" mobileSheet triggerClassName="md:!min-h-9">
+        <Menu className="w-full min-w-0">
+          <MenuItem disabled={pending || hasDependencies}
+            title={hasDependencies ? "Move or remove its programs, courses, faculty before deleting." : "Archive this department"}
+            onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>
+            Archive
+          </MenuItem>
+        </Menu>
+      </Dropdown>
       </div>
       <Dialog
         open={open}
@@ -158,7 +160,7 @@ export function DepartmentActions({
         title={DEPARTMENT_COPY.editTitle}
         description="Department names stay unique within the active college."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={pending}
@@ -176,12 +178,12 @@ export function DepartmentActions({
             >
               {pending ? "Saving…" : DEPARTMENT_COPY.saveButton}
             </Button>
-          </>
+          </div>
         }
       >
         <label
           htmlFor={`department-name-${departmentId}`}
-          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           {DEPARTMENT_COPY.nameLabel}
         </label>
@@ -204,7 +206,7 @@ export function DepartmentActions({
         title="Archive department"
         description={`Archive ${name}? This is allowed only when it has no active programs, faculty assignments, or courses.`}
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={pending}
@@ -223,7 +225,7 @@ export function DepartmentActions({
                 ? "Archiving…"
                 : "Archive department"}
             </Button>
-          </>
+          </div>
         }
       >
         {archiveError ? (
@@ -233,7 +235,7 @@ export function DepartmentActions({
               onClick={archive}>Retry delete</Button></div>
           </Alert>
         ) : null}
-        <p className="m-0 text-sm text-body">
+        <p className="m-0 max-w-prose text-sm text-body">
           Existing dependencies are checked
           server-side immediately before the
           archive is applied.
