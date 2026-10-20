@@ -151,7 +151,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  }
  return <section className="min-w-0 space-y-3 md:flex-none">
   <div className="flex flex-wrap items-center gap-3">
-   <h2 className={kind==="LIVE_CLASS"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
+   <h2 className={kind==="LIVE_CLASS"||kind==="RESOURCE"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
    <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
     onClick={fresh} className="w-full md:w-auto">{text}</Button>
   </div>
