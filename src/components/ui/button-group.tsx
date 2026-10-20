@@ -13,7 +13,7 @@ export type ButtonGroupProps = ComponentPropsWithRef<"div"> & {
 export function ButtonGroup({ label, className, children, ...props }: ButtonGroupProps) {
   return (
     <div {...props} data-slot="button-group" role="group" aria-label={label}
-      className={cx("inline-flex max-w-full min-w-0 items-stretch isolate", className)}>
+      className={cx("inline-flex max-w-full min-w-0 items-stretch isolate max-[767px]:overflow-x-auto max-[767px]:overscroll-x-contain", className)}>
       {children}
     </div>
   );
