@@ -722,3 +722,21 @@ This inventory reads every named queued file through the connected GitHub reposi
 | `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx` | 41 | 0 (0 hidden) | 0 | 0/0 | 24,28 |
 | `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx` | 67 | 0 (0 hidden) | 0 | 0/0 | 27,30 |
 | `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx` | 150 | 0 (0 hidden) | 0 | 1/1 | 33,36,48 |
+
+
+### Source inventory routes, part 3/4 (25–36 of 46)
+
+| Path | Lines | Native/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source value example lines |
+|---|---:|---:|---:|---:|---|
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx` | 38 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx` | 16 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx` | 13 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx` | 24 | 0 (0 hidden) | 0 | 0/0 | 15,21 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx` | 70 | 0 (0 hidden) | 0 | 1/1 | 15,16,21 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx` | 45 | 0 (0 hidden) | 0 | 0/0 | 13,14 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx` | 89 | 0 (0 hidden) | 0 | 0/0 | 25,26,83 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx` | 54 | 0 (0 hidden) | 0 | 0/0 | 37,41 |
+| `src/app/(authenticated)/teacher/courses/page.tsx` | 39 | 0 (0 hidden) | 0 | 0/0 | 15,19,32 |
+| `src/app/(authenticated)/teacher/layout.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 17 |
+| `src/app/(authenticated)/teacher/live-classes/page.tsx` | 82 | 0 (0 hidden) | 0 | 1/1 | 21,25,39 |
+| `src/app/(authenticated)/teacher/notifications/page.tsx` | 123 | 0 (0 hidden) | 0 | 0/0 | 73,98,112 |
