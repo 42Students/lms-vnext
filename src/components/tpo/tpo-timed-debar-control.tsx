@@ -48,7 +48,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
   {active.length>0?<p role="status" className="text-sm font-semibold">Debarred · {active.length} active restriction(s)</p>:null}
   <Disclosure title="Create debarment" defaultOpen={active.length===0} className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
    <label className="grid min-w-0 gap-1 text-sm">Reason for Debar
-    <Textarea className="w-full min-w-0" value={reason} rows={2} maxLength={500} disabled={pending||active.length>0} onChange={e=>setReason(e.target.value)}
+    <Textarea className="w-full min-w-0" value={reason} rows={2} maxLength={500} disabled={pending||active.length>0} onChange={e=>{setReason(e.target.value);setError("");}}
      /></label>
    <label className="grid min-w-0 gap-1 text-sm">How long
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")}
@@ -77,7 +77,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     {row.liftedAt?<p className="text-sm">Lifted · {row.liftedReason??"No reason recorded"}</p>:null}
     {row.active?<div className="min-w-0 space-y-2">
      <label className="grid min-w-0 gap-1 text-sm">Reason for lifting
-      <Textarea className="w-full min-w-0" value={liftReason} maxLength={500} disabled={pending} onChange={e=>setLiftReason(e.target.value)}
+      <Textarea className="w-full min-w-0" value={liftReason} maxLength={500} disabled={pending} onChange={e=>{setLiftReason(e.target.value);setError("");}}
        /></label>
      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!liftReason.trim()}
       onClick={()=>{setError("");setConfirm({action:"LIFT",id:row.id});}}
@@ -98,10 +98,10 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     <p className="text-sm">The student&apos;s existing applications will remain recorded.</p>
     <p className="break-words text-sm text-body">Reason: {confirm?.action==="LIFT"?liftReason.trim():reason.trim()}</p>
     {confirm?.action==="DEBAR"?<p className="text-sm text-body">{duration==="DATE"?"Until: "+untilDate+" IST":duration==="DRIVES"?"Drives: "+untilDrives:"Until lifted"}</p>:null}
-    {error&&!confirm?<InlineNotice tone="error" message={error}/>:null}
+    {error&&confirm?<InlineNotice tone="error" message={error}/>:null}
    </div>
   </Dialog>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error&&!confirm?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;
 }
