@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -74,7 +75,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   }catch(e){setError(e instanceof Error?e.message:CAMPAIGN_DRAFT_UNAVAILABLE);}
   finally{setBusy(false);}
  }
- return <section className="space-y-5 border-t border-border pt-5" aria-label="Campaign composer">
+ return <section className="min-w-0 space-y-4 border-t border-border pt-4" aria-label="Campaign composer">
   <h2 className="text-lg font-semibold text-foreground">Write a campaign</h2>
   <p className="text-sm text-body">Save a draft for your placement cell. No message is sent until a separate, verified dispatch action is enabled.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} className="space-y-4">
@@ -83,7 +84,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      onChange={e=>setTitle(e.target.value)}/>
    </label>
    {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
-   {selectedLeadIds.length?<section aria-label="Selected recruiter audience review" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+   {selectedLeadIds.length?<section aria-label="Selected recruiter audience review" className="min-w-0 space-y-2 border-y border-border py-3 text-sm">
     <h3 className="font-semibold">Selected recruiter audience</h3>
     {audienceStatus==="loading"?<p role="status">Checking selected contacts and suppression rules…</p>:null}
     {audienceStatus==="error"?<Alert tone="error"><p>Could not check selected contacts. No emails have been sent.</p>
@@ -117,12 +118,13 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      Write {`{name}`} or {`{company}`} and each person sees their own. This preview uses example text;
      sending, signature and unsubscribe-link delivery have not been enabled.
    </p>
-   <section className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" aria-label="Message preview">
-     <h3 className="text-sm font-semibold">Preview</h3>
+   <Disclosure title="Preview" ariaLabel="Message preview" className="border-y border-border py-2">
+     <div className="min-w-0 py-2">
      <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">
        {previewTpoCampaignText(body,{name:"Sample recruiter",company:"Example company"})}
      </p>
-   </section>
+     </div>
+   </Disclosure>
    <label className="block text-sm font-semibold">Approved campaign template key
     <Input value={templateKey} maxLength={160} required className={field}
      placeholder="tpo-campaign-general" onChange={e=>setTemplateKey(e.target.value)}/>
@@ -138,7 +140,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     Change selected recruiters in Engage
    </Link>}
    {!deliveryReady?<Alert tone="warning"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</Alert>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
-   <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 md:min-h-9 print:hidden">
+   <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 w-full md:min-h-9 sm:w-auto print:hidden">
     {busy?"Saving…":"Save draft"}
    </Button>
   </form>
