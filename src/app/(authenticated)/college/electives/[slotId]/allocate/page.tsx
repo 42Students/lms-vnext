@@ -177,7 +177,7 @@ export default async function CollegeElectiveAllocatePage({
         <Input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 xl:w-auto">Search</Button>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
     </form>
     <form action={allocate} className="space-y-4 border-b border-border pb-4">
       <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Allocate selected to…

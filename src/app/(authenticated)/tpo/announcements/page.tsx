@@ -97,7 +97,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       initialAudience={query.success?query.data.audience:"COLLEGE"}
       initialTarget={first(raw.targetId)??""}
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
-     <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">Preview audience</Button>
+     <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Preview audience</Button>
    </form>
    {!query.success?<Alert tone="error">Choose a valid audience and target ID.</Alert>:null}
    {preview.failed?<Alert tone="error">
@@ -247,7 +247,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
           initialTargets={[]} options={targetOptions}/>
         </fieldset>:null}
        <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
-       <Button type="submit" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Save notice edits</Button>
+       <Button type="submit" className="min-h-11 md:min-h-9">Save notice edits</Button>
       </form>
      </TpoNoticeComposerDialog>:null}
     {tab.data==="yours"?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}
@@ -256,7 +256,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-4 flex flex-wrap gap-2">
       <Input type="hidden" name="expectedVersion" value={row.version}/>
       <Input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
-      <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">
+      <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">
        {tab.data==="deleted"?"Undo removal":"Remove notice"}
       </Button>
      </form>:null}
@@ -266,7 +266,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-2">
       <Input type="hidden" name="expectedVersion" value={row.version}/>
       <Input type="hidden" name="action" value="UNDO_SEND"/>
-      <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">
+      <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">
        Undo send (30 seconds)
       </Button>
      </form>:null}
