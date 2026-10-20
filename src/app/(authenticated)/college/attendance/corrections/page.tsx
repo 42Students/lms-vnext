@@ -7,6 +7,7 @@ import {DataTable} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {collegeCorrectionReadSchema} from "@/modules/attendance/college-correction-read-model";
 import {getCollegeCorrectionRead} from "@/modules/attendance/college-correction-read-service";
 
@@ -45,11 +46,11 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
       </p>
     </section>
     <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
-      <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
+      <label className="grid min-w-0 w-full flex-1 gap-2 text-sm font-semibold text-body md:min-w-40">From (IST)
         <Input name="from" type="date" required defaultValue={data.query.from??""}
           className="min-h-11 md:min-h-9"/>
       </label>
-      <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">To (IST)
+      <label className="grid min-w-0 w-full flex-1 gap-2 text-sm font-semibold text-body md:min-w-40">To (IST)
         <Input name="to" type="date" required defaultValue={data.query.to??""}
           className="min-h-11 md:min-h-9"/>
       </label>
@@ -62,8 +63,8 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
         columns={[
           {key:"session",header:"Session / class",mobilePriority:"primary",cell:item=>item.title+" · "+item.sectionName},
           {key:"time",header:"Time (IST)",mobilePriority:"secondary",cell:item=>when(item.startsAt)+" – "+when(item.endsAt)},
-          {key:"attendance",header:"Attendance",mobilePriority:"secondary",cell:item=>item.attendanceStatus??"No attendance session row"},
-          {key:"window",header:"Faculty window",mobilePriority:"secondary",cell:item=>item.facultyMarkingWindow.replaceAll("_"," ")},
+          {key:"attendance",header:"Attendance",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.attendanceStatus==="MARKED"?"success":"neutral"}>{item.attendanceStatus??"No attendance session row"}</StatusBadge>},
+          {key:"window",header:"Faculty window",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.facultyMarkingWindow==="OPEN"?"success":"neutral"}>{item.facultyMarkingWindow.replaceAll("_"," ")}</StatusBadge>},
         ]}
         empty={<EmptyState title="No scheduled sessions" description="No persisted scheduled sessions overlap this date range."/>}/>}
     </section>}
