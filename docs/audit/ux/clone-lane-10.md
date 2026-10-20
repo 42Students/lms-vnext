@@ -36,3 +36,21 @@ Shared title reference: `docs/design/legacy-styles/components___listing-page-hea
 - [x] `src/app/(authenticated)/recruiter/messages/page.tsx` — route itself has no styled JSX (export alias / guarded redirect); scoped route grep raw=0,overlay=0,hex=0,manualTab=0; 375/768/1280 rendering wholly delegated to canonical route reviewed in this batch; no page-owned values to compare.
 
 Other fourteen page routes stay [ ] because the full rendered component-tree state matrix and old-vNext browser comparisons cannot be established from remote source alone. Strict visual evidence is not fabricated.
+
+## Transferred out of lane-10 on origin/main (2026-10-20)
+
+All 14 remaining unticked paths from `lane-10.md` are assigned verbatim to other lanes by the new `lane-*b.md`/`lane-*c.md` ownership rule. Do **not** tick or edit them from chat-10; their page-level clone completion now belongs to the destination lane. Zero eligible unticked items remain for chat-10.
+- SKIPPED (moved to `lane-12b.md`): `src/app/(authenticated)/admin/placements/calendar/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-12b.md`): `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-12b.md`): `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-12b.md`): `src/app/(authenticated)/admin/placements/new/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-12b.md`): `src/app/(authenticated)/college/faculty/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-12b.md`): `src/app/(authenticated)/college/lecture-halls/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-12b.md`): `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-12b.md`): `src/app/(authenticated)/college/programs/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-14b.md`): `src/app/(authenticated)/college/quizzes/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-14b.md`): `src/app/(authenticated)/college/verification/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-14b.md`): `src/app/(authenticated)/mentor/projects/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-14b.md`): `src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-14b.md`): `src/app/(authenticated)/tpo/reports/leads/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
+- SKIPPED (moved to `lane-14b.md`): `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx` — no edits, no checklist tick; destination queue verified on origin/main.
