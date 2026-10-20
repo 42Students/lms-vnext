@@ -6,10 +6,10 @@
 - [x] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
 - [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/college/college-profile/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/page.tsx`
 - [ ] `src/app/(authenticated)/dashboard/page.tsx`

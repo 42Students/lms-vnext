@@ -105,28 +105,28 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   {!lessons.length?<p className="text-sm text-muted-foreground">Create an active course lesson before adding quizzes.</p>:null}
   {opened?<div className="space-y-3">
    <div className="grid gap-3 md:grid-cols-2">
-    <label className="grid gap-1 text-xs font-semibold text-body">Course / Lesson
+    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Course / Lesson
      <Select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
       className="min-h-11 md:min-h-9">
       {lessons.map(x=><option key={x.id} value={x.id}>{x.courseCode} · {x.course} · {x.name}</option>)}
      </Select></label>
-    <label className="grid gap-1 text-xs font-semibold text-body">Audience
+    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Audience
      <Select value={deliveryId} disabled={busy} onChange={e=>setDeliveryId(e.target.value)}
       className="min-h-11 md:min-h-9">
       <option value="">All currently eligible sections</option>
       {sections.map(x=><option key={x.deliveryId} value={x.deliveryId}>
        {x.sectionName} ({x.sectionCode})</option>)}
      </Select></label>
-    <label className="grid gap-1 text-xs font-semibold text-body">Title
+    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Title
      <Input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-1 text-xs font-semibold text-body">Deadline (IST, required before publishing)
+    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Deadline (IST, required before publishing)
      <DateInput mode="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
       className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-1 text-xs font-semibold text-body">Maximum attempts
+    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Maximum attempts
      <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
       onChange={e=>setMaxAttempts(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-1 text-xs font-semibold text-body md:col-span-2">Description
+    <label className="grid gap-1 text-sm font-semibold leading-5 text-body md:col-span-2">Description
      <Textarea rows={2} maxLength={10000} value={description} disabled={busy}
       onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/></label>
    </div>

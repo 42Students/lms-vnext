@@ -30,11 +30,11 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
     {showHeader ? <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} /> : null}
     <form action={base} className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-3 print:hidden">
-      <label className="grid gap-1 text-xs font-semibold text-body">Assessment title
+      <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Assessment title
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-body">Status
+      <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option><option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
@@ -42,15 +42,15 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
           <option value="ARCHIVED">Archived</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-body">Course code
+      <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Course code
         <Input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 md:min-h-9"/>
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-body">Audience
+      <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Audience
         <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
           <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
         </Select>
       </label>
-      {!assignment?<label className="grid gap-1 text-xs font-semibold text-body">Results
+      {!assignment?<label className="grid gap-1 text-sm font-semibold leading-5 text-body">Results
         <Select name="results" defaultValue={data.query.results} className="min-h-11 md:min-h-9">
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </Select>
