@@ -40,7 +40,7 @@ export function ActionPagination({
    {pages.map(target=>target===current?
     <span key={target} aria-current="page" aria-label={"Current page "+target+" of "+total}
      className={cx("inline-flex items-center justify-center",base,
-      "cursor-default border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]")}>
+      "cursor-default border-[var(--lms-primary)] bg-white text-[var(--lms-primary)]")}>
      {target}
     </span>:
     <Button key={target} variant="secondary" type="button" disabled={disabled}
