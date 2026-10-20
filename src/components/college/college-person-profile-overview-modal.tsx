@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {Alert} from "@/components/ui/alert";
 import {Skeleton} from "@/components/ui/skeleton";
-import {useState} from "react";
+import {useRef,useState} from "react";
 type Overview={person:{name:string;kind:"FACULTY"|"LEARNER";gender:string;bio:string;
  academicTitle:string|null;employmentType:string|null;rollNumber:string|null};
  education:{title:string;detail:string;year:string;extra:string}[];
@@ -13,27 +13,30 @@ const sections=["skills","certifications","projects","publications","awards","ex
 export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
  membershipId:string;name:string;kind:"FACULTY"|"LEARNER";
 }){
+ const requestId=useRef(0);
+ function close(){requestId.current+=1;setOpen(false);}
  const [open,setOpen]=useState(false),[loading,setLoading]=useState(false),
  [error,setError]=useState(""),[data,setData]=useState<Overview|null>(null);
  async function show(){
+  const request=++requestId.current;
   setOpen(true);setError("");setLoading(true);setData(null);
   try{
    const response=await fetch("/api/college/people/"+encodeURIComponent(membershipId)+
     "/profile-overview?kind="+kind,{cache:"no-store"});
    const payload=await response.json().catch(()=>null);
    if(!response.ok||!payload?.person)throw Error(payload?.error??"Profile unavailable");
-   setData(payload as Overview);
-  }catch(e){setError(e instanceof Error?e.message:"Could not load profile");}
-  finally{setLoading(false);}
+   if(request===requestId.current)setData(payload as Overview);
+  }catch(e){if(request===requestId.current)setError(e instanceof Error?e.message:"Could not load profile");}
+  finally{if(request===requestId.current)setLoading(false);}
  }
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
    className="min-h-11 w-full md:min-h-9 md:w-auto">Profile</Button>
-  <Dialog open={open} onOpenChange={setOpen} title={"Profile for "+name} footer={<Button variant="secondary" type="button" onClick={()=>setOpen(false)}
+  <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={"Profile for "+name} footer={<Button variant="secondary" type="button" onClick={close}
       className="min-h-11 w-full md:min-h-9 md:w-auto">Close</Button>}>
     
     {loading?<Skeleton variant="row" count={3} label="Loading profile"/>:null}
-    {error?<Alert tone="error">{error}</Alert>:null}
+    {error?<Alert tone="error">{error}<div className="mt-[var(--lms-space-2)]"><Button variant="secondary" type="button" onClick={()=>void show()}>Retry</Button></div></Alert>:null}
     {data&&!loading&&!error?<div className="min-w-0 space-y-[var(--lms-space-4)]">
      <dl className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] text-sm md:grid-cols-2">
       <div><dt className="text-muted-foreground">Gender</dt><dd>{data.person.gender||"Not recorded"}</dd></div>
