@@ -39,7 +39,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
   </Alert>
   <nav className="flex flex-wrap gap-3">
    <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Drive rounds"/>
-   <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
+   <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm font-medium text-primary-text md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
   </nav>
   <>
    <section className="space-y-3 border-b border-border pb-4">
