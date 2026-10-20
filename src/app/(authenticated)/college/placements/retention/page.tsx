@@ -16,7 +16,7 @@ export default async function CollegeRetentionPage(){
  return <div className="min-w-0 space-y-6">
   <PageHeader title="Data retention report"
    description="Rejected or withdrawn applications idle for 180+ days."
-   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link md:min-h-9">Analytics</Link>}/>
+   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 inline-flex items-center lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Analytics</Link>}/>
   <section className="min-w-0 pt-2">
    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Review candidates ({data.total})</h2>
    <p className="my-2 text-sm text-muted-foreground">Cutoff: {fmt.format(data.cutoff)} IST. {data.note}</p>

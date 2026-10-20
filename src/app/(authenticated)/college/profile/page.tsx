@@ -27,7 +27,7 @@ export default async function CollegeAdminProfilePage({
   if(profileResult.status==="rejected")return <div className="min-w-0 space-y-6">
     <PageHeader title="Profile"/>
     <ErrorState title="Failed to load profile" description="Couldn’t refresh profile. Your existing details have not been changed."
-      action={<Link href="/college/profile" prefetch={false} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</Link>}/>
+      action={<Link href="/college/profile" prefetch={false} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>}/>
 
   </div>;
   const profile=profileResult.value;
@@ -36,17 +36,17 @@ export default async function CollegeAdminProfilePage({
     <PageHeader title="Profile"
       description="Your personal and contact details. College contact information is managed separately."
       actions={<Link href="/account/security"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Signed-in devices
       </Link>} />
     <CollegeAdminProfileEditor initial={profile}
       email={account?.email ?? null} phone={account?.phoneE164 ?? null}
       college={account?.college?.name ?? null} />
     <div className="flex flex-wrap gap-3">
-      <Link href="/college/domains" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">
+      <Link href="/college/domains" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Tenant domains
       </Link>
-      <Link href="/college/college-profile" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">
+      <Link href="/college/college-profile" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Edit college display and support contacts
       </Link>
     </div>

@@ -37,7 +37,7 @@ export default async function CollegeProjectsPage({
       <PageHeader title="Workspaces" description="Select a college to continue."/>
       <ErrorState title="No college selected"
         description="Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page."
-        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+        action={<Link href="/dashboard" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to dashboard</Link>}/>
     </div>;
   }
 
@@ -47,7 +47,7 @@ export default async function CollegeProjectsPage({
       <PageHeader title="Workspaces" description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link md:min-h-9">Clear filters</Link>}
+        action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}
       />
     </div>;
   }
@@ -81,7 +81,7 @@ export default async function CollegeProjectsPage({
       <ErrorState title="Project workspaces unavailable"
         description="The workspace list could not be loaded. Your search and filters were not changed."
         action={<Link href={"/college/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry loading workspaces</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry loading workspaces</Link>}/>
     </div>;
   }
   const result=snapshotsResult.value;
@@ -109,14 +109,14 @@ export default async function CollegeProjectsPage({
         title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Create workspace
         </Link>}
       />
 
       <nav aria-label="Project workspace tools" className="flex min-w-0 flex-wrap gap-2">
-      <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
+      <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold hover:bg-[rgba(38,186,199,0.07)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
+      <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-[rgba(38,186,199,0.07)] lms-inline-link active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
 
       <div className="min-w-0 space-y-2">
        <Tabs ariaLabel="Workspace display and archive" renderPanel={false}
