@@ -43,7 +43,7 @@ export default async function HrMessagesPage({searchParams}:{
      </Link>
      {result.status==="READY"?<Link
        href={"/api/placements/recruiter/notifications/export?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)}
-       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto hover:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        Export scoped notifications CSV
      </Link>:null}
    </>}/>
@@ -102,7 +102,8 @@ export default async function HrMessagesPage({searchParams}:{
        </ol>
      </section>)}
    </div>:<EmptyState title="No matching notifications"
-     description="No matching notifications for this employer and college."/>}
+     description="No matching notifications for this employer and college."
+     action={query.data.q||query.data.unreadOnly==="true" ? <Link href={"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Reset</Link> : undefined}/>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground">
        {result.first?result.first+"–"+result.last:"No rows on this page"}

@@ -79,3 +79,13 @@
 - Regressions found/fixed: 1 layout regression — actionable deadlines and upcoming rounds links were inline elements under a `divide-y` row list, preventing full-width rows/hit targets; make both block/min-w-0 and do the same for results-due rows. Inspected full 32k source, route error/loading, HR layout, lane-14 proof, Today action/due/results models, profile/portfolio data calls, shared Badge/Alert/EmptyState and draft reminder. Checked permission, IST clock, grant choice, partial outage and drill-down links.
 - Extra clutter/alignment: 2 — long deadline/event labels wrap rather than overflowing, and summary-list row hit areas now align across sections.
 - Files changed: `src/app/(authenticated)/hr/home/page.tsx`. Static inspection only, no CI.
+
+## 17. `src/app/(authenticated)/hr/messages/page.tsx`
+- Regressions found/fixed: 0. The alias re-exports the authorized `/hr/conversations/page.tsx` already verified under surface 7. Re-read alias, inbox component hierarchy, route error/loading, HR layout and lane-14 proof; imports, messages wording and fallback recovery remain intact.
+- Extra clutter/alignment: 0; route has no independently rendered page controls.
+- Files changed: verified, no change. No CI/runtime.
+
+## 18. `src/app/(authenticated)/hr/notifications/page.tsx`
+- Regressions found/fixed: 0. Read full page/error/loading, HR layout, lane-14 evidence, HrNotificationReadButton with receipt gating, hrNotificationsQuerySchema, grouped notices model, Tabs, NeedsDoingChips, StatusBadge, forms, unread/export URLs and empty state. Permissions and original labels retained.
+- Extra clutter/alignment: 2 — demote competing CSV export to tertiary text link rather than outlined button; when filtered inbox is empty provide Reset to selected college's unfiltered notifications.
+- Files changed: `src/app/(authenticated)/hr/notifications/page.tsx`. Static only; no CI.
