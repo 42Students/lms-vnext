@@ -1,2 +1,2 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
-export default function Loading(){return <GracefulPageLoading label="Loading recruiter round results" shape="directory"/>;}
+export default function Loading(){return <div className="min-w-0 max-w-full"><GracefulPageLoading label="Loading recruiter round results" shape="directory"/></div>;}

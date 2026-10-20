@@ -15,7 +15,7 @@ type Grant = {
   collegeName: string;
 };
 
-export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] }) {
+export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants: readonly Grant[]; hideHeading?: boolean }) {
   const [items, setItems] = useState(() => [...grants]);
   const [leaving, setLeaving] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -50,8 +50,8 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
   }
 
   return (
-    <section className="border-b border-border pb-5">
-      <h2 className="text-base font-semibold text-foreground">College Access</h2>
+    <section aria-label="College Access" className="min-w-0 border-t border-border pt-4">
+      {hideHeading ? null : <h2 className="text-base font-semibold text-foreground">College Access</h2>}
       <p className="mt-1 text-sm text-muted-foreground">
         Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
       </p>
@@ -69,12 +69,12 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
       ) : (
         <div className="mt-4 divide-y divide-border">
           {items.map((grant) => (
-            <div key={grant.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-              <div>
-                <div className="font-medium text-foreground">{grant.collegeName}</div>
+            <div key={grant.id} className="flex min-w-0 flex-col gap-3 py-4 first:pt-0 last:pb-0 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+              <div className="min-w-0 flex-1">
+                <div className="break-words font-medium text-foreground">{grant.collegeName}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Active recruiter access</div>
                 <nav aria-label={"Open "+grant.collegeName+" recruiter pages"}
-                  className="mt-2 flex flex-wrap gap-3 text-sm">
+                  className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                   {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
                     <Link key={link.label} href={link.href}
                       className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -89,7 +89,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                 disabled={leaving === grant.id}
                 loading={leaving === grant.id}
                 onClick={() => setConfirmGrant(grant)}
-                className="border-error/30 text-error hover:bg-error/5"
+                className="min-h-11 w-full justify-center border-error/30 text-error hover:bg-error/5 min-[768px]:min-h-9 min-[768px]:w-auto"
               >
                 {leaving === grant.id ? "Leaving…" : "Leave Access"}
               </Button>

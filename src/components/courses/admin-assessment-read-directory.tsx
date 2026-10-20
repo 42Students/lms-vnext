@@ -28,7 +28,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
   const title = assignment ? "Assignments" : "Quizzes";
   const base = assignment ? "/admin/assignments" : "/admin/quizzes";
   const stats = adminAssessmentStats(data.items);
-  return <div className="space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-5">
     {showHeader ? <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} /> : null}
     <FilterBar title="Assessment filters"><form action={base} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-3 print:hidden">
@@ -59,17 +59,17 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
       </label>:null}
       <Button variant="primary" type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
     </form></FilterBar>
-    <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
+    <p className="m-0 break-words text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {data.items.map(item => <article key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
           <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>{item.status}</StatusBadge>
         </div>
-        <p className="mt-1 text-sm text-body">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>
-        <p className="mt-2 text-xs text-muted-foreground">{item.deliverySpecific ? "Section-specific" : "Shared offering"} · {item.points} maximum points</p>
+        <p className="mt-1 break-words text-sm text-body">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>
+        <p className="mt-2 break-words text-xs text-muted-foreground">{item.deliverySpecific ? "Section-specific" : "Shared offering"} · {item.points} maximum points</p>
         <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] text-sm text-body">
-          <div><dt className="text-xs text-muted-foreground">Due</dt><dd>{formatDue(item.dueAt)}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">Due</dt><dd className="break-words">{formatDue(item.dueAt)}</dd></div>
           <div><dt className="text-xs text-muted-foreground">{assignment ? "Submissions" : "Attempts"}</dt>
             <dd className="text-lg font-semibold tabular-nums">{item.activityCount}</dd></div>
         </dl>
@@ -106,7 +106,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         </Link>
       </article>)}
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
-    <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+    <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between print:hidden">
       <span className="text-xs text-muted-foreground">25 per page</span>
       <Pagination page={data.page} pageCount={data.totalPages}
         hrefForPage={page => adminAssessmentHref(data.kind, { ...data.query, page })}

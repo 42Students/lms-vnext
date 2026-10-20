@@ -40,7 +40,7 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
   }catch(error){setMessage(error instanceof Error?error.message:"Save failed");}
   finally{setBusy(false);}
  }
- return <div className="mt-4 flex flex-wrap items-end gap-3">
+ return <div className="mt-4 flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-end">
   <label className="grid min-w-0 w-full flex-1 gap-[6px] md:min-w-48 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic scope
    <Select className="min-h-11 min-[768px]:min-h-9" value={scopeKey}
     onChange={e=>{setScopeKey(e.target.value);setStored(undefined);setMessage("");}}>
@@ -50,13 +50,13 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
     </option>)}
    </Select>
   </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module
    <Select className="min-h-11 min-[768px]:min-h-9" value={module}
     onChange={e=>{setModule(e.target.value as "projects"|"placements"|"electives");setStored(undefined);}}>
     <option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
    </Select>
   </label>
-  <Button type="button" variant="secondary" className="min-h-11 min-[768px]:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>Recheck</Button>
+  <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto min-[768px]:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>Recheck</Button>
   {stored!==undefined&&<><label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored rule
    <Select value={choice} className="min-h-11 min-[768px]:min-h-9" onChange={e=>setChoice(e.target.value)}>
     <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>

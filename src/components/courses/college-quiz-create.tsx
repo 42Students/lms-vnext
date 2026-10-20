@@ -94,16 +94,15 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create quiz.");}
   finally{lock.current=false;setBusy(false);}
  }
- return <section className="min-w-0 space-y-3">
-  <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
-   <div className="min-w-0"><p className="font-semibold text-foreground">Quizzes</p>
-    <p className="text-xs text-muted-foreground">Author questions for all eligible Sections or a specific Section.</p></div>
-   <Button variant="secondary" type="button" disabled={!lessons.length||busy} onClick={()=>{setError("");setNotice("");setOpened(true);}}
+ return <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+  <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
+   <p className="m-0 min-w-0 text-xs text-muted-foreground">Author questions for all eligible Sections or a specific Section.</p>
+   <Button variant="primary" type="button" disabled={!lessons.length||busy} onClick={()=>{setError("");setNotice("");setOpened(true);}}
     className="min-h-11 w-full md:min-h-9 md:w-auto">
     Create New Quiz</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create an active course lesson before adding quizzes.</p>:null}
-  {opened?<div className="min-w-0 max-w-4xl space-y-4">
+  {opened?<div className="min-w-0 max-w-4xl space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
    <div className="grid min-w-0 gap-4 md:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Course / Lesson
      <Select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
@@ -143,7 +142,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     {questions.reduce((sum,question)=>sum+question.points,0)} total points · Max 100 questions and 10,000 points.</p>
    {questions.map((question,i)=><fieldset key={i} className="space-y-2 border-t border-border py-3">
     <legend className="text-sm font-semibold">Question {i+1}</legend>
-    <div className="flex min-w-0 flex-wrap gap-2">
+    <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_7rem]">
      <Select value={question.type} disabled={busy} onChange={e=>{
       const type=e.target.value as Question["type"];
       replaceQuestion(i,{...question,type,options:question.options.map((o,j)=>({...o,correct:j===0}))});
@@ -153,7 +152,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      </Select>
      <Input type="number" min={1} max={1000} aria-label="Question points" disabled={busy}
       value={question.points} onChange={e=>replaceQuestion(i,{...question,points:Number(e.target.value)})}
-      className="min-h-11 w-28 md:min-h-9"/>
+      className="min-h-11 w-full sm:w-28 md:min-h-9"/>
     </div>
     <Textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
@@ -171,17 +170,17 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       ...question,options:question.options.filter((_,k)=>k!==j)})}
       className="min-h-11 text-xs font-semibold md:min-h-9">Remove</Button>:null}
     </label>)}
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
      <Button variant="ghost" type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
-      className="min-h-11 text-sm font-semibold text-primary-text disabled:opacity-40 md:min-h-9">Move question up</Button>
+      className="min-h-11 w-full text-sm font-semibold text-primary-text disabled:opacity-40 sm:w-auto md:min-h-9">Move question up</Button>
      <Button variant="ghost" type="button" disabled={busy||i===questions.length-1} onClick={()=>moveQuestion(i,1)}
-      className="min-h-11 text-sm font-semibold text-primary-text disabled:opacity-40 md:min-h-9">Move question down</Button>
+      className="min-h-11 w-full text-sm font-semibold text-primary-text disabled:opacity-40 sm:w-auto md:min-h-9">Move question down</Button>
      <Button variant="ghost" type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
-      className="min-h-11 text-sm font-semibold text-primary-text md:min-h-9">+ Add option</Button>
+      className="min-h-11 w-full text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">+ Add option</Button>
      {questions.length>1?<Button variant="danger" type="button" disabled={busy}
       onClick={()=>setQuestions(rows=>rows.filter((_,k)=>k!==i))}
-      className="min-h-11 text-sm font-semibold md:min-h-9">Remove question</Button>:null}
+      className="min-h-11 w-full text-sm font-semibold sm:w-auto md:min-h-9">Remove question</Button>:null}
     </div>
    </fieldset>)}
    <Button variant="secondary" type="button" disabled={busy||questions.length>=100}
