@@ -10,13 +10,13 @@ export class ShellWidgetBoundary extends Component<Props,State>{
  static getDerivedStateFromError():State{return {failed:true};}
  render(){
   if(!this.state.failed)return this.props.children;
-  return <div className="min-w-0 space-y-2" role="group" aria-label={this.props.name}>
+  return <div className="grid w-full min-w-0 max-w-sm gap-[var(--lms-space-3)]" role="group" aria-label={this.props.name}>
    <InlineNotice tone="error" message="Could not load this right now. Try again."/>
-   <div className="flex flex-wrap gap-3 text-sm">
-    <Button variant="secondary" type="button" onClick={()=>this.setState({failed:false})}
+   <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm max-[767px]:flex-col max-[767px]:items-stretch">
+    <Button variant="secondary" type="button" className="w-full min-[768px]:w-auto" onClick={()=>this.setState({failed:false})}
      >Retry</Button>
     {this.props.fallbackHref?<a href={this.props.fallbackHref}
-     className="inline-flex min-h-10 items-center text-primary-text underline">Open page</a>:null}
+     className="inline-flex min-h-11 min-w-0 w-full items-center justify-center text-primary-text underline min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">Open page</a>:null}
    </div>
   </div>;
  }

@@ -10,7 +10,7 @@ export function ShellConnectivityNotice(){
   window.addEventListener("offline",update);
   return ()=>{window.removeEventListener("online",update);window.removeEventListener("offline",update);};
  },[]);
- return offline?<div className="border-b border-border bg-surface px-4 py-2">
-  <InlineNotice tone="error" message="You appear to be offline. Changes will not be saved until you reconnect."/>
+ return offline?<div className="min-w-0 border-b border-border px-[var(--lms-space-3)] py-[var(--lms-space-2)] min-[768px]:px-[var(--lms-space-4)]">
+  <div className="mx-auto w-full min-w-0 max-w-full break-words"><InlineNotice tone="error" message="You appear to be offline. Changes will not be saved until you reconnect."/></div>
  </div>:null;
 }
