@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   mentorTeamCoverageHref, mentorTeamCoverageQuerySchema,
@@ -61,15 +62,15 @@ export default async function MentorTeamCoveragePage({
         </section>
       : <>
         <FilterBar title="Filters"><form method="get" action="/mentor/team-coverage"
-          className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+          className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground"
+              className="min-h-11 md:min-h-9  text-foreground"
               placeholder="Project name" />
           </label>
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Team coverage
             <Select name="filter" defaultValue={data.query.filter}
-              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
+              className="min-h-11 md:min-h-9  text-foreground">
               <option value="ALL">All projects</option>
               <option value="NO_LEARNERS">No active learners</option>
               <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
@@ -83,37 +84,33 @@ export default async function MentorTeamCoveragePage({
           </label>
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project state
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+              className="min-h-11 md:min-h-9 ">
               <option value="ALL">All current assignments</option>
               <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
               <option value="COMPLETED">Completed</option>
             </Select>
           </label>
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">My Mentor assignment
-            <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+            <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9 ">
               <option value="ALL">All assignments</option><option value="PRIMARY">Primary Mentor</option><option value="SUPPORTING">Supporting Mentor</option>
             </Select>
           </label>
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Team-size order
-            <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+            <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 ">
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </Select>
           </label>
           <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>
           <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
         </form></FilterBar>
-        <section aria-label="Registered team coverage summary"
-          className="grid gap-3 md:grid-cols-3">
-          {([
-            ["Current assigned projects",data.projectCount],
-            ["Projects with no active learners",data.summary.zeroLearnerProjects],
-            ["Projects without primary Mentor",data.summary.withoutPrimaryMentor],
-          ] as const).map(([label,value])=>
-            <div key={label} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-              <p className="text-xs font-semibold text-muted-foreground">{label}</p>
-              <p className="mt-2 text-xl font-semibold tabular-nums">{value}</p>
-            </div>)}
-        </section>
+        <section aria-label="Registered team coverage summary" className="grid gap-3 min-[768px]:grid-cols-3">
+           {([
+             ["Current assigned projects",data.projectCount],
+             ["Projects with no active learners",data.summary.zeroLearnerProjects],
+             ["Projects without primary Mentor",data.summary.withoutPrimaryMentor],
+           ] as const).map(([label,value])=>
+             <StatTile key={label} label={label} value={value} className="min-h-[104px]" />)}
+         </section>
         <p className="text-sm text-body">
           {data.total} matching project{data.total === 1 ? "" : "s"}
         </p>

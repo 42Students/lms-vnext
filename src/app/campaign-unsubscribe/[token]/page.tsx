@@ -20,7 +20,7 @@ export default async function CampaignUnsubscribe({
   }
   const cell = kind === "PLACEMENT_CELL";
   return (
-    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-lg min-w-0 flex-col justify-center gap-6 px-4 py-8 sm:py-12`}>
+    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-lg min-w-0 flex-col justify-center gap-6 px-4 py-8 min-[768px]:py-12`}>
       <PageHeader eyebrow="42Students" title={cell ? "Stop these emails?" : "Campaign email preferences"} />
       {unavailable ? (
         <Card as="section" role="alert">

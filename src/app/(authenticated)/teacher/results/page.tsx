@@ -41,7 +41,7 @@ export default async function FacultyAssessmentResultsPage({
         </Link>
       </div>} />
     <form method="get" action="/teacher/results"
-      className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-3 xl:grid-cols-4">
+      className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-3 min-[1280px]:grid-cols-4">
       <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           
@@ -117,7 +117,7 @@ export default async function FacultyAssessmentResultsPage({
               </div>
               <StatusBadge tone={item.status==="PUBLISHED"?"success":"warning"}>{item.status}</StatusBadge>
             </div>
-            <dl className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            <dl className="mt-4 grid gap-3 md:grid-cols-2 min-[1280px]:grid-cols-5">
               {([
                 ["Eligible", item.eligible],
                 ["Responded", item.responded],
