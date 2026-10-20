@@ -22,7 +22,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
- if(!isSuperAdmin(context))return <div className="min-w-0 space-y-6">
+ if(!isSuperAdmin(context))return <div className="min-w-0 space-y-4 md:space-y-5">
   <PageHeader title="Students"/>
   <ErrorState title="Student access denied"
    description="Your account cannot access Super Admin student records."
@@ -42,7 +42,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     listSuperAdminStudentCsvImportHistory(context),
    ]);
   }catch{
-   return <div className="min-w-0 space-y-6">
+   return <div className="min-w-0 space-y-4 md:space-y-5">
     <PageHeader title="Students"/>
     <ErrorState title="Student register unavailable"
      description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
@@ -58,7 +58,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
      students:count(meta.count),created:count(meta.created),failed:count(meta.failed),
    };
  });
- return <div className="min-w-0 max-w-full space-y-6">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
@@ -67,19 +67,25 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
-  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-6"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
-  {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-6">
+  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-4"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
+  {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-4">
     <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
       <h2 id="bulk-register-students-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Bulk Register Students</h2>
       <SuperAdminStudentImportHistory runs={importRuns}/>
     </div>
     <p className="text-sm text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
-    <CollegeStudentCsvImport choices={choices}/>
+    <details className="min-w-0">
+      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Show CSV import form</summary>
+      <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>
+    </details>
   </section>:null}
   <AdminScopedReadPage headingMode="section" peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
-  renderBulkActions={rows=><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/>}
-  renderRowActions={row=><div className="flex flex-wrap items-start gap-3"><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>{peopleFilters?<><CollegePersonEditAction membershipId={row.id} kind="LEARNER"/><StudentClassMoveAction membershipId={row.id} name={row.title}/></>:null}</div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
+  renderBulkActions={rows=><details className="min-w-0 border-b border-border pb-3">
+    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Bulk module access controls</summary>
+    <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
+   </details>}
+  renderRowActions={row=><div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap"><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>{peopleFilters?<><CollegePersonEditAction membershipId={row.id} kind="LEARNER"/><StudentClassMoveAction membershipId={row.id} name={row.title}/></>:null}</div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
 }

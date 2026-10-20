@@ -38,7 +38,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
   }catch(e){setError(e instanceof Error?e.message:"Update failed. Refresh and retry.");}
   finally{pendingRef.current=false;setBusy(false);}
  }
- return <section aria-label="Bulk student access" className="space-y-3 border-b border-border pb-5">
+ return <section aria-label="Bulk student access" className="min-w-0 space-y-3 pb-4">
   <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
    <p role="status" className="text-sm text-muted-foreground">{selected.length}/25 students selected</p></div>
   <p className="text-xs text-muted-foreground">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
@@ -51,7 +51,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
    {capped.map(learner=><label key={learner.id} className="flex min-h-11 items-center gap-2 text-sm text-body">
     <Checkbox checked={selected.includes(learner.id)} disabled={busy||(!selected.includes(learner.id)&&selected.length>=25)}
      onChange={e=>setSelected(curr=>e.target.checked?[...curr,learner.id]:curr.filter(id=>id!==learner.id))}/>
-    <span className="truncate">{learner.name}</span>
+    <span className="min-w-0 break-words">{learner.name}</span>
    </label>)}
   </div>
   <div className="grid min-w-0 grid-cols-1 items-end gap-3 text-sm print:hidden md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
@@ -62,7 +62,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
     className="min-h-11 w-full md:min-h-9">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
     <option value="INHERIT">Clear override / Inherit</option></Select></label>
-   <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9" disabled={busy||!selected.length} onClick={()=>void submit()}
+   <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={busy||!selected.length} onClick={()=>void submit()}
     >{busy?"Saving…":"Apply to selected"}</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
