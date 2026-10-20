@@ -1001,6 +1001,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="dialog"],
 [data-slot="bottom-sheet"] { box-shadow: var(--lms-elevation-4); }
 [data-slot="drawer"] { box-shadow: var(--lms-drawer-shadow); }
+/* Legacy navigation drawer casts its shadow to the right: antddesign.scss:414-415. */
+[data-slot="drawer"][data-side="left"] { box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12); }
 [data-slot="drawer"]::backdrop { background: rgba(30,54,63,.1); }
 [data-slot="dialog"] :is(header,footer),
 [data-slot="drawer"] :is(header,footer),
