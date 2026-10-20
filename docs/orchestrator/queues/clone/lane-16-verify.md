@@ -54,4 +54,4 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-16.md: surface | regre
 - [x] `src/components/admin/super-admin-batch-graduate-action.tsx`
 - [x] `src/components/admin/super-admin-company-merge.tsx`
 - [x] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
