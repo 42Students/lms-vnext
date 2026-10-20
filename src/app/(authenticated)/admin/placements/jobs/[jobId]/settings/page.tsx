@@ -9,6 +9,7 @@ import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-s
 import { getPlacementJob } from "@/modules/placements/job-service";
 import {driveSettingsIstDate} from "@/modules/placements/admin-drive-settings-date-model";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 export default async function DriveSettingsPage({params}:{params:Promise<{jobId:string}>}){
  const {jobId}=await params;
@@ -16,9 +17,10 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
  requireSuperAdminSelectedCollege(context,"placements.manage");
  const job=await getPlacementJob(context,jobId);
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
- return <div className="space-y-4">
+ return <div className="min-w-0 space-y-4">
     
-  <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."/>
+  <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
+   actions={<PageBackLink href={base} label="Drive overview" />}/>
   <section className="space-y-2 border-b border-border pb-5">
    <h2 className="font-semibold">{job.title}</h2>
    <p className="flex flex-wrap items-center gap-2 text-sm text-body">Status: <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{job.status}</StatusBadge></p>
