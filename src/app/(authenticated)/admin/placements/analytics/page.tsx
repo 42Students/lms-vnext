@@ -61,7 +61,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.companyName},
   {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Drive",mobilePriority:"secondary",cell:row=>
    <Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)}
-    className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline">
+    className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9">
      {row.jobTitle}</Link>},
   ...metricKeys.map((key,index)=>({
     key,header:COMPANY_HIRING_COLUMNS[index+2]??key,mobilePriority:"secondary" as const,
@@ -91,7 +91,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <label className="grid gap-1 text-sm font-semibold">Applied through
     <Input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-w-0"/></label>
    <div className="flex flex-wrap items-end gap-3"><Button type="submit">Refresh</Button>
-    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear all</Link></div>
+    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear all</Link></div>
   </form>
   {params.size?<p className="text-sm text-body">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
   <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
