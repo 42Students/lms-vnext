@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import {DataTable} from "@/components/ui/data-table";
@@ -301,8 +302,7 @@ export default async function TpoMessagesPage({
 
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
-            <Input
-              type="date"
+            <DateInput mode="date"
               name="from"
               defaultValue={query.from ?? ""}
               className="min-h-11 md:min-h-9"
@@ -311,8 +311,7 @@ export default async function TpoMessagesPage({
 
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
-            <Input
-              type="date"
+            <DateInput mode="date"
               name="to"
               defaultValue={query.to ?? ""}
               className="min-h-11 md:min-h-9"

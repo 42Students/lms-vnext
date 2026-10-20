@@ -129,9 +129,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="LIVE">Live</option><option value="CLOSED">Closed</option>
         </Select>
       </label>
-      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Company or drive
-       <Input name="search" defaultValue={data.search} maxLength={100}
-        className="mt-[6px] block w-full"/>
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company or drive
+       <Input type="search" name="search" defaultValue={data.search} maxLength={100}
+        className="mt-2 block w-full"/>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline state
         <Select name="deadline" defaultValue={data.deadline} className="mt-[6px] block w-full">
@@ -331,7 +331,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                   {job.roundsCompleted} of {job.roundCount} rounds completed · {job.offersMade} active offers
                 </p>
                 <p className="text-xs text-body">Deadline: {job.applicationDeadline
-                  ? new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
+                  ? new Date(job.applicationDeadline).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
                   +" IST": "Not recorded"}</p></div>
               <div className="flex flex-wrap items-center gap-2">
                 <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Open drive</Link>
