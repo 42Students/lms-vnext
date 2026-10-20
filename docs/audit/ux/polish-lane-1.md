@@ -247,3 +247,11 @@
 **Problems fixed (10):** always-expanded create form; conversations expanded for every request; two competing oversized headings; custom inconsistent status chip; cramped phone request headings; multi-action rows wrapped irregularly; no empty discussion explanation; non-accept confirmations falsely described acceptance; send action undersized; long threads pushed next request offscreen. Used native disclosures for create and per-request discussion, shared status badge, 44px phone buttons, accurate conditional modal semantics and empty reply state. All IDs, mode logic, 409 optimistic tokens, routes and API contracts retained.
 
 **Files:** `src/components/placements/tpo-drive-change-requests.tsx`, queue, proof. No CI.
+
+## Surface 42 — TPO saved drive views
+
+**Reviewed:** local browser storage load/save, no views, at-most-eight, duplicate-name replacement, blocked storage, list apply/copy/delete, clipboard error/success, clear-all confirm, collapsed/expanded toolbar, 375/768 mobile. Shared Input/Button/EmptyState/Notice/Dialog; no runtime/CI.
+
+**Problems fixed (8):** pill list nested three ghost buttons horizontally and overflowed; long view names compressed action buttons; save action undersized at 375; clear-all danger text floated above saved views; success link notice remained after editing name; list lacked continuous legacy row dividers; summary focus cue inconsistent; every row used isolated bordered cards. Converted to compact 2/3-column hairline list, touch-sized save and row actions, bounded text, moved Clear all after entries, cleared stale clipboard success on edits, enhanced summary focus. Names, labels/ARIA, limit eight, localStorage and URLs preserved.
+
+**Files:** `src/components/placements/tpo-drive-saved-views.tsx`, queue, proof. No CI.
