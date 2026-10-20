@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function TpoMyNotificationsError({
   reset,
@@ -16,16 +17,9 @@ export default function TpoMyNotificationsError({
     >
       <PageHeader title={"Couldn't load My Notifications"} />
 
-      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-        Your college-scoped notification records or
-        preferences could not be retrieved. This failure
-        is not interpreted as an empty inbox or disabled
-        notification preferences.
-      </p>
-
-      <Button className="mt-5" onClick={reset}>
-        Retry
-      </Button>
+      <ErrorState title="Couldn't load My Notifications"
+        description="Your college-scoped notification records or preferences could not be retrieved. This failure is not interpreted as an empty inbox or disabled notification preferences."
+        action={<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Retry</Button>}/>
     </section>
   );
 }

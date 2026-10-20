@@ -1,5 +1,5 @@
-import { StatTile } from "@/components/ui/stat-tile";
-import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
+import { SummaryStrip } from "@/components/ui/summary-strip";
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -60,12 +60,11 @@ export default async function TpoMyNotificationsPage({
   if (!parsed) {
     return (
       <div className="min-w-0 space-y-6">
-        <TpoSettingsNav active="notifications" />
-
         <PageHeader
           title="My Notifications"
           description="Your own college-scoped notification deliveries and saved notification preferences."
         />
+        <TpoSettingsNav active="notifications" compact />
 
         <ErrorState
           title="Invalid notification filters"
@@ -111,35 +110,73 @@ export default async function TpoMyNotificationsPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <TpoSettingsNav active="notifications" />
-
       <PageHeader
         title="My Notifications"
         description="Only in-app notifications addressed to your signed-in account and recorded against your current college. Read-only; no notification is marked read by visiting this page."
       />
+      <TpoSettingsNav active="notifications" compact />
 
-      <section
-        aria-label="My notification summary"
-        className="grid gap-3 min-[768px]:grid-cols-3"
-      >
-        {[
-          {
-            label: "My college notifications",
-            value: summary.total,
-          },
-          {
-            label: "Unread",
-            value: summary.unread,
-          },
-          {
-            label: "Read",
-            value: summary.read,
-          },
-        ].map((metric) => (
-          <StatTile className={tpoTileStyles.tile} key={metric.label} label={metric.label} value={metric.value} />
-        ))}
+      <SummaryStrip label="My notification summary" steps={[
+        {label:"My college notifications",value:summary.total},
+        {label:"Unread",value:summary.unread},
+        {label:"Read",value:summary.read},
+      ]}/>
+
+      <section className="border-t border-border">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border py-4">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">
+              My notification preferences
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-body">
+              These settings are displayed for your own user
+              account and current college only.
+            </p>
+          </div>
+
+          <StatusBadge
+            tone={
+              preferences.source === "PERSISTED"
+                ? "success"
+                : preferences.source === "SOURCE_DEFAULT"
+                  ? "info"
+                  : "warning"
+            }
+          >
+            {preferences.source === "PERSISTED"
+              ? "Persisted"
+              : preferences.source === "SOURCE_DEFAULT"
+                ? "Source default"
+                : "Unavailable"}
+          </StatusBadge>
+        </div>
+
+        {preferences.source === "UNAVAILABLE" ? (
+          <Alert tone="warning">
+            The TPO notification-preference table is not
+            registered in the current database. Saved
+            preferences cannot be read. No preference value
+            is asserted from this missing source.
+          </Alert>
+        ) : (
+          <>
+            {preferences.source === "SOURCE_DEFAULT" ? (
+              <Alert tone="info">
+                No saved preference row exists for your user
+                account in this college. The values below
+                are the declared database source defaults,
+                not persisted personal selections.
+              </Alert>
+            ) : null}
+
+            <TpoMyNotificationPreferencesEditor key={context.user.id+":"+data.collegeId}
+             initial={preferences.values} version={data.preferencesVersion}/>
+
+          </>
+        )}
       </section>
 
+      <Disclosure title="Notification history" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
       <section className="border-t border-border pt-4">
         <h2 className="text-lg font-semibold text-foreground">
           My notification history
@@ -155,7 +192,7 @@ export default async function TpoMyNotificationsPage({
         <form
           action="/tpo/settings/notifications"
           method="get"
-          className="mt-4 flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch"
+          className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[1280px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]"
         >
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-40 leading-4">
             Read status
@@ -191,7 +228,7 @@ export default async function TpoMyNotificationsPage({
 
           <Button
             type="submit"
-            className="min-h-11 min-[768px]:min-h-9"
+            className="min-h-11 w-full min-[768px]:min-h-9 min-[1280px]:w-auto"
           >
             Apply
           </Button>
@@ -243,7 +280,7 @@ export default async function TpoMyNotificationsPage({
             rows={items}
             getRowKey={item=>item.id}
             caption="My notifications"
-            empty={<p>No in-app notification deliveries to your account match this read-status filter within your current college.</p>}
+            empty={<EmptyState title="No matching notifications" description="No in-app notification deliveries to your account match this read-status filter within your current college."/>}
             columns={[
               {key:"subject",header:"Subject",mobilePriority:"primary",cell:item=>
                 <div className="space-y-2">
@@ -302,60 +339,8 @@ export default async function TpoMyNotificationsPage({
         </nav>
       </section>
 
-      <section className="border-t border-border">
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border py-4">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">
-              My notification preferences
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-body">
-              These settings are displayed for your own user
-              account and current college only.
-            </p>
-          </div>
-
-          <StatusBadge
-            tone={
-              preferences.source === "PERSISTED"
-                ? "success"
-                : preferences.source === "SOURCE_DEFAULT"
-                  ? "info"
-                  : "warning"
-            }
-          >
-            {preferences.source === "PERSISTED"
-              ? "Persisted"
-              : preferences.source === "SOURCE_DEFAULT"
-                ? "Source default"
-                : "Unavailable"}
-          </StatusBadge>
-        </div>
-
-        {preferences.source === "UNAVAILABLE" ? (
-          <Alert tone="warning">
-            The TPO notification-preference table is not
-            registered in the current database. Saved
-            preferences cannot be read. No preference value
-            is asserted from this missing source.
-          </Alert>
-        ) : (
-          <>
-            {preferences.source === "SOURCE_DEFAULT" ? (
-              <Alert tone="info">
-                No saved preference row exists for your user
-                account in this college. The values below
-                are the declared database source defaults,
-                not persisted personal selections.
-              </Alert>
-            ) : null}
-
-            <TpoMyNotificationPreferencesEditor key={context.user.id+":"+data.collegeId}
-             initial={preferences.values} version={data.preferencesVersion}/>
-
-          </>
-        )}
-      </section>
-
+      </Disclosure>
+      <Disclosure title="Data scope" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]">
       <p className="text-xs leading-5 text-muted-foreground">
         Source: in_app_notifications joined to college-scoped
         activity_events, filtered to the authenticated recipient.
@@ -367,6 +352,7 @@ export default async function TpoMyNotificationsPage({
         Preference values do not prove that downstream
         delivery behavior has been implemented.
       </p>
+      </Disclosure>
     </div>
   );
 }
