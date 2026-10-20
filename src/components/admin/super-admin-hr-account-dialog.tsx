@@ -150,18 +150,18 @@ export function SuperAdminHrAccountDialog({
               Company not listed? Create a company by name
             </label>
             {createCompany?<div className="mb-4 space-y-3 border-b border-border pb-4">
-              <label className="grid gap-1 text-[13px] font-semibold text-body">Company name
+              <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Company name
                 <Input className="min-h-11 md:min-h-9" value={newCompanyName} minLength={2} maxLength={150} required
                   onChange={event=>setNewCompanyName(event.target.value)} disabled={pending}/>
               </label>
-              <label className="grid gap-1 text-[13px] font-semibold text-body">First college
+              <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">First college
                 <Select className="min-h-11 md:min-h-9" required value={newCompanyCollegeId} disabled={pending||optionsLoading}
                   onChange={event=>setNewCompanyCollegeId(event.target.value)}>
                   <option value="">Select a college</option>
                   {colleges.map(c=><option key={c.collegeId} value={c.collegeId}>{c.collegeName}</option>)}
                 </Select>
               </label>
-              <label className="grid gap-1 text-[13px] font-semibold text-body">Company domain (optional)
+              <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Company domain (optional)
                 <Input className="min-h-11 md:min-h-9" value={newCompanyDomain} placeholder="company.com" maxLength={253}
                   disabled={pending} onChange={event=>setNewCompanyDomain(event.target.value)}/>
               </label>
@@ -172,7 +172,7 @@ export function SuperAdminHrAccountDialog({
             </div>:null}
             {!createCompany?<><label
               htmlFor={`${id}-relationship`}
-              className="mb-1.5 block text-[13px] font-semibold text-body"
+              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Company and first college
             </label>
@@ -203,7 +203,7 @@ export function SuperAdminHrAccountDialog({
 
             {companyRelationshipId&&!createCompany ? (
               <fieldset className="mt-3 space-y-2 border-b border-border pb-4">
-                <legend className="text-[13px] font-semibold text-foreground">Colleges · optional additional access</legend>
+                <legend className="text-[var(--lms-font-sm)] font-semibold text-foreground">Colleges · optional additional access</legend>
                 <p className="text-xs text-muted-foreground">
                   You can add or remove colleges later. Only colleges connected to this same company are shown.
                 </p>
@@ -274,12 +274,12 @@ export function SuperAdminHrAccountDialog({
         )}
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="grid gap-1 text-[13px] font-semibold text-body">First Name
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">First Name
             <Input className="min-h-11 md:min-h-9" id={`${id}-first-name`} autoComplete="given-name" value={firstName}
               minLength={1} maxLength={120} required disabled={pending}
               onChange={event=>setFirstName(event.target.value)}/>
           </label>
-          <label className="grid gap-1 text-[13px] font-semibold text-body">Last Name
+          <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Last Name
             <Input className="min-h-11 md:min-h-9" id={`${id}-last-name`} autoComplete="family-name" value={lastName}
               maxLength={120} disabled={pending}
               onChange={event=>setLastName(event.target.value)}/>
@@ -290,7 +290,7 @@ export function SuperAdminHrAccountDialog({
           <div>
             <label
               htmlFor={`${id}-phone`}
-              className="mb-1.5 block text-[13px] font-semibold text-body"
+              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Mobile number
             </label>
@@ -313,7 +313,7 @@ export function SuperAdminHrAccountDialog({
           <div>
             <label
               htmlFor={`${id}-email`}
-              className="mb-1.5 block text-[13px] font-semibold text-body"
+              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Email · optional
             </label>
@@ -335,7 +335,7 @@ export function SuperAdminHrAccountDialog({
         <div>
           <label
             htmlFor={`${id}-title`}
-            className="mb-1.5 block text-[13px] font-semibold text-body"
+            className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
           >
             Designation · optional
           </label>
@@ -355,7 +355,7 @@ export function SuperAdminHrAccountDialog({
           <div>
             <label
               htmlFor={`${id}-status`}
-              className="mb-1.5 block text-[13px] font-semibold text-body"
+              className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Recruiter status
             </label>

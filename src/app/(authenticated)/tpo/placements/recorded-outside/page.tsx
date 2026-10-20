@@ -29,13 +29,13 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
    External drive record saved. It was not published as a job.
   </Banner>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
-  <section aria-label="Recorded outside drives" className="space-y-3 border-b border-border pb-6">
-   <h2 className="font-semibold">Recorded outside drives</h2>
+  <section aria-label="Recorded outside drives" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
+   <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Recorded outside drives</h2>
    <p className="text-sm text-body">These are historic records, not published jobs; they are excluded from learner application reminders.</p>
    {recorded.length?<ul className="divide-y divide-border">
     {recorded.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
      <span>{item.company} · {item.title} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.occurredAt)} · Recorded outside LMS</span>
-     <Link href={"/tpo/placements/recorded-outside/"+item.id} className="font-semibold text-[var(--lms-teal-deep)] underline">
+     <Link href={"/tpo/placements/recorded-outside/"+item.id} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
       Add students and results
      </Link>
     </li>)}

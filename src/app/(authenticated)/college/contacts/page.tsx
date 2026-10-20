@@ -59,8 +59,8 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
         className="min-h-11 w-full min-w-0 md:min-h-9"/>
     </label>}>
   <form id="college-contacts-filters" action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-   <input type="hidden" name="tab" value={filter.tab}/>
-   {filter.membershipId&&<input type="hidden" name="membershipId" value={filter.membershipId}/>}
+   <Input type="hidden" name="tab" value={filter.tab}/>
+   {filter.membershipId&&<Input type="hidden" name="membershipId" value={filter.membershipId}/>}
 
    <Disclosure title="Advanced filters" defaultOpen={activeCollegeContactFilterCount(filter)>0} className="min-w-0 flex-auto basis-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 [&>summary]:text-foreground">
     <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
@@ -224,18 +224,18 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
         {key:"actions",header:"Related role records",mobileLabel:"Related role records",mobilePriority:"action" as const,
           cell:contact=><div className="flex flex-wrap gap-2">
             <Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
-              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]">View contact</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]">View contact</Link>
             {contactRecordLinks(contact).map(link=><Link key={link.href} href={link.href}
-              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]">{link.label}</Link>)}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]">{link.label}</Link>)}
           </div>},
       ]}/>}
   </section>
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <p>Page {filter.page} of {pageCount} · Showing {range.first}–{range.last} of {results.total} matching contacts</p>
    <div className="flex flex-wrap gap-2">
-    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="rounded-[var(--lms-control-radius)] border px-4 py-2">First</Link>:null}
+    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">First</Link>:null}
     <Pagination page={filter.page} pageCount={pageCount} hrefForPage={page=>collegeContactsHref({...filter,page})} label="Contact directory pages"/>
-    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="rounded-[var(--lms-control-radius)] border px-4 py-2">Last</Link>:null}
+    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Last</Link>:null}
    </div>
   </div>
  </div>;

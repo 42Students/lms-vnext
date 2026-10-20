@@ -18,7 +18,7 @@ export default async function TpoDriveDiscussion({params}:{
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Drive" title={data.job.title+" · Discussion"}
     description="Conversations with recruiters attached to this drive. Private team notes are not shared with recruiters."/>
-  <Link href={root} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
+  <Link href={root} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Back to drive</Link>
   {!data.available?<Alert tone="warning">
     Recruiter conversation records are unavailable right now. Other drive work is still available. Try again later.
    </Alert>:data.threads.length===0?<EmptyState title="No recruiter conversation is attached to this drive yet."
@@ -33,7 +33,7 @@ export default async function TpoDriveDiscussion({params}:{
      new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(thread.latestAt)+" IST":
      "No messages yet"}</p>
     <Link href={"/tpo/messages/"+encodeURIComponent(thread.id)}
-      className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Open conversation</Link>
+      className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open conversation</Link>
    </li>)}</ul>
    </section>}
   <p className="text-xs text-muted-foreground">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>

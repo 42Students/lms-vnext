@@ -69,7 +69,7 @@ function MetricCard({
   return href ? (
     <Link
       href={href}
-      className="rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle"
+      className="flex min-h-11 flex-col rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
     >
       {content}
     </Link>
@@ -117,7 +117,7 @@ async function SuperAdminDashboard({
         title="Overview"
         description={`${scopeLabel}. Counts and actions follow the selected safety scope.`}
       />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Organizations"
           value={organizations.length}
@@ -185,7 +185,7 @@ async function RecruiterDashboard({
         title={context.recruiter?.companyName ?? "Hiring dashboard"}
         description="Your hiring workspace is limited to explicit college-employer grants. College-private relationship notes and placement-cell controls remain hidden."
       />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <MetricCard
           label="Granted colleges"
           value={
@@ -352,7 +352,7 @@ async function MembershipDashboard({
         description="Your active roles share one landing page. Every count and destination remains scoped through the same authenticated membership and permission rules."
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {college ? (
           <MetricCard
             label="College"

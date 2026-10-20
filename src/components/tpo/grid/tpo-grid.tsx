@@ -240,7 +240,7 @@ export function TpoGrid<Row>({
    if(window.getSelection()?.toString())return;
    event.preventDefault();copyVisible();
   }}>
-   <div className="h-[520px] w-full overflow-hidden rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)]">
+   <div className="h-[32.5rem] w-full overflow-hidden rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)]">
     <AgGridReact<Row> theme={quartz} rowData={rowData} columnDefs={definitions}
      getRowId={p=>rowKey(p.data)} suppressCellFocus={false}
      defaultColDef={{sortable:false,filter:false,resizable:true}}

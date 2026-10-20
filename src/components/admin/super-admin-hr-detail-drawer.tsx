@@ -264,7 +264,7 @@ export function SuperAdminHrDetailDrawer({
 
                 <label
                   htmlFor={`${id}-grant`}
-                  className="mb-1.5 mt-3 block text-[13px] font-semibold text-body"
+                  className="mb-1.5 mt-3 block text-[var(--lms-font-sm)] font-semibold text-body"
                 >
                   College
                 </label>
@@ -297,7 +297,7 @@ export function SuperAdminHrDetailDrawer({
                   )}
                 </Select>
 
-                <label className="mb-1.5 mt-3 block text-[13px] font-semibold text-body">
+                <label className="mb-1.5 mt-3 block text-[var(--lms-font-sm)] font-semibold text-body">
                  Until (optional)
                  <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
                   className="mt-1 min-h-11 w-full md:min-h-9"/>

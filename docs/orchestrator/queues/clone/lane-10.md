@@ -13,19 +13,19 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/admin/recruiters/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/page.tsx`
 - [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/programs/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
 - [ ] `src/app/(authenticated)/college/quizzes/page.tsx`
 - [ ] `src/app/(authenticated)/college/verification/page.tsx`
-- [ ] `src/app/(authenticated)/hr/messages/page.tsx`
+- [x] `src/app/(authenticated)/hr/messages/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/messages/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/calendar/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/messages/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx`

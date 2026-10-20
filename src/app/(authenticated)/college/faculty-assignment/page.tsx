@@ -55,7 +55,7 @@ export default async function CollegeFacultyAssignmentPage({
     new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
   ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
   return (
-    <div className="min-w-0 overflow-x-clip space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
@@ -67,7 +67,7 @@ export default async function CollegeFacultyAssignmentPage({
         Export filtered faculty assignments CSV
       </Link>
       <CollegeFacultyAssignmentCreate {...options} />
-      <section className="border-t border-border pt-4">
+      <section className="border-b border-border pb-4">
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 md:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Faculty, course or class

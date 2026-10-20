@@ -63,7 +63,7 @@ export default async function CompanySharePage({
   <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 sm:grid-cols-3">
    {Array.from({length:18},(_,index)=><span key={index} className="block w-[150%] -rotate-30 whitespace-nowrap">{result.companyName} · confidential</span>)}
   </div>
-  <header>
+  <section aria-label="Shared applicant summary">
    <p className="text-sm text-muted-foreground">42Students · Company applicant share</p>
    <PageHeader title={"Shared with "+result.companyName} />
    <p className="mt-1 break-words text-lg font-medium text-foreground">{result.title}</p>
@@ -78,7 +78,7 @@ export default async function CompanySharePage({
     Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
    </p>
    {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
-  </header>
+  </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex min-w-0 flex-wrap items-end gap-3 border-y border-border py-4">
     <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner name

@@ -19,9 +19,14 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
   collegeId?getSuperAdminFacultyAssignmentClasses(context):Promise.resolve([]),
   collegeId?getAdminCourseWorkspace(context,collegeId):Promise.resolve(null),
  ]);
- return <div className="min-w-0 space-y-5"><div className="flex flex-wrap items-center gap-3"><p className="font-semibold text-foreground">Current teaching assignments</p><Link href="/admin/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create teaching assignment →</Link></div>{workspace?<SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries}
-  faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>:null}
- <AdminScopedReadPage classOptions={classes} title="Faculty Assignments" path="/admin/faculty-assignment" statuses={statuses}
+ return <div className="min-w-0 space-y-5">
+  <AdminScopedReadPage
+  headerActions={<Link href="/admin/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create teaching assignment →</Link>}
+  intro={workspace?<section aria-label="Create faculty assignment" className="space-y-3 border-b border-border pb-5">
+   <h2 className="text-lg font-semibold text-foreground">Current teaching assignments</h2>
+   <SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries} faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>
+  </section>:null}
+  classOptions={classes} title="Faculty Assignments" path="/admin/faculty-assignment" statuses={statuses}
   exportPath="/api/admin/faculty-assignment/export" exportFilename="faculty-assignments.csv"
   description="Connect faculty to the right class, course, semester and teaching role. Account status and profile changes stay on the Faculty roster."
   searchParams={searchParams}

@@ -93,7 +93,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    <Button type="button" disabled={!available.length||!candidates.length} onClick={()=>open()}
     >Schedule interview</Button>
   </div>
-  {!available.length||!candidates.length?<p role="status" className="text-sm text-body">Schedule an interview when a pending or scheduled round and a candidate are available.</p>:null}
+  {!available.length||!candidates.length?<Banner tone="info">Schedule an interview when a pending or scheduled round and a candidate are available.</Banner>:null}
   <DataTable<(typeof appointments)[number]>
     caption="Candidate interviews"
     rows={appointments}

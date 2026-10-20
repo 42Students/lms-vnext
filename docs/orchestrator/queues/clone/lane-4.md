@@ -20,25 +20,25 @@ Fix every listed deviation using the shared components in src/components/ui and 
 - [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx` (score 1: arbitrary px size x1)
 - [x] `src/components/admin/college-admin-lifecycle-action.tsx` (score 1: arbitrary px size x1)
 - [x] `src/components/admin/college-feature-rule-editor.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/admin/tenant-domain-manager.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/admin/tenant-settings-editor.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/courses/faculty-lesson-authoring.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/admin/tenant-domain-manager.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/admin/tenant-settings-editor.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/courses/faculty-lesson-authoring.tsx` (score 1: arbitrary px size x1)
 
 ## Section 2: page routes, full fidelity pass (38)
 For each page: page head via PageHeader (title, subtitle, actions exactly as the old LMS), canvas card (white, radius 12, border #e5e9f0, padding 24), tabs, filter row, tables/grids/cards, chips and badges, banners and inline notices, every modal and drawer the page opens, buttons and forms, empty/loading/error states, toasts, spacing and typography values, and responsive at 1280, 768 and 375 widths. Read the page and the components it renders, fix every deviation you find, not only the listed ones.
 
-- [ ] `src/app/(authenticated)/activity/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/organizations/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx`
-- [ ] `src/app/(authenticated)/college/academics/page.tsx`
-- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/page.tsx`
-- [ ] `src/app/(authenticated)/college/announcements/page.tsx`
+- [x] `src/app/(authenticated)/activity/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- [x] `src/app/(authenticated)/admin/organizations/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx`
+- [x] `src/app/(authenticated)/college/academics/page.tsx`
+- [x] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/page.tsx`
+- [x] `src/app/(authenticated)/college/announcements/page.tsx`
 - [ ] `src/app/(authenticated)/college/assignments/page.tsx`
 - [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
 - [ ] `src/app/(authenticated)/college/attendance/departments/page.tsx`

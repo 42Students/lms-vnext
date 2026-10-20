@@ -28,7 +28,7 @@ export function FacultyReportStudentTable({
     <section aria-label={title} className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-[var(--lms-heading)]">{title}</h2>
+          <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
           <p aria-live="polite" className="mt-1 text-xs text-muted-foreground">
             {result.count} of {rows.length} learners · Highest scores first
           </p>

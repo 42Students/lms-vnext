@@ -8,7 +8,7 @@ export default async function LearnerPlacementNotificationPreferencesPage(){
   const context=await getCurrentRequestContext();
   const preferences=await getCandidatePreferences(context);
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/my-placements" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+    <Link href="/learn/my-placements" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
       ← Back to My Placements
     </Link>
     <PageHeader title="Placement notifications"

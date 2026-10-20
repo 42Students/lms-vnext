@@ -52,7 +52,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const rawAsk=Array.isArray(query.ask)?query.ask[0]:query.ask;
  const highlightAskId=rawAsk&&tpoThreadIdSchema.safeParse(rawAsk).success?rawAsk:undefined;
  const serverNow=new Date();
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader title={result.thread.topic}
    description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}/>
@@ -87,7 +87,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
      <Link key={message.id} href={"#team-message-"+message.id}
       className="block truncate text-sm text-link underline">{message.body}</Link>)}
    </aside>:null}
-  <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="space-y-3">
+  <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="min-w-0 space-y-3">
    {result.messages.map((message,index)=>{
     const day=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
      timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
@@ -97,8 +97,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     return <li id={"team-message-"+message.id} key={message.id} className="min-w-0">
      {showDay?<p className="my-3 text-center text-xs font-semibold text-muted-foreground">{day(message.createdAt)}</p>:null}
      <div className={own?
-      "ml-auto max-w-[88%] rounded-[var(--lms-canvas-radius)] border border-border bg-surface-secondary p-4":
-      "mr-auto max-w-[88%] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"}>
+      "ml-auto max-w-full min-[768px]:max-w-[88%] rounded-[var(--lms-canvas-radius)] border border-border bg-surface-secondary p-4":
+      "mr-auto max-w-full min-[768px]:max-w-[88%] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"}>
       <p className="text-xs text-muted-foreground">
        {own?"You":message.authorName?.trim()||"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST

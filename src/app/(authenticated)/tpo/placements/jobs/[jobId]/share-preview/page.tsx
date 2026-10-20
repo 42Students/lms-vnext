@@ -66,10 +66,10 @@ export default async function TpoShortlistSharePreviewPage({
         Export capped CSV
       </a>}
     />
-    <form action={path} method="get" className="flex flex-wrap items-end gap-3">
+    <form action={path} method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
       {preservedHistory.shareStatus?<input type="hidden" name="shareStatus" value={preservedHistory.shareStatus}/>:null}
       {preservedHistory.sharePage?<input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
-      <label className="grid gap-2 text-sm font-semibold text-body">Search shortlisted learner
+      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search shortlisted learner
         <Input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
           placeholder="Learner name" />
       </label>
@@ -119,7 +119,7 @@ export default async function TpoShortlistSharePreviewPage({
       {shares.page>1?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page-1,parsed.data.q,data.page)}
         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Previous links</Link>:null}
       {shares.page<shares.totalPages?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page+1,parsed.data.q,data.page)}
-        className="font-semibold text-[var(--lms-teal-deep)] underline">Next links</Link>:null}
+        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">Next links</Link>:null}
     </nav>
     <nav aria-label="Share preview pagination"
       className="flex flex-wrap justify-between gap-3 text-sm">
@@ -128,7 +128,7 @@ export default async function TpoShortlistSharePreviewPage({
         {data.page > 1 ? <Link href={path + "?" + new URLSearchParams({page:String(data.page-1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
           className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline md:min-h-9">← Previous</Link> : null}
         {data.page < data.totalPages ? <Link href={path + "?" + new URLSearchParams({page:String(data.page+1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
-          className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Next →</Link> : null}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] hover:underline min-[768px]:min-h-9">Next →</Link> : null}
       </div>
     </nav>
   </div>;

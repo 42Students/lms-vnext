@@ -68,7 +68,7 @@ export function SuperAdminFacultyAssignmentCreate({
    {notice?<Alert tone="success">{notice}</Alert>:null}
    {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 border-b border-border pb-5 md:grid-cols-2">
     <p className="md:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
-    <label className="grid gap-1 text-[13px] font-semibold text-body">Course / Class / Semester
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Course / Class / Semester
      <Select required className={inputClass} value={deliveryId} onChange={e=>{setDeliveryId(e.target.value);setOtherDeliveryIds([]);}}>
       <option value="">Choose an active class</option>
       {available.map(item=><option key={item.id} value={item.id}>
@@ -77,7 +77,7 @@ export function SuperAdminFacultyAssignmentCreate({
      </Select>
     </label>
     {selected?<fieldset className="grid gap-2 border-b border-border pb-3 md:col-span-2">
-      <legend className="px-1 text-[13px] font-semibold text-foreground">Course(s)</legend>
+      <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Course(s)</legend>
       <p className="text-xs text-body">Select several courses to assign this lecturer to all of them at once. The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
       <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
         className="grid max-h-48 gap-2 overflow-y-auto overscroll-contain md:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
@@ -89,7 +89,7 @@ export function SuperAdminFacultyAssignmentCreate({
         </label>)}
       </div>
     </fieldset>:null}
-    <label className="grid gap-1 text-[13px] font-semibold text-body">Faculty
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Faculty
      <Select required className={inputClass} value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
       <option value="">Choose faculty</option>
       {faculty.map(item=><option key={item.membershipId} value={item.membershipId}>
@@ -97,7 +97,7 @@ export function SuperAdminFacultyAssignmentCreate({
       </option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold text-body">Role
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Role
      <Select className={inputClass} value={role} onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
       {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
        {facultyAssignmentRoleLabel(value)}
@@ -155,7 +155,7 @@ export function SuperAdminTeachingRoleEdit({
       Edit role
    </Button>
    {open?<div className="grid gap-2">
-      <label className="grid gap-1 text-[13px] font-semibold text-body">Teaching role
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Teaching role
        <Select className="min-h-11 md:min-h-9" value={role} disabled={pending}
         onChange={e=>setRole(e.target.value as CourseTeachingRole)}
         >
