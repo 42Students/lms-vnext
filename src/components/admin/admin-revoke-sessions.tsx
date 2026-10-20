@@ -36,11 +36,15 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
  }
 
  return <div className="min-w-0 space-y-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-  <Button type="button" variant="danger" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy||count<1} onClick={()=>setConfirmOpen(true)}>
+  <Button type="button" variant="danger" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy||count<1} onClick={()=>{setMessage("");setErrorMessage("");setConfirmOpen(true);}}>
    {busy?"Signing out…":"Sign out everywhere"}
   </Button>
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Sign out everywhere?" description={"All active sessions for this administrator, including other colleges, will be revoked immediately."+(errorMessage?" "+errorMessage:"")} confirmLabel="Sign out everywhere" confirmVariant="danger" pending={busy} onConfirm={()=>void revoke()}/>
-  <p className="text-xs text-muted-foreground">Revokes all active sessions for this person, across every college. This action is audited.</p>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Sign out everywhere?"
+   description="All active sessions for this administrator, including other colleges, will be revoked immediately."
+   confirmLabel="Sign out everywhere" confirmVariant="danger" pending={busy} confirmDisabled={count<1} onConfirm={()=>void revoke()}>
+    {errorMessage?<p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{errorMessage}</p>:null}
+  </ConfirmDialog>
+  <p className="max-w-prose text-xs leading-5 text-muted-foreground">Revokes all active sessions for this person, across every college. This action is audited.</p>
+  {message?<p role="status" aria-live="polite" className="max-w-prose break-words text-sm text-success-text">{message}</p>:null}
  </div>;
 }
