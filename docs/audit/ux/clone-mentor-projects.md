@@ -19,21 +19,21 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [x] `src/app/(authenticated)/mentor/page.tsx` (greps: complete-page raw/hex/hand-tab/overlay source scan => 0; values: 12 legacy/shared rows match; responsive: 44px phone, 36px tablet+, details below)
 - [x] `src/app/(authenticated)/mentor/profile/page.tsx` (redirect-only; source scan: 0 JSX/HTML, 0 controls, 0 visual properties; 0 applicable pixel values; viewport-independent redirect; evidence below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx` (greps: entire TSX raw/hex/manual-overlay/hand-tabs 0; values: 41 rows incl shared shell or dialog table; responsive: 320/767, 768, 992 source proof below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx` (greps: full-source raw controls, hex, manual modal and tabs=0; values: 19-row table and conditional states below; responsive: 320/767/768px metadata, links and history)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx` (greps: complete source, raw controls/hex/native overlay/tabs=0; values: 20 exact shared/legacy rows including open/confirm/error states; responsive: scoped 767px modal actions + fluid text; table below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx` (greps: entire TSX raw/hex/manual-overlay/hand-tabs 0; values: 41 rows incl shared shell or dialog table; responsive: 320/767, 768, 992 source proof below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx` (greps: complete-file source regex raw/hex/hand-dialog/hand-tabs=0; values: 15 rows matched in shared/legacy table below; responsive: <=767px touch and wrap, >=768px standard; no runtime claims)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx` (greps: entire TSX raw/hex/manual-overlay/hand-tabs 0; values: 41 rows incl shared shell or dialog table; responsive: 320/767, 768, 992 source proof below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx` (greps: complete-file raw/hex/dialog/hand-tabs=0; values: 18 legacy/source states matched, hairline rows and scoped chip breakpoint; responsive 320/767/768px proof below)
 - [ ] `src/app/(authenticated)/mentor/projects/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/reports/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/reports/page.tsx` (greps: entire TSX raw/hex/manual-overlay/hand-tabs 0; values: 41 rows incl shared shell or dialog table; responsive: 320/767, 768, 992 source proof below)
 - [ ] `src/app/(authenticated)/mentor/review-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/reviews/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/sprint-progress/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -78,7 +78,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/mentor-lane-board.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/components/projects/mentor-meeting-history.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 10 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [x] `src/components/projects/mentor-meeting-notes-editor.tsx` (greps: complete source, raw controls/hex/native overlay/tabs=0; values: 20 exact shared/legacy rows including open/confirm/error states; responsive: scoped 767px modal actions + fluid text; table below)
-- [ ] `src/components/projects/mentor-meeting-reschedule.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-meeting-reschedule.tsx` (greps: entire TSX raw/hex/manual-overlay/hand-tabs 0; values: 21 rows incl shared shell or dialog table; responsive: 320/767, 768, 992 source proof below)
 - [ ] `src/components/projects/mentor-meetings-calendar.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-product-backlog.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-project-about-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -727,3 +727,138 @@ Repro for complete source grep (expected 0 matches; the evidence count is from t
 
     rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx'
 
+## Verified legacy-source parity tranche: reports, Board, resources, meetings, reschedule
+These five owned screens use the shared legacy skin and page chrome. The common 28-value table directly above remains applicable to page routes. The reschedule control uses its separate modal/form table below. The source counts were produced by inspecting complete files at the chat-8 branch head; actual browser screenshots/typecheck/CI are NOT claimed.
+
+### Mentor assigned Project reports — src/app/(authenticated)/mentor/reports/page.tsx
+
+Complete source file read: 181 lines; scan counts {"raw":0,"hardHex":0,"windowConfirm":0,"manualOverlay":0,"manualTab":0,"PageHeader":2,"Input":1,"Select":5,"Button":1,"Dialog":0,"ConfirmDialog":0,"EmptyState":1,"Pagination":1}.
+| Property/state | Old LMS exact source/value | Current vNext source/value | Source comparison |
+|---|---|---|---|
+| Two metric sections | old-lms-pages.md:11-14 separate status metric objects | 2 status/attention sections, each grid of genuine count cards, no outer card | match |
+| Stat card face | shell-spec.md:18-20 and variables.scss:30,134 radius12 border1 #e5e9f0 white | rounded --lms-radius-card, border canvas, bg-surface #fff, p-4 | match |
+| Stat grid | variables.scss:148-156 767 mobile/991 tablet | 1 col phone, 2 from md768, 4 from min992; same in status and attention | match |
+| Stat captions | variables.scss:27 #6b7280 muted small | text-xs text-muted-foreground and tabular-nums on counts | match |
+| Desktop header action | shell-spec.md:24 9px white 14/650 36px | Projects list Link data-unskin, bg-white font-[650], md:min-h-9; teal hover | match |
+| Filter fields | form.scss:110-143 13/600 muted labels, radius10 #fbfcfd | 1 Input, 5 Select, shared field skin, min-h-11 md:min-h-9 | match |
+| Mobile filters | listing-page-header.scss:130-159 stacked label width100 | GET form flex-wrap, max-[767px]:[&_label]:w-full | match |
+| CSV action | shell-spec.md:24 outlined secondary | download Link data-unskin, neutral14/650 white, capped 100 status notice | match |
+| Project results | variables.scss:134 12px separate record radius | project list 1-col phone / md:2, each distinct project card radius12, border #e5e9f0 | match |
+| Project row links | accessibility.scss:18-23 focus 2px teal | Open project/Risk links inline-flex min-h11 phone md:min-h9, underlined teal | match |
+| Time metadata | variables.scss:27 muted caption #6b7280 | project.updatedAt formatted en-IN Asia/Kolkata | match |
+| Empty/disabled/invalid | old-lms-pages.md:6,11-12 truthful messages | invalid filter alert, disabled status, empty assigned projects EmptyState, populated list | match |
+| Pager | old-lms-pages.md:10 native page navigation | shared Pagination with report Href, current filters preserved | match |
+
+Responsive source proof: On 320–767px, page labels stack at full width and the shared field, CTA, or dialog controls remain at least 44px; at 768px, actions and form fields are 36px and layout aligns horizontally. At >=992px, metrics and independent object grids use the legacy desktop threshold where applicable. Inline record lists retain neutral hairline rows without extra card surfaces. Error/empty/disabled/pending states are covered in the table and reuse shared components. No service, query, mutation, or content wording change.
+
+Full-file grep reproduction (expected 0 matches for these sources; inspected from GitHub rather than running rg locally):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/reports/page.tsx'
+
+### Mentor registered resources directory — src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx
+
+Complete source file read: 125 lines; scan counts {"raw":0,"hardHex":0,"windowConfirm":0,"manualOverlay":0,"manualTab":0,"PageHeader":2,"Input":1,"Select":4,"Button":1,"Dialog":0,"ConfirmDialog":0,"EmptyState":1,"Pagination":1}.
+| Property/state | Old LMS exact source/value | Current vNext source/value | Source comparison |
+|---|---|---|---|
+| Project resource heading | shell-spec.md:26-27 shared 30/600 header | one PageHeader, header secondary outlined action with data-unskin | match |
+| Filter canvas | shell-spec.md:18-20 no inner card on continuous canvas | mentorResourceDirectoryFilterLayout with !rounded-none !border-0 !bg-transparent !p-0 | match |
+| Filter mobile flow | listing-page-header.scss:130-159 label full width until767 | max-[767px]:[&_label]:w-full, min-w0, input/select widthfull | match |
+| Filter labels | form.scss:110-115 13/600/16 neutral400 | five grid labels exact 13/600 line16 muted | match |
+| Filter field surface | form.scss:117-143 10px #fbfcfd | 1 Input 4 Select shared components; removed conflicting 9px/bg-white | match |
+| Filter action | shell-spec.md:23 primary teal-white 36 | shared Button min-h11 through767, md:min-h9 | match |
+| Secondary export | shell-spec.md:24 white 14/650 neutral | CSV export Link data-unskin, 44 phone/36 desktop, teal hover | match |
+| Resource card paint | variables.scss:134 12px card | separate linked-resource objects radius --lms-radius-card, border canvas, white | match |
+| Resource list columns | variables.scss:148-156 phone <=767 | grid-cols-1 phone, md:grid-cols-2 from 768, no horizontal overflow | match |
+| Safe external link | accessibility.scss:18-23 visible focus, links underline | resource.safeUrl Link target blank rel noopener noreferrer, no unsafe URL created | match |
+| Long resource text | old project SCSS _learn-projects.scss:1063-1079 anywhere wrap | title and optional description break-words whitespace-pre-wrap | match |
+| Empty/invalid/disabled | old-lms-pages.md:6,11-12 feedback in one canvas | invalid filter alert, access disabled inline, no matches shared EmptyState | match |
+| Pagination/privacy | old-lms-pages.md:10 real navigation | shared Pagination, directory Href keeps filters; only safe HTTPS metadata | match |
+
+Responsive source proof: On 320–767px, page labels stack at full width and the shared field, CTA, or dialog controls remain at least 44px; at 768px, actions and form fields are 36px and layout aligns horizontally. At >=992px, metrics and independent object grids use the legacy desktop threshold where applicable. Inline record lists retain neutral hairline rows without extra card surfaces. Error/empty/disabled/pending states are covered in the table and reuse shared components. No service, query, mutation, or content wording change.
+
+Full-file grep reproduction (expected 0 matches for these sources; inspected from GitHub rather than running rg locally):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx'
+
+### Mentor Board status readout — src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx
+
+Complete source file read: 157 lines; scan counts {"raw":0,"hardHex":0,"windowConfirm":0,"manualOverlay":0,"manualTab":0,"PageHeader":2,"Input":1,"Select":3,"Button":1,"Dialog":0,"ConfirmDialog":0,"EmptyState":1,"Pagination":1}.
+| Property/state | Old LMS exact source/value | Current vNext source/value | Source comparison |
+|---|---|---|---|
+| Board metrics | old-lms-pages.md:11 compact separate stat tiles | five registered task-count cards, radius12 border1 white, no extra outer canvas | match |
+| Count grid | variables.scss:148-156 phone<=767/tablet768/desktop992 | grid single mobile, md2 and min992 five columns | match |
+| Sprint summaries | old-lms-pages.md:11 genuine separate subobjects | up to six Sprint summary cards radius12 border canvas, 1/2 columns at md | match |
+| Sprint empty | old-lms-pages.md:6 inline no-recorded-data | removed nested no-data painted card; now inline border-b and 12px vertical text | match |
+| Search and filters | form.scss:117-143 native 10px radius/#fbfcfd | 1 Input and 3 Select, shared field chrome, 44 phone/36 md | match |
+| Filter label font | form.scss:110-115 13px/600/16 neutral400 | four labels now text13 leading4 neutral400; no unstyled font-size14 | match |
+| Filter mobile | listing-page-header.scss:130-159 full-width labels through767 | form max-[767px] label width100%, flex-wrap | match |
+| Primary button | shell-spec.md:23 teal #0a7c88 white 36 | shared Button variant primary min-h11 md:min-h9 | match |
+| CSV actions | shell-spec.md:24 secondary 14px/650, hover teal | two download Links data-unskin, white, teal hover, md36; py2 cleared md | match |
+| No nested history cards | common.scss:700-726 1px neutral200/12px cells | saved task ol border-y/divide-y; each li py-space-3 | match |
+| Adaptive empty | old-lms-pages.md:6 no invented rows | shared EmptyState title depends whether project has zero stored tasks or filters exclude | match |
+| No fabricated values | old-lms-pages.md:12 exact status not prediction | completion null is Unknown; assigned workload not inferred | match |
+| Pagination | old-lms-pages.md:10 listing page control | shared Pagination and mentorBoardReviewHref | match |
+
+Responsive source proof: On 320–767px, page labels stack at full width and the shared field, CTA, or dialog controls remain at least 44px; at 768px, actions and form fields are 36px and layout aligns horizontally. At >=992px, metrics and independent object grids use the legacy desktop threshold where applicable. Inline record lists retain neutral hairline rows without extra card surfaces. Error/empty/disabled/pending states are covered in the table and reuse shared components. No service, query, mutation, or content wording change.
+
+Full-file grep reproduction (expected 0 matches for these sources; inspected from GitHub rather than running rg locally):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx'
+
+### Mentor meeting and team log — src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx
+
+Complete source file read: 150 lines; scan counts {"raw":0,"hardHex":0,"windowConfirm":0,"manualOverlay":0,"manualTab":0,"PageHeader":2,"Input":1,"Select":4,"Button":1,"Dialog":0,"ConfirmDialog":0,"EmptyState":1,"Pagination":1}.
+| Property/state | Old LMS exact source/value | Current vNext source/value | Source comparison |
+|---|---|---|---|
+| Team summary | old-lms-pages.md:6 inline metadata divider | one border-b team summary section, no extra card | match |
+| Summary columns | variables.scss:148-156 single until767, 3 from768 | md:grid-cols-3 (previous 640 cutoff corrected); on phone stacks | match |
+| Summary typography | variables.scss:27 #6b7280 metadata | dt text-xs muted, dd text-xl/semibold tabular role counts | match |
+| Five filter fields | form.scss:117-143 shared radius10 bg#fbfcfd | 1 Input and 4 Select, all min-h11 md:min-h9, no local white/9px override | match |
+| Filter labels | form.scss:110-115 #a9a7ae 13/600/16 | five muted 13px labels and 16px line height | match |
+| Phone filters | listing-page-header.scss:130-159 full width labels | max-[767px] label width100 in flex-wrap GET form | match |
+| Header action | shell-spec.md:24 secondary white 36 desktop | PageHeader Link data-unskin, neutral14/650 and md:py-0 | match |
+| History rows | common.scss:700-726 1px #e5e9f0/12px | ol border-y/divide-y; per-meeting li py-space-3 | match |
+| Meeting time | variables.scss:27 muted timestamp text | en-IN/Asia-Kolkata IST date, source time zone unchanged | match |
+| Reschedule UI | old-lms-pages.md:12 shared dialog actions | delegates to separately audited MentorMeetingReschedule, only for scheduled active projects | match |
+| Role and privacy | old-lms-pages.md:6 no fake activity | only registered team counts; missing outcome caption and no invented attendance | match |
+| Empty/error/disabled | old-lms-pages.md:6,11-12 inline states | invalid query alert, access disabled status, zero meetings EmptyState | match |
+| Pager | old-lms-pages.md:10 navigation | shared Pagination preserves meeting filter href | match |
+
+Responsive source proof: On 320–767px, page labels stack at full width and the shared field, CTA, or dialog controls remain at least 44px; at 768px, actions and form fields are 36px and layout aligns horizontally. At >=992px, metrics and independent object grids use the legacy desktop threshold where applicable. Inline record lists retain neutral hairline rows without extra card surfaces. Error/empty/disabled/pending states are covered in the table and reuse shared components. No service, query, mutation, or content wording change.
+
+Full-file grep reproduction (expected 0 matches for these sources; inspected from GitHub rather than running rg locally):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx'
+
+### Mentor meeting reschedule editor and confirmation — src/components/projects/mentor-meeting-reschedule.tsx
+
+Complete source file read: 97 lines; scan counts {"raw":0,"hardHex":0,"windowConfirm":0,"manualOverlay":0,"manualTab":0,"PageHeader":0,"Input":2,"Select":0,"Button":3,"Dialog":1,"ConfirmDialog":2,"EmptyState":0,"Pagination":0}.
+| Property/state | Old LMS exact source/value | Current vNext source/value | Source comparison |
+|---|---|---|---|
+| Reschedule primary surface | shell-spec.md:18-24 shared 36px 14/650 secondary button | shared Button variant secondary default size14/650, no size=sm override | match |
+| Phone click heights | variables.scss:138-149 44px until767, shell-spec.md:24 36px desktop | owned legacy-project-touch-actions.module.css wraps all dialog action Buttons; min44 until767, shared36 md | match |
+| Secondary button radius | shell-spec.md:24 9px white/outlined | shared Button --lms-control-radius:9px and neutral background | match |
+| Dialog width | legacy-styles/components___antddesign.scss:1037-1068 viewport inset16 | shared Dialog.tsx:39-56 width calc(100%-2rem) max36rem | match |
+| Dialog max height | legacy antddesign.scss:1037-1068 viewport minus48px | shared Dialog.tsx:44-55 max-h calc(visualHeight-3rem), scroll body | match |
+| Dialog border/shadow | old-lms-pages.md:12 shared modal outline and elevation | Dialog data-slot/dialog, neutral200 outline, --lms-elevation-4; no home-built modal | match |
+| Dialog header | old-lms-pages.md:12 1px separator and 24px padding | Dialog.tsx:46-53 header border-b, phone px16/tablet canvas pad24 | match |
+| Dialog focus/close | accessibility.scss:18-23 2px visible teal focus | Dialog Escape/backdrop/close and shared Button keyboard focus | match |
+| Label font | form.scss:110-115 #a9a7ae 13px/600 line16 | two date-time labels text13/600 leading4 neutral400 | match |
+| Field radius/background | form.scss:117-143 10px/#fbfcfd native input | two shared Input type datetime-local using shared skin, no 9px/white override | match |
+| Input phone touch | variables.scss:139/148 min44 through767 | both inputs min-h-11 md:min-h-9 | match |
+| Form layout | old-lms-pages.md:12 compact modal content | grid gap-4, two labels, error notice, flex-wrap footer | match |
+| Confirm dialog | legacy antddesign.scss:1037-1068 responsive shared modal | shared ConfirmDialog with pending, text summary, footer Button | match |
+| Discard confirmation | old-lms-pages.md:12 actual dismissible shared modal | useProjectEditorDiscardGuard and second ConfirmDialog, same focus and footer | match |
+| Invalid dates | form.scss:132-143 invalid 20% error ring | aria-invalid on shared Input with inline role=alert validation | match |
+| Pending/duplicate | old-lms-pages.md:12 disabled while save ongoing | pending guards on submit, shared Button disabled/ConfirmDialog pending | match |
+| Save error | old-lms-pages.md:12 error inline, toast | FriendlyFetchError/friendlyApiError role=alert and shared toast | match |
+| Save success | old-lms-pages.md:12 feedback and refresh | existing success toast + router.refresh preserved | match |
+| Mutation security | old-lms-pages.md:12 no speculative action | same PATCH URL, optimistic expectedUpdatedAt, schema validation | match |
+| No raw overlay | old-lms-pages.md:12 shared overlay only | one Dialog, two ConfirmDialog components; source fixed-inset/window.confirm=0 | match |
+| Reduced motion | accessibility.scss:18-23 focus and reduced motion | shared Dialog/Button reduced-motion behavior, local CSS no animation | match |
+
+Responsive source proof: On 320–767px, page labels stack at full width and the shared field, CTA, or dialog controls remain at least 44px; at 768px, actions and form fields are 36px and layout aligns horizontally. At >=992px, metrics and independent object grids use the legacy desktop threshold where applicable. Inline record lists retain neutral hairline rows without extra card surfaces. Error/empty/disabled/pending states are covered in the table and reuse shared components. No service, query, mutation, or content wording change.
+
+Full-file grep reproduction (expected 0 matches for these sources; inspected from GitHub rather than running rg locally):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/components/projects/mentor-meeting-reschedule.tsx'
