@@ -13,12 +13,12 @@ export default async function CollegeRetentionPage(){
   {key:"screening",header:"Screening",cell:row=>row.screening??"Not reviewed"},
   {key:"changed",header:"Last changed",cell:row=>fmt.format(row.lastChange)},
  ];
- return <div className="space-y-6">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title="Data retention report"
    description="Rejected or withdrawn applications idle for 180+ days."
    actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Analytics</Link>}/>
-  <section className="border-t border-border pt-5">
-   <h2 className="text-lg font-semibold">Review candidates ({data.total})</h2>
+  <section className="min-w-0 pt-2">
+   <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Review candidates ({data.total})</h2>
    <p className="my-2 text-sm text-muted-foreground">Cutoff: {fmt.format(data.cutoff)} IST. {data.note}</p>
    <DataTable caption="Retention review candidates" rows={data.rows} columns={columns}
      getRowKey={row=>row.id} empty={<p role="status" className="text-sm text-body">No applications currently match the retention review criteria.</p>}/>
