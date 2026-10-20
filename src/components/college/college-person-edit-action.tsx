@@ -155,7 +155,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             <Textarea className="min-w-0" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>
-          <div className="flex gap-2 md:col-span-2">
+          <div className="flex flex-col gap-2 sm:flex-row md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
             <Button variant="primary" type="submit" disabled={pending} loading={pending} className="min-h-11 md:min-h-9">
               {pending?"Saving…":"Save changes"}
             </Button>
