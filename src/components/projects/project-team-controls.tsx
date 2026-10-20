@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -61,6 +61,7 @@ export function AddProjectMemberControl({
   const [roleLabel, setRoleLabel] = useState("");
   const [isPrimary, setIsPrimary] = useState(false);
   const [searching, setSearching] = useState(false);
+  const searchRequest = useRef(0);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,6 +69,7 @@ export function AddProjectMemberControl({
     nextRole: ProjectMemberRole = role,
     nextQuery: string = query,
   ) {
+    const request = ++searchRequest.current;
     setSearching(true);
     setError(null);
     try {
@@ -76,6 +78,7 @@ export function AddProjectMemberControl({
         nextRole,
         nextQuery,
       );
+      if (request !== searchRequest.current) return;
       setCandidates(rows);
       setMembershipId((current) =>
         rows.some((row) => row.membershipId === current)
@@ -83,6 +86,7 @@ export function AddProjectMemberControl({
           : rows[0]?.membershipId ?? "",
       );
     } catch (caught) {
+      if (request !== searchRequest.current) return;
       setCandidates([]);
       setMembershipId("");
       setError(
@@ -91,7 +95,7 @@ export function AddProjectMemberControl({
           : "Could not load eligible college members.",
       );
     } finally {
-      setSearching(false);
+      if (request === searchRequest.current) setSearching(false);
     }
   }
 
@@ -169,6 +173,7 @@ export function AddProjectMemberControl({
               Project role
             </span>
             <Select
+              disabled={pending}
               value={role}
               onChange={(event) => {
                 const next =
@@ -190,6 +195,7 @@ export function AddProjectMemberControl({
             </span>
             <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
               <Input
+                disabled={pending}
                 value={query}
                 maxLength={120}
                 onChange={(event) =>
@@ -218,7 +224,7 @@ export function AddProjectMemberControl({
             <Select
               aria-label="Project member"
               value={membershipId}
-              disabled={searching || candidates.length === 0}
+              disabled={pending || searching || candidates.length === 0}
               onChange={(event) =>
                 setMembershipId(event.target.value)
               }
