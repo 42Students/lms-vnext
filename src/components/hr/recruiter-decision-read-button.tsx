@@ -1,5 +1,5 @@
 "use client";
-import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {isVerifiedRecruiterDecisionReadReceipt} from "@/modules/placements/recruiter-decision-read-model";
@@ -28,9 +28,9 @@ export function RecruiterDecisionReadButton({id}:{id:string}){
   finally{lock.current=false;setBusy(false);}
  }
  return <div className="mt-2">
-  <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy||complete} loading={busy} onClick={()=>void read()}>
+  <Button type="button" variant="secondary" disabled={busy||complete} loading={busy} onClick={()=>void read()}>
    {complete?"Marked as read":busy?"Saving…":"Mark as read"}
   </Button>
-  {error?<Alert tone="error">{error}</Alert>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </div>;
 }
