@@ -60,20 +60,20 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
   }
  }
  return <>
-  <form onSubmit={submit} className="space-y-4 border-b border-border pb-5">
-   {job.applicationDeadline?<p className="text-sm text-body">Current deadline: {
+  <form onSubmit={submit} className="min-w-0 max-w-2xl space-y-4 border-b border-border pb-5">
+   {job.applicationDeadline?<p className="border-b border-border pb-3 text-sm font-semibold text-body">Current deadline: {
     new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>:null}
    <label className="block text-sm font-semibold text-body">New application deadline (IST)
     <Input required type="datetime-local" name="newDeadline" defaultValue={initial}
-     className="mt-2 min-h-11 w-full md:min-h-9"/></label>
+     className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"/></label>
    <label className="block text-sm font-semibold text-body">Reason (immutable audit)
     <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
-     className="mt-2 w-full"/></label>
-   <p className="text-xs text-body">{job.applicationDeadline?
+     className="mt-2 min-h-11 w-full min-w-0"/></label>
+   <p className="max-w-xl text-xs leading-5 text-body">{job.applicationDeadline?
     "New deadline must be later than the current deadline and in the future.":
     "First deadline must be in the future."} Expiry is validated again under the database lock.</p>
    {error?<InlineNotice tone="error" message={error}/>:null}
-   <Button disabled={pending} type="submit" className="min-h-11 md:min-h-9">
+   <Button disabled={pending} type="submit" className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">
     {pending?"Saving…":job.applicationDeadline?"Review and extend deadline":"Review and set deadline"}</Button>
   </form>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}

@@ -286,11 +286,11 @@ function JobActions({
   if (application?.status === "SUBMITTED") {
     return (
       <>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
           <StatusBadge tone="success">
             Applied · {humanize(application.channel)}
           </StatusBadge>
-          <Button className="max-md:min-h-11"
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
             size="sm"
             variant="secondary"
             disabled={pendingAction !== null}
@@ -308,11 +308,11 @@ function JobActions({
           description={`Request to withdraw ${roleOption.title} at this employer. The placement team must review your request.`}
           footer={
             <>
-              <Button className="max-md:min-h-11" variant="secondary" disabled={pendingAction !== null}
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingAction !== null}
                 onClick={() => setConfirmation(null)}>
                 Keep application
               </Button>
-              <Button className="max-md:min-h-11"
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                 disabled={!validWithdrawalReason || pendingAction !== null}
                 onClick={() => void requestWithdrawal()}
               >
@@ -368,7 +368,7 @@ function JobActions({
   if (!item.canApply) {
     const missing=item.eligibility.checks.filter(check=>check.status==="MISSING");
     const failed=item.eligibility.checks.filter(check=>check.status==="FAIL");
-    return <div role="status" className="space-y-2 rounded-lg border border-border bg-surface-subtle p-3 text-sm">
+    return <div role="status" className="min-w-0 space-y-2 border-t border-border pt-3 text-sm">
       <p className="font-semibold text-foreground">You can’t apply to this drive</p>
       <p className="text-body">{item.eligibility.status==="NEEDS_DATA"
         ?"Some academic evidence is missing."
@@ -392,9 +392,9 @@ function JobActions({
     job.applicationMode === "HYBRID";
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
       {internalAvailable ? (
-        <Button className="max-md:min-h-11"
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
           size="sm"
           disabled={pendingAction !== null}
           onClick={() => setConfirmation("INTERNAL")}
@@ -410,11 +410,11 @@ function JobActions({
             href={safeExternalUrl!}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle sm:w-auto md:min-h-9"
           >
             Open employer form
           </a>
-          <Button className="max-md:min-h-11"
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
             size="sm"
             variant="secondary"
             disabled={pendingAction !== null}
@@ -432,14 +432,14 @@ function JobActions({
         title="Ready to apply?"
         description="We'll send your profile to the recruiter. You can withdraw later from Applications."
         footer={<>
-          <Button className="max-md:min-h-11" variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Not yet</Button>
-          <Button className="max-md:min-h-11" disabled={pendingAction!==null} onClick={()=>void apply("INTERNAL")}>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Not yet</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pendingAction!==null} onClick={()=>void apply("INTERNAL")}>
             {pendingAction==="INTERNAL"?"Submitting…":"Confirm & apply"}
           </Button>
         </>}
       >
         <div className="space-y-4">
-          <dl className="grid grid-cols-1 gap-3 rounded-lg border border-border bg-surface-subtle p-3 text-sm md:grid-cols-3">
+          <dl className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-3 border-y border-border py-3 text-sm md:grid-cols-3 [&_dd]:min-w-0 [&_dd]:break-words">
             <div><dt className="font-semibold text-muted-foreground">Role</dt>
               <dd className="mt-1 text-foreground">{roleOption.title}</dd></div>
             <div><dt className="font-semibold text-muted-foreground">Company</dt>
@@ -471,7 +471,7 @@ function JobActions({
         description={`Record your application for ${roleOption.title} at ${item.company.name} in your LMS journey.`}
         footer={
           <>
-            <Button className="max-md:min-h-11" variant="secondary" disabled={pendingAction !== null}
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingAction !== null}
               onClick={() => setConfirmation(null)}>
               Not yet
             </Button>
@@ -518,7 +518,7 @@ export function LearnerPlacementJobs({
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid min-w-0 gap-4">
       {items.map((item) => {
         const failedChecks =
           item.eligibility.checks.filter(
@@ -532,7 +532,7 @@ export function LearnerPlacementJobs({
         return (
           <article
             key={item.roleOption.id}
-            className="min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-primary hover:shadow-sm motion-reduce:transition-none md:p-6"
+            className="min-w-0 border-b border-border py-4 first:pt-0 last:pb-0 md:py-5"
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
@@ -558,7 +558,7 @@ export function LearnerPlacementJobs({
                   {item.job.description}
                 </p>
               </div>
-              <div className="flex min-w-0 flex-wrap items-center gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
               <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
                {item.application ? (
                  <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
@@ -575,7 +575,7 @@ export function LearnerPlacementJobs({
               </div>
             </div>
 
-            <div className="mt-4 grid min-w-0 gap-3 text-sm md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 text-sm md:grid-cols-2 xl:grid-cols-4 [&>div]:min-w-0">
               <div>
                 <p className="m-0 text-xs font-semibold text-muted-foreground">
                   Work
@@ -631,7 +631,7 @@ export function LearnerPlacementJobs({
 
             <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt)}</p>
             {!item.canApply && !item.application ? (
-              <div className="mt-3 rounded-md border border-border bg-surface-subtle p-3 text-sm text-body"
+              <div className="mt-3 min-w-0 border-t border-border pt-3 text-sm text-body"
                 aria-label="Why this role is not open to you">
                 <p className="font-semibold text-foreground">Not open to you</p>
                 <ul className="mt-2 list-disc space-y-1 pl-5">
@@ -642,7 +642,7 @@ export function LearnerPlacementJobs({
             ) : null}
             {failedChecks.length > 0 ||
             missingChecks.length > 0 ? (
-              <div className="mt-4 rounded-lg border border-border bg-muted px-4 py-3">
+              <div className="mt-4 min-w-0 border-t border-border pt-3">
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
                   Eligibility evidence
                 </p>

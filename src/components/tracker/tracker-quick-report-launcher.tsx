@@ -8,7 +8,7 @@ export function TrackerQuickReportLauncher(){
  const [open,setOpen]=useState(false),[context,setContext]=useState("");
  useEffect(()=>{
   function onKey(event:KeyboardEvent){
-   if(event.altKey&&!event.repeat&&event.key.toLowerCase()==="b"){
+   if(event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.repeat&&event.key.toLowerCase()==="b"){
     if((event.target as HTMLElement|null)?.closest("input,textarea,select,[contenteditable=true]"))return;
     event.preventDefault();setOpen(x=>!x);
    }
@@ -27,13 +27,14 @@ export function TrackerQuickReportLauncher(){
   return ()=>{live=false;};
  },[open]);
  return <>
-  <Button variant="primary" className="fixed bottom-5 right-5 z-40 min-h-11 shadow-[var(--lms-overlay-shadow)] md:min-h-9" type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)}
+  <Button variant="primary" className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-40 min-h-11 max-w-[calc(100vw-2rem)] whitespace-normal text-center shadow-[var(--lms-overlay-shadow)] sm:right-5 md:min-h-9" type="button" aria-haspopup="dialog" aria-keyshortcuts="Alt+B" onClick={()=>setOpen(true)}
    >
     Report issue · Alt+B
   </Button>
-  <Drawer open={open} onOpenChange={setOpen} title="Report an issue">
-    <Disclosure title={"Captured page / browser / viewport"} className="mb-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs text-body">
-      <pre className="mt-2 whitespace-pre-wrap break-words">{context}</pre>
+  <Drawer open={open} onOpenChange={setOpen} title="Report an issue"
+   bodyClassName="min-w-0 [&_form]:min-w-0 [&_input]:max-w-full [&_select]:max-w-full [&_textarea]:max-w-full">
+    <Disclosure title={"Captured page / browser / viewport"} className="mb-3 border-t border-border text-xs text-body" contentClassName="px-2 pb-3">
+      <pre className="mt-2 min-w-0 whitespace-pre-wrap break-all text-xs leading-5 text-body">{context}</pre>
     </Disclosure>
     <TrackerReportForm contextPrefill={context}/>
   </Drawer>

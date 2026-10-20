@@ -38,18 +38,19 @@ export default async function TemplateVersionComparisonPage({ params }: {
         action={<PageBackLink href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"} label="Back to version history" />}/>
     </div>;
   }
-  return <div className="min-w-0 space-y-4 md:space-y-6">
+  return <div className="min-w-0 space-y-4 md:space-y-5">
+    <PageBackLink href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`} label="Version history" />
     <PageHeader title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`}
-      actions={<PageBackLink href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`} label="Version history" />} />
+    />
     <Banner tone="info">This snapshot is read-only. Publication state and college assignments are managed separately.</Banner>
     {detail.changes.length ? <section aria-label="Changed fields" className="space-y-4">
       {detail.changes.map(change => <article key={change.label} className="min-w-0 border-b border-border py-4">
-        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{change.label}</h2>
-        <div className="grid min-w-0 gap-4 md:grid-cols-2">
+        <h2 className="m-0 break-words text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">{change.label}</h2>
+        <div className="grid min-w-0 gap-4 lg:grid-cols-2">
           {[{ label: "Current", value: change.current }, { label: "Selected version", value: change.selected }].map(value =>
-            <div key={value.label} className="min-w-0 overflow-hidden"><h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{value.label}</h3>
-              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 overflow-y-auto overscroll-contain whitespace-pre-wrap break-all border-y border-[var(--lms-canvas-border)] bg-surface py-[var(--lms-space-3)] text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{value.value}</pre></div>)}
+            <div key={value.label} className="min-w-0"><h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{value.label}</h3>
+              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 min-w-0 overflow-y-auto overscroll-contain whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] bg-surface py-[var(--lms-space-3)] text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{value.value}</pre></div>)}
         </div>
       </article>)}
     </section> : <EmptyState title="No content differences" description="No content differences from the current version."/>}
@@ -57,7 +58,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
       templateId={detail.template.id} selectedVersion={{
         id:detail.selected.id,version:detail.selected.version,title:detail.selected.title,
       }} currentVersion={detail.template.currentVersion} status={detail.template.status}/>:null}
-    <section aria-label="Selected version snapshot" className="border-t border-border pt-[var(--lms-space-4)]"><h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Version {detail.selected.version} snapshot</h2>
+    <section aria-label="Selected version snapshot" className="min-w-0 border-t border-border pt-[var(--lms-space-4)]"><h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Version {detail.selected.version} snapshot</h2>
       <ProjectTemplateView blueprint={detail.selected.blueprint} />
     </section>
   </div>;

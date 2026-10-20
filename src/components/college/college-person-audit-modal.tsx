@@ -10,7 +10,7 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
  const [events,setEvents]=useState<Event[]>([]),[error,setError]=useState(""),[truncated,setTruncated]=useState(false);
  async function show(){
-  setOpen(true);setBusy(true);setError("");
+  setOpen(true);setBusy(true);setError("");setEvents([]);setTruncated(false);
   try{const r=await fetch("/api/college/people/"+encodeURIComponent(membershipId)+"/audit?kind="+kind,{
    cache:"no-store"});
    const body=await r.json().catch(()=>null);
@@ -22,21 +22,21 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
  const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
-   className="min-h-11 md:min-h-9">Audit trail</Button>
-  <Dialog open={open} onOpenChange={setOpen} title={"Audit trail for "+name} footer={<Button variant="secondary" type="button" className="min-h-11 md:min-h-9"
+   className="min-h-11 w-full md:min-h-9 md:w-auto">Audit trail</Button>
+  <Dialog open={open} onOpenChange={setOpen} title={"Audit trail for "+name} footer={<Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto"
       onClick={()=>setOpen(false)}>Close</Button>}>
     
     {busy?<Skeleton variant="row" count={3} label="Loading audit trail"/>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
     {!events.length&&!busy&&!error?<EmptyState title="No recorded activity" description="No recorded activity for this person."/>:null}
-    <ol className="divide-y divide-border">
-     {events.map(event=><li key={event.id} className="py-3 text-sm">
-      <strong>{event.summary}</strong>
-      <p className="mt-1 text-xs text-muted-foreground">{date.format(new Date(event.at))} IST · {event.importance} · By {event.authorName??"System/unknown staff"}</p>
-      <p className="mt-1 break-all text-xs text-muted-foreground">{event.kind}</p>
+    {!busy&&!error&&events.length>0?<ol className="min-w-0 divide-y divide-border border-y border-border">
+     {events.map(event=><li key={event.id} className="min-w-0 space-y-[var(--lms-space-1)] py-[var(--lms-space-3)] text-sm">
+      <strong className="block break-words font-semibold text-foreground">{event.summary}</strong>
+      <p className="break-words text-xs text-muted-foreground">{date.format(new Date(event.at))} IST · {event.importance} · By {event.authorName??"System/unknown staff"}</p>
+      <p className="break-words text-xs text-muted-foreground">{event.kind}</p>
      </li>)}
-    </ol>
-    {truncated?<Alert tone="info">Showing 100 most recent events.</Alert>:null}
+    </ol>:null}
+    {!busy&&!error&&truncated?<Alert tone="info">Showing 100 most recent events.</Alert>:null}
   </Dialog>
  </>;
 }
