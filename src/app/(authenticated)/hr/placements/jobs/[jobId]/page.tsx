@@ -627,23 +627,14 @@ export default async function HrPlacementJobPage({
                 className="mt-4 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review rounds</Link>
             </RecruiterApplicantReviewDrawer>
           ) : null}
-          <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
-              {applicantsPage.first === 0 ? "No rows on this page" :
-                "Showing " + applicantsPage.first + "–" + applicantsPage.last}
+              {applicantsPage.first===0?"No rows on this page":"Showing "+applicantsPage.first+"–"+applicantsPage.last}
               {" of " + stageCounts[filters.stage]}
             </span>
-            <div className="flex gap-2">
-              {filters.page > 1 ? (
-                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)+returnQuery}
-                  className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>
-              ) : null}
-              {filters.page < applicantsPage.pages ? (
-                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page+1)+returnQuery}
-                  className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>
-              ) : null}
-            </div>
-          </nav>
+            <Pagination label="Applicant pages" page={filters.page} pageCount={applicantsPage.pages}
+              hrefForPage={page=>"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+page+returnQuery} showBoundaryLinks={false}/>
+          </div>
         </section>
       ) : null}
       {filters.tab === "offers" ? (
@@ -703,12 +694,9 @@ export default async function HrPlacementJobPage({
               <p className="text-xs text-muted-foreground">
                {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
               </p>
-              <nav aria-label="Selection history pages" className="flex gap-3 text-sm">
-               {selectionPage.page>1?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page-1)+returnQuery}
-                className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous selections</Link>:null}
-               {selectionPage.page<selectionPage.pages?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page+1)+returnQuery}
-                className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next selections</Link>:null}
-              </nav>
+              <Pagination label="Selection history pages" page={selectionPage.page}
+                pageCount={selectionPage.pages} showBoundaryLinks={false}
+                hrefForPage={page=>"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+page+returnQuery}/>
             </section>:null}
           {offers.length ? <HrJobOffersGrid
             scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id].join(":")}
@@ -727,24 +715,15 @@ export default async function HrPlacementJobPage({
               joiningDate:offer.joiningDate??"Date not set",
             }))}
           /> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>:null}
-          {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+          {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
-              {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
-              {" of " + offersPage.total}
+              {offersPage.first===0?"No rows on this page":"Showing "+offersPage.first+"–"+offersPage.last}
+              {" of "+offersPage.total}
             </span>
-            <div className="flex gap-2">
-              {filters.offerPage > 1 ? <Link
-                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)+returnQuery}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-                Previous
-              </Link> : null}
-              {filters.offerPage < offersPage.pages ? <Link
-                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)+returnQuery}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-                Next
-              </Link> : null}
-            </div>
-          </nav>:null}
+            <Pagination label="Offer pages" page={filters.offerPage} pageCount={offersPage.pages}
+              hrefForPage={page=>"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+page+returnQuery}
+              showBoundaryLinks={false}/>
+          </div>:null}
         </section>
       ) : null}
       {filters.tab === "rounds" || filters.tab === "overview" ? <section>
