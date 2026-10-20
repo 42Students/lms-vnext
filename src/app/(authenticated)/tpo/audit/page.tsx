@@ -93,10 +93,10 @@ export default async function TpoAuditPage({
 
   if (!parsed.success) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
           eyebrow="TPO · Oversight"
-          title="Audit log"
+          title="Audit Log"
           description="College-scoped history of persisted placement activity."
         />
         <ErrorState
@@ -163,10 +163,10 @@ export default async function TpoAuditPage({
    return "/tpo/audit?"+params.toString();
   };
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         eyebrow="TPO · Oversight"
-        title="Audit log"
+        title="Audit Log"
         description="A traceable history of placement decisions, changes, sharing and access across the workspace."
         actions={<div className="flex flex-wrap gap-2">
           <a href={"/api/placements/tpo/audit/export?"+new URLSearchParams({
@@ -181,9 +181,9 @@ export default async function TpoAuditPage({
            ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
           }).toString()}
            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
-           Export audit log CSV
+           Export actor audit CSV
           </a>
-          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
             Actor / entity filters and CSV →
           </Link>
         </div>}
@@ -191,7 +191,7 @@ export default async function TpoAuditPage({
 
       <section
         aria-label="Audit summary"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
       >
         {[
           {
@@ -227,7 +227,7 @@ export default async function TpoAuditPage({
        </Link>)}
       </nav>
       <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,count:item.count??undefined,href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
-      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:p-5">
+      <section className="min-w-0 border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Audit filters
         </h2>
@@ -235,7 +235,7 @@ export default async function TpoAuditPage({
         <form
           method="get"
           action="/tpo/audit"
-          className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5"
+          className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5"
         >
           <label className="grid gap-1 text-sm font-semibold text-body">
             About
@@ -296,10 +296,10 @@ export default async function TpoAuditPage({
           </label>
           <PageSizeSelect name="pageSize" defaultValue={String(pageSize)} options={[25,50,100]} />
 
-          <div className="flex flex-wrap items-center gap-3 sm:col-span-2 xl:col-span-5">
+          <div className="flex flex-wrap items-center gap-3 md:col-span-2 xl:col-span-5">
             <Button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             >
               Apply filters
             </Button>
