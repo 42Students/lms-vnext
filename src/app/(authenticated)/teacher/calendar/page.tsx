@@ -46,13 +46,10 @@ export default async function FacultyCalendarPage({
   const names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   const selected=grid.query.deliveryId;
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader title="Class Schedule" />
-    <div className="flex justify-end">
-      <Link href="/teacher/live-classes"
+    <PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"
         className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View live classes
-      </Link>
-    </div>
+      </Link>} />
     <section className={monthStyles.calendarCard}>
       <div className={monthStyles.toolbar}>
         <h2 className={monthStyles.period}>
@@ -82,7 +79,7 @@ export default async function FacultyCalendarPage({
             </option>)}
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Apply
         </Button>
       </form>

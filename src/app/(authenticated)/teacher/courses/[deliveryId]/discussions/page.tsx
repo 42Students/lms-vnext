@@ -19,16 +19,11 @@ export default async function FacultyCourseDiscussionsPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-5">
-      <Link
-        href={`/teacher/courses/${deliveryId}/home`}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        ← Course workspace
-      </Link>
       <PageHeader
         eyebrow="Faculty · Course"
         title="Discussions"
         description={`${workspace.course.courseName} · ${workspace.course.sectionName}`}
+        actions={<Link href={`/teacher/courses/${deliveryId}/home`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Course workspace</Link>}
       />
       <LearnerCourseDiscussion
         key={deliveryId}

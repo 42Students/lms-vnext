@@ -45,12 +45,12 @@ export default async function FacultyAssignmentReportPage({
   } = report;
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <Link href="/teacher/allAssignments" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      <PageHeader title={assignment.title} description={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
+        actions={<div className="flex flex-wrap items-center gap-3">
+          <Link href="/teacher/allAssignments" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         ← My Assignments
       </Link>
-      <PageHeader title={assignment.title} />
-      <div className="flex flex-wrap items-center gap-3">
-        <FacultyReportCsvDownload
+          <FacultyReportCsvDownload
           href={facultyReportCsvHref({
             kind:"assignment",assessmentId:assignment.id,deliveryId:assignment.deliveryId,
           })}
@@ -63,7 +63,9 @@ export default async function FacultyAssignmentReportPage({
           className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
           Filter submissions and export
         </Link>
-      </div>
+        </div>}
+      />
+
       <FacultyReportDownload
         kind="assignment"
         incomplete={facultyReportIsIncomplete({kind:"assignment",eligibleLearners:metrics.eligibleLearners,
@@ -125,7 +127,7 @@ export default async function FacultyAssignmentReportPage({
                   value={width} maximum={100} unit="percent" />
                 <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
-                 className="rounded-[var(--lms-canvas-radius)] border border-border p-2 text-sm [&>summary]:min-h-11 md:[&>summary]:min-h-[var(--lms-control-height)] [&>summary]:px-0">
+                 className="border-b border-border p-2 text-sm [&>summary]:min-h-11 md:[&>summary]:min-h-[var(--lms-control-height)] [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {submissions.filter(row=>{
                     if(row.gradingStatus!=="GRADED"||row.pointsAwarded===null||assignment.maxPoints<=0)return false;

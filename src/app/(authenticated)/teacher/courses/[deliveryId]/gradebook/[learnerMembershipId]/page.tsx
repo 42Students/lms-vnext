@@ -24,12 +24,10 @@ export default async function FacultyLearnerGradebookPage({
   }
   const root="/teacher/courses/"+encodeURIComponent(query.deliveryId)+"/gradebook";
   return <div className="min-w-0 max-w-full space-y-6">
-    <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-      ← Published gradebook
-    </Link>
     <PageHeader eyebrow="Faculty · Published learner scores"
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
-      description={data.delivery.courseName+" · "+data.delivery.sectionName}/>
+      description={data.delivery.courseName+" · "+data.delivery.sectionName}
+      actions={<Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Published gradebook</Link>} />
     <section className="border-b border-border pb-5" aria-label="Recorded score totals">
       <div className="grid gap-3 md:grid-cols-3">
         <p className="text-sm text-body">Published scores: {data.learner.gradedCount}/{data.learner.publishedAssessments}</p>
@@ -49,7 +47,7 @@ export default async function FacultyLearnerGradebookPage({
           description="There are no published assignment or quiz result records for this Section."/>:
         <ul className="grid gap-3">
           {data.assessments.map(item=><li key={item.kind+":"+item.assessmentId}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+            className="min-w-0 border-b border-border py-4 last:border-b-0">
             <p className="text-xs font-semibold text-muted-foreground">{item.kind==="QUIZ"?"Quiz":"Assignment"}</p>
             <h3 className="mt-1 break-words font-semibold text-foreground">{item.title}</h3>
             <p className="mt-2 text-sm text-body">{item.status==="UNKNOWN"?
