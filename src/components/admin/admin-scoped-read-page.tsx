@@ -70,7 +70,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
-  {peopleSummary?<section aria-label={title+" overview"} className="grid divide-y divide-border border-y border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">
+  {peopleSummary?<section aria-label={title+" overview"} className="grid divide-y divide-border border-y border-border min-[768px]:grid-cols-2 min-[768px]:divide-x min-[768px]:divide-y-0 xl:grid-cols-4">
    {[
     {label:peopleFilters?.kind==="FACULTY"?"Faculty":"Students",value:peopleSummary[0].total},
     {label:"Active",value:peopleSummary[1].total},
@@ -84,12 +84,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
-  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-4 print:hidden">
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 min-[768px]:grid-cols-2 lg:grid-cols-4 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
-   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
+   <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-body">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Status
+   <label className="grid gap-1 text-[13px] font-semibold text-body">Status
     <Select name="status" defaultValue={data.query.status}
      className="min-h-11 w-full md:min-h-9">
      {statuses.map(status=><option key={status} value={status}>{status}</option>)}
@@ -99,56 +99,56 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {(["jobId","departmentId","programId","cohortId"] as const).map(key=>{
       const rows=key==="jobId"?applicationFilters.jobs:key==="departmentId"?applicationFilters.departments:key==="programId"?applicationFilters.programs:applicationFilters.batches;
       const label=key==="jobId"?"Job":key==="departmentId"?"Department":key==="programId"?"Program":"Batch";
-      return <label key={key} className="grid gap-1 text-sm font-semibold text-body">{label}
-        <Select name={key} defaultValue={data.query[key]??""} className="min-h-11 w-full md:min-h-9">
+      return <label key={key} className="grid gap-1 text-[13px] font-semibold text-body">{label}
+        <Select name={key} defaultValue={data.query[key]??""} className="w-full">
           <option value="">All {label.toLowerCase()}s</option>{rows.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>;
     })}
-    <label className="grid gap-1 text-sm font-semibold text-body">Source
-      <Select name="source" defaultValue={data.query.source} className="min-h-11 w-full md:min-h-9">
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Source
+      <Select name="source" defaultValue={data.query.source} className="w-full">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Channel
-      <Select name="channel" defaultValue={data.query.channel} className="min-h-11 w-full md:min-h-9">
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Channel
+      <Select name="channel" defaultValue={data.query.channel} className="w-full">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Hiring stage
-     <Select name="pipelineStage" defaultValue={data.query.pipelineStage} className="min-h-11 w-full md:min-h-9">
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Hiring stage
+     <Select name="pipelineStage" defaultValue={data.query.pipelineStage} className="w-full">
        {["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"].map(stage=><option value={stage} key={stage}>{stage==="ALL"?"All hiring stages":stage}</option>)}
      </Select>
     </label>
    </>:null}
    {peopleFilters ? <>
-    <label className="grid gap-1 text-sm font-semibold text-body">Department
-     <Select name="departmentId" defaultValue={data.query.departmentId??""} className="min-h-11 w-full md:min-h-9">
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Department
+     <Select name="departmentId" defaultValue={data.query.departmentId??""} className="w-full">
       <option value="">All departments</option>{peopleFilters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
     </label>
-    {peopleFilters.kind==="FACULTY"?<label className="grid gap-1 text-sm font-semibold text-body">Faculty type
+    {peopleFilters.kind==="FACULTY"?<label className="grid gap-1 text-[13px] font-semibold text-body">Faculty type
       <Input name="employmentType" defaultValue={data.query.employmentType??""} placeholder="Professor, Mentor…" maxLength={128}
        className="min-h-11 w-full md:min-h-9"/>
      </label>:<>
       {(["programId","cohortId","sectionId"] as const).map((key)=>{
         const values=key==="programId"?peopleFilters.programs:key==="cohortId"?peopleFilters.batches:peopleFilters.classes;
         const label=key==="programId"?"Program":key==="cohortId"?"Batch":"Class";
-        return <label key={key} className="grid gap-1 text-sm font-semibold text-body">{label}
-         <Select name={key} defaultValue={data.query[key]??""} className="min-h-11 w-full md:min-h-9">
+        return <label key={key} className="grid gap-1 text-[13px] font-semibold text-body">{label}
+         <Select name={key} defaultValue={data.query[key]??""} className="w-full">
           <option value="">All {label.toLowerCase()}s</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
          </Select>
         </label>;
       })}
      </>}
    </>:null}
-   {classOptions?<label className="grid gap-1 text-sm font-semibold text-body">Class
+   {classOptions?<label className="grid gap-1 text-[13px] font-semibold text-body">Class
      <Select name="sectionId" defaultValue={data.query.sectionId??""}
       className="min-h-11 w-full md:min-h-9">
       <option value="">All classes</option>
       {classOptions.map(cls=><option key={cls.id} value={cls.id}>{cls.name}</option>)}
      </Select></label>:null}
-   <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
+   <label className="grid gap-1 text-[13px] font-semibold text-body">Rows per page
     <Select name="pageSize" defaultValue={data.query.pageSize}
      className="min-h-11 w-full md:min-h-9">
      {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
