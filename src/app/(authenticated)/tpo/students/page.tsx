@@ -270,7 +270,7 @@ export default async function TpoStudentsPage({
           </p>
           <Link
             href="/tpo/students"
-            className="mt-4 inline-flex min-h-9 items-center font-semibold text-link hover:underline"
+            className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Clear filters
           </Link>
@@ -412,8 +412,8 @@ export default async function TpoStudentsPage({
       />
       <Dropdown mobileSheet align="start" label="Student roster tools" trigger="More student tools">
         <nav aria-label="Student roster tools" className="flex min-w-52 flex-col gap-2">
-        <Link href="/tpo/students/requests" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Student Requests</Link>
-        <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Preparation support</Link>
+        <Link href="/tpo/students/requests" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Student Requests</Link>
+        <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Preparation support</Link>
         <TpoSafeCsvDownload href={exportHref} filename="students.csv" label="Export filtered CSV" />
        </nav>
       </Dropdown>
@@ -422,11 +422,11 @@ export default async function TpoStudentsPage({
         className="flex flex-wrap items-end gap-3 border-b border-border py-4">
         {/* Program and Class are selected in the single grid filter panel.
             Preserve them through this separate advanced-filter form. */}
-        <input type="hidden" name="programId" value={query.programId??""}/>
-        <input type="hidden" name="classId" value={query.classId??""}/>
+        <Input type="hidden" name="programId" value={query.programId??""}/>
+        <Input type="hidden" name="classId" value={query.classId??""}/>
         <label className="text-sm font-semibold">Stage
           <Select name="legacyStage" defaultValue={query.legacyStage??""}
-            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All stages</option>
             {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
               <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
@@ -439,13 +439,13 @@ export default async function TpoStudentsPage({
         </label>
         <label className="text-sm font-semibold">Debarred
           <Select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}
-            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Debarred</option><option value="NO">Not debarred</option>
           </Select>
         </label>
         <label className="text-sm font-semibold">Needs attention
           <Select name="needsAttention" defaultValue={query.needsAttention===undefined?"":query.needsAttention?"YES":"NO"}
-            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Needs attention</option><option value="NO">No attention flags</option>
           </Select>
         </label>
@@ -453,11 +453,11 @@ export default async function TpoStudentsPage({
           <Input type="number" name="minRoundReached" min={0} max={10000} step={1}
            defaultValue={query.minRoundReached??""} className="w-28"/>
         </label>
-        <Disclosure title="Profile strength filters" className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
+        <Disclosure title="Profile strength filters" className="w-full min-w-0 border-b border-border px-0 py-3">
          <p className="mt-2 text-xs text-muted-foreground">Projects here are self-reported profile entries, not verified Projects workspace outcomes or released grades.</p>
          <div className="mt-3 flex flex-wrap gap-3">
           <label className="grid gap-1 text-sm">Gender
-           <Select name="gender" defaultValue={query.gender??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+           <Select name="gender" defaultValue={query.gender??""} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
             <option value="">Any</option>{(["Male","Female","Other"] as const).map(v=><option key={v}>{v}</option>)}
            </Select>
           </label>
@@ -473,13 +473,13 @@ export default async function TpoStudentsPage({
             <Input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="w-28"/>
            </label>)}
           <label className="grid gap-1 text-sm">Profile links
-           <Select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+           <Select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
             <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
            </Select>
           </label>
           {([["hasResume","Resume"],["hasCodingProfiles","Coding profiles"]] as const).map(([key,label])=>
            <label key={key} className="grid gap-1 text-sm">{label}
-            <Select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+            <Select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
              <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
             </Select>
            </label>)}
@@ -487,7 +487,7 @@ export default async function TpoStudentsPage({
         </Disclosure>
         <label className="text-sm font-semibold">Profile verified
           <Select name="profileStatus" defaultValue={query.profileStatus??""}
-            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All verification states</option>
             <option value="VERIFIED">Verified</option>
             <option value="WAITING">Waiting to verify</option>
@@ -513,7 +513,7 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
          </label>)}
-        <Disclosure title="Academic marks and passing year filters" className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
+        <Disclosure title="Academic marks and passing year filters" className="w-full min-w-0 border-b border-border px-0 py-3">
           <div className="mt-3 flex flex-wrap gap-3">
             {([
               ["minTenthPct","10th % from",query.minTenthPct],
@@ -534,28 +534,28 @@ export default async function TpoStudentsPage({
               ["isLateralEntry","Lateral entry",query.isLateralEntry],
             ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
               <Select name={key} defaultValue={value===undefined?"":value?"YES":"NO"}
-                className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+                className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
                 <option value="">Any</option><option value="YES">Yes</option><option value="NO">No</option>
               </Select></label>)}
           </div>
         </Disclosure>
         <label className="text-sm font-semibold">CGPA recorded
           <Select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
-            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Recorded</option>
             <option value="NO">No recorded CGPA</option>
           </Select>
         </label>
         <label className="text-sm font-semibold">Offer waiting on answer
           <Select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
-            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option>
             <option value="YES">Yes</option><option value="NO">No</option>
           </Select>
         </label>
         <label className="text-sm font-semibold">After college
           <Select name="afterCollege" defaultValue={query.afterCollege??""}
-            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All outcomes</option>
             {AFTER_COLLEGE_OUTCOMES.map(outcome=>
               <option key={outcome} value={outcome}>{AFTER_COLLEGE_LABELS[outcome]}</option>)}
@@ -563,7 +563,7 @@ export default async function TpoStudentsPage({
         </label>
         <label className="text-sm font-semibold">Batch
           <Select name="batchId" defaultValue={query.batchId??""}
-            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Current students</option>
             {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </Select>
@@ -579,7 +579,7 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
          </label>)}
-        <Button variant="secondary" type="submit" className="min-h-9 px-4">Show students</Button>
+        <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9 px-4">Show students</Button>
       </form>
       {query.batchId?<p className="text-sm text-muted-foreground">
         Students from a finished batch include completed enrollments for follow-up and reporting.
@@ -616,11 +616,11 @@ export default async function TpoStudentsPage({
 
       {query.profileStatus&&!data.definitions.verificationAvailable?<Alert tone="warning">
         Profile-verification records are unavailable. A missing source must not be mistaken for Not verified.
-        <Link href="/tpo/students" className="ml-2 text-link underline">Clear profile filter</Link>
+        <Link href="/tpo/students" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear profile filter</Link>
       </Alert>:null}
       {query.afterCollege&&!data.definitions.afterCollegeAvailable?<Alert tone="warning">
         Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
-        <Link href="/tpo/students" className="ml-2 text-link underline">Clear outcome filter</Link>
+        <Link href="/tpo/students" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear outcome filter</Link>
       </Alert>:null}
       {!data.definitions.externalOffersAvailable ? (
         <Alert tone="warning">
@@ -631,7 +631,7 @@ export default async function TpoStudentsPage({
       {!data.debarmentAvailable?<InlineNotice tone="info" message="Timed debarment records are not available right now. Debarment filters and counts may be incomplete."/>:null}
       {(data.uninvitedCount??0)>0?<Alert tone="warning">
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
-        <Link href="/tpo/batches" className="ml-2 font-semibold text-link underline">Open Placement eligibility</Link>
+        <Link href="/tpo/batches" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open Placement eligibility</Link>
       </Alert>:null}
       <section className="border-b border-border py-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -649,8 +649,8 @@ export default async function TpoStudentsPage({
         </div>
 
         <p className="mt-3 text-sm text-body" aria-live="polite">Journey of the {summary.activeLearners} students in {query.batchId?"this batch":query.programId?"this program":query.branchId?"this branch":"placements"}.</p>
-        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Student placement journey">
-         {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+        <div className="mt-5 grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-4" aria-label="Student placement journey">
+         {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="min-w-0 border-b border-r border-border bg-surface p-4 last:border-r-0">
           <h3 className="text-sm font-semibold">{step.label}</h3>
           <p className="mt-2 text-2xl font-bold tabular-nums">{step.count}</p>
           <p className="text-xs text-muted-foreground">{step.percent}% of {summary.activeLearners} student(s)</p>
@@ -659,14 +659,14 @@ export default async function TpoStudentsPage({
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Journey attention filters">
          {data.debarredCount!=null&&data.debarredCount>0?<Link
           href={scopedHref({...currentFilters,debarred:true,page:1})}
-          className="rounded-[var(--lms-control-radius)]-full border border-border px-3 py-2 text-sm font-semibold text-link">
+          className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-link">
           Debarred · {data.debarredCount}</Link>:null}
          {tpoStudentJourneyGaps(summary).map(gap=><Link key={gap.state}
           href={scopedHref({...currentFilters,journeyState:gap.state,page:1})}
-          className="rounded-[var(--lms-control-radius)]-full border border-border px-3 py-2 text-sm font-semibold text-link">
+          className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-link">
           {gap.label} · {gap.count}</Link>)}
         </div>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="mt-5 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
           {TPO_STUDENT_JOURNEY_STATES.map((state) => {
             const selected = query.journeyState === state;
 
@@ -703,8 +703,8 @@ export default async function TpoStudentsPage({
           })}
         </div>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-[var(--lms-canvas-radius)] bg-muted px-4 py-3">
+        <div className="mt-5 grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3">
+          <div className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0">
             <p className="text-xs font-semibold text-muted-foreground">
               {query.batchId?"Students in selected batch":"Active enrolled learners"}
             </p>
@@ -712,7 +712,7 @@ export default async function TpoStudentsPage({
               {summary.activeLearners}
             </p>
           </div>
-          <div className="rounded-[var(--lms-canvas-radius)] bg-muted px-4 py-3">
+          <div className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0">
             <p className="text-xs font-semibold text-muted-foreground">
               Registered placement pool
             </p>
@@ -720,7 +720,7 @@ export default async function TpoStudentsPage({
               {summary.placementPool}
             </p>
           </div>
-          <div className="rounded-[var(--lms-canvas-radius)] bg-muted px-4 py-3">
+          <div className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0">
             <p className="text-xs font-semibold text-muted-foreground">
               Placed outside registered pool
             </p>
@@ -739,7 +739,7 @@ export default async function TpoStudentsPage({
         </p>
       </section>
 
-      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
+      <section className="min-w-0 border-y border-border">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Branch intelligence
@@ -755,7 +755,7 @@ export default async function TpoStudentsPage({
             No learners are available for this selection.
           </p>
         ) : (
-          <div className="hidden sm:block">
+          <div className="hidden md:block">
             <Table scrollLabel="Branch intelligence" className="min-w-[52rem]">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
@@ -782,7 +782,7 @@ export default async function TpoStudentsPage({
                           columns:first(raw.columns)?.slice(0,800),
                           pageSize:query.pageSize,
                         },branch.branchId))}
-                        className="font-semibold text-link hover:underline"
+                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
                       >
                         {branch.branchName}
                       </Link>
@@ -812,12 +812,12 @@ export default async function TpoStudentsPage({
           </div>
         )}
 
-        {data.branches.length ? <ul className="space-y-3 px-4 pt-4 sm:hidden" aria-label="Branch intelligence">
-          {data.branches.map(branch => <li key={branch.branchId} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4">
+        {data.branches.length ? <ul className="space-y-3 px-4 pt-4 md:hidden" aria-label="Branch intelligence">
+          {data.branches.map(branch => <li key={branch.branchId} className="min-w-0 border-b border-border py-4">
             <Link href={scopedHref(tpoBranchDrillFilters({
               journeyState:query.journeyState, search:query.search,
               columns:first(raw.columns)?.slice(0,800), pageSize:query.pageSize,
-            },branch.branchId))} className="inline-flex min-h-9 items-center font-semibold text-link underline">{branch.branchName}</Link>
+            },branch.branchId))} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{branch.branchName}</Link>
             <dl className="grid grid-cols-2 gap-3 text-sm">
               <div><dt className="text-body">Learners</dt><dd className="font-semibold tabular-nums">{branch.activeLearners}</dd></div>
               <div><dt className="text-body">Registered</dt><dd className="font-semibold tabular-nums">{branch.placementPool}</dd></div>
@@ -850,7 +850,7 @@ export default async function TpoStudentsPage({
           </div>
           <Link
             href={tpoStudentRosterClearHref(query.pageSize,first(raw.columns))}
-            className="text-sm font-semibold text-link hover:underline"
+            className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Clear filters
           </Link>
@@ -859,15 +859,15 @@ export default async function TpoStudentsPage({
         <form
           action="/tpo/students"
           method="get"
-          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2 lg:grid-cols-4"
         >
-          {first(raw.columns)&&<input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
+          {first(raw.columns)&&<Input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Journey
             <Select
               name="journeyState"
               defaultValue={query.journeyState ?? ""}
-              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="">All journeys</option>
               {TPO_STUDENT_JOURNEY_STATES.map((state) => (
@@ -883,7 +883,7 @@ export default async function TpoStudentsPage({
             <Select
               name="branchId"
               defaultValue={query.branchId ?? ""}
-              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="">All branches</option>
               {data.branches.map((branch) => (
@@ -904,7 +904,7 @@ export default async function TpoStudentsPage({
             <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
-              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="25">25 students</option>
               <option value="50">50 students</option>
@@ -912,10 +912,10 @@ export default async function TpoStudentsPage({
             </Select>
           </label>
 
-          <div className="sm:col-span-2 lg:col-span-4">
+          <div className="md:col-span-2 lg:col-span-4">
             <Button variant="primary"
               type="submit"
-              className="min-h-9 px-5"
+              className="min-h-11 md:min-h-9 px-5"
             >
               Apply filters
             </Button>
@@ -923,7 +923,7 @@ export default async function TpoStudentsPage({
         </form>
 
         {roster.items.length === 0 ? (
-          <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-8 text-sm text-body">
+          <div className="border-y border-border py-8 text-sm text-body">
             {roster.total > 0
               ? "This page is outside the matching result range. Return to the first page."
               : Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")
@@ -936,7 +936,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: 1,
                 }):(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"/tpo/students":"/tpo/batches")}
-                className="font-semibold text-link hover:underline"
+                className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               >
                 {roster.total>0?"First matching page":(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"Clear search and filters":"Open Placement eligibility")}
               </Link>
@@ -1021,7 +1021,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: roster.page - 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               >
                 Previous
               </Link>
@@ -1033,7 +1033,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: roster.page + 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               >
                 Next
               </Link>
