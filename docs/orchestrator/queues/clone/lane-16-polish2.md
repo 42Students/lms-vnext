@@ -22,4 +22,4 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | probl
 - [x] `src/components/tpo/tpo-batch-rule-editor.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/courses/faculty-item-actions.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/ui/range-slider.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
-- [ ] `src/components/projects/project-readiness-override-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/components/projects/project-readiness-override-form.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
