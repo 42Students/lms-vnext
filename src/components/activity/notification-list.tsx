@@ -82,9 +82,15 @@ export function NotificationList({
 
   if (items.length === 0) {
     return (
-      <div className="border-y border-[var(--lms-canvas-border)] bg-transparent px-6 py-12 text-center">
-        <p className="m-0 font-semibold text-foreground">{emptyText}</p>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <div className={readEndpoint==="/api/learn/notifications"
+        ? "flex min-h-[180px] flex-col items-center justify-center gap-4 bg-transparent px-6 py-12 text-center"
+        : "border-y border-[var(--lms-canvas-border)] bg-transparent px-6 py-12 text-center"}>
+        <p className={readEndpoint==="/api/learn/notifications"
+          ? "m-0 text-[20px] font-semibold leading-[1.3] text-[var(--lms-neutral-900)]"
+          : "m-0 font-semibold text-foreground"}>{emptyText}</p>
+        <p className={readEndpoint==="/api/learn/notifications"
+          ? "mx-auto max-w-[320px] text-[14px] leading-[1.5] text-[var(--lms-neutral-500)]"
+          : "mt-2 text-sm text-muted-foreground"}>
           Workflow notifications and announcements appear when their producers publish them.
         </p>
       </div>
@@ -92,9 +98,10 @@ export function NotificationList({
   }
 
   return (
-    <div className="space-y-5">
+    <div className={readEndpoint==="/api/learn/notifications" ? "space-y-4 min-[768px]:space-y-6" : "space-y-5"}>
       {groupNotificationsByDate(items, groupingNow).map((group) => (
-        <section key={group.label} aria-label={group.label} className="space-y-2">
+        <section key={group.label} aria-label={group.label}
+          className={readEndpoint==="/api/learn/notifications" ? "space-y-4" : "space-y-2"}>
           <h2 className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{group.label}</h2>
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
@@ -135,7 +142,7 @@ export function NotificationList({
                       <Button
                         type="button"
                         onClick={() => onSelect(item)}
-                        variant="ghost" className="min-h-11 min-[768px]:min-h-9 text-left underline-offset-2 hover:underline"
+                        variant="ghost" className="min-h-11 min-[768px]:min-h-9 !text-[14px] min-[768px]:!text-[16px] !leading-[1.35] text-left underline-offset-2 hover:underline"
                         aria-label={`View notification: ${item.title}`}
                       >
                         {item.title}
@@ -143,7 +150,9 @@ export function NotificationList({
                     ) : item.title}
                   </h3>
                   {item.contextLine?<p className="mt-1 text-xs font-semibold text-muted-foreground">{item.contextLine}</p>:null}
-                  <p className="mt-1 text-sm leading-[1.5] text-body">{item.body}</p>
+                  <p className={readEndpoint==="/api/learn/notifications"
+                    ? "mt-2 line-clamp-2 text-[13px] min-[768px]:text-[14px] leading-[1.5] text-[var(--lms-neutral-500)]"
+                    : "mt-1 text-sm leading-[1.5] text-body"}>{item.body}</p>
                   <p className="mt-2 text-xs leading-[1.4] text-muted-foreground">
                     {formatWhen(item.createdAt)}
                   </p>
