@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
@@ -143,18 +144,7 @@ export default async function LearnerAssessmentResultsPage({
           ))}
         </section>
       )}
-      {paged.pages>1?<nav aria-label="Assessment results pagination"
-        className="flex flex-wrap items-center justify-between gap-3">
-        {paged.page>1?<Link href={href(view,paged.page-1)}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">
-          Previous
-        </Link>:<span/>}
-        <span className="text-sm tabular-nums text-body">Page {paged.page} of {paged.pages}</span>
-        {paged.page<paged.pages?<Link href={href(view,paged.page+1)}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">
-          Next
-        </Link>:<span/>}
-      </nav>:null}
+      {paged.pages>1 ? <Pagination label="Assessment results pagination" page={paged.page} pageCount={paged.pages} hrefForPage={page=>href(view,page)} /> : null}
       <p className="text-xs text-muted-foreground">
         Only applied placement round results appear here. Provider submission
         status, internal reviews and unpublished grades are not inferred.
