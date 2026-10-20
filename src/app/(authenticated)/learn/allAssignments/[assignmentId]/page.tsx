@@ -31,10 +31,10 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
   if (resolution.kind === "choose") return <div className="min-w-0 space-y-6">
-    <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>} />
+    <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← All Assignments</Link>} />
     <ul className="divide-y divide-border border-y border-border">
       {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
-        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           href={"/learn/allAssignments/" + encodeURIComponent(path.assignmentId) + "?deliveryId=" + encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -47,7 +47,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   if (!item) notFound();
   const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
   return <div className="space-y-6">
-    <PageHeader title={item.title} actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>} />
+    <PageHeader title={item.title} actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← All Assignments</Link>} />
     <div className="grid gap-4 md:grid-cols-2">
       <section aria-labelledby="assignment-due-title" className="border-b border-border py-4">
         <h2 id="assignment-due-title" className="text-xs font-semibold text-muted-foreground">Due</h2>
@@ -67,7 +67,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       {materials.links.length>0 ? <ul className="mt-3 space-y-2" aria-label="Instructor resources">
         {materials.links.map(link=><li key={link.id} className="text-sm">
           <a href={link.href} rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Open link: {link.title}
           </a>
         </li>)}
@@ -82,7 +82,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
           learnerAssessmentSubmittedLinkHref(item.submissionUrl) ? (
             <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
-              className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{item.submissionUrl}</a>
+              className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.submissionUrl}</a>
           ) : (
             <Alert tone="warning" className="break-all">Saved link unavailable. Open the original submission from a trusted HTTPS source.</Alert>
           )

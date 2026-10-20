@@ -80,14 +80,14 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   return (
     <div className="min-w-0 space-y-6">
       <div>
-        <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to My Placements</Link>
+        <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to My Placements</Link>
         <PageHeader title={LEARNER_LEGACY_NOTICES_TITLE}
           description="Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown." />
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
       </div>
       <nav aria-label="Placement notice views" className="flex flex-wrap gap-3">
-        <a href="#college-notices" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Announcements</a>
-        <a href="#personal-updates" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
+        <a href="#college-notices" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Announcements</a>
+        <a href="#personal-updates" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
       </nav>
       <div id="college-notices" className="scroll-mt-24"/>
       <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="College notice search" className="flex min-w-0 flex-wrap items-end gap-3">
@@ -104,7 +104,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </label>
         <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Search</Button>
         {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="College notice sorting" className="flex min-w-0 flex-wrap items-end gap-3">
         {alertQ?<Input type="hidden" name="alertQ" value={alertQ}/>:null}
@@ -148,7 +148,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       {pageClamped && collegeNoticesRead.available ? (
         <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           The requested notice page no longer exists in the current filtered results. Showing page {pages.page} instead.
-          <Link href={noticePageUrl(pages.page)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          <Link href={noticePageUrl(pages.page)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Update page link
           </Link>
         </p>
@@ -157,7 +157,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <div role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           That notice is not among your currently visible college notices. It may have expired or become unavailable to your membership.
           <Link href={learnerNoticeRecoveryHref(filters.focus)}
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Search all my visible notices
           </Link>
         </div>
@@ -170,7 +170,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <Banner tone="warning" role="alert">
           College notices are temporarily unavailable. Your personal placement alerts are still accessible below.
           <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Retry college notices
           </Link>
         </Banner>
@@ -204,7 +204,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
               {notice.senderLabel==="Placement cell"?<TpoNoticeAcknowledge id={notice.id}/>:null}
               {learnerNoticeHref(notice.id) ? (
                 <Link href={learnerNoticeHref(notice.id)!}
-                  className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                  className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                   Link to this notice
                 </Link>
               ) : null}
@@ -220,9 +220,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       )}
       {pages.total > 0 ? <nav aria-label="College notice pages" className="flex flex-wrap items-center gap-3 text-sm">
         <p className="text-muted-foreground">{pages.from}–{pages.to} of {pages.total} loaded matching notices</p>
-        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Previous</Link> : null}
+        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link> : null}
         <span aria-current="page">Page {pages.page} of {pages.pages}</span>
-        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Next</Link> : null}
+        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link> : null}
       </nav> : null}
       <div id="personal-updates" className="scroll-mt-24"/>
       <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
@@ -247,7 +247,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs text-muted-foreground">This search covers the latest 20 loaded personal alerts, not your full notification history.</p>
           <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ:"",sort:sortKey,source})}
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Clear personal alert search
           </Link>
         </div>
@@ -257,7 +257,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <Banner tone="warning" role="alert">
           Personal placement alerts are temporarily unavailable; the college notice results above remain accessible.
           <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">Retry personal alerts</Link>
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry personal alerts</Link>
         </Banner>}
 
     </div>

@@ -30,7 +30,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." actions={<PageBackLink href="/learn/allQuizzes" label="All Quizzes"/>} />
     <ul className="divide-y divide-border border-y border-border">
       {resolution.options.map(option=><li key={option.deliveryId} className="py-[16px]">
-        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9"
+        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           href={"/learn/allQuizzes/"+encodeURIComponent(path.quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -62,7 +62,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
           <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={attempt.resultsVisible?"success":"neutral"}>{attempt.resultsVisible?"Results published":"Results pending"}</StatusBadge>{learnerAttemptResultLabel(attempt)}</p>
           <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
             aria-current={selected?.id===attempt.id?"page":undefined}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             {attempt.resultsVisible ? "View result" : "View attempt"}
           </Link>
         </li>)}
@@ -71,7 +71,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     {selected ? <section className="border-b border-border py-[16px]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Attempt {selected.attemptNumber} result</h2>
-        <Link href={historyUrl} className="inline-flex min-h-11 items-center text-sm text-primary-text underline hover:text-primary-hover md:min-h-9">Close detail</Link>
+        <Link href={historyUrl} className="inline-flex min-h-11 items-center text-sm text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close detail</Link>
       </div>
       <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
       {selected.resultsVisible ? selected.answers.length===0 ? (
