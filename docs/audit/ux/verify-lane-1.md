@@ -99,3 +99,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** reviewed scoped authorization, notice feed/query models, link focus/readiness, `LearnerPlacementAlerts` and `TpoNoticeAcknowledge` component props/POST actions, notice filters, hidden GET values, deep links, pagination, third-party URL gating, loading/error/parent layout; no broken TSX imports or removed IDs/labels found.
 - **Extra clutter/alignment fixes (0):** responsive disclosed advanced filters, flat notice rows, scrollable anchor navigation and independent alert search retain usable hierarchy at 375/768.
 - **Files changed:** verification proof and queue only (verified, no change to source).
+
+## Surface 15 — Learner application company profile
+- **Surface:** `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 15.
+- **Regressions found/fixed (0):** checked owned application validation/data scope, company-share preview, redacted public fields, privacy disclosure, StatusBadge/Banner/ThirdPartyLink props and verified HTTPS safety, navigation, route loading/error/not-found and parent layout. No broken markup/props/import, missing ID or changed URL.
+- **Extra clutter/alignment fixes (1):** replaced static route loading indicator with existing `GracefulPageLoading` directory skeleton, keeping the original heading/loading words and adding shared slow-fetch recovery.
+- **Files changed:** `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/loading.tsx`; verification proof and queue.
+
+## Surface 16 — Learner application status history
+- **Surface:** `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 16.
+- **Regressions found/fixed (0):** reviewed authorized history service, timeline semantics, IST dates, previous/current status wording, status badge, empty history, loading/error/not-found and parent layout; no missing aria/copy, import, or TSX regression found.
+- **Extra clutter/alignment fixes (1):** updated route-only loading fallback to legacy one-canvas directory skeleton with the existing loading message and slow-load Retry rather than a static spinner.
+- **Files changed:** `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/loading.tsx`; verification proof and queue.

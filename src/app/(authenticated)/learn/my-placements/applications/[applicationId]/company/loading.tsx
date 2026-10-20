@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function LearnerApplicationSubpageLoading() {
@@ -8,7 +8,7 @@ export default function LearnerApplicationSubpageLoading() {
         title="Employer details"
         description="Checking your own persisted application."
       />
-      <LoadingState label="Loading employer details…" />
+      <GracefulPageLoading label="Loading employer details…" shape="directory" />
     </div>
   );
 }
