@@ -48,10 +48,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regres
 - [x] `src/components/academics/academics-create-panel.tsx`
 - [x] `src/components/academics/college-promotion-confirmation.tsx`
 - [x] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-lifecycle-action.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
+- [x] `src/components/academics/college-section-lifecycle-action.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
 - [ ] `src/components/courses/admin-course-display-editor.tsx`
 - [ ] `src/components/courses/faculty-assignment-editor.tsx`
 - [ ] `src/components/courses/faculty-content-order-editor.tsx`
