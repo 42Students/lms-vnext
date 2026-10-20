@@ -16,6 +16,8 @@ export type OtpInputProps = Omit<ComponentPropsWithRef<"input">, "type" | "input
  */
 export function OtpInput({ digits = 6, error = false, className, ...props }: OtpInputProps) {
   const count = Number.isFinite(digits) ? Math.max(1, Math.min(12, Math.trunc(digits))) : 6;
+  // Never render an impossible native minlength > maxlength combination.
+  const minLength = Math.max(0, Math.min(count, props.minLength ?? count));
   return (
     <Input
       {...props}
@@ -23,11 +25,12 @@ export function OtpInput({ digits = 6, error = false, className, ...props }: Otp
       type="text"
       aria-label={props["aria-label"] ?? "One-time code"}
       inputMode="numeric"
+      enterKeyHint={props.enterKeyHint ?? "done"}
       autoComplete="one-time-code"
       autoCapitalize="off"
       spellCheck={false}
       pattern="[0-9]*"
-      minLength={props.minLength ?? count}
+      minLength={minLength}
       maxLength={count}
       error={error}
       className={cx("tabular-nums tracking-[0.3em] text-center max-[767px]:min-h-11", className)}
