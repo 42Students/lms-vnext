@@ -21,6 +21,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
 import { readTpoInternalConversation, tpoThreadIdSchema, tpoMessagePageSchema } from "@/modules/placements/tpo-team-conversation-service";
 import {Button} from "@/components/ui/button";
+import {Disclosure} from "@/components/ui/disclosure";
+import {EmptyState} from "@/components/ui/empty-state";
 export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[];m?:string|string[];ask?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasPlacementTeamMembership(context))redirect("/dashboard");
@@ -52,12 +54,13 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const rawAsk=Array.isArray(query.ask)?query.ask[0]:query.ask;
  const highlightAskId=rawAsk&&tpoThreadIdSchema.safeParse(rawAsk).success?rawAsk:undefined;
  const serverNow=new Date();
- return <div className="min-w-0 space-y-5">
-  <TpoLiveRefresh intervalMs={30000}/>
+ return <div className="min-w-0 space-y-4">
   <PageHeader title={result.thread.topic}
-   description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}/>
-  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link lms-inline-link">All conversations</Link>
+   description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}
+   actions={<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-link lms-inline-link min-[768px]:min-h-9">All conversations</Link>}/>
+  <TpoLiveRefresh intervalMs={30000}/>
   <TpoTeamOpenRead threadId={result.thread.id}/>
+  <Disclosure title="Conversation tools" className="min-w-0 border-b border-border" contentClassName="space-y-3 py-3">
   <TpoTeamRename threadId={result.thread.id} currentTopic={result.thread.topic}/>
   <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}
    counterpart={result.thread.counterpartName}
@@ -65,14 +68,6 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    decisions={result.messages.filter(message=>message.decision&&!message.removed).length}
    openAsks={asks.status==="READY"?asks.items.filter(ask=>ask.status==="OPEN").length:0}
    awayLabel={awayLabel}/>
-  {asks.status==="READY"?<TpoTeamAskPanel threadId={result.thread.id}
-   actorId={context.membership?.id??""}
-   recipientId={otherMembershipId}
-   recipientAwayLabel={awayLabel}
-   recipientName={result.thread.counterpartName}
-   items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
-   highlightAskId={highlightAskId} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?
-   <p role="alert" className="text-sm text-error">Could not load team asks. Other messages are still available.</p>:null}
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
@@ -80,6 +75,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     Mark this conversation&apos;s alerts as read
    </Button>
   </form>
+  </Disclosure>
   {result.messages.some(message=>message.decision&&!message.removed)?
    <aside aria-label="Decisions here" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
     <h2 className="text-sm font-semibold">Decided:</h2>
@@ -87,7 +83,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
      <Link key={message.id} href={"#team-message-"+message.id}
       className="block truncate text-sm text-link underline">{message.body}</Link>)}
    </aside>:null}
-  <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="min-w-0 space-y-3">
+  {result.messages.length===0?<EmptyState title="No messages in this thread yet." description="Reply privately to start the conversation."/>:null}
+  <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="min-w-0 space-y-3 border-t border-border pt-4">
    {result.messages.map((message,index)=>{
     const day=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
      timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
@@ -97,8 +94,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     return <li id={"team-message-"+message.id} key={message.id} className="min-w-0">
      {showDay?<p className="my-3 text-center text-xs font-semibold text-muted-foreground">{day(message.createdAt)}</p>:null}
      <div className={own?
-      "ml-auto w-fit max-w-[90%] rounded-[13px] rounded-br-[5px] border border-border bg-surface-secondary px-3 py-[9px] min-[768px]:max-w-[86%] min-[1024px]:max-w-[76%]":
-      "mr-auto w-fit max-w-[90%] rounded-[13px] rounded-bl-[5px] border border-border bg-surface px-3 py-[9px] min-[768px]:max-w-[86%] min-[1024px]:max-w-[76%]"}>
+      "ml-auto w-fit max-w-[94%] rounded-[var(--lms-control-radius)] rounded-br-sm border border-border bg-surface-secondary px-3 py-2 min-[768px]:max-w-[82%] min-[1024px]:max-w-[74%]":
+      "mr-auto w-fit max-w-[94%] rounded-[var(--lms-control-radius)] rounded-bl-sm border border-border bg-surface px-3 py-2 min-[768px]:max-w-[82%] min-[1024px]:max-w-[74%]"}>
       <p className="text-xs text-muted-foreground">
        {own?"You":message.authorName?.trim()||"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
@@ -133,7 +130,14 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    </Link> : null}
   </nav>
   <TpoTeamReplyComposer threadId={result.thread.id} actorUserId={context.user.id}/>
-  {!result.messages.length?<p role="status" className="border-t border-border py-5 text-sm text-body">No messages in this thread yet.</p>:null}
+  {asks.status==="READY"?<TpoTeamAskPanel threadId={result.thread.id}
+   actorId={context.membership?.id??""}
+   recipientId={otherMembershipId}
+   recipientAwayLabel={awayLabel}
+   recipientName={result.thread.counterpartName}
+   items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
+   highlightAskId={highlightAskId} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?
+   <p role="alert" className="text-sm text-error">Could not load team asks. Other messages are still available.</p>:null}
 
  </div>;
 }
