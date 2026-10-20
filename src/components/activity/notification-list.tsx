@@ -82,7 +82,7 @@ export function NotificationList({
 
   if (items.length === 0) {
     return (
-      <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-6 py-12 text-center">
+      <div className="border-y border-border bg-surface px-6 py-12 text-center">
         <p className="m-0 font-semibold text-foreground">{emptyText}</p>
         <p className="mt-2 text-sm text-muted-foreground">
           Workflow notifications and announcements appear when their producers publish them.
@@ -92,9 +92,9 @@ export function NotificationList({
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="space-y-5">
       {groupNotificationsByDate(items, groupingNow).map((group) => (
-        <section key={group.label} aria-label={group.label} className="grid gap-4">
+        <section key={group.label} aria-label={group.label} className="space-y-2">
           <h2 className="text-sm font-semibold text-muted-foreground">{group.label}</h2>
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
@@ -103,7 +103,7 @@ export function NotificationList({
                void markRead(item.id,item.actionHref??undefined);
               }}
               aria-label={"Open notification: "+item.title}
-              className="w-full min-h-12 justify-start rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-left whitespace-normal shadow-[var(--lms-shadow-sm)] hover:border-primary/25 hover:shadow-[var(--lms-shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:p-6">
+              className="w-full min-h-12 justify-start border-b border-border bg-surface p-4 text-left whitespace-normal shadow-none hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:p-4">
               <div className="flex items-start gap-3">
                {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block size-2 shrink-0 rounded-full bg-primary"/>:null}
                <div className="min-w-0 flex-1">
@@ -117,7 +117,7 @@ export function NotificationList({
               </div>
              </Button>:<article
               key={item.id}
-              className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-[var(--lms-shadow-sm)] transition-[box-shadow,border-color] duration-200 hover:border-primary/25 hover:shadow-[var(--lms-shadow-md)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:p-6"
+              className="border-b border-border bg-surface p-4 shadow-none transition-colors hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:p-4"
             >
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div>
