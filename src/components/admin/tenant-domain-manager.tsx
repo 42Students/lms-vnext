@@ -2,6 +2,7 @@
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -50,6 +51,9 @@ export function TenantDomainManager({
   const router = useRouter();
   const { showToast } = useToast();
   const [host, setHost] = useState("");
+  const createInFlightRef = useRef(false);
+  const actionInFlightRef = useRef(false);
+  const [actionError, setActionError] = useState("");
   const [deleteHostConfirmation, setDeleteHostConfirmation] = useState("");
   const [primaryTarget, setPrimaryTarget] = useState<TenantDomainClientRow | null>(null);
   const [deleteTarget, setDeleteTarget] =
@@ -59,6 +63,8 @@ export function TenantDomainManager({
   const [creating, startCreate] = useTransition();
 
   function createDomain() {
+    if (createInFlightRef.current || creating || !host.trim()) return;
+    createInFlightRef.current = true;
     startCreate(async () => {
       try {
       const response = await fetch("/api/tenant-domains", {
@@ -97,6 +103,8 @@ export function TenantDomainManager({
           title: "Domain could not be added",
           description: "The domain action could not be completed.",
         });
+      } finally {
+        createInFlightRef.current = false;
       }
     });
   }
@@ -105,7 +113,10 @@ export function TenantDomainManager({
     domain: TenantDomainClientRow,
     action: "verify" | "primary" | "delete",
   ) {
+    if (actionInFlightRef.current) return;
+    actionInFlightRef.current = true;
     const key = `${domain.id}:${action}`;
+    setActionError("");
     setPendingAction(key);
 
     try {
@@ -138,6 +149,7 @@ export function TenantDomainManager({
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
+        setActionError(payload?.error === "DOMAIN_NOT_VERIFIED" ? "Only a verified domain can become primary." : payload?.error === "PRIMARY_HOST_CONFIRMATION_REQUIRED" ? "The primary hostname confirmation is missing or stale. Reload and confirm the current primary address." : "The domain action could not be completed.");
         showToast({
           tone: "error",
           title:
@@ -183,6 +195,7 @@ export function TenantDomainManager({
 
       router.refresh();
     } catch {
+      setActionError("The domain action could not be completed. Check the domain status and retry.");
       showToast({
         tone: "error",
         title: action === "verify" ? "Verification failed" :
@@ -190,6 +203,7 @@ export function TenantDomainManager({
         description: "The domain action could not be completed.",
       });
     } finally {
+      actionInFlightRef.current = false;
       setPendingAction(null);
     }
   }
@@ -208,7 +222,7 @@ export function TenantDomainManager({
             </label>
             <Input
               id="tenant-domain-host"
-              className="min-h-11 w-full sm:w-auto md:min-h-9"
+              className="min-h-11 w-full md:min-h-9"
               value={host}
               onChange={(event) => setHost(event.target.value)}
               placeholder="lms.college.edu"
@@ -226,7 +240,6 @@ export function TenantDomainManager({
             className="min-h-11 w-full justify-center md:min-h-9 md:w-auto"
             loading={creating}
              disabled={creating || !host.trim()}
-            onClick={createDomain}
           >
             {creating ? "Adding…" : "Add domain"}
           </Button>
@@ -277,7 +290,7 @@ export function TenantDomainManager({
                         </StatusBadge>
                       ) : null}
                     </div>
-                    <p className="mt-2 text-xs text-muted-foreground">
+                    <p className="mt-2 break-words text-xs leading-5 text-muted-foreground">
                       Last DNS check:{" "}
                       {formatCheckedAt(domain.lastCheckedAt)}
                       {domain.lastCheckResult
@@ -312,7 +325,7 @@ export function TenantDomainManager({
                         size="sm"
                         className="min-h-11 w-full sm:w-auto md:min-h-9"
                         disabled={busy}
-                        onClick={() => setPrimaryTarget(domain)}
+                        onClick={() => { setActionError(""); setPrimaryTarget(domain); }}
                       >
                         {pendingAction === primaryKey
                           ? "Updating…"
@@ -326,6 +339,7 @@ export function TenantDomainManager({
                       className="min-h-11 w-full sm:w-auto md:min-h-9"
                       disabled={busy}
                       onClick={() =>
+                        setActionError("");
                         setDeleteTarget(domain)
                       }
                     >
@@ -393,7 +407,9 @@ export function TenantDomainManager({
         confirmVariant="primary"
         pending={Boolean(pendingAction)}
         onConfirm={() => { if (primaryTarget) void runAction(primaryTarget, "primary"); }}
-      />
+      >
+        {actionError?<p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{actionError}</p>:null}
+      </ConfirmDialog>
 
       <ConfirmDialog
         open={Boolean(deleteTarget)}
@@ -421,10 +437,11 @@ export function TenantDomainManager({
         }}
       >
         {deleteTarget?.isPrimary ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type the full primary hostname
-          <Input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
+          <Input type="text" autoComplete="off" spellCheck={false} disabled={Boolean(pendingAction)} value={deleteHostConfirmation}
             onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label> : null}
+        {actionError?<p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{actionError}</p>:null}
       </ConfirmDialog>
     </div>
   );
