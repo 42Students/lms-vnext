@@ -34,26 +34,27 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
   }catch(e){setError(e instanceof Error?e.message:"Could not extend deadline");}
   finally{setBusy(false);}
  }
- return <div className="inline-block">
+ return <div className="inline-flex min-w-0 max-w-full flex-col items-start gap-2">
   <Button variant="secondary" type="button" onClick={()=>{setOpen(true);setError("");}}
    >Extend deadline</Button>
-  {done?<p role="status" className="text-xs">{done}</p>:null}
+  {done?<p role="status" className="max-w-full break-words text-xs text-body">{done}</p>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title={"Extend deadline — "+title} dismissible={!busy}>
-    <h2 className="text-lg font-semibold">Extend deadline — {title}</h2>
-    <p className="text-sm">Current deadline: {current}</p>
-    <p className="text-sm text-body">Extend deadline for {title}?</p>
-    <label className="grid gap-1 text-sm">New application deadline (IST)
+   <div className="min-w-0 space-y-4">
+    <p className="break-words text-sm text-body">Current deadline: {current}</p>
+    <p className="break-words text-sm text-body">Extend deadline for {title}?</p>
+    <label className="grid min-w-0 gap-1 text-sm">New application deadline (IST)
      <Input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
       />
     </label>
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-    <div className="flex gap-3">
+    <div className="flex min-w-0 flex-col-reverse gap-3 sm:flex-row sm:justify-end [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
      <Button type="button" disabled={busy||!value} onClick={()=>void save()}
       >
       {busy?"Extending…":"Extend"}</Button>
      <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
       >Cancel</Button>
     </div>
+   </div>
   </Dialog>
  </div>;
 }

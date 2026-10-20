@@ -3,6 +3,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
+import {Disclosure} from "@/components/ui/disclosure";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 type Event={from:string|null;to:string;reason:string|null;when:string};
@@ -94,22 +95,18 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   {label:"Application history",rows:detail?.history??[]},
  ];
  return <Dialog open={true} onOpenChange={open=>{if(!open)onClose();}} title="Application Details">
-    <div className="flex items-center justify-between gap-3">
-      <h2 className="text-lg font-semibold">Application Details</h2>
-      <div className="flex gap-2">
+    <div className="flex min-w-0 items-center justify-end gap-3">
        <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
         >Refresh</Button>
-       <Button variant="secondary" type="button" onClick={onClose} >Close</Button>
-      </div>
     </div>
     {!detail&&!loading&&!error?<Button variant="primary" type="button" onClick={()=>void reload()}
       className="mt-4">Open application details</Button>:null}
     {loading?<p role="status" className="py-4 text-sm">Loading application details…</p>:null}
     {error?<p ref={errorRef} tabIndex={-1} role="alert" className="my-4 text-sm text-error">{error}</p>:null}
-    {detail?<div className="mt-4 space-y-5">
+    {detail?<div className="mt-4 min-w-0 space-y-5">
       <div className="border-b border-border py-4">
        <h3 className="font-semibold">{detail.application.name??"Unnamed learner"} · {detail.application.role}</h3>
-       <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+       <div className="mt-3 grid min-w-0 gap-x-4 gap-y-2 text-sm sm:grid-cols-2 [&>p]:min-w-0 [&>p]:break-words [&>p]:[overflow-wrap:anywhere]">
         <p>Email: {detail.application.email??"Not provided"}</p>
         <p>Mobile: {detail.application.phone??"Not provided"}</p>
         <p>Roll: {detail.application.rollNumber??"Not recorded"}</p>
@@ -141,7 +138,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         {rescreening?"Re-screening…":"Re-screen"}
        </Button>
        <p className="mt-1 text-xs text-muted-foreground">Re-screen checks recorded academic eligibility under current policy. It does not fabricate a match score or reverse an existing screening decision.</p>
-       {rescreenResult?<div role="status" className="mt-3 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+       {rescreenResult?<div role="status" className="mt-3 space-y-2 border-y border-border py-3">
         <p className="font-semibold">Current eligibility: {rescreenResult.status}</p>
         {rescreenResult.checks.length?<ul className="space-y-1 text-sm">
          {rescreenResult.checks.map((check,i)=><li key={i}>
@@ -172,8 +169,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </section>
       <section className="border-b border-border py-4">
        <h3 className="font-semibold">Offer history</h3>
-       {detail.offers.length?<ul className="mt-2 space-y-3 text-sm">{detail.offers.map(o=>
-        <li key={o.id} className="space-y-2 rounded border border-border p-2">
+       {detail.offers.length?<ul className="mt-2 divide-y divide-border border-y border-border text-sm">{detail.offers.map(o=>
+        <li key={o.id} className="min-w-0 space-y-2 break-words py-3">
          <p>{o.status} · {when(o.issuedAt)}</p>
          {o.offerLetterUrl?<a href={o.offerLetterUrl}  rel="noreferrer noopener"
            className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:null}
@@ -208,20 +205,21 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         <Textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
          className="w-full"/></label>
        {success?<p role="status" className="text-sm text-body">{success}</p>:null}
+<div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
        <Button variant="primary" type="button" disabled={saving||!note.trim()} onClick={()=>void save()}
-        className="mt-3">
+        className="min-h-11 w-full sm:w-auto md:min-h-9">
          {saving?"Saving…":amendsNoteId?"Save correction":"Add note"}</Button>
        {amendsNoteId?<Button variant="secondary" type="button" onClick={()=>{setAmendsNoteId(null);setNote("");}}
-         className="ml-2">Cancel correction</Button>:null}
+         className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel correction</Button>:null}
+</div>
       </section>
-      {sections.map(section=><section key={section.label} className="border-b border-border py-4">
-        <h3 className="font-semibold">{section.label}</h3>
-        {section.rows.length?<ol className="mt-3 space-y-2 text-sm">{section.rows.map((event,index)=>
-          <li key={index} className="rounded border border-border p-2">
+      {sections.map(section=><Disclosure key={section.label} title={section.label} className="border-b border-border py-2" contentClassName="pb-3">
+        {section.rows.length?<ol className="mt-3 divide-y divide-border text-sm">{section.rows.map((event,index)=>
+          <li key={index} className="min-w-0 break-words py-3">
            {event.from??"New"} → {event.to} · {when(event.when)}
            {event.reason?<p className="mt-1 text-xs text-body">{event.reason}</p>:null}
           </li>)}</ol>:<p className="mt-2 text-sm text-body">No recorded events.</p>}
-      </section>)}
+      </Disclosure>)}
     </div>:null}
  </Dialog>;
 }
