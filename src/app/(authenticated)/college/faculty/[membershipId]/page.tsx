@@ -27,16 +27,17 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     throw error;
   }
   return <div className="min-w-0 max-w-full space-y-6">
+    <div className="flex min-w-0 items-center">
+      <PageBackLink href="/college/faculty" label="Back to faculty"/>
+    </div>
     <PageHeader title={data.person.name}
-      description="College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure."
-      actions={<div className="flex flex-wrap gap-3">
+      actions={<CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>} />
+    <section className="min-w-0 border-b border-border pb-5">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Faculty record</h2>
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Lifecycle audit</Link>
-        <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
-        <PageBackLink href="/college/faculty" label="Back to faculty"/>
-      </div>} />
-    <section className="border-b border-border pb-5">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Faculty record</h2>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Lifecycle audit</Link>
+      </div>
       <dl className="mt-4 grid min-w-0 gap-4 text-sm md:grid-cols-2">
         <div><dt className="text-muted-foreground">Title</dt><dd>{data.person.academicTitle ?? "Not recorded"}</dd></div>
         <div><dt className="text-muted-foreground">Department</dt><dd>{data.person.departmentName ?? "Not recorded"}</dd></div>
@@ -44,10 +45,17 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <div><dt className="text-muted-foreground">Membership</dt><dd><StatusBadge tone={data.person.status==="ACTIVE"?"success":"warning"}>{data.person.status}</StatusBadge></dd></div>
       </dl>
     </section>
-    <section className="border-b border-border pb-5">
+    <section className="min-w-0 border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
-      <form method="get" className="mt-3 flex min-w-0 flex-wrap items-end max-[767px]:flex-col max-[767px]:items-stretch gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
-        action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
+      <p className="mt-3 text-sm text-body">{data.counts.totalAssignments} total assignments ·
+        {" "}{data.counts.activeAssignments} active ·
+        {" "}{data.counts.distinctOfferings} distinct course offerings
+      </p>
+      <p className="mt-2 max-w-2xl text-xs text-muted-foreground">College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure.</p>
+      <details className="mt-4 min-w-0 border-y border-border py-2" open={data.filter.status!=="ALL"||data.filter.role!=="ALL"}>
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filter</summary>
+        <form method="get" className="mt-3 grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
+          action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">
           Assignment history
           <Select name="status" defaultValue={data.filter.status}
@@ -67,16 +75,17 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="TA">Teaching assistant</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-      </form>
-      <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
-        {" "}{data.counts.activeAssignments} active ·
-        {" "}{data.counts.distinctOfferings} distinct course offerings
-      </p>
-      {data.assignments.length === 0
-        ? <EmptyState title="No teaching assignments" description="No college-scoped teaching assignments recorded."/>
-        : <div className="mt-4">
-          <DataTable
+          <Button type="submit" className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto">Filter</Button>
+        </form>
+      </details>
+      <div className="mt-4 min-w-0">
+        {data.assignments.length === 0
+        ? <EmptyState title="No teaching assignments" description="No college-scoped teaching assignments recorded."
+            action={data.filter.status!=="ALL"||data.filter.role!=="ALL" ?
+              <Link href={`/college/faculty/${encodeURIComponent(membershipId)}`}
+                className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">All assignments</Link>
+              : null}/>
+        : <DataTable
             caption="Persisted teaching assignments"
             rows={data.assignments}
             getRowKey={item => item.id}
@@ -92,8 +101,8 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
               { key: "role", header: "Role", mobilePriority: "secondary", cell: item => item.role },
               { key: "status", header: "Status", mobilePriority: "secondary", cell: item => <StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>{item.status}</StatusBadge> },
             ]}
-          />
-        </div>}
+          />}
+      </div>
       {data.truncated ? <p className="mt-3 text-sm text-muted-foreground">
         Showing the first 100 matching assignment rows; summary totals include all assignment states.
       </p> : null}
