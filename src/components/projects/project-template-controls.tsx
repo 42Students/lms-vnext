@@ -135,7 +135,7 @@ export function CreateProjectTemplateControl() {
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={value => { if (!pending) setOpen(value); }}
         title="Create project template"
         description="Start with a valid release → sprint → task baseline. The draft can be published after review."
       >
@@ -144,7 +144,7 @@ export function CreateProjectTemplateControl() {
           className="grid gap-4"
         >
           <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Template title
             </span>
             <Input
@@ -157,7 +157,7 @@ export function CreateProjectTemplateControl() {
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Slug
             </span>
             <Input
@@ -173,8 +173,10 @@ export function CreateProjectTemplateControl() {
               placeholder="campus-project"
             />
           </label>
-          <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body">
+          <details className="border-t border-[var(--lms-canvas-border)] pt-3">
+            <summary className="cursor-pointer py-2 text-[13px] font-semibold text-body">Additional template details</summary>
+          <label className="mt-3 block min-w-0">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Summary
             </span>
             <Textarea
@@ -186,7 +188,7 @@ export function CreateProjectTemplateControl() {
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Goal
             </span>
             <Textarea
@@ -197,9 +199,10 @@ export function CreateProjectTemplateControl() {
               }
             />
           </label>
-          <div className="grid min-w-0 gap-3 min-[992px]:grid-cols-3">
+          </details>
+          <div className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-4 md:grid-cols-2 min-[992px]:grid-cols-3">
             <label>
-              <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body">
+              <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
                 Release
               </span>
               <Input
@@ -214,7 +217,7 @@ export function CreateProjectTemplateControl() {
               />
             </label>
             <label>
-              <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body">
+              <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
                 Sprint
               </span>
               <Input
@@ -229,7 +232,7 @@ export function CreateProjectTemplateControl() {
               />
             </label>
             <label>
-              <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body">
+              <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
                 First task
               </span>
               <Input
@@ -252,9 +255,10 @@ export function CreateProjectTemplateControl() {
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex flex-col-reverse gap-2 border-t border-[var(--lms-canvas-border)] pt-4 sm:flex-row sm:justify-end">
             <Button
               type="button"
+              className="w-full sm:w-auto"
               variant="secondary"
               disabled={pending}
               onClick={() => setOpen(false)}
@@ -262,7 +266,9 @@ export function CreateProjectTemplateControl() {
               Cancel
             </Button>
             <Button
+              className="w-full sm:w-auto"
               type="submit"
+              loading={pending}
               disabled={
                 pending ||
                 !slug.trim() ||
@@ -470,38 +476,38 @@ export function ProjectTemplateActions({
         ) : null}
       </div>
 
-      <Dialog open={duplicateOpen} onOpenChange={setDuplicateOpen}
+      <Dialog open={duplicateOpen} onOpenChange={value => { if (pending === null) setDuplicateOpen(value); }}
         title="Duplicate project template"
         description="Create a new draft copy. The source template and its assigned workspaces remain unchanged."
-        footer={<>
-          <Button variant="secondary" disabled={pending!==null} onClick={()=>setDuplicateOpen(false)}>Cancel</Button>
-          <Button disabled={pending!==null||!copyTitle.trim()||!copySlug.trim()}
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button className="w-full sm:w-auto" variant="secondary" disabled={pending!==null} onClick={()=>setDuplicateOpen(false)}>Cancel</Button>
+          <Button className="w-full sm:w-auto" loading={pending==="Duplicate template"} disabled={pending!==null||!copyTitle.trim()||!copySlug.trim()}
             onClick={()=>void duplicate()}>{pending==="Duplicate template"?"Duplicating…":"Duplicate template"}</Button>
-        </>}>
+        </div>}>
         <div className="grid gap-3">
-          <label className="text-sm font-semibold">New title
+          <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">New title
             <Input required maxLength={200} value={copyTitle} onChange={e=>setCopyTitle(e.target.value)}/>
           </label>
-          <label className="text-sm font-semibold">New slug
+          <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">New slug
             <Input required maxLength={64} pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               value={copySlug} onChange={e=>setCopySlug(e.target.value.toLowerCase())}/>
           </label>
-          <label className="text-sm font-semibold">New summary
+          <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">New summary
             <Textarea maxLength={2000} value={copySummary} onChange={e=>setCopySummary(e.target.value)}/>
           </label>
         </div>
       </Dialog>
       <Dialog open={confirmRevoke} onOpenChange={setConfirmRevoke}
         title="Revoke college assignment?" description={templateAssignmentRevocationNotice()}
-        footer={<>
-          <Button variant="secondary" disabled={pending !== null} onClick={() => setConfirmRevoke(false)}>Cancel</Button>
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button className="w-full sm:w-auto" variant="secondary" disabled={pending !== null} onClick={() => setConfirmRevoke(false)}>Cancel</Button>
           <Button disabled={pending !== null || !selectedCollegeId} onClick={() => {
             if (!selectedCollegeId) return;
             setConfirmRevoke(false);
             void mutate("Revoke college assignment", "/api/projects/templates/" + templateId + "/assignments",
               "DELETE", { collegeId: selectedCollegeId });
-          }}>Confirm revocation</Button>
-        </>}>
+          }} className="w-full sm:w-auto" loading={pending==="Revoke college assignment"}>Confirm revocation</Button>
+        </div>}>
         <p className="text-sm text-body">Only this college&apos;s availability changes.</p>
       </Dialog>
 
@@ -511,8 +517,8 @@ export function ProjectTemplateActions({
         title="Archive project template?"
         description="Archiving hides this template from normal creation flows. Active college assignments must be revoked first; existing workspaces are unaffected."
         footer={
-          <>
-            <Button
+          <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button className="w-full sm:w-auto"
               variant="secondary"
               disabled={pending !== null}
               onClick={() =>
@@ -522,6 +528,8 @@ export function ProjectTemplateActions({
               Cancel
             </Button>
             <Button
+              className="w-full sm:w-auto"
+              loading={pending === "Archive template"}
               disabled={pending !== null}
               onClick={() => {
                 setConfirmArchive(false);
@@ -537,7 +545,7 @@ export function ProjectTemplateActions({
                 ? "Archiving…"
                 : "Archive template"}
             </Button>
-          </>
+          </div>
         }
       >
         <p className="m-0 text-sm leading-6 text-body">
