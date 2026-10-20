@@ -204,3 +204,8 @@
 - Regressions found/fixed: 0. Read controlled editor/dirty-leave handling, source route props, name parser and profile PATCH receipt schema, protected update route, useGuardedAction and shared Input/Button/ConfirmActionDialog. Optimistic user/profile tokens, validation fields, exact same-URL navigation guard, disabled phone, focus/touch states, busy/feedback behavior and reset confirmation remain intact.
 - Extra clutter/alignment: 0. Save and Unsaved changes stay grouped beneath a hairline; 375 stacks while 768 runs inline without losing labels.
 - Files changed: verified, no change. No runtime or CI.
+
+## 42. `src/components/hr/recruiter-request-cancel-button.tsx`
+- Regressions found/fixed: 1 — prior polish described a confirmed cancellation, but the client accepted any parseable successful PATCH payload and immediately hid the Cancel action without verifying the server's returned row. Require the PATCH receipt's request id, college id and status CANCELLED before success, navigation refresh or removal of the action; a nonmatching receipt instead stays available with existing safe failure feedback. Read full component, route consumer, PATCH server route and optimistic-lock transaction, apiFetch, ConfirmDialog/Dialog, InlineNotice, Button and lane-14 proof. Kept field names, expectedUpdatedAt, role scope, confirmation and single-notice locations.
+- Extra clutter/alignment: 1 — native Manage request summary now fills the 375px touch row rather than w-fit; reverts to compact width at 768. Preserve the disclosed destructive action and exact labels.
+- Files changed: `src/components/hr/recruiter-request-cancel-button.tsx`. Static source inspection, no runtime or CI.
