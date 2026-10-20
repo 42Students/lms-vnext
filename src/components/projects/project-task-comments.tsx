@@ -44,15 +44,15 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   }catch(caught){setError(caught instanceof Error?caught.message:"Could not add comment");}
   finally{setBusy(false);}
  }
- return <div className="mt-2 space-y-2">
+ return <div className="mt-[var(--lms-space-2)] min-w-0 space-y-[var(--lms-space-3)]">
    <Button size="sm" variant="secondary" onClick={()=>open?setOpen(false):void show()}>
      Comments
    </Button>
    {open?<div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
      <p className="text-xs text-muted-foreground">Notes and progress updates people on this task have written.</p>
-     <label className="block text-xs font-semibold text-body">Filter comments
+     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter comments
        <Select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
-         className="mt-1 w-full">
+         className="w-full">
          <option value="ALL">All comments</option>
          {PROJECT_TASK_COMMENT_KINDS.map(value=><option key={value} value={value}>
            {PROJECT_TASK_COMMENT_KIND_LABELS[value]}
@@ -73,7 +73,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
       </p>
       <p className="whitespace-pre-wrap">{row.body}</p>
    </article>)}
-     {canPost?<label className="grid gap-1 text-sm font-semibold text-body">Type
+     {canPost?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
        <Select value={kind} disabled={busy}
          onChange={event=>setKind(event.target.value as ProjectTaskCommentKind)}
          className="w-full">
@@ -82,7 +82,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
          </option>)}
        </Select>
      </label>:null}
-     {canPost?<label className="grid gap-1 text-sm text-body">Message
+     {canPost?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
        <Textarea maxLength={4000} value={body} disabled={busy}
          placeholder="Share a progress update or note..."
          onChange={e=>setBody(e.target.value)}/>
@@ -90,7 +90,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
      {canPost && !body.trim() ? <p className="text-xs text-muted-foreground">
        Add a note before posting.
      </p> : null}
-     {canPost?<Button size="sm" disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
+     {canPost?<Button className="w-full sm:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
    </div>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </div>;
