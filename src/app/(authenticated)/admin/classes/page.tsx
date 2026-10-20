@@ -75,8 +75,8 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           columns={[
             {key:"class",header:"Class",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
-              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Manage students →</Link>
-              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Schedule →</Link>
+              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Manage students →</Link>
+              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Schedule →</Link>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
             {key:"batch",header:"Batch",mobilePriority:"secondary",cell:row=>row.cohortName},
@@ -88,7 +88,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             {key:"capacity",header:"Max Students",mobilePriority:"secondary",cell:row=>row.capacity??"—"},
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeClassRowActions row={row}/>},
           ]} />
-        <nav aria-label="Class pages" className="flex items-center justify-between gap-3 text-sm">
+        <nav aria-label="Class pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
             {data.query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}

@@ -18,13 +18,11 @@ export default async function SuperAdminSectionOperationsPage({
   if (!(await resolveSuperAdminSectionDetail(context, sectionId))) notFound();
 
   return (
-    <div className="min-w-0">
       <AcademicsSectionPage
       context={context}
       sectionId={sectionId}
       eyebrow="Super Admin · Academics"
       backHref="/admin/academics"
       />
-    </div>
   );
 }
