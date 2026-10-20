@@ -22,12 +22,14 @@ export async function AdminProjectSectionPage({
   basePath,
   from,
   reason,
+  polishAdminSection=false,
 }: {
   projectId: string;
   section: string;
   basePath: string;
   from?: string;
   reason?: string;
+  polishAdminSection?: boolean;
 }) {
   if (!isProjectWorkspaceSection(section)) {
     notFound();
@@ -65,6 +67,7 @@ export async function AdminProjectSectionPage({
         context.membership?.id ?? null
       }
       activeSection={section}
+      polishAdminSection={polishAdminSection}
       sectionBaseHref={
         basePath + "/" + projectId
       }
