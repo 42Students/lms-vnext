@@ -1,5 +1,5 @@
 "use client";
-import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {createHrBellMutationGate} from "@/modules/placements/hr-recruiter-bell-model";
@@ -38,9 +38,9 @@ export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
   finally{gate.current.end();setSaving(false);}
  }
  return <div className="mt-3 flex flex-wrap items-center gap-2">
-  <Button type="button" variant="secondary" className="min-h-11 min-[768px]:min-h-9" disabled={saving||complete} loading={saving} onClick={()=>void markRead()}>
+  <Button type="button" variant="secondary" disabled={saving||complete} loading={saving} onClick={()=>void markRead()}>
    {complete?"Marked as read":saving?"Saving…":"Mark as read"}
   </Button>
-  {message?<Alert tone="error">{message}</Alert>:null}
+  {message?<InlineNotice tone="error" message={message}/>:null}
  </div>;
 }
