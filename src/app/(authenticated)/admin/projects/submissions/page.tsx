@@ -34,14 +34,11 @@ export default async function SuperAdminProjectSubmissionsRoute({
   if (!collegeId) {
     return (
       <div className="min-w-0 space-y-6">
-        <ProjectAdminNav
-          basePath="/admin/projects"
-          active="submissions"
-        />
         <PageHeader
           title="Project submissions"
           description="A selected college scope is required."
         />
+        <ProjectAdminNav basePath="/admin/projects" active="submissions" />
         <EmptyState
           title="Select a college scope"
           description="Choose a college before reviewing project submissions."
