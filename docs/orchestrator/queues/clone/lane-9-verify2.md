@@ -22,8 +22,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
 - [x] `src/components/tpo/tpo-applications-spreadsheet.tsx`
 - [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
 - [ ] `src/components/academics/college-term-mapping-manager.tsx`
 - [ ] `src/components/courses/faculty-assessment-lifecycle.tsx`
 - [ ] `src/components/admin/college-bulk-import.tsx`
