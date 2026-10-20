@@ -64,8 +64,8 @@ export function updateTpoGridQuery(query: URLSearchParams, changes: Record<strin
   return result;
 }
 export function csvSafeGridCell(raw: string | number | null | undefined) {
-  const text = String(raw ?? "");
-  const neutral = /^[\s\u0000-\u001f]*[=+@\-]/u.test(text) ? "'" + text : text;
+  const text = String(raw ?? "").replaceAll(/[\u0000-\u001f\u007f\u2028\u2029]+/gu, " ");
+  const neutral = /^[\s\uFEFF]*[=+@\-]/u.test(text) ? "'" + text : text;
   return '"' + neutral.replaceAll('"', '""') + '"';
 }
 export function exportTpoGridCsv<Row>(columns: readonly TpoGridColumn<Row>[], rows: readonly Row[]) {
