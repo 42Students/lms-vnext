@@ -54,11 +54,11 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     urgentOnly:first(raw.urgentOnly),jobId:first(raw.jobId),
     page:first(raw.page),pageSize:first(raw.pageSize),
   });
-  if(!parsed.success)return <div className="space-y-5">
+  if(!parsed.success)return <div className="min-w-0 space-y-5">
     <PageHeader title="Requests"
       description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first."/>
     <Alert tone="error">
-      <h2 className="font-semibold text-foreground">Invalid request filters</h2>
+      <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Invalid request filters</h2>
       <p className="mt-2 text-sm text-body">Check the request status, kind, age, sorting and page values. No request data was loaded.</p>
       <Link href="/tpo/requests" className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline">
         Clear invalid filters
@@ -75,7 +75,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   const attention=tpoRequestAttentionOnPage(data.requests,asOf);
   return <div className="min-w-0 space-y-5">
     <PageHeader title="Requests" description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first." />
-    <nav aria-label="Request history views" className="flex flex-wrap gap-2">
+    <nav aria-label="Request history views" className="flex min-w-0 flex-wrap items-center gap-2">
       <FilterChipLink href={href({...data.query,status:"PENDING",age:"ALL",page:1})}
         selected={data.query.status==="PENDING"&&data.query.age==="ALL"}
         >Waiting</FilterChipLink>
@@ -86,43 +86,43 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         selected={data.query.status==="ALL"&&data.query.age==="ALL"}
         >All history</FilterChipLink>
     </nav>
-    <nav aria-label="Request statuses" className="flex flex-wrap gap-2">
+    <nav aria-label="Request statuses" className="flex min-w-0 flex-wrap items-center gap-2">
       {TPO_REQUEST_STATUSES.map(status=>
         <FilterChipLink key={status} href={href({...data.query,status,page:1})} selected={data.query.status===status}
           >{status==="PENDING"?"Waiting":status.charAt(0)+status.slice(1).toLowerCase()} · {statusCounts[status]}</FilterChipLink>)}
     </nav>
-    <form method="get" action="/tpo/requests" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border py-4 max-[767px]:flex-col max-[767px]:items-stretch">
+    <form method="get" action="/tpo/requests" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] py-4 max-[767px]:flex-col max-[767px]:items-stretch">
       <Input type="hidden" name="status" value={data.query.status}/>
-      <label className="flex min-h-11 items-center gap-2 text-sm"><Checkbox name="urgentOnly" value="true" defaultChecked={data.query.urgentOnly===true}/> Urgent only</label>
-      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind<Select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 w-full md:min-h-9">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</Select></label>
-      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive<Select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 w-full md:min-h-9">
+      <label className="flex min-h-11 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:min-h-9"><Checkbox name="urgentOnly" value="true" defaultChecked={data.query.urgentOnly===true}/> Urgent only</label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind<Select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</Select></label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive<Select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9">
        <option value="">All drives</option>
        {data.query.jobId&&!jobChoices.some(row=>row.job.id===data.query.jobId)?<option value={data.query.jobId}>Previously selected drive</option>:null}
        {jobChoices.map(row=><option value={row.job.id} key={row.job.id}>{row.company.name} · {row.job.title}</option>)}
       </Select></label>
       <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student number, student, job or company
-        <Input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full md:min-h-9" />
+        <Input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9" />
       </label>
       <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Page size
-        <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 w-full md:min-h-9">
+        <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9">
           <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="500">500</option>
         </Select>
       </label>
-      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Age<Select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 w-full md:min-h-9"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
-      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order<Select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 w-full md:min-h-9"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></Select></label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Age<Select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order<Select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></Select></label>
       <Button type="submit" >Apply</Button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-link underline">Clear search, age and drive filters</Link>
     </form>
     {(await placementTableExists("placement_learner_general_requests"))?<TpoGeneralRequestsPanel/>:null}
-    <section aria-label="Needs doing first" className="space-y-3 border-b border-border py-4">
-     <h2 className="font-semibold">Needs doing first</h2>
+    <section aria-label="Needs doing first" className="space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
+     <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Needs doing first</h2>
      <p className="text-sm">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
      <div className="flex flex-wrap gap-3 text-sm">
-      <Link href={href({...data.query,status:"PENDING",urgentOnly:true,page:1})} aria-current={data.query.urgentOnly?"page":undefined} className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link">Urgent · {attention.urgent}</Link>
+      <Link href={href({...data.query,status:"PENDING",urgentOnly:true,page:1})} aria-current={data.query.urgentOnly?"page":undefined} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Urgent · {attention.urgent}</Link>
       <Link href={href({...data.query,status:"PENDING",age:"OLDER_THAN_2_DAYS",page:1})}
        aria-current={data.query.age==="OLDER_THAN_2_DAYS"?"page":undefined}
-       className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
-      <span className="rounded border border-border px-3 py-2">May need proof review · {attention.proofUnconfirmed}</span>
+       className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
+      <span className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] text-[var(--lms-body-text)]">May need proof review · {attention.proofUnconfirmed}</span>
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
     </section>
@@ -152,10 +152,10 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       description={data.total===0?"Withdrawals, off-campus offers, registration changes and disputes from students show up here.":undefined}
       action={<Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
        className="inline-flex min-h-11 items-center text-link underline">{data.total>0?"First matching page":"Reset filters"}</Link>}/>:<ul className="space-y-3">{data.requests.map(request=>
-      <li key={request.id} className="min-w-0 border-b border-border py-4">
+      <li key={request.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="font-semibold">{request.studentName} · {request.requestType.replaceAll("_"," ")}</h2>
+            <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{request.studentName} · {request.requestType.replaceAll("_"," ")}</h2>
             <p className="mt-1 text-sm text-body">{request.companyName} · {request.jobTitle}</p>
             <p className="mt-1 text-xs text-muted-foreground">Student number: {request.rollNumber??"Not recorded"} · Branch: {request.branchName??"Not assigned"}</p>
             {outcomeResult.available?<p className="mt-1 text-xs text-body">

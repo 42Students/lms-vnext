@@ -1,9 +1,5 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
-import {Suspense} from "react";
-import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -80,8 +76,6 @@ export default async function TpoFailureReasonsPage({
         }
       />
 
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/failure-reasons" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
@@ -91,19 +85,19 @@ export default async function TpoFailureReasonsPage({
 
       <section
         aria-label="Recorded adverse outcomes"
-        className="border-b border-border py-4"
+        className="border-b border-[var(--lms-canvas-border)] py-4"
       >
-        <p className="text-sm font-semibold text-body">
+        <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Recorded adverse events and current decisions
         </p>
-        <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
+        <p className="mt-2 text-[24px] font-semibold leading-8 tabular-nums text-[var(--lms-heading)]">
           {reportNumber(failures.total)}
         </p>
       </section>
 
       <section
         aria-label="Report methodology"
-        className="border-t border-border py-4 text-sm leading-6 text-body"
+        className="border-t border-[var(--lms-canvas-border)] py-4 text-[14px] leading-6 text-[var(--lms-body-text)]"
       >
         <p className="font-semibold text-foreground">
           Reporting methodology
@@ -129,7 +123,7 @@ export default async function TpoFailureReasonsPage({
       <a href={"/api/placements/tpo/reports/round-failures?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{})
-       }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+       }).toString()} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
        Download round-and-branch failures CSV
       </a>
       <ReportTable
