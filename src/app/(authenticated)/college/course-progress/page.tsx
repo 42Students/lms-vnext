@@ -50,7 +50,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
-    <div className="min-w-0 max-w-full space-y-5">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title="Progress" />
       <ErrorState title="Invalid course progress filters"
         description="The search, offering status or page is invalid. No activity was loaded."

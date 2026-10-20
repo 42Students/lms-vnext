@@ -63,26 +63,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-2.md: file, number of i
 - [x] `src/app/(authenticated)/college/attendance/page.tsx`
 - [x] `src/app/(authenticated)/college/batches/page.tsx`
 - [x] `src/app/(authenticated)/college/classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/loading.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/college/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/not-found.tsx`
-- [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/page.tsx`
-- [ ] `src/app/(authenticated)/college/profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/resources/page.tsx`
-- [ ] `src/app/(authenticated)/college/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/loading.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/lessons/page.tsx`
+- [x] `src/app/(authenticated)/college/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/college/not-found.tsx
+- [x] `src/app/(authenticated)/college/page.tsx
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx
+- [x] `src/app/(authenticated)/college/placements/page.tsx
+- [x] `src/app/(authenticated)/college/profile/page.tsx
+- [x] `src/app/(authenticated)/college/projects/page.tsx
+- [x] `src/app/(authenticated)/college/resources/page.tsx
+- [x] `src/app/(authenticated)/college/semester-courses/page.tsx
 - [ ] `src/app/(authenticated)/college/semesters/page.tsx`
 - [ ] `src/app/(authenticated)/college/videos/page.tsx`
 - [ ] `src/app/(authenticated)/dashboard/page.tsx`
