@@ -79,8 +79,8 @@ export type PlacementDraftEditValue = {
   };
 };
 
-const inputClass = "w-full";
-const textareaClass = "min-h-28 w-full";
+const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
+const textareaClass = "min-h-28 w-full min-w-0";
 
 function splitList(value: string) {
   return value
@@ -361,10 +361,10 @@ export function PlacementDraftEditForm({
       <form
         onSubmit={submit}
       onChange={markDirty}
-        className="grid gap-5 border-t border-[var(--lms-canvas-border)] py-5"
+        className="grid min-w-0 gap-4 border-t border-[var(--lms-canvas-border)] py-4"
       >
-        <div className="grid gap-4 min-[992px]:grid-cols-2">
-          <label className="min-[992px]:col-span-2">
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+          <label className="sm:col-span-2">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job title
             </span>
@@ -376,7 +376,7 @@ export function PlacementDraftEditForm({
               defaultValue={value.job.title}
             />
           </label>
-          <label className="min-[992px]:col-span-2">
+          <label className="sm:col-span-2">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Description
             </span>
@@ -530,7 +530,9 @@ export function PlacementDraftEditForm({
           </label>
         </div>
 
-        <div className="border-t border-[var(--lms-canvas-border)] pt-5">
+        <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
+          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Eligibility rules</summary>
+          <div className="min-w-0 pb-4">
           <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Eligibility rules
           </h3>
@@ -538,8 +540,8 @@ export function PlacementDraftEditForm({
             Leave programs and cohorts unselected to keep the opportunity college-wide.
           </p>
 
-          <div className="mt-4 grid gap-4 min-[992px]:grid-cols-2">
-            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+          <div className="mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
+            <fieldset className="min-w-0 border-t border-border py-3">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
               </legend>
@@ -583,7 +585,7 @@ export function PlacementDraftEditForm({
               )}
             </fieldset>
 
-            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+            <fieldset className="min-w-0 border-t border-border py-3">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible cohorts
               </legend>
@@ -692,12 +694,14 @@ export function PlacementDraftEditForm({
               </Select>
             </label>
           </div>
-        </div>
+          </div>
+        </details>
 
-        <div>
+        <div className="min-w-0 border-t border-border pt-4">
           <Button
             type="submit"
             size="sm"
+            className="min-h-11 w-full sm:w-auto md:min-h-9"
             disabled={pending}
           >
             {pending
