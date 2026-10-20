@@ -117,7 +117,7 @@ export function LearnerNotificationsInbox({
   }
 
   return (
-    <section className="min-w-0 space-y-[var(--lms-space-4)]" aria-label="Learner notifications inbox">
+    <section className="min-w-0 space-y-4" aria-label="Learner notifications inbox">
       <p role="status" className="text-sm text-body min-[768px]:hidden">{mobileSummary}</p>
       <nav aria-label="Filter notifications by type" className="min-w-0">
         <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
@@ -137,7 +137,7 @@ export function LearnerNotificationsInbox({
           ))}
         </div>
       </nav>
-      <div className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-2)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
+      <div className="grid min-w-0 grid-cols-2 items-end gap-2 border-b border-border pb-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
         <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:col-span-1">
           Search notifications
           <Input type="search" value={search} maxLength={100}
@@ -171,20 +171,17 @@ export function LearnerNotificationsInbox({
           </Button>
         </div>
       ):null}
-      <p role="status" className="text-xs text-muted-foreground">
-        Showing {visible.length} of {combined.length} loaded notifications in this filtered view.
-        College announcements have no personal read status.
-        {" "}{learnerNotificationPreviewNotice(personal.length,60)}
-        {" "}<Link href="/learn/notifications/history" className="font-semibold text-primary-text underline">
-          Browse personal history
-        </Link>
-      </p>
+      <div className="flex min-w-0 flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+        <p role="status" className="text-sm text-body">Showing {visible.length} of {combined.length} loaded notifications in this filtered view.</p>
+        <Link href="/learn/notifications/history" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 hover:text-primary-hover md:min-h-9">Browse personal history</Link>
+      </div>
+      <p className="max-w-3xl text-xs leading-5 text-muted-foreground">College announcements have no personal read status. {learnerNotificationPreviewNotice(personal.length,60)}</p>
 
       {sourceStatus.state==="PARTIAL" ? (
         <div role="alert" className="border-y border-border py-[var(--lms-space-3)] text-sm text-body">
           <p className="font-semibold text-foreground">Announcements not refreshed</p>
           <p className="mt-1">{sourceStatus.notice}</p>
-          <Button size="sm" variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11" onClick={()=>router.refresh()}>
+          <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>router.refresh()}>
             Retry announcements
           </Button>
         </div>
@@ -203,7 +200,7 @@ export function LearnerNotificationsInbox({
           } />
           {filtered ? (
             <Button type="button" onClick={resetFilters}
-              variant="ghost" className="min-h-[var(--lms-control-height)] max-md:min-h-11 underline">
+              variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9 underline">
               View all
             </Button>
           ) : null}
@@ -247,7 +244,7 @@ export function LearnerNotificationsInbox({
             ) : null}
             {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
               <a href={selected.externalCta.href} target="_blank" rel="noopener noreferrer"
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">
                 {selected.externalCta.label} ↗
               </a>:null}
             <Button className="w-full min-[768px]:w-auto max-[767px]:min-h-11" onClick={() => setSelected(null)}>Got it</Button>

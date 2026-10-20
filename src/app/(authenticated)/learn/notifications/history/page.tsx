@@ -42,7 +42,7 @@ export default async function LearnerNotificationHistoryPage({
   );
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <Link href="/learn/notifications"
         className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline">
         ← Notifications
@@ -63,22 +63,22 @@ export default async function LearnerNotificationHistoryPage({
           Unread only
         </Link>
       </nav>
-      <p className="text-sm text-body">
+      <p className="max-w-2xl text-sm leading-6 text-body">
         Showing {items.length} notifications on this page, newest first.
         Counts are page-local; this is not a complete-inbox count.
       </p>
       {emptyMessage ? (
-        <section role="status" className="border-y border-[var(--lms-canvas-border)] px-4 py-6 text-center">
+        <section role="status" className="border-y border-[var(--lms-canvas-border)] px-2 py-6 text-center">
           <p className="text-sm text-body">{emptyMessage}</p>
         </section>
       ) : (
         <NotificationList items={items} readEndpoint="/api/learn/notifications" />
       )}
-      <nav aria-label="Notification history pages" className="flex min-w-0 flex-wrap items-center gap-3">
+      <nav aria-label="Notification history pages" className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
         {page.nextCursor ? (
           <Link
             href={learnerNotificationHistoryHref(page.nextCursor, page.unreadOnly)}
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:w-auto md:min-h-9"
           >
             Older notifications →
           </Link>
