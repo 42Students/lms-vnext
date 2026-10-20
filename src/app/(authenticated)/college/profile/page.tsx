@@ -34,21 +34,18 @@ export default async function CollegeAdminProfilePage({
   const account=accountResult.status==="fulfilled"?accountResult.value:null;
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Profile"
-      description="Your personal and contact details. College contact information is managed separately."
-      actions={<Link href="/account/security"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-        Signed-in devices
-      </Link>} />
+      description="Your personal and contact details. College contact information is managed separately." />
     <CollegeAdminProfileEditor initial={profile}
       email={account?.email ?? null} phone={account?.phoneE164 ?? null}
       college={account?.college?.name ?? null} />
-    <div className="flex flex-wrap gap-3">
-      <Link href="/college/domains" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-        Tenant domains
-      </Link>
-      <Link href="/college/college-profile" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-        Edit college display and support contacts
-      </Link>
-    </div>
+    <nav aria-label="Related profile links"
+      className="flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-4 md:flex-row md:flex-wrap md:items-center md:gap-4">
+      <Link href="/account/security"
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Signed-in devices</Link>
+      <Link href="/college/domains"
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Tenant domains</Link>
+      <Link href="/college/college-profile"
+        className="inline-flex min-h-11 items-center break-words font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Edit college display and support contacts</Link>
+    </nav>
   </div>;
 }
