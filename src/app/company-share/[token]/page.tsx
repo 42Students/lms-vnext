@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import authStyles from "@/components/public/public-auth-skin.module.css";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -27,13 +28,13 @@ export default async function CompanySharePage({
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Try again</Link>}/>
  </main>;
  if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:py-10`}>
-  <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 md:p-6">
+  <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <PageHeader title="Enter the 6-digit share code" />
    <p className="text-sm text-body">Ask the placement cell for the code sent separately with this company share link.</p>
    {access==="invalid"?<p role="alert" className="text-sm text-error">
     That code did not work, or this share is no longer available.</p>:null}
    <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code
      <Input name="code" type="text" required inputMode="numeric" autoComplete="one-time-code"
       pattern="[0-9]{6}" minLength={6} maxLength={6}
       className="max-w-full tracking-widest" />
@@ -78,16 +79,16 @@ export default async function CompanySharePage({
     Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
    </p>
    {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
-  </section>
-  <form action={"/company-share/"+encodeURIComponent(token)} method="get"
-    className="flex min-w-0 flex-wrap items-end gap-3 border-y border-border py-4">
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner name
+  </header>
+  <FilterBar title="Filters"><form action={"/company-share/"+encodeURIComponent(token)} method="get"
+    className="flex min-w-0 flex-wrap items-end gap-3 border-y border-border py-4 max-[767px]:[&_label]:w-full">
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner name
      <Input name="q" type="search" defaultValue={result.search} maxLength={80}
       className="w-full sm:w-64" placeholder="Name contains..." />
     </label>
     <Button type="submit">Apply search</Button>
     <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</a>
-  </form>
+  </form></FilterBar>
   <p role="status" className="text-sm text-body">
    {result.total} shortlisted applicants · Page {result.page} of {result.totalPages}
   </p>

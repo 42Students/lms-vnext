@@ -1,3 +1,4 @@
+import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -31,7 +32,7 @@ export default async function MyTrackerReportDetail({
     <PageHeader title={report.publicId} description={report.issueType}
       actions={<Link href="/tracker/mine" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Back to my reports</Link>}/>
     <section className="border-b border-border pb-5">
-      <p className="text-sm font-semibold">Status: {report.status} · Severity: {report.severity}</p>
+      <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm font-semibold text-body"><span>Status</span><StatusBadge>{report.status}</StatusBadge><span>Severity</span><StatusBadge>{report.severity}</StatusBadge></div>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{report.description}</p>
       <p className="mt-2 text-xs text-muted-foreground">Reported: {report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
     </section>
