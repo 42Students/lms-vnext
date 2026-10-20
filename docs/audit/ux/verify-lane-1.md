@@ -43,3 +43,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (1):** removed unused `Alert` import left by preceding polish, avoiding strict unused-local compilation failure. Checked DateInput, Select, FilterBar/ResponsiveFilterDrawer, CalendarGrid, CSS month geometry, SummaryStrip and Badge contracts, query/links/roles, loading/error routes and parent layouts.
 - **Extra clutter/alignment fixes (0):** responsive month navigator, concealed filtered totals, class rows and invalid/empty-result recovery maintain clear hierarchy at 375/768. Existing legacy CSS and wording retained.
 - **Files changed:** `src/app/(authenticated)/learn/attendance/calendar/page.tsx`; verification proof and queue.
+
+## Surface 7 — Learner attendance workspace
+- **Surface:** `src/app/(authenticated)/learn/attendance/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 7.
+- **Regressions found/fixed (2):** unused `StatTile` import in the polished workspace (strict TS unused-local error), and non-phrasing `p`/`div` children inside the native `Button` for course overview (invalid button nesting and disrupted flex layout). Replaced content wrappers with semantic text spans; retained text, badges and click behavior.
+- **Extra clutter/alignment fixes (2):** stacked course name/section and status badges vertically within each full-width course choice (clear reading order at 375/768); removed redundant Disclosure bottom border inside the enclosing Course overview section. Verified attendance eligibility threshold, URL/filters, period shifts, history CSV, DataTable and loading/error.
+- **Files changed:** `src/components/attendance/learner-attendance-workspace.tsx`; verification proof and queue.
+
+## Surface 8 — Learner Class Schedule
+- **Surface:** `src/app/(authenticated)/learn/calendar/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 8.
+- **Regressions found/fixed (0):** reviewed validated URL filters, authorized schedule service and DTO mapping, `LearnerClassSchedule` JSX/CSS/CalendarGrid/Disclosure/EventCard/StatusBadge, course links, period navigation and no-event states, plus loading/error/not-found and parent layouts; no source-level TSX/props/ARIA regressions identified.
+- **Extra clutter/alignment fixes (0):** existing month/week/day navigation, horizontal grid containment and filter disclosure preserve readable phone/tablet layouts. Verified, no change to source.
+- **Files changed:** verification proof and queue only.
