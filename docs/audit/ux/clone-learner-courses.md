@@ -610,3 +610,203 @@ The next five owned modules were source-audited, modified, pushed and re-read:
 **Work done this batch:** 25 distinct TSX files were updated and source-probed across learner/course, college assessment and Super Admin pages, plus this audit documentation. These are file-level code changes; H1–H6 remain **open** under STRICT TICK pending the 247-path complete inventory and exact visual/focus/disabled phone/tablet evidence. No build, TypeScript check, tests, CI or screenshots run.
 
 **Next exact unticked file:** `src/components/courses/college-assignment-review.tsx` (college assessment published grade visibility/disabled/empty and responsive source check), then `src/components/courses/college-quiz-create.tsx` only if the orchestrator returns a concrete computed-style diff.
+
+## 2026-10-20 chat-7 continuation — college courses, assignment and lessons (batch 6)
+
+**Source-check method:** Each changed file was fetched again by its exact GitHub branch path after the write and inspected as complete UTF-8 text. No application build, compiler, static analyzer, browser or CI ran (lane constraint). A path passing these source probes is *not automatically a strict visual parity tick*. Changes preserve routes, service calls, confirmation flows, state guards, saved versions and user-facing copy unless specifically noted.
+
+### 19 inspected and updated TSX files — work ledger
+
+| Path below `src/components/courses/` | Concrete judgement-case change | Responsive and state evidence |
+| --- | --- | --- |
+| `college-assignment-review.tsx` | Partial, pending, successful and retryable grade publication now use shared `Alert` with status, success or warning tone; section selector and Publish/Retry controls sized | `min-h-11 md:min-h-9`, retains disabled-while-pending, result counters and refresh |
+| `super-admin-course-bulk-visibility.tsx` | Three old `sm:` overrides changed to `md:`; existing `ScrollCue`, checkbox selection, failure retry and status `Alert` untouched | Breakpoint >=768, selected row 44px, secondary and primary buttons 44px phone |
+| `college-course-missing-scope.tsx` | Shared `PageHeader` stays outside and above shared `Alert tone=error`; no bespoke error typography | Page title shared; alert's default role/typography/spacing inherited; missing-scope copy untouched |
+| `college-content-preview.tsx` | Shared preview `Dialog` open and Close controls now 44px phone/36px desktop; privacy-safe summary retained | `min-h-11 md:min-h-9`; focus-trapping/backdrop owned by shared Dialog |
+| `college-student-visibility-control.tsx` | Student visibility toggle preserves `aria-pressed`, confirmation, stale-version handling, pending disable and error alert, with 36px desktop reduction | `min-h-11 md:min-h-9` |
+| `college-lesson-create-control.tsx` | All picker/form/action controls now 44px until 768; Create Another and Cancel use outlined secondary, not local teal-on-primary overrides; 13px semibold labels | `min-h-11 md:min-h-9`, labels `text-xs font-semibold text-body`; authoring, validation and toast states unchanged |
+| `admin-offering-section-preview.tsx` | Section selector/submit 44px phone and 36px desktop, lesson/item headings explicit foreground | `min-h-11 md:min-h-9`; metadata-only section audience semantics unchanged |
+| `resource-progress-control.tsx` | Completion action responsive and error result now shared `Alert tone=error`; `Badge` success and `ConfirmDialog` retained | `min-h-11 md:min-h-9`; pending, confirmed, complete/disabled and error states preserved |
+| `admin-course-actions.tsx` | All six small Edit/Archive/End lifecycle buttons given 44px phone targets; duplicate link breakpoint from 640 to 768; existing dialogs/confirmation unchanged | `min-h-11 md:min-h-9`, `md:min-h-9`; preserved course, delivery and faculty assignment scope |
+| `admin-learning-structure-actions.tsx` | Switched two learning path/ordering grid breakpoints from `sm:` to `md:` | `md:grid-cols-[1fr_2fr_auto]`, `md:items-end`; all mutation/disabled states preserved |
+| `admin-offering-learning-overview.tsx` | Four content links/lesson panel responsive modifiers now `md:`, badge JSX normalized, removed redundant duplicated `md:p-3` tile override | `min-h-11 md:min-h-9` link controls; distinct Lesson cards kept (not flattened) |
+| `admin-course-display-editor.tsx` | Shared Input and Save action now 44px phone/36px tablet; 13px semibold field labels; rich description and thumbnail fields preserved | `min-h-11 md:min-h-9`; migration-disabled warning status and pending save untouched |
+| `college-content-authoring-control.tsx` | Removed extra ordinary outer card, tokens for heading, 13px/600 labels; 44px phone New/Save/filer/Order/external-link controls, removed local input border/bg/40px overrides; error and success now shared `Alert` | `border-b border-border pb-5`, `md:grid-cols-2`, `min-h-11 md:min-h-9`; timezone conversions/filters/link material state preserved |
+| `college-lesson-visibility-controls.tsx` | Page-scoped selection list uses 768px two-column breakpoint and >=44px checkbox labels/buttons; Show/Hide/Retry remain shared secondary | `md:grid-cols-2`; existing shared `ScrollCue`, optimistic timestamps, failure report and retry retained |
+| `college-lesson-drag-order.tsx` | Reorder heading foreground; drag-sort fallback Move up/Move down buttons 44px phone | `min-h-11 md:min-h-9`; actual drag and persistent sort logic retained |
+| `college-lesson-reorder-actions.tsx` | Compact lesson sequence arrows have 44px phone targets | `min-h-11 md:min-h-9`; up/down disable and pending confirmation preserved |
+| `college-archived-lesson-restore.tsx` | Restore action remains shared ghost/link with responsive size | `min-h-11 md:min-h-9`; existing confirmation and error inline retained |
+| `college-assignment-create.tsx` | **Fixed a real duplicated JSX `variant` prop** on Create New Assignment; removed extra form canvas; converted all 6 grid breakpoints to `md:`, shared Input/Select/Textarea skins and 13px labels, 44px controls | `md:grid-cols-2`, `md:col-span-2`, `min-h-11 md:min-h-9`; dual create/discard `ConfirmDialog` and submission methods retained |
+| `college-assignment-actions.tsx` | Edit/Publish use secondary variant, Delete danger, Save primary without ad hoc border/bg overrides; shared Input/Textarea, flat edit area and success/error Alerts | `min-h-11 md:min-h-9`; API concurrency, archive/publish and no-edit-after-submission guards untouched |
+
+### Legacy value table — checked properties and supported states
+
+| Property and state | Legacy/owner source and expected value | Changed source and resolved value | Source result |
+| --- | --- | --- | --- |
+| Text/form labels | `legacy-styles/components___form.scss:102-126` 14px input text/20px/0.2px and `components___form.scss:107-111` 13px semibold labels | `admin-course-display-editor.tsx`, `college-lesson-create-control.tsx`, `college-content-authoring-control.tsx`, `college-assignment-create.tsx`: `text-xs font-semibold text-body` (13px/600 token), shared Input/Select font14px | Label role source MATCH; per-font visual no rendering |
+| Form default/focus/error | `components___form.scss:102-138` #fbfcfd, teal focus rgba(38,186,199,.15), error border #ef4444, error fill .06 | All migrated inputs use `src/components/ui/{input,select,textarea}.tsx`; inherited globals `--lms-form-bg:#fbfcfd`, focus shadow and error from shared skin; no local rounded/border override in modified assignment/content controls | Source token path MATCH, computed disabled/error states need shared-owner review |
+| Accent default and hover | `legacy-styles/components___variables.scss:10-14` teal #26bac7, hover #1e9aa8, text #1a95a1, subtle #eff8fa | Shared `Button`, `Badge`, `StatusBadge`, `Alert`; remaining dynamic class colors use `--lms-*` tokens | MATCH resolved brand tokens; hover pixel comparison pending |
+| Primary/secondary/danger | `master-queue.md:4-9` revised binding owner spec primary #0a7c88 white/36px/9px/14px/650 and outlined secondary; legacy `components___button.scss:1-90` older `.ln-btn` family variants include 8px/40px exceptions | `college-assignment-actions`, `college-lesson-create`, `college-quiz-actions` now use shared variants instead of forced page bg/teal text; `--lms-control-height=36px`, radius9px in `globals.css:341-343` | MATCH newer owner spec via shared button, **historical legacy `.ln-btn` variation remains non-identical**, so no strict global-button tick |
+| Phone action target | `legacy-styles/components___learn-layout.scss:361-383` min 44px for back and other mobile actions; `old-lms-shell.css` phone touch spec | Targeted buttons, selectors and section links `min-h-11` (44px) until >=768px; `md:min-h-9`=36px from tablet | MATCH source sizing for touched controls, not all descendants |
+| Phone/tablet breakpoint | `legacy-styles/components___learn-layout.scss:34,379,419,450` at max-width:767px | **All 19 re-fetched TSX have zero `sm:` occurrences**, 75 `md:` occurrences; responsive selectors now switch at 768px | Source breakpoint MATCH; physical viewport proof open |
+| Flat ordinary page and divider | `docs/design/old-lms-pages.md:7-12` one white 12px-radius canvas, ordinary lists/filters hairlines, separate report tile cards only | Course/assignment authoring ordinary wrappers `border-b` or `border-y`; genuine lessons retain separate card semantics | Source layout MATCH in modified files |
+| Error, empty, loading, success | `variables.scss:63-78` error #ef4444, warning #d97706, success #059669, info #26bac7 | `Alert tone=error/warning/success/info` in course scope, grade publication, authoring, resource progress; no changes to EmptyState/service state guards | State token source MATCH; exact alert surface differ with shared `--lms-warning-surface`, browser proof OPEN |
+| Page title/header | `old-lms-pages.md:7-10` one row page head above content | Missing college scope now one `PageHeader` OUTSIDE one semantic `Alert`, rather than nesting header in banner; other shared heads retained | MATCH source placement |
+
+### Coverage and JSX proof — exact scope 19 files
+
+Post-write, fetched every file named in the preceding 19-row table, and counted the following regex matches on complete source:
+
+| Source regex probe | Count across these 19 TSX |
+| --- | ---: |
+| `/<(button\\|input\\|select\\|textarea\\|table)(?=[\\s>])/g` (raw controls/table) | **0** |
+| `/#[a-f0-9]{6}\\b/gi` (six-digit hex) | **0** |
+| `/fixed inset-0\\|role=["']dialog["']/g` (handmade overlay) | **0** |
+| `/<h1(?=[\\s>])/g` (local competing page title) | **0** |
+| `/\\bsm:/g` (premature 640px breakpoint) | **0** |
+| `/\\bmd:/g` (>=768px breakpoint use) | **75** |
+
+Paired JSX tag checks across each source: Button and Alert openings/closings are balanced; `admin-course-actions` 10 Button pairs; `admin-learning-structure-actions` 13 Button pairs and 2 form pairs; `college-content-authoring-control` 8 Button and 2 Alert pairs; `college-assignment-actions` 4 Button pairs; `college-assignment-create` 3 Button pairs and both existing ConfirmDialog usages; `college-course-missing-scope` one Alert pair outside one `PageHeader`; `resource-progress-control` one Button/Alert pair and one ConfirmDialog usage. The other 12 scoped paths also have balanced form/button/alert tags; shared inputs can self-close. **The scan was executed over fetched source strings, NOT via local `rg` or compiler.**
+
+Reproducible local search, when orchestrator runs it:
+```bash
+rg -n '<(button|input|select|textarea|table)([[:space:]>])|#[0-9A-Fa-f]{6}|fixed inset-0|role="dialog"|<h1([[:space:]>])' src/components/courses/{admin-course-actions,admin-course-display-editor,admin-learning-structure-actions,admin-offering-learning-overview,admin-offering-section-preview,college-archived-lesson-restore,college-assignment-actions,college-assignment-create,college-assignment-review,college-content-authoring-control,college-content-preview,college-course-missing-scope,college-lesson-create-control,college-lesson-drag-order,college-lesson-reorder-actions,college-lesson-visibility-controls,college-student-visibility-control,resource-progress-control,super-admin-course-bulk-visibility}.tsx
+```
+
+**Strict ticks:** H1–H6 remain **[ ]**, because full 247-file inventory + computed style/interaction states of all shared Button/Dialog/Alert/Checkbox etc and phone/tablet visual comparison still lack proof; do not claim that changes alone certify pixel-level parity. Sources do confirm no raw controls/hex/overlays and valid balanced known JSX tag pairs for the exact 19 files above. Next owner stage is orchestrator side-by-side screenshot verification per checklist J; no tests or CI in chat-7.
+
+**Next exact unticked file:** `src/components/courses/college-content-csv-export.tsx` (export link token, loading and mobile hit area), followed by `src/components/courses/assignment-file-open-control.tsx` and its learner submission adjacent controls.
+
+## 2026-10-20 chat-7 continuation — learner assignment/course routes and file submissions (batch 7)
+
+**Scope:** 24 re-read complete TypeScript/TSX source files after direct branch writes (15 learner route pages, 9 course components). No tests, compiler, browser, app process, CI or screenshots used, per lane instructions. Protected file transfers and persistence logic were not changed; visual render-level final proof remains open.
+
+### Source-reviewed and edited file inventory — relative paths
+
+**Under `src/components/courses/`**
+
+| TSX file | Source fixes and state preservation |
+| --- | --- |
+| `assignment-file-open-control.tsx` | Submitted-file Download stays shared secondary with 44px phone target / 36px desktop. Preserved private file grant flow, loading `PageLoading`, `EmptyState`, per-file `StatusBadge`, and `Alert` error. |
+| `assignment-file-submission-control.tsx` | Responsive 44px Upload/Cancel/Check file/Remove/Submit and file picker, 13px semibold label, upload progress in shared `MetricBar`, error migrated to shared `Alert`. Preserved pending/disabled while upload, cancel `AbortController`, storage checks, final submission confirmation. |
+| `assignment-multipart-parts-editor.tsx` | Standard 13px semibold labels for link kind/HTTPS URL/caption; shared controls 44px phone/36px desktop and labelled remove/add actions. Kept up to 20 links, user-authored rich-text editor, and disabled propagation. |
+| `assignment-submission-control.tsx` | All 3 shared `FilterChip` type selectors and submit/discard actions 44px phone; shared `Alert` handles success, methods-load error, missing file storage warning/error, and failed submission. Discard uses shared danger (destructive) Button; confirmation dialog, submit flight guard, copy and route state preserved. |
+| `assignment-submission-links.tsx` | Submitted HTTPS link gains keyboard outline, hover and 44px phone click target. Preserved URL validation, archived links, fetch-error shared `Alert`, and kind `Badge`. |
+| `lesson-resource-materials-control.tsx` | Resource external link and all add/edit/remove/save controls respect 767px mobile target, titles foreground, shared success/error `Alert`. Kept editable permission, external HTTPS link handling, draft notes, materials loading and optimistic control state. |
+| `course-display-read-only.tsx` | Takeaway text grid remains one column through 767px, two-column from 768. Existing sanitized HTML, fallback and no-data behavior untouched. |
+| `expandable-course-description.tsx` | `Read more/Show less` toggle 44px phone/36px tablet; `aria-expanded`, `aria-controls`, escaped/sanitized text path untouched. |
+| `expandable-course-update.tsx` | Identical `Read more/Show less` responsive change on course announcements; no text truncation or expanded state change. |
+
+**Under `src/app/(authenticated)/learn/`**
+
+| TSX route | Source fixes, visual and state mapping |
+| --- | --- |
+| `courses/error.tsx` | Shared `PageHeader` above `Alert tone=error`, 44px phone Retry and Back to Courses actions, no centered extra canvas. |
+| `allAssignments/error.tsx` | Same error banner and controls; retained loading-not-empty wording. |
+| `allQuizzes/error.tsx` | Moved status role to semantic shared `Alert`, leaving `PageHeader` outside banner. Retry and return 44px phone. |
+| `attendance/error.tsx` | Shared `PageHeader` outside shared error banner; retry phone 44px. |
+| `courses/[deliveryId]/[...courseTab]/page.tsx` | All three header actions now use `md:min-h-9` rather than premature `sm:min-h-9`. `PageHeader`, course-detail Tabs, roster and historical/read-only view unaffected. |
+| `courses/[deliveryId]/[...courseTab]/not-found.tsx` | Shared `PageHeader` above `Alert tone=warning`; Back link preserves 44px phone/36px tablet. |
+| `courses/[deliveryId]/attendance-summary/page.tsx` | Return link 44px phone, summary/month/item grids and month card padding move from 640px to 768px cutoff. |
+| `courses/[deliveryId]/attendance-summary/error.tsx` | Shared `ErrorState` preserved; Retry and Attendance navigation 44px phone/36px tablet. |
+| `courses/[deliveryId]/progress/page.tsx` | Course progress summary, lesson rows and detail links now stack through 767px; summary `MetricBar` kept with ARIA progressbar. |
+| `courses/[deliveryId]/progress/error.tsx` | Preserved shared `ErrorState`, aligned Retry and Courses controls to phone 44px. |
+| `allAssignments/[assignmentId]/page.tsx` | Assignment selector and resource links, header back action, due/points/notes grid and disabled submission action get 767px break; flattened chooser list to hairline rows; shared `Alert tone=warning` for closed or missing-deadline submissions; no student URL leak/permission changes. |
+| `allAssignments/[assignmentId]/error.tsx` | Shared PageHeader then error Alert; Retry and back links use 44px phone. |
+| `allQuizzes/[quizId]/page.tsx` | Quiz attempt history grid and links, chooser list, Close detail action, heading and review layout switch at 768px; no grading or answer-disclosure changes. |
+| `allQuizzes/[quizId]/error.tsx` | Shared banner for load failure with 44px Retry and All Quizzes navigation. |
+| `attendance/calendar/page.tsx` | Removed hand-written semantic status pill skins; shared `StatusBadge` has success=PRESENT, error=ABSENT, warning=EXCUSED/MEDICAL/LATE, neutral=NOT_MARKED, info=SCHEDULED. Invalid filter screen now PageHeader outside `Alert tone=error`; form labels 13px/600; 44px phone Clear/Filter. Preserved IST date rendering, calendar grid, filters, monthly classes and authorization. |
+
+### Legacy value and interaction proof
+
+| Property/state/edge | Legacy reference and expectation | vNext source property, value and evidence | Outcome |
+| --- | --- | --- | --- |
+| Primary/default CTA, hover, active, disabled | `docs/orchestrator/queues/master-queue.md:4-9` revised binding owner spec primary #0a7c88, white text, height36, radius9, 14px/650; `legacy-styles/components___button.scss:1-90` older 8px/40px family variants | Shared `Button` receives semantic primary/secondary/danger props, disabled by existing state booleans; `src/app/globals.css:341-343` default36px/radius9; no local overriding raw button | Source shared skin route MATCH newer owner spec; exact hover/disabled pixels still require shared owner |
+| Native form font/keyboard focus/error | `legacy-styles/components___form.scss:102-138` body 14px/20px/0.2px, background #fbfcfd, 13px/600 labels, teal focus, red error | Assignment/file/link editors use shared `Input`, `Select`, `Textarea`, `Checkbox`, `FilterChip`; `text-xs font-semibold text-body` field labels and `Alert tone=error` | Source MATCH for token path; keyboard/tab/focus computed states OPEN |
+| Phone target and cutoff | `legacy-styles/components___learn-layout.scss:34,361-383` <=767px phone, minimum interactive target44px; 768px+ desktop/tab skin | All touched anchor/button/input controls `min-h-11` with `md:min-h-9` (44px/36px). All previous `sm:` in these 24 paths now `md:`. | Source MATCH for named controls, rendered hit boxes OPEN |
+| Error, invalid, unloaded versus empty | `old-lms-pages.md:7-10` one canvas, narrow inline status strip and accessible action | `PageHeader` lives outside shared `Alert tone=error` on route errors, `ErrorState` retained for drilldowns; asynchronous Error, Empty, Loading state preserved in file controls | Source semantic MATCH, exact banner padding/status-color/radius OPEN |
+| Status pills and colors | `legacy-styles/components___variables.scss:63-78`: success #059669, error #ef4444, warning #d97706, info #26bac7 | Attendance calendar uses `StatusBadge tone` rather than handmade `rounded-full px-2 py-1`; unknown status defaults neutral | Source semantic colors aligned, shared badge computed px value OPEN |
+| Course cards/list wrappers | `docs/design/old-lms-pages.md:7,12` no nested ordinary table or list card, distinct objects retain cards | Learner assignment/quiz choose-course lists `divide-y border-y`; learner lesson/month review cards remain distinct objects | Source layout MATCH for changed ordinary wrappers |
+| Uploading, verifying, ready, removed and failed | `old-lms-pages.md` structured state pills, muted helper/disabled button states | Shared `StatusBadge` in staged and submitted files, progress `MetricBar role=progressbar`, primary pending/secondary cancel/disabled remove, `Alert tone=error` on failure | All code state branches preserved, visual/race regression not run |
+| Confirmation and discard | `legacy-styles/components___button.scss:39-87` semantic primary/secondary/danger and `old-lms-pages.md:7-10` page state boundaries | Assignment discard `Dialog` uses secondary Keep editing/danger Discard, buttons 44px phone. Existing typed confirmation, dirty check, no double submission intact | Semantic source matching, modal rendered focus and click-through OPEN |
+| Focus and hover on text actions | `legacy-styles/components___form.scss:23-28` keyboard-visible focus and legacy teal hover | External submission/material links and course links use `focus-visible:outline-2`, `hover:text-primary-hover`, min44px phone; direct external `target="_blank" rel=noopener noreferrer` retained | Source style MATCH, keyboard traversal OPEN |
+
+### Scoped grep output and syntax evidence
+
+Post-write full-source fetch and regex check for exactly the **24 listed files** (not all portal routes). Across these 24 TSX paths:
+
+| Probe | Hits |
+| --- | ---: |
+| `/<(button|input|select|textarea|table)(?=[\\s>])/g` raw controls and tables | **0** |
+| `/#[a-f0-9]{6}\\b/gi` hard-coded six-digit colors | **0** |
+| `/fixed inset-0\\|role="dialog"/g` hand-rolled overlays | **0** |
+| `/\\bsm:/g` premature 640px breakpoint utility | **0** |
+| `/\\bmd:/g` correct 768px transition utility | **91** |
+
+Source JSX pair examples: learner course error pages `Alert` opens/closes 1/1 each; progress/attendance drilldown `ErrorState` native; assignment submission uses 1 `<form>` and 1 `</form>`, shared `Button` 3/3 and `Alert` 4/4; file upload `Button` 5/5 and `Alert` 1/1; materials `Button` 4/4 and `Alert` 2/2. Other component/route button and alert tags were also paired in the fetched files, never half-migrated. No TypeScript parse or runtime behavior test was executed.
+
+**STRICT TICKS: H1–H6 remain [ ]**. These 24 **source-corrected** paths still require inherited shared Button/StatusBadge/Table/Alert visual-values complete comparison and route-level phone/tablet rendered states, which this lane cannot run. No unverified line is marked as a full pixel-parity closure; the orchestrator's checklist section J and shared component lanes remain the bottleneck. Source probes are scoped and not falsely presented as full 247-path zero.
+
+**Next exact unticked file:** `src/app/(authenticated)/learn/attendance/calendar/error.tsx`, then `src/app/(authenticated)/learn/calendar/page.tsx` for the learner week/class schedule control and calendar responsive parity.
+
+## 2026-10-20 chat-7 continuation — learner calendar error pages and Super Admin directories (batch 8)
+
+**5 additional files updated, pushed, then complete-source fetched and scanned.** This is a *source/style migration*, not a UI screenshot or executed test. `PageHeader` remains outside an `Alert` in both learner calendar errors, so the old single page canvas and one-line header structure do not get absorbed into a colored banner. In admin pages the shared page head, tabs and directory bodies are unchanged; only local judgement cases were touched.
+
+| Scope/file | Source change | Error/empty/loading and responsive proof |
+| --- | --- | --- |
+| `src/app/(authenticated)/learn/attendance/calendar/error.tsx` | Removed wrapper `role=alert` from page header; actual failed-read sentence now shared `Alert tone=error`. Retry `Button` 44px phone / 36px tablet. | Existing route-specific error copy and `reset` callback preserved. `min-h-11 md:min-h-9`, `Alert` 1/1, `PageHeader` 1. |
+| `src/app/(authenticated)/learn/calendar/error.tsx` | Same shared `PageHeader` followed by `Alert tone=error`, compact wrap-aware Retry row. | Existing calendar refresh failure text and handler unchanged; `Alert` 1/1, button 1/1, 768px breakpoint. |
+| `src/app/(authenticated)/admin/lessons/page.tsx` | Nine `sm:` replaced with `md:` in form filters, list actions and pagination; field labels inherit 13px semibold `text-xs`. Invalid-filter and retry `ErrorState` links gain 44px mobile/36px desktop and hover token. Separate partial-filter and lesson-picker failures now `Alert tone=warning` instead of handmade bordered `p`. | Forms retained (1 open/1 close); PageHeader 4 conditional states; Alert 2/2; Button 1/1. Existing `EmptyState`, `ErrorState`, CSV export, bulk visibility, paging and optimistic admin operations retained. |
+| `src/app/(authenticated)/admin/course-progress/page.tsx` | Two form labels use 13px/600 font role; partial-filter warning now shared `Alert`; invalid `ErrorState` Clear action gains touch size/focus hover. | Existing adminScope permissions, read-only progress calculations, exported CSV link, flat record list, paging and empty states untouched. Form 1/1, Alert 1/1, 11 `md:` classes. |
+| `src/app/(authenticated)/admin/courses/page.tsx` | Existing shared PageHeader and Tabs unchanged; invalid course-query `ErrorState` Clear filters action gets 44px phone/36px tablet and teal hover token. | No outer card introduced. Existing unselected-college `EmptyState`, section tabs, duplicated course copy semantics preserved. |
+
+### Exact legacy-property and state values
+
+| Property/required state | Old LMS authority | Current source/value | Source comparison |
+| --- | --- | --- | --- |
+| One page title outside banner | `docs/design/old-lms-pages.md:7-10`: one row title, same white 12px canvas; separate slim inline notices | Calendar error routes now shared `PageHeader` sibling before semantic `Alert tone=error`, Super Admin `PageHeader` already shared | Layout arrangement MATCH in source |
+| Default text color / warning and error | `legacy-styles/components___variables.scss:20-32,63-78`: foreground #1a1d21, warning #d97706, error #ef4444, info teal #26bac7 | `src/components/ui/alert.tsx:6-19` shared `tone=error` / `tone=warning` and tokens rather than page-local `bg-warning-subtle` | Semantic color routing MATCH; exact rendered banner geometry still shared-owner |
+| Form label | `legacy-styles/components___form.scss:107-111`: 13px/600/line16; shared Input font14/line20 | Lesson and course-progress filter labels `text-xs font-semibold text-body`, shared `Input`/`Select` handle focus/error/disabled | Source MATCH font role, actual browser states OPEN |
+| Phone hit target | `legacy-styles/components___learn-layout.scss:361-383`: 44px back link/phone action | Retry/Clear filter/export/next buttons `min-h-11` (44px) below768; `md:min-h-9` (36px) at/above768 | Named controls MATCH source height |
+| Breakpoint | `legacy-styles/components___learn-layout.scss:34,379,419,450`: `max-width:767px` mobile | Admin lessons 9 `sm` migrated to 768px `md`, no new 640px rules; existing progress 768px | Source BREAKPOINT MATCH, no viewport run |
+| Focus, hover, disabled, loading | `legacy-styles/components___form.scss:23-28,123-138` keyboard focus visible; `components___button.scss:20-85` hover/disabled; `old-lms-pages.md:7-10` empty/error | Shared `Alert`, `Button`, `ErrorState`, `EmptyState` own token states; error links use `hover:text-primary-hover`; loading/error copy and retry functions kept | Component reuse proved; exact computed hover/focus/disabled **OPEN** |
+
+**Scoped source grep:** For the exact **five paths** in the table, complete fetched text scanned with `/<(button|input|select|textarea|table)(?=[\\s>])/g`, `/#[a-f0-9]{6}\\b/gi`, `/fixed inset-0|role="dialog"/g`, and `/\\bsm:/g`: 0 matches for every probe. `/\\bmd:/g`: 26 occurrences (1+1+12+11+1). Shared `Alert` opens/closes 1/1 in each calendar error and 2/2 in Admin lessons, 1/1 in course-progress; admin courses uses shared `ErrorState` no new Alert. Admin lessons/course-progress form tags 1/1. No `h1` bypasses the shared PageHeader.
+
+**STRICT TICK STATUS:** H1–H6 remain `[ ]` pending complete 247-path inventory/strict shared hover/disabled/focus computed-value comparison and orchestrator side-by-side phone/tablet screenshots per checklist J; source probes and legacy file tables alone are not a pixel-perfect runtime certificate. No local `rg`, JS/TS execution, browser session, tests or CI were performed.
+
+**Next exact unticked file:** `src/app/(authenticated)/learn/calendar/page.tsx` (class schedule links, calendar visual state/layout and service-driven states), followed by `src/app/(authenticated)/learn/attendance/page.tsx`.
+
+### Batch 8 continuation — learner calendar and attendance header links
+
+After the previous five-route change, two more source pages were inspected end-to-end and pushed:
+
+| File | Screen states and pixel-value source proof | Responsive proof |
+| --- | --- | --- |
+| `src/app/(authenticated)/learn/calendar/page.tsx` | Existing one `PageHeader`, authenticated `LearnerClassSchedule` (IST), empty and filter states untouched. Header secondary Attendance calendar link uses existing shared 9px `--lms-control-radius`, 1px border, white base with 150ms `--lms-motion-fast`; hover teal border/`--lms-primary-subtle`, focused teal 2px outline with 2px offset; reduced motion disabled transition. | `min-h-11 md:min-h-9`, 44px under768 and 36px desktop; zero `sm:` declarations. |
+| `src/app/(authenticated)/learn/attendance/page.tsx` | Existing one `PageHeader` and scoped attendance service/IST summaries untouched; matching link hover/focus/reduced-motion as above. | `min-h-11 md:min-h-9`, 44/36px with breakpoint 768. |
+
+Legacy sources: `legacy-styles/components___variables.scss:10-14` interactive `#26bac7` default/hover and `#eff8fa` subtle fill; `components___form.scss:23-28,120-127` keyboard-visible teal focus; `components___learn-layout.scss:34,361-383` phone cutoff 767px and 44px mobile button. The native link states follow shared tokens, not hard-coded CSS. Source-only validation for BOTH pages (fetched after edit): raw `button/input/select/textarea/table` count **0**, six-digit hex count **0**, hand-rolled dialogs count **0**, `sm:` count **0**, one `md:` breakpoint each, exactly one `PageHeader` each, exactly one `focus-visible:outline-2` and `motion-reduce:transition-none` each. No direct JSX button mismatch.
+
+**Coverage inventory caveat:** The original 247-TSX inventory at the top of this audit is the 2026-10-19 baseline and is explicitly *not* a fresh exhaustive count. Later GitHub listing of `src/components/courses` returned 114 entries, including TypeScript and CSS modules. Refresh the full recursive inventory with exact TSX filtering and run the area-wide `rg` commands before any H1–H6 ticks. Source-edited ≠ full visual proof.
+
+**Next exact unticked file:** `src/app/(authenticated)/learn/attendance/calendar/loading.tsx`, then `src/app/(authenticated)/learn/calendar/loading.tsx` — check spinner/loading skeleton value/state parity against shared `GracefulPageLoading` and old dotted-spinner contract. H1–H6 remain open pending global/source-state proof and computed phone/tablet comparisons. No application code, CI, tests or browser was run.
+
+### Batch 8 final source addendum — per-student progress and loading states
+
+**`src/app/(authenticated)/admin/course-progress/students/page.tsx`**: source-updated per-student Super Admin course progress report. Existing `PageHeader` and shared `DataTable` remain, with columns Student, Videos, Assignments, Quizzes, Progress; data scoping, percent calculations, no-data `empty`, 500-student truncation and CSV export preserved. All 19 premature `sm:` utilities (summary strip, table action/link) now use `md:` for legacy 768px tablet layout. `Back to Course Progress` link gains hover/focus token styling and maintains `min-h-11 md:min-h-9`. Truncation warning now `Alert tone=warning role=alert`, rather than a plain warning-colored paragraph.
+
+| Property/state | Legacy value/reference | vNext current source | Comparison |
+| --- | --- | --- | --- |
+| Phone/tablet cutoff | `components___learn-layout.scss:34,379,419` phone ends at767px | Student summary 4-column grid and export controls use `md:` from768px | Source MATCH |
+| Phone link touch target | `components___learn-layout.scss:361-383` 44px | Back/export `min-h-11` default, `md:min-h-9` (36px) | Source MATCH |
+| Hover and focus | `components___variables.scss:10-14` interactive teal #26bac7, text #1a95a1; `components___form.scss:23-28` focus-ring keyboard only | Back action uses `hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary` | Token path MATCH; rendered keyboard browser check OPEN |
+| Partial/truncated warning | `components___variables.scss:63-78` warning #d97706 and 10% tinted background; `old-lms-pages.md:7-12` in-canvas notice | `Alert tone=warning role=alert` shared component; retains original warning text | Semantic source MATCH; banner exact geometry OPEN |
+| DataTable/empty state | `old-lms-pages.md:12` hairline rows, pills/table in page canvas; absence is not misrepresented | Existing shared `DataTable` with empty-state text and 5 column descriptors | Shared consumption confirmed; rendered table rows OPEN |
+
+**Grep source check** after push: raw `<button/input/select/textarea/table>` 0, hardcoded 6-digit hex 0, hand-rolled modal 0, raw `h1` 0, `sm:` 0, `md:` 19, shared `Alert` opening/closing 1/1 and one `DataTable` self-closing. No compile, CI or browser run.
+
+**Loading-state source review with no edit warranted:** `src/app/(authenticated)/learn/attendance/calendar/loading.tsx`, `learn/calendar/loading.tsx`, `allAssignments/[assignmentId]/loading.tsx`, `allQuizzes/[quizId]/loading.tsx`, `courses/[deliveryId]/progress/loading.tsx`, `courses/[deliveryId]/attendance-summary/loading.tsx`, `courses/[deliveryId]/[...courseTab]/loading.tsx`, `courses/[deliveryId]/loading.tsx`. Six of these use shared `GracefulPageLoading` (directory/card/route variants); two drilldowns use shared `PageHeader` plus `LoadingState`. No local hand-built spinner, raw controls, or overlay. The old LMS `old-lms-pages.md:27` observed a small dotted loading spinner; exact spinner render/animation is owned by shared UI and must be compared by the orchestrator before a strict tick.
+
+**NEXT EXACT UNTICKED TSX:** `src/components/courses/college-live-classes-directory.tsx` — lesson/course live-class filters, recorded attendance section, responsive list rows and state actions; then `src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx` and its section content display. H1–H6 **remain open** for complete computed-value and full-area grep verification. This lane has not executed code, tests, typecheck or CI.

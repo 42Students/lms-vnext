@@ -39,11 +39,11 @@ export default async function LearnerCourseAttendanceSummaryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />
-      <section aria-label="All-time course attendance" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="All-time course attendance" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Marked attendance", value: attendance.overall?.markedSessions ?? 0 },
           { label: "Present", value: attendance.overall?.present ?? 0 },
@@ -88,7 +88,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
       ) : (
         <section aria-label="Course attendance by month" className="space-y-4">
           {filtered.map((month) => (
-            <article key={month.month} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+            <article key={month.month} className="rounded-xl border border-border bg-surface p-4 md:p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="font-semibold text-foreground">{month.month}</h2>
@@ -102,7 +102,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
                   {month.percentage === null ? "No marked sessions" : month.percentage + "%"}
                 </StatusBadge>
               </div>
-              <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+              <ul className="mt-3 grid gap-2 md:grid-cols-2">
                 {month.records.map((row) => (
                   <li key={row.id} className="flex flex-wrap items-start justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
                     <div className="min-w-0">

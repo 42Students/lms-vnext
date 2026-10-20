@@ -40,11 +40,11 @@ export function AssignmentSubmissionLinks({submissionId}:{submissionId:string}){
  if(error)return <Alert tone="error">{error}</Alert>;
  if(!links.length)return null;
  return <section aria-label="Submitted repository and website links" className="space-y-2">
-  <h4 className="text-sm font-semibold">Submitted links</h4>
+  <h4 className="text-sm font-semibold text-foreground">Submitted links</h4>
   <ul className="space-y-1">
    {links.map(link=><li key={link.id} className="text-sm">
     {safeHref(link.url)?<a href={safeHref(link.url)!} target="_blank"
-      rel="noopener noreferrer" className="break-all text-primary-text underline">
+      rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       {link.caption||link.url}
     </a>:<span>Link unavailable</span>}
     <Badge tone="neutral" className="ml-2">

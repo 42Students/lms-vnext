@@ -6,6 +6,7 @@ import {getSuperAdminLearningFilterOptions} from "@/modules/admin-ui/super-admin
 import {SuperAdminLearningFilterFields} from "@/components/admin/super-admin-learning-filter-fields";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -24,7 +25,7 @@ export default async function SuperAdminCourseProgressPage({
   if (!parsed) return <div className="min-w-0 space-y-5">
     <PageHeader title="Course Progress" />
     <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
-      action={<Link href="/admin/course-progress" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Clear filters</Link>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
     <PageHeader title="Course Progress" />
@@ -44,11 +45,11 @@ export default async function SuperAdminCourseProgressPage({
     </p>
     
     <form className="grid gap-3 py-1 md:grid-cols-2 min-[1366px]:grid-cols-5">
-      <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
+      <label className="grid gap-1 text-xs font-semibold text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Offering status
+      <label className="grid gap-1 text-xs font-semibold text-body">Offering status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
@@ -56,10 +57,9 @@ export default async function SuperAdminCourseProgressPage({
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
     </form>
-    {filtersResult.status==="rejected"?<p role="status"
-      className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+    {filtersResult.status==="rejected"?<Alert tone="warning">
       Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
-    </p>:null}
+    </Alert>:null}
     <Link className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text" href="/admin/course-progress">Clear filters</Link>
     <p className="text-sm text-muted-foreground">
       {data.total} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
