@@ -14,13 +14,13 @@ export default async function SuperAdminAuthSettings(){
  // Privileged auth posture is read-only, but even the key inventory must not
  // be presented to a disabled actor or a college-only account on a deep link.
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
    <PageHeader title="Authentication settings"/>
    <ErrorState title="Authentication settings access denied"
     description="Your account cannot view privileged authentication policies."
     action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title="Authentication settings"
    description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."
    actions={<PageBackLink href="/admin/settings" label="Platform settings" />} />
@@ -42,7 +42,7 @@ export default async function SuperAdminAuthSettings(){
     <code className="break-all text-xs">{spec.key}</code>
     {spec.dangerous?<StatusBadge tone="warning" className="ml-2">High impact · deployment gated</StatusBadge>:null}
    </li>)}</ul>
-   <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-primary-text underline">Open Global Tenant Settings editor</Link>
+   <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Open Global Tenant Settings editor</Link>
   </section>
   <p className="text-xs text-muted-foreground">No credentials, cookie secrets, signing keys, permitted IPs, provider tokens or environment values are displayed or editable.</p>
  </div>;
