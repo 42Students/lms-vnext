@@ -25,7 +25,7 @@ export default async function CollegeContactDetail({params}:{params:Promise<{mem
    <p className="break-words text-sm"><strong>Phone:</strong> {contact.phone}</p>
    <p className="text-sm"><strong>Joined:</strong> {date} IST</p>
    <nav aria-label="Related role records" className="flex flex-wrap gap-2">
-    {contactRecordLinks(contact).map(link=><Link key={link.href} href={link.href} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{link.label}</Link>)}
+    {contactRecordLinks(contact).map(link=><Link key={link.href} href={link.href} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{link.label}</Link>)}
    </nav>
   </section>
  </div>;
