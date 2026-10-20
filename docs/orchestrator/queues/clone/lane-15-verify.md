@@ -31,10 +31,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-15.md: surface | regre
 - [x] `src/app/(authenticated)/admin/colleges/page.tsx`
 - [x] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
 - [x] `src/app/(authenticated)/admin/companies/page.tsx`
-- [ ] `src/app/(authenticated)/admin/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/courses/page.tsx`
 - [ ] `src/app/(authenticated)/admin/departments/page.tsx`
 - [ ] `src/app/(authenticated)/admin/domains/page.tsx`
 - [ ] `src/app/(authenticated)/admin/electives/page.tsx`
