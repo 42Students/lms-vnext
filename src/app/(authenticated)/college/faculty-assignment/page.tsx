@@ -64,13 +64,13 @@ export default async function CollegeFacultyAssignmentPage({
         actions={<Link href="/college/faculty"
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Faculty directory</Link>}
       />
+      <Disclosure title={FACULTY_ASSIGNMENT_COPY.createTitle} className="min-w-0 border-y border-[var(--lms-canvas-border)]" contentClassName="pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
+        <CollegeFacultyAssignmentCreate {...options} />
+      </Disclosure>
       <Link prefetch={false} download href={facultyAssignmentCsvHref(query)}
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)]">
         Export filtered faculty assignments CSV
       </Link>
-      <Disclosure title={FACULTY_ASSIGNMENT_COPY.createTitle} className="min-w-0 border-y border-[var(--lms-canvas-border)]" contentClassName="pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
-        <CollegeFacultyAssignmentCreate {...options} />
-      </Disclosure>
       <FilterBar title="Filters" activeCount={Number(Boolean(query.q)) + Number(Boolean(query.courseCode)) + Number(Boolean(query.sectionCode)) + Number(query.status !== "ACTIVE") + Number(query.role !== "ALL")}
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Faculty, course or class
