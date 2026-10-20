@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
@@ -43,7 +44,7 @@ export default async function MentorReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Delivery" title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
       actions={<Link data-unskin="" href="/mentor/reviews"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Pending reviews
       </Link>} />
     {!data.enabled ?
@@ -51,8 +52,8 @@ export default async function MentorReviewHistoryPage({
         Projects access is disabled for this membership. No review history was loaded.
       </section>
     : <>
-      <form method="get" action="/mentor/review-history"
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+      <FilterBar title="Filters"><form method="get" action="/mentor/review-history"
+        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <Input type="hidden" name="decision" value={data.query.decision}/>
         <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
@@ -86,7 +87,7 @@ export default async function MentorReviewHistoryPage({
         </label>
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
         <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
-      </form>
+      </form></FilterBar>
       <Tabs ariaLabel="Review decision filter" renderPanel={false} value={data.query.decision} items={([["ALL","All decisions"],["APPROVED","Approved"],["CHANGES_REQUESTED","Changes requested"]] as const).map(([decision,label])=>({value:decision,label,href:mentorReviewHistoryHref({...data.query,decision,page:1})}))}/>
       <p className="text-sm text-body">
         {data.total} persisted delivery decision{data.total === 1 ? "" : "s"} across assigned projects
