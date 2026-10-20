@@ -13,6 +13,7 @@ import {listCohorts} from "@/modules/academics/cohort-service";
 import {getPlacementJob} from "@/modules/placements/job-service";
 import {getJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import type {CollegeLegacyDriveStatus} from "@/modules/placements/college-legacy-drive-settings-model";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function CollegeDriveSettingsPage({
   params,
@@ -33,13 +34,12 @@ export default async function CollegeDriveSettingsPage({
   const cohortGroups=job.status==="DRAFT"?await Promise.all(
     programs.map(async program=>({program,cohorts:await listCohorts(context,program.id)})),
   ):[];
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Settings" description={drive.title}
       actions={<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] min-[768px]:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         href={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>Overview</Link>}/>
     {job.status==="DRAFT"&&eligibilityPolicy?
-      <section aria-label="Edit drive" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
-        <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Edit drive</h2>
+      <section aria-label="Edit drive" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
         <PlacementDraftEditForm academicOptions={{
           programs:programs.map(program=>({
             id:program.id,name:program.name,code:program.code,departmentName:program.departmentName,
@@ -79,9 +79,9 @@ export default async function CollegeDriveSettingsPage({
         This drive is read-only. Only drafts in an active placement season are editable.
         Published-drive changes use the guarded lifecycle and deadline actions.
       </Alert>}
-    <section aria-label="Legacy drive settings" className="min-w-0 space-y-4">
+    <section aria-label="Legacy drive settings" className="min-w-0">
       <CollegeLegacyDriveSettings jobId={jobId} status={drive.status as CollegeLegacyDriveStatus}/>
     </section>
-    {drive.status!=="ARCHIVED"?<CollegeDriveArchiveAction jobId={jobId}/>:null}
+    {drive.status!=="ARCHIVED"?<Disclosure title="Delete drive" className="min-w-0 border-b border-[var(--lms-canvas-border)]"><div className="min-w-0 pt-[var(--lms-space-2)]"><CollegeDriveArchiveAction jobId={jobId}/></div></Disclosure>:null}
   </div>;
 }
