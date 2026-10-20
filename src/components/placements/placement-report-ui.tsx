@@ -59,9 +59,9 @@ export function ReportFilters({
   return (
     <section
       aria-label="Report filters"
-      className="grid min-w-0 grid-cols-1 gap-4 border-b border-[var(--lms-canvas-border)] pb-6 min-[992px]:grid-cols-2 print:hidden"
+      className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 print:hidden"
     >
-      <form action={path} method="get" className="flex flex-wrap items-end gap-3">
+      <form action={path} method="get" className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Placement season
           <Select
@@ -81,7 +81,7 @@ export function ReportFilters({
             ))}
           </Select>
         </label>
-        <Button variant="secondary" className="min-h-11 md:min-h-9"
+        <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
           type="submit"
           disabled={workspace.seasons.length === 0}
           
@@ -122,8 +122,8 @@ export function ReportFilters({
           Apply drive
         </Button>
       </form>
-      <div className="min-[992px]:col-span-2"><TpoReportSavedFilters path={path} collegeId={workspace.collegeId} userId={userId}/></div>
-      <p className="text-xs leading-5 text-muted-foreground min-[992px]:col-span-2">
+      <div className="sm:col-span-2"><TpoReportSavedFilters path={path} collegeId={workspace.collegeId} userId={userId}/></div>
+      <p className="text-xs leading-5 text-muted-foreground sm:col-span-2">
         Changing the season clears the drive filter. Changing the drive
         preserves the selected season. Reports are read-only and restricted
         to your college.
@@ -140,7 +140,7 @@ export function ReportScopeNote({
   return (
     <section
       aria-label="Reporting methodology"
-      className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm leading-6 text-body"
+      className="border-y border-border py-3 text-sm leading-6 text-body"
     >
       <p className="font-semibold text-foreground">Reporting methodology</p>
       <p className="mt-1">{note}</p>
@@ -184,7 +184,7 @@ export function ReportMetrics({
 }
 
 export function ReportNavigation({
-  workspace, compactNavigation = false,
+  workspace, compactNavigation = true,
 }: {
   workspace: PlacementReportWorkspace;
   compactNavigation?: boolean;
@@ -276,7 +276,7 @@ export function ReportCsvLink({
     <a
       href={`/api/placements/reports?${params.toString()}`}
       aria-label={`Export ${kind.replaceAll("-", " ")} CSV`}
-      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden"
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9 print:hidden"
     >
       Export CSV
     </a>
