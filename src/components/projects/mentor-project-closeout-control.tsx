@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
@@ -14,6 +14,7 @@ export function MentorProjectCloseoutControl({
   const router=useRouter();
   const [checks,setChecks]=useState([false,false,false]);
   const [pending,setPending]=useState(false);
+  const inFlight=useRef(false);
   const [confirming,setConfirming]=useState(false);
   const [error,setError]=useState<string|null>(null);
   const labels=[
@@ -22,17 +23,17 @@ export function MentorProjectCloseoutControl({
     "I confirm that completing this project is intended.",
   ];
   async function submit(){
-    if(pending||!checks.every(Boolean)) return;
-    setConfirming(false);
+    if(pending||inFlight.current||!checks.every(Boolean)) return;
+    inFlight.current=true;
     setPending(true);setError(null);
     try{
       await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/complete","POST",{
         expectedUpdatedAt,confirmDeliveryReviewed:true,
         confirmTeamNotified:true,confirmCloseout:true,
       });
-      router.refresh();
-    }catch{setError("Project completion could not be saved. Please check the project status and try again.");}
-    finally{setPending(false);}
+      setConfirming(false);router.refresh();
+    }catch{setConfirming(false);setError("Project completion could not be saved. Please check the project status and try again.");}
+    finally{inFlight.current=false;setPending(false);}
   }
   return <div className={"space-y-3 "+styles.legacy}>
     {labels.map((label,i)=><label key={label}
@@ -41,9 +42,9 @@ export function MentorProjectCloseoutControl({
         onChange={event=>setChecks(old=>old.map((v,j)=>i===j?event.target.checked:v))}
         className="mt-1 size-4 accent-[var(--lms-primary)]" />{label}
     </label>)}
-    <Button type="button" className="min-h-11 md:min-h-9" onClick={()=>setConfirming(true)} disabled={pending||!checks.every(Boolean)}
+    <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setConfirming(true)} disabled={pending||!checks.every(Boolean)}
       loading={pending}>{pending?"Completing…":"Confirm project completion"}</Button>
-    <ConfirmDialog open={confirming} onOpenChange={setConfirming}
+    <ConfirmDialog open={confirming} onOpenChange={open=>{if(!pending)setConfirming(open);}}
       title="Complete this project?"
       description="This updates its registered status to COMPLETED."
       confirmLabel="Complete project" pending={pending} onConfirm={submit}/>
