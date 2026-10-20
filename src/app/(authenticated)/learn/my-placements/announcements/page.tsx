@@ -190,7 +190,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                 {noticeNow-Date.parse(notice.createdAt)<7*24*60*60*1000 && noticeNow>=Date.parse(notice.createdAt)
                   ? <Badge  tone="info">New</Badge>:null}
               </div>
-              <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
+              <h2 className="break-words text-lg font-semibold text-[var(--lms-heading)]">{notice.title}</h2>
               <p className="mt-1 text-xs text-muted-foreground">
                 {notice.senderLabel ? "Issued by "+notice.senderLabel : "College announcement"}
                 {notice.audienceLabel ? " · For "+notice.audienceLabel : ""}

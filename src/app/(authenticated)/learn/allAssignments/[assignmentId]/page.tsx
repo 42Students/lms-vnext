@@ -59,7 +59,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       </section>
     </div>
     <section className="border-b border-border py-4 md:py-6">
-      <h2 className="font-semibold text-foreground">Instructions & resources</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)]">Instructions & resources</h2>
       <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">
         {item.description || "Your faculty hasn't added any resources to this assignment yet."}
       </p>
@@ -74,7 +74,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       </ul> : null}
     </section>
     <section className="border-b border-border py-4 md:py-6">
-      <h2 className="font-semibold text-foreground">Your submission</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)]">Your submission</h2>
       {item.submissionId ? <div className="mt-3 space-y-3 text-sm text-body">
         <p role="status" className="flex flex-wrap items-center gap-2"><StatusBadge tone="success">Submitted</StatusBadge>{formatDate(item.submittedAt)}</p>
         {item.submissionType === "TEXT" ? (

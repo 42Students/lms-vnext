@@ -32,7 +32,7 @@ export default async function ProfileCompleteness({searchParams}:{
     <PageHeader title="Profile completion checklist"
       description="Read-only coverage of the fields saved to your learner profile." />
     <section className="py-2">
-      <h2 className="text-lg font-semibold text-foreground">{readiness.filled} of {readiness.total} sections filled</h2>
+      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{readiness.filled} of {readiness.total} sections filled</h2>
       <p className="mt-2 text-sm font-semibold text-foreground">{career.percentage??0}% career profile complete · {learnerCareerCompletionMessage(career.percentage??0)}</p>
       <p className="mt-2 text-sm text-body">
         {readiness.missing} sections have no saved entries. This is not a verification, placement eligibility or application readiness score.
@@ -51,19 +51,19 @@ export default async function ProfileCompleteness({searchParams}:{
         className={
           "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-neutral-200)] px-4 py-2 text-[13px] font-semibold leading-5 transition-[color,background,border-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9 " +
           (readiness.show===option.value ? "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)]" :
-            "border-[var(--lms-neutral-200)] bg-transparent text-[var(--lms-neutral-500)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)]")
+            "border-[var(--lms-neutral-200)] bg-transparent text-[var(--lms-neutral-500)] hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-primary)]")
         }>
         {option.label}
       </Link>)}
     </nav>
     <section className="border-t border-border pt-5">
-      <h2 className="text-base font-semibold text-foreground">Your sections</h2>
+      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your sections</h2>
       {readiness.items.length===0 ? <p className="mt-3 text-sm text-body">
         No sections match this filter. Choose All sections to review the full checklist.
       </p> : <ul className="mt-4 divide-y divide-border border-y border-border">
         {readiness.items.map(item=><li key={item.section} className="min-w-0">
           <Link href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 items-center justify-between gap-3 px-1 py-3 text-sm text-foreground hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="flex min-h-11 items-center justify-between gap-3 px-1 py-3 text-sm text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             <span className="min-w-0 break-words">{item.label}
               {(["personal-details","contacts","education","skills"].includes(item.section))?
                 <span className="ml-2 text-xs font-semibold text-muted-foreground">Required</span>:null}
