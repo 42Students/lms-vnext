@@ -185,7 +185,7 @@
 .card :global(button:not([type="submit"]):not([role="tab"])),
 .card :global(a) { color: var(--auth-primary); }
 .card :global(button:disabled:not([type="submit"])) { color: var(--lms-neutral-400, #a9a7ae); }
-.status { margin-bottom: 24px; border-radius: var(--lms-control-radius, 9px); padding: 14px 16px; font-size: 14px; line-height: 22px; }
+.status { margin-bottom: 16px; border-radius: var(--lms-control-radius, 9px); padding: 14px 16px; font-size: 14px; line-height: 22px; }
 .statusWarning { border: 1px solid #f3d1a0; background: #fffbeb; color: #92400e; }
 .statusError { border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; }
 .statusTitle { margin: 0 0 4px; font-weight: 650; }
@@ -287,4 +287,45 @@
     font-size: 16px;
     letter-spacing: .3em;
   }
+}
+
+/* Public login, code verification and branded error states share the same
+   keyboard entry target without adding another card or layout landmark. */
+.skipLink {
+  position: fixed;
+  z-index: 20;
+  top: max(12px, env(safe-area-inset-top, 0px));
+  left: 16px;
+  transform: translateY(-160%);
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 16px;
+  border: 2px solid var(--auth-primary);
+  border-radius: 9px;
+  background: var(--lms-surface, #fff);
+  color: var(--auth-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+.skipLink:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--auth-primary);
+  outline-offset: 2px;
+}
+.card:focus { outline: none; }
+.card:focus-visible { outline: 2px solid var(--auth-primary); outline-offset: 3px; }
+@media (max-width: 767px) {
+  .card :global(.login-form[data-step="code"] form > div > button:not([type="submit"])) {
+    min-height: 44px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .footerLinks a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+  .footerLinks { gap: 4px 16px; }
+  .card :global(.login-form[data-step="code"] form > div) { min-width: 0; }
 }
