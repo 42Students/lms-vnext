@@ -35,7 +35,7 @@ export default async function FacultyResponseFollowUpsPage({
         Results overview
       </Link>} />
     <form action="/teacher/response-followups" method="get"
-      className="flex flex-wrap items-end gap-3">
+      className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
@@ -72,7 +72,7 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="5">5</option><option value="10">10</option>
         </Select>
       </label>
-      <Button type="submit" variant="primary">
+      <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
         Filter
       </Button>
       <Link href="/teacher/response-followups"
@@ -91,7 +91,7 @@ export default async function FacultyResponseFollowUpsPage({
       description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/response-followups" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear follow-up filters</Link> : null}</div>
     : <div className="grid gap-3">{data.items.map(item =>
       <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary motion-reduce:transition-none md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div><h2 className="font-semibold text-foreground">{item.title}</h2>
             <p className="mt-1 text-sm text-body">{item.courseName} · {item.sectionName} · {item.kind}</p>
