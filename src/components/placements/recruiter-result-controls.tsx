@@ -551,7 +551,11 @@ export function RecruiterResultControls({
                                       .status,
                                   )}
                                 </StatusBadge>
-                                <StatusBadge>
+                                <StatusBadge tone={
+                                  participant.result.outcome==="PASS"?"success":
+                                  participant.result.outcome==="FAIL"?"error":
+                                  participant.result.outcome==="HOLD"?"warning":"info"
+                                }>
                                   {humanize(
                                     participant
                                       .result
