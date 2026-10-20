@@ -40,7 +40,7 @@ export default async function TpoDriveCloseoutPage({
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
       Export CSV
     </a>
-    <section aria-label="Close-out metrics" className="grid min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 xl:grid-cols-4">
+    <section aria-label="Close-out metrics" className="grid min-w-0 max-w-full overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 xl:grid-cols-4">
       {cells.map(([label, value]) => <div key={label}
         className="border-b border-[var(--lms-canvas-border)] p-[var(--lms-space-4)] last:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0 xl:border-b-0">
         <p className="text-sm font-medium text-body">{label}</p>
