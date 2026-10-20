@@ -79,7 +79,7 @@ function MeetingFields({
     <div className="grid min-w-0 gap-[var(--lms-space-4)]">
       <label className="min-w-0">
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          {isRequest?"Title":"Title"}
+          Title
         </span>
         <Input
           required
@@ -161,10 +161,7 @@ export function RequestProjectMeetingControl({
   const guard=useProjectEditorDiscardGuard(open,dirty,pending,discardDraft);
   function openDialog() {
     setMinStart(toLocalInput(new Date()));
-    setTimeZone(
-      Intl.DateTimeFormat()
-        .resolvedOptions().timeZone || "UTC",
-    );
+    setTimeZone("Asia/Kolkata");
     setError(null);
     setOpen(true);
   }
@@ -174,15 +171,15 @@ export function RequestProjectMeetingControl({
   ) {
     event.preventDefault();
     setError(null);
-    if(startsAt && new Date(startsAt).getTime()<Date.now()){
+    if(startsAt && Date.parse(startsAt + ":00+05:30") < Date.now()){
       setError("Preferred date cannot be in the past.");
       return;
     }
     if (
       !startsAt ||
       !endsAt ||
-      new Date(endsAt).getTime() <=
-        new Date(startsAt).getTime()
+      Date.parse(endsAt + ":00+05:30") <=
+        Date.parse(startsAt + ":00+05:30")
     ) {
       setError(
         "End time must be after the start time.",
