@@ -41,7 +41,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
       {data ? <AcademicSetupSteps step={5} /> : null}
     {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
     {data ? <>
-      <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
+      <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} academicSetupHref="/admin/academics" />
       <Tabs ariaLabel="Batch lifecycle views" value={data.query.status} renderPanel={false} items={([
         ["ALL","All batches"],["ACTIVE","Active batches"],["INACTIVE","Show inactive"],["COMPLETED","Show completed"],
       ] as const).map(([value,label])=>({value,label,href:pageUrl({...data.query,status:value,page:1})}))}/>
@@ -61,7 +61,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
               className="min-h-11 md:min-h-9"/>
           </label>
           <Disclosure title="More filters" defaultOpen={data.query.status!=="ALL" || data.query.pageSize!==25}
-            className="min-w-0 min-[768px]:col-span-4" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] min-[768px]:grid-cols-2">
+            className="order-last min-w-0 min-[768px]:col-span-4" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] min-[768px]:grid-cols-2">
           <label className="grid min-w-0 w-full md:min-w-36 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select name="status" defaultValue={data.query.status}
