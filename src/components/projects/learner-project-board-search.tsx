@@ -22,12 +22,12 @@ export function LearnerProjectBoardSearch({
         <label className="flex-1 text-sm font-semibold text-foreground">
           Search tasks
           <Input name="taskSearch" type="search" maxLength={100} defaultValue={search}
-            placeholder="Task title or details" className="mt-1 min-h-9" />
+            placeholder="Task title or details" className="mt-1 min-h-11 md:min-h-9" />
         </label>
         <label className="text-sm font-semibold text-foreground">
           Priority
           <Select name="priority" defaultValue={priority}
-            className="mt-1 min-h-9">
+            className="mt-1 min-h-11 md:min-h-9">
             <option value="">All priorities</option>
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -38,7 +38,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Status
           <Select name="taskStatus" defaultValue={status}
-            className="mt-1 min-h-9">
+            className="mt-1 min-h-11 md:min-h-9">
             <option value="">All statuses</option>
             <option value="TODO">To do</option>
             <option value="IN_PROGRESS">In progress</option>
@@ -48,7 +48,7 @@ export function LearnerProjectBoardSearch({
           </Select>
         </label>
         <label className="text-sm font-semibold text-foreground">Task order
-          <Select name="taskSort" defaultValue={taskSort} className="mt-1 min-h-9">
+          <Select name="taskSort" defaultValue={taskSort} className="mt-1 min-h-11 md:min-h-9">
             <option value="DEFAULT">Project order</option><option value="PRIORITY">Highest priority first</option>
             <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option>
           </Select>
@@ -56,7 +56,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Sprint
           <Select name="sprintId" defaultValue={sprintId}
-            className="mt-1 min-h-9">
+            className="mt-1 min-h-11 md:min-h-9">
             <option value="">All sprints</option>
             {sprints.map(sprint => <option key={sprint.id} value={sprint.id}>{sprint.title}</option>)}
           </Select>
@@ -64,7 +64,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Release
           <Select name="releaseId" defaultValue={releaseId}
-            className="mt-1 min-h-9">
+            className="mt-1 min-h-11 md:min-h-9">
             <option value="">All releases</option>
             {releases.map(release=>(
               <option key={release.id} value={release.id}>{release.title}</option>
@@ -72,11 +72,11 @@ export function LearnerProjectBoardSearch({
           </Select>
         </label>
         <label className="text-sm font-semibold text-foreground">Assignee
-          <Select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-1 min-h-9">
+          <Select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-1 min-h-11 md:min-h-9">
             <option value="">Everyone</option><option value="mine">Mine</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-9">Apply</Button>
+        <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
         <Link href={base} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">Clear all</Link>
       </form>
   );

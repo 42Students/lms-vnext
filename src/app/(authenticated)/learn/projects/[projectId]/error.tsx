@@ -14,9 +14,9 @@ export default function LearnerProjectDetailError({
       <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
         Please check your connection, then try again. Your project activity has not been changed.
       </p>
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <Button type="button" className="max-md:min-h-11" onClick={reset}>Retry</Button>
-        <Link href="/learn/projects" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">Back to Projects</Link>
+      <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
+        <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
+        <Link href="/learn/projects" className="inline-flex min-h-11 w-full sm:w-auto md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">Back to Projects</Link>
       </div>
     </section>
   );
