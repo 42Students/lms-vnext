@@ -13,6 +13,8 @@ import type {
   listCollegeBatches,
   listCollegeSemesters,
 } from "@/modules/academics/college-academic-directory-service";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
