@@ -3,26 +3,26 @@
 300 files (1056 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: no horizontal overflow, stacked grids, tap targets >= 44 at 375, tables scroll inside container, header actions wrap, sidebar collapse, modal width, long text truncation.
 Record ONE proof line per file in docs/audit/ux/dim-lane-14.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/activity/[eventId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/admin/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/admin/faculty/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/programs/page.tsx`
+- [x] `src/app/(authenticated)/activity/[eventId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/page.tsx`
+- [x] `src/app/(authenticated)/admin/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- [x] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/hr/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/programs/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
