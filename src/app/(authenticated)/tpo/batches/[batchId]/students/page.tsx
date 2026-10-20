@@ -8,6 +8,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
 import {SummaryStrip} from "@/components/ui/summary-strip";
 import {ErrorState} from "@/components/ui/error-state";
+import {EmptyState} from "@/components/ui/empty-state";
 import {batchDecisionLabel,batchSourceLabel,batchRegistrationLabel} from "@/modules/placements/tpo-batch-labels-model";
 import {studentJourneyForBatch} from "@/modules/placements/tpo-batch-student-journey-model";
 import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
@@ -53,59 +54,8 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
  return <div className="min-w-0 space-y-4"><PageHeader title={result.batch.name+" — Students"} description="Eligibility, registration and student evidence."/>
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
- <TpoBatchStudentSavedViews batchId={batchId}/>
- <TpoBatchStudentKeyboardActions
-  rows={visible.map(student=>({id:student.membershipId,name:student.name,rollNumber:student.rollNumber}))}
- />
- <section aria-label="Placement journey" className="space-y-3 border-b border-border pb-4">
-  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Placement journey</h2>
-  <dl className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
-   {([["Students",journey.total],["Eligible",journey.eligible],
-      ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],
-      ["Registered",journey.registered]] as const).map(([label,value])=>
-      <div key={label} className="min-w-0 border-b border-r border-border px-3 py-3 last:border-r-0">
-       <dt className="text-xs text-muted-foreground">{label}</dt>
-       <dd className="text-xl font-semibold tabular-nums">{value===null?"—":value}</dd>
-      </div>)}
-  </dl>
-  <div className="flex flex-wrap gap-2 text-xs">
-   {journey.undecided!==null?<Badge tone="warning">Not decided: {journey.undecided}</Badge>:null}
-   {journey.registrationGap!==null?<Badge tone="neutral">No choice recorded: {journey.registrationGap}</Badge>:null}
-  </div>
-  {journey.sampled?<p className="text-xs text-muted-foreground">Eligibility covers a sample of {journey.sampleCount} learners; full-cohort eligibility and invited counts are not inferred.</p>:null}
-  {!registrationCounts.available?<p className="text-xs text-muted-foreground">Registration choice totals are unavailable.</p>:null}
-  <p className="text-xs text-muted-foreground">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
- </section>
- {!finished&&journey.undecided!==null&&journey.undecided>0?
- <Alert tone="warning" title="Suggested placement action">
-   <strong>Suggested: make them eligible</strong>
-   <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
-   <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
-     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Show me</Link>
- </Alert>:null}
- <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
- <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Download blank eligibility import CSV (this page)</a>
- {finished?<Alert tone="info">This batch is finished. Eligibility decisions and import actions are read-only.</Alert>:<TpoBatchEligibilityImport batchId={batchId}/>}
- {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
-   target="STUDENTS" rows={visible.map(student=>({
-    id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
-   }))} />:null}
- <section aria-label="Batch student follow-up actions" className="grid gap-2 lg:grid-cols-2">
-  <TpoStudentNudgePanel rows={visible.map(student=>({
-   id:student.membershipId,label:student.name+" · "+(student.rollNumber??"No roll number"),
-   registered:student.registration?.choice==="PLACEMENTS",
-  }))}/>
-  <TpoBatchStudentBulkNotes rows={visible.map(student=>({
-   id:student.membershipId,label:student.name+" · "+(student.rollNumber??"No roll number"),
-  }))}/>
- </section>
- <p className="text-xs text-muted-foreground">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
-  Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
-  Every change is confirmed and audited. Review skipped learners before retrying.</p>
- <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
- {!result.registrationAvailable?<Alert tone="warning">Registration records unavailable.</Alert>:null}
  <form role="search" aria-label="students filters" action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
-  className="grid min-w-0 grid-cols-1 items-end gap-2 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-3">
+  className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] py-4 sm:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class (on this page)
    <Select name="classId" defaultValue={view.data.classId??""}
     className="block min-h-11 md:min-h-9 w-full mt-[6px]">
@@ -128,6 +78,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="NEEDS_REVIEW">Ambiguous / needs review</option>
    </Select>
   </label>
+  <Disclosure title="Decision source · Registration choice · Sort this page" defaultOpen={Boolean(view.data.source!=="ALL"||view.data.registration!=="ALL"||view.data.order!=="NAME_ASC")} className="min-w-0 border-0 sm:col-span-2 xl:col-span-3" contentClassName="pt-3"><div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision source
    <Select name="source" defaultValue={view.data.source} className="min-h-11 md:min-h-9 w-full mt-[6px] block">
     <option value="ALL">Any source</option>
@@ -151,8 +102,26 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="REVIEW_FIRST">Needs review first</option>
    </Select>
   </label>
+  </div></Disclosure>
   <Button type="submit" variant="primary" className="min-h-11 md:min-h-9 w-full md:w-auto">Filter</Button>
  </form>
+ <TpoBatchStudentSavedViews batchId={batchId}/>
+ <TpoBatchStudentKeyboardActions
+  rows={visible.map(student=>({id:student.membershipId,name:student.name,rollNumber:student.rollNumber}))}
+ />
+ {!finished&&journey.undecided!==null&&journey.undecided>0?
+ <Alert tone="warning" title="Suggested placement action">
+   <strong>Suggested: make them eligible</strong>
+   <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
+   <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
+     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Show me</Link>
+ </Alert>:null}
+ <p className="text-xs text-muted-foreground">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
+  Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
+  Every change is confirmed and audited. Review skipped learners before retrying.</p>
+ <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
+ {!result.registrationAvailable?<Alert tone="warning">Registration records unavailable.</Alert>:null}
+
  {!result.registrationAvailable&&view.data.registration!=="ALL"?<Alert tone="warning">Registration filtering unavailable; no learners are classified without records.</Alert>:null}
  <Disclosure title="Export" ariaLabel="Batch student exports"
    className="border-b border-border py-3 [&>summary]:min-h-11 md:[&>summary]:min-h-9 [&>summary]:text-link">
@@ -167,11 +136,28 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <SummaryStrip label="Loaded-page eligibility evidence" steps={[{label:"Loaded",value:pageSummary.assessed},{label:"Eligible",value:pageSummary.eligible},{label:"Ineligible",value:pageSummary.ineligible},{label:"Not decided",value:pageSummary.undecided},{label:"Needs review",value:pageSummary.needsReview},{label:"Direct overrides",value:pageSummary.directOverrides}]} />
  <p className="text-xs text-muted-foreground">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
+ <Disclosure title="Bulk changes · Import eligibility · Send a message · Add a note" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
+ <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
+ <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Download blank eligibility import CSV (this page)</a>
+ {finished?<Alert tone="info">This batch is finished. Eligibility decisions and import actions are read-only.</Alert>:<TpoBatchEligibilityImport batchId={batchId}/>}
+ {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
+   target="STUDENTS" rows={visible.map(student=>({
+    id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
+   }))} />:null}
+ <section aria-label="Batch student follow-up actions" className="grid gap-2 lg:grid-cols-2">
+  <TpoStudentNudgePanel rows={visible.map(student=>({
+   id:student.membershipId,label:student.name+" · "+(student.rollNumber??"No roll number"),
+   registered:student.registration?.choice==="PLACEMENTS",
+  }))}/>
+  <TpoBatchStudentBulkNotes rows={visible.map(student=>({
+   id:student.membershipId,label:student.name+" · "+(student.rollNumber??"No roll number"),
+  }))}/>
+ </section>
+ </Disclosure>
  <div id="batch-student-decisions" className="min-w-0">
   <DataTable rows={visible} getRowKey={student=>student.membershipId}
    caption={"Batch students · page "+result.page}
-   empty={<p role="status">{result.students.length===0?
-    "No active learners found on this page.":"No students match these filters. Clear the filters or change the page."}</p>}
+   empty={<EmptyState title={result.students.length===0?"No active learners found on this page.":"No students match these filters. Clear the filters or change the page."} action={<Link href={href(1)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Filter</Link>}/>}
    columns={[
     {key:"student",header:"Student",mobilePriority:"primary" as const,cell:student=>
      <div className="min-w-0 space-y-1">
@@ -208,7 +194,29 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
      </div>},
    ]}/>
  </div>
- <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Previous</Link>:null}
- {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Next</Link>:null}</nav>
+ <Disclosure title="Placement journey" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
+ <section aria-label="Placement journey" className="space-y-3 border-b border-border pb-4">
+  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Placement journey</h2>
+  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-[var(--lms-canvas-border)] md:grid-cols-4">
+   {([["Students",journey.total],["Eligible",journey.eligible],
+      ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],
+      ["Registered",journey.registered]] as const).map(([label,value])=>
+      <div key={label} className="min-w-0 border-b border-r border-[var(--lms-canvas-border)] px-3 py-3 last:border-r-0">
+       <dt className="text-xs text-muted-foreground">{label}</dt>
+       <dd className="text-xl font-semibold tabular-nums">{value===null?"—":value}</dd>
+      </div>)}
+  </dl>
+  <div className="flex flex-wrap gap-2 text-xs">
+   {journey.undecided!==null?<Badge tone="warning">Not decided: {journey.undecided}</Badge>:null}
+   {journey.registrationGap!==null?<Badge tone="neutral">No choice recorded: {journey.registrationGap}</Badge>:null}
+  </div>
+  {journey.sampled?<p className="text-xs text-muted-foreground">Eligibility covers a sample of {journey.sampleCount} learners; full-cohort eligibility and invited counts are not inferred.</p>:null}
+  {!registrationCounts.available?<p className="text-xs text-muted-foreground">Registration choice totals are unavailable.</p>:null}
+  <p className="text-xs text-muted-foreground">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
+ </section>
+ </Disclosure>
+
+ {(result.page>1||result.hasMore)?<nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Previous</Link>:null}
+ {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Next</Link>:null}</nav>:null}
  </div>;
 }
