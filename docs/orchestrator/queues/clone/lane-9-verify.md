@@ -9,7 +9,7 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-9-b with [chat-9] after every 2 surfaces.
 
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
 - [ ] `src/components/tpo/tpo-batch-inline-decision.tsx`
 - [ ] `src/components/tpo/tpo-bell-panel.tsx`
 - [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
