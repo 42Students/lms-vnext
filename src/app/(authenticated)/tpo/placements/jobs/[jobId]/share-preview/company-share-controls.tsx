@@ -8,6 +8,7 @@ import {prependCompanyShareLink} from "@/modules/placements/company-share/link-p
 import {companyShareIssueFailureMessage} from "@/modules/placements/company-share/issue-message-model";
 import {copyCompanyShareUrl} from "@/modules/placements/company-share/copy-model";
 import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
@@ -112,13 +113,13 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    External sharing is unavailable until its audited database migration is registered.
   </Alert>:<>
    <div className="flex flex-wrap items-end gap-3">
-    <label className="text-sm text-body">Expires in days
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expires in days
      <Select value={days} onChange={event=>changeExpiry(event.target.value)}
-      className="ml-2">
+      className="ml-2 mt-[6px] block">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-sm">Please shortlist by
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Please shortlist by
      <Input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
       />
     </label>
@@ -126,7 +127,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
      <legend className="px-1 text-sm font-semibold">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
      <div className="grid gap-2 sm:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
       <label key={key} className="inline-flex min-h-11 items-center gap-2 text-sm">
-       <input type="checkbox" checked={selectedColumns.includes(key)}
+       <Checkbox checked={selectedColumns.includes(key)}
         disabled={pending||(!selectedColumns.includes(key)&&selectedColumns.length>=11)}
         onChange={event=>setSelectedColumns(current=>event.target.checked?
          [...current,key]:current.filter(col=>col!==key))}/>

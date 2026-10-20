@@ -55,19 +55,19 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     }))}/>
   <form method="get" action={root+"/offers"} className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
    <Input type="hidden" name="status" value={data.status}/>
-   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Joining outcome
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Joining outcome
     <Select name="joining" defaultValue={parsed.data.joining} >
      <option value="ALL">All joining outcomes</option><option value="PENDING">Accepted / pending</option>
      <option value="JOINED">Confirmed joined</option><option value="DEFERRED">Deferred</option>
      <option value="DID_NOT_JOIN">Did not join</option>
     </Select>
    </label>
-   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Offer type
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Offer type
     <Select name="kind" defaultValue={parsed.data.kind} >
      <option value="ALL">All kinds</option><option value="OFFER">Offer</option><option value="LOI">Letter of intent</option>
     </Select>
    </label>
-   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Response deadline
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Response deadline
     <Select name="expiry" defaultValue={parsed.data.expiry}
       >
      <option value="ALL">Any response deadline</option>
@@ -77,17 +77,17 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
      <option value="UNKNOWN">No expiry recorded</option>
     </Select>
    </label>
-   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Minimum package (LPA)
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum package (LPA)
     <Input type="number" name="minCtcLpa" min={0} max={1000} step="0.01"
       defaultValue={parsed.data.minCtcLpa??""}
       className="w-full sm:w-36"/>
    </label>
-   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Maximum package (LPA)
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum package (LPA)
     <Input type="number" name="maxCtcLpa" min={0} max={1000} step="0.01"
       defaultValue={parsed.data.maxCtcLpa??""}
       className="w-full sm:w-36"/>
    </label>
-   <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">Search learner, email, roll, batch, branch or role
+   <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner, email, roll, batch, branch or role
     <Input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="w-full min-w-0"/>
    </label><Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>:null}

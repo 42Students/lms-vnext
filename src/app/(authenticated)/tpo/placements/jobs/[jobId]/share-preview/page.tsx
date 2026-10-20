@@ -69,7 +69,7 @@ export default async function TpoShortlistSharePreviewPage({
     <form action={path} method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
       {preservedHistory.shareStatus?<Input type="hidden" name="shareStatus" value={preservedHistory.shareStatus}/>:null}
       {preservedHistory.sharePage?<Input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
-      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search shortlisted learner
+      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search shortlisted learner
         <Input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
           placeholder="Learner name" />
       </label>

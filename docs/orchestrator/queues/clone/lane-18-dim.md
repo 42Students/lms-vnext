@@ -73,16 +73,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-18.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/audit/actors/page.tsx`
 - [x] `src/app/(authenticated)/tpo/audit/page.tsx`
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/page.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
