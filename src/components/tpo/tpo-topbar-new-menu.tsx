@@ -10,7 +10,7 @@ export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
  const pathname=usePathname(),query=useSearchParams();
  const companyName=pathname==="/tpo/companies"?(query.get("name")||"").trim().slice(0,150):"";
  const companyPrefix=companyName?" for "+companyName:"";
- const navClass="block min-h-11 rounded-[8px] px-2 py-2 text-sm text-primary-text hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere]";
+ const navClass="block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-2 text-sm text-primary-text hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere]";
  const links=companyName?[{
   label:"New recruiter lead"+companyPrefix,
   href:"/tpo/recruiters?add=1&company="+encodeURIComponent(companyName),
@@ -23,7 +23,7 @@ export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
    className="min-w-[min(15rem,calc(100vw_-_5rem))] max-w-full space-y-1">
    {links.map(item=><Link key={item.href} href={item.href} className={navClass}>{item.label}</Link>)}
    {companyName?<MenuSeparator />:null}
-   <div className={navClass}><TpoNewFollowupModal collegeId={collegeId}/></div>
+   <div className="min-w-0"><TpoNewFollowupModal collegeId={collegeId}/></div>
   </nav>
  </Dropdown>;
 }
