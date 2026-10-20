@@ -62,8 +62,8 @@ export function CollegeStudyMemberActions({
       }
       setError(null);
       setAction({ action: "ADD", membershipId });
-    }} className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
-      <label className="grid min-w-52 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+    }} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
         Add learner
         <Select value={selection} onChange={(event) => setSelection(event.target.value)}
           className="min-h-11 min-w-0 md:min-h-9">
@@ -71,12 +71,12 @@ export function CollegeStudyMemberActions({
           {available.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-52 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
         Or learner membership ID
         <Input value={manualId} onChange={(event) => setManualId(event.target.value)}
           placeholder="UUID" className="min-h-11 min-w-0 md:min-h-9" />
       </label>
-      <Button type="submit" loading={pending} className="min-h-11 md:min-h-9" disabled={pending}>Review add</Button>
+      <Button type="submit" loading={pending} className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto" disabled={pending}>Review add</Button>
     </form>
     <p className="text-xs text-muted-foreground">
       Adding to a full group follows the registered group waitlist policy. Only active same-college learners are eligible.
@@ -85,12 +85,12 @@ export function CollegeStudyMemberActions({
       {members.every(member=>member.state==="REMOVED") ? <EmptyState title="No active group members" description="No active group members are recorded."/> : null}
       {members.filter((member) => member.state !== "REMOVED").map((member) =>
         <div key={member.membershipId}
-          className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
+          className="flex min-w-0 flex-col items-stretch gap-3 py-3 md:flex-row md:items-center md:justify-between">
           <span className="text-sm text-body">
             {member.displayName ?? "Unnamed member"} · <StatusBadge tone={member.state==="ACTIVE"?"success":member.state==="WAITLISTED"?"warning":"neutral"}>{member.state}</StatusBadge>
             {member.isLocked ? " · Locked" : ""}
           </span>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending}
               onClick={() => setAction({
                 action: "LOCK", membershipId: member.membershipId, locked: !member.isLocked,
