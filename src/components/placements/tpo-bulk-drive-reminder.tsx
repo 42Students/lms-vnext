@@ -1,17 +1,25 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useState,type MouseEvent} from "react";
 
 /** TPO-drives-13/14: only acts on currently selected, visible drives. */
 export function TpoBulkDriveReminder(){
  const [busy,setBusy]=useState(false),[message,setMessage]=useState(""),[error,setError]=useState("");
- async function remind(event:MouseEvent<HTMLButtonElement>){
+ const [confirmOpen,setConfirmOpen]=useState(false),[selectedIds,setSelectedIds]=useState<string[]>([]);
+ function review(event:MouseEvent<HTMLButtonElement>){
   const form=event.currentTarget.form;
   if(!form||busy)return;
   const ids=[...new Set(new FormData(form).getAll("ids").filter((v):v is string=>typeof v==="string"))];
   if(!ids.length||ids.length>10){setError("Choose between 1 and 10 drives on this page.");return;}
-  if(!window.confirm("Preview and send one daily reminder for eligible students who have not applied to these "+ids.length+" drives?"))return;
+  setSelectedIds(ids);
+  setConfirmOpen(true);
+ }
+ async function remind(){
+  if(busy||!selectedIds.length)return;
+  setConfirmOpen(false);
+  const ids=selectedIds;
   setBusy(true);setError("");setMessage("");
   let sent=0,skipped=0,failed=0;
   for(const id of ids){
@@ -45,11 +53,16 @@ export function TpoBulkDriveReminder(){
     Clear selection
    </Button>
   </div>
-  <Button variant="secondary" type="button" disabled={busy} onClick={e=>void remind(e)}
+  <Button variant="secondary" type="button" disabled={busy} onClick={review}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Checking selected drives…":"Remind non-applicants in selected drives"}
   </Button>
   {message?<InlineNotice tone="success" message={message}/>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+   title="Send eligible non-applicant reminders?"
+   description={"Preview and send one daily reminder for eligible students who have not applied to these "+selectedIds.length+" drives?"}
+   confirmLabel="Preview and send" confirmVariant="primary" pending={busy}
+   onConfirm={()=>void remind()}/>
  </div>;
 }
