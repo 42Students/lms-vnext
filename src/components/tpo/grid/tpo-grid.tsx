@@ -154,7 +154,7 @@ export function TpoGrid<Row>({
  const selectOne=(row:Row,checked:boolean,shift=false)=>{
   if(!selection)return;
   const id=rowKey(row);
-  const result=gridSelectionCheckbox(currentVisibleIds(),selection.selected,id,checked,anchor.current,shift);
+  const result=gridSelectionCheckbox(currentVisibleIds(),selection.selected,id,checked,anchor.current,shift,allowedIds);
   anchor.current=result.anchor;
   changeSelected(result.selected);
  };
@@ -167,7 +167,7 @@ export function TpoGrid<Row>({
    shiftKey:native.shiftKey,ctrlKey:native.ctrlKey,metaKey:native.metaKey,
   }:{};
   const id=rowKey(event.data);
-  const result=gridSelectionClick(currentVisibleIds(),selection.selected,id,anchor.current,modifiers);
+  const result=gridSelectionClick(currentVisibleIds(),selection.selected,id,anchor.current,modifiers,allowedIds);
   anchor.current=result.anchor;
   changeSelected(result.selected);
  };
