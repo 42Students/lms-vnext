@@ -301,3 +301,17 @@ Files: `src/app/(authenticated)/admin/course-progress/students/page.tsx`, queue 
 - Changes: dirty-only primary action, visible invalid-field state after validation, clear stale errors as values change, readable help measures and a retryable error inside ConfirmDialog while preserving the existing external alert. Shared 44px phone/36px desktop controls, two-column 768 layout and untouched confirmation/PUT/refresh semantics.
 - Inspected: policy schema, form validation, pending/success/failure/confirmation and shared ConfirmDialog/Input/Button/Alert plus legacy form rules. Source-only 375/768/1280 review; no tests/browser/CI.
 - Files: src/components/admin/super-admin-attendance-settings-editor.tsx, docs/orchestrator/queues/clone/lane-5-polish.md, docs/audit/ux/polish-lane-5.md.
+
+## Surface 44 — SuperAdminCollegeCompanyActions
+
+- Problems fixed (8): new-company trigger sat below its own heading with no aligned action row; create form visually blended into rows; mobile primary/cancel controls wrapped at arbitrary widths; reopened forms retained stale API errors; every company showed two management buttons before its status badges; destructive action had no visible disabled explanation; management actions cramped phones; failed archive/restore only displayed error behind an open confirmation.
+- Changes: align Add company opposite the section heading and stack fully on phones, use a hairline form divider, full-width 44px phone submit/cancel; clear stale errors on reopen/cancel; move optional trust/delete/restore controls into shared keyboard-accessible relationship Disclosure with full-width mobile actions, visible drive restriction, and confirmation-scoped error with retry. Preserved company creation fields, API payloads, trust/delete/restore semantics, drive restriction, routes and status labels.
+- Inspected parent `/admin/companies` list/action nesting, full create/pending/error and relationship trust/archive/restore/confirm/error/disabled states; shared Disclosure, ConfirmDialog, Input, Button and Alert. Legacy field/button chrome sourced from docs/design; 375/768/1280 source-only review, no browser/tests/CI.
+- Files: src/components/admin/super-admin-college-company-actions.tsx, docs/orchestrator/queues/clone/lane-5-polish.md, docs/audit/ux/polish-lane-5.md.
+
+## Surface 45 — SuperAdminPlatformBlockAction
+
+- Problems fixed (6): disabled destructive action offered no minimum reason guidance; audit reason field was unassociated with a hint; changing reason left stale error visible; API-safe error details were discarded on every failure; failed submission showed its error behind ConfirmDialog; success feedback did not match shared legacy alert chrome.
+- Changes: add compact associated audit-length help, reset stale error on edit, expose apiFetch's user-safe failure message with generic fallback, move actionable error inside the confirmation while retaining the in-section alert, and use shared success/error Alerts. Preserve collapsed destructive disclosure, status-dependent danger/restore variants, four-character guard, session revocation text, PATCH payload, lock and refresh.
+- Inspected membership detail placement, API safe error boundary, disabled/edit/confirm/pending/failure/success/refresh and shared ConfirmDialog/Textarea/Button/Alert. Source-only 375/768/1280 review; no browser/tests/CI.
+- Files: src/components/admin/super-admin-platform-block-action.tsx, docs/orchestrator/queues/clone/lane-5-polish.md, docs/audit/ux/polish-lane-5.md.
