@@ -42,8 +42,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  const raw=await searchParams;
  const parsed=hrConversationQuerySchema.safeParse({collegeId:raw.collegeId,q:raw.q,page:raw.page,unreadOnly:raw.unreadOnly,sort:raw.sort,scope:raw.scope});
  if(!parsed.success)return <div className="min-w-0 space-y-3">
-  <PageHeader title="Conversations"/>
-  <ErrorState title="Invalid conversation filters." description="Review the college and conversation filters."
+  <PageHeader title="Messages"/>
+  <ErrorState title="Invalid conversation filters" description="Review the college and conversation filters."
     action={<Link href="/hr/conversations" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/></div>;
  const result=await listHrConversations(context,parsed.data);
  const generalLookup=result.status==="READY"
