@@ -42,7 +42,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
    cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)}
    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Export this history page (CSV)</Link>
   <p className="text-xs text-muted-foreground">Export contains at most 40 authorized changes from this page, not an unrestricted audit archive.</p>
-  {result.items.length===0?<p className="border-b border-border py-5 text-sm text-body">No module override changes have been recorded for this membership.</p>:
+  {result.items.length===0?<p className="border-b border-border py-6 text-sm text-body">No module override changes have been recorded for this membership.</p>:
    <ol className="min-w-0 space-y-3">{result.items.map(item=><li key={item.id} className="border-b border-border py-4 last:border-b-0">
     <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.module}</h2>
     <p className="mt-2 text-sm text-body">{item.change}</p>

@@ -167,7 +167,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">← {college.name} access hierarchy</Link>}
       />
 
-      <section className="min-w-0 space-y-4 border-t border-border pt-5">
+      <section className="min-w-0 space-y-4 border-t border-border pt-6">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Find a learner
@@ -311,7 +311,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           className="min-w-0 space-y-6"
           aria-label="Selected learner module access"
         >
-          <div className="border-b border-border pb-5">
+          <div className="border-b border-border pb-6">
             <h2 className="m-0 text-xl font-semibold text-foreground">
               Why this learner sees these modules
             </h2>
@@ -336,7 +336,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
           </div>
 
-          <section aria-label="Placement cell decision" className="border-t border-border pt-5">
+          <section aria-label="Placement cell decision" className="border-t border-border pt-6">
             <h3 className="font-semibold text-foreground">Placement cell decision</h3>
             <p className="mt-2 text-sm text-body">{
               selected.placementParticipation.status==="NOT_DECIDED"?"Not decided yet":
@@ -374,7 +374,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Inspect membership overrides and locks →
           </Link>
-          <section className="min-w-0 border-t border-border pt-5" aria-label="Student overrides and locks">
+          <section className="min-w-0 border-t border-border pt-6" aria-label="Student overrides and locks">
             <h3 className="text-base font-semibold text-foreground">Student overrides and locks</h3>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
             <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-3">
@@ -393,7 +393,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           {selected.modules.map((module) => (
             <article
               key={module.module}
-              className="min-w-0 space-y-4 border-t border-border pt-5"
+              className="min-w-0 space-y-4 border-t border-border pt-6"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -454,7 +454,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </p>
         </section>
       ) : (
-        <section className="border-t border-border pt-5">
+        <section className="border-t border-border pt-6">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Select a learner to explain access
           </h2>
