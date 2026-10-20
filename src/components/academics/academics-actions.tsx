@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -83,6 +84,7 @@ export function ProgramActions({
   displayDurationYears = false,
   contents,
   departments = [],
+  compactActions = false,
 }: {
   program: {
     id: string;
@@ -92,6 +94,7 @@ export function ProgramActions({
     departmentId?: string;
   };
   displayDurationYears?: boolean;
+  compactActions?: boolean;
   departments?: readonly {id:string;name:string}[];
   contents?: { semesters: number; batches: number; classes: number } | null;
 }) {
@@ -139,7 +142,19 @@ export function ProgramActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] md:justify-end">
+      {compactActions ? (
+        <div className="flex min-w-0 justify-end">
+          <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+            <Menu>
+              <MenuItem onClick={openEdit}>Edit</MenuItem>
+              <MenuItem disabled={programHasLinkedRecords}
+                title={programHasLinkedRecords ? "Remove linked semesters, batches, classes before deleting." : "Archive this program"}
+                onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
+            </Menu>
+          </Dropdown>
+        </div>
+      ) : (
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="md"
          
@@ -161,6 +176,7 @@ export function ProgramActions({
           Archive
         </Button>
       </div>
+      )}
 
       <Dialog
         open={editOpen}
@@ -520,6 +536,7 @@ export function AcademicPeriodActions({
 export function CohortActions({
   cohort,
   periods,
+  compactActions = false,
 }: {
   cohort: {
     id: string;
@@ -537,6 +554,7 @@ export function CohortActions({
     name: string;
     code: string;
   }[];
+  compactActions?: boolean;
 }) {
   const [editOpen, setEditOpen] =
     useState(false);
@@ -570,7 +588,20 @@ export function CohortActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] md:justify-end">
+      {compactActions && cohort.status === "PLANNED" ? (
+        <div className="flex min-w-0 justify-end">
+          <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+            <Menu>
+              <MenuItem onClick={openEdit}>Edit</MenuItem>
+              <MenuItem disabled={pending} onClick={() =>
+                run(() => mutate("/api/academics/cohorts/" + cohort.id, "PATCH", { action: "ACTIVATE" }), "Cohort activated")
+              }>Activate</MenuItem>
+              <MenuItem onClick={() => setConfirmAction("ARCHIVE")}>Archive</MenuItem>
+            </Menu>
+          </Dropdown>
+        </div>
+      ) : (
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         {cohort.status === "PLANNED" ? (
           <>
             <Button
@@ -626,6 +657,7 @@ export function CohortActions({
           </Button>
         )}
       </div>
+      )}
 
       <Dialog
         open={editOpen}
@@ -767,6 +799,7 @@ export function CohortActions({
 export function SectionActions({
   section,
   operationsHref,
+  compactActions = false,
 }: {
   section: {
     id: string;
@@ -775,6 +808,7 @@ export function SectionActions({
     capacity: number | null;
   };
   operationsHref: string;
+  compactActions?: boolean;
 }) {
   const [editOpen, setEditOpen] =
     useState(false);
@@ -806,7 +840,23 @@ export function SectionActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] md:justify-end">
+      {compactActions ? (
+        <div className="flex min-w-0 flex-nowrap items-center justify-end gap-[var(--lms-space-2)]">
+        <Link
+          href={operationsHref}
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+        >
+          Open
+        </Link>
+          <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+            <Menu>
+              <MenuItem onClick={openEdit}>Edit</MenuItem>
+              <MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
+            </Menu>
+          </Dropdown>
+        </div>
+      ) : (
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Link
           href={operationsHref}
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
@@ -824,6 +874,7 @@ export function SectionActions({
           </div>
         </Dropdown>
       </div>
+      )}
 
       <Dialog
         open={editOpen}
