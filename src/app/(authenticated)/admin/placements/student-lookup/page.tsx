@@ -48,7 +48,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
   {!ctx.adminScope?.collegeId?<div id="placement-student-scope-hint" role="status">
    <EmptyState title="Select a college to continue" description="Choose a college in the header above to look up student placements."/>
   </div>:null}
-  {data&&!data.students.length?<EmptyState title="No matching college students." description="Name, roll number or email" />:null}
+  {data&&!data.students.length?<EmptyState title="No matching students" description="No students in the selected college match this name, roll number or email." />:null}
   {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-4 last:border-0">
    <div className="flex flex-wrap items-center justify-between gap-2">
     <div><h2 className="font-semibold text-[var(--lms-heading)]">{person.name??person.roll??"Student"}</h2>
@@ -65,7 +65,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
       {key:"offer",header:"Offer",mobilePriority:"secondary",cell:row=>row.offerStatus?<StatusBadge tone={row.offerStatus==="ACCEPTED"?"success":row.offerStatus==="DECLINED"?"error":"info"}>{row.offerStatus}</StatusBadge>:"None"},
       {key:"joining",header:"Joining",mobilePriority:"secondary",cell:row=>row.joining??"Not recorded"},
     ]}
-    empty={<EmptyState title="No applications found" description="No applications found."/>}
+    empty={<EmptyState title="No applications found" description="No placement applications are recorded for this student."/>}
    />
    {person.truncated?<p className="text-xs text-muted-foreground">Showing newest 100 application/offer records.</p>:null}
   </section>)}
