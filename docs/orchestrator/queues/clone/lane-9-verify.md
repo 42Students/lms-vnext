@@ -50,8 +50,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/ui/date-range-picker.tsx`
 - [x] `src/components/ui/long-text.tsx`
 - [x] `src/components/ui/permission-action.tsx`
-- [ ] `src/app/(authenticated)/teacher/error.tsx`
-- [ ] `src/app/(authenticated)/admin/layout.tsx`
-- [ ] `src/app/(authenticated)/hr/error.tsx`
-- [ ] `src/app/(authenticated)/teach/layout.tsx`
-- [ ] `src/app/(authenticated)/hr/layout.tsx`
+- [x] `src/app/(authenticated)/teacher/error.tsx`
+- [x] `src/app/(authenticated)/admin/layout.tsx`
+- [x] `src/app/(authenticated)/hr/error.tsx`
+- [x] `src/app/(authenticated)/teach/layout.tsx`
+- [x] `src/app/(authenticated)/hr/layout.tsx`
