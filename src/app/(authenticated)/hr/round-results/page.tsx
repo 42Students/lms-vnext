@@ -22,7 +22,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    roundId:raw.roundId||undefined,outcome:raw.outcome||undefined});
  if(!query.success) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Round Results" />
    <ErrorState title="Invalid round filters" description="Choose a valid hiring drive, round and outcome filter."
-    action={<Link href="/hr/round-results" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
+    action={<Link href="/hr/round-results" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
  if(!query.data.jobId) {
    const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(item=>item.job.archivedAt===null);
    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Round Results"

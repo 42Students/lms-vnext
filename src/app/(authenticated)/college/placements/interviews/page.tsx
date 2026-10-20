@@ -104,7 +104,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       rows={data.rows} getRowKey={row=>row.id}
       empty={<EmptyState title="No matching interviews" description="No interviews match these filters."/>} />
    </section>
-   <nav aria-label="Interview result pages" className="flex gap-4 text-sm">
+   <nav aria-label="Interview result pages" className="flex min-w-0 flex-wrap items-center gap-4 text-sm">
     {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-h-11 md:min-h-9 inline-flex items-center">Previous</Link>:null}
     <span>Page {valid.data.page} of {data.pageCount}</span>
     {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-h-11 md:min-h-9 inline-flex items-center">Next</Link>:null}

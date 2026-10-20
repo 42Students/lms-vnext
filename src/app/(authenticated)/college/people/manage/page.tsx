@@ -81,11 +81,11 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />
     <section className="pt-4" aria-label="People filters">
       <form action="/college/people/manage" method="get" role="search" className="flex flex-wrap items-end gap-3">
-        <label className="grid min-w-44 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email or phone
+        <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-44 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email or phone
           <Input name="q" type="search" maxLength={100} defaultValue={filter.q}
             />
         </label>
-        <label className="grid min-w-36 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+        <label className="grid min-w-0 w-full gap-[6px] md:w-auto md:min-w-36 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
           <Select name="role" defaultValue={filter.role}
            >
             <option value="ALL">All roles</option>
@@ -96,7 +96,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
             <option value="TPO">TPO</option>
           </Select>
         </label>
-        <label className="grid min-w-36 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
+        <label className="grid min-w-0 w-full gap-[6px] md:w-auto md:min-w-36 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
           <Select name="status" defaultValue={filter.status}
            >
             <option value="ALL">All statuses</option>

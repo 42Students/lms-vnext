@@ -43,46 +43,46 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-13.md: file, number of 
 - [x] `src/app/(authenticated)/college/companies/page.tsx`
 - [x] `src/app/(authenticated)/college/contacts/page.tsx`
 - [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/page.tsx`
-- [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
-- [ ] `src/app/(authenticated)/hr/activity/page.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/hr/home/page.tsx`
-- [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/round-results/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/verification/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/activity/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/page.tsx`
+- [x] `src/app/(authenticated)/college/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [x] `src/app/(authenticated)/hr/activity/page.tsx`
+- [x] `src/app/(authenticated)/hr/calendar/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/reports/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/hr/home/page.tsx`
+- [x] `src/app/(authenticated)/hr/notifications/page.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/round-results/page.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/page.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/page.tsx`
+- [x] `src/app/(authenticated)/mentor/calendar/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
