@@ -31,7 +31,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       description="College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure."
       actions={<div className="flex flex-wrap gap-3">
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Lifecycle audit</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Lifecycle audit</Link>
         <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
         <PageBackLink href="/college/faculty" label="Back to faculty"/>
       </div>} />
@@ -84,7 +84,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             columns={[
               { key: "course", header: "Course", mobilePriority: "primary",
                 cell: item => <Link href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-                  className="font-semibold text-link hover:underline">
+                  className="font-semibold text-link hover:underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                   {item.courseName} ({item.courseCode})
                 </Link> },
               { key: "class", header: "Class / cohort", mobilePriority: "secondary",
