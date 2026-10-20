@@ -31,6 +31,7 @@ export default async function MentorProjectTimelinePage({
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,
   );
+  const filtered=data.query.releaseStatus!=="ALL"||data.query.sprintStatus!=="ALL";
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Release & Sprint timeline"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
@@ -58,7 +59,7 @@ export default async function MentorProjectTimelinePage({
         {data.total} registered release{data.total===1?"":"s"} match.
       </p>
       {data.items.length===0?<EmptyState title="No matching registered releases"
-        description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed." action={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Sprint workspace</Link>}/>
+        description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed." action={filtered?<Link href={mentorTimelineHref({...data.query,releaseStatus:"ALL",sprintStatus:"ALL",page:1})} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>:<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Sprint workspace</Link>}/>
       :<Timeline aria-label="Registered releases">
         {data.items.map(release=><TimelineEntry key={release.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">
