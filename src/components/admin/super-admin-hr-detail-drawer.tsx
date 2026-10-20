@@ -114,7 +114,7 @@ export function SuperAdminHrDetailDrawer({
       }
       description="Recruiter identity, company, college access and account security."
       footer={
-        <>
+        <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           {account ? (
             <Button className="min-h-11 md:min-h-9"
               variant="secondary"
@@ -131,7 +131,7 @@ export function SuperAdminHrDetailDrawer({
           >
             Close
           </Button>
-        </>
+        </div>
       }
     >
       {loading ? (
@@ -155,13 +155,11 @@ export function SuperAdminHrDetailDrawer({
           description="Select a recruiter from the accounts table."
         />
       ) : (
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-[var(--lms-space-4)]">
           <section className="border-b border-border pb-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h3 className="m-0 text-base font-semibold text-foreground">
-                  {hrDisplayName(account)}
-                </h3>
+                
                 <p className="mt-1 text-sm text-muted-foreground">
                   {account.title || "No job title"}
                 </p>
@@ -178,7 +176,7 @@ export function SuperAdminHrDetailDrawer({
                 <dt className="text-xs font-semibold text-muted-foreground">
                   Mobile
                 </dt>
-                <dd className="mt-1 break-all text-body">
+                <dd className="mt-1 break-words [overflow-wrap:anywhere] text-body">
                   {account.phoneE164 || "Not provided"}
                 </dd>
               </div>
@@ -187,7 +185,7 @@ export function SuperAdminHrDetailDrawer({
                 <dt className="text-xs font-semibold text-muted-foreground">
                   Email
                 </dt>
-                <dd className="mt-1 break-all text-body">
+                <dd className="mt-1 break-words [overflow-wrap:anywhere] text-body">
                   {account.email || "Not provided"}
                 </dd>
               </div>
@@ -253,10 +251,8 @@ export function SuperAdminHrDetailDrawer({
             )}
 
             {account.status === "ACTIVE" ? (
-              <div className="mt-5 border-t border-border pt-4">
-                <h4 className="m-0 text-sm font-semibold text-foreground">
-                  Add a college
-                </h4>
+              <details className="group mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
+                <summary className="min-h-11 cursor-pointer text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Add a college</summary>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
                   Only active relationships for{" "}
                   {account.companyName} are eligible.
@@ -264,7 +260,7 @@ export function SuperAdminHrDetailDrawer({
 
                 <label
                   htmlFor={`${id}-grant`}
-                  className="mb-1.5 mt-3 block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"
+                  className="mb-[6px] mt-[var(--lms-space-3)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"
                 >
                   College
                 </label>
@@ -297,7 +293,7 @@ export function SuperAdminHrDetailDrawer({
                   )}
                 </Select>
 
-                <label className="mb-1.5 mt-3 block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
+                <label className="mb-[6px] mt-[var(--lms-space-3)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
                  Until (optional)
                  <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
                   className="mt-1 min-h-11 w-full md:min-h-9"/>
@@ -341,7 +337,7 @@ export function SuperAdminHrDetailDrawer({
                 ) : null}
 
                 <Button
-                  className="mt-3 min-h-11 md:min-h-9"
+                  className="mt-[var(--lms-space-3)] min-h-11 w-full md:min-h-9 md:w-auto"
                   disabled={
                     pending ||
                     optionsLoading ||
@@ -358,7 +354,7 @@ export function SuperAdminHrDetailDrawer({
                 >
                   {pending ? "Working…" : "Grant access"}
                 </Button>
-              </div>
+              </details>
             ) : (
               <p className="mt-4 text-xs leading-5 text-muted-foreground">
                 This recruiter is not active. Restore
