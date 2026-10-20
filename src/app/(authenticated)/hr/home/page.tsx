@@ -57,14 +57,14 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Today" description={"College access for " + recruiter.companyName} />
     {visible.length === 0 ? <EmptyState title="Open this on your college&apos;s placement address" description="Your recruiter account works inside one college&apos;s placement site. Ask the placement cell that invited you to restore access." /> :
-    <section className="grid gap-3 md:grid-cols-2">{visible.map(grant => {
+    <section className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2">{visible.map(grant => {
       const detail=byId.get(grant.id)!;
-      return <article key={grant.id} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5">
+      return <article key={grant.id} className="space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
         <h2 className="font-semibold text-foreground">{detail.collegeName}</h2>
         {detail.collegeCode?<p className="text-xs text-muted-foreground">College code: {detail.collegeCode}</p>:null}
         <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST)</p>
         <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Open recruiter Today
         </Link>
       </article>;
@@ -131,7 +131,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <PageHeader title={greeting.title}
       description={greeting.subtitle}
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedId})}
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Request a drive
       </Link>} />
     <HrUnsentDriveAlert collegeId={selectedId}
@@ -149,18 +149,18 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <p className="font-semibold">Drive summary is partially unavailable.</p>
       <p className="mt-1">Your available drive information is shown below. Some notifications or calendar events may be missing.</p>
       <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
-        className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>
+        className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>
     </Alert>:null}
     <section aria-label="Recruiter tasks" className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border md:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
       <Link key={action.label} href={action.url} className="border-b border-border p-5 last:border-b-0 hover:bg-primary-subtle md:border-b-0 md:border-r md:last:border-r-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
     <section aria-label="Next recruiter actions" className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 md:p-5">
-      <h2 className="text-lg font-semibold text-foreground">Next up</h2>
+      <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Next up</h2>
       <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
-      {actionQueue.length ? <ul className="grid gap-3 md:grid-cols-2">
+      {actionQueue.length ? <ul className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2">
         {actionQueue.map(task => <li key={task.key}>
-          <Link href={task.href} className="block min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 md:min-h-9">
+          <Link href={task.href} className="block min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 min-[768px]:min-h-9">
             <span className="inline-flex items-center gap-2 text-xs font-semibold text-body">
               <Badge tone={task.tone==="URGENT"?"error":task.tone==="SOON"?"warning":"info"}>
                 {task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
@@ -185,7 +185,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <li>Applicants show up here; you review them one by one and send results to the placement cell.</li>
           </ol>
           <Link href={recruiterDriveDraftHref({collegeId:selectedId})}
-            className="mt-4 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="mt-4 inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Request your first drive
           </Link>
         </div>
@@ -203,7 +203,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </div>
       {weekEvents.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {weekEvents.map(item=><li key={item.id}>
-          <Link href={item.href} className="block rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 md:min-h-9">
+          <Link href={item.href} className="block rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 min-[768px]:min-h-9">
             <span className="block text-xs font-semibold text-muted-foreground">{item.kind.replaceAll("_"," ")}</span>
             <span className="mt-1 block font-semibold text-foreground">{item.title}</span>
             <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
@@ -221,7 +221,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all live drives</Link>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">Applied counts here mean applicants the placement cell has explicitly shared with you; private/unshared submissions are not visible.</p>
-      {liveDrives.length?<div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      {liveDrives.length?<div className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
         {liveDrives.map(row=><Link key={row.job.id}
           href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -280,7 +280,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </p>
       {conversationSignals?.unread.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {conversationSignals.unread.map(row=><li key={row.id}>
-          <Link href={row.href} className="block rounded-[var(--lms-control-radius)] border border-border p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 md:min-h-9">
+          <Link href={row.href} className="block rounded-[var(--lms-control-radius)] border border-border p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 min-[768px]:min-h-9">
             <span className="block break-words font-semibold text-primary-text">{row.label}</span>
             <span className="mt-1 block text-sm text-body">{row.unread} unread placement-cell messages</span>
           </Link>
@@ -295,7 +295,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       {waitingRequests.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {waitingRequests.map(request=><li key={request.id}>
           <Link href={"/recruiter/drives/new?collegeId="+encodeURIComponent(selectedId)+(request.status==="SENT_BACK"?"&fix=":"&edit=")+encodeURIComponent(request.id)}
-            className="block rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 md:min-h-9">
+            className="block rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 min-[768px]:min-h-9">
             <span className="block font-semibold">{request.title}</span>
             <span className="mt-1 block text-xs text-body">
               {request.status==="REQUEST"?"Sent for review":"Needs your changes"}
@@ -309,7 +309,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <p className="mt-1 text-sm text-body">These conversations were last updated by you. This does not prove a reply is due.</p>
       {conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {conversationSignals.waiting.map(row=><li key={row.id}>
-          <Link href={row.href} className="block rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 md:min-h-9">
+          <Link href={row.href} className="block rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 min-[768px]:min-h-9">
             {row.label} · Last message from you
           </Link>
         </li>)}
@@ -318,7 +318,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </p>}
       {conversationSignals?.limitedToCurrentPage?<Link
         href={"/hr/conversations?collegeId="+encodeURIComponent(selectedId)}
-        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         View all conversations
       </Link>:null}
     </section>
