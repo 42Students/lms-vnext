@@ -20,10 +20,10 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/hr/colleges/loading.tsx` (own DOM/styles: 0; shared GracefulPageLoading only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
 - [x] `src/app/(authenticated)/hr/colleges/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
 - [ ] `src/app/(authenticated)/hr/company/error.tsx`
-- [ ] `src/app/(authenticated)/hr/company/loading.tsx`
+- [x] `src/app/(authenticated)/hr/company/loading.tsx` (single shared `GracefulPageLoading` only; own JSX DOM/styles: 0; source native/hex/overlay: 0; default/error/loading/mobile/tablet props delegated, N/A locally)
 - [ ] `src/app/(authenticated)/hr/company/page.tsx`
 - [ ] `src/app/(authenticated)/hr/company/reports/error.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/loading.tsx`
+- [x] `src/app/(authenticated)/hr/company/reports/loading.tsx` (single shared `GracefulPageLoading` only; own JSX DOM/styles: 0; source native/hex/overlay: 0; default/error/loading/mobile/tablet props delegated, N/A locally)
 - [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
 - [ ] `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx`
 - [ ] `src/app/(authenticated)/hr/conversations/[threadId]/loading.tsx`
@@ -570,3 +570,9 @@ For each route listed below, complete fetched source shows exactly one shared `G
 - src/app/(authenticated)/hr/calendar/loading.tsx
 - src/app/(authenticated)/hr/colleges/error.tsx
 - src/app/(authenticated)/hr/colleges/loading.tsx
+
+
+### More delegated loading/error route source values — 2 files
+
+- `src/app/(authenticated)/hr/company/loading.tsx`: local value table font/color/padding/border/hover/focus/active/disabled/loading/error/empty/breakpoint = N/A; exact single shared primitive, no own DOM. Legacy references `old-lms-pages.md:6-12`, `components___listing-page-header.scss:131-158`; source native controls, hex, h1, overlay count = 0; JSX unchanged.
+- `src/app/(authenticated)/hr/company/reports/loading.tsx`: local value table font/color/padding/border/hover/focus/active/disabled/loading/error/empty/breakpoint = N/A; exact single shared primitive, no own DOM. Legacy references `old-lms-pages.md:6-12`, `components___listing-page-header.scss:131-158`; source native controls, hex, h1, overlay count = 0; JSX unchanged.
