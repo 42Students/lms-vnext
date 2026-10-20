@@ -60,7 +60,7 @@ export function FacultyProfileTextSection({ section, title, description, fields,
     </div>
     {changed && issue ? <Alert tone="error">Review {title}: {issue}</Alert> : null}
     <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
-      {changed ? <Button variant="secondary" disabled={pending} className="w-full sm:w-auto" onClick={()=>setDiscardOpen(true)}>Discard edits</Button> : null}
+      {changed ? <Button type="button" variant="secondary" disabled={pending} className="w-full sm:w-auto" onClick={()=>setDiscardOpen(true)}>Discard edits</Button> : null}
       <Button type="submit" loading={pending} disabled={!changed||Boolean(issue)} className="w-full sm:w-auto">{pending?"Saving…":"Save "+title}</Button>
     </div>
     <ConfirmDialog open={discardOpen} onOpenChange={next=>{if(!pending)setDiscardOpen(next);}}
