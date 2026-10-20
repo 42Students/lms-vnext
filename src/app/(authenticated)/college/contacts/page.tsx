@@ -13,7 +13,7 @@ import {FilterBar} from "@/components/ui/filter-bar";
 import {Pagination} from "@/components/ui/pagination";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {DataTable} from "@/components/ui/data-table";
-import {Alert} from "@/components/ui/alert";
+import {Banner} from "@/components/ui/banner";
 import {EmptyState} from "@/components/ui/empty-state";
 import {collegeContactPageRoleCounts,activeCollegeContactFilterCount,collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
@@ -46,10 +46,10 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     {value:"FACULTY",label:"Faculty contacts",href:collegeContactsTabHref(filter,"FACULTY")},
     {value:"STUDENT",label:"Student contacts",href:collegeContactsTabHref(filter,"STUDENT")},
    ]}/>
-  {filter.membershipId&&<Alert tone="info" className="flex flex-row flex-wrap items-center gap-3">
-   <span>Showing the bookmarked contact record only.</span>
-   <Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Show matching contact directory</Link>
-  </Alert>}
+  {filter.membershipId&&<Banner tone="info"
+   action={<Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Show matching contact directory</Link>}>
+   Showing the bookmarked contact record only.
+  </Banner>}
   <p role="status" className="text-xs text-muted-foreground">{activeCollegeContactFilterCount(filter)} applied directory filters. Pagination, sort and selected tab are not counted.</p>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
   <FilterBar title="Filters" activeCount={activeCollegeContactFilterCount(filter)}

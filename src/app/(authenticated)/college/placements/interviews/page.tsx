@@ -98,7 +98,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     <p role="status" className="text-sm">{data.total} matching appointments</p>
     
    </div>
-   {data.limited?<p role="status" className="text-sm text-warning-text">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</p>:null}
+   {data.limited?<Banner tone="warning">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</Banner>:null}
    <section aria-label="College interview appointments">
     <DataTable caption="College interview appointments" columns={columns}
       rows={data.rows} getRowKey={row=>row.id}

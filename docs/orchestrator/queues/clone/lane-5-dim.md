@@ -23,26 +23,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-5.md: file, number of i
 - [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
 - [x] `src/app/(authenticated)/authenticated-print.css`
 - [x] `src/app/(authenticated)/college/activity/page.tsx`
-- [ ] `src/app/(authenticated)/college/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/branding/page.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/domains/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/error.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
-- [ ] `src/app/(authenticated)/hr/home/page.tsx`
+- [x] `src/app/(authenticated)/college/announcements/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/college/branding/page.tsx`
+- [x] `src/app/(authenticated)/college/college-profile/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/domains/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/hr/home/page.tsx`
 - [ ] `src/app/(authenticated)/layout.tsx`
 - [ ] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx`
 - [ ] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`

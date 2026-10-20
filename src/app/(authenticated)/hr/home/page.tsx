@@ -153,7 +153,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </Alert>:null}
     <section aria-label="Recruiter tasks" className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">{actions.map(action=>
       <Link key={action.label} href={action.url} className="border-b border-[var(--lms-canvas-border)] p-5 last:border-b-0 hover:bg-primary-subtle min-[768px]:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-        <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
+        <span className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{action.label}</span><span className="mt-2 block text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{action.value}</span>
       </Link>)}</section>
     <section aria-label="Next recruiter actions" className="space-y-3 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 min-[768px]:p-5">
       <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Next up</h2>
@@ -190,10 +190,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           </Link>
         </div>
       ) : (
-        <div role="status" className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface-secondary p-4">
-          <h3 className="font-semibold text-foreground">You are all caught up</h3>
-          <p className="mt-2 text-sm text-body">New applicants, replies and decisions from the placement cell will show up here.</p>
-        </div>
+        <EmptyState title="You are all caught up"
+          description="New applicants, replies and decisions from the placement cell will show up here." />
       )}
     </section>
     <section aria-label="This week" className="border-b border-[var(--lms-canvas-border)] pb-5">
