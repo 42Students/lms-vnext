@@ -359,7 +359,7 @@ export default async function TpoStudentRequestsPage({
                   {formatRequestedAt(request.requestedAt)} IST
                 </time>
                 <Link href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
-                  className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                  className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto sm:justify-start md:min-h-9">
                   Open placement job
                 </Link>
                 {request.status==="PENDING" ? <TpoRequestDecisionControl
