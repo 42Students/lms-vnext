@@ -7,6 +7,7 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Banner } from "@/components/ui/banner";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { ErrorState } from "@/components/ui/error-state";
@@ -29,7 +30,7 @@ export async function ProjectAdminAtRiskPage({
 }: {
   collegeId: string;
   basePath: string;
-  eyebrow: string;
+  eyebrow?: string;
   searchParams: Record<
     string,
     string | string[] | undefined
@@ -88,7 +89,7 @@ export async function ProjectAdminAtRiskPage({
           </FilterChipLink>)}
       </nav>
       <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
-      <ProjectAdminFilters query={query} includeRiskSort />
+      <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort /></FilterBar>
       <ListToolbar label="At-risk workspaces" viewCount={result.total} />
 
       {!result.items.length ? (
