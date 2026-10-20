@@ -131,7 +131,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
-      <form className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <form aria-label="Filter tenant settings" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <label className="grid min-w-48 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Setting or source
           <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 md:min-h-9"/>
         </label>
@@ -141,7 +141,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           </Select>
         </label>
         <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
       </form>
       {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."/> : null}
       <nav
@@ -152,7 +152,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] border-transparent px-3 text-sm font-semibold text-[var(--lms-neutral-400)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary)] focus-visible:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] border-transparent px-3 text-sm font-semibold text-[var(--lms-neutral-400)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary)] focus-visible:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >
             {section.title}
           </a>

@@ -58,7 +58,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
         defaultValue={filter.q} placeholder="Search contacts"
         className="min-h-11 w-full min-w-0 md:min-h-9"/>
     </label>}>
-  <form id="college-contacts-filters" action="/college/contacts" method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
+  <form id="college-contacts-filters" action="/college/contacts" method="get" aria-label="Filter college contacts" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
    <Input type="hidden" name="tab" value={filter.tab}/>
    {filter.membershipId&&<Input type="hidden" name="membershipId" value={filter.membershipId}/>}
 
