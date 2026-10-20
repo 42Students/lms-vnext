@@ -67,7 +67,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       }catch(reason){setError(reason instanceof Error?reason.message:"Registration failed");}
     });
   }
-  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 gap-4 md:grid-cols-2">
+  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 max-w-4xl gap-4 md:grid-cols-2">
     <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">First Name
       <Input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
     </label>
@@ -104,6 +104,9 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
           <option key={p.id} value={p.id}>{p.name} · {p.capacity??"Unlimited"} seats</option>)}
       </Select>
     </label>
+    <details className="group min-w-0 border-t border-border pt-4 md:col-span-2">
+      <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Gender · Date of Birth · Address</summary>
+      <div className="grid min-w-0 gap-4 pt-3 md:grid-cols-2">
     <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
       <Select value={gender} onChange={e=>setGender(e.target.value as typeof gender)} className={field}>
         {["","Male","Female","Other","Prefer not to say"].map(g=><option key={g} value={g}>{g||"Not specified"}</option>)}
@@ -116,8 +119,10 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       <Textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
         className="min-w-0"/>
     </label>
-    <div className="space-y-2 md:col-span-2">
-      <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 md:min-h-9">
+      </div>
+    </details>
+    <div className="sticky bottom-0 z-10 flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 md:col-span-2 md:flex-row md:flex-wrap md:items-center">
+      <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
         {pending?"Registering…":"Register student"}
       </Button>
       {result&&<Alert tone={result.startsWith("Partially")?"warning":"success"}>{result}</Alert>}
