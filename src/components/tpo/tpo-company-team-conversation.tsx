@@ -154,9 +154,9 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   </div>
   {error?<Banner tone="error" action={<Button variant="secondary" type="button" onClick={()=>void load()}>Retry</Button>}>{error}</Banner>:null}
   {!data&&!error?<LoadingState label="Loading company Team conversation…"/>:null}
-  {data?.status==="NOT_REGISTERED"?<p role="status" className="text-sm text-body">
+  {data?.status==="NOT_REGISTERED"?<Banner tone="warning">
     Company Team messages are unavailable until the database migration is registered. No messages have been fabricated.
-  </p>:null}
+  </Banner>:null}
   {data?.status==="READY"?<>
    {data.truncated?<Banner tone="warning">Showing the latest 100 messages. Earlier history remains stored.</Banner>:null}
    {data.messages.some(m=>m.decision&&!m.deletedAt)?<aside aria-label="Pinned company Team decisions"
