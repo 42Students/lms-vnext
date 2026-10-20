@@ -49,35 +49,35 @@ export default async function MentorReviewsPage({
       Projects access is disabled. No project data was loaded.
     </div> : <>
       <form action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Search
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Search
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             placeholder="Project title" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Assigned project
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Assigned project
           <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full border border-[var(--lms-canvas-border)] px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">My Mentor assignment
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">My Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Review order
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Review order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Newest submitted first</option>
             <option value="OLDEST">Oldest submitted first</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Submitted within
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Submitted within
           <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_7_DAYS">Waiting over 7 days</option><option value="OLDER_THAN_30_DAYS">Waiting over 30 days</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Assigned Project lifecycle
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Assigned Project lifecycle
           <Select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All current assignments</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
