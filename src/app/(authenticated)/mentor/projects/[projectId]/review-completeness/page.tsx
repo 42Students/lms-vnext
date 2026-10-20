@@ -46,7 +46,7 @@ export default async function MentorProjectReviewCompletenessPage({
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="min-w-0 break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery version {item.version}</h2>
-            <StatusBadge tone={item.status==="APPROVED"?"success":item.status==="REJECTED"?"warning":"neutral"}>{item.status}</StatusBadge>
+            <StatusBadge tone={item.status==="APPROVED"?"success":item.status==="REJECTED"?"error":"neutral"}>{item.status}</StatusBadge>
           </div>
           <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
             <div><dt className="text-xs text-muted-foreground">Review decision</dt>

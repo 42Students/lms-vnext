@@ -42,36 +42,36 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  {undoable?<Disclosure title="Undo last decision"
     summaryTitle={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}
     className="border-b border-border py-3 [&>summary]:min-h-11 [&>summary]:text-link">
-  <p className="my-2 text-sm text-muted-foreground">Only the latest unreversed batch or learner action can be undone. A newer decision will block this request.</p>
+  <p className="my-2 text-sm text-muted-foreground leading-[22px]">Only the latest unreversed batch or learner action can be undone. A newer decision will block this request.</p>
   <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
  </Disclosure>:null}
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
- {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
+ {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
    className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" data-testid="batch.suggest-do">Do it</Link>
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
-   className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
+   className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
     className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
-  </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
+  </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
    Suggested: remind them to register <Link href="#batch-reminder" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
  {own?<Link href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
    {own.total} {own.total===1?"student is":"students are"} decided individually
    {own.uncertain>0?", "+own.uncertain+" need class review":own.different===0?", all the same as their class or batch":", "+own.different+" differ from their class or batch"} →
-  </Link>:<p role="status" className="text-sm text-body">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
+  </Link>:<p role="status" className="text-sm text-body leading-[22px]">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
  <section aria-label="Whole batch eligibility decision" className="space-y-2 border-b border-border py-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
-    <div><h2 className="font-semibold">Whole batch</h2>
-      <p className="text-sm text-body">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
-      {decision.reason?<p className="text-xs text-muted-foreground">Reason: {decision.reason}</p>:null}
+    <div><h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Whole batch</h2>
+      <p className="text-sm text-body leading-[22px]">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
+      {decision.reason?<p className="text-xs text-muted-foreground leading-5">Reason: {decision.reason}</p>:null}
     </div>
     <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       {lifecycle?.finishedAt?"Review batch decision":"Set batch decision"} →
     </Link>
   </div>
-  {decision.status==="INELIGIBLE"?<p className="text-sm text-warning">The batch is ineligible: {decision.reason??"No reason recorded"}. Classes or students set to Eligible are still in placements.</p>:null}
+  {decision.status==="INELIGIBLE"?<p className="text-sm text-warning leading-[22px]">The batch is ineligible: {decision.reason??"No reason recorded"}. Classes or students set to Eligible are still in placements.</p>:null}
  </section>
  <Badge tone="info" role="status">
   {ready?tpoBatchPlacementState({finishedAt:lifecycle?.finishedAt??null,
@@ -90,8 +90,8 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   expectedVersion:lifecycle.updatedAt.toISOString(),
  }:null}/>:null}
  <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 border-b border-border py-4">
-  <h2 className="font-semibold">Eligibility decisions</h2>
-  <p className="text-sm text-muted-foreground">{summary.complete?
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Eligibility decisions</h2>
+  <p className="text-sm text-muted-foreground leading-[22px]">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
    "Partial snapshot: only the first "+eligibility.limit+" learners were assessed. Do not treat these counts as batch totals."}</p>
   <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
@@ -108,7 +108,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
     segments={[{label:"Eligible",value:summary.eligible,tone:"success"},
       {label:"Ineligible",value:summary.ineligible,tone:"error"},
       {label:"Not decided",value:summary.undecided,tone:"primary"}]} />:null}
-  <p className="text-sm">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
+  <p className="text-sm leading-[22px]">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
   <Link href={"/tpo/batches/"+batchId+"/students"} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open Students</Link>
@@ -116,9 +116,9 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
 
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
   className="scroll-mt-24 space-y-3 border-b border-border py-4 target:animate-pulse">
-  <h2 className="font-semibold">Next step</h2>
-  <h3 className="text-lg font-semibold">{next.title}</h3>
-  <p className="text-sm text-body">{next.detail}</p>
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Next step</h2>
+  <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{next.title}</h3>
+  <p className="text-sm text-body leading-[22px]">{next.detail}</p>
   <div className="flex flex-wrap gap-3">
    <Link href={"/tpo/batches/"+batchId+next.href}
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
@@ -132,6 +132,6 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  </section>
 
 
- <p className="text-sm text-muted-foreground">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
+ <p className="text-sm text-muted-foreground leading-[22px]">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
  </div>;
 }

@@ -29,40 +29,40 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
    actions={<a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary md:min-h-9">
      Download all matching CSV</a>}/>
-  <form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-   <label className="min-w-40 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
+  <form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
+   <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Stage
     <Select name="stage" defaultValue={result.stage} className="w-full mt-[6px] block">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
     </Select></label>
-   <label className="min-w-40 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
+   <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Applicant flags
     <Select name="flag" defaultValue={result.flag} className="w-full mt-[6px] block">
      <option value="ALL">Any flag</option><option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option><option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
-   <label className="min-w-40 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
+   <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Name, roll, branch, batch, email, phone or role
     <Input name="search" defaultValue={result.search} maxLength={100} className="w-full mt-[6px] block"/>
    </label>
-   <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
+   <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Channel
     <Select name="channel" defaultValue={result.channel} className="w-full mt-[6px] block">
      <option value="ALL">All</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
     </Select></label>
-   <label className="min-w-40 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
+   <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Eligibility evidence
     <Select name="eligibility" defaultValue={result.eligibility} className="w-full mt-[6px] block">
      <option value="ALL">All</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · missing evidence</option>
     </Select></label>
-   <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
+   <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Order by
     <Select name="sort" defaultValue={result.sort} className="w-full mt-[6px] block">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
     </Select></label>
-   <label className="min-w-36 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
+   <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Submitted window
     <Select name="submittedWithin" defaultValue={result.submittedWithin} className="w-full mt-[6px] block">
      <option value="ALL">Any date</option><option value="LAST_7_DAYS">Last 7 × 24h</option>
      <option value="LAST_30_DAYS">Last 30 × 24h</option>
     </Select></label>
-   <Button type="submit" >Preview filters</Button>
+   <Button type="submit" className="w-full min-[768px]:w-auto">Preview filters</Button>
   </form>
   <Banner tone="info">
    {result.rows.length} application records shown in this preview.
@@ -75,7 +75,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      <h2 className="font-semibold text-foreground">{row.studentName??"Name unavailable"}</h2>
      <p className="text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
      <p className="text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-     <dl className="mt-3 grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] text-xs text-body min-[768px]:grid-cols-4">
+     <dl className="mt-3 grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] text-xs text-body min-[768px]:grid-cols-4">
       <div><dt>Roll number</dt><dd className="font-semibold text-foreground">{row.rollNumber??"Not recorded"}</dd></div>
       <div><dt>Batch</dt><dd className="font-semibold text-foreground">{row.batchName??"Not recorded"}</dd></div>
       <div><dt>Branch</dt><dd className="font-semibold text-foreground">{row.branchName??"Not recorded"}</dd></div>

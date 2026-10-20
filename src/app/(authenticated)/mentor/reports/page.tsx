@@ -50,7 +50,7 @@ export default async function MentorReportsPage({searchParams}:{
       Projects are disabled for this membership. Project report data was not loaded.
     </section>:<>
       <section aria-label="Project status totals" className="space-y-3">
-        <h2 className="font-semibold">Registered project status</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Registered project status</h2>
         <div className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
           {statusMetrics.map(([label,count])=>
             <article key={label} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
@@ -58,13 +58,13 @@ export default async function MentorReportsPage({searchParams}:{
               <p className="mt-2 text-2xl font-bold tabular-nums">{count}</p>
             </article>)}
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground leading-5">
           {data.projectCount} currently assigned projects; primary Mentor recorded on
           {" "}{data.primaryMentorCount}. These are not learner placement or success rates.
         </p>
       </section>
       <section aria-label="Recorded attention totals" className="space-y-3">
-        <h2 className="font-semibold">Recorded project attention</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recorded project attention</h2>
         <div className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
           {attentionMetrics.map(([label,count])=>
             <article key={label} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
@@ -72,25 +72,25 @@ export default async function MentorReportsPage({searchParams}:{
               <p className="mt-2 text-xl font-bold tabular-nums">{count}</p>
             </article>)}
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground leading-5">
           Each category counts projects with a registered signal, not event volume.
           Stalled means no recently recorded qualifying activity, not a prediction.
         </p>
       </section>
       <FilterBar title="Filters"><form role="search" aria-label="mentor reports filters" method="get" action="/mentor/reports"
         className="flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch border-b border-border pb-4 max-[767px]:[&_label]:w-full">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9"/>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 md:min-h-9">
             {(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attention
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attention
           <Select name="attention" defaultValue={data.query.attention}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All</option>
@@ -101,13 +101,13 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="NONE">No currently recorded attention</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded tasks
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded tasks
           <Select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-11 md:min-h-9">
             <option value="ALL">All tasks</option><option value="NO_TASKS">No tracked tasks</option>
             <option value="OPEN_TASKS">Unfinished tasks</option><option value="ALL_DONE">All registered tasks done</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor assignment
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All assigned projects</option>
@@ -115,7 +115,7 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Report order
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Report order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9">
             <option value="UPDATED">Recently updated</option>
@@ -144,7 +144,7 @@ export default async function MentorReportsPage({searchParams}:{
           CSV omits {data.exportOmitted} matching assigned projects.
         </span>:null}
       </div>
-      <p className="text-sm text-body">{data.total} projects match these filters.</p>
+      <p className="text-sm text-body leading-[22px]">{data.total} projects match these filters.</p>
       {data.items.length===0?<EmptyState title="No assigned projects match"
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
@@ -152,14 +152,14 @@ export default async function MentorReportsPage({searchParams}:{
         <ol aria-label="mentor reports entries" className="grid gap-3 md:grid-cols-2">{data.items.map(project=>
           <li key={project.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="break-words font-semibold text-foreground">{project.title}</h3>
+              <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{project.title}</h3>
               <span className="text-xs font-semibold text-muted-foreground">{project.status}</span>
             </div>
-            <p className="mt-2 text-sm text-body">
+            <p className="mt-2 text-sm text-body leading-[22px]">
               {project.isPrimaryMentor?"Primary Mentor":"Assigned Mentor"}
               {project.attention.length?" · "+project.attention.join(", "):" · No currently recorded attention"}
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">
+            <p className="mt-2 text-xs text-muted-foreground leading-5">
               Project record updated {new Intl.DateTimeFormat("en-IN",{
                 dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
               }).format(project.updatedAt)} IST
@@ -173,7 +173,7 @@ export default async function MentorReportsPage({searchParams}:{
           </li>)}</ol>}
       <Pagination label="Mentor report pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReportsHref({...data.query,page})}/>
     </>}
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       Report counts use registered current assignments and project-attention producers only.
       No learner contact, inferred risk score, velocity or missing historical activity is disclosed.
     </p>

@@ -36,38 +36,38 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
   {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
    Projects access is disabled; resource metadata was not loaded.
   </section>:<>
-   <p className="text-sm text-body">
+   <p className="text-sm text-body leading-[22px]">
     {data.registered} active resource records · {data.requiredCount} required ·
     {" "}{data.linkableCount} with HTTPS links.
    </p>
    <FilterBar title="Filters"><form method="get" action={base+"/resources-directory"} role="search" aria-label="Project resources filters"
     className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title or description
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-11 md:min-h-9"/>
     </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Requirement
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Requirement
      <Select name="required" defaultValue={data.query.required}
       className="min-h-11 md:min-h-9">
       <option value="ALL">All</option><option value="REQUIRED">Required</option>
       <option value="OPTIONAL">Optional</option>
      </Select>
     </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">HTTPS link availability
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">HTTPS link availability
      <Select name="link" defaultValue={data.query.link}
       className="min-h-11 md:min-h-9">
       <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
       <option value="UNAVAILABLE">No safe HTTPS link</option>
      </Select>
     </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description recorded
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description recorded
      <Select name="description" defaultValue={data.query.description}
       className="min-h-11 md:min-h-9">
       <option value="ALL">Any</option><option value="RECORDED">Has a description</option>
       <option value="MISSING">No written description</option>
      </Select>
     </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource order
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource order
      <Select name="order" defaultValue={data.query.order}
       className="min-h-11 md:min-h-9">
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
@@ -86,11 +86,11 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
       download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
      Export resource metadata CSV (max 200)
     </Link>
-    {data.exportOmitted>0?<p role="status" className="text-xs text-body">
+    {data.exportOmitted>0?<p role="status" className="text-xs text-body leading-5">
      Export omits {data.exportOmitted} matching resource records.
     </p>:null}
    </div>
-   <p className="text-sm text-body">{data.total} matching recorded resource{data.total===1?"":"s"}</p>
+   <p className="text-sm text-body leading-[22px]">{data.total} matching recorded resource{data.total===1?"":"s"}</p>
    {data.items.length===0?<EmptyState title="No matching resources"
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":
@@ -99,24 +99,24 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {data.items.map(resource=><li key={resource.id}
      className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
      <div className="flex flex-wrap items-start justify-between gap-2">
-      <h2 className="break-words font-semibold text-foreground">{resource.title}</h2>
+      <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{resource.title}</h2>
       <span className="text-xs font-semibold text-body">
        {resource.required?"Required":"Optional"}
       </span>
      </div>
-     {resource.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
+     {resource.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
       {resource.description}</p>:null}
      {resource.safeUrl?<Link href={resource.safeUrl} target="_blank" rel="noopener noreferrer"
       className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
       Open HTTPS resource
-     </Link>:<p className="mt-2 text-xs text-muted-foreground">
+     </Link>:<p className="mt-2 text-xs text-muted-foreground leading-5">
       No safe HTTPS link recorded.
      </p>}
     </li>)}
    </ol>}
    <Pagination label="Resource directory pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorResourceDirectoryHref({...data.query,page})}/>
   </>}
-  <p className="text-xs text-muted-foreground">
+  <p className="text-xs text-muted-foreground leading-5">
    Only registered resource metadata and explicitly safe HTTPS links are shown.
    No file storage, upload, download proxy, contact details or private URLs
    are added by this directory.

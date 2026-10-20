@@ -49,35 +49,35 @@ export default async function MentorReviewsPage({
       Projects access is disabled. No project data was loaded.
     </div> : <>
       <form role="search" aria-label="mentor reviews filters" action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             placeholder="Project title" className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
           <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9">
             <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review order
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9">
             <option value="NEWEST">Newest submitted first</option>
             <option value="OLDEST">Oldest submitted first</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted within
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted within
           <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9">
             <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_7_DAYS">Waiting over 7 days</option><option value="OLDER_THAN_30_DAYS">Waiting over 30 days</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned Project lifecycle
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned Project lifecycle
           <Select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 md:min-h-9">
             <option value="ALL">All current assignments</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
@@ -95,20 +95,20 @@ export default async function MentorReviewsPage({
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching reviews.</span>:null}
       </div>
-      <p className="text-sm text-body">{data.total} matching review item{data.total === 1 ? "" : "s"}</p>
+      <p className="text-sm text-body leading-[22px]">{data.total} matching review item{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." />
         : <div className="grid">{data.items.map(item =>
           <Link key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             <p className="min-w-0 break-words font-semibold text-link">{item.description}</p>
-            <p className="mt-2 text-xs text-muted-foreground">Submitted: {new Intl.DateTimeFormat("en-IN",{
+            <p className="mt-2 text-xs text-muted-foreground leading-5">Submitted: {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(new Date(item.occurredAt))} IST</p>
-            <p className="mt-2 text-sm font-semibold text-link">Open delivery review →</p>
+            <p className="mt-2 text-sm font-semibold text-link leading-[22px]">Open delivery review →</p>
           </Link>)}</div>}
       <Pagination label="Review queue pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorPortfolioHref("reviews",{...data.query,page})}/>
     </>}
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       Review actions remain in each assigned project&apos;s existing authorized Delivery workspace.
     </p>
   </div>;

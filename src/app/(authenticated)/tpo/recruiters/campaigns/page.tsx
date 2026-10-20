@@ -34,7 +34,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <p className="text-sm text-body">
    To send one, select recruiters in the table and choose Act, then Send an email.
   </p>
-  <form method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+  <form role="search" aria-label="recruiters campaigns filters" method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Purpose
     <Input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
      placeholder="Filter by purpose" className="mt-[6px] block min-h-11 min-[768px]:min-h-9 border border-border px-3"/>
@@ -78,7 +78,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   </section>
   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
-  {result.rows.length ? <ol className="grid gap-3 min-[768px]:grid-cols-2">
+  {result.rows.length ? <ol aria-label="recruiters campaigns entries" className="grid gap-3 min-[768px]:grid-cols-2">
     {result.rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
       <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
