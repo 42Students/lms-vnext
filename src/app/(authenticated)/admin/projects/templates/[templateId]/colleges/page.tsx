@@ -10,6 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import {SuperAdminTemplateCollegeBulk} from "@/components/projects/super-admin-template-college-bulk";
@@ -33,8 +34,12 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   </div>;
   const raw = await searchParams;
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
-  if (!parsed.success) return <ErrorState title="Invalid college filters" description="Review the search, status and page."
-    action={<Link href={templateCollegeAvailabilityHref(id.data, {})}>Clear filters</Link>} />;
+  if (!parsed.success) return <div className="min-w-0 space-y-5">
+    <PageHeader title="College availability" />
+    <ErrorState title="Invalid college filters" description="Review the search, status and page."
+      action={<Link href={templateCollegeAvailabilityHref(id.data,{})}
+        className="font-semibold text-primary-text underline">Clear filters</Link>} />
+  </div>;
   let data;
   try { data = await listSuperAdminTemplateCollegeAvailability(context, id.data, parsed.data); }
   catch (error) {
@@ -54,7 +59,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
       actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">← Template catalogue</Link>} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
-    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
+    <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="w-full" /></label>
       <label className="grid gap-1 text-sm font-semibold text-body">Availability
@@ -67,18 +72,27 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <SuperAdminTemplateCollegeBulk templateId={id.data} published={data.template.status==="PUBLISHED"}
       colleges={data.items.map(row=>({id:row.id,name:row.name,assigned:Boolean(row.assignment),
         canAssign:can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})}))}/>
-    {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-      {data.items.map(row => <article key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="break-words text-base font-semibold text-[var(--lms-heading)]">{row.name}</h2>
-        <p className="text-xs text-muted-foreground">{row.code}</p>
-        <StatusBadge tone={row.assignment ? "success" : "neutral"}>{row.assignment ? "Assigned" : "Not assigned"}</StatusBadge>
-        {row.assignment ? <p className="text-sm text-body">Pinned version {row.assignment.assignedVersion ?? "Unresolved"} ·
-          {" "}{new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(row.assignment.assignedAt)} IST</p> : null}
-        {can(context, "project-template.assign", { collegeId: row.id, organizationId: row.organizationId }) ?
-          <div className="mt-3"><ProjectTemplateActions templateId={id.data} title={data.template.title}
-            status={data.template.status} selectedCollegeId={row.id} assignedToSelectedCollege={Boolean(row.assignment)} allowGlobalActions={false} /></div> : null}
-      </article>)}
-    </div> : <EmptyState title="No matching colleges" description="No active colleges match the filters in the current safety scope." />}
+    <DataTable<(typeof data.items)[number]> caption="Template college availability"
+      rows={data.items} getRowKey={row=>row.id}
+      columns={[
+        {key:"college",header:"College",mobilePriority:"primary",cell:row=><>
+          <span className="break-words font-semibold text-foreground">{row.name}</span>
+          <span className="mt-1 block text-xs text-muted-foreground">{row.code}</span>
+        </>},
+        {key:"availability",header:"Availability",mobilePriority:"secondary",cell:row=>
+          <StatusBadge tone={row.assignment?"success":"neutral"}>{row.assignment?"Assigned":"Not assigned"}</StatusBadge>},
+        {key:"version",header:"Assigned version",mobilePriority:"secondary",cell:row=>row.assignment?
+          <span className="text-sm text-body">Pinned version {row.assignment.assignedVersion??"Unresolved"}</span>:"—"},
+        {key:"assignedAt",header:"Assigned on",mobilePriority:"secondary",cell:row=>row.assignment?
+          new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.assignment.assignedAt)+" IST":"—"},
+        {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>
+          can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})?
+            <ProjectTemplateActions templateId={id.data} title={data.template.title}
+              status={data.template.status} selectedCollegeId={row.id}
+              assignedToSelectedCollege={Boolean(row.assignment)} allowGlobalActions={false}/>:null},
+      ]}
+      empty={<EmptyState title="No matching colleges" description="No active colleges match the filters in the current safety scope."/>}
+    />
     <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateCollegeAvailabilityHref(id.data,{...data.query,page})} label="College availability pages" />
   </div>;
 }
