@@ -391,7 +391,6 @@ export function CreateProjectControl({
       ) : null}
       {standalone ? (
         <section aria-label="Create workspace" className="space-y-5">
-          <h2 className="text-xl font-semibold text-foreground">Create workspace</h2>
           <p className="text-sm text-body">Create an independent Project workspace from a published template assigned to this college.</p>
           {form}
         </section>
