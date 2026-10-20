@@ -263,7 +263,7 @@ export async function PlacementDriveWorkspace({
     : null;
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         eyebrow={eyebrow}
         title={driveDay.job.company.name + " · " + driveDay.job.title}
@@ -272,10 +272,10 @@ export async function PlacementDriveWorkspace({
           " · " + headerFacts.status
         }
         actions={
-          <Dropdown inlineDesktop mobileSheet align="end" label="Drive actions" trigger="Actions" className="w-full md:w-auto">
+          <Dropdown mobileSheet align="end" label="Drive actions" trigger="Actions" className="w-full md:w-auto">
             <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" tabIndex={0}
-              className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-7 md:max-h-none md:flex-row md:flex-wrap md:overflow-visible md:p-0 md:pb-0 md:[mask-image:none]">
+              className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
             {nextStep ? (
               <Link href={nextStep.primary.href}
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[rgba(38,186,199,0.35)] min-[768px]:min-h-[var(--lms-control-height)]">
@@ -443,18 +443,18 @@ export async function PlacementDriveWorkspace({
         </section>
       ):null}
       {nextStep ? (
-        <section aria-label="Next step" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+        <section aria-label="Next step" className="border-b border-border pb-4">
           <h2 className="text-base font-semibold text-foreground">Next step</h2>
           <p className="mt-2 text-sm text-body">{nextStep.primary.description}</p>
           <Link href={nextStep.primary.href}
-            className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">
+            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">
             {nextStep.primary.label}
           </Link>
           {nextStep.more.length > 0 ? (
-            <div className="mt-4 grid gap-2 min-[768px]:grid-cols-3">
+            <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {nextStep.more.map(step => (
                 <Link key={step.href} href={step.href}
-                  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
+                  className="inline-flex min-h-11 min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
                   <span className="block font-semibold">{step.label}</span>
                   <span className="mt-1 block text-xs text-body">{step.description}</span>
                 </Link>
@@ -466,9 +466,9 @@ export async function PlacementDriveWorkspace({
       {journey?<section aria-label="Drive applicant journey" className="border-b border-border pb-6">
         <h2 className="font-semibold text-foreground">Journey</h2>
         <p className="mt-1 text-xs text-body">{journey.definition}</p>
-        <div className="mt-4 grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border min-[768px]:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 xl:grid-cols-6">
           {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
-            className="border-b border-border p-3 text-foreground hover:bg-primary-subtle min-[768px]:border-r min-[768px]:border-b-0 min-[768px]:last:border-r-0">
+            className="min-w-0 border-b border-r border-border p-3 text-foreground hover:bg-primary-subtle even:border-r-0 md:even:border-r xl:border-b-0 xl:last:border-r-0">
             <span className="block text-xs text-body">{stage.name}</span>
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
           </Link>)}
@@ -479,7 +479,7 @@ export async function PlacementDriveWorkspace({
         <section aria-label="Round journey" className="border-b border-border pb-6">
           <h2 className="text-base font-semibold text-foreground">Rounds</h2>
           <p className="mt-1 text-sm text-body">Round status, schedule and outcome progress. Open a round to see who has reached it.</p>
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
+          <div className="mt-3 divide-y divide-border">
             {driveDay.rounds.map(round => {
               const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
               const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
@@ -487,7 +487,7 @@ export async function PlacementDriveWorkspace({
                 row.request.status==="PENDING"&&row.request.requestType==="ROUND_RESCHEDULE"&&
                 row.request.roundId===round.id).length;
               return (
-                <article key={round.id} className="border-b border-border py-4">
+                <article key={round.id} className="min-w-0 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
                     <span className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>
@@ -529,8 +529,8 @@ export async function PlacementDriveWorkspace({
         </section>
       ) : null}
       {isTpo && driveDay.rounds.length>0 ? (
-        <section aria-label="Round result entry" className="border-b border-border pb-6">
-          <h2 className="font-semibold text-foreground">Enter round results</h2>
+        <details className="group min-w-0 border-b border-border pb-4">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Enter round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
           <div className="mt-3 flex flex-wrap gap-2">
             {driveDay.rounds.filter(round=>round.kind!=="TALK").map(round=>
               <Link key={round.id}
@@ -539,7 +539,7 @@ export async function PlacementDriveWorkspace({
                 {round.name}
               </Link>)}
           </div>
-        </section>
+        </details>
       ) : null}
       {isTpo ? (
         <section
@@ -763,9 +763,12 @@ export async function PlacementDriveWorkspace({
             | "DRAFT" | "PUBLISHED" | "CLOSED" | "ARCHIVED"}
         />
       )}
-      <PlacementDriveDayOverview
-        driveDay={driveDay}
-      />
+      <details className="group min-w-0 border-b border-border pb-4">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+          Drive day overview <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
+        </summary>
+        <div className="pt-3"><PlacementDriveDayOverview driveDay={driveDay} embedded /></div>
+      </details>
       {roundOrder?<TpoRoundReorder jobId={jobId} readiness={roundOrder}/>:null}
       <section id="drive-round-actions">
       <PlacementDriveControls

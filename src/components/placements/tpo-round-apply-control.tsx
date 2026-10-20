@@ -39,13 +39,13 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    setReport(value);setPreview(null);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Results could not be applied");}finally{setBusy(false);}
  }
- return <section className="space-y-3 border-b border-border pb-6">
+ return <section className="min-w-0 space-y-3 border-b border-border pb-4">
   <h2 className="font-semibold text-foreground">Apply results for the whole round</h2>
   <p className="text-sm text-body">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void load()}
    >
    {busy?"Working…":"Preview applying round results"}</Button>
-  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+  {preview?<div role="region" aria-label="Round application preview" className="min-w-0 space-y-3 border-t border-border pt-3>
    <h3 className="font-semibold">Consequence preview</h3>
    <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
    <dl className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface text-sm sm:grid-cols-4">
@@ -54,8 +54,8 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
     <div className="p-3"><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
-   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border px-2">
-    {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm last:border-b-0">
+   <div className="max-h-60 min-w-0 overflow-y-auto border-y border-border px-2">
+    {preview.rows.map(r=><div key={r.resultId} className="flex min-w-0 flex-col gap-1 border-b border-border px-2 py-2 text-sm last:border-b-0 sm:flex-row sm:justify-between sm:gap-2">
      <span>{r.student}</span><span>{r.outcome} → {r.destination} · {r.status}</span>
     </div>)}
    </div>
@@ -68,7 +68,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    {!preview.ready?<Alert tone="warning">Complete this evaluation round before applying results.</Alert>:null}
    <div className="flex flex-wrap gap-3">
     <Button variant="primary" type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+     className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
      Confirm and apply {preview.staged} result(s)</Button>
     <Button variant="secondary" type="button" disabled={busy} onClick={()=>setPreview(null)}
      >Not yet</Button>
