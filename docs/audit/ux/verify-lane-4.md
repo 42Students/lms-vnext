@@ -124,3 +124,23 @@
 - Regressions found/fixed: 1 — the All time preset explicitly sets `range=ALL`, but Load more omitted that parameter and silently reverted older pages to the 30-day default. Preserve it in the pagination URL after cloning `exportParams`, so the strict export route does not receive the UI-only flag. Reviewed the full page, route error/loading, authenticated layout, lane-14 polish proof, ActivityCenter/Disclosure, DateInput/CalendarGrid/Popover, Select/Input/Button/PageHeader, permission-gated query service and sanitized event metadata. No missing imports, dropped ARIA props, duplicated attributes or broken JSX identified by source review.
 - Extra clutter/alignment: 2 — audit-findings tertiary link and Reset now use a subtle legacy hover rather than primary-button fill; retained exact link labels, destinations, filters, shortcut IDs, click targets and other lane tokens.
 - Files changed: `src/app/(authenticated)/activity/page.tsx`. Static source inspection only; no runtime, typecheck, tests or CI.
+
+## 26. `src/app/(authenticated)/college-admin/departments/page.tsx`
+- Regressions found/fixed: 0. Read role-aware redirect, legacyDepartmentDestination's active-membership and COLLEGE_ADMIN guard, route loading/error, alias layout and not-found, authenticated shell canvas, ErrorState, GracefulPageLoading, Button, and lane-14 polish evidence. No missing imports, broken tags or changed target; no local editor is rendered.
+- Extra clutter/alignment: 0. One bounded canvas and phone-width retry remain consistent with the legacy fallback.
+- Files changed: verified, no change. Source only; no runtime or CI.
+
+## 27. `src/app/(authenticated)/college-admin/programs/page.tsx`
+- Regressions found/fixed: 0. Read route redirect, loading/error, alias and authenticated layouts, shared fallbacks, same legacy role resolver and lane-14 polish evidence. Destination still derives exclusively from authorized request context; no copy, field or label drift.
+- Extra clutter/alignment: 0. Loading and retry remain single-canvas and phone safe; redirect renders no redundant UI.
+- Files changed: verified, no change. Source only; no runtime or CI.
+
+## 28. `src/app/(authenticated)/dashboard/page.tsx`
+- Regressions found/fixed: 0. Read all role branches, page loading/error, authenticated canvas, lane-14 polish proof, MetricCard, CollegeAtGlancePanel/StatTile, SuperAdminTodayBoard, dashboard quick actions, MembershipChooser/Radio, workspace model, EmptyState and PageHeader. Props/exports, protected links, membership selection, request context and scope guards are consistent; no broken JSX or copied labels detected.
+- Extra clutter/alignment: 0. Setup and lower-priority scope material remain behind disclosure; metric tiles wrap safely at 375/768.
+- Files changed: verified, no change. Static only; no runtime or CI.
+
+## 29. `src/app/(authenticated)/notifications/page.tsx`
+- Regressions found/fixed: 0. Read page/loading/error, authenticated shell, lane-14 proof, NotificationList/read API wiring, NotificationToolbar/mark-all confirmation, Alert, Button and GracefulErrorBoundary; invalid cursor recovery, All/Unread tab query and next-page cursor preserve contracts. No invalid JSX/import/prop regression observed.
+- Extra clutter/alignment: 0. Day headers, stacked phone action row, clear empty action and single older-notifications link have consistent legacy density.
+- Files changed: verified, no change. Source only; no runtime or CI.
