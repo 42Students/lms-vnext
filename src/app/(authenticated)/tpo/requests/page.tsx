@@ -1,4 +1,5 @@
 import { Select } from "@/components/ui/select";
+import { Disclosure } from "@/components/ui/disclosure";
 import {Checkbox} from "@/components/ui/checkbox";
 import {FilterChipLink} from "@/components/ui/filter-chip";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -11,7 +12,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
-import { Alert } from "@/components/ui/alert";
+import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import {TpoRequestBulkDecision} from "@/components/placements/tpo-request-bulk-decision";
@@ -57,13 +58,8 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   if(!parsed.success)return <div className="min-w-0 space-y-5">
     <PageHeader title="Requests"
       description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first."/>
-    <Alert tone="error">
-      <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Invalid request filters</h2>
-      <p className="mt-2 text-sm text-body">Check the request status, kind, age, sorting and page values. No request data was loaded.</p>
-      <Link href="/tpo/requests" className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
-        Clear invalid filters
-      </Link>
-    </Alert>
+    <ErrorState title="Invalid request filters" description="Check the request status, kind, age, sorting and page values. No request data was loaded."
+      action={<Link href="/tpo/requests" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Clear invalid filters</Link>}/>
   </div>;
   const [data,jobChoices]=await Promise.all([
     getTpoGlobalRequestsInbox(context, parsed.data),
@@ -86,23 +82,28 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         selected={data.query.status==="ALL"&&data.query.age==="ALL"}
         >All history</FilterChipLink>
     </nav>
+    <Disclosure title="More request statuses" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]">
     <nav aria-label="Request statuses" className="flex min-w-0 flex-wrap items-center gap-2">
       {TPO_REQUEST_STATUSES.map(status=>
         <FilterChipLink key={status} href={href({...data.query,status,page:1})} selected={data.query.status===status}
           >{status==="PENDING"?"Waiting":status.charAt(0)+status.slice(1).toLowerCase()} · {statusCounts[status]}</FilterChipLink>)}
     </nav>
-    <form method="get" action="/tpo/requests" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] py-4 max-[767px]:flex-col max-[767px]:items-stretch">
+    </Disclosure>
+    <form method="get" action="/tpo/requests" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_auto]">
       <Input type="hidden" name="status" value={data.query.status}/>
       <label className="flex min-h-11 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:min-h-9"><Checkbox name="urgentOnly" value="true" defaultChecked={data.query.urgentOnly===true}/> Urgent only</label>
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student number, student, job or company
+        <Input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9" />
+      </label>
+      <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Apply</Button>
+      <Disclosure title="Advanced request filters" className="min-w-0 min-[768px]:col-span-2" contentClassName="min-w-0 pt-[var(--lms-space-3)]">
+        <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind<Select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</Select></label>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive<Select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9">
        <option value="">All drives</option>
        {data.query.jobId&&!jobChoices.some(row=>row.job.id===data.query.jobId)?<option value={data.query.jobId}>Previously selected drive</option>:null}
        {jobChoices.map(row=><option value={row.job.id} key={row.job.id}>{row.company.name} · {row.job.title}</option>)}
       </Select></label>
-      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student number, student, job or company
-        <Input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9" />
-      </label>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Page size
         <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9">
           <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="500">500</option>
@@ -110,10 +111,10 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       </label>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Age<Select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order<Select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 w-full min-[768px]:min-h-9"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></Select></label>
-      <Button type="submit" >Apply</Button>
+        </div>
+      </Disclosure>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Clear search, age and drive filters</Link>
     </form>
-    {(await placementTableExists("placement_learner_general_requests"))?<TpoGeneralRequestsPanel/>:null}
     <section aria-label="Needs doing first" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
      <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Needs doing first</h2>
      <p className="text-[14px] leading-5 text-[var(--lms-body-text)]">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
@@ -126,26 +127,6 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
     </section>
-    {data.query.status==="PENDING"?<TpoRequestBulkDecision rows={data.requests.filter(row=>row.status==="PENDING").map(row=>({
-      id:row.id,studentName:row.studentName,requestType:row.requestType,
-      expectedUpdatedAt:row.updatedAt.toISOString(),
-    }))}/>:null}
-    {data.query.status==="PENDING"?<TpoSequentialRequestReview
-      requests={data.requests.filter(row=>row.status==="PENDING").map(row=>({
-        id:row.id,studentName:row.studentName,requestType:row.requestType,
-        reason:row.reason,jobTitle:row.jobTitle,companyName:row.companyName,
-        expectedUpdatedAt:row.updatedAt.toISOString(),
-      }))}/>:null}
-    {data.query.status==="PENDING"?<TpoStudentNudgePanel
-      rows={Array.from(new Map(data.requests.filter(row=>row.status==="PENDING")
-        .map(row=>[row.membershipId,{id:row.membershipId,label:row.studentName,registered:null}])).values())}
-    />:null}
-    <TpoRequestPageClipboard rows={data.requests.map(row=>({
-      id:row.id,student:row.studentName,number:row.rollNumber,
-      kind:row.requestType,company:row.companyName,asked:row.requestedAt.toISOString(),
-      status:row.status,decided:row.decidedAt?.toISOString()??null,
-    }))}/>
-    <TpoSafeCsvDownload href={tpoRequestsExportHref(data.query)} filename="tpo-requests.csv" label="Export filtered requests CSV" />
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<EmptyState
       title={data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you.":"No requests in this period."}
@@ -178,6 +159,33 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         </div>
       </li>)}</ul>}
     <Pagination label="Request pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>href({...data.query,page})}/>
+    <Disclosure title="Review tools" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
+    {data.query.status==="PENDING"?<TpoRequestBulkDecision rows={data.requests.filter(row=>row.status==="PENDING").map(row=>({
+      id:row.id,studentName:row.studentName,requestType:row.requestType,
+      expectedUpdatedAt:row.updatedAt.toISOString(),
+    }))}/>:null}
+    {data.query.status==="PENDING"?<TpoSequentialRequestReview
+      requests={data.requests.filter(row=>row.status==="PENDING").map(row=>({
+        id:row.id,studentName:row.studentName,requestType:row.requestType,
+        reason:row.reason,jobTitle:row.jobTitle,companyName:row.companyName,
+        expectedUpdatedAt:row.updatedAt.toISOString(),
+      }))}/>:null}
+    {data.query.status==="PENDING"?<TpoStudentNudgePanel
+      rows={Array.from(new Map(data.requests.filter(row=>row.status==="PENDING")
+        .map(row=>[row.membershipId,{id:row.membershipId,label:row.studentName,registered:null}])).values())}
+    />:null}
+    </Disclosure>
+    <Disclosure title="Export and row tools" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
+    <TpoRequestPageClipboard rows={data.requests.map(row=>({
+      id:row.id,student:row.studentName,number:row.rollNumber,
+      kind:row.requestType,company:row.companyName,asked:row.requestedAt.toISOString(),
+      status:row.status,decided:row.decidedAt?.toISOString()??null,
+    }))}/>
+    <TpoSafeCsvDownload href={tpoRequestsExportHref(data.query)} filename="tpo-requests.csv" label="Export filtered requests CSV" />
+    </Disclosure>
+    <Disclosure title="Other student requests" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]">
+    {(await placementTableExists("placement_learner_general_requests"))?<TpoGeneralRequestsPanel/>:null}
+    </Disclosure>
     <p className="text-xs text-muted-foreground">CSV exports matching authorized requests across pages (up to 5,000), includes their recorded reasons and decisions, and neutralizes spreadsheet formulas. If the export is truncated, narrow the filters.</p>
     <p className="text-xs text-muted-foreground">Pending actions require explicit confirmation. The learner receives an in-app notice when a request is approved or rejected; no email is sent from this inbox.</p>
   </div>;
