@@ -11,6 +11,8 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Disclosure } from "@/components/ui/disclosure";
+import { Dropdown } from "@/components/ui/dropdown";
 import { useToast } from "@/components/ui/toast";
 import { describePrimaryDomainSwitch, canConfirmPrimaryDomainDelete } from "@/modules/tenant-domains/admin-confirmation-model";
 
@@ -180,7 +182,7 @@ export function TenantDomainManager({
   return (
     <div className="space-y-5">
       <section className="border-t border-border pt-5 print:hidden">
-        <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
           <div>
             <label
               htmlFor="tenant-domain-host"
@@ -204,7 +206,7 @@ export function TenantDomainManager({
             </p>
           </div>
           <Button
-            className="min-h-11 md:min-h-9"
+            className="min-h-11 w-full md:min-h-9 md:w-auto"
             loading={creating}
              disabled={creating || !host.trim()}
             onClick={createDomain}
@@ -267,7 +269,7 @@ export function TenantDomainManager({
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap justify-end gap-2 print:hidden">
+                  <div className="flex min-w-0 flex-wrap justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
                     {!domain.isVerified ? (
                       <Button
                         variant="secondary"
@@ -300,7 +302,8 @@ export function TenantDomainManager({
                           : "Make primary"}
                       </Button>
                     ) : null}
-                    <Button
+                    <Dropdown trigger="More" label="Domain actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+                    <Button role="menuitem"
                       variant="danger"
                       size="sm"
                       className="min-h-11 md:min-h-9"
@@ -313,13 +316,13 @@ export function TenantDomainManager({
                         ? "Deleting…"
                         : "Delete"}
                     </Button>
+                    </Dropdown>
                   </div>
                 </div>
 
                 {!domain.isVerified &&
                 domain.verificationToken ? (
-                  <section aria-label="DNS ownership record" className="mt-5 border-t border-border pt-4 print:hidden">
-                    <h3 className="mb-2 text-sm font-semibold text-foreground">DNS ownership record</h3>
+                  <Disclosure ariaLabel="DNS ownership record" title={<h3 className="m-0 text-sm font-semibold text-foreground">DNS ownership record</h3>} className="mt-[var(--lms-space-4)] print:hidden" contentClassName="pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]">
                     <p className="text-xs leading-5 text-body">
                       Publish this TXT record with your DNS
                       provider. Verification requires an exact
@@ -353,7 +356,7 @@ export function TenantDomainManager({
                         </dd>
                       </div>
                     </dl>
-                  </section>
+                  </Disclosure>
                 ) : null}
               </section>
             );

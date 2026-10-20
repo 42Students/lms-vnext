@@ -26,19 +26,43 @@ export function TpoKeyboardShortcuts({showTrigger=true}:{showTrigger?:boolean}={
   document.addEventListener("keydown",onKey);
   return ()=>{document.removeEventListener("keydown",onKey);if(timeout)clearTimeout(timeout);};
  },[router,open]);
+ const keyClass="inline-flex min-h-7 min-w-7 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-2 text-xs font-semibold text-[var(--lms-body-text)]";
  return <>{showTrigger?<Button variant="secondary" type="button" aria-label="Keyboard shortcuts" onClick={()=>setOpen(true)}
-  className="min-h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">?</Button>:null}
+  className="min-h-11 min-w-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:min-w-9">?</Button>:null}
   <Drawer title="Keyboard shortcuts" open={open} onOpenChange={setOpen}
    description="Press a key, then the next one. They do nothing while you are typing in a box.">
-   <h3 className="font-semibold">Go to</h3>
-   <ul className="mt-2 grid min-w-0 grid-cols-1 gap-2 text-sm md:grid-cols-2">{Object.entries(go).map(([key])=>
-    <li key={key}><kbd>G</kbd> <kbd>{key.toUpperCase()}</kbd> · {goLabels[key]}</li>)}</ul>
-   <h3 className="mt-4 font-semibold">Create</h3>
-   <p>N then L · New recruiter lead</p><p>N then D · New drive</p>
-   <h3 className="mt-4 font-semibold">Anywhere</h3>
-   <p><kbd>Ctrl</kbd> <kbd>K</kbd> · Search and jump</p><p><kbd>?</kbd> · Show this list</p>
-   <h3 className="mt-4 font-semibold">Reviewing applicants</h3>
-   <p><kbd>S</kbd> · Shortlist</p><p><kbd>R</kbd> · Not selected</p>
-   <p><kbd>←</kbd> <kbd>→</kbd> · Previous, next student</p>
+   <div className="min-w-0 space-y-5">
+    <section aria-label="Go to keyboard shortcuts">
+     <h3 className="text-sm font-semibold text-foreground">Go to</h3>
+     <ul className="mt-2 grid min-w-0 grid-cols-1 gap-x-4 gap-y-0 text-sm md:grid-cols-2">
+      {Object.entries(go).map(([key])=><li key={key} className="flex min-h-11 min-w-0 items-center gap-3 border-b border-[var(--lms-canvas-border)] py-2">
+       <span className="flex shrink-0 items-center gap-1"><kbd className={keyClass}>G</kbd><kbd className={keyClass}>{key.toUpperCase()}</kbd></span>
+       <span className="min-w-0 break-words">{goLabels[key]}</span>
+      </li>)}
+     </ul>
+    </section>
+    <section aria-label="Create keyboard shortcuts" className="border-t border-[var(--lms-canvas-border)] pt-4">
+     <h3 className="text-sm font-semibold text-foreground">Create</h3>
+     <ul className="mt-2 space-y-0 text-sm">
+      <li className="flex min-h-11 flex-wrap items-center gap-2 border-b border-[var(--lms-canvas-border)] py-2"><kbd className={keyClass}>N</kbd> then <kbd className={keyClass}>L</kbd><span className="min-w-0 break-words">· New recruiter lead</span></li>
+      <li className="flex min-h-11 flex-wrap items-center gap-2 py-2"><kbd className={keyClass}>N</kbd> then <kbd className={keyClass}>D</kbd><span className="min-w-0 break-words">· New drive</span></li>
+     </ul>
+    </section>
+    <section aria-label="Anywhere keyboard shortcuts" className="border-t border-[var(--lms-canvas-border)] pt-4">
+     <h3 className="text-sm font-semibold text-foreground">Anywhere</h3>
+     <ul className="mt-2 space-y-0 text-sm">
+      <li className="flex min-h-11 flex-wrap items-center gap-2 border-b border-[var(--lms-canvas-border)] py-2"><kbd className={keyClass}>Ctrl</kbd><kbd className={keyClass}>K</kbd><span className="min-w-0 break-words">· Search and jump</span></li>
+      <li className="flex min-h-11 flex-wrap items-center gap-2 py-2"><kbd className={keyClass}>?</kbd><span className="min-w-0 break-words">· Show this list</span></li>
+     </ul>
+    </section>
+    <section aria-label="Reviewing applicants keyboard shortcuts" className="border-t border-[var(--lms-canvas-border)] pt-4">
+     <h3 className="text-sm font-semibold text-foreground">Reviewing applicants</h3>
+     <ul className="mt-2 space-y-0 text-sm">
+      <li className="flex min-h-11 items-center gap-2 border-b border-[var(--lms-canvas-border)] py-2"><kbd className={keyClass}>S</kbd><span className="min-w-0 break-words">· Shortlist</span></li>
+      <li className="flex min-h-11 items-center gap-2 border-b border-[var(--lms-canvas-border)] py-2"><kbd className={keyClass}>R</kbd><span className="min-w-0 break-words">· Not selected</span></li>
+      <li className="flex min-h-11 flex-wrap items-center gap-2 py-2"><kbd className={keyClass}>←</kbd><kbd className={keyClass}>→</kbd><span className="min-w-0 break-words">· Previous, next student</span></li>
+     </ul>
+    </section>
+   </div>
   </Drawer></>;
 }

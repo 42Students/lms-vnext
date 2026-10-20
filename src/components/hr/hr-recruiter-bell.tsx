@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -89,10 +88,10 @@ export function HrRecruiterBell(){
  }
 
  const unread=state?.unread??0;
- const panelFooter=<><div role="group" aria-label="Recruiter notification actions" className="flex flex-wrap items-center justify-between gap-3">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">See all notifications</Link>
+ const panelFooter=<><div role="group" aria-label="Recruiter notification actions" className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">See all notifications</Link>
     {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
-      variant="secondary" className="min-h-11 md:min-h-9">{loading?"Saving…":"Mark all read"}</Button>:null}
+      variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
    {saveError?<Alert tone="error" className="mt-2">{saveError}</Alert>:null}</>;
  const panelBody=<>
@@ -100,10 +99,10 @@ export function HrRecruiterBell(){
    {!state&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
     state.items.length===0?<EmptyState title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
-    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul role="list" aria-label="Recent recruiter notifications" className="space-y-[6px] px-3">{state.items.map(item=><li key={item.id}>
-     <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-11 items-start gap-2 rounded-[8px] border border-[rgba(229,233,240,0.6)] bg-surface px-4 py-3 text-sm text-body transition-[background-color,border-color,box-shadow] duration-200 hover:border-[var(--lms-neutral-200)] hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-[rgba(0,0,0,0.06)] active:shadow-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-neutral-500)] motion-reduce:transition-none">
+    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3 min-w-0" viewportClassName="max-h-80"><ul role="list" aria-label="Recent recruiter notifications" className="min-w-0 space-y-[6px] px-3">{state.items.map(item=><li key={item.id}>
+     <Link href={item.href} onClick={()=>setOpen(false)} className="grid min-h-11 min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 gap-y-1 rounded-[8px] sm:flex sm:gap-2 border border-[rgba(229,233,240,0.6)] bg-surface px-4 py-3 text-sm text-body transition-[background-color,border-color,box-shadow] duration-200 hover:border-[var(--lms-neutral-200)] hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-[rgba(0,0,0,0.06)] active:shadow-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-neutral-500)] motion-reduce:transition-none">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-[var(--lms-radius-pill)] bg-[var(--lms-notification-unread,var(--lms-error))]":"mt-1.5 h-2 w-2 shrink-0 rounded-[var(--lms-radius-pill)] bg-muted"}/>
-      <span className="flex-1 text-sm font-semibold leading-[1.4]">{item.label}</span><time dateTime={item.at} className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</time>
+      <span className="min-w-0 break-words text-sm font-semibold leading-[1.4] sm:flex-1">{item.label}</span><time dateTime={item.at} className="col-start-2 break-words text-xs text-muted-foreground sm:col-auto sm:shrink-0">{relativeHrBellTime(item.at,now)}</time>
      </Link></li>)}</ul></ScrollCue>}
 
 </>;

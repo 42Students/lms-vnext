@@ -45,20 +45,25 @@ export function LearnerBoardTaskDetailDialog({
       {task.carriedFromSprintId?<p className="mt-2 text-xs font-semibold text-warning-text">
         Carried over
       </p>:null}
-      <dl className="mt-5 grid grid-cols-2 gap-3 text-sm">
+      <dl className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-[var(--lms-font-base)] sm:grid-cols-3">
         <div><dt className="text-muted-foreground">Status</dt><dd className="mt-1"><StatusBadge tone={learnerBoardTaskStatusTone(task.status)}>{learnerBoardTaskStatusLabel(task.status)}</StatusBadge></dd></div>
         <div><dt className="text-muted-foreground">Priority</dt><dd className="mt-1"><StatusBadge tone={learnerBoardTaskPriorityTone(task.priority)}>{learnerBoardTaskPriorityLabel(task.priority)}</StatusBadge></dd></div>
-        <div className="col-span-2"><dt className="text-muted-foreground">Sprint</dt><dd className="mt-1 font-semibold">{sprintTitle??"Not assigned"}</dd></div>
+        <div className="col-span-2 sm:col-span-3"><dt className="text-muted-foreground">Sprint</dt><dd className="mt-1 font-semibold">{sprintTitle??"Not assigned"}</dd></div>
         <div><dt className="text-muted-foreground">Assignee</dt><dd>{facts.assignee}</dd></div>
         <div><dt className="text-muted-foreground">Due date</dt><dd>{facts.dueDate}</dd></div>
         <div><dt className="text-muted-foreground">Estimate</dt><dd>{facts.estimate}</dd></div>
         <div><dt className="text-muted-foreground">Task type</dt><dd>{facts.taskType}</dd></div>
-        {facts.blockerReason ? <div className="col-span-2">
+        {facts.blockerReason ? <div className="col-span-2 sm:col-span-3">
           <dt className="text-muted-foreground">Blocker note</dt>
           <dd className="whitespace-pre-wrap break-words">{facts.blockerReason}</dd>
         </div> : null}
       </dl>
-      <h3 className="mt-5 text-sm font-semibold">Submission</h3>
+      <div className="mt-[var(--lms-space-4)] flex min-w-0 justify-stretch sm:justify-end">
+        <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
+          onClick={() => { navigatingRef.current.startNavigation(); }}
+          className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] sm:w-auto">Open task actions in Board</Link>
+      </div>
+      <h3 className="mt-[var(--lms-space-5)] text-sm font-semibold">Submission</h3>
       <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-body">
         <span>{commentCount} comment{commentCount===1?"":"s"}</span>
         {safeProjectExternalHref(submissionUrl)?
@@ -77,7 +82,7 @@ export function LearnerBoardTaskDetailDialog({
         <h3 className="font-semibold">Acceptance criteria</h3>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.acceptanceCriteria??"No acceptance criteria recorded."}</p>
       </section>
-      <section className="mt-5 rounded-lg border border-border bg-surface-subtle p-3">
+      <section className="mt-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
         <h3 className="text-sm font-semibold">Done when</h3>
         <p className="mt-2 whitespace-pre-wrap text-sm text-body">{task.acceptanceCriteria || "No criteria recorded."}</p>
         {task.status === "BLOCKED" ? <p role="alert" className="mt-2 rounded-md border border-warning-border bg-warning-subtle p-2 text-sm">
@@ -88,10 +93,10 @@ export function LearnerBoardTaskDetailDialog({
       <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={task.updatedAt.toISOString()}
         canPost={task.assigneeMembershipId === currentMembershipId && Boolean(currentMembershipId)}/>
-      <h3 className="mt-5 text-sm font-semibold">Task actions</h3>
       <LearnerTaskStatusActions projectId={projectId} task={task} currentMembershipId={currentMembershipId} />
-      <section className="mt-5 rounded-lg border border-border p-3" aria-label="Task Activity">
-        <h3 className="font-semibold">Activity</h3>
+      <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]" aria-label="Task Activity">
+        <details className="min-w-0">
+         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Activity</summary>
         {activityEvents.length?<ol className="mt-2 space-y-2 text-xs text-body">
           {activityEvents.map((event,index)=><li key={index}>
             {event.summary} · {event.actorDisplayName??"Project member"} ·
@@ -100,14 +105,8 @@ export function LearnerBoardTaskDetailDialog({
             }).format(event.occurredAt)}
           </li>)}
         </ol>:<p className="mt-2 text-xs text-muted-foreground">No task activity yet.</p>}
+        </details>
       </section>
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
-          onClick={() => { navigatingRef.current.startNavigation(); }}
-          className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground">
-          Open task actions in Board
-        </Link>
-      </div>
       <p className="mt-3 text-xs leading-5 text-muted-foreground">Submission review and additional task details are available in the full Board.</p>
     </Dialog>
   );

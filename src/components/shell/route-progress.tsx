@@ -85,13 +85,13 @@ export function RouteProgress() {
   if (!pending || !slow) return null;
   return <div data-slot="legacy-page-loader" className="lms-legacy-page-loader" role="status"
       aria-label="Loading page">
-      <div className="lms-legacy-loader-spin">
+      <div className="lms-legacy-loader-spin min-w-0 max-w-[calc(100vw-2rem)]">
         <span className="lms-legacy-loader-dots" aria-hidden="true">
           <i/><i/><i/><i/>
         </span>
-        {stalled ? <div className="lms-legacy-loader-recovery">
+        {stalled ? <div className="lms-legacy-loader-recovery min-w-0">
           <p>Still loading…</p>
-          <Button type="button" variant="secondary" onClick={()=>window.location.reload()}>Reload</Button>
+          <Button type="button" variant="secondary" className="w-full min-[768px]:w-auto" onClick={()=>window.location.reload()}>Reload</Button>
         </div> : null}
       </div>
     </div>;

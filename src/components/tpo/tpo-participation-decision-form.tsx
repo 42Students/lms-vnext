@@ -124,11 +124,9 @@ export function TpoParticipationDecisionForm({
         </label>
       ) : null}
 
-      <div className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-6 text-body">
-        <p className="font-semibold text-foreground">
-          This is not a registration-choice editor.
-        </p>
-        <p className="mt-1">
+      <details className="min-w-0 border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-6 text-body">
+        <summary className="min-h-11 cursor-pointer font-semibold text-foreground">This is not a registration-choice editor.</summary>
+         <p className="mt-1">
           Higher studies, entrepreneurship, competitive exams and placement
           consent are separate cohort-registration choices. That database
           lifecycle is not migrated yet. Selecting Ineligible with a reason
@@ -136,7 +134,7 @@ export function TpoParticipationDecisionForm({
           create a Higher Studies declaration or consent record.
           Clearing this override resumes the class/batch inherited decision.
         </p>
-      </div>
+      </details>
 
       {feedback ? (
         <p
@@ -152,7 +150,7 @@ export function TpoParticipationDecisionForm({
       <Button
         type="submit"
         disabled={pending}
-        className="min-h-11 md:min-h-9"
+        className="min-h-11 w-full sm:w-auto md:min-h-9"
       >
         {pending ? "Saving…" : "Save learner eligibility"}
       </Button>

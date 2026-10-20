@@ -196,8 +196,8 @@ export function TpoCalendarMoveFollowup({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex min-w-0 flex-col gap-[var(--lms-space-4)]">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <form onSubmit={onSubmit} className="mt-4 flex flex-wrap items-end gap-2 border-t border-border pt-4">
+      <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-semibold text-body">
         Move follow-up (IST)
         <Input
           name="dueAt"
@@ -205,14 +205,13 @@ export function TpoCalendarMoveFollowup({
           key={currentIst}
           defaultValue={currentIst}
           required
-          className="w-full"
+          className={inputClass}
         />
       </label>
-      <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
-      <Button variant="primary"
+      <Button variant="secondary"
         type="submit"
         disabled={busy}
-        className="w-full sm:w-auto" loading={busy}
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
       >
         {busy ? "Moving…" : "Reschedule"}
       </Button>
@@ -220,11 +219,10 @@ export function TpoCalendarMoveFollowup({
         type="button"
         disabled={busy}
         onClick={() => void onDone()}
-        className="w-full sm:w-auto" loading={busy}
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
       >
         {busy ? "Saving…" : "Done"}
       </Button>
-      </div>
       {message?<InlineNotice tone={message===tpoCalendarFollowupSuccess("MOVE")||message===tpoCalendarFollowupSuccess("DONE")?"success":"error"} message={message}/>:null}
     </form>
   );

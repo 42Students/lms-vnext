@@ -116,9 +116,9 @@ export async function ProjectAdminSubmissionsPage({
 
   return (
     <div className="min-w-0 space-y-4">
-      <PageBackLink href={basePath} label="Project workspaces" />
       <PageHeader
         title="Submissions dashboard"
+        actions={<PageBackLink href={basePath} label="Project workspaces" />}
         description="Final project deliverables across all workspaces."
         needsDoingLabel="Review status:"
         selectedNeedKey={query.submissionStatus}
@@ -168,7 +168,7 @@ export async function ProjectAdminSubmissionsPage({
           label="Unsubmitted workspace pages"/>
       </section>:null}
       {view==="ALL" && result ? <>
-      {summary?<div className="grid min-w-0 grid-cols-2 divide-y divide-border border-y border-border min-[768px]:grid-cols-4 min-[768px]:divide-x min-[768px]:divide-y-0">
+      {summary?<div className="grid min-w-0 grid-cols-2 gap-2 border-y border-border py-3 md:grid-cols-4">
         {([
           ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
           ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
@@ -176,7 +176,7 @@ export async function ProjectAdminSubmissionsPage({
           ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
         ] as const).map(([name, value, href]) => {
           return <Link key={name} href={href}
-            className="block min-w-0 bg-surface px-3 py-4 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="block min-w-0 bg-surface px-3 py-3 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             <p className="text-xs font-semibold text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;
@@ -214,7 +214,7 @@ export async function ProjectAdminSubmissionsPage({
               key={submission.id}
               className="min-w-0 py-4"
             >
-              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+              <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0 flex-1">
                   <Link
                     href={
@@ -242,7 +242,7 @@ export async function ProjectAdminSubmissionsPage({
                     submission.status==="SUBMITTED"?"Under Review":submission.status}
                 </StatusBadge>
               </div>
-              <dl className="mt-3 grid min-w-0 gap-2 text-xs text-body md:grid-cols-3">
+              <dl className="mt-3 grid min-w-0 grid-cols-2 gap-3 text-xs text-body md:grid-cols-3">
                 <div><dt className="font-semibold">Pending</dt><dd>{
                   submission.status === "SUBMITTED" && submission.submittedAt
                     ? (projectAdminElapsedDays(submission.submittedAt,renderedAt)===null?"—":projectAdminElapsedDays(submission.submittedAt,renderedAt)+" days")
@@ -253,7 +253,7 @@ export async function ProjectAdminSubmissionsPage({
                 <div><dt className="font-semibold">Reviewed by</dt>
                   <dd>{submission.reviewedBy ?? "—"}</dd></div>
               </dl>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">{submission.summary}</p>
+              <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-body">{submission.summary}</p>
               <div className="mt-3 flex flex-wrap gap-3 text-sm">
                 {([submission.sourceUrl, submission.demoUrl] as const).map((candidate, i) => {
                   const href = safeProjectExternalHref(candidate);

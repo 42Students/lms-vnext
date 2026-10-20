@@ -413,6 +413,25 @@ export default async function TpoStudentsPage({
         description="Everyone in placements, from the batches you made eligible."
         actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
+      <nav
+        aria-label="Students workspace tabs"
+        className="flex flex-wrap gap-2 border-b border-border pb-3"
+      >
+        <Link
+          href="/tpo/students"
+          aria-current="page"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+        >
+          Students roster
+        </Link>
+        <Link
+          href="/tpo/students/requests"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+        >
+          Requests
+        </Link>
+      </nav>
+
       <Dropdown mobileSheet align="start" label="Student roster tools" trigger="More student tools">
         <nav aria-label="Student roster tools" className="flex min-w-52 flex-col gap-2">
         <Link href="/tpo/students/requests" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Student Requests</Link>
@@ -421,8 +440,9 @@ export default async function TpoStudentsPage({
        </nav>
       </Dropdown>
 
+      <Disclosure title="Advanced student filters" className="min-w-0 border-b border-border py-3" contentClassName="pt-3">
       <form role="search" aria-label="tpo students filters" action="/tpo/students" method="get"
-        className="flex flex-wrap items-end gap-3 border-b border-border py-4">
+        className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4 xl:items-end">
         {/* Program and Class are selected in the single grid filter panel.
             Preserve them through this separate advanced-filter form. */}
         <Input type="hidden" name="programId" value={query.programId??""}/>
@@ -582,29 +602,13 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
          </label>)}
-        <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9 px-4">Show students</Button>
+        <Button variant="secondary" type="submit" className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Show students</Button>
       </form>
+      </Disclosure>
       {query.batchId?<p className="text-sm text-muted-foreground">
         Students from a finished batch include completed enrollments for follow-up and reporting.
       </p>:null}
-      <nav
-        aria-label="Students workspace tabs"
-        className="flex flex-wrap gap-2 border-b border-border pb-3"
-      >
-        <Link
-          href="/tpo/students"
-          aria-current="page"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-        >
-          Students roster
-        </Link>
-        <Link
-          href="/tpo/students/requests"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-        >
-          Requests
-        </Link>
-      </nav>
+
 
       {!data.definitions.registrationsAvailable ? (
         <Alert tone="warning">
@@ -636,7 +640,8 @@ export default async function TpoStudentsPage({
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
         <Link href="/tpo/batches" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open Placement eligibility</Link>
       </Alert>:null}
-      <section className="border-b border-border py-5">
+      <Disclosure title="Placement intelligence" className="min-w-0 border-b border-border py-3" contentClassName="pt-3">
+      <section className="min-w-0">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
@@ -741,8 +746,10 @@ export default async function TpoStudentsPage({
           they are not confirmed joining counts.
         </p>
       </section>
+      </Disclosure>
 
-      <section className="min-w-0 border-y border-border">
+      <Disclosure title="Branch intelligence" className="min-w-0 border-y border-border py-3" contentClassName="pt-3">
+      <section className="min-w-0">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Branch intelligence
@@ -840,8 +847,9 @@ export default async function TpoStudentsPage({
           *Rate uses the registered placement pool; — means no registered students.
         </p>
       </section>
+      </Disclosure>
 
-      <section className="space-y-4">
+      <section className="min-w-0 space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
@@ -918,7 +926,7 @@ export default async function TpoStudentsPage({
           <div className="md:col-span-2 lg:col-span-4">
             <Button variant="primary"
               type="submit"
-              className="min-h-11 md:min-h-9 px-5"
+              className="min-h-11 w-full px-5 sm:w-auto md:min-h-9"
             >
               Apply filters
             </Button>
@@ -960,6 +968,7 @@ export default async function TpoStudentsPage({
 
         {rosterVerifications?.enabled&&rosterVerifications.permitted&&waitingRosterRows.length>0?
           <TpoRosterVerificationBulk rows={waitingRosterRows}/>:null}
+        <Disclosure title="Bulk student actions" className="min-w-0 border-t border-border py-3" contentClassName="min-w-0 space-y-4 pt-3">
         {manageAllowed?<TpoStudentNudgePanel
           key={"nudge:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.search}
           rows={roster.items.map(student=>({
@@ -1008,6 +1017,7 @@ export default async function TpoStudentsPage({
           />
         ) : null}
 
+        </Disclosure>
         </TpoStudentsSelectionProvider>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-body">
