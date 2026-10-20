@@ -14,7 +14,7 @@ export default function ErrorPage({ reset }: {
         The requested records could not be retrieved. A load failure does not
         mean there are no records or that a reported total is zero.
       </p>
-      <Button className="mt-4" onClick={reset}>Retry</Button>
+      <Button className="mt-4 min-h-11 w-full sm:w-auto sm:min-h-9" onClick={reset}>Retry</Button>
     </section>
   );
 }
