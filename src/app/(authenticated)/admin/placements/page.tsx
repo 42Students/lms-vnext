@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 
 const secondaryActionClass =
-  "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9";
+  "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9";
 
 export default async function AdminPlacementsPage({ searchParams }: {
   searchParams: Promise<{ staleDays?: string }>;
@@ -32,7 +32,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
 
   if (!collegeId) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-5">
         <PageHeader
           title="Placement Drives"
           description="Placement administration requires a college safety scope."
@@ -54,7 +54,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
   }
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader
         title="Placement Drives"
         description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."
@@ -62,7 +62,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
           {directoryActions}
           <Link
             href="/admin/placements/new"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-safe:transition-colors motion-reduce:transition-none md:min-h-9"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary motion-safe:transition-colors motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           >
             New drive
           </Link>

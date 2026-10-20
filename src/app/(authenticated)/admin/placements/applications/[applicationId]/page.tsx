@@ -15,9 +15,9 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
  return <div className="min-w-0 max-w-full space-y-4">
   <SuperAdminPlacementDetailView data={detail} extraActions={detail.related?<>
    <Link href={detail.related.href+"/applications"}
-    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Manage this drive&apos;s applications and stage decisions →</Link>
+    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Manage this drive&apos;s applications and stage decisions →</Link>
    <Link href={detail.related.href+"/schedule?applicationId="+encodeURIComponent(applicationId)}
-    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Schedule candidate interview →</Link>
+    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Schedule candidate interview →</Link>
   </>:undefined}/>
   <section aria-label="Application stage history" className="space-y-3 border-b border-border pb-4">
    <h2 className="text-base font-semibold text-foreground">Status history</h2>

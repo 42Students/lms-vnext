@@ -76,7 +76,7 @@ export default async function SuperAdminProjectsPage({
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}
+        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}
       />
     </div>;
   }
@@ -124,7 +124,7 @@ export default async function SuperAdminProjectsPage({
       <ErrorState title="Project workspaces unavailable"
         description="The workspace list could not be loaded. Your search and filters were not changed."
         action={<Link href={"/admin/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry loading workspaces</Link>}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry loading workspaces</Link>}
       />
     </div>;
   }
@@ -138,8 +138,8 @@ export default async function SuperAdminProjectsPage({
         description="Live projects, each run by a mentor with a team of students."
         actions={
           <div className="flex min-w-0 w-full flex-col items-stretch justify-end gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center">
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href="/admin/projects/workspaces/new">Create workspace</Link>
             <CreateProjectControl
               collegeId={collegeId}
               basePath="/admin/projects"
