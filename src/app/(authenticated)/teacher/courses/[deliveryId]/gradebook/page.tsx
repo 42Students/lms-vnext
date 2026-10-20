@@ -96,7 +96,7 @@ export default async function FacultyGradebookPage({
       description="Try another name, roll number or email. Published grades were not inferred."/>
     :<div className="grid gap-3">
       {filtered.items.map(row=><article key={row.membershipId}
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
         <h2 className="font-semibold text-foreground">
           {row.displayName||row.email||"Unnamed learner"}
         </h2>

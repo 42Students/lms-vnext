@@ -30,8 +30,8 @@ export default async function FacultyDiscussionParticipationPage({
       <h2 className="text-lg font-semibold text-foreground">12 most recent recorded messages</h2>
       {data.recent.length===0?<EmptyState title="No recorded discussions"
         description="This Section has no stored messages. Replies and deleted text cannot be reconstructed."/>:
-        <ol className="grid gap-2">{data.recent.map(row=><li key={row.id}
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+        <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.recent.map(row=><li key={row.id}
+          className="min-w-0 bg-transparent py-3">
           <p className="text-sm font-semibold">{row.senderRole}
             {row.pinned?" · Pinned":""}</p>
           <time dateTime={row.createdAt} className="text-xs text-muted-foreground">
