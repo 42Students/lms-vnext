@@ -84,15 +84,15 @@ export function CollegeClassCreate({ cohorts, periods }: {
             <Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
-      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[920px] grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 w-full md:min-h-9">
            <option value="">Select program</option>
            {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select required value={cohortId} onChange={event => setCohortId(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
             <option value="">Select batch</option>
@@ -101,7 +101,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
           <Select required value={academicPeriodId}
             onChange={event => setAcademicPeriodId(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
@@ -111,20 +111,20 @@ export function CollegeClassCreate({ cohorts, periods }: {
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
           <Input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
           <Input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (required, 1–200)
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (required, 1–200)
           <Input required type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid min-w-0 gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
@@ -193,20 +193,20 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         <p className="text-sm text-muted-foreground md:col-span-2">
           Batch and academic period are immutable. Name and code changes require no dependent records.
         </p>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (blank means unlimited)
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (blank means unlimited)
           <Input type="number" min={1} max={10000} step={1} value={capacity}
             onChange={e => setCapacity(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description
           <Textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
