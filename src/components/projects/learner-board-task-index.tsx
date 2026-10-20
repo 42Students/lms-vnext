@@ -14,14 +14,14 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
  filters:LearnerTaskBoardUrlFilters;
 }){
  const lanes=groupLearnerBoardLanes(tasks,sprints);
- return <section aria-label="Project Board lanes" className="space-y-3">
+ return <section aria-label="Project Board lanes" className="min-w-0 space-y-3">
   <p className="text-sm text-body">Tasks are grouped by their saved status. Open a task to work on it.</p>
   <div role="region" aria-label="Project board columns; scroll sideways to see all task lanes" tabIndex={0}
     className={styles.scrollRegion+" min-w-0 overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
    <div className={styles.track}>
     {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label} width="compact" className={styles.lane+(lane.id==="BACKLOG"?" "+styles.backlogLane:"")}>
       <h2 className={styles.header+" flex min-w-0 items-center justify-between font-semibold text-foreground"}>
-       <span>{lane.label}</span><Badge tone="neutral" className="tabular-nums">{lane.tasks.length}</Badge>
+       <span className="min-w-0 break-words">{lane.label}</span><Badge tone="neutral" className="tabular-nums">{lane.tasks.length}</Badge>
       </h2>
       <ul className={styles.body+" mt-3 space-y-2"}>
        {lane.tasks.map(task=>{
@@ -30,7 +30,7 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
          <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
           className={styles.card+" block min-h-11 rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm text-primary-text hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"}>
           <span className="block break-words font-semibold">{task.title}</span>
-          <span className="mt-2 block text-xs text-muted-foreground">{info.priority} · {info.sprintTitle}</span>
+          <span className="mt-2 block break-words text-xs text-muted-foreground">{info.priority} · {info.sprintTitle}</span>
          </Link>
         </li>;
        })}
