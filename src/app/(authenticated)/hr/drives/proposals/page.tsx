@@ -44,7 +44,7 @@ export default async function RecruiterDriveProposalHistory({
    <form action="/hr/drives/proposals" method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-4">
     <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-0 flex-[1_1_12rem] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role title
-     <Input name="q" maxLength={100} defaultValue={input.data.q}
+     <Input type="search" name="q" maxLength={100} defaultValue={input.data.q}
        className="mt-1 w-full" placeholder="Role title" />
     </label>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order

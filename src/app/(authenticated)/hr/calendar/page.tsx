@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Card } from "@/components/ui/card";
 import { ErrorState } from "@/components/ui/error-state";
@@ -446,9 +447,8 @@ export default async function HrCalendarPage({
               <label className="flex min-w-0 flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Jump to date
                 <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-    <Input
+    <DateInput mode="date"
                   key={anchor}
-                  type="date"
                   name="date"
                   defaultValue={anchor}
                   required
