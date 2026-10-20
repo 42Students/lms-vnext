@@ -11,13 +11,13 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 ### 1. `src/app/(authenticated)/hr` — 71 TSX files
 
 - [ ] `src/app/(authenticated)/hr/activity/error.tsx`
-- [ ] `src/app/(authenticated)/hr/activity/loading.tsx`
+- [x] `src/app/(authenticated)/hr/activity/loading.tsx` (own DOM/styles: 0; shared GracefulPageLoading only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
 - [ ] `src/app/(authenticated)/hr/activity/page.tsx`
 - [ ] `src/app/(authenticated)/hr/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/loading.tsx`
+- [x] `src/app/(authenticated)/hr/calendar/loading.tsx` (own DOM/styles: 0; shared GracefulPageLoading only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
 - [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/hr/colleges/error.tsx`
-- [ ] `src/app/(authenticated)/hr/colleges/loading.tsx`
+- [x] `src/app/(authenticated)/hr/colleges/error.tsx` (own DOM/styles: 0; shared GracefulErrorBoundary only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
+- [x] `src/app/(authenticated)/hr/colleges/loading.tsx` (own DOM/styles: 0; shared GracefulPageLoading only; native/hex/overlay 0; states/phone/tablet delegated unchanged; value proof: own values N/A)
 - [x] `src/app/(authenticated)/hr/colleges/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
 - [ ] `src/app/(authenticated)/hr/company/error.tsx`
 - [ ] `src/app/(authenticated)/hr/company/loading.tsx`
@@ -560,3 +560,13 @@ These counts are from fetching and searching all 145 complete file contents in t
 **Audit integrity:** Native/hex/h1 scan passing **does not** satisfy the strict state-value/viewport tick rule by itself. All visible HR/recruiter/tracker page checklist boxes remain unticked until default, hover, active, focus, disabled, loading, empty, error and phone/tablet comparisons are recorded. The three nonvisual effect helpers and 17 recruiter route-only shims remain separately ticked with their zero-own-DOM proof.
 
 **Next:** `src/components/tracker/known-errors-workspace.tsx` now uses shared `Dialog` for mute confirmation instead of an inline custom confirmation panel. Verify its live focus/keyboard/scroll and then proceed to `src/components/placements/recruiter-result-controls.tsx` dense result tables.
+
+
+### chat-15 delegation-only route proof 4 files
+
+For each route listed below, complete fetched source shows exactly one shared `GracefulPageLoading` or `GracefulErrorBoundary` element, no local DOM tags, no className, no inline style, no raw controls, no literal colors, no hand-built overlays. Legacy property source: `docs/design/old-lms-pages.md:6-12` and `docs/design/legacy-styles/components___listing-page-header.scss:131-158`. Font/size/color/border/hover/focus/disabled/active/loading/error/phone/tablet: N/A at caller level; the delegated shared component keeps its original props and owns all visual states. Grep-equivalent source counts 0 for native controls, hex, hand-authored h1 and custom overlay. No behavior changes or runtime verification are claimed.
+
+- src/app/(authenticated)/hr/activity/loading.tsx
+- src/app/(authenticated)/hr/calendar/loading.tsx
+- src/app/(authenticated)/hr/colleges/error.tsx
+- src/app/(authenticated)/hr/colleges/loading.tsx
