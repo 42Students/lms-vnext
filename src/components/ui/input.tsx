@@ -38,6 +38,7 @@ export function Input({ className, error = false, ...props }: InputProps) {
         "aria-invalid:focus-visible:border-[var(--lms-error)]",
         "aria-invalid:focus-visible:shadow-[0_0_0_2px_rgba(239,68,68,0.2)]",
         "aria-invalid:focus-visible:outline-[var(--lms-error)]",
+        props.type === "search" && "rounded-[12px] pr-[44px] [background-image:url('/assets/images/common/search.svg')] [background-position:right_15px_center] [background-repeat:no-repeat] [background-size:19px_19px] [&::-webkit-search-cancel-button]:hidden",
         "motion-reduce:transition-none",
         className,
       )}
