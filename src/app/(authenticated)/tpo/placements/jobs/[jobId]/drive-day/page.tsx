@@ -15,7 +15,6 @@ export default async function DriveDayForOneDrive({
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const { jobId } = await params;
   const drive = await getPlacementDriveDay(context, jobId);
-  const root = "/tpo/placements/jobs/" + encodeURIComponent(jobId);
   return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="TPO · Drive day" title={drive.job.title + " · Drive day"}
       description="The campus-day rounds, attendance and result readiness for this drive."
