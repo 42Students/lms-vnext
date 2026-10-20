@@ -15,20 +15,20 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-11.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx`
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx`
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/invitation-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/reminder-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/export/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/reminder-prep/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/export/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx`

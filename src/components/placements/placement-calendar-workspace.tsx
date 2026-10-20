@@ -791,8 +791,9 @@ export async function PlacementCalendarWorkspace({
             />
           </label>
 
-          {isTpo&&countSourceEvents.length>0?<div aria-label="Quick company filters" className="flex max-w-full flex-wrap items-center gap-2">
-    <span className="text-xs font-semibold text-muted-foreground">Companies in this period:</span>
+          {isTpo&&countSourceEvents.length>0?<details aria-label="Quick company filters" open={Boolean(state.company)} className="min-w-0 sm:col-span-2 lg:col-span-3">
+    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Companies in this period</summary>
+    <div className="flex max-w-full flex-wrap items-center gap-2 pt-2">
     {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
       .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
       <FilterChipLink key={name} href={calendarHref(basePath,audience,state,{company:name})}
@@ -800,7 +801,7 @@ export async function PlacementCalendarWorkspace({
         title={name}>{name}</FilterChipLink>)}
     {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
        className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
-   </div>:null}
+   </div></details>:null}
    {isTpo?<datalist id="tpo-calendar-company-choices">
            {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
              .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
