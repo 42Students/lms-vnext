@@ -15,13 +15,13 @@ These 29 page routes were moved to chat-1 from the end of other lanes' review qu
 - [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
 - [x] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx`
-- [ ] `src/app/forbidden/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx`
+- [x] `src/app/forbidden/page.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/reviews/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/more/page.tsx`
