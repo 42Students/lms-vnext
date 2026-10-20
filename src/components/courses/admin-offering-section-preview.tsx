@@ -11,17 +11,17 @@ function ItemList({items}:{items:readonly {
 }[]}){
  if(!items.length)return <p className="text-xs text-muted-foreground">No items for this Section.</p>;
  return <ul className="divide-y divide-border border-y border-border">{items.map(item=><li key={item.id}
-  className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
-  <span className="break-words">{item.title}
+  className="flex min-w-0 flex-col items-start gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+  <span className="min-w-0 break-words">{item.title}
    {item.kind?<span className="ml-1 text-xs text-muted-foreground">({item.kind.replaceAll("_"," ")})</span>:null}
   </span>
-  <span className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">{item.scope==="SECTION"?"Section-specific":"Shared offering"}
+  <span className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-muted-foreground">{item.scope==="SECTION"?"Section-specific":"Shared offering"}
    <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="ARCHIVED"?"neutral":"warning"}>{item.status}</StatusBadge> #{item.sequence+1}
    <StatusBadge tone={item.studentVisible?"success":"neutral"}>{item.studentVisible?"Visible to students":"Not visible to students"}</StatusBadge></span>
  </li>)}</ul>;
 }
 export function AdminOfferingSectionPreview({data}:{data:Preview}){
- return <section id="section-content" className="scroll-mt-24 space-y-4 border-t border-border pt-5"
+ return <section id="section-content" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5"
   aria-label="Section course content">
   <div className="space-y-1">
    <h2 className="text-lg font-semibold text-foreground">Section content</h2>
@@ -45,7 +45,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
    <p className="text-sm font-semibold">Viewing {data.selected.sectionName} ({data.selected.sectionCode})</p>
    <p className="text-xs text-muted-foreground">This is a metadata-only view of shared and Section-specific content. It does not reveal private video, file or meeting links. Visibility indicators reflect publication and lesson flags, not an individual learner&apos;s enrolment or progress.</p>
    {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 border-b border-border py-4">
-    <h3 className="font-semibold text-foreground">{lesson.name}
+    <h3 className="flex min-w-0 flex-wrap items-center gap-2 font-semibold text-foreground">{lesson.name}
      <StatusBadge tone={lesson.visibleToStudents?"success":"neutral"}>{lesson.visibleToStudents?"Lesson visible":"Lesson hidden"}</StatusBadge>
     </h3>
     <div className="space-y-1"><h4 className="text-sm font-semibold text-foreground">Videos, Resources and Live Classes ({lesson.contents.length})</h4>
