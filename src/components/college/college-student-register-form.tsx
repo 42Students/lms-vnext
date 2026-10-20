@@ -67,7 +67,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       }catch(reason){setError(reason instanceof Error?reason.message:"Registration failed");}
     });
   }
-  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 gap-4 md:grid-cols-2">
+  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 gap-[16px] md:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold">First Name
       <Input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
     </label>
