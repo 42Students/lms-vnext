@@ -51,17 +51,17 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       }))} />
     <section className="border-b border-border py-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-semibold text-foreground">Current readiness</h2>
+        <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Current readiness</h2>
         <StatusBadge tone={readiness.finalSubmission.canSubmitDraft?"success":"warning"}>
           {readiness.finalSubmission.canSubmitDraft?"Ready":"Not ready"}
         </StatusBadge>
       </div>
-      <dl className="mt-4 grid gap-3 text-sm min-[768px]:grid-cols-3">
-        <div><dt className="font-semibold">State</dt><dd>{readiness.readinessOverride.state??"Automatic"}</dd></div>
-        <div><dt className="font-semibold">Reason</dt><dd className="whitespace-pre-wrap">{readiness.readinessOverride.note??
+      <dl className="mt-4 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0">
+        <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</dt><dd className="mt-2 break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.state??"Automatic"}</dd></div>
+        <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason</dt><dd className="mt-2 whitespace-pre-wrap break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.note??
           (readiness.execution.complete?"All execution items completed":"Incomplete tasks, sprints or releases")}</dd></div>
-        <div><dt className="font-semibold">Submission status</dt>
-          <dd>{readiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
+        <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission status</dt>
+          <dd className="mt-2 break-words text-[var(--lms-body-text)]">{readiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
       </dl>
       {readiness.readinessOverride.overriddenBy ? <p className="mt-3 text-xs text-muted-foreground">Overridden by {readiness.readinessOverride.overriddenBy}</p> : null}
       {readiness.readinessOverride.occurredAt?<p className="mt-3 text-xs text-muted-foreground">
@@ -79,10 +79,10 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         value={item.done} maximum={item.total||1} />
       </div>)}
     </section>
-    <div className="grid gap-3 min-[768px]:grid-cols-3">
-      <p>Tasks completed: {readiness.execution.tasks.done}/{readiness.execution.tasks.total}</p>
-      <p>Sprints completed: {readiness.execution.sprints.completed}/{readiness.execution.sprints.total}</p>
-      <p>Releases shipped: {readiness.execution.releases.shipped}/{readiness.execution.releases.total}</p>
+    <div className="grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0">
+      <p className="px-4 py-3 text-[14px] leading-5 text-[var(--lms-body-text)]">Tasks completed: {readiness.execution.tasks.done}/{readiness.execution.tasks.total}</p>
+      <p className="px-4 py-3 text-[14px] leading-5 text-[var(--lms-body-text)]">Sprints completed: {readiness.execution.sprints.completed}/{readiness.execution.sprints.total}</p>
+      <p className="px-4 py-3 text-[14px] leading-5 text-[var(--lms-body-text)]">Releases shipped: {readiness.execution.releases.shipped}/{readiness.execution.releases.total}</p>
     </div>
     <ProjectReadinessOverrideForm projectId={projectId} initialState={readiness.readinessOverride.state} initialNote={readiness.readinessOverride.note}
       hasSubmission={readiness.finalSubmission.latest!==null}/>
