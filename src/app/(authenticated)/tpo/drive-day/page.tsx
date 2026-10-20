@@ -34,13 +34,6 @@ function formatWhen(
   }).format(value);
 }
 
-function invalidDriveDayView(message: string) {
-  return <div className="min-w-0 space-y-4">
-    <PageHeader title="Drive day" />
-    <Alert tone="error">{message} <Link href="/tpo/drive-day" className="font-semibold underline">Clear filters</Link></Alert>
-  </div>;
-}
-
 export default async function DriveDayPage({searchParams}:{searchParams:Promise<{issue?:string|string[];sort?:string|string[];q?:string|string[]}>}) {
   const context =
     await getCurrentRequestContext();
@@ -54,39 +47,35 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
   if (hasMembershipRole(context, "TPO") && !hasMembershipRole(context, "LEARNER")) {
     const raw=await searchParams;
     const search=tpoLiveRoundSearchSchema.safeParse(Array.isArray(raw.q)?raw.q[0]:raw.q);
-    if(!search.success)return invalidDriveDayView("Invalid search.");;
+    if(!search.success)return <Alert tone="error">Invalid search. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
     const issue=tpoDriveDayIssueSchema.safeParse(Array.isArray(raw.issue)?raw.issue[0]:raw.issue);
     const sort=tpoDriveDaySortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
-    if(!sort.success)return invalidDriveDayView("Invalid drive day sorting.");;
-    if(!issue.success)return invalidDriveDayView("Invalid drive day filter.");;
+    if(!sort.success)return <Alert tone="error">Invalid drive day sorting. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
+    if(!issue.success)return <Alert tone="error">Invalid drive day filter. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
     const snapshot = await getTpoLiveDriveDaySummary(context);
     const liveTotals=summarizeTpoLiveTriage(snapshot.rows);
     const liveRows=sortTpoDriveDayRows(filterTpoDriveDayIssues(filterTpoLiveRoundSearch(snapshot.rows,search.data),issue.data),sort.data);
     return (
       <div className="min-w-0 space-y-[var(--lms-space-6)]">
         <PageHeader title="Drive day"
-          description="Rounds happening now, using recorded schedule and duration plus persisted attendance."
-          actions={<Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})}
-            className="lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-            Export current live snapshot CSV
-          </Link>} />
-        <form action="/tpo/drive-day" method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto]>
+          description="Rounds happening now, using recorded schedule and duration plus persisted attendance." />
+        <form action="/tpo/drive-day" method="get" className="flex flex-wrap gap-3">
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"/></label>
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attendance focus<Select name="issue" defaultValue={issue.data} className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></label>
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Prioritize<Select name="sort" defaultValue={sort.data} className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
-          <Button type="submit" className="min-h-11 w-full self-end rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary md:min-h-[var(--lms-control-height)] xl:w-auto>Apply</Button>
+          <Button type="submit" className="self-end min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Apply</Button>
         </form>
-        <div className="flex flex-wrap items-center"><Link href="/tpo/drive-day" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset focus</Link></div>
-        <dl aria-label="Current authorized live-round snapshot" className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 xl:grid-cols-6">{[
+        <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Reset focus</Link></div>
+        <dl aria-label="Current authorized live-round snapshot" className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-3 lg:grid-cols-6">{[
           ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
           ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
-        ].map(([name,count],index)=><div key={name} className={"min-w-0 px-3 py-3 sm:px-4 " + (index < 4 ? "border-b border-border xl:border-b-0 " : "") + (index % 2 === 0 ? "border-r border-border " : "") + (index % 3 !== 2 ? "md:border-r " : "md:border-r-0 ") + (index < 3 ? "md:border-b " : "") + (index !== 5 ? "xl:border-r " : "xl:border-r-0 ")}><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
+        ].map(([name,count])=><div key={name} className="border-b border-border px-1 py-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
         <p className="text-xs text-muted-foreground">Counts describe the full retrieved live-round sample before these screen filters, not every round in the college or verified attendance.</p>
         {snapshot.truncated ? (
           <Alert tone="warning">Only the first 20 live rounds are shown; more records may exist.</Alert>
         ) : null}
         {liveRows.length === 0 ? (
-          <EmptyState title={snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"} description="Only published scheduled rounds with a recorded start and duration count as live. A round without duration is not assumed active. No check-ins or no-shows are inferred." action={<Link href="/tpo/drive-day" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset focus</Link>}/>
+          <EmptyState title={snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"} description="Only published scheduled rounds with a recorded start and duration count as live. A round without duration is not assumed active. No check-ins or no-shows are inferred."/>
         ) : (
           <div className="grid gap-4">
             {liveRows.map((round) => (
@@ -102,14 +91,14 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     <p className="text-xs text-muted-foreground">{tpoLiveRoundVenueLabel(round.venue)}</p>
                     {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground">Elapsed {tpoLiveRoundTiming(round,snapshot.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}
                   </div>
-                  <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
+                  <div className="flex flex-wrap gap-2"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
                   <Link href={"/tpo/drive-day/" + round.id}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover md:min-h-9">
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
                     Open round
                   </Link></div>
                 </div>
                 <p role="status" className="mt-3 text-sm text-body">{tpoLiveAttendanceAttention(round.counts)}</p>
-                <dl className="mt-4 grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+                <dl className="mt-4 grid grid-cols-1 gap-3 min-[768px]:grid-cols-5">
                   {([
                     ["Roster", round.counts.total], ["Checked in", round.counts.checkedIn],
                     ["Explicit no-shows", round.counts.noShow], ["Pending", round.counts.pending],
