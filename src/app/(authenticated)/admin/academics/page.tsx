@@ -18,7 +18,7 @@ export default async function SuperAdminAcademicsPage() {
       <div className="min-w-0 space-y-6">
         <PageHeader
           
-          title="Academics"
+          title="Academic Setup"
           description="Academic administration requires a college safety scope."
           actions={<div className="flex w-full flex-wrap items-center gap-[var(--lms-space-2)] md:w-auto">
             <Link href="/admin/electives" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Elective slots →</Link>
@@ -42,7 +42,7 @@ export default async function SuperAdminAcademicsPage() {
     <div className="min-w-0 space-y-6">
       <PageHeader
         
-        title="Academics"
+        title="Academic Setup"
         description="Academic structure inside the selected college safety scope."
         actions={<div className="flex w-full flex-wrap items-center gap-[var(--lms-space-2)] md:w-auto">
           <Link href="/admin/electives"
