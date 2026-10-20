@@ -158,7 +158,7 @@ export default async function CollegeElectiveAllocatePage({
       (reason ? "&reason=" + encodeURIComponent(reason) : ""));
   }
 
-  return <main className="min-w-0 overflow-x-clip space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
       actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Back to Electives</Link>} />
@@ -219,5 +219,5 @@ export default async function CollegeElectiveAllocatePage({
         Allocate selected to…
       </Button>
     </form>
-  </main>;
+  </div>;
 }
