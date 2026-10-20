@@ -7,6 +7,6 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   return <ErrorState
     title="Couldn't load Reports · Accreditation"
     description="The requested records could not be retrieved. A load failure does not mean there are no records or that a reported total is zero."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    action={<Button type="button" onClick={reset} className="w-full sm:w-auto">Retry</Button>}
   />;
 }
