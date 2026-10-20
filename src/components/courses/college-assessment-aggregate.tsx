@@ -6,6 +6,7 @@ import { COLLEGE_COURSE_TAB_COPY, collegeAudienceLabel, collegeResultsLabel, col
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import { Pagination } from "@/components/ui/pagination";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
@@ -221,7 +222,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                     <dd>{item.submittedLearners}/{item.eligibleLearners}</dd></div>
                   {isAssignment?<div><dt className="font-semibold text-muted-foreground">Graded</dt>
                     <dd>{item.gradedLearners} graded</dd></div>:null}
-                  {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
+                  {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd><StatusBadge tone={item.resultsPublished?"success":"warning"}>{item.resultsPublished?"Published":"Hidden"}</StatusBadge></dd></div>:null}
                 </dl>
                 {!isAssignment?<><QuizListActions item={item}/><CollegeQuizActions quiz={item}/><CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId} specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries} status={item.status}/></>:null}
                 {isAssignment?<CollegeAssignmentActions assignment={item}/>:null}
@@ -259,7 +260,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                       {collegeStatusLabel(item.status)}
                     </StatusBadge>},
                   ...(!isAssignment?[{key:"results",header:COLLEGE_COURSE_TAB_COPY.assessmentColumns.results,
-                    mobilePriority:"secondary" as const,cell:(item:CollegeAssessmentAggregateItem)=>collegeResultsLabel(Boolean(item.resultsPublished))}]:[]),
+                    mobilePriority:"secondary" as const,cell:(item:CollegeAssessmentAggregateItem)=><StatusBadge tone={item.resultsPublished?"success":"warning"}>{collegeResultsLabel(Boolean(item.resultsPublished))}</StatusBadge>}]:[]),
                   {key:"due",header:"Due (IST)",mobilePriority:"secondary" as const,cell:(item)=>formatDue(item.dueAt)},
                   {key:"submitted",header:"Submitted / eligible",mobilePriority:"secondary" as const,
                     cell:(item)=>item.submittedLearners+"/"+item.eligibleLearners+" submitted"},
@@ -284,26 +285,14 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         )}
       </section>
 
-      <nav aria-label={name + " pagination"}
-        className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
           Page {data.page} of {data.totalPages} · {data.total} records · 25/page
         </p>
-        <div className="flex gap-2">
-          {data.page > 1 ? (
-            <Link href={collegeAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
-              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
-              Previous
-            </Link>
-          ) : null}
-          {data.page < data.totalPages ? (
-            <Link href={collegeAssessmentHref(data.kind, { ...data.query, page: data.page + 1 })}
-              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
-              Next
-            </Link>
-          ) : null}
-        </div>
-      </nav>
+        <Pagination page={data.page} pageCount={data.totalPages}
+          hrefForPage={page=>collegeAssessmentHref(data.kind,{...data.query,page})}
+          label={name+" pagination"} showBoundaryLinks={false}/>
+      </div>
 
       <p className="text-xs leading-5 text-muted-foreground">
         Submitted means distinct active enrolled learners with a submission or attempt.
