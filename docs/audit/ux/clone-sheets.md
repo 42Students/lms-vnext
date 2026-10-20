@@ -773,3 +773,41 @@ Full files fetched directly from branch. `grep -nE '<(button|input|select|textar
 | src/app/(authenticated)/tpo/students/requests/page.tsx | 0/0/0 | 1/1; 12/12 | 108/108 | 0/18 |
 
 These records do not tick A5–A7/E8 globally; no phone/tablet screenshot proof, no runtime hover/focus/disabled verification, no CI or app execution. Next TPO remaining company/student error/loading and ancillary controls, then revisit global icons and links.
+
+## chat-12 2026-10-20 — Whole batch pages (classes, rules, overview, students, registrations and histories)
+
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx — source-complete TPO legacy control/link/source-responsive pass. No rendered-browser certification.
+
+### Legacy/vNext CSS value comparison
+Old references: docs/design/old-lms-pages.md:6-10 one white canvas, separated row actions, continuous funnel/metrics, teal links; docs/design/old-lms-shell.css:23,31-32,73 44px phone, 768px tablet; docs/design/old-lms-shell-spec.md:24-25 compact desktop 36px actions; legacy-styles/components___common.scss:68-75 teal link and hover underline.
+| File | Legacy layout/interaction property | Exact current VNext source anchor/property | Result |
+|---|---|---|---|
+| src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 14: <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center font-sem; 24: className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline  | Source checked, browser pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 35: <Link href="/tpo/settings/rules" className="lms-inline-link inline-flex min-h-11 items-center r | Source checked, browser pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 40: <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center text-sm text; 50: className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link under; 54: className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link under; 56: Suggested: remind them to register <Link href="#batch-reminder" className="lms-inline-link ml-2; 96: <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-co | Source checked, browser pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 35: if(!parsed.success)return <p role="alert">Invalid page number. <Link className="lms-inline-link; 81: className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link under; 84: <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inli; 108: className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border bor; 117: className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-bo | Source checked, browser pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 39: className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-bo; 43: className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-bo; 52: <Button type="submit" className="min-h-11 md:min-h-9 justify-self-start">Filter</Button>; 60: }).toString()} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-; 81: className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link u | Source checked, browser pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus | 26: <a href={tpoCohortHistoryCsvHref(batchId,filters.data)} className="lms-inline-link inline-flex  | Source checked, browser pending |
+| src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx | Hairline row separation, 44px phone, 36px >=768px and teal underline/focus |  | Source checked, browser pending |
+
+### Scoped regex/JSX and responsive proof
+Complete files inspected using regex equivalents of `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`, and `grep -nE 'sm:|md:' FILE`; JSX Button/Link open-close and curly counts compared, no app running.
+| File | Raw/SVG/hex | Button; Link pairs | Curly | sm/md tokens |
+|---|---|---|---|---|
+| src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx | 0/0/0 | 0/0; 2/2 | 34/34 | 0/3 |
+| src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx | 0/0/0 | 0/0; 1/1 | 34/34 | 0/1 |
+| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | 0/0/0 | 0/0; 9/9 | 90/90 | 0/6 |
+| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | 0/0/0 | 1/1; 6/6 | 122/122 | 0/20 |
+| src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx | 0/0/0 | 1/1; 4/4 | 68/68 | 0/14 |
+| src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx | 0/0/0 | 1/1; 1/1 | 43/43 | 0/2 |
+| src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx | 0/0/0 | 1/1; 3/3 | 34/34 | 0/2 |
+
+Global A5/A6/A7/E8 remain [ ] per strict tick rule: no full icon/page link/visited-external audit, avatar/wordmark/title states and no browser phone/tablet/desktop screenshot or disabled/focus regression proof. Shared controls unmodified and CI not run.
+
+Next possible TPO-owned target: src/components/tpo/tpo-student-outcome-pill.tsx then unreviewed small TPO recruiter/companies controls; avoid other lanes' shell/UI files.
