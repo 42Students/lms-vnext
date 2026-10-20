@@ -1,4 +1,5 @@
 import {DataTable} from "@/components/ui/data-table";
+import {Disclosure} from "@/components/ui/disclosure";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import Link from "next/link";
@@ -54,13 +55,13 @@ export default async function TpoCompanyContactLogPage({
   }).toString();
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-4">
       <PageHeader
         
         title={log.companyName + " · Contact log"}
         description="Read-only CRM interaction history for contacts explicitly linked to this college-company relationship."
         actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-          className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Company details</Link>}
+          className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Company details</Link>}
       />
       {!log.available ? (
         <Alert tone="warning">
@@ -70,11 +71,11 @@ export default async function TpoCompanyContactLogPage({
       ) : (
         <>
           {log.writeEnabled && log.contacts.length > 0 ? (
-            <TpoCompanyInteractionForm
+            <Disclosure title="Record a contact interaction" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3"><TpoCompanyInteractionForm
               key={log.contacts.map((item) => item.id + item.updatedAtIso).join(":")}
               companyId={companyId}
               contacts={log.contacts}
-            />
+            /></Disclosure>
           ) : log.contacts.length === 0 ? (
             <Alert tone="warning">
               No active, explicitly linked recruiter contacts are available
@@ -86,13 +87,13 @@ export default async function TpoCompanyContactLogPage({
               activity remains read-only.
             </Alert>
           )}
-          <form method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-            <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">
+          <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto]">
+            <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
               Interaction type
               <Select
                 name="type"
                 defaultValue={log.type}
-                className="mt-[6px] block w-full min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+                className="mt-[6px] block min-h-11 w-full md:min-h-9"
               >
                 {["ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM"].map((type) => (
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
@@ -113,7 +114,7 @@ export default async function TpoCompanyContactLogPage({
             caption="Recorded company contact interactions"
             rows={log.rows}
             getRowKey={(row)=>row.id}
-            empty={<EmptyState title="No recorded contact interactions match this filter." description="Calls, emails and messages are not inferred from invitations or drives."/>}
+            empty={<EmptyState title="No recorded contact interactions match this filter." description="Calls, emails and messages are not inferred from invitations or drives." action={<Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline">Filter</Link>}/>}
             columns={[
               {key:"contact",header:"Contact",mobileLabel:"Contact",mobilePriority:"primary",cell:(row)=>row.contactName},
               {key:"type",header:"Type",mobileLabel:"Type",mobilePriority:"secondary",cell:(row)=>row.type},
@@ -122,7 +123,7 @@ export default async function TpoCompanyContactLogPage({
                cell:(row)=><time dateTime={row.occurredAtIso}>{dateFormat.format(new Date(row.occurredAtIso))}</time>},
             ]}
           />
-          <nav aria-label="Contact log pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+          {(log.page>1||(log.pages!==null&&log.page<log.pages))?<nav aria-label="Contact log pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
             <span className="text-body">Page {log.page} of {log.pages}</span>
             <div className="flex flex-wrap gap-3">
               {log.page > 1 ? (
@@ -136,7 +137,7 @@ export default async function TpoCompanyContactLogPage({
                 </Link>
               ) : null}
             </div>
-          </nav>
+          </nav>:null}
         </>
       )}
       <p className="text-xs text-muted-foreground leading-[1.6]">

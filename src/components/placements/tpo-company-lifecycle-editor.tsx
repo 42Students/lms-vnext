@@ -53,14 +53,14 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
   }
 
   return (
-    <section className="space-y-4 border-b border-border pb-6">
+    <section className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
       <h2 className="text-lg font-semibold text-foreground">Manage college relationship</h2>
       <p className="text-sm text-body">
         This company&apos;s global name and domain are shared across colleges and cannot
         be edited here. Only your college&apos;s trust and archive state can change.
         Active draft/published drives block archiving.
       </p>
-      <p className="text-sm text-body">
+      <p className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm text-body">
         Status: <strong>{company.status}</strong> · Trusted: <strong>{company.isTrusted ? "Yes" : "No"}</strong>
       </p>
       <label className="block text-sm font-semibold text-foreground">
@@ -71,33 +71,33 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           className="mt-2 block w-full"
         />
       </label>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap">
         {company.status === "ACTIVE" ? (
           <>
             <Button variant="secondary" type="button" disabled={busy || reason.trim().length < 8}
-              onClick={() => void submit("EDIT_TRUST")}
+              onClick={() => void submit("EDIT_TRUST")} className="w-full sm:w-auto"
               >
               {company.isTrusted ? "Remove trust" : "Mark trusted"}
             </Button>
             <Button variant="secondary" type="button" disabled={busy || reason.trim().length < 8}
-              onClick={() => void submit("ARCHIVE")}
+              onClick={() => void submit("ARCHIVE")} className="w-full sm:w-auto"
               >
               Archive relationship
             </Button>
           </>
         ) : (
           <Button variant="secondary" type="button" disabled={busy || reason.trim().length < 8}
-            onClick={() => void submit("RESTORE")}
+            onClick={() => void submit("RESTORE")} className="w-full sm:w-auto"
             >
             Restore relationship
           </Button>
         )}
       </div>
-      {reviewAction?<div role="group" aria-label="Confirm company change" className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3 text-sm">
+      {reviewAction?<div role="group" aria-label="Confirm company change" className="border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
         <p className="text-body">Confirm: {reviewAction==="EDIT_TRUST"
           ?company.isTrusted?"remove trust from ":"mark trusted ":""+(reviewAction==="ARCHIVE"?"archive ":"restore ")}{company.name}?
           This changes only this college&apos;s relationship and is audited.</p>
-        <div className="mt-2 flex gap-2">
+        <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
           <Button type="button" disabled={busy} onClick={()=>void submit(reviewAction)}
             >Confirm change</Button>
           <Button variant="secondary" type="button" disabled={busy} onClick={()=>setReviewAction(null)}
