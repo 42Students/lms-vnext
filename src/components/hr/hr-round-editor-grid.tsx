@@ -40,10 +40,10 @@ export function HrRoundEditorGrid({rows,scopeKey}:{
   storageKey={"hr-rounds:"+scopeKey}
   mobilePrimaryKeys={["sequence","name","kind","status"]}
   rowActions={row=>row.editable?<div className="flex flex-wrap items-center gap-2">
-   <Link href={row.editHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   <Link href={row.editHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Edit round
    </Link>
-   <Link href={row.removeHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   <Link href={row.removeHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Review round removal
    </Link>
   </div>:null}

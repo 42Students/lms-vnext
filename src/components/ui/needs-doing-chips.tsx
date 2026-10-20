@@ -39,7 +39,7 @@ export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs d
       {items.map(item => {
         const count = typeof item.count === "number" && Number.isFinite(item.count) ? Math.max(0, Math.trunc(item.count)) : null;
         const selected = selectedKey === item.key;
-        const classes = cx(base, (item.href !== undefined || onSelect) && "min-h-11 sm:min-h-8", tones[item.tone ?? "neutral"], selected && "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
+        const classes = cx(base, (item.href !== undefined || onSelect) && "min-h-11 md:min-h-8", tones[item.tone ?? "neutral"], selected && "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
         const accessibleLabel = count !== null ? `${item.label} ${count}` : item.label;
         const content = <><span>{item.label}</span>{count !== null ? <span className="tabular-nums">{count}</span> : null}</>;
         if (item.href !== undefined) {
