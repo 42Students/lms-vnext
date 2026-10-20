@@ -228,19 +228,19 @@ export default async function LearnerPlacementsPage({
   });
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader
         title="My Placements"
         description={LEARNER_PLACEMENTS_HOME_SUBTITLE}
       />
 
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         <Link href="/learn/my-placements/preparation"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Placement preparation checklist →
         </Link>
         <Link href="/learn/my-placements/notification-preferences"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Placement notification choices →
         </Link>
       </div>
@@ -263,6 +263,11 @@ export default async function LearnerPlacementsPage({
           <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">Retry registration</Link>
         </Alert>
       )}
+      <LearnerPlacementPartialAlert missing={display.failed} />
+      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null}
+        profileFixes={verificationCue?.editHrefs??[]} acceptedOffer={offerRows?offerRows.some(row=>row.offer.status==="ACCEPTED"):null} />
+
+
       <section aria-labelledby="learner-placement-verification"
         className="min-w-0 border-b border-border py-4 md:py-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -304,7 +309,7 @@ export default async function LearnerPlacementsPage({
         {collegeNoticesFailed ? <Alert tone="error" className="mt-3">College notices are temporarily unavailable. Your other placement information is unchanged.</Alert>
           : collegeNotices===null ? <p className="mt-3 text-sm text-body">The college notice feed is not enabled.</p>
           : collegeNotices.length===0 ? <p className="mt-3 text-sm text-body">No notices yet.</p>
-          : <ul className="mt-3 space-y-2">{collegeNotices.map(notice=><li key={notice.id} className="min-w-0 border-b border-border px-3 py-3 last:border-b-0">
+          : <ul className="mt-3 space-y-2">{collegeNotices.map(notice=><li key={notice.id} className="min-w-0 border-b border-border py-3 last:border-b-0">
               {learnerNoticeHref(notice.id) ? (
                 <Link href={learnerNoticeHref(notice.id)!} className="inline-flex min-h-11 md:min-h-9 items-center break-words text-sm font-semibold text-primary-text underline">
                   {notice.title} →
@@ -321,7 +326,7 @@ export default async function LearnerPlacementsPage({
             <p className="mt-2 text-sm text-body">No personal placement updates have been delivered yet.</p>
           ) : <ul className="mt-3 space-y-2">
             {personalNoticeRead.value.map(alert=>(
-              <li key={alert.id} className="min-w-0 border-b border-border px-3 py-3 text-sm text-body last:border-b-0">
+              <li key={alert.id} className="min-w-0 border-b border-border py-3 text-sm text-body last:border-b-0">
                 <p className="font-semibold text-foreground">{alert.title}{alert.unread?" · Unread":""}</p>
                 <p className="mt-1 line-clamp-2">{alert.body}</p>
                  <time className="mt-1 block text-xs text-muted-foreground" dateTime={alert.createdAt.toISOString()}>{learnerNoticeRelativeDay(alert.createdAt,new Date())}</time>
@@ -333,10 +338,6 @@ export default async function LearnerPlacementsPage({
             className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all personal updates →</Link>
         </div>
       </section>
-      <LearnerPlacementPartialAlert missing={display.failed} />
-      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null}
-        profileFixes={verificationCue?.editHrefs??[]} acceptedOffer={offerRows?offerRows.some(row=>row.offer.status==="ACCEPTED"):null} />
-
       {journeyBundle ? <LearnerRecentPlacementActivity events={journeyBundle.activity} /> : null}
 
       {offerRows ? <LearnerPlacementOffers

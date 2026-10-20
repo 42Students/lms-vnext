@@ -52,7 +52,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
     <h2 className="font-semibold">{LEARNER_REGISTRATION_COPY.title}</h2>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
-      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 rounded-lg border border-border p-3 transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none">
+      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-3 transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none">
         <Radio name="sp-choice" checked={choice===item.value}
           onChange={()=>{setChoice(item.value);setConsent(false);}} className="mt-1" />
         <span className="min-w-0"><span className="block break-words font-semibold">{item.label}</span>
@@ -65,7 +65,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
     </fieldset>
     {registration.stage==="OPEN"?<>
       {registration.deadline?<p className="text-sm">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})}.</p>:null}
-      <Button className="max-md:min-h-11" type="button" disabled={busy} onClick={()=>void submit()}>
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy} onClick={()=>void submit()}>
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
       </Button>
     </>:<p className="text-sm" role="status">{registration.stage==="NOT_INVITED"?
