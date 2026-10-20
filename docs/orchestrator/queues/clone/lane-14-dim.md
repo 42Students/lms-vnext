@@ -113,16 +113,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-14.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/placements/new/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
 - [x] `src/app/(authenticated)/tpo/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/see/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/templates/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/season/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/see/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/templates/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
