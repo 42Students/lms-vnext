@@ -108,7 +108,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
      className="min-h-11 md:min-h-9"/>
    </label>
    <div className="flex flex-wrap gap-2">
-    <Button type="button" disabled={busy||!name.trim()} onClick={()=>void create(false)}
+    <Button type="button" loading={busy} disabled={busy||!name.trim()} onClick={()=>void create(false)}
      className="min-h-11 md:min-h-9">
      {busy?"Saving…":"Create Lesson"}
     </Button>
