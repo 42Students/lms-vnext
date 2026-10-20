@@ -772,3 +772,270 @@ Earlier audit compared to the original `learn-placements-stat-card` (the *older*
 - [ ] Native controls (owner master-queue codemod supersedes manual migration; still needs all-repo native-tag grep).
 
 **Next untouched E7 surface:** `src/components/courses/faculty-lesson-video-manager.tsx` (upload progress) and `src/components/courses/assignment-file-submission-control.tsx` (upload progress). These already render `MetricBar`; locate an exact old upload meter selector before changing their paints. If none exists, leave them unchanged with an explicit legacy reference gap. Then `src/components/placements/placement-calendar-workspace.tsx` for any unreviewed responsive week/day interaction.
+
+
+## 2026-10-20 chat-2 — 15 additional file-level E7 source reviews and migrations
+
+**Scope:** exactly fifteen page/component TSX source files reviewed in entirety against the legacy source family, corrected as listed. The table rows are direct source-value comparisons, not screenshot claims. Product data/labels/routes/functions were preserved. Native controls and JSX pairing proof below are connector-side scans over complete fetched UTF-8 files. No app, tests, TypeScript parser, lint, browser or CI executed. Whole-repo grep, rendered phone/tablet, focus/hover screenshots and E7 umbrella certification remain pending.
+
+### Faculty lesson upload
+
+**File:** `src/components/courses/faculty-lesson-video-manager.tsx` (changed callsite line 244; 1 mapped instance). Reference: `lms2-fe@prod-2026/_learn-courses.scss:2857-2868` + `docs/design/legacy-styles/components___variables.scss:10,14`. Target: `src/components/courses/legacy-upload-meter.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Track height | 8px | 8px | Match |
+| Track/fill radius | 999px | 999px | Match |
+| Track colour | $light-cyan = #9ee4e8 | #9ee4e8 | Source-family match / caveat noted |
+| Fill colour | $clrThird = #26bac7 | #26bac7 | Source-family match / caveat noted |
+| Reduced motion | Original upload-specific selector not found | Fill transition disabled (enhancement) | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/components/courses/faculty-lesson-video-manager.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `uploadStyles.upload` ⇒ **1**. Shared `<Select>` opening/closing 0/0, shared `<Button>` 11/11; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-upload-meter.module.css` <=767px full-width and reduced-motion fill. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Upload-specific old progress selector not found; family tokens matched, not a claim of original upload widget geometry.
+
+### Assignment submission upload
+
+**File:** `src/components/courses/assignment-file-submission-control.tsx` (changed callsite line 192; 1 mapped instance). Reference: `lms2-fe@prod-2026/_learn-courses.scss:2857-2868` + `docs/design/legacy-styles/components___variables.scss:10,14`. Target: `src/components/courses/legacy-upload-meter.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Track height | 8px | 8px | Match |
+| Track/fill radius | 999px | 999px | Match |
+| Track colour | $light-cyan = #9ee4e8 | #9ee4e8 | Source-family match / caveat noted |
+| Fill colour | $clrThird = #26bac7 | #26bac7 | Source-family match / caveat noted |
+| Reduced motion | Original upload-specific selector not found | Fill transition disabled (enhancement) | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/components/courses/assignment-file-submission-control.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `uploadStyles.upload` ⇒ **1**. Shared `<Select>` opening/closing 0/0, shared `<Button>` 5/5; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-upload-meter.module.css` <=767px full-width; existing 44px phone buttons retained. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Upload-specific old progress selector not found; family tokens matched, not a claim of original upload widget geometry.
+
+### Admin announcement read meter
+
+**File:** `src/app/(authenticated)/admin/announcements/page.tsx` (changed callsite line 193; 1 mapped instance). Reference: `lms2-fe@prod-2026/_tpo-reports.scss:465-477`. Target: `src/components/placements/report-bar-chart.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Track height | 11px | 11px | Match |
+| Track background | $tpo-line = #e7ecf2 | #e7ecf2 | Source-family match / caveat noted |
+| Fill | $clrThird = #26bac7 | #26bac7 | Source-family match / caveat noted |
+| Track radius | 999px | 999px | Match |
+| Nonzero minimum fill | 2px | 2px | Match |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/app/(authenticated)/admin/announcements/page.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `chartStyles.track` ⇒ **1**. Shared `<Select>` opening/closing 4/4, shared `<Button>` 1/1; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `report-bar-chart.module.css` <=767px compact row geometry and natural 100% meter width. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Notification-specific legacy page meter selector not separately documented; original TPO report family used.
+
+### Faculty course histogram
+
+**File:** `src/components/courses/faculty-course-home-signals.tsx` (changed callsite line 238; 1 mapped instance). Reference: `lms2-fe@prod-2026/_learn-faculty-dashboard.scss:461-504`. Target: `src/components/courses/faculty-course-home-signals.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Columns | 80px 1fr 32px | 80px minmax(0,1fr) 32px | Source-family match / caveat noted |
+| Gap | 8px | 8px | Match |
+| Labels | 12px / 500 / #6b7280 | 12px / 500 / #6b7280 | Match |
+| Count | 12px / 600 / #1a1d21 | 12px / 600 / #1a1d21 | Match |
+| Bar | 8px / radius4 / #e5e9f0 | 8px / radius4 / #e5e9f0 | Match |
+| Fill | #26bac7 | #26bac7 | Match |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/components/courses/faculty-course-home-signals.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `styles.gradeTrack` ⇒ **1**. Shared `<Select>` opening/closing 0/0, shared `<Button>` 0/0; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `faculty-course-home-signals.module.css` <=767px keeps 80/1fr/32 grid and 8px gaps. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Legacy histogram transform timing not replicated; vNext retains width-based shared bar transitions.
+
+### Teacher quiz score distribution
+
+**File:** `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` (changed callsite line 157; 1 mapped instance). Reference: `lms2-fe@prod-2026/_learn-courses.scss:2840-2875`. Target: `src/components/courses/faculty-report-legacy-charts.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Columns | 62px 1fr 18px | 62px minmax(0,1fr) 18px | Source-family match / caveat noted |
+| Gap | 8px | 8px | Match |
+| Label | 11px / #6b7280 | 11px / #6b7280 | Match |
+| Count | 12px / 700 / #1a1d21 | 12px / 700 / #1a1d21 | Match |
+| Rail | 8px / radius999 / #f1f4f9 | 8px / radius999 / #f1f4f9 | Match |
+| Score fills | success / 55%-blend / warning / 55%-blend / error | #059669 / #64883c / #d97706 / #e36421 / #ef4444 | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `styles.distributionExcellent` ⇒ **1**. Shared `<Select>` opening/closing 0/0, shared `<Button>` 0/0; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `faculty-report-legacy-charts.module.css` <=767px keeps 62/1fr/18 axes; original score bands and 6px answer-accuracy bar retained. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Original chart width transition is 400ms ease; the shared MetricBar width transition differs until its owner updates the shared primitive.
+
+### Teacher assignment score distribution
+
+**File:** `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` (changed callsite line 124; 1 mapped instance). Reference: `lms2-fe@prod-2026/_learn-courses.scss:2840-2875`. Target: `src/components/courses/faculty-report-legacy-charts.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Columns | 62px 1fr 18px | 62px minmax(0,1fr) 18px | Source-family match / caveat noted |
+| Gap | 8px | 8px | Match |
+| Label | 11px / #6b7280 | 11px / #6b7280 | Match |
+| Count | 12px / 700 / #1a1d21 | 12px / 700 / #1a1d21 | Match |
+| Rail | 8px / radius999 / #f1f4f9 | 8px / radius999 / #f1f4f9 | Match |
+| Score fills | success / 55%-blend / warning / 55%-blend / error | #059669 / #64883c / #d97706 / #e36421 / #ef4444 | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `styles.distributionExcellent` ⇒ **1**. Shared `<Select>` opening/closing 0/0, shared `<Button>` 0/0; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `faculty-report-legacy-charts.module.css` <=767px 62/1fr/18 axes, unchanged disclosure behavior. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Original chart width transition is 400ms ease; the shared MetricBar width transition differs until its owner updates the shared primitive.
+
+### Project file upload and input
+
+**File:** `src/components/projects/project-resource-files-panel.tsx` (changed callsite line 196; 1 mapped instance). Reference: `lms2-fe@prod-2026/_learn-projects.scss:256-268,2057-2061` + `docs/design/legacy-styles/components___variables.scss:10,14`. Target: `src/components/projects/project-workspace-readiness.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Progress track | 8px teal/cyan project family | 8px #9ee4e8 rail | Source-family match / caveat noted |
+| Fill | #26bac7 | #26bac7 | Match |
+| Label group | 8px progress group gap | 8px in shared readiness CSS | Source-family match / caveat noted |
+| Input | Legacy uploader file-native | Shared Input with native type=file/accept/onChange | Source-family match / caveat noted |
+| Mobile | fluid progress | <=767px min-width0 / width100% | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/components/projects/project-resource-files-panel.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `<Input id=` ⇒ **1**. Shared `<Select>` opening/closing 1/1, shared `<Button>` 8/8; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `project-workspace-readiness.module.css` <=767px full-width; shared Input gives 44px phone target. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Exact legacy project-upload meter isn't a separate source selector. Input change preserves file chooser semantics; runtime pending.
+
+### TPO home KPIs
+
+**File:** `src/app/(authenticated)/tpo/home/page.tsx` (changed callsite line 183; 4 mapped instances). Reference: `lms2-fe@prod-2026/_tpo-reports.scss:345-377` and `_tpo-tokens.scss:6-25`. Target: `src/components/placements/legacy-tpo-report-stats.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Tile box | min-height 104px, pad14px | min-height104px, pad14px | Source-family match / caveat noted |
+| Border / radius | 1px #e7ecf2 / 12px | 1px #e7ecf2 / 12px | Match |
+| Shadow | 0 3px 14px rgba(26,45,72,.035) | same | Source-family match / caveat noted |
+| Caption | min-height30px / 12px / 650 / #5b6b82 | same | Source-family match / caveat noted |
+| Value | 24px / 650 / #172033 | same | Source-family match / caveat noted |
+| Mobile | fluid legacy card body | <=767px pad14px/min-width0 | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/app/(authenticated)/tpo/home/page.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `tpoTileStyles.tile` ⇒ **4**. Shared `<Select>` opening/closing 0/0, shared `<Button>` 0/0; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-tpo-report-stats.module.css` <=767px padding14; parent grid one/two/four columns at breakpoints. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** These vNext views retain their own KPI set, order and responsive grid; only original TPO report KPI styling cloned.
+
+### TPO audit KPIs
+
+**File:** `src/app/(authenticated)/tpo/audit/page.tsx` (changed callsite line 214; 1 mapped instance). Reference: `lms2-fe@prod-2026/_tpo-reports.scss:345-377` and `_tpo-tokens.scss:6-25`. Target: `src/components/placements/legacy-tpo-report-stats.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Tile box | min-height 104px, pad14px | min-height104px, pad14px | Source-family match / caveat noted |
+| Border / radius | 1px #e7ecf2 / 12px | 1px #e7ecf2 / 12px | Match |
+| Shadow | 0 3px 14px rgba(26,45,72,.035) | same | Source-family match / caveat noted |
+| Caption | min-height30px / 12px / 650 / #5b6b82 | same | Source-family match / caveat noted |
+| Value | 24px / 650 / #172033 | same | Source-family match / caveat noted |
+| Mobile | fluid legacy card body | <=767px pad14px/min-width0 | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/app/(authenticated)/tpo/audit/page.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `tpoTileStyles.tile` ⇒ **1**. Shared `<Select>` opening/closing 1/1, shared `<Button>` 1/1; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-tpo-report-stats.module.css` <=767px padding14; parent `sm:grid-cols-2 xl:grid-cols-4`. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** These vNext views retain their own KPI set, order and responsive grid; only original TPO report KPI styling cloned.
+
+### TPO notification KPIs
+
+**File:** `src/app/(authenticated)/tpo/settings/notifications/page.tsx` (changed callsite line 139; 1 mapped instance). Reference: `lms2-fe@prod-2026/_tpo-reports.scss:345-377` and `_tpo-tokens.scss:6-25`. Target: `src/components/placements/legacy-tpo-report-stats.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Tile box | min-height 104px, pad14px | min-height104px, pad14px | Source-family match / caveat noted |
+| Border / radius | 1px #e7ecf2 / 12px | 1px #e7ecf2 / 12px | Match |
+| Shadow | 0 3px 14px rgba(26,45,72,.035) | same | Source-family match / caveat noted |
+| Caption | min-height30px / 12px / 650 / #5b6b82 | same | Source-family match / caveat noted |
+| Value | 24px / 650 / #172033 | same | Source-family match / caveat noted |
+| Mobile | fluid legacy card body | <=767px pad14px/min-width0 | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/app/(authenticated)/tpo/settings/notifications/page.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `tpoTileStyles.tile` ⇒ **1**. Shared `<Select>` opening/closing 2/2, shared `<Button>` 1/1; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-tpo-report-stats.module.css` <=767px padding14; parent mobile single column. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** These vNext views retain their own KPI set, order and responsive grid; only original TPO report KPI styling cloned.
+
+### TPO season KPIs
+
+**File:** `src/app/(authenticated)/tpo/settings/season/page.tsx` (changed callsite line 60; 1 mapped instance). Reference: `lms2-fe@prod-2026/_tpo-reports.scss:345-377` and `_tpo-tokens.scss:6-25`. Target: `src/components/placements/legacy-tpo-report-stats.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Tile box | min-height 104px, pad14px | min-height104px, pad14px | Source-family match / caveat noted |
+| Border / radius | 1px #e7ecf2 / 12px | 1px #e7ecf2 / 12px | Match |
+| Shadow | 0 3px 14px rgba(26,45,72,.035) | same | Source-family match / caveat noted |
+| Caption | min-height30px / 12px / 650 / #5b6b82 | same | Source-family match / caveat noted |
+| Value | 24px / 650 / #172033 | same | Source-family match / caveat noted |
+| Mobile | fluid legacy card body | <=767px pad14px/min-width0 | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/app/(authenticated)/tpo/settings/season/page.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `tpoTileStyles.tile` ⇒ **1**. Shared `<Select>` opening/closing 0/0, shared `<Button>` 0/0; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-tpo-report-stats.module.css` <=767px padding14; parent mobile single column. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** These vNext views retain their own KPI set, order and responsive grid; only original TPO report KPI styling cloned.
+
+### Placement operations KPIs
+
+**File:** `src/components/placements/placement-operations-overview.tsx` (changed callsite line 16; 1 mapped instance). Reference: `lms2-fe@prod-2026/_tpo-reports.scss:345-377` and `_tpo-tokens.scss:6-25`. Target: `src/components/placements/legacy-tpo-report-stats.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Tile box | min-height 104px, pad14px | min-height104px, pad14px | Source-family match / caveat noted |
+| Border / radius | 1px #e7ecf2 / 12px | 1px #e7ecf2 / 12px | Match |
+| Shadow | 0 3px 14px rgba(26,45,72,.035) | same | Source-family match / caveat noted |
+| Caption | min-height30px / 12px / 650 / #5b6b82 | same | Source-family match / caveat noted |
+| Value | 24px / 650 / #172033 | same | Source-family match / caveat noted |
+| Mobile | fluid legacy card body | <=767px pad14px/min-width0 | Source-family match / caveat noted |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/components/placements/placement-operations-overview.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `tpoTileStyles.tile` ⇒ **1**. Shared `<Select>` opening/closing 1/1, shared `<Button>` 1/1; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-tpo-report-stats.module.css` <=767px padding14; parent `sm`/`xl` grid. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** These vNext views retain their own KPI set, order and responsive grid; only original TPO report KPI styling cloned.
+
+### College at-a-glance tiles
+
+**File:** `src/components/admin/college-at-glance-panel.tsx` (changed callsite line 48; 1 mapped instance). Reference: `docs/design/legacy-styles/pages___admin-dashboard.scss:40-52,289-291`. Target: `src/components/admin/legacy-college-stat.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Tile | background #eff8fa | background #eff8fa | Match |
+| Border / radius | 1px rgba(38,186,199,.35), radius8 | same | Source-family match / caveat noted |
+| Title | 12px / 400 / rgba(0,0,0,.45) | same | Source-family match / caveat noted |
+| Value | 16px / 600 / #1a1d21 | same | Source-family match / caveat noted |
+| Desktop body padding | Ant Card default 24px | 24px | Source-family match / caveat noted |
+| Phone <=767px padding | 12px 16px | 12px 16px | Match |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/components/admin/college-at-glance-panel.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `collegeStyles.tile` ⇒ **1**. Shared `<Select>` opening/closing 0/0, shared `<Button>` 1/1; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-college-stat.module.css` <=767px 12px 16px; parent 1/2/4 columns. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Source targets old college dashboard statistics; page-level KPI wording and number of cards remain vNext.
+
+### College readiness tiles
+
+**File:** `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` (changed callsite line 178; 1 mapped instance). Reference: `docs/design/legacy-styles/pages___admin-dashboard.scss:40-52,289-291`. Target: `src/components/admin/legacy-college-stat.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Tile | background #eff8fa | background #eff8fa | Match |
+| Border / radius | 1px rgba(38,186,199,.35), radius8 | same | Source-family match / caveat noted |
+| Title | 12px / 400 / rgba(0,0,0,.45) | same | Source-family match / caveat noted |
+| Value | 16px / 600 / #1a1d21 | same | Source-family match / caveat noted |
+| Desktop body padding | Ant Card default 24px | 24px | Source-family match / caveat noted |
+| Phone <=767px padding | 12px 16px | 12px 16px | Match |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `collegeStyles.tile` ⇒ **1**. Shared `<Select>` opening/closing 2/2, shared `<Button>` 1/1; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-college-stat.module.css` <=767px 12px 16px; parent grid responsive. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Source targets old college dashboard statistics; page-level KPI wording and number of cards remain vNext.
+
+### College courses overview tiles
+
+**File:** `src/components/courses/admin-course-overview.tsx` (changed callsite line 429; 4 mapped instances). Reference: `docs/design/legacy-styles/pages___admin-dashboard.scss:40-52,289-291`. Target: `src/components/admin/legacy-college-stat.module.css`.
+
+| Legacy property / state | Original value | vNext value | Source verdict |
+| --- | --- | --- | --- |
+| Tile | background #eff8fa | background #eff8fa | Match |
+| Border / radius | 1px rgba(38,186,199,.35), radius8 | same | Source-family match / caveat noted |
+| Title | 12px / 400 / rgba(0,0,0,.45) | same | Source-family match / caveat noted |
+| Value | 16px / 600 / #1a1d21 | same | Source-family match / caveat noted |
+| Desktop body padding | Ant Card default 24px | 24px | Source-family match / caveat noted |
+| Phone <=767px padding | 12px 16px | 12px 16px | Match |
+
+**Coverage:** `grep -oE '<(button|input|select|textarea)[[:space:]>]' 'src/components/courses/admin-course-overview.tsx' | wc -l` ⇒ **0** native openings (connector-backed equivalent). `collegeStyles.tile` ⇒ **4**. Shared `<Select>` opening/closing 2/2, shared `<Button>` 1/1; duplicate JSX quote-before-className 0. These counts come from the complete file source, not an executed local shell command.
+
+**Responsive proof (source):** `legacy-college-stat.module.css` <=767px 12px 16px; existing page grid left unchanged. Hover/focus/disabled keep existing shared-component behavior unless the scoped CSS states otherwise. **Remaining exception:** Source targets old college dashboard statistics; page-level KPI wording and number of cards remain vNext.
+
+### Batch-level result and work queue
+
+**15 of 15 scoped TSX files now have complete-file reads and file-scoped value/grep/responsive records;** targeted legacy styling has been committed directly to `chatgpt/chat-2-b` with `[chat-2]` prefixes. Files are source-migrated, not certified pixel-identical by browser. Original file CSS/JS assets and JSX trees were not executed.
+
+- [ ] E7 all-portal stat / progress / charts (missing: exhaustive source inventory, zero hand-rolled repository-wide grep, exact original upload-selector source, score animation, computed hover/focus/tablet screenshots).
+- [ ] E7 calendar and G6 boards (missing: remaining instances and visual proof).
+- [ ] E8 export contract (owned with AG Grid by chat-14, no fabricated strict closure).
+- [ ] Raw controls whole-repo zero (only fifteen scoped files have zero; this does not imply global zero).
+
+**Exact next unreviewed E7 file:** `src/components/placements/placement-calendar-workspace.tsx` (TPO month/week/agenda responsive view and old calendar day-grid styles), then `src/components/placements/tpo-week-hour-calendar.tsx`.

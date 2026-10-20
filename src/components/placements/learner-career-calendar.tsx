@@ -235,7 +235,7 @@ export function LearnerCareerCalendar({
               const outside = view === "month" && day.slice(0, 7) !== anchor.slice(0, 7);
               const isSunday = new Date(day+"T12:00:00Z").getUTCDay()===0;
               return (
-                <button
+                <Button variant="ghost"
                   type="button"
                   key={day}
                   aria-label={`${prettyDay(day)}: ${dayEvents.length} events`}
@@ -254,7 +254,7 @@ export function LearnerCareerCalendar({
                     </span>
                   ))}
                   {chips.hidden > 0 ? <span className={styles.more}>+{chips.hidden} more</span> : null}
-                </button>
+                </Button>
               );
             })}
           </CalendarGrid>
