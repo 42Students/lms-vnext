@@ -14,11 +14,11 @@ export default async function TeacherLayout({
   return (
     <>
       <a href="#faculty-page-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-[var(--lms-control-radius)] focus:border focus:border-primary focus:bg-surface focus:px-4 focus:text-sm focus:font-semibold focus:text-primary-text focus:shadow-none focus:outline-none focus:ring-4 focus:ring-[var(--lms-focus-ring)]">
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-[max(1rem,env(safe-area-inset-top))] focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-[var(--lms-control-radius)] focus:border focus:border-primary focus:bg-surface focus:px-4 focus:text-sm focus:font-semibold focus:text-primary-text focus:shadow-none focus:outline-2 focus:outline-offset-[3px] focus:outline-[var(--lms-primary-text)]">
         Skip to faculty content
       </a>
       <div id="faculty-page-content" tabIndex={-1}
-        className="min-w-0 scroll-mt-6 focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+        className="min-w-0 scroll-mt-6 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         {children}
       </div>
     </>
