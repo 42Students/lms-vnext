@@ -1,7 +1,5 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
-
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -48,8 +46,8 @@ export function FacultyReportDownload(props: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 print:hidden">
-      <Button type="button" variant="secondary" aria-haspopup={props.incomplete?"dialog":undefined} className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>{
+    <div className="min-w-0 space-y-2 print:hidden">
+      <Button type="button" variant="primary" aria-haspopup={props.incomplete?"dialog":undefined} className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]" onClick={()=>{
         if(props.incomplete){setError(null);setConfirmationOpen(true);}else downloadPdf();
       }}>{props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
       <ConfirmDialog open={confirmationOpen} onOpenChange={setConfirmationOpen}
