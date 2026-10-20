@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import {StatusBadge} from "@/components/ui/status-badge";
 import Link from "next/link";
 import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
 import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
@@ -29,7 +30,7 @@ export default async function LearnerVerificationPage() {
       <h2 id="own-private-receipts" className="text-base font-semibold text-foreground">Your saved private evidence receipts</h2>
       <p className="mt-2 text-sm text-body">These counts describe private upload receipts and scan status, not verified documents or proof that a reviewer has accepted them. Rejected, revoked and expired receipts cannot be used for approval.</p>
       <ul className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
-        {status.evidence.map(item=><li key={item.purpose} className="min-h-11 min-w-0 rounded-lg border border-border p-3 md:p-4">
+        {status.evidence.map(item=><li key={item.purpose} className="min-h-11 min-w-0 border-b border-[var(--lms-canvas-border)] py-3 md:py-4">
           <p className="text-sm font-semibold text-foreground">{item.purpose === "AADHAAR"?"Identity (Aadhaar)":item.purpose === "PAN"?"Identity (PAN)":item.purpose === "MARKSHEET"?"Education marksheets":"Resume"}</p>
           <p className="mt-1 text-sm text-body">{item.cleanScanCount} clean scans · {item.pendingScanCount} scans pending · {item.recorded} active receipts</p>
         </li>)}
@@ -37,10 +38,10 @@ export default async function LearnerVerificationPage() {
     </section>
     <div className="grid min-w-0 gap-4 md:grid-cols-2">{details.map(item => {
       const row = status[item.key];
-      return <section key={item.key} className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
+      return <section key={item.key} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4 md:pt-6">
         <h2 className="text-lg font-semibold text-foreground">{item.heading}</h2>
-        <p className="mt-2 text-sm font-semibold text-body">{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
-          "Ready to send":label[row.status]}</p>
+        <div className="mt-2"><StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":row.status==="NOT_SUBMITTED"?"neutral":"info"}>{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
+          "Ready to send":label[row.status]}</StatusBadge></div>
         {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
           decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,
           heading:item.heading})?<p role="status" className="mt-2 whitespace-pre-wrap text-sm text-body">
