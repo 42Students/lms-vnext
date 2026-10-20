@@ -30,7 +30,7 @@ export function LearnerInterviewWithdrawalRequest({target}:{target:LearnerInterv
     }catch(err){setError(err instanceof Error?err.message:"Unable to record request.");}
     finally{setPending(false);}
   }
-  return <section className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4" aria-label="Application withdrawal request">
+  return <section className="space-y-3 border-t border-border pt-4" aria-label="Application withdrawal request">
     <h3 className="text-sm font-semibold text-foreground">Ask the placement team to withdraw</h3>
     <p className="text-sm leading-6 text-body">This requests withdrawal of the whole application, including its interview rounds. Your application and interview remain active until the placement team approves.</p>
     {target.pending||submitted ? <p role="status" className="text-sm text-body">
