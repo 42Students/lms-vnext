@@ -123,16 +123,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-2.md: file, number of i
 - [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/calendar/error.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/rules/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
 - [ ] `src/app/(authenticated)/learn/not-found.tsx`
 - [ ] `src/app/(authenticated)/learn/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/learn/notifications/history/error.tsx`
