@@ -243,7 +243,7 @@ export default async function ActivityPage({
        ].map(link=><Link key={link.label} href={link.href}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] font-[650] hover:border-[var(--lms-primary)] md:min-h-9">{link.label}</Link>)}</div>
       </nav>:null}
-      <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 gap-4 border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
+      <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
           <label>
             <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College</span>
@@ -327,6 +327,10 @@ export default async function ActivityPage({
             defaultValue={one(params.to)}
           />
         </label>
+        <details open={Boolean(one(params.eventType)||one(params.subjectType)||one(params.subjectId)||one(params.actorName)||one(params.q)||one(params.actorUserId)) || undefined}
+          className="group min-w-0 border-t border-[var(--lms-canvas-border)] md:col-span-2 xl:col-span-4">
+          <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">More filters<span aria-hidden="true">⌄</span></summary>
+          <div className="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
         <label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Event type
@@ -379,8 +383,10 @@ export default async function ActivityPage({
             placeholder="Optional UUID"
           />
         </label>
-        <div className="flex min-w-0 flex-wrap items-end gap-2">
-          <Button type="submit" className="min-h-11 md:min-h-9">Apply filters</Button>
+          </div>
+        </details>
+        <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] md:col-span-2 xl:col-span-4">
+          <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
           <Link
             href="/activity"
             className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white md:min-h-9"
