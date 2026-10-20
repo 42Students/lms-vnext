@@ -29,7 +29,7 @@ export default async function LearnerApplicationCompanyPage({
         description="Read-only company profile from your own placement application."
         actions={<div className="flex flex-wrap items-center gap-3">
           <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Back to application</Link>
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Back to application</Link>
           <StatusBadge tone={company.companyStatus === "ACTIVE" ? "success" : "neutral"}>
             {company.companyStatus.replaceAll("_", " ")}
           </StatusBadge>
