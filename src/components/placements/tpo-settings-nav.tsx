@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
 type SettingsKey="season"|"rules"|"job-types"|"after-college"|"prep-readiness"|"blocked-dates"|"see"|"team"|"trusted"|"branding"|"notifications"|"recruiters"|"templates"|"notices"|"public-page"|"public-link";
 export const TPO_SETTINGS_NAV_GROUPS=[
  {title:"Placement policy",items:[
@@ -24,9 +25,8 @@ export const TPO_SETTINGS_NAV_GROUPS=[
   {id:"branding",label:"Placement Branding",href:"/tpo/settings/branding"},
  ]},
 ] as const;
-export function TpoSettingsNav({active}:{active:SettingsKey}){
- return <nav aria-label="TPO placement settings sections" className="min-w-0 space-y-4 md:sticky md:top-4 md:float-left md:mr-6 md:w-56">
-  {TPO_SETTINGS_NAV_GROUPS.map(group=><section key={group.title} aria-label={group.title} className="space-y-2">
+export function TpoSettingsNav({active,compact=false}:{active:SettingsKey;compact?:boolean}){
+ const groups = TPO_SETTINGS_NAV_GROUPS.map(group=><section key={group.title} aria-label={group.title} className="space-y-2">
    <h2 className="text-xs font-semibold uppercase tracking-[0.105em] text-muted-foreground">{group.title}</h2>
    <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-col md:items-stretch md:overflow-visible md:pb-0">{group.items.map(item=><Link key={item.id} href={item.href}
     aria-current={active===item.id?"page":undefined}
@@ -34,6 +34,9 @@ export function TpoSettingsNav({active}:{active:SettingsKey}){
      "inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] md:min-h-9 md:w-full md:shrink":
      "inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] border-l-[3px] border-transparent bg-transparent px-3 text-sm text-body hover:bg-[var(--lms-primary-subtle)] md:min-h-9 md:w-full md:shrink"}>
     {item.label}</Link>)}</div>
-  </section>)}
- </nav>;
+  </section>);
+ if(compact)return <nav aria-label="TPO placement settings sections" className="min-w-0">
+   <Disclosure title="Settings sections" className="min-w-0" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)]">{groups}</Disclosure>
+  </nav>;
+ return <nav aria-label="TPO placement settings sections" className="min-w-0 space-y-4 md:sticky md:top-4 md:float-left md:mr-6 md:w-56">{groups}</nav>;
 }

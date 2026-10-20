@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
+import { Disclosure } from "@/components/ui/disclosure";
 import {TpoOutcomeLabelsEditor} from "@/components/tpo/tpo-outcome-labels-editor";
 import {readTpoOutcomeLabels} from "@/modules/placements/tpo-outcome-label-settings-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -12,10 +13,15 @@ export default async function AfterCollegeSettings(){
  await requireTpoBatchActor(context);
  const settings=await readTpoOutcomeLabels(context);
  const choices=afterCollegeAllOptions();
- return <div className="min-w-0 space-y-4"><TpoSettingsNav active="after-college"/>
+ return <div className="min-w-0 space-y-[var(--lms-space-5)]">
  <PageHeader title="After college" description="See the outcomes students or the placement cell can select after college." />
- <ol className="grid min-w-0 gap-x-6 border-t border-border min-[768px]:grid-cols-2">{choices.map(choice=><li className="min-w-0 border-b border-border py-3" key={choice.value}><strong>{choice.label}</strong><p className="text-xs text-muted-foreground">{choice.value==="DEBARRED"?"Automatic":choice.value.startsWith("PLACED_")?"Updated by placement results":"Set by you or the student"}</p></li>)}</ol>
- {settings.ready?<TpoOutcomeLabelsEditor initial={settings.labels} version={settings.version}/>:
-  <Alert tone="warning">Outcome-label storage is not available yet.</Alert>}
+ <TpoSettingsNav active="after-college" compact/>
+ <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  {settings.ready?<TpoOutcomeLabelsEditor initial={settings.labels} version={settings.version}/>:
+   <Alert tone="warning">Outcome-label storage is not available yet.</Alert>}
+  <Disclosure title="Available outcomes" className="min-w-0" contentClassName="min-w-0 pt-[var(--lms-space-2)]">
+   <ol className="grid min-w-0 gap-x-[var(--lms-space-6)] border-t border-border min-[768px]:grid-cols-2">{choices.map(choice=><li className="min-w-0 border-b border-border py-[var(--lms-space-3)]" key={choice.value}><strong>{choice.label}</strong><p className="text-xs text-muted-foreground">{choice.value==="DEBARRED"?"Automatic":choice.value.startsWith("PLACED_")?"Updated by placement results":"Set by you or the student"}</p></li>)}</ol>
+  </Disclosure>
+ </div>
  </div>;
 }
