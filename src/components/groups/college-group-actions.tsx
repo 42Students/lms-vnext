@@ -112,7 +112,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
 
   const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
   return <>
-    {group ? <span className="flex flex-wrap gap-2">
+    {group ? <div className="flex min-w-0 flex-wrap items-center gap-2">
       {group.status !== "ARCHIVED" ? (
         <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => {
           setDraft(draftOf(group)); setError(null); setOpen(true);
@@ -129,12 +129,14 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
         }}>Close</Button>
       ) : null}
       {(group.status === "DRAFT" || group.status === "CLOSED") ? (
-        <Button size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => {
-          setError(null); setConfirm("ARCHIVE");
-        }}>Archive</Button>
+        <details className="relative min-w-0"><summary className="flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Archive</summary>
+          <Button size="sm" variant="danger" className="mt-2 min-h-11 md:min-h-9" disabled={pending} onClick={() => {
+            setError(null); setConfirm("ARCHIVE");
+          }}>Archive</Button>
+        </details>
       ) : null}
-    </span> : (
-      <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={() => { setDraft(EMPTY); setError(null); setOpen(true); }}>
+    </div> : (
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={() => { setDraft(EMPTY); setError(null); setOpen(true); }}>
         New study group
       </Button>
     )}
@@ -142,24 +144,23 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
       title={group ? "Edit study group" : "New study group"}
       description="This form manages college-owned study groups only."
       footer={<>
-        <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
-        <Button type="submit" form={editorFormId} loading={pending} className="min-h-11 md:min-h-9" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
+        <Button type="button" variant="secondary" className="min-h-11 flex-1 sm:flex-none md:min-h-9" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
+        <Button type="submit" form={editorFormId} loading={pending} className="min-h-11 flex-1 sm:flex-none md:min-h-9" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
       </>}>
-      <form id={editorFormId} onSubmit={(event) => { event.preventDefault(); save(); }} className="space-y-4">
-        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group name
+      <form id={editorFormId} onSubmit={(event) => { event.preventDefault(); save(); }} className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+        <label className="block min-w-0 sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group name
           <Input required maxLength={150} value={draft.name}
             onChange={(event) => update("name", event.target.value)} className={inputClass} />
         </label>
-        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
-          <Textarea maxLength={1000} value={draft.description} rows={3}
-            onChange={(event) => update("description", event.target.value)}
-            className={inputClass} />
-        </label>
-        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (optional)
+        <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (optional)
           <Input inputMode="numeric" type="number" min={1} max={10000} value={draft.capacity}
             onChange={(event) => update("capacity", event.target.value)} className={inputClass} />
         </label>
-        {error ? <Alert tone="error">{error}</Alert> : null}
+        <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Description
+          <Textarea maxLength={1000} value={draft.description} rows={3}
+            onChange={(event) => update("description", event.target.value)} className={inputClass} />
+        </label>
+        {error ? <Alert tone="error" className="sm:col-span-2">{error}</Alert> : null}
       </form>
     </Dialog>
     <ConfirmDialog open={confirm !== null} onOpenChange={(value) => { if (!value && !pending) setConfirm(null); }}
