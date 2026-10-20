@@ -413,7 +413,7 @@ export function LearnerCourseDiscussion({
       ) : null}
 
       {pinned ? (
-        <section className="rounded-xl border border-primary bg-primary-subtle p-4">
+        <section className="border-b border-primary bg-primary-subtle/50 px-3 py-3 sm:px-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
               Pinned by {pinned.senderName??"Unknown"} · 1 of {pinnedMessages.length||1}
@@ -454,7 +454,7 @@ export function LearnerCourseDiscussion({
           if(destination)router.push(destination);
         }}/>
       {moderationError?<Alert tone="error">{moderationError}</Alert>:null}
-      <section className="relative overflow-hidden rounded-xl border border-border bg-surface">
+      <section className="relative min-w-0 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface">
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -665,7 +665,7 @@ export function LearnerCourseDiscussion({
             placeholder="Write a message..."
             className="mt-1.5 w-full"
           />
-          <div className="mt-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="mt-3 flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <span className="text-xs text-muted-foreground">
               <span className="md:hidden">Tap Send to post · Enter adds a new line</span>
               <span className="hidden md:inline">Enter to send · Shift+Enter for a new line</span>
