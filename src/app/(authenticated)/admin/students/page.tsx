@@ -22,7 +22,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
- if(!isSuperAdmin(context))return <div className="min-w-0 space-y-5">
+ if(!isSuperAdmin(context))return <div className="min-w-0 space-y-6">
   <PageHeader title="Students"/>
   <ErrorState title="Student access denied"
    description="Your account cannot access Super Admin student records."
@@ -42,7 +42,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     listSuperAdminStudentCsvImportHistory(context),
    ]);
   }catch{
-   return <div className="min-w-0 space-y-5">
+   return <div className="min-w-0 space-y-6">
     <PageHeader title="Students"/>
     <ErrorState title="Student register unavailable"
      description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
@@ -62,13 +62,13 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
-    <a href="#register-student" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3.5 text-sm font-semibold text-on-primary hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Register New Student ↓</a>
-    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    <a href="#register-student" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Register New Student ↓</a>
+    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
-  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-5"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
-  {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-5">
+  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-6"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
+  {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-6">
     <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
       <h2 id="bulk-register-students-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Bulk Register Students</h2>
       <SuperAdminStudentImportHistory runs={importRuns}/>
