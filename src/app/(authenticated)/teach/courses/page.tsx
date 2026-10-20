@@ -18,7 +18,7 @@ export default async function FacultyCoursesPage({searchParams}: {
   });
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="My Teaching Courses"
         description="Your active Course deliveries, exact Sections and the learning items visible to each class."
