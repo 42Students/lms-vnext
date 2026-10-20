@@ -82,7 +82,7 @@ export default async function FacultyContactsPage({
           value:key,label:tab.label,href:`/teacher/contacts/${key}`,
         }))} />
 
-      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <section className="border-y border-[var(--lms-canvas-border)] py-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
