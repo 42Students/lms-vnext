@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { hasActiveMembership, hasMembershipRole } from "@/modules/identity/context";
 
@@ -23,9 +24,9 @@ export default async function MentorLandingPage() {
     <PageHeader title={access===null?"Projects could not be loaded":"Projects is currently unavailable"}
       description={access===null?"Check your connection and try again. This does not mean Projects is disabled.":"Projects is disabled for this account. You can still check notifications."} />
     <div className="space-y-3">
-      <p className="text-sm text-body">
+      <Alert tone={access===null?"error":"warning"}>
         Contact your college administrator if you need access to Projects.
-      </p>
+      </Alert>
       {access===null?<Link href="/mentor?retry=1" className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Retry access check</Link>:null}
       <Link href="/mentor/notifications"
         className="mt-4 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 py-2 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">

@@ -70,7 +70,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
    setNotice("Copied "+selectedRows.length+" selected requests.");
   }catch{setNotice("Could not copy. Check your browser clipboard permissions.");}
  }
- return <section aria-label="Request row tools" className="space-y-2 rounded-lg border border-border p-3">
+ return <section aria-label="Request row tools" className="space-y-2 border-y border-[var(--lms-canvas-border)] py-3">
   <p className="text-sm font-semibold">Select and copy request rows</p>
   <p role="status" aria-live="polite" className="text-xs">{selectedRows.length} selected of {rows.length} on this page.</p>
   <div className="flex flex-wrap gap-3">
@@ -107,14 +107,14 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
        aria-label={"Select request from "+row.student}
        onChange={event=>setSelected(ids=>event.target.checked
         ?[...new Set([...ids,row.id])]:ids.filter(id=>id!==row.id))}/>
-      <span className="text-xs text-body sm:hidden">Select request</span>
+      <span className="text-xs text-body md:hidden">Select request</span>
      </label>},
     ...columns.map((column,index)=>({
      key:column.key,
      header:column.label,
      mobileLabel:column.label,
      mobilePriority:index===0?"primary" as const:"secondary" as const,
-     className:index===0?"sm:sticky sm:left-10 sm:z-10 sm:bg-surface":"",
+     className:index===0?"md:sticky md:left-10 md:z-10 md:bg-surface":"",
      cell:(row:TpoRequestClipboardRow)=>row[column.key]??"—",
     })),
    ]}

@@ -11,6 +11,7 @@ import { getCollegeHallAvailability, CollegeHallAvailabilityNotFoundError }
   from "@/modules/academics/college-hall-availability-service";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {StatusBadge} from "@/components/ui/status-badge";
 
 type Query = Record<string, string | string[] | undefined>;
 
@@ -77,8 +78,8 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
             <li key={item.id} className="border-b border-border py-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <h3 className="font-semibold text-foreground">{item.title}</h3>
-                {item.hasConflict ? <strong className="text-sm text-error">Potential conflict</strong> :
-                  <span className="text-sm text-muted-foreground">Scheduled</span>}
+                {item.hasConflict ? <StatusBadge tone="warning">Potential conflict</StatusBadge> :
+                  <StatusBadge tone="neutral">Scheduled</StatusBadge>}
               </div>
               <p className="mt-2 text-sm text-body">{when(item.startsAt)} – {when(item.endsAt)} · {item.sectionName}</p>
               <p className="mt-1 text-xs text-muted-foreground">Class configured capacity: {item.sectionCapacity ?? "Unknown"}; hall capacity: {result.hall.capacity}</p>
