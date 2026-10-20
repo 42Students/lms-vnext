@@ -66,7 +66,7 @@ export default async function RecruiterRequestDrivePage({
   if (collegeId && !grants.some((grant) => grant.collegeId === collegeId)) notFound();
 
   if (!collegeId) {
-    return <div className="min-w-0 max-w-full space-y-6">
+    return <div className="min-w-0 max-w-full space-y-5">
       <PageHeader title="Request a drive"
         description="Choose an authorized college before drafting a hiring request." />
       {grants.length === 0 ? (
@@ -96,17 +96,17 @@ export default async function RecruiterRequestDrivePage({
     ? hrDraftFromAuthorizedJob(fromJob.job, fromJob.rounds)
     : emptyHrDriveDraft();
 
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
     <nav className="flex flex-wrap items-center gap-3" aria-label="Recruiter drive links">
       <PageBackLink href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)} label="Back to drives"/>
     <Link href={hrSentProposalsHref(collegeId)}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       View previously sent discussion proposals
     </Link>
     <Link href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       Record an outside-platform drive
     </Link>
     </nav>
