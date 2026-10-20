@@ -72,7 +72,7 @@ export default async function MentorReviewHistoryPage({
           </Select>
         </label>
         <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Delivery submission version
-          <Input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 md:min-h-9 w-36 border border-[var(--lms-canvas-border)] px-3"/>
+          <Input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 w-full max-w-full border border-[var(--lms-canvas-border)] px-3 md:min-h-9 md:w-36"/>
         </label>
         <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Review chronology
           <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
