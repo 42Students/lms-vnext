@@ -21,12 +21,12 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/components/courses/learner-assessment-overview.tsx`
 - [x] `src/components/courses/learner-roadmap-item-dialog.tsx`
 - [x] `src/components/groups/college-group-actions.tsx`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/recruiter-applicant-review-drawer.tsx`
-- [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/hr/recruiter-round-inline-editor.tsx`
-- [ ] `src/components/placements/college-application-detail-drawer.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/hr/recruiter-applicant-review-drawer.tsx`
+- [x] `src/components/hr/recruiter-notification-bell.tsx`
+- [x] `src/components/hr/recruiter-round-inline-editor.tsx`
+- [x] `src/components/placements/college-application-detail-drawer.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
 - [ ] `src/components/placements/college-drive-deadline-action.tsx`
 - [ ] `src/components/placements/college-interview-appointments.tsx`
 - [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
