@@ -143,8 +143,9 @@ export function CollegeBrandingForm({
     <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] min-[992px]:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={save}
-        className="order-last min-w-0 space-y-[var(--lms-space-4)] print:hidden min-[992px]:order-first"
+        className="order-first min-w-0 space-y-[var(--lms-space-4)] print:hidden"
       >
+        {!canEdit ? <Alert tone="info">You can view this branding but not change it.</Alert> : null}
         <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Colours</h2>
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
@@ -152,7 +153,7 @@ export function CollegeBrandingForm({
               <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 {key === "primaryColor" ? "Primary colour" : "Secondary colour"}
               </span>
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 <Input
                   type="color"
                   aria-label={`${key} picker`}
@@ -168,7 +169,7 @@ export function CollegeBrandingForm({
                   disabled={!canEdit}
                   maxLength={7}
                   aria-invalid={Boolean(errors[key])}
-                  className="min-h-11 md:min-h-9"
+                  className="min-h-11 min-w-0 flex-1 md:min-h-9"
                 />
               </div>
               {errors[key] ? (
@@ -182,12 +183,17 @@ export function CollegeBrandingForm({
           chosen automatically so it always stays readable.
         </p>
 
+        {Object.values(errors).some(Boolean) ? <Alert tone="error">Review the highlighted fields before saving. Sections with errors are expanded.</Alert> : null}
         {[
           { title: "Sign-in images", fields: FIELDS.slice(0, 4) },
           { title: "Support details and policies", fields: FIELDS.slice(4) },
-        ].map(group => (
-          <Disclosure key={group.title} title={group.title} defaultOpen={canEdit}
-            contentClassName="pt-[var(--lms-space-3)]">
+        ].map(group => {
+          const hasErrors=group.fields.some(field=>Boolean(errors[field.key]));
+          return <Disclosure key={group.title + (hasErrors ? "-invalid" : "-ready")}
+            title={hasErrors ? group.title + " · Check fields" : group.title}
+            defaultOpen={hasErrors}
+            className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3"
+            contentClassName="min-w-0 pt-[var(--lms-space-3)]">
             <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
               {group.fields.map(field => (
                 <label key={field.key} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -205,22 +211,20 @@ export function CollegeBrandingForm({
                 </label>
               ))}
             </div>
-          </Disclosure>
-        ))}
+          </Disclosure>;
+        })}
 
         {canEdit ? (
-          <Button type="submit" loading={saving} disabled={saving} className="min-h-11 w-full md:min-h-9 md:w-auto">
+          <Button type="submit" loading={saving} disabled={saving} className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">
             {saving ? "Saving…" : "Save branding"}
           </Button>
-        ) : (
-          <Alert tone="info">You can view this branding but not change it.</Alert>
-        )}
+        ) : null}
       </form>
 
       <aside
         aria-label="Sign-in preview"
         style={previewStyle}
-        className="order-first min-w-0 h-fit space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[992px]:order-last min-[992px]:border-b-0 min-[992px]:border-l min-[992px]:pl-[var(--lms-space-4)] min-[992px]:pb-0"
+        className="order-last min-w-0 h-fit space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] min-[992px]:border-t-0 min-[992px]:border-l min-[992px]:pl-[var(--lms-space-4)] min-[992px]:pt-0"
       >
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sign-in preview
