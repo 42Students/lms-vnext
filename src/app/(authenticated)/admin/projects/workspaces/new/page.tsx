@@ -14,7 +14,8 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
 }) {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId;
-  if (!collegeId) return <div className="min-w-0 space-y-5"><PageHeader title="Create workspaces from a class" description="Choose a college safety scope before creating Project workspaces."/><EmptyState title="Select a college" description="Use the admin scope selector to choose an active college."/></div>;
+  if (!collegeId) return <div className="min-w-0 space-y-5"><PageHeader title="Create workspaces from a class" description="Choose a college safety scope before creating Project workspaces."
+    actions={<PageBackLink href="/admin/projects" label="Project workspaces"/>}/><EmptyState title="Select a college" description="Use the admin scope selector to choose an active college."/></div>;
   let templates: Awaited<ReturnType<typeof listAssignedProjectTemplates>>;
   try {
     // Do not fetch or show template details until the selected college scope
@@ -24,7 +25,8 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
   } catch (error) {
     const denied = error instanceof ProjectsServiceError && error.code === "PROJECT_ACCESS_DENIED";
     return <div className="min-w-0 space-y-5">
-      <PageHeader title="Create project workspace"/>
+      <PageHeader title="Create project workspace"
+        actions={<PageBackLink href="/admin/projects" label="Project workspaces"/>}/>
       <ErrorState title={denied ? "Project creation access denied" : "Project setup unavailable"}
         description={denied
           ? "Your selected college cannot be used to create workspaces. Select an authorized college and try again."
