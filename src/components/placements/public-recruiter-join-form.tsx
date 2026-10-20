@@ -119,7 +119,7 @@ export function PublicRecruiterJoinForm({
   }
 
   return (
-    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 py-8 sm:py-12`}>
+    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 py-8 min-[768px]:py-12`}>
       <Card as="section" className="w-full">
         {preview.kind !== "READY" ? (
           <>
@@ -139,7 +139,7 @@ export function PublicRecruiterJoinForm({
                 ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
                 : "Sign in with your work email, "+signInEmail+". We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Sign in</Link>
           </>
         ) : (
           <>
@@ -193,7 +193,7 @@ export function PublicRecruiterJoinForm({
                 </label>
               ) : null}
               {!sentTo ? (
-                <Button type="submit" loading={pending} className="w-full sm:w-auto">Send me a code</Button>
+                <Button type="submit" loading={pending} className="w-full min-[768px]:w-auto">Send me a code</Button>
               ) : (
                 <>
                   <label className="flex flex-col gap-1 text-sm font-semibold text-body">
@@ -204,8 +204,8 @@ export function PublicRecruiterJoinForm({
                     <span className="text-xs font-normal text-muted-foreground">This proves the email is yours.</span>
                   </label>
                   <div className="flex flex-wrap gap-3">
-                    <Button type="submit" loading={pending} className="w-full sm:w-auto">Join {college} placements</Button>
-                    <Button type="button" variant="secondary" disabled={pending} onClick={()=>void sendCode()} className="w-full sm:w-auto">Send a new code</Button>
+                    <Button type="submit" loading={pending} className="w-full min-[768px]:w-auto">Join {college} placements</Button>
+                    <Button type="button" variant="secondary" disabled={pending} onClick={()=>void sendCode()} className="w-full min-[768px]:w-auto">Send a new code</Button>
                   </div>
                 </>
               )}
