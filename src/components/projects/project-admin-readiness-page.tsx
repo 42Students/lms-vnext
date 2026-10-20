@@ -12,6 +12,8 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { ErrorState } from "@/components/ui/error-state";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
 import { DataTable } from "@/components/ui/data-table";
@@ -71,11 +73,22 @@ export async function ProjectAdminReadinessPage({
       one(searchParams.pageSize) ?? 25,
     ),
   };
-  const [result, activeOverrides, workspaceChoices] = await Promise.all([
+  const read = await Promise.all([
     listProjectAdminSnapshots(context, collegeId, query),
     listCollegeActiveReadinessOverrides(context, collegeId),
     listCollegeReadinessWorkspaceChoices(context,collegeId),
-  ]);
+  ]).then(value => ({ ok: true as const, value }))
+    .catch(() => ({ ok: false as const }));
+  if (!read.ok) return <div className="min-w-0 space-y-6">
+    <PageHeader title="Submission readiness"
+      description="Execution completion and final-delivery readiness across project workspaces."
+      actions={<PageBackLink href={basePath} label="Project workspaces" />} />
+    <ProjectAdminNav basePath={basePath} active="readiness" />
+    <ErrorState title="Submission readiness unavailable"
+      description="The readiness workspaces could not be loaded. Choose the selected college and retry."
+      action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry readiness</Link>} />
+  </div>;
+  const [result, activeOverrides, workspaceChoices] = read.value;
   const chosenId=z.string().uuid().safeParse(one(searchParams.projectId) ?? one(searchParams.workspaceId)).data;
   const selected=chosenId && workspaceChoices.some(item=>item.id===chosenId)?chosenId:null;
   const outsideScope=Boolean(chosenId&&!selected);
@@ -84,12 +97,14 @@ export async function ProjectAdminReadinessPage({
     basePath + "/readiness";
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Submission readiness"
         description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to."
-        actions={<a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Export overrides CSV</a>}
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
+          <PageBackLink href={basePath} label="Project workspaces" />
+          <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export overrides CSV</a></div>}
       />
       <ProjectAdminNav basePath={basePath} active="readiness" />
       <section className="border-b border-border pb-5">
