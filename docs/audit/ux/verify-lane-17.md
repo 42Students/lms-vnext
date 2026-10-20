@@ -77,3 +77,13 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Regression fixed (1): Open · Review submission used `reason=pending-review` or status strings not recognized by shared project route guard (only `STALLED|BLOCKER|REVIEW`). Preserve existing destination and `from=submissions` and supply valid `REVIEW` only for submitted deliveries; other statuses omit unsupported reason.
 - Extra alignment fix (1): moved unchanged Project workspaces back link above the single PageHeader; review chips remain in PageHeader. All labels, permissions, accessible targets and legacy tokens preserved.
 - Files changed: `src/components/projects/project-admin-submissions-page.tsx`, proof and queue. No CI or runtime.
+
+## Surface 13 — `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 13. Reviewed entire page, loading and error routes, SuperAdminTemplateCollegeBulk (selection, checkbox permissions, confirm, retry, partial failures), tabs, DataTable/FilterBar, ID and search schema, authorized service, pagination and parent layouts.
+- Regressions found/fixed: 0. Native disclosure renders only when requested, action/dialog/button props and query keys agree with model, college assignment scope and disabled states remain intact. No duplicate attributes, missing imports, dropped IDs/aria, or invalid TSX found in inspected files.
+- Extra clutter/alignment fixes: 0. Single canvas, page title, clear-filter recovery, mobile selections, existing bulk disclosure and directory loading retained. Files changed: queue and this proof; source inspection only, not executed.
+
+## Surface 14 — `src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 14. Redirect-only Overview alias read with loading/error boundaries, permission helper, template UUID schema and canonical subview resolver. Inspected absence of any independent rendered page controls.
+- Regressions found/fixed: 0. Authorizes before validation and canonical redirect, invalid UUID notFound; template-specific directory loader with unchanged error retry. No content/layout invented.
+- Extra clutter/alignment fixes: 0. Files changed: queue and this proof; source-only, no CI.
