@@ -7,6 +7,8 @@ import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   createCollegeSemesterSchema,
@@ -72,7 +74,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
       ) : (
-        <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
           <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.programLabel}
             <Select required value={programId} onChange={e => setProgramId(e.target.value)}
@@ -93,12 +95,11 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)} placeholder={SEMESTER_COPY.namePlaceholder}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <p className="self-center text-xs text-body">
+          <p className="border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-xs text-body md:col-span-2">
             Total credits are calculated from courses mapped to this semester.
           </p>
-          <div className="flex items-end">
-            <Button variant="primary" type="submit" disabled={pending}
-              >
+          <div className="flex items-end justify-stretch md:col-span-2 md:justify-end">
+            <Button variant="primary" type="submit" disabled={pending} className="w-full md:w-auto">
               {pending ? "Saving…" : SEMESTER_COPY.createButton}
             </Button>
           </div>
@@ -168,24 +169,25 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   }
 
   return (
-    <div className="min-w-52 space-y-2">
+    <div className="min-w-0 space-y-[var(--lms-space-2)]">
       {!editing && !confirming ? (
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
           <Button variant="secondary" type="button" disabled={pending} onClick={() => { setNotice(""); setName(row.name);setIsActive(row.isActive);setEditing(true); }}
             >
             Edit
           </Button>
-          <Button variant="secondary" type="button" disabled={pending} onClick={() => { setNotice(""); setConfirming(true); }}
-            >
-            Delete
-          </Button>
+          <Dropdown trigger="More" label="Semester actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+            <Menu className="w-full min-w-0">
+              <MenuItem disabled={pending} onClick={() => { setNotice(""); setConfirming(true); }}>Delete</MenuItem>
+            </Menu>
+          </Dropdown>
         </div>
       ) : null}
       {editing ? (
         <Dialog open={editing} onOpenChange={next=>{if(!next)closeEditor();}}
           title={SEMESTER_COPY.editTitle}
           description={SEMESTER_COPY.promotionNote}>
-        <form onSubmit={save} className="space-y-2">
+        <form onSubmit={save} className="grid min-w-0 gap-[var(--lms-space-4)]">
           
           
           <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -199,13 +201,12 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
               disabled={pending} onChange={e => setIsActive(e.target.checked)} />
             <span role="status">{isActive ? SEMESTER_COPY.statusActive : SEMESTER_COPY.statusInactive}</span>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="primary" type="submit" disabled={pending} >
-              {pending ? "Saving…" : SEMESTER_COPY.saveButton}
-            </Button>
-            <Button variant="secondary" type="button" disabled={pending} onClick={closeEditor}
-              >
+          <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
+            <Button variant="secondary" type="button" disabled={pending} onClick={closeEditor}>
               Cancel
+            </Button>
+            <Button variant="primary" type="submit" disabled={pending}>
+              {pending ? "Saving…" : SEMESTER_COPY.saveButton}
             </Button>
           </div>
         </form>
