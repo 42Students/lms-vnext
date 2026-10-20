@@ -23,13 +23,14 @@ export function CollegeArchivedLessonRestore({id,name}:{id:string;name:string}){
    setError("Lesson could not be restored. Check for a conflicting active lesson and try again.");
   }finally{setPending(false);}
  }
- return <div className="inline-flex max-w-full flex-col items-start gap-1">
-  <Button variant="ghost" type="button" disabled={pending} onClick={()=>setConfirming(true)}
-   className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9">Restore</Button>
-  <ConfirmDialog open={confirming} onOpenChange={setConfirming}
+ return <div className="flex max-w-full flex-col items-stretch gap-1 sm:items-start">
+  <Button variant="ghost" type="button" disabled={pending} onClick={()=>{setError("");setConfirming(true);}}
+   className="min-h-11 w-full !text-[var(--lms-primary-text)] underline sm:w-auto md:min-h-9">Restore</Button>
+  <ConfirmDialog open={confirming} onOpenChange={value=>{if(!pending){setError("");setConfirming(value);}}}
    title={"Restore "+name+"?"}
    description="Restoring makes the Lesson available in its active Learning Path. Historical progress and submissions are kept."
-   confirmLabel="Restore Lesson" confirmVariant="primary" pending={pending} onConfirm={()=>void restore()}/>
-  {error?<Alert tone="error">{error}</Alert>:null}
+   confirmLabel="Restore Lesson" confirmVariant="primary" pending={pending} onConfirm={()=>void restore()}>
+    {error?<Alert tone="error" role="alert">{error}</Alert>:null}
+  </ConfirmDialog>
  </div>;
 }
