@@ -523,7 +523,7 @@ export function SectionOperations({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-6)]">
-      <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)] md:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Program
@@ -693,7 +693,7 @@ export function SectionOperations({
           <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Program enrollments
           </h3>
-          <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
+          <DataTable empty={<EmptyState title="No records to show" />}
             columns={enrollmentColumns}
             rows={programEnrollments}
             getRowKey={(row) => row.id}
@@ -704,7 +704,7 @@ export function SectionOperations({
           <h3 id="section-roster" className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Section roster history
           </h3>
-          <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
+          <DataTable empty={<EmptyState title="No records to show" />}
             columns={rosterColumns}
             rows={roster}
             getRowKey={(row) => row.id}
@@ -787,7 +787,7 @@ export function SectionOperations({
         </div>
         </Disclosure>
 
-        <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
+        <DataTable empty={<EmptyState title="No records to show" />}
           columns={facultyColumns}
           rows={facultyAssignments}
           getRowKey={(row) => row.id}
@@ -980,7 +980,7 @@ export function SectionOperations({
         </div>
         </Disclosure>
 
-        <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
+        <DataTable empty={<EmptyState title="No records to show" />}
           columns={scheduleColumns}
           rows={scheduleEvents}
           getRowKey={(row) => row.id}
