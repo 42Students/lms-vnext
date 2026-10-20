@@ -651,3 +651,34 @@ In `faculty-assignment-review.tsx`, all ten `size="sm"` 13px review and paginati
 **Bounded turn total so far: 39 distinct TSX files plus this audit**, all pushed only to `chatgpt/chat-3-b`. Visible source scans recorded 0 unexempted native controls/confirm/hex, 0 640px `sm:` variants in those 39 touched files; the seven invisible GET preservation input tags on two report routes, and one on the Super Admin directory, are explicitly exempt. The scan does not cover every descendant outside these files. Responsive **source-code** mapping is checked; rendered 375/767/768/991/1024 widths and default/hover/focus/loading/error state comparison remain unexecuted. No typecheck/tests/CI, per owner.
 
 **Exact next file after this turn:** `src/components/courses/faculty-assessment-create.tsx` (revisit its entire rendered form state against the current global skin and legacy SCSS), followed by `src/components/academics/academics-section-page.tsx`. Work queue H remains strictly unchecked pending full portal grep and rendered property proof.
+
+
+### 2026-10-20 next bounded sweep — ten source-migrated components
+
+All counts below came from entire current GitHub UTF-8 file blobs at the pushed lane head, **not a shell command**. Zero means the full blob had no source matches for native visible controls, native confirm, or hard-coded hex. Shared Button open/close counts are an approximate JSX tag-balance check (not a TypeScript compile). Native `Checkbox` and `Radio` are imported, not hand-rolled.
+
+| File | Lines | Raw control/confirm/hex matches (line:match or 0) | `sm:` 640px modifiers | `Button` opening/closing | Sample lines for token/shared-UI proof |
+|---|---:|---|---:|---:|---|
+| `src/components/courses/faculty-assessment-create.tsx` | 88 | 0 | 0 | 2/2 | 45,47,52,58,65 |
+| `src/components/academics/academics-section-page.tsx` | 90 | 0 | 0 | 0/0 | 42 |
+| `src/components/academics/academics-actions.tsx` | 947 | 0 | 0 | 21/21 | 144,152,215,227,239 |
+| `src/components/academics/section-operations.tsx` | 992 | 0 | 0 | 10/10 | 272,291,350,369,813 |
+| `src/components/attendance/faculty-attendance-workspace.tsx` | 1284 | 0 | 0 | 14/14 | 491,493,549,680,802 |
+| `src/components/courses/faculty-choice-quiz-builder.tsx` | 442 | 0 | 0 | 26/26 | 207,209,211,213,215 |
+| `src/components/courses/faculty-lesson-authoring.tsx` | 1173 | 0 | 0 | 11/11 | 65,600,664,673,816 |
+| `src/components/courses/faculty-quiz-question-editor.tsx` | 687 | 0 | 0 | 6/6 | 415,479,499,522,671 |
+| `src/components/courses/faculty-lesson-video-manager.tsx` | 341 | 0 | 0 | 11/11 | 218,222,225,228,232 |
+| `src/components/courses/faculty-course-home-signals.tsx` | 262 | 0 | 0 | 0/0 | 38,42,83,159,183 |
+
+**Values, legacy-to-vNext declaration mapping (selected migrated properties, not all computed properties):**
+
+| Legacy file:line and precise value | vNext file/prop | Source check |
+|---|---|---|
+| `docs/design/legacy-styles/components___variables.scss:139` 44px phone touch target and `:148` phone up to 767px | `src/components/academics/academics-actions.tsx`, `section-operations.tsx`, `attendance/faculty-attendance-workspace.tsx`, `courses/faculty-quiz-question-editor.tsx`: `min-h-11`/shared Button, `md:min-h-[var(--lms-control-height)]` switch at 768px | Phone action height declaration mapped to 44px; browser/computed-state proof pending |
+| `docs/orchestrator/queues/master-queue.md:5` default button 36px high, 14px/650, control radius 9px | 13 academic action and six Section-operation buttons, eight attendance buttons switched from `size="sm"` (13px) to shared `size="md"` (14px); existing 44px phone constraints retained | Static dimensions checked via shared Button props; emitted CSS pending |
+| `docs/design/legacy-styles/components___form.scss:110-114` form label 13px, 600, 16px leading | `section-operations.tsx`, `faculty-attendance-workspace.tsx`, `faculty-quiz-question-editor.tsx`: `text-[13px] font-semibold leading-4` | Source value aligned for touched labels |
+| `docs/design/legacy-styles/components___variables.scss:30,134` 1px `#e5e9f0` border and 12px card radius | `faculty-assessment-create.tsx`, `academics-section-page.tsx`, `faculty-course-home-signals.tsx`: border-border / canvas-radius tokens and one un-nested layout width; shared state surfaces via `Alert`/`EmptyState` | Inherited token use checked; no computed canvas screenshot |
+| `docs/design/old-lms-pages.md:7` slim alert/banner instead of custom notice | `faculty-lesson-authoring.tsx`: quarter-hour validation -> `Alert tone="warning"`; `faculty-choice-quiz-builder.tsx`: shared error/success Alerts; `faculty-lesson-video-manager.tsx`: readonly/info and processing/warning Alerts | Structural shared-component proof; pending hover/focus/error browser comparison |
+| `docs/design/old-lms-pages.md:4` small teal selected controls, old LMS consistent input skins | `faculty-choice-quiz-builder.tsx`: `NativeCheckbox` kept for form-inside-`label` preview choice, `Checkbox` with `label` from shared selection-controls for interactive authoring | Removed duplicate Checkbox name binding; no inferred behavior or grading change |
+
+The direct whole-blob regex equivalent is `<(button|input|select|textarea|table|dialog)\\b|window\\.confirm\\s*\\(|#[0-9a-fA-F]{3,8}\\b`. This was evaluated in GitHub connector response text on exactly the ten files above. **No `git grep` shell, no JSX parser, no responsive screenshots, no typecheck/tests/CI** were executed. The strict 94-work-item H queue remains unchecked because full visual/default/hover/focus/disabled/loading and transitive coverage conditions are not proven. These ten files are source-updated only. Next target: `src/components/courses/faculty-course-list.tsx` and `src/components/courses/faculty-assessment-overview.tsx`, followed by remaining unreviewed delegated teacher pages.
