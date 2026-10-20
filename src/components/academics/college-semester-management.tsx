@@ -70,8 +70,8 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
   }
 
   return (
-    <section aria-label={SEMESTER_COPY.createTitle} className="min-w-0 border-t border-border pt-4">
-      <h2 className="m-0 text-lg font-semibold text-foreground">{SEMESTER_COPY.createTitle}</h2>
+    <details aria-label={SEMESTER_COPY.createTitle} className="group min-w-0 border-b border-border pb-4">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">{SEMESTER_COPY.createTitle}</summary>
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
       ) : (
@@ -107,7 +107,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
         </form>
       )}
       {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
-    </section>
+    </details>
   );
 }
 
