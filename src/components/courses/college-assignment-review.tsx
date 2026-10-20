@@ -88,7 +88,7 @@ export function CollegeAssignmentReview({
    <FacultyAssignmentReview key={selected.deliveryId} reviewScope="COLLEGE"
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
     maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
-   {status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
+   {status==="PUBLISHED"?<Button variant="primary" type="button" loading={bulkBusy} disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
     className="min-h-11 md:min-h-9">
     {bulkBusy?"Publishing…":"Publish grades"}
    </Button>:null}

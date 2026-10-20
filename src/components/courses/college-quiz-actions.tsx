@@ -116,7 +116,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     Quiz deadlines cannot be changed after learner attempts or after the quiz closes.
     Other immutable quiz fields stay unchanged.
    </p>:null}
-   <Button type="button" disabled={busy} onClick={()=>void act("EDIT")}
+   <Button type="button" loading={busy} disabled={busy} onClick={()=>void act("EDIT")}
     variant="primary" size="sm" className="min-h-11 md:min-h-9">
     {busy?"Saving…":"Save quiz"}</Button>
   </div>:null}

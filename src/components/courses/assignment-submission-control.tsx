@@ -302,7 +302,7 @@ export function AssignmentSubmissionControl({
         {error ? <Alert tone="error" className="mt-3">Assignment was not submitted. {error}</Alert> : null}
 
         {submissionType !== "FILE" ? <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Button type="submit" className="min-h-11 md:min-h-9" disabled={!methodsLoaded||Boolean(methodsError)}>
+          <Button type="submit" className="min-h-11 md:min-h-9" loading={submitting} disabled={!methodsLoaded||Boolean(methodsError)||submitting}>
             {submitting
               ? "Submitting…"
               : error?"Retry":"Submit"}
