@@ -92,7 +92,7 @@ export function MembershipChooser({
 
   if (memberships.length===0) {
     return (
-      <section className="rounded-[12px] border border-border bg-surface p-6">
+      <section className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-6">
         <p className="m-0 text-base font-semibold text-foreground">
           No active college memberships
         </p>
@@ -109,7 +109,7 @@ export function MembershipChooser({
       {error ? (
         <p
           role="alert"
-          className="rounded-[9px] border border-error bg-[var(--lms-error-subtle)] px-4 py-3 text-sm font-semibold text-error"
+          className="rounded-[var(--lms-control-radius,9px)] border border-error bg-[var(--lms-error-subtle)] px-4 py-3 text-sm font-semibold text-error"
         >
           {error}
         </p>
@@ -123,7 +123,7 @@ export function MembershipChooser({
         {sorted.map((membership) => (
           <section
             key={membership.id}
-            className={"flex flex-col justify-between gap-5 rounded-[12px] border bg-surface p-5 "+
+            className={"flex flex-col justify-between gap-5 rounded-[var(--lms-canvas-radius,12px)] border bg-surface p-5 "+
               (membership.id===selectedId?"border-primary":"border-border")}
           >
             <div>

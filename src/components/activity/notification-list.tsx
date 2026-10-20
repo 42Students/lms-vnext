@@ -105,7 +105,7 @@ export function NotificationList({
               aria-label={"Open notification: "+item.title}
               className="w-full min-h-12 justify-start rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-left whitespace-normal shadow-[var(--lms-shadow-sm)] hover:border-primary/25 hover:shadow-[var(--lms-shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:p-6">
               <div className="flex items-start gap-3">
-               {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary"/>:null}
+               {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block size-2 shrink-0 rounded-full bg-primary"/>:null}
                <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                  <strong className="break-words">{item.title}</strong>
