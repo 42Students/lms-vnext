@@ -33,7 +33,7 @@ export default async function HrProfilePage() {
             profileUpdatedAt={profile.profileUpdatedAt.toISOString()} />
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Work email</dt>
-            <dd className="mt-1 text-sm text-foreground">{profile.email ?? "Not provided"}</dd>
+            <dd className="mt-1 break-all text-sm text-foreground">{profile.email ?? "Not provided"}</dd>
             <p className="mt-1 text-xs text-muted-foreground">You sign in with this, so it can&apos;t be changed here. A different company means a new work email and a new account.</p>
           </div>
 
@@ -49,7 +49,7 @@ export default async function HrProfilePage() {
         <dl className="mt-[16px] grid gap-[16px] md:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
-            <dd className="mt-1 text-sm text-foreground">{profile.companyName}</dd>
+            <dd className="mt-1 break-words text-sm text-foreground">{profile.companyName}</dd>
             <p className="mt-1 text-xs text-muted-foreground">Your company comes from your work email. Ask 42 if its name or logo is wrong.</p>
           </div>
           <div>

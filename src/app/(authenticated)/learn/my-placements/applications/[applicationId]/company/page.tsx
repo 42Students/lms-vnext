@@ -44,7 +44,7 @@ export default async function LearnerApplicationCompanyPage({
         </p>
         <dl className="mt-4 grid gap-3 text-sm">
           <div><dt className="font-semibold">Application ID</dt><dd className="break-all">{company.companySharePreview.applicationId}</dd></div>
-          <div><dt className="font-semibold">Learner</dt><dd>{company.companySharePreview.learnerName}</dd></div>
+          <div className="min-w-0"><dt className="font-semibold">Learner</dt><dd className="break-words">{company.companySharePreview.learnerName}</dd></div>
           <div><dt className="font-semibold">Email</dt><dd className="break-all">{company.companySharePreview.email??"No email recorded"}</dd></div>
         </dl>
         <p className="mt-4 rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-xs text-body">
@@ -58,15 +58,15 @@ export default async function LearnerApplicationCompanyPage({
         <dl className="mt-4 grid gap-4 text-sm md:grid-cols-2">
           <div>
             <dt className="font-semibold text-muted-foreground">Employer</dt>
-            <dd className="mt-1 text-foreground">{company.companyName}</dd>
+            <dd className="mt-1 break-words text-foreground">{company.companyName}</dd>
           </div>
           <div>
             <dt className="font-semibold text-muted-foreground">Applied role</dt>
-            <dd className="mt-1 text-foreground">{company.roleTitle}</dd>
+            <dd className="mt-1 break-words text-foreground">{company.roleTitle}</dd>
           </div>
           <div>
             <dt className="font-semibold text-muted-foreground">Placement drive</dt>
-            <dd className="mt-1 text-foreground">{company.driveTitle}</dd>
+            <dd className="mt-1 break-words text-foreground">{company.driveTitle}</dd>
           </div>
           <div>
             <dt className="font-semibold text-muted-foreground">Official website</dt>

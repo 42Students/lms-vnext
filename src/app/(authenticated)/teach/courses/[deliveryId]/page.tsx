@@ -48,7 +48,7 @@ export default async function FacultyCoursePage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/teach/courses"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           ← My Teaching Courses
         </Link>

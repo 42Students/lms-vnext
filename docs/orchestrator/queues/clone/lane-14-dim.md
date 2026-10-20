@@ -53,36 +53,36 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-14.md: file, number of 
 - [x] `src/app/(authenticated)/college/live-classes/page.tsx`
 - [x] `src/app/(authenticated)/college/people/error.tsx`
 - [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/retention/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/college/profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/create/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/college/resources/page.tsx`
-- [ ] `src/app/(authenticated)/college/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/verification/page.tsx`
-- [ ] `src/app/(authenticated)/dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/hr/profile/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/retention/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/college/profile/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/create/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/college/resources/page.tsx`
+- [x] `src/app/(authenticated)/college/semesters/page.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/verification/page.tsx`
+- [x] `src/app/(authenticated)/dashboard/page.tsx`
+- [x] `src/app/(authenticated)/hr/profile/page.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
+- [x] `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
