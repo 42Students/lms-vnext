@@ -69,21 +69,21 @@ export function LearnerPlacementJobDetail({
           }
         />
 
-        <dl className="mt-5 grid min-w-0 gap-4 border-t border-border pt-5 md:grid-cols-2 lg:grid-cols-3">
-          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Where</dt>
+        <dl className="mt-5 grid min-w-0 gap-4 border-t border-border pt-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+          <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where</dt>
             <dd className="mt-1 font-semibold text-foreground">{item.job.locations.length?item.job.locations.join(", "):"Not specified"}</dd></div>
-          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Job type</dt>
+          <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Job type</dt>
             <dd className="mt-1 font-semibold text-foreground">{humanize(item.job.employmentType)}</dd></div>
-          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Compensation</dt>
+          <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Compensation</dt>
             <dd className="mt-1 font-semibold text-foreground">{item.job.minimumAnnualCtcInr!==null
               ? "₹"+(item.job.minimumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA" : "Not disclosed"}</dd></div>
-          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Pay</dt>
+          <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pay</dt>
             <dd className="mt-1 font-semibold text-foreground">{item.job.stipendPerMonthInr!==null&&item.job.stipendPerMonthInr!==undefined
               ? "₹"+item.job.stipendPerMonthInr.toLocaleString("en-IN")+" / month" : "See role breakdown"}</dd></div>
-          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Posted</dt>
+          <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Posted</dt>
             <dd className="mt-1 font-semibold text-foreground">{item.job.publishedAt&&Number.isFinite(Date.parse(item.job.publishedAt))
               ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(item.job.publishedAt)) : "Not specified"}</dd></div>
-          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Applications close</dt>
+          <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applications close</dt>
             <dd className="mt-1 font-semibold text-foreground">{learnerJobDeadlineLabel(item.job.applicationDeadline)}</dd></div>
         </dl>
         <div className="mt-5 flex min-w-0 flex-wrap gap-3">
@@ -101,8 +101,8 @@ export function LearnerPlacementJobDetail({
       </section>
       {availability ? (
         <aside role="status" aria-label="Application availability"
-          className="min-w-0 border-b border-border bg-surface-subtle px-4 py-4 md:px-6 md:py-5">
-          <h2 className="text-base font-semibold text-foreground">{availability.title}</h2>
+          className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-surface-subtle px-4 py-4 md:px-6 md:py-5">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{availability.title}</h2>
           <p className="mt-2 text-sm leading-6 text-body">{availability.detail}</p>
           {availability.kind!=="OPEN" && availability.kind!=="APPLIED" ? (
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-body" aria-label="Application blockers">
@@ -113,16 +113,16 @@ export function LearnerPlacementJobDetail({
           {availability.kind!=="OPEN" ? (
             <div className="mt-3 flex flex-wrap gap-4">
               <Link href="/learn/my-placements/applications"
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text">
                 Check my applications →
               </Link>
               <Link href="/learn/profile"
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text">
                 Review my profile →
               </Link>
               {(availability.kind==="NOT_OPEN" || availability.kind==="EVIDENCE") ? (
                 <Link href="/learn/my-placements#registration"
-                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text">
                   Register for placements →
                 </Link>
               ) : null}
@@ -131,16 +131,16 @@ export function LearnerPlacementJobDetail({
         </aside>
       ) : null}
 
-      <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5"
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5"
         aria-label="Registration and evidence requirements">
-        <h2 className="text-base font-semibold text-foreground">Requirements &amp; preferences</h2>
+        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Requirements &amp; preferences</h2>
         <p className="mt-2 text-sm leading-6 text-body">
           These are role-specific eligibility checks from your college placement data.
           Separate placement registration or consent status is not established by this checklist.
         </p>
-        <ul className="mt-4 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-4 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
           {requirements.map(role=>(
-            <li key={role.id} className="min-w-0 border-b border-border py-3">
+            <li key={role.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
               <p className="break-words text-sm font-semibold text-foreground">{role.title}</p>
               <p className="mt-2 text-xs text-body">
                 {role.checked===0?"No detailed requirement checks available":
@@ -155,26 +155,26 @@ export function LearnerPlacementJobDetail({
         </ul>
         <div className="mt-4 flex flex-wrap gap-4">
           <Link href="/learn/my-placements/rules"
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Review placement rules →
           </Link>
           <Link href="/learn/profile"
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Review profile evidence →
           </Link>
         </div>
       </section>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-        <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5" aria-labelledby="about-drive">
-          <h2 id="about-drive" className="m-0 text-lg font-semibold text-foreground">About this opportunity</h2>
+        <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5" aria-labelledby="about-drive">
+          <h2 id="about-drive" className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">About this opportunity</h2>
           <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-body">
             {item.job.description || "No additional description was published for this drive."}
           </p>
           <h3 className="mt-6 text-base font-semibold text-foreground">Key dates</h3>
           <p className="mt-2 text-sm text-body">Applications close: {learnerJobDeadlineLabel(item.job.applicationDeadline)}</p>
           <h3 className="mt-6 text-base font-semibold text-foreground">Company & role details</h3>
-          <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
+          <dl className="mt-4 grid min-w-0 gap-4 min-[768px]:grid-cols-2">
             <div>
               <dt className="text-xs font-semibold text-muted-foreground">Locations</dt>
               <dd className="mt-1 text-sm text-foreground">
@@ -196,7 +196,7 @@ export function LearnerPlacementJobDetail({
           </dl>
         </section>
 
-        <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5" aria-labelledby="eligibility-title">
+        <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5" aria-labelledby="eligibility-title">
           <h2 id="eligibility-title" className="m-0 text-lg font-semibold text-foreground">
             Eligibility breakdown
           </h2>
@@ -262,14 +262,14 @@ export function LearnerPlacementJobDetail({
         </section>
       </div>
 
-      <section aria-labelledby="drive-pay-title" className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
+      <section aria-labelledby="drive-pay-title" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5">
         <h2 id="drive-pay-title" className="text-lg font-semibold text-foreground">Pay</h2>
         <p className="mt-1 text-sm text-body">Published compensation for each role. Missing amounts are not estimated.</p>
         <ul className="mt-4 grid gap-3 lg:grid-cols-2">{items.map(row=>{
           const pay=learnerDrivePayFacts({...row.roleOption,stipendPerMonthInr:row.job.stipendPerMonthInr??null});
           return <li key={row.roleOption.id} className="rounded-md border border-border p-4">
             <h3 className="font-semibold text-foreground">{row.roleOption.title}</h3>
-            <dl className="mt-3 grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
+            <dl className="mt-3 grid grid-cols-1 gap-3 text-sm min-[768px]:grid-cols-2">
               <div><dt className="text-muted-foreground">CTC</dt><dd>{pay.ctc}</dd></div>
               <div><dt className="text-muted-foreground">Fixed</dt><dd>{pay.fixed}</dd></div>
               <div><dt className="text-muted-foreground">Variable</dt><dd>{pay.variable}</dd></div>
