@@ -426,6 +426,7 @@ export function FacultyQuizQuestionEditor({
         description="Question changes are accepted only while this Quiz remains Draft and has no learner attempts."
         footer={
           <Button
+            loading={saving}
             disabled={
               saving || loading
             }
