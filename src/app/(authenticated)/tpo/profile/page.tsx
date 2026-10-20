@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getOwnTpoProfile } from "@/modules/placements/tpo-self-profile-service";
 import { formatTpoProfileRole } from "@/modules/placements/tpo-utility-model";
@@ -104,12 +105,9 @@ export default async function TpoProfilePage() {
             </dt>
             <dd className="mt-2 flex flex-wrap gap-2">
               {profile.roles.map((role) => (
-                <StatusBadge
-                  key={role}
-                  tone="info"
-                >
+                <Badge key={role} tone="neutral">
                   {formatTpoProfileRole(role)}
-                </StatusBadge>
+                </Badge>
               ))}
             </dd>
           </div>
