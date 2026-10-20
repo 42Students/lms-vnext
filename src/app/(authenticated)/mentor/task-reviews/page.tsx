@@ -102,7 +102,7 @@ export default async function MentorTaskReviewsPage({
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission version
           <Input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
-            className="min-h-11 min-w-0 max-w-full md:min-h-9 w-32" />
+            className="min-h-11 min-w-0 w-full max-w-full md:min-h-9 md:w-32" />
         </label>
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting since
           <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9">
