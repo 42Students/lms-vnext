@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,8 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [reviewAction, setReviewAction] = useState<"SCHEDULE" | "CANCEL" | null>(null);
+  const [confirmBlockedDay, setConfirmBlockedDay] = useState(false);
   const blockedDay=blockedDates.find(day=>day===dateInput.slice(0,10));
   function choose(next: string) {
     setId(next);
@@ -46,19 +49,24 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
     setReason("");
     setError(null);
   }
+  function review(action: "SCHEDULE" | "CANCEL") {
+    if (!round || pending) return;
+    if (action === "CANCEL" && reason.trim().length < 3) { setError("Enter a cancellation reason."); return; }
+    if (action === "SCHEDULE" && !blockedDatesAvailable) {
+      setError("Blocked-date settings are unavailable. Round scheduling is disabled until conflicts can be checked.");
+      return;
+    }
+    setError(null);
+    setReviewAction(action);
+    setConfirmBlockedDay(action === "SCHEDULE" && Boolean(blockedDay));
+  }
   async function submit(action: "SCHEDULE" | "CANCEL") {
     if (!round || pending) return;
     const note = action === "CANCEL" ? reason.trim() : "";
     if (action === "CANCEL" && note.length < 3) { setError("Enter a cancellation reason."); return; }
-    if(action==="SCHEDULE"&&blockedDay&&!window.confirm(
-      "This is a blocked date ("+blockedDay+"). Schedule this round anyway?"
-    ))return;
     if(action==="SCHEDULE"&&!blockedDatesAvailable){setError("Blocked-date settings are unavailable. Round scheduling is disabled until conflicts can be checked.");return;}
-    if (!window.confirm(
-      (action === "CANCEL" ? "Cancel " : "Create or reschedule ") +
-      round.name + " for " + round.companyName +
-      "? The action is recorded in the permanent round event history.",
-    )) return;
+    setReviewAction(null);
+    setConfirmBlockedDay(false);
     setPending(true); setError(null);
     try {
       const response = await fetch("/api/placements/tpo/calendar/round", {
@@ -120,16 +128,33 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
           className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
       </label>
       <div className="flex flex-wrap gap-3">
-        <Button variant="primary" disabled={pending} type="button" onClick={() => void submit("SCHEDULE")}
+        <Button variant="primary" disabled={pending} type="button" onClick={() => review("SCHEDULE")}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-on-primary">
           {round.status === "PENDING" ? "Confirm schedule" : "Confirm reschedule"}
         </Button>
-        <Button variant="secondary" disabled={pending} type="button" onClick={() => void submit("CANCEL")}
+        <Button variant="secondary" disabled={pending} type="button" onClick={() => review("CANCEL")}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
           Confirm cancellation
         </Button>
       </div>
     </> : null}
     {error ? <InlineNotice tone="error" message={error}/> : null}
+    <ConfirmDialog open={reviewAction !== null}
+      onOpenChange={next => { if (!next && !pending) { setReviewAction(null); setConfirmBlockedDay(false); } }}
+      title={confirmBlockedDay ? "Use blocked placement date?" :
+        reviewAction === "CANCEL" ? "Cancel scheduled round?" : "Confirm round schedule?"}
+      description={confirmBlockedDay
+        ? "This is a blocked date ("+blockedDay+"). Schedule this round anyway?"
+        : (reviewAction === "CANCEL" ? "Cancel " : "Create or reschedule ") +
+          (round?.name ?? "round") + " for " + (round?.companyName ?? "company") +
+          "? The action is recorded in the permanent round event history."}
+      confirmLabel={confirmBlockedDay ? "Schedule anyway" :
+        reviewAction === "CANCEL" ? "Cancel round" : "Confirm schedule"}
+      confirmVariant={reviewAction === "CANCEL" ? "danger" : "primary"}
+      pending={pending}
+      onConfirm={() => {
+        if (confirmBlockedDay) { setConfirmBlockedDay(false); return; }
+        if (reviewAction) void submit(reviewAction);
+      }}/>
   </section>;
 }
