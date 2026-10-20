@@ -30,7 +30,7 @@ export default async function TpoCompanyTeamPage({params}:{
    "Company discussion · "+result.companyName:"Company discussion"}
    description="A college-private conversation about this company. Recruiters and students cannot read it."/>
   <Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
-   className="inline-flex min-h-9 items-center text-sm text-primary-text underline">Back to company</Link>
+   className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to company</Link>
   {result.status==="NOT_REGISTERED"?
    <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
     Company Team discussions require their registered database migration. No messages were inferred from private conversations.
@@ -39,14 +39,14 @@ export default async function TpoCompanyTeamPage({params}:{
     <TpoLiveRefresh intervalMs={30000}/>
     <ol aria-label="Company Team messages" className="space-y-3">
      {result.messages.map(message=><li key={message.id} id={"team-message-"+message.id}
-      className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      className="border-b border-border py-4">
       <p className="text-xs text-muted-foreground">{message.authorName??"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
          dateStyle:"medium",timeStyle:"short"}).format(message.createdAt)} IST</p>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
      </li>)}
     </ol>
-    {result.truncated?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+    {result.truncated?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm text-body">
      Showing the latest 100 company Team messages. Older messages are not loaded here.
     </p>:null}
     {!result.messages.length?<p role="status" className="text-sm text-body">
