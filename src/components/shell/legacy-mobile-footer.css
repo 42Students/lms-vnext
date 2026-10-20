@@ -106,3 +106,10 @@
   white-space:nowrap;
  }
 }
+
+/* Keep system notices above the fixed legacy role footer on phones. The
+ * toast's inline viewport positioning reads this inherited custom property. */
+@media (max-width:767px) {
+ body:has(.lms-legacy-mobile-footer) [data-slot="toast-stack"],
+ body:has(.lms-tpo-mobile-footer) [data-slot="toast-stack"] { --lms-toast-navigation-offset: 64px; }
+}
