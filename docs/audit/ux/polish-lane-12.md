@@ -49,3 +49,13 @@
 **Files changed:** `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`, its `error.tsx`, `src/components/courses/faculty-contacts-table.tsx`, queue and proof. Pagination, filters, loading, parent layout, link states and redirected invalid tabs inspected.
 
 **Verification boundary:** static TypeScript/JSX inspection only; no build/tests or screenshots.
+
+## 06 · Teacher / Contacts index redirect
+**Surface:** `src/app/(authenticated)/teacher/contacts/page.tsx`  
+**Problems found (0):** this route has no rendered surface; it only performs a server redirect to `/teacher/contacts/allContacts` and should not introduce a duplicate heading, loading card or intermediate screen.
+
+**Fix:** reviewed the redirect destination, tab validation, query-filtered directory landing route and parent loading/error/access/not-found fallbacks. Kept the redirect unchanged so that the index never flashes a second layout at 375px, 768px or desktop. The actual directory layout was polished under surface 05.
+
+**Files changed:** queue and proof only. Preserved original route and redirect behavior.
+
+**Verification boundary:** source inspection, no runtime tests or CI.
