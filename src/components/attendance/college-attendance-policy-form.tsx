@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-import {apiFetch} from "@/lib/api-fetch";
-import {useGuardedAction} from "@/hooks/use-guarded-action";
-import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { apiFetch } from "@/lib/api-fetch";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
+import { DEFAULT_ATTENDANCE_POLICY } from "@/modules/attendance/policy-validation";
 
 type PolicyValues = {
   eligibilityThresholdPercent: number;
@@ -89,9 +89,9 @@ export function CollegeAttendancePolicyForm({
     <>
     <form
       onSubmit={save}
-      className="space-y-[var(--lms-space-5)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]"
+      className="min-w-0 max-w-[920px] space-y-[var(--lms-space-4)]"
     >
-      <div>
+      <div className="min-w-0 max-w-[65ch]">
         <h2 className="m-0 text-lg font-semibold text-foreground">
           College attendance policy
         </h2>
@@ -104,11 +104,11 @@ export function CollegeAttendancePolicyForm({
         </p>
       </div>
 
-      <div className="grid gap-[var(--lms-space-5)] md:grid-cols-2">
+      <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
         <div>
           <label
             htmlFor="attendance-eligibility-threshold"
-            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
           >
             Eligibility threshold (%)<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
           </label>
@@ -138,7 +138,7 @@ export function CollegeAttendancePolicyForm({
         <div>
           <label
             htmlFor="attendance-correction-window"
-            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
           >
             Correction window (hours)<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
           </label>
@@ -192,20 +192,20 @@ export function CollegeAttendancePolicyForm({
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]">
+      <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:flex-row sm:flex-wrap sm:items-center">
         <Button
           type="submit"
-          className="min-h-11 md:min-h-9"
-          loading={saving}
-          disabled={saving}
+          className="min-h-11 w-full sm:w-auto md:min-h-9"
+          loading={saving || pending}
+          disabled={saving || pending}
         >
           {saving
             ? "Saving policy…"
             : "Save attendance policy"}
         </Button>
-        <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={saving||pending}
+        <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={saving || pending}
           onClick={()=>setResetOpen(true)}>Reset to default</Button>
-        <span className="text-xs text-muted-foreground">
+        <span className="min-w-0 text-xs leading-5 text-muted-foreground sm:ml-auto">
           Changes apply to this college only.
         </span>
       </div>

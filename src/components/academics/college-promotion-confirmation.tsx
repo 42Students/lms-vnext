@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import {Button} from "@/components/ui/button";
-import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
@@ -56,21 +56,21 @@ export function CollegePromotionConfirmation({
     });
   }
 
-  return <div className="space-y-3">
+  return <div className="min-w-0 space-y-[var(--lms-space-3)]">
     {success && <p role="status" className="text-sm font-semibold text-[var(--lms-teal-deep)]">{success}</p>}
     <Button type="button" onClick={() => { setError(null); setOpen(true); }}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary">
+      className="min-h-11 w-full sm:w-auto md:min-h-9">
       {BATCH_PROMOTION_COPY.promoteButton}
     </Button>
     <ConfirmDialog open={open} onOpenChange={setOpen} title="Promote Batch" description={"Confirm promotion to term "+targetTerm} confirmLabel="Yes, Promote" pending={pending} onConfirm={submit}>
-      <p className="font-semibold text-foreground">Confirm promotion to term {targetTerm}</p>
-      <p className="mt-2 text-sm text-body">
+      <p className="m-0 break-words font-semibold text-foreground">Confirm promotion to term {targetTerm}</p>
+      <p className="mt-[var(--lms-space-2)] max-w-prose text-sm leading-5 text-body">
         This changes the saved progression version and academic year for this batch.
         The server will reject any blockers or a stale preview.
         {promotionImpactMessage(learnerCount)}.
         This operation does not move learners to a different class or period.
       </p>
-      {error ? <p role="alert" className="mt-2 text-sm text-foreground">{error}</p> : null}
+      {error ? <p role="alert" className="mt-[var(--lms-space-2)] break-words text-sm font-semibold text-error">{error}</p> : null}
 
     </ConfirmDialog>
   </div>;

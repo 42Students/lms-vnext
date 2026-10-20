@@ -17,9 +17,9 @@ import {
   listCollegePromotionOptions,
   previewCollegeBatchPromotion,
 } from "@/modules/academics/college-batch-promotion-service";
-import {Select} from "@/components/ui/select";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type Search = Record<string, string | string[] | undefined>;
 function first(value: string | string[] | undefined) {
@@ -68,13 +68,13 @@ export default async function CollegeBatchPromotionPage({
       action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Retry promotion preview</Link>}/>
   </div>;
   const {options,preview,facultySetup}=read.value;
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<PageBackLink href="/college/batches" label="Batches" />} />
-    <section className="border-t border-border pt-4">
-      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-[var(--lms-space-2)] max-[767px]:[&_label]:w-full md:grid-cols-2 min-[992px]:grid-cols-4">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <section className="min-w-0 pt-[var(--lms-space-2)]">
+      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 items-end gap-[var(--lms-space-3)] max-[767px]:[&_label]:w-full md:grid-cols-2 min-[992px]:grid-cols-4">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Program
           <Select name="programId" defaultValue={parsed.data.programId ?? ""}
             >
@@ -84,7 +84,7 @@ export default async function CollegeBatchPromotionPage({
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Batch
           <Select name="cohortId" defaultValue={parsed.data.cohortId ?? ""}
             >
@@ -94,7 +94,7 @@ export default async function CollegeBatchPromotionPage({
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic year override (optional)
           <Input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
@@ -107,14 +107,14 @@ export default async function CollegeBatchPromotionPage({
       </form></FilterBar>
     </section>
     {!preview ? (
-      <section className="border-t border-border pt-6">
+      <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
         <EmptyState title="No promotion preview" description="Select a batch to calculate a preview from saved progression, semester and enrollment records."/>
       </section>
     ) : (
       <>
-        <section className="space-y-3 border-t border-border pt-5" aria-label="Promotion preview">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{preview.batch.name}</h2>
-          <p className="text-sm text-body">Program: {preview.batch.programName} · Batch status: {preview.batch.status}</p>
+        <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]" aria-label="Promotion preview">
+          <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] font-semibold leading-7 text-[var(--lms-heading)]">{preview.batch.name}</h2>
+          <p className="min-w-0 break-words text-sm leading-5 text-body">Program: {preview.batch.programName} · Batch status: {preview.batch.status}</p>
           <p className="text-sm text-body">
             Recorded term: {preview.batch.currentTermNumber ?? "Not recorded"} of {preview.batch.durationTerms}.
             Target term: {preview.plan.targetTermNumber ?? "No next term (graduation or unavailable)"}.
@@ -131,8 +131,8 @@ export default async function CollegeBatchPromotionPage({
           </p>
           {preview.blockers.length ? (
             <Alert tone="error" className="space-y-2">
-              <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Batch blockers</h3>
-              <ul className="list-inside list-disc text-sm text-body">
+              <h3 className="m-0 text-[var(--lms-font-md)] font-semibold leading-6 text-[var(--lms-heading)]">Batch blockers</h3>
+              <ul className="list-inside list-disc space-y-[var(--lms-space-2)] text-sm leading-5 text-body">
                 {preview.blockers.map(blocker => <li key={blocker}>
                   {blocker==="NEXT_TERM_NO_MAPPED_COURSES"?<>
                     Cannot promote: Semester {preview.plan.targetTermNumber} has no mapped courses.
@@ -163,8 +163,8 @@ export default async function CollegeBatchPromotionPage({
                 academicYearStart={preview.plan.academicYearStart!} />
             ) : null}
         </section>
-        <section aria-label="Learner-level preview" className="min-w-0 border-t border-border pt-4">
-          <h2 className="border-b border-border pb-3 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Learner blockers</h2>
+        <section aria-label="Learner-level preview" className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+          <h2 className="m-0 pb-[var(--lms-space-3)] text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Learner blockers</h2>
           <DataTable rows={preview.learners} getRowKey={learner=>learner.membershipId} caption="Learner blockers"
             columns={[
               {key:"name",header:"Learner",mobilePriority:"primary",cell:learner=>learner.name},
@@ -176,7 +176,7 @@ export default async function CollegeBatchPromotionPage({
         </section>
       </>
     )}
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">
       Preview never writes. Confirming promotion requires an unchanged version and rechecks
       blockers in a transaction. Graduation is available for batches in their final registered semester.
     </p>
