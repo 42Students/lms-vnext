@@ -83,3 +83,17 @@
 - Extra clutter/alignment fixes: 0. Correctly bounded 375px stacked filter buttons, 768px aligned controls, one readable history table and quiet export; no speculative redesign applied.
 - Inspected HR page, HrProposalHistoryGrid/TpoGrid, recruiter+HR loading/error, PageHeader/PageBackLink, NeedsDoingChips, Input/Select/Button/EmptyState and parent layouts against `polish-lane-15.md`; no local not-found/template/layout. Source-only, no execution/CI.
 - Files changed: queue and evidence only.
+
+## Surface 13 — Outside-platform recruiter drive
+- Surface: `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx` re-exporting HR record page.
+- Regressions fixed (1): previous proof said optional external HTTPS reference and staff notes were hidden in a disclosure but `RecordedOutsideForm` still displayed both always. Wrapped exactly those two controls in a native keyboard-operable details section without modifying input names, request POST or validation.
+- Extra clutter/alignment fixes: 0. Primary three fields remain first, mobile 375px one-column and tablet 768px two-column form remain, button 44/36px.
+- Read HR page and full RecordedOutsideForm, stored-result confirmation, no-college/invalid-scope guards, shared Input/Select/Textarea/Button/PageHeader/InlineNotice, HR and recruiter loading/error, parent layouts and `polish-lane-15.md`; no local template/not-found/layout.
+- Files changed: `src/components/placements/recorded-outside-form.tsx`, queue and proof. Source-only/no tests/CI.
+
+## Surface 14 — Recruiter Today home
+- Surface: recruiter/home alias of `src/app/(authenticated)/hr/home/page.tsx`.
+- Regressions fixed (1): other lane's proof promised hairline Next-up work rows yet code still used a two-column spaced grid, competing with actual primary action and weekly tasks. Replaced task grid with an unadorned divided list.
+- Extra clutter/alignment fixes (4): remove redundant borders/rounded mini-cards from deadline, upcoming-round and results-due rows, and unread conversation rows under their existing section dividers. All task text, relative IST dates, links, grant-scoped counts, quick-number disclosure and status badges unchanged.
+- Read full HR Today page, data model/service references, HrUnsentDriveAlert with confirmation, PageHeader/NeedsDoingChips/Badge/Alert/EmptyState/ErrorState/GracefulPageLoading, HR/recruiter loading/error, parent layouts and other lane's `polish-lane-15.md` entry; no local template/not-found/layout. 375px/768px source check, no CI or project execution.
+- Files changed: HR home page, queue and evidence.
