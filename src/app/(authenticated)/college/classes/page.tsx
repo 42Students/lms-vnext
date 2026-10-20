@@ -31,7 +31,9 @@ export default async function CollegeClassesPage({
     listCollegeClasses(context, parsed.data),
     listCollegeSectionOptions(context),
   ]);
-  return <div className="min-w-0 overflow-x-clip space-y-6">
+  return <div className="min-w-0 overflow-x-clip">
+    <CollegeStructureDirectory data={classes}
+      leading={<div className="min-w-0 space-y-4">
     <div className="flex flex-wrap items-center gap-3">
       <a href={classesExportHref(classes.query)}
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
@@ -44,6 +46,7 @@ export default async function CollegeClassesPage({
       Preview recurring class schedule
     </Link>
     <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
-    <CollegeStructureDirectory data={classes} />
+
+      </div>}/>
   </div>;
 }
