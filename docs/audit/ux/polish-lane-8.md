@@ -175,3 +175,13 @@ Files: college/domains/page.tsx; components/admin/tenant-domain-manager.tsx; aud
 **8 issues fixed:** Roster rows appeared below the secondary faculty workflow, density and summary borders competed with the main work, label gutters used nonstandard measurements, the section editor flex-wrapped unpredictably at 375/768px, member movement fields could overflow, removal actions became cramped, faculty action rows lacked mobile alignment, and heading hierarchy was oversized. Moved the existing roster before faculty, preserved all forms and confirmation checkboxes, aligned 8/12/16px gutters, made form grids fluid, standardized 44px controls and narrow mobile action widths. Reviewed active, waitlisted, archived, no offering/faculty, assignment/movement/removal outcomes, empty roster, 500 row cap, loading/error/not-found and college layout. Static source review only; no CI.
 
 **Files:** elective roster page, proof and queue.
+
+## Surface 28 — College electives page
+
+Eight issues: page-tools order, excessive borders, wide guidance, secondary add action, dense form fields, unbounded editing, cramped mobile row actions and misaligned controls. Moved creation and export below page heading; aligned fields to legacy spacing; constrained editor and stacked mobile buttons. Inspected empty/loading/error, disabled module, create/edit/archive and tablet/phone source layouts. Source-only review, no tests.
+
+## Surface 29 — Faculty assignment page
+
+Nine UI issues corrected: expanded editor clutter, search hierarchy, repeated borders, cramped filter widths, uneven label gaps, competing Clear action, oversized export toolbar, mobile row actions and inconsistent dialog trigger heights. Used a collapsed workflow disclosure and responsive filter drawer with always-visible search; normalized gutters. Examined empty/error/loading, edit/confirm/reassign, pagination, and 375/768 layouts. Source inspection only.
+
+Files: faculty-assignment page and reassign component; queue/proof.
