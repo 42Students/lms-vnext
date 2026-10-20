@@ -43,7 +43,7 @@ export default async function AnnouncementsPage({
   if (!params) {
     return <div className="min-w-0 space-y-6">
       <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
-      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset filters</Link></p>
+      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Reset filters</Link></p>
     </div>;
   }
 
@@ -133,7 +133,7 @@ export default async function AnnouncementsPage({
         actions={
           <Link
             href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-foreground md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
@@ -170,7 +170,7 @@ export default async function AnnouncementsPage({
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
         </label>
         <Button type="submit">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
       </form>
       <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
         ...(includeDeleted ? {deleted:"1"} : {}),
@@ -181,10 +181,10 @@ export default async function AnnouncementsPage({
         ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export this filtered page (CSV)</Link>
+      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-6">
-       <h2 className="text-lg font-semibold text-foreground">Placement-cell read receipts</h2>
+       <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Placement-cell read receipts</h2>
        <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read.</p>
        <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
         const receipt=receipts.get(row.id)!;
@@ -201,7 +201,7 @@ export default async function AnnouncementsPage({
         })}/>
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
+          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
             Older announcements
           </Link>
         </div>
