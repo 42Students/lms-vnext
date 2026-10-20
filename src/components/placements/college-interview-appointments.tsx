@@ -116,7 +116,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      }))} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[14px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Download .ics</a>:null}
      {row.status==="SCHEDULED"?<>
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>open(row)}
@@ -174,7 +174,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    description="This action is recorded and the learner will be notified."
    confirmLabel="Save decision" pending={busy} confirmDisabled={decisionReason.trim().length<3}
    onConfirm={()=>void confirmDecision()}>
-   <label className="grid gap-1 text-sm font-semibold">Reason or outcome note
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason or outcome note
     <Textarea rows={3} value={decisionReason} onChange={e=>setDecisionReason(e.target.value)}
      className="w-full" /></label>
   </ConfirmDialog>
