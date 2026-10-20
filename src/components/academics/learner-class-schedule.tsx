@@ -183,7 +183,7 @@ function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
   const columns=days.map(day=>({day,rows:eventsForDay(day)}));
   const hours=learnerHourlySlots(columns.flatMap(col=>col.rows));
   return <div className={styles.hourFrame} aria-label="Hourly class schedule">
-    <div className={styles.hourGrid+" "+(days.length===1?"grid-cols-[5rem_minmax(280px,1fr)]":"grid-cols-[5rem_repeat(7,minmax(150px,1fr))]")}>
+    <div className={styles.hourGrid+" "+(days.length===1?"grid-cols-[5rem_minmax(17.5rem,1fr)]":"grid-cols-[5rem_repeat(7,minmax(9.375rem,1fr))]")}>
       <div className={styles.hourHeader}>ALL DAY</div>
       {columns.map(col=><div key={localDayKey(col.day)}
         className={styles.hourDayHeader}>
