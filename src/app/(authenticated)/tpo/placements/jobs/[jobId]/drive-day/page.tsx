@@ -26,10 +26,10 @@ export default async function DriveDayForOneDrive({
         Open drive day / attendance
       </Link>} />
     {drive.rounds.length ? (
-      <section aria-label="Drive day rounds" className="grid gap-3 sm:grid-cols-2">
+      <section aria-label="Drive day rounds" className="grid min-w-0 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2">
         {drive.rounds.map((round) => {
           const done = round.status === "COMPLETED" || round.status === "CANCELLED";
-          return <article key={round.id} className="border-b border-border py-4">
+          return <article key={round.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{round.name}</h2>
               <Badge  tone="neutral">
@@ -41,9 +41,9 @@ export default async function DriveDayForOneDrive({
               : "Date to be confirmed"}</p>
             <p className="mt-1 text-sm text-body">{round.venue || "Venue to be told"}</p>
             <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
-              <Link className="text-link underline lms-inline-link"
+              <Link className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]"
                 href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}>See attendance and results</Link>
-              <Link className="text-link underline lms-inline-link" href="/tpo/drive-day">Open drive day</Link>
+              <Link className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href="/tpo/drive-day">Open drive day</Link>
             </div>
           </article>;
         })}
