@@ -31,9 +31,9 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-1.md: surface | regres
 - [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
