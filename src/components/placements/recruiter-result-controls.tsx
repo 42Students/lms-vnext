@@ -411,23 +411,23 @@ export function RecruiterResultControls({
                   <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
                   {([
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
-                  ] as const).map(([outcome,label])=><Button key={outcome} type="button"
+                  ] as const).map(([outcome,label])=><Button key={outcome} type="button" className="min-h-11 md:min-h-9"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
                     variant="secondary">
                     {label}
                   </Button>)}
-                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
+                  <Button type="button" className="min-h-11 md:min-h-9" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
                     onClick={undoDraftOutcome} variant="secondary">
                     Undo draft
                   </Button>
-                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
+                  <Button type="button" className="min-h-11 md:min-h-9" loading={bulkPending===round.id} disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
                     
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </Button>
-                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null}
+                  <Button type="button" className="min-h-11 md:min-h-9" disabled={bulkPending!==null||pendingKey!==null}
                     variant="secondary"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
@@ -450,7 +450,7 @@ export function RecruiterResultControls({
                     href={round.meetingUrl}
                     
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex min-h-9 items-center text-xs font-semibold text-primary-text hover:text-primary-hover"
+                    className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                   >
                     Open meeting →
                   </a>
@@ -514,7 +514,7 @@ export function RecruiterResultControls({
                           key={
                             participant.applicationId
                           }
-                          className="grid min-w-0 gap-4 py-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)]"
+                          className="grid min-w-0 scroll-mt-20 gap-4 py-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)]"
                         >
                           <div>
                             {canStage&&!applied?<label className="mb-2 flex items-center gap-2 text-xs text-body">
@@ -767,7 +767,7 @@ export function RecruiterResultControls({
 
                               <div className="flex flex-wrap items-center gap-3 md:col-span-2">
                                 <Button
-                                  size="sm"
+                                  size="sm" className="min-h-11 md:min-h-9" loading={pendingKey===key}
                                   disabled={
                                     pendingKey !==
                                     null || bulkPending !== null
