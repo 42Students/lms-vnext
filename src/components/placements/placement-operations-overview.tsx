@@ -55,7 +55,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
           <Button type="submit" variant="secondary">Apply</Button>
         </form>:null}
       </div>
-      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." action={<Link href={basePath+"/lifecycle"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Drive lifecycle</Link>} /></div> :
+      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." action={<Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Drive lifecycle</Link>} /></div> :
         <div className="min-w-0 divide-y divide-border">{operations.workQueue.map((item, index) =>
           <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
