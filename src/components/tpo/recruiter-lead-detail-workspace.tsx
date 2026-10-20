@@ -258,7 +258,8 @@ export function RecruiterLeadDetailWorkspace({
     if(!confirmed&&editing&&lead&&(
       edit.name!==lead.name||edit.email!==(lead.emailNorm??"")||
       edit.phone!==(lead.phoneNorm??"")||edit.designation!==(lead.designation??"")||
-      edit.companyName!==(lead.companyName??"")
+      edit.companyName!==(lead.companyName??"")||
+      edit.source!==(SOURCES.some(([code])=>code===lead.source)?lead.source??"":"")
     )){setConfirmation("CLOSE_EDIT");return;}
     setEditing(false);
   }
@@ -665,7 +666,7 @@ export function RecruiterLeadDetailWorkspace({
             ) : <p className="text-sm text-muted-foreground">No next step yet. Add a follow-up above.</p>}
           </section>
 
-          <Dialog open={editing} onOpenChange={next=>{if(!next)closeEdit();}}
+          <Dialog open={editing && confirmation===null} onOpenChange={next=>{if(!next)closeEdit();}}
             title="Edit contact details" dismissible={!saving}>
               <form className="space-y-3" onSubmit={e => void saveEdit(e)}>
                 {(["name", "email", "phone", "designation", "companyName"] as const).map(name => (
@@ -694,7 +695,7 @@ export function RecruiterLeadDetailWorkspace({
               </form>
           </Dialog>
 
-          <Dialog open={notNowOpen} onOpenChange={next=>{if(!next)closeNotNow();}}
+          <Dialog open={notNowOpen && confirmation===null} onOpenChange={next=>{if(!next)closeNotNow();}}
             title="Not now" dismissible={!saving}>
               <form className="space-y-4" onSubmit={e => void markNotNow(e)}>
                 <label className="block min-w-0 text-[13px] font-semibold leading-4">Reason

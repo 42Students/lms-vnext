@@ -48,6 +48,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   useEffect(()=>{if(open)fileRef.current?.focus();},[open]);
 
   async function chooseFile(file: File | undefined) {
+    if (busy) return; // FileUpload clears its picker when disabled during commit; keep the confirmed preview.
     const sequence=++previewSeq.current;
     setExisting([]);
     setRowGroup("ALL");

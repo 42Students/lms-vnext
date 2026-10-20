@@ -42,7 +42,7 @@ export function TemplateMetadataEditControl({ templateId, title, summary, curren
       <form onSubmit={submit} className="grid min-w-0 gap-4">
         <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">Title<Input required maxLength={200} disabled={pending}
           value={editedTitle} onChange={event => setTitle(event.target.value)} /></label>
-        <details className="border-t border-[var(--lms-canvas-border)] pt-3" open={Boolean(summary)}>
+        <details className="border-t border-[var(--lms-canvas-border)] pt-3" defaultOpen={Boolean(summary)}>
           <summary className="cursor-pointer py-2 text-[13px] font-semibold text-body">Summary</summary>
         <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">Summary<Textarea maxLength={2000} disabled={pending}
           value={editedSummary} onChange={event => setSummary(event.target.value)} /></label>
