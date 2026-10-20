@@ -35,6 +35,7 @@ export default async function MentorTeamMeetingsPage({
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);
   const board="/mentor/projects/"+encodeURIComponent(projectId)+"?tab=team";
+  const filtered=parsed.data.status!=="ALL"||parsed.data.type!=="ALL"||parsed.data.outcome!=="ALL"||parsed.data.order!=="NEWEST"||Boolean(parsed.data.search);
   const renderedAt = new Date();
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
@@ -109,13 +110,13 @@ export default async function MentorTeamMeetingsPage({
           </label>
             </div>
           </Disclosure>
-          <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
+          {filtered?<Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>:null}
         </form>
       </FilterBar>
       <p className="text-sm text-body leading-[22px]">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
-        description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." action={<Link href={board} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Team workspace</Link>} />
+        description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." action={filtered?<Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>:<Link href={board} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Team workspace</Link>} />
         :<ol aria-label="team meetings entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
           <li key={meeting.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
