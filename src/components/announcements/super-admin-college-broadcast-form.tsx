@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Disclosure} from "@/components/ui/disclosure";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
@@ -51,8 +52,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   }catch{setFeedback("Connection failure. Publication could not be confirmed.");}
   finally{setPending(false);setReview(false);}
  }
- return <section className="space-y-4 border-t border-border pt-5">
-  <h2 className="m-0 text-lg font-semibold text-foreground">New announcement to placement cells</h2>
+ return <Disclosure title={<h2 className="m-0 text-lg font-semibold text-foreground">New announcement to placement cells</h2>} className="min-w-0" contentClassName="space-y-4 pb-[var(--lms-space-4)]">
   <p className="text-sm text-body">Send an in-app announcement from 42 to selected placement cells. Immediate announcements also create a bell for active TPO members; scheduled announcements appear at their planned time. No SMS or email is sent.</p>
   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
    <Select value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11">
@@ -91,12 +91,12 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   </label>
   {!timing.valid?<p role="alert" className="text-sm text-danger-text">Enter valid local schedule and expiry values; expiry must follow the schedule.</p>:null}
   <p className="text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,Boolean(scheduledAt))}</p>
-  <Button disabled={!valid} onClick={()=>setReview(true)}>Review placement-cell announcement</Button>
+  <Button className="w-full md:w-auto" disabled={!valid} onClick={()=>setReview(true)}>Review placement-cell announcement</Button>
   {feedback?<p role="status" className="text-sm text-body">{feedback}</p>:null}
   <ConfirmDialog open={review} onOpenChange={setReview} pending={pending} confirmDisabled={!valid}
    title="Approve announcement to placement cells" description={broadcastConsentSummary(mode,count,Boolean(scheduledAt))}
    confirmLabel="Consent and publish" confirmVariant="danger" onConfirm={()=>{void submit();}}>
    <p className="text-sm text-body">Confirm that this notice, its audience and expiry are correct. Once approved, recipient rows are persisted atomically and become visible according to their schedule.</p>
   </ConfirmDialog>
- </section>;
+ </Disclosure>;
 }
