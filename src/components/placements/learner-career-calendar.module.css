@@ -9,8 +9,8 @@
   flex-direction: column;
   gap: 0;
   padding: 16px 24px;
-  background: #fff;
-  border-bottom: 1px solid #e5e9f0;
+  background: var(--lms-white);
+  border-bottom: 1px solid var(--lms-neutral-200);
 }
 .header {
   display: flex;
@@ -20,7 +20,7 @@
 }
 .heading {
   margin: 0;
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 28px;
   font-weight: 600;
   line-height: 1.3;
@@ -49,28 +49,28 @@
   border: 0 !important;
   border-radius: 8px !important;
   background: transparent !important;
-  color: #6b7280 !important;
+  color: var(--lms-neutral-500) !important;
   transition: color 150ms cubic-bezier(.2,0,0,1), background 150ms cubic-bezier(.2,0,0,1);
 }
 .navArrow:hover:not(:disabled) {
-  color: #26bac7 !important;
+  color: var(--lms-primary) !important;
   background: rgba(38,186,199,.08) !important;
 }
 .navArrow:focus-visible {
-  outline: 2px solid #0e7c87 !important;
+  outline: 2px solid var(--lms-teal-deep) !important;
   outline-offset: 2px !important;
-  color: #0e7c87 !important;
+  color: var(--lms-teal-deep) !important;
 }
 .today {
   min-height: 44px !important;
-  border-color: #26bac7 !important;
-  color: #26bac7 !important;
+  border-color: var(--lms-primary) !important;
+  color: var(--lms-primary) !important;
   transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease;
 }
 .today:hover:not(:disabled) {
-  border-color: #1e9aa8 !important;
+  border-color: var(--lms-primary-hover) !important;
   background: rgba(38,186,199,.08) !important;
-  color: #1e9aa8 !important;
+  color: var(--lms-primary-hover) !important;
 }
 .period {
   display: inline-flex;
@@ -83,7 +83,7 @@
   min-width: 180px;
   border: 1px solid transparent;
   border-radius: 10px;
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 16px;
   font-weight: 600;
   line-height: 1.3;
@@ -96,35 +96,35 @@
   gap: 8px;
   margin-top: 16px;
   padding: 12px 24px;
-  background: #fff;
-  border-bottom: 1px solid #e5e9f0;
+  background: var(--lms-white);
+  border-bottom: 1px solid var(--lms-neutral-200);
 }
 .legendChip {
   min-height: 32px !important;
   padding: 4px 12px !important;
-  border: 1px solid #e5e9f0 !important;
+  border: 1px solid var(--lms-neutral-200) !important;
   border-radius: 999px !important;
-  background: #fff !important;
-  color: #54505d !important;
+  background: var(--lms-white) !important;
+  color: var(--lms-neutral-700) !important;
   font-size: 12px !important;
   font-weight: 400 !important;
   line-height: 1.4 !important;
   transition: background 150ms cubic-bezier(.2,0,0,1), border-color 150ms cubic-bezier(.2,0,0,1), box-shadow 150ms cubic-bezier(.2,0,0,1);
 }
 .legendChip:hover:not(:disabled) {
-  background: #eff8fa !important;
-  border-color: #26bac7 !important;
+  background: var(--lms-primary-subtle) !important;
+  border-color: var(--lms-primary) !important;
 }
 .legendChip:focus-visible {
-  outline: 2px solid #0e7c87 !important;
+  outline: 2px solid var(--lms-teal-deep) !important;
   outline-offset: 2px !important;
 }
 .legendChip[aria-pressed="true"] {
-  background: #eff8fa !important;
-  border-color: #26bac7 !important;
-  color: #1a95a1 !important;
+  background: var(--lms-primary-subtle) !important;
+  border-color: var(--lms-primary) !important;
+  color: var(--lms-primary-text) !important;
   font-weight: 600 !important;
-  box-shadow: inset 0 0 0 1px #26bac7 !important;
+  box-shadow: inset 0 0 0 1px var(--lms-primary) !important;
 }
 /* Career event accent pairs: lms2-fe@prod-2026/
  * src/components/Placements/careerEventVisuals.js:11-48.
@@ -142,7 +142,7 @@
 .legendChip[data-kind="INTERVIEW"]:hover:not(:disabled),
 .legendChip[data-kind="INTERVIEW"][aria-pressed="true"] {
   background: #ecfdf5 !important;
-  color: #065f46 !important;
+  color: var(--lms-success-text) !important;
   border-color: #047857 !important;
 }
 .legendChip[data-kind="INTERVIEW"][aria-pressed="true"] {
@@ -160,8 +160,8 @@
 .gridFrame {
   position: relative;
   overflow-x: auto;
-  background: #fff;
-  border: 1px solid #e5e9f0;
+  background: var(--lms-white);
+  border: 1px solid var(--lms-neutral-200);
   border-radius: 10px;
   scrollbar-width: thin;
   overscroll-behavior-x: contain;
@@ -169,14 +169,14 @@
 .grid {
   min-width: 0 !important;
   width: 100%;
-  border: 1px solid #e5e9f0 !important;
+  border: 1px solid var(--lms-neutral-200) !important;
   border-radius: 10px !important;
-  background: #e5e9f0 !important;
+  background: var(--lms-neutral-200) !important;
 }
 .weekday {
   padding: 12px 8px;
-  background: #fafbfc;
-  color: #54505d;
+  background: var(--lms-neutral-50);
+  color: var(--lms-neutral-700);
   font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
@@ -189,19 +189,19 @@
   padding: 8px;
   border: 0 !important;
   border-radius: 0 !important;
-  background: #fff !important;
-  color: #54505d;
+  background: var(--lms-white) !important;
+  color: var(--lms-neutral-700);
   text-align: right;
 }
-.day:hover { background: #eff8fa !important; }
+.day:hover { background: var(--lms-primary-subtle) !important; }
 .day:focus-visible {
-  outline: 2px solid #0e7c87 !important;
+  outline: 2px solid var(--lms-teal-deep) !important;
   outline-offset: -2px !important;
 }
-.outsideDay { background: #fafbfc !important; }
-.outsideDay:hover { background: #eff8fa !important; }
+.outsideDay { background: var(--lms-neutral-50) !important; }
+.outsideDay:hover { background: var(--lms-primary-subtle) !important; }
 .todayDay {
-  background: #eff8fa !important;
+  background: var(--lms-primary-subtle) !important;
   box-shadow: inset 0 0 0 2px rgba(38,186,199,.45) !important;
 }
 .dayNumber {
@@ -209,16 +209,16 @@
   font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
-  color: #54505d;
+  color: var(--lms-neutral-700);
   text-align: right;
 }
-.todayDay .dayNumber { color: #0e7c87; font-weight: 700; }
+.todayDay .dayNumber { color: var(--lms-teal-deep); font-weight: 700; }
 .chip {
   display: block;
   min-height: 28px;
   margin: 2px 4px;
   padding: 6px 10px 6px 8px;
-  border: 1px solid #d6dbe3;
+  border: 1px solid var(--lms-neutral-300);
   border-left: 3px solid #475569;
   border-radius: 6px;
   background: #f1f5f9;
@@ -237,16 +237,16 @@
 .chip[data-kind="INTERVIEW"] {
   border-left-color: #047857;
   background: #ecfdf5;
-  color: #065f46;
+  color: var(--lms-success-text);
 }
 .more {
   display: inline-flex;
   margin: 2px 4px;
   padding: 3px 8px;
-  border: 1px solid #e5e9f0;
+  border: 1px solid var(--lms-neutral-200);
   border-radius: 999px;
-  background: #f1f4f9;
-  color: #1a95a1;
+  background: var(--lms-neutral-100);
+  color: var(--lms-primary-text);
   font-size: 11px;
   font-weight: 600;
 }
@@ -255,25 +255,25 @@
   flex-direction: column;
   gap: 24px;
   padding: 24px;
-  background: #fff;
+  background: var(--lms-white);
 }
 .agendaEvent,
 .mobileRow {
-  border: 1px solid #e5e9f0;
+  border: 1px solid var(--lms-neutral-200);
   border-left: 4px solid #475569;
   border-radius: 10px;
-  background: #fff;
+  background: var(--lms-white);
   padding: 12px 16px;
   transition: box-shadow 150ms cubic-bezier(.2,0,0,1), border-color 150ms cubic-bezier(.2,0,0,1);
 }
 .agendaEvent:hover,
 .mobileRow:hover {
-  border-color: #d6dbe3;
+  border-color: var(--lms-neutral-300);
   box-shadow: 0 2px 4px rgba(16,24,40,.04), 0 4px 12px rgba(16,24,40,.06);
 }
 .agendaEvent:focus-within,
 .mobileRow:focus-within {
-  outline: 2px solid #0e7c87;
+  outline: 2px solid var(--lms-teal-deep);
   outline-offset: 2px;
 }
 .agendaEvent[data-kind="ASSESSMENT"],
@@ -283,11 +283,11 @@
 .mobileDay {
   padding-bottom: 12px;
   margin-bottom: 12px;
-  border-bottom: 1px solid #e5e9f0;
+  border-bottom: 1px solid var(--lms-neutral-200);
 }
 .mobileDay > h4 {
   margin-bottom: 12px;
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 16px;
   font-weight: 600;
 }
@@ -308,7 +308,7 @@
     bottom: 0;
     width: 28px;
     pointer-events: none;
-    background: linear-gradient(90deg, rgba(255,255,255,0),#fff);
+    background: linear-gradient(90deg, rgba(255,255,255,0),var(--lms-white));
   }
 }
 @media (max-width: 767px) {
