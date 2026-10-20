@@ -134,7 +134,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   <Dialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Save changes to a live drive?"
    description={"Choose whether to notify "+job.applicantCount+" existing applicants. Both choices audit the change."}
    dismissible={!pending}
-   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
+   footer={<div className="flex w-full flex-col-reverse gap-2 lg:flex-row lg:flex-wrap lg:justify-end">
     <Button variant="secondary" disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setConfirmOpen(false)}>Cancel</Button>
     <Button variant="secondary" disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void save(false)}>Save without telling anyone</Button>
     <Button loading={pending} disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void save(true)}>Save and notify {job.applicantCount} applicants</Button>
