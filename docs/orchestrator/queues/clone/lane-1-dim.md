@@ -23,26 +23,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-1.md: file, number of i
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/page.tsx`
-- [ ] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/companies/page.tsx`
-- [ ] `src/app/(authenticated)/admin/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/courses/page.tsx`
-- [ ] `src/app/(authenticated)/admin/departments/page.tsx`
-- [ ] `src/app/(authenticated)/admin/domains/page.tsx`
-- [ ] `src/app/(authenticated)/admin/electives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/page.tsx`
+- [x] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
+- [x] `src/app/(authenticated)/admin/companies/page.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/departments/page.tsx`
+- [x] `src/app/(authenticated)/admin/domains/page.tsx`
+- [x] `src/app/(authenticated)/admin/electives/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
 - [ ] `src/app/(authenticated)/admin/features/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/features/page.tsx`
 - [ ] `src/app/(authenticated)/admin/hr/loading.tsx`

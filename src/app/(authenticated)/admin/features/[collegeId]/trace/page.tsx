@@ -164,7 +164,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         eyebrow="Super Admin · Module Access"
         title={`${college.name} · Learner access trace`}
         description={`Explain why an active learner's Projects, Placements and Electives module settings resolve to On or Off. The selected college is fixed to ${college.code}.`}
-        actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← {college.name} access hierarchy</Link>}
+        actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">← {college.name} access hierarchy</Link>}
       />
 
       <section className="min-w-0 space-y-4 border-t border-border pt-5">
@@ -183,7 +183,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         <FilterBar title="Filters"><form
           action={basePath}
           method="get"
-          className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
+          className="flex flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
         >
           <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-60">
             Name or roll number
