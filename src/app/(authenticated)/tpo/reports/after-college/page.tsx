@@ -9,8 +9,10 @@ import {Pagination} from "@/components/ui/pagination";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {SummaryStrip} from "@/components/ui/summary-strip";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {getTpoAfterCollegeReport} from "@/modules/placements/tpo-after-college-report-service";
@@ -25,10 +27,10 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const batches=await listTpoBatches(ctx);
  const batchId=first(raw.batchId)||undefined,branchId=first(raw.branchId)||undefined;
  if(batchId&&!batches.batches.some(batch=>batch.id===batchId))
-  return <Alert tone="error">Invalid batch. <Link href="/tpo/reports/after-college">Clear filters</Link></Alert>;
+  return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid batch" description="Choose an available batch for this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
  const data=await getTpoAfterCollegeReport(ctx,{collegeId:ctx.membership.collegeId,batchId,branchId});
  const branches=new Map(data.branches.map(row=>[row.id,row.name]));
- if(branchId&&!branches.has(branchId))return <Alert tone="error">Invalid branch for this college. <Link href="/tpo/reports/after-college">Clear filters</Link></Alert>;
+ if(branchId&&!branches.has(branchId))return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid branch" description="Choose a branch in this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
  const displayedCount=Math.min(data.rows.length,300);
  const pageCount=Math.max(1,Math.ceil(displayedCount/25));
@@ -36,35 +38,29 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(pageCount,requestedPage)):1;
  const pageHref=(nextPage:number)=>{const next=new URLSearchParams(query);next.set("page",String(nextPage));return "/tpo/reports/after-college?"+next.toString();};
  return <div data-tpo-presentation-report className="space-y-5">
-  <Link href="/tpo/reports" className="text-sm font-semibold text-link underline lms-inline-link">← All reports</Link>
-      <TpoReportPresentation />
-  <PageHeader eyebrow="TPO · Reports" title="After college"
-   description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."/>
+  <PageHeader title="After college"
+   description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."
+   actions={<><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">← All reports</Link>{data.available?<a href={"/api/placements/tpo/reports/after-college?"+query.toString()} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">Download CSV</a>:null}</>}/>
+  <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId} userId={ctx.user.id}/></Suspense>
   {!data.available?<Alert tone="warning">After-college outcomes storage is unavailable. This page does not infer destinations.</Alert>:<>
    <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
-    <label className="grid gap-1 text-sm">Batch
-     <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+    <label className="grid w-full min-w-0 basis-full gap-1 text-sm md:w-[220px] md:basis-auto">Batch
+     <Select name="batchId" defaultValue={batchId??""} className="min-h-11 w-full md:min-h-9">
       <option value="">All current batches</option>
       {batches.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select></label>
-    <label className="grid gap-1 text-sm">Branch
-     <Select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+    <label className="grid w-full min-w-0 basis-full gap-1 text-sm md:w-[220px] md:basis-auto">Branch
+     <Select name="branchId" defaultValue={branchId??""} className="min-h-11 w-full md:min-h-9">
       <option value="">All branches</option>
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
      </Select></label>
-    <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Filter</Button>
-    <Link href="/tpo/reports/after-college" className="text-link underline lms-inline-link">Clear</Link>
-    <a href={"/api/placements/tpo/reports/after-college?"+query.toString()}
-      className="text-link underline">Download CSV</a>
+    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+    <Link href="/tpo/reports/after-college" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline md:min-h-9 md:w-auto">Clear</Link>
+
    </form>
    <p className="text-sm text-body">{data.total} students in this reporting population. NAAC 5.2 / NIRF working data only; unreported choices remain Not decided.</p>
-   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-    {AFTER_COLLEGE_OUTCOMES.map(key=><div key={key} className="rounded border border-border p-4">
-     <p className="text-xs font-semibold">{AFTER_COLLEGE_LABELS[key]}</p>
-     <p className="mt-2 text-2xl font-bold tabular-nums">{data.counts[key]}</p>
-    </div>)}
-   </div>
+   <SummaryStrip label="After-college outcomes" steps={AFTER_COLLEGE_OUTCOMES.map(key=>({label:AFTER_COLLEGE_LABELS[key],value:data.counts[key]}))}/>
    <DataTable rows={data.rows.slice((page-1)*25,page*25)} getRowKey={row=>row.membershipId}
     caption="After college"
     empty={<EmptyState title="No students match these filters."/>}
