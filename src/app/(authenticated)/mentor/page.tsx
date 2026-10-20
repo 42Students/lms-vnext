@@ -20,18 +20,20 @@ export default async function MentorLandingPage() {
   if (access?.projects.enabled === true) {
     redirect("/mentor/projects");
   }
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title={access===null?"Projects could not be loaded":"Projects is currently unavailable"}
       description={access===null?"Check your connection and try again. This does not mean Projects is disabled.":"Projects is disabled for this account. You can still check notifications."} />
-    <div className="space-y-3">
+    <div className="min-w-0 space-y-4">
       <Alert tone={access===null?"error":"warning"}>
         Contact your college administrator if you need access to Projects.
       </Alert>
-      {access===null?<Link href="/mentor?retry=1" className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Retry access check</Link>:null}
-      <Link href="/mentor/notifications"
-        className="mt-4 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 py-2 text-sm font-semibold text-on-primary md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        View notifications
-      </Link>
+      <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center">
+        <Link href="/mentor/notifications"
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 py-2 text-sm font-semibold text-on-primary md:min-h-[var(--lms-control-height)] md:w-auto hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          View notifications
+        </Link>
+        {access===null?<Link href="/mentor?retry=1" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Retry access check</Link>:null}
+      </div>
     </div>
   </div>;
 }

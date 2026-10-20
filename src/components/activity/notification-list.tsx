@@ -131,7 +131,7 @@ export function NotificationList({
                 : "border-b border-[var(--lms-canvas-border)] bg-transparent py-4 transition-colors duration-150 hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:py-5"}
             >
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
-                <div>
+                <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge>{item.source === "ANNOUNCEMENT" ? "Announcement" : item.module}</StatusBadge>
                     {item.source === "ANNOUNCEMENT" && item.pinned ? (
