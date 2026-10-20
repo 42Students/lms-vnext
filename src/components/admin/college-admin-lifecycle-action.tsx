@@ -33,20 +33,32 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
  }
  if(status!=="ACTIVE"&&status!=="SUSPENDED")return null;
  if(hasMentorRole&&action==="SUSPEND")return <Alert tone="warning">Also assigned to mentoring. Review active project assignments before changing access.</Alert>;
- return <div className="min-w-0 space-y-[var(--lms-space-2)] print:hidden">
-  {action==="SUSPEND"?<label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Suspension reason
-   <Input value={reason} maxLength={1000} disabled={busy} onChange={event=>setReason(event.target.value)}
-    className="min-h-11 md:min-h-9" placeholder="Reason for suspension"/>
-  </label>:null}
-  <Button type="button" variant="secondary" loading={busy} disabled={busy||(action==="SUSPEND"&&reason.trim().length<3)}
-   onClick={()=>setConfirmOpen(true)} className="min-h-11 w-full md:min-h-9 md:w-auto">
+ const reasonIssue=action==="SUSPEND"&&reason.trim().length>0&&reason.trim().length<3;
+ return <section aria-label="Administrator access" aria-busy={busy} className="min-w-0 space-y-3 print:hidden">
+  <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+   {action==="SUSPEND"?<label className="grid min-w-0 gap-1.5 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Suspension reason
+    <Input value={reason} maxLength={1000} disabled={busy} aria-invalid={reasonIssue}
+     aria-describedby="admin-suspension-reason-help"
+     onChange={event=>{setReason(event.target.value);if(error)setError("");}}
+     className="min-h-11 w-full sm:min-h-9" placeholder="Reason for suspension"/>
+    <span id="admin-suspension-reason-help" className={reasonIssue?"text-xs font-normal leading-5 text-[var(--lms-error)]":"text-xs font-normal leading-5 text-muted-foreground"}>
+     {reasonIssue?"Enter at least 3 characters before suspending.":"At least 3 characters required · "+reason.length+"/1000"}
+    </span>
+   </label>:<p className="m-0 min-w-0 text-sm leading-5 text-body">Restore this administrator&apos;s college access.</p>}
+   <Button type="button" variant={action==="SUSPEND"?"danger":"primary"} loading={busy}
+    disabled={busy||(action==="SUSPEND"&&reason.trim().length<3)}
+    onClick={()=>{setError("");setConfirmOpen(true);}} className="min-h-11 w-full sm:min-h-9 sm:w-auto">
     {busy?"Saving…":action==="SUSPEND"?"Suspend":"Reactivate"}
-  </Button>
+   </Button>
+  </div>
   {error?<Alert tone="error">{error}</Alert>:null}
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+  <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}}
    title={action==="SUSPEND"?"Suspend administrator access?":"Reactivate administrator access?"}
    description={action==="SUSPEND"?"This administrator will lose college access and be signed out from active devices.":"Restore college access for this administrator?"}
-   confirmLabel={action==="SUSPEND"?"Suspend":"Reactivate"} confirmVariant={action==="SUSPEND"?"danger":"primary"} pending={busy}
-   onConfirm={()=>void submit()}/>
- </div>;
+   confirmLabel={action==="SUSPEND"?"Suspend":"Reactivate"} confirmVariant={action==="SUSPEND"?"danger":"primary"}
+   pending={busy} confirmDisabled={action==="SUSPEND"&&reason.trim().length<3}
+   onConfirm={()=>void submit()}>
+   {action==="SUSPEND"?<p className="min-w-0 break-words text-sm leading-5 text-body"><strong className="font-semibold">Suspension reason:</strong> {reason.trim()}</p>:null}
+  </ConfirmDialog>
+ </section>;
 }
