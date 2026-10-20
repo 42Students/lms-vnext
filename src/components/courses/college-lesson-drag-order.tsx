@@ -42,15 +42,15 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
  return <section aria-label="Reorder shared lessons" className="border-b border-border pb-4">
   <h3 className="font-semibold text-foreground">Reorder Lessons</h3>
   <p className="mt-1 text-xs text-muted-foreground">Drag a lesson onto another to change its place, or use Move up and Move down. Changes affect every section sharing this offering.</p>
-  <ol className="mt-3 space-y-2">
+  <ol className="mt-3 divide-y divide-border border-y border-border">
    {order.map((id,index)=><li key={id} draggable={!busy}
       onDragStart={event=>{setDragging(id);event.dataTransfer.setData("text/plain",id);}}
       onDragOver={event=>event.preventDefault()}
       onDrop={event=>{event.preventDefault();void move(dragging??event.dataTransfer.getData("text/plain"),id);}}
       onDragEnd={()=>setDragging(null)}
-      className="flex flex-wrap items-center gap-3 rounded border border-border p-3">
+      className="flex min-w-0 flex-wrap items-center gap-3 py-3">
       <span aria-hidden="true" className="cursor-grab text-muted-foreground">⠿</span>
-      <span className="min-w-0 flex-1 break-words text-sm">{index+1}. {names.get(id)??"Lesson"}</span>
+      <span className="min-w-0 flex-1 break-words text-sm text-body">{index+1}. {names.get(id)??"Lesson"}</span>
       <Button type="button" variant="secondary" disabled={busy||index===0} onClick={()=>void move(id,order[index-1]!)}
         className="min-h-11 md:min-h-9">Move up</Button>
       <Button type="button" variant="secondary" disabled={busy||index===order.length-1} onClick={()=>void move(id,order[index+1]!)}

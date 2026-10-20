@@ -1,5 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {MetricBar} from "@/components/ui/metric-bar";
+import chartStyles from "@/components/placements/report-bar-chart.module.css";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
@@ -189,7 +190,7 @@ export default async function AnnouncementsPage({
         const receipt=receipts.get(row.id)!;
         return <li key={row.id} className="border-b border-border py-3 text-sm">
          <p className="font-semibold">{row.title}</p><p className="text-muted-foreground">{receipt.cellRead} of 1 placement cell read · {receipt.read}/{receipt.delivered} bell recipients read</p>
-         <MetricBar role="progressbar" label={row.title+" notification reads"} className="mt-2 w-full"
+         <MetricBar role="progressbar" label={row.title+" notification reads"} className={chartStyles.track+" mt-2 w-full"}
           value={receipt.cellRead} maximum={1} unit="placement cell" />
         </li>;
        })}</ul>

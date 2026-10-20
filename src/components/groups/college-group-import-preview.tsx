@@ -4,6 +4,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Result = {
   groupId: string; status: string; total: number; ready: number; blocked: number;
@@ -67,27 +69,27 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
           onChange={(event) => { setCsv(event.target.value); setResult(null); }}
           className="font-mono text-sm" />
       </label>
-      <Button type="submit" disabled={reading || pending || !csv.trim()}>
+      <Button type="submit" loading={pending || reading} className="min-h-11 md:min-h-9" disabled={reading || pending || !csv.trim()}>
         {pending ? "Validating…" : "Preview only (no import)"}
       </Button>
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {error ? <Alert tone="error">{error}</Alert> : null}
     </form>
     {result ? <section aria-label="Student group CSV validation report" className="space-y-4">
       <h2 className="text-lg font-semibold text-foreground">
         Dry run: {result.ready} ready, {result.blocked} blocked, {result.total} examined
       </h2>
-      <p className="text-sm text-body">{result.warning}</p>
+      {result.warning ? <Alert tone="warning">{result.warning}</Alert> : null}
       <a href={"data:text/csv;charset=utf-8," + encodeURIComponent(result.errorCsv)}
         download="group-import-validation-errors.csv"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Download safe error CSV
       </a>
-      {result.rows.length === 0 ? <p className="text-sm text-body">No learner rows were supplied.</p> : (
-        <div className="max-h-[35rem] overflow-auto rounded-[var(--lms-control-radius)] border border-border">
+      {result.rows.length === 0 ? <EmptyState title="No learner rows" description="No learner rows were supplied."/> : (
+        <div className="max-h-[35rem] min-w-0 overflow-auto">
           <DataTable<Result["rows"][number]>
             caption="Group import preview validation"
             rows={result.rows} getRowKey={row=>String(row.rowNumber)}
-            empty={<p>No learner rows were supplied.</p>}
+            empty={<EmptyState title="No learner rows" description="No learner rows were supplied."/>}
             columns={[
               {key:"row",header:"Row",mobilePriority:"primary",cell:row=>row.rowNumber},
               {key:"email",header:"Email",mobilePriority:"secondary",cell:row=><span className="break-all">{row.email}</span>},
