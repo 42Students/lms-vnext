@@ -55,7 +55,7 @@ export default async function MentorProjectTimelinePage({
       <p role="status" aria-live="polite" className="text-sm text-body">
         {data.total} registered release{data.total===1?"":"s"} match.
       </p>
-      {data.items.length===0?<EmptyState title="No matching registered Releases"
+      {data.items.length===0?<EmptyState title="No matching registered releases"
         description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed."/>
       :<Timeline aria-label="Registered releases">
         {data.items.map(release=><TimelineEntry key={release.id}>

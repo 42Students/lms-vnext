@@ -31,7 +31,7 @@ export default async function FacultyGradebookPage({
     knownKeys&&noRepeatedKeys?rawSearch:{invalid:true},
   );
   if(!parsed.success||!view.success)return <section role="alert" className="min-w-0 space-y-3">
-    <PageHeader title={"Invalid gradebook link or filters"} />
+    <PageHeader title="Published gradebook" description="Invalid gradebook link or filters" />
     <Link href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
       "/teacher/courses"} className="text-primary-text underline inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
@@ -46,9 +46,9 @@ export default async function FacultyGradebookPage({
     if(error instanceof CoursesServiceError &&
        error.code==="FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS") {
       return <section role="alert" className="min-w-0 space-y-3">
-        <PageHeader title={"Gradebook report limit"} />
+        <PageHeader title="Published gradebook" description="Gradebook report limit" />
         <p className="text-sm text-body leading-[22px]">
-          This Section has more than 100 published assessments. Contact your college
+          This section has more than 100 published assessments. Contact your college
           administrator to request a gradebook report. No grades have been changed.
         </p>
         <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)}
@@ -66,7 +66,7 @@ export default async function FacultyGradebookPage({
     <PageHeader title="Published gradebook"
       actions={<Link href={csv}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
-        Download full Section CSV
+        Download full section CSV
       </Link>} />
     <p className="text-sm text-body leading-[22px]">
       {data.rosterSize} current eligible learners · {data.publishedAssessments}
@@ -92,7 +92,7 @@ export default async function FacultyGradebookPage({
       The CSV contains the full authorized Section, not only visible search matches.
     </p>
     {data.rows.length===0?<EmptyState title="No current enrolled learners"
-      description="The authorized Section roster is empty. No scores were inferred."/>
+      description="The authorized section roster is empty. No scores were inferred."/>
     :filtered.items.length===0?<EmptyState title="No matching learners"
       description="Try another name, roll number or email. Published grades were not inferred."/>
     :<div className="grid gap-3">
