@@ -85,7 +85,7 @@ export default async function FacultyContactsPage({
       <section className="min-w-0 border-b border-border pb-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">Directory results</h2>
+            <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
             <p className="mt-1 text-sm text-body" role="status" aria-live="polite">
               {result.total}{" "}
               {result.total === 1

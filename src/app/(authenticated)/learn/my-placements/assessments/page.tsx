@@ -50,10 +50,10 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
         }
       />
       <Banner tone="info">
-        <h2 className="m-0 text-sm font-semibold text-foreground">
+        <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Submit assessments on the employer’s platform
         </h2>
-        <p className="mt-2 text-sm leading-6 text-body">
+        <p className="mt-2 text-sm text-body leading-[1.6]">
           Opening an employer assessment link does not submit your attempt or
           confirm receipt. Complete the assessment using the provider’s
           instructions. The recruiter controls official submission and results.

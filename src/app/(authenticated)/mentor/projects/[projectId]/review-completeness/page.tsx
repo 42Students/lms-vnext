@@ -45,7 +45,7 @@ export default async function MentorProjectReviewCompletenessPage({
       :<ol aria-label="Recorded delivery review versions" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="min-w-0 break-words font-semibold text-foreground">Delivery version {item.version}</h2>
+            <h2 className="min-w-0 break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery version {item.version}</h2>
             <StatusBadge tone={item.status==="APPROVED"?"success":item.status==="REJECTED"?"warning":"neutral"}>{item.status}</StatusBadge>
           </div>
           <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
@@ -73,7 +73,7 @@ export default async function MentorProjectReviewCompletenessPage({
         </li>)}</ol>}
       <Pagination label="Review version pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewCompletenessHref({projectId,page})}/>
     </>}
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-[1.6]">
       A review is recorded only when a persisted review decision exists.
       Feedback means recorded written text, not a product requirement.
       Raw feedback, learner identities and inaccessible historic records are not exposed.
