@@ -3,6 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import {useState} from "react";
 import dynamic from "next/dynamic";
@@ -49,7 +50,7 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
   {key:"who",label:"Who",read:row=>row.actorName},
  ];
  return <section aria-label="Audit history grid" className="min-w-0 space-y-3">
-  <div className="flex min-w-0 flex-wrap items-end gap-3 border-y border-border py-3">
+  <div className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] py-3 sm:grid-cols-2 lg:grid-cols-3">
    <label className="min-w-0 flex-1 text-sm md:flex-none">What happened
     <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"
      maxLength={120} className="mt-1 block w-full min-w-0" />
