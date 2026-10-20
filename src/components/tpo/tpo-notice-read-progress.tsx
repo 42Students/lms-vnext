@@ -1,5 +1,6 @@
 "use client";
 import { Disclosure } from "@/components/ui/disclosure";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Button } from "@/components/ui/button";
 import { MetricBar } from "@/components/ui/metric-bar";
 import barStyles from "@/components/placements/report-bar-chart.module.css";
@@ -48,12 +49,12 @@ export function TpoNoticeReadProgress({id}:{id:string}){
    {data.unread.length?<Button variant="secondary" type="button" disabled={busy}
     className="min-h-11 min-[768px]:min-h-9"
     onClick={()=>void remind()}>{busy?"Sending…":"Remind them"}</Button>:null}
-   {reminder?<p role="status">{reminder}</p>:null}
+   {reminder?<InlineNotice tone="success" message={reminder}/>:null}
    {data.unread.length?<Disclosure title="Who hasn't read">
     <ul className="max-h-48 overflow-auto">{data.unread.map((name,index)=>
      <li key={index} className="break-words py-0.5">{name}</li>)}</ul>
    </Disclosure>:null}
   </div>:null}
-  {error?<p role="alert" className="mt-2 break-words text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }

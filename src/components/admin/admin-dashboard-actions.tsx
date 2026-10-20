@@ -33,7 +33,7 @@ function ActionLink({
   return (
     <Link
       href={href}
-      className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+      className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
       <p className="m-0 text-sm font-semibold text-foreground">{label}</p>
       <p className="mt-1 text-xs text-muted-foreground">
@@ -48,7 +48,7 @@ export function CollegeAdminQuickActions() {
   return (
     <section aria-label="Quick Actions" className="space-y-3">
       <h2 className="m-0 text-lg font-semibold text-foreground">Quick Actions</h2>
-      <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {COLLEGE_ADMIN_QUICK_ACTIONS.map((item) => (
           <ActionLink key={item.key} label={item.label} href={item.href} />
         ))}
@@ -79,7 +79,7 @@ export function CollegeAdminDashboardActions() {
             <h3 className="m-0 text-base font-semibold text-foreground">
               {phaseIndex + 1}. {phase.title}
             </h3>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
               {phase.steps.map((step) => (
                 <ActionLink
                   key={step.key}
@@ -107,7 +107,7 @@ export function SuperAdminGlobalDashboardActions() {
         Select a college in the top bar for detailed metrics,
         or use a supported platform-wide workspace.
       </p>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-4">
         {SUPER_ADMIN_GLOBAL_LINKS.map((item) => (
           <ActionLink key={item.label} label={item.label} href={item.href} subtitle={item.subtitle} />
         ))}
@@ -121,11 +121,11 @@ export function SuperAdminCollegeDashboardActions() {
   return <section aria-label="Selected college quick actions" className="space-y-3">
     <h2 className="m-0 text-lg font-semibold text-foreground">Selected college quick actions</h2>
     <p className="text-sm text-body">These pages enforce the college selected in the Super Admin scope selector.</p>
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
       {SUPER_ADMIN_COLLEGE_QUICK_ACTIONS.map(item=><ActionLink key={"quick:"+item.label} label={item.label} href={item.href}/>)}
     </div>
     <h3 className="pt-3 text-sm font-semibold text-body">Other college workspaces</h3>
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
       {SUPER_ADMIN_COLLEGE_LINKS.map(item => <ActionLink key={item.label} label={item.label} href={item.href} />)}
     </div>
   </section>;

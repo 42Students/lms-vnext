@@ -47,32 +47,32 @@ export default async function FacultyQuizReportPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <Link href="/teacher/allQuizzes" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Back
       </Link>
       <PageHeader title={quiz.title} />
       <div className="flex flex-wrap justify-end gap-3">
         <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Individual attempts &amp; question accuracy →
         </Link>
       </div>
       <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-primary-text">
+          className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-primary-text">
           Export attempted only
         </Link>
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-primary-text">
+          className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-primary-text">
           Export not attempted only
         </Link>
       </nav>
       <div className="flex flex-wrap items-center gap-3">
         <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
           "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
           Download question accuracy CSV
         </Link>
         <p className="text-xs text-muted-foreground">Question export includes aggregate accuracy only, capped at 500 questions.</p>
@@ -158,7 +158,7 @@ export default async function FacultyQuizReportPage({
                   value={width} maximum={100} unit="percent" />
                 <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
-                 className="rounded-md border border-border p-2 text-sm [&>summary]:min-h-9 [&>summary]:px-0">
+                 className="rounded-[var(--lms-canvas-radius)] border border-border p-2 text-sm [&>summary]:min-h-11 md:[&>summary]:min-h-[var(--lms-control-height)] [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {latestAttempts.filter(attempt=>{
                     if(attempt.maxScore<=0)return false;
@@ -239,7 +239,7 @@ export default async function FacultyQuizReportPage({
             Every currently eligible learner has at least one attempt.
           </p>
         ) : (
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+          <ul className="mt-3 grid gap-2 md:grid-cols-2">
             {notAttemptedLearners.map((learner) => (
               <li
                 key={learner.membershipId}

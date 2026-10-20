@@ -16,7 +16,7 @@ export default async function TeacherCoursesPage({searchParams}: {
     <div role="alert" className="border-b border-border py-5">
       The Course filters could not be understood. No other Section has been loaded.
       <Link href="/teacher/courses"
-        className="ml-2 font-semibold text-primary-text underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="ml-2 font-semibold text-primary-text underline inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Reset filters
       </Link>
     </div>

@@ -4,6 +4,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {useState} from "react";
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Answer={id:string;promptSnapshot:string;questionType:string;pointsPossible:number;pointsAwarded:number;
@@ -37,7 +38,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  }
  if(!options.length||status==="DRAFT")return null;
  return <div className="mt-2 space-y-2">
-  {options.length>1?<label className="grid gap-1 text-xs font-semibold">Section
+  {options.length>1?<label className="grid gap-1 text-xs font-semibold text-body">Section
    <Select value={chosen.deliveryId} disabled={loading} onChange={e=>{
     setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
     className="min-h-11 md:min-h-9">
@@ -55,25 +56,25 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
-    <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student on this page
+    <label className="mb-2 grid gap-1 text-xs font-semibold text-body">Search Student on this page
      <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-11 md:min-h-9" placeholder="Student name or email"/>
     </label>
     {learnerSearch.trim()&&!attempts.some(item=>(item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||(item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase()))?
      <p className="text-xs text-muted-foreground">No Students match your search.</p>:null}
-    <ul className="space-y-2">{attempts.filter(item=>!learnerSearch.trim()||
+    <ul className="divide-y divide-border border-y border-border">{attempts.filter(item=>!learnerSearch.trim()||
       (item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||
       (item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())).map(item=><li key={item.id}
-     className="space-y-1 rounded border border-border p-2 text-xs">
-     <p className="font-semibold">{item.learnerDisplayName?.trim()||item.learnerEmail||"Learner "+item.membershipId.slice(0,8)}</p>
+     className="space-y-1 py-3 text-xs">
+     <p className="font-semibold text-foreground">{item.learnerDisplayName?.trim()||item.learnerEmail||"Learner "+item.membershipId.slice(0,8)}</p>
      <p>Attempt {item.attemptNumber} · {item.score}/{item.maxScore} points</p>
      <p className="text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{
       dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.submittedAt))} IST</p>
-    <Disclosure title={`View Answers (${item.answers.length})`} className="mt-2 rounded border border-border p-2">
+    <Disclosure title={`View Answers (${item.answers.length})`} className="mt-2 border-t border-border pt-2">
       {item.answers.length===0?<p className="mt-2 text-muted-foreground">No saved answers for this attempt.</p>:null}
-      <ol className="mt-2 space-y-3">{item.answers.map((answer,index)=><li key={answer.id} className="rounded border border-border p-2">
-       <p className="font-semibold">Question {index+1}: {answer.promptSnapshot}</p>
-       <p>{answer.pointsAwarded}/{answer.pointsPossible} points · {answer.correct?"Correct":"Incorrect"}</p>
+      <ol className="mt-2 space-y-3">{item.answers.map((answer,index)=><li key={answer.id} className="border-b border-border py-2">
+       <p className="font-semibold text-foreground">Question {index+1}: {answer.promptSnapshot}</p>
+       <p className="flex flex-wrap items-center gap-2">{answer.pointsAwarded}/{answer.pointsPossible} points · <StatusBadge tone={answer.correct?"success":"error"}>{answer.correct?"Correct":"Incorrect"}</StatusBadge></p>
        <ul className="mt-1 space-y-1">{[...(answer.optionsSnapshot??[])].sort((a,b)=>a.sequence-b.sequence).map(option=><li key={option.id}>
         <span className={(answer.selectedOptionIds??[]).includes(option.id)?"font-semibold text-primary-text":""}>
          {(answer.selectedOptionIds??[]).includes(option.id)?"Selected: ":""}{option.text}

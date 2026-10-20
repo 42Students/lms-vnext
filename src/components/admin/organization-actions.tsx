@@ -89,7 +89,7 @@ export function OrganizationActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 print:hidden">
         <Button
           variant="secondary"
           size="sm"
@@ -143,6 +143,7 @@ export function OrganizationActions({
           Organization name
         </label>
         <Input
+          className="min-h-11 md:min-h-9"
           id={`organization-name-${organizationId}`}
           value={nextName}
           onChange={(event) =>

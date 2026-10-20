@@ -9,6 +9,8 @@ import {Pagination} from "@/components/ui/pagination";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {getTpoAfterCollegeReport} from "@/modules/placements/tpo-after-college-report-service";
@@ -23,10 +25,10 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const batches=await listTpoBatches(ctx);
  const batchId=first(raw.batchId)||undefined,branchId=first(raw.branchId)||undefined;
  if(batchId&&!batches.batches.some(batch=>batch.id===batchId))
-  return <p role="alert">Invalid batch. <Link href="/tpo/reports/after-college">Clear filters</Link></p>;
+  return <Alert tone="error">Invalid batch. <Link href="/tpo/reports/after-college">Clear filters</Link></Alert>;
  const data=await getTpoAfterCollegeReport(ctx,{collegeId:ctx.membership.collegeId,batchId,branchId});
  const branches=new Map(data.branches.map(row=>[row.id,row.name]));
- if(branchId&&!branches.has(branchId))return <p role="alert">Invalid branch for this college. <Link href="/tpo/reports/after-college">Clear filters</Link></p>;
+ if(branchId&&!branches.has(branchId))return <Alert tone="error">Invalid branch for this college. <Link href="/tpo/reports/after-college">Clear filters</Link></Alert>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
  const displayedCount=Math.min(data.rows.length,300);
  const pageCount=Math.max(1,Math.ceil(displayedCount/25));
@@ -39,9 +41,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
   <PageHeader eyebrow="TPO · Reports" title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."/>
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId} userId={ctx.user.id}/></Suspense>
-  {!data.available?<p role="status" className="rounded border border-border p-4">
-    After-college outcomes storage is unavailable. This page does not infer destinations.
-   </p>:<>
+  {!data.available?<Alert tone="warning">After-college outcomes storage is unavailable. This page does not infer destinations.</Alert>:<>
    <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
     <label className="grid gap-1 text-sm">Batch
      <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
@@ -67,7 +67,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
    </div>
    <DataTable rows={data.rows.slice((page-1)*25,page*25)} getRowKey={row=>row.membershipId}
     caption="After college"
-    empty={<p role="status">No students match these filters.</p>}
+    empty={<EmptyState title="No students match these filters."/>}
     columns={[
      {key:"student",header:"Student",cell:row=>row.displayName,mobilePriority:"primary"},
      {key:"roll",header:"Roll no.",cell:row=>row.rollNumber??"—",mobilePriority:"secondary"},

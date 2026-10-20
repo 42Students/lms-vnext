@@ -8,6 +8,8 @@ import { DataTable } from "@/components/ui/data-table";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoBranchSeasonDashboard } from "@/modules/placements/tpo-branch-season-service";
 
@@ -71,9 +73,7 @@ export default async function TpoBranchSeasonPage({
         </form>
       ) : null}
       {!dashboard.season ? (
-        <p role="status" className="border-t border-border py-6 text-sm text-body">
-          No placement seasons are recorded for this college. No branch rate can be calculated.
-        </p>
+        <EmptyState title="No placement seasons are recorded for this college." description="No branch rate can be calculated."/>
       ) : (
         <>
           <section className="grid gap-3 sm:grid-cols-2">
@@ -87,23 +87,16 @@ export default async function TpoBranchSeasonPage({
             </div>
           </section>
           {!dashboard.registrationAvailable ? (
-            <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
-              No migrated placement-pool registration table is available.
-              Registered denominator and placement rate are unknown, not zero.
-              The accepted-applicants / applicant ratio below is an explicitly different metric.
-            </p>
+            <Alert tone="warning">No migrated placement-pool registration table is available. Registered denominator and placement rate are unknown, not zero. The accepted-applicants / applicant ratio below is an explicitly different metric.</Alert>
           ) : null}
           {dashboard.rows.length === 0 ? (
-            <p role="status" className="border-t border-border py-6 text-sm text-body">
-              This season has no persisted applicant, accepted-offer or registered-pool
-              branch evidence. Rates cannot be inferred.
-            </p>
+            <EmptyState title="This season has no persisted applicant, accepted-offer or registered-pool branch evidence." description="Rates cannot be inferred."/>
           ) : (
             <DataTable
               caption="Branch by placement season"
               rows={dashboard.rows}
               getRowKey={row=>row.departmentId??"unknown"}
-              empty={<p role="status">This season has no persisted applicant, accepted-offer or registered-pool branch evidence. Rates cannot be inferred.</p>}
+              empty={<EmptyState title="This season has no persisted applicant, accepted-offer or registered-pool branch evidence." description="Rates cannot be inferred."/>}
               columns={[
                 {key:"department",header:"Current branch",cell:row=>row.departmentName,mobilePriority:"primary"},
                 {key:"applicants",header:"Applicants",cell:row=>row.applicants,mobilePriority:"secondary"},

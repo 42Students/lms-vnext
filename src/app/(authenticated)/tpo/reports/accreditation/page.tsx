@@ -9,6 +9,8 @@ import { DataTable } from "@/components/ui/data-table";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {getPlacementAccreditationReport} from "@/modules/placements/report-accreditation-service";
 import {getTpoAccreditationStudentExport} from "@/modules/placements/tpo-accreditation-students-service";
@@ -100,8 +102,8 @@ export default async function TpoAccreditationReportPage({
         {report.selectedJobId&&<input type="hidden" name="jobId" value={report.selectedJobId}/>}
         <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9">Show students</Button>
        </form>
-       {batchId&&!selectedBatch&&<p role="alert" className="text-sm">Choose a batch from this college.</p>}
-       {selectedBatch&&studentReport?.rows.length===0?<p role="status" className="text-sm text-muted-foreground">No placed students in this batch. Export is unavailable until a recorded placement exists.</p>:null}
+       {batchId&&!selectedBatch&&<Alert tone="error">Choose a batch from this college.</Alert>}
+       {selectedBatch&&studentReport?.rows.length===0?<Alert tone="info">No placed students in this batch. Export is unavailable until a recorded placement exists.</Alert>:null}
        {studentReport&&<>
         {completeness?<div aria-label="NAAC and NIRF completeness" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
          <h3 className="font-semibold">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</h3>
@@ -118,7 +120,7 @@ export default async function TpoAccreditationReportPage({
           caption="Placed students in this batch"
           rows={studentReport.rows.slice(0,50)}
           getRowKey={student=>student.membershipId}
-          empty={<p role="status">No placed students were recorded in this batch.</p>}
+          empty={<EmptyState title="No placed students were recorded in this batch."/>}
           columns={[
             {key:"name",header:"Name",cell:student=>student.name??"—",mobilePriority:"primary"},
             {key:"roll",header:"Roll no.",cell:student=>student.rollNumber??"—",mobilePriority:"secondary"},
@@ -186,7 +188,7 @@ export default async function TpoAccreditationReportPage({
             caption="Accreditation evidence preview"
             rows={overview.slice(0,50).map((row,index)=>({row,index}))}
             getRowKey={item=>String(item.index)}
-            empty={<p role="status">No reportable placement season was found. Download the CSV for the explicit completeness warnings.</p>}
+            empty={<EmptyState title="No reportable placement season was found." description="Download the CSV for the explicit completeness warnings."/>}
             columns={[
               {key:"section",header:"Section",cell:item=>item.row[0]??"—",mobilePriority:"primary"},
               {key:"dimension",header:"Dimension",cell:item=>item.row[4]??"—",mobilePriority:"secondary"},

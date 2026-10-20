@@ -25,7 +25,9 @@
  * recruiter-v2 board with a more specific, route-scoped selector rather
  * than relying on the ordering of Tailwind and CSS-module styles. */
 .board[data-slot="calendar-grid"] {
-  display: grid;
+  /* CalendarGrid owns display so Tailwind hidden / min-[861px]:grid still work.
+   * Setting display:grid here would outrank .hidden at <=860px, duplicating
+   * the mobile agenda and causing horizontal overflow. */
   grid-template-columns: repeat(7, minmax(150px, 1fr));
   gap: 10px;
   min-width: 0;

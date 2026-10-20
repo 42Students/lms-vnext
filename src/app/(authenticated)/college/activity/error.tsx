@@ -7,5 +7,5 @@ export default function CollegeActivityError({ reset }: {
 }) {
   return <ErrorState title="Activity Log unavailable"
     description="College activity could not be loaded. An empty result is not assumed."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>} />;
 }
