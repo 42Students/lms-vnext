@@ -61,7 +61,7 @@ export function CollegeStudentImportHistory(){
   <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else close();}} title="Bulk import history" footer={<Button variant="secondary" type="button" onClick={close}
       className="min-h-11 w-full md:min-h-9 md:w-auto">Close</Button>}>
     
-    {error?<Alert tone="error">{error}</Alert>:null}
+    {error?<div className="space-y-[var(--lms-space-2)]"><Alert tone="error">{error}</Alert><Button variant="secondary" type="button" onClick={()=>void load(page)} className="min-h-11 w-full md:min-h-9 md:w-auto">Retry</Button></div>:null}
     {busy?<Skeleton variant="row" label="Loading import history"/>:null}
     {!busy&&!error?<DataTable<Receipt> caption="Bulk import history" rows={rows} getRowKey={row=>row.id}
       columns={[
@@ -73,13 +73,13 @@ export function CollegeStudentImportHistory(){
         {key:"failed",header:"Failed",cell:row=>row.failed,mobilePriority:"secondary"},
       ]}
       empty={<EmptyState title="No bulk import history" description="No bulk imports have been recorded yet."/>}/>:null}
-    <nav aria-label="Import history pages" className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-3)] text-sm">
+    {(rows.length>0||page>1||hasNext)&&!error?<nav aria-label="Import history pages" className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-3)] text-sm">
      <Button variant="secondary" type="button" disabled={page<=1||busy} onClick={()=>void load(page-1)}
       className="min-h-11 flex-1 md:min-h-9 md:flex-none">Previous</Button>
      <span className="shrink-0 py-[var(--lms-space-2)] text-center">Page {page}</span>
      <Button variant="secondary" type="button" disabled={!hasNext||busy} onClick={()=>void load(page+1)}
       className="min-h-11 flex-1 md:min-h-9 md:flex-none">Next</Button>
-    </nav>
+    </nav>:null}
   </Dialog>
  </>;
 }

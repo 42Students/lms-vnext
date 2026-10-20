@@ -6,7 +6,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { studentSectionMoveMessage } from "@/modules/academics/college-student-section-move-model";
 
@@ -19,6 +19,9 @@ export function StudentClassMoveAction({ membershipId, name }: {
   membershipId: string; name: string;
 }) {
   const router = useRouter();
+  const requestVersion = useRef(0);
+  const moving = useRef(false);
+  function close() { if (busy || moving.current) return; requestVersion.current++; setOpen(false); }
   const [open, setOpen] = useState(false);
   const [loaded, setLoaded] = useState<Options | null>(null);
   const [targetId, setTargetId] = useState("");
@@ -26,6 +29,8 @@ export function StudentClassMoveAction({ membershipId, name }: {
   const [busy, start] = useTransition();
   const base = "/api/college/students/" + encodeURIComponent(membershipId) + "/section";
   function load() {
+    if (busy || moving.current) return;
+    const version = ++requestVersion.current;
     setOpen(true);
     setLoaded(null);
     setTargetId("");
@@ -35,9 +40,9 @@ export function StudentClassMoveAction({ membershipId, name }: {
         const response = await fetch(base, { cache: "no-store" });
         if (!response.ok) throw new Error("Class options unavailable or permission denied");
         const value = await response.json() as Options;
-        setLoaded(value);
+        if (version === requestVersion.current) setLoaded(value);
       } catch (reason) {
-        setError(reason instanceof Error ? reason.message : "Could not load classes");
+        if (version === requestVersion.current) setError(reason instanceof Error ? reason.message : "Could not load classes");
       }
     });
   }
@@ -45,7 +50,8 @@ export function StudentClassMoveAction({ membershipId, name }: {
   const canMove = loaded && selected && selected.id !== loaded.current.sectionId;
   const moveConfirmation=selected?studentSectionMoveMessage(name,selected.name):"";
   function submit() {
-    if (!loaded || !canMove || !selected) return;
+    if (!loaded || !canMove || !selected || busy || moving.current) return;
+    moving.current = true;
     setError("");
     start(async () => {
       try {
@@ -59,12 +65,13 @@ export function StudentClassMoveAction({ membershipId, name }: {
           }),
         });
         if (!response.ok) throw new Error("Class move was denied. Refresh options and try again.");
+        requestVersion.current++;
         setOpen(false);
         setLoaded(null);
         router.refresh();
       } catch (reason) {
         setError(reason instanceof Error ? reason.message : "Move failed");
-      }
+      } finally { moving.current = false; }
     });
   }
   return <div className="min-w-0 text-left">
@@ -72,8 +79,8 @@ export function StudentClassMoveAction({ membershipId, name }: {
       className="min-h-11 w-full md:min-h-9 md:w-auto">
       Move class
     </Button>
-    <Dialog open={open} onOpenChange={next=>{if(!busy)setOpen(next);}} title={"Move class for "+name} dismissible={!busy} footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
-      <Button variant="secondary" type="button" onClick={() => setOpen(false)}
+    <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={"Move class for "+name} dismissible={!busy} footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
+      <Button variant="secondary" type="button" onClick={close}
         className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy}>Cancel</Button>
       <Button variant="primary" type="button" disabled={!canMove || busy} onClick={submit}
         className="min-h-11 w-full md:w-auto md:min-h-9" loading={busy}>Confirm move</Button>
