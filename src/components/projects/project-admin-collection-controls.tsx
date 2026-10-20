@@ -74,7 +74,7 @@ export function ProjectAdminFilters({
       method="get"
       className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
     >
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[13px] font-semibold text-body">
         Search
         <Input
           name={legacyWorkspaces ? "search" : "q"}
@@ -84,7 +84,7 @@ export function ProjectAdminFilters({
           className="min-w-56"
         />
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[13px] font-semibold text-body">
         Workspace status
         <Select
           name="status"
@@ -103,7 +103,7 @@ export function ProjectAdminFilters({
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
       {includeRiskSort ? (
-        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Sort by
           <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
             className="">
@@ -114,7 +114,7 @@ export function ProjectAdminFilters({
         </label>
       ) : null}
       {includeSubmissionStatus ? (
-        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Submission status
           <Select
             name="submissionStatus"
@@ -132,7 +132,7 @@ export function ProjectAdminFilters({
           </Select>
         </label>
       ) : null}
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[13px] font-semibold text-body">
         Rows
         <Select
           name="pageSize"
