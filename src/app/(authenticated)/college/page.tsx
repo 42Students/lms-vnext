@@ -65,7 +65,7 @@ export default async function CollegeOverviewPage() {
   const closingQuizzes=closingResult.status==="fulfilled"?closingResult.value:null;
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-6">
+    <div className="min-w-0 max-w-full overflow-x-clip space-y-[16px]">
       <PageHeader
         title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}
         description={`${college.name} · ${formatCollegeHeaderDate(new Date())}`}
@@ -96,7 +96,7 @@ export default async function CollegeOverviewPage() {
           </>
         }
       />
-      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 border-t border-border pt-5">
+      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 border-t border-border pt-[16px]">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Code
@@ -135,7 +135,7 @@ export default async function CollegeOverviewPage() {
       {attendance?<>
       <section aria-label="Today" className="space-y-3">
         <h2 className="text-xl font-semibold text-foreground">Today</h2>
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid gap-[8px] md:grid-cols-3">
           {[
             { label: "Classes scheduled today", value: attendance.today.scheduled },
             { label: "Held so far", value: attendance.today.held },
@@ -151,7 +151,7 @@ export default async function CollegeOverviewPage() {
       </section>
       </>:<CollegeDashboardSectionFailure title="Today"/>}
       {attendance?<>
-      <section aria-label="Attendance not taken" className="space-y-3 border-t border-border pt-5">
+      <section aria-label="Attendance not taken" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Attendance not taken</h2>
@@ -182,7 +182,7 @@ export default async function CollegeOverviewPage() {
       </section>
       </>:<CollegeDashboardSectionFailure title="Attendance not taken"/>}
       {lowAttendance?<>
-      <section aria-label="Low attendance" className="space-y-3 border-t border-border pt-5">
+      <section aria-label="Low attendance" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">
             Under {lowAttendance.threshold}% attendance
@@ -208,7 +208,7 @@ export default async function CollegeOverviewPage() {
       </section>
       </>:<CollegeDashboardSectionFailure title="Low attendance"/>}
       {unstaffed?<>
-      <section aria-label="Courses with no teacher" className="space-y-3 border-t border-border pt-5">
+      <section aria-label="Courses with no teacher" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Courses with no teacher</h2>
           <Link href="/college/faculty-assignment" className="font-semibold text-primary-text hover:underline">
@@ -234,7 +234,7 @@ export default async function CollegeOverviewPage() {
       </section>
       </>:<CollegeDashboardSectionFailure title="Courses with no teacher"/>}
       {pendingGrades?<>
-      <section aria-label="Waiting to be graded" className="space-y-3 border-t border-border pt-5">
+      <section aria-label="Waiting to be graded" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Waiting to be graded</h2>
           <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">
@@ -257,10 +257,10 @@ export default async function CollegeOverviewPage() {
       </section>
       </>:<CollegeDashboardSectionFailure title="Waiting to be graded"/>}
       {setupGaps?<>
-      <section aria-label="Setup gaps" className="space-y-3 border-t border-border pt-5">
+      <section aria-label="Setup gaps" className="space-y-3 border-t border-border pt-[16px]">
         <h2 className="text-lg font-semibold text-foreground">Setup gaps</h2>
         <p className="text-sm text-muted-foreground">Records still missing a critical academic relationship.</p>
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-[8px] md:grid-cols-2 lg:grid-cols-4">
           {setupGaps.map(item => <Link key={item.label} href={item.href}
             className="rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary">
             <p className="text-sm text-muted-foreground">{item.label}</p>
