@@ -37,7 +37,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-19.md: surface | probl
 - [x] `src/components/tpo/tpo-timed-debar-control.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/tracker/known-errors-workspace.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/tracker/tracker-live-logs-explorer.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/tracker/tracker-quick-report-launcher.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/tracker/tracker-quick-report-launcher.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/ui/confirm-action-dialog.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/ui/confirm-dialog.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
