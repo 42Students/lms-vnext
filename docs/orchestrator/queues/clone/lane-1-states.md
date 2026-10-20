@@ -9,10 +9,10 @@ Shared UI components that every page inherits. For each file: compare EVERY stat
 - [x] `src/components/ui/empty-state.tsx`
 - [x] `src/components/ui/form-field.tsx`
 - [x] `src/components/ui/input.tsx`
-- [ ] `src/components/ui/metric-bar.tsx`
-- [ ] `src/components/ui/page-back-link.tsx`
-- [ ] `src/components/ui/password-input.tsx`
-- [ ] `src/components/ui/search-field.tsx`
-- [ ] `src/components/ui/split-button.tsx`
-- [ ] `src/components/ui/table.tsx`
-- [ ] `src/components/ui/tooltip.tsx`
+- [x] `src/components/ui/metric-bar.tsx`
+- [x] `src/components/ui/page-back-link.tsx`
+- [x] `src/components/ui/password-input.tsx`
+- [x] `src/components/ui/search-field.tsx`
+- [x] `src/components/ui/split-button.tsx`
+- [x] `src/components/ui/table.tsx`
+- [x] `src/components/ui/tooltip.tsx`
