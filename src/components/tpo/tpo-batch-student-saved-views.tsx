@@ -67,10 +67,11 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    className="min-h-11 w-full sm:w-auto md:min-h-9">Saved batch views</Button>
   {open?<div className="min-w-0 space-y-3 border-y border-border py-4">
    <h3 className="font-semibold">Saved views</h3>
+   {busy&&!views.length?<p role="status" className="text-sm text-muted-foreground">Loading saved batch views…</p>:null}
    <p className="text-xs text-body">These filters are private to your account and this batch. Pin up to five views.</p>
    {pinnedViews.length?<div className="flex min-w-0 flex-wrap gap-2" aria-label="Pinned batch views">
     {pinnedViews.map(view=><Button variant="secondary" type="button" key={view.id}
-      disabled={busy||guarded} onClick={()=>void openSaved(view)}
+      disabled={busy||guarded} onClick={()=>void openSaved(view)} className="min-h-11 md:min-h-9"
       >{view.name}</Button>)}
    </div>:null}
    <label className="block min-w-0 text-sm">View name
@@ -81,10 +82,10 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    <div className="grid min-w-0 grid-cols-2 gap-2">
     <Button variant="primary" type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
      action:"CREATE",name:name.trim(),pinned,filters:current(),
-    })} >Save current filters</Button>
+    })} className="min-h-11 w-full md:min-h-9">Save current filters</Button>
     <Button variant="secondary" type="button" disabled={busy||guarded||!selected||!name.trim()} onClick={()=>void action({
      action:"UPDATE",id:selected,name:name.trim(),pinned,filters:current(),
-    })} >Update selected</Button>
+    })} className="min-h-11 w-full md:min-h-9">Update selected</Button>
    </div>
    <ul className="grid min-w-0 grid-cols-1 gap-2">{views.map(view=><li key={view.id}
     className="grid min-w-0 grid-cols-2 gap-2 border-b border-border py-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] sm:items-center">
@@ -94,11 +95,11 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
      {view.name}{view.pinned?" · Pinned":""}
     </label>
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>void openSaved(view)}
-     >Open</Button>
+     className="min-h-11 w-full md:min-h-9">Open</Button>
     <a href={batchStudentViewExportHref(batchId,1,view.query)}
-     className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Download CSV</a>
+     className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Download CSV</a>
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>setDeleteTarget(view)}
-     >Delete</Button>
+     className="min-h-11 w-full md:min-h-9">Delete</Button>
    </li>)}</ul>
    {selectedView?<p className="text-xs text-body">Selected: {selectedView.name}</p>:null}
    {!views.length?<p className="text-sm">No saved batch views yet.</p>:null}
