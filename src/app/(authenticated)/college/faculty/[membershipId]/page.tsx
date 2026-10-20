@@ -46,7 +46,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     </section>
     <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
-      <form method="get" className="mt-3 flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch"
+      <form method="get" className="mt-3 flex min-w-0 flex-wrap items-end max-[767px]:flex-col max-[767px]:items-stretch gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">
           Assignment history
