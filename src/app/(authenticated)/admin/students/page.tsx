@@ -67,10 +67,10 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
-  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-5"><h2 id="register-student-heading" className="text-lg font-semibold text-foreground">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
+  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-5"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-5">
     <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
-      <h2 id="bulk-register-students-heading" className="text-lg font-semibold text-foreground">Bulk Register Students</h2>
+      <h2 id="bulk-register-students-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Bulk Register Students</h2>
       <SuperAdminStudentImportHistory runs={importRuns}/>
     </div>
     <p className="text-sm text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
