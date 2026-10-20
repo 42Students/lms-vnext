@@ -340,7 +340,7 @@ function SubmissionGradeCard({
           <div><p className="mb-2 text-xs font-semibold text-body">Written Response</p><p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p></div>
         ) : content.kind === "FILE" || content.kind === "LINK" ? (
           <Link href={content.href} target="_blank" rel="noopener noreferrer" prefetch={false}
-            className="inline-flex min-h-10 items-center break-words text-sm font-semibold text-primary-text hover:text-primary-hover">
+            className="inline-flex min-h-11 items-center md:min-h-10 break-words text-sm font-semibold text-primary-text hover:text-primary-hover">
             {content.label}
           </Link>
         ) : <p role="status" className="text-sm text-muted-foreground">{content.message}</p>}
@@ -391,21 +391,21 @@ function SubmissionGradeCard({
 
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] md:col-span-2">
           {actions.canGrade&&draftState.hasChanges?(
-            <Button size="sm" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            <Button size="md" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||draftState.points===null}
               onClick={()=>void saveAndPublish()}>
               {saving?"Submitting…":submission.gradingStatus==="GRADED"?"Edit grade":"Submit grade"}
             </Button>
           ):null}
           {actions.canGrade ? (
-            <Button size="sm" type="submit" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            <Button size="md" type="submit" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||unchanged}>
               {saving?"Saving privately…":"Save privately"}
             </Button>
           ):null}
           {actions.canPublish ? (
             <Button
-              size="sm"
+              size="md"
               type="button"
               className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
@@ -501,7 +501,7 @@ export function FacultyAssignmentReview({
 
   if(status==="ARCHIVED")return null;
   if(status==="DRAFT")return <div className="mt-3">
-    <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+    <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
       onClick={()=>setOpen(true)}>View submissions</Button>
     <Drawer open={open} onOpenChange={setOpen} title="Assignment submissions"
       description="Draft assignments are hidden from learners.">
@@ -541,7 +541,7 @@ export function FacultyAssignmentReview({
   return (
     <>
       <div className="mt-3">
-        <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
           onClick={() => void load()}>
           View submissions
         </Button>
@@ -568,7 +568,7 @@ export function FacultyAssignmentReview({
         </div>
         <div className="flex gap-2">
           <Button
-            size="sm"
+            size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={loading}
@@ -610,7 +610,7 @@ export function FacultyAssignmentReview({
 
       {!loading && submissions && submissions.length>0 ? (
         <nav aria-label="Submission student navigation" className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:flex md:flex-wrap">
-          <label className="col-span-2 grid min-w-0 flex-1 gap-[var(--lms-space-1)] text-sm font-semibold md:min-w-48">
+          <label className="col-span-2 grid min-w-0 flex-1 gap-[var(--lms-space-1)] text-[13px] font-semibold leading-4 md:min-w-48">
             Students ({submissions.filter(item=>item.gradingStatus==="GRADED").length}/{submissions.length} graded on this page)
             <Select className="min-h-11 text-base md:min-h-[var(--lms-control-height)] md:text-sm"
               value={selectedSubmissionId??submissions[0].id}
@@ -620,7 +620,7 @@ export function FacultyAssignmentReview({
               </option>)}
             </Select>
           </label>
-          <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+          <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id)}>
             Previous student
@@ -628,7 +628,7 @@ export function FacultyAssignmentReview({
           <span className="text-xs text-muted-foreground">
             {Math.max(1,submissions.findIndex(item=>item.id===selectedSubmissionId)+1)} / {submissions.length}
           </span>
-          <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+          <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id)}>
             Next student
@@ -655,9 +655,9 @@ export function FacultyAssignmentReview({
         </div>
       ) : null}
       {pagination ? <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3">
-        <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page<=1}
+        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page<=1}
           onClick={()=>void load({filter,page:pagination.page-1})}>Previous</Button>
-        <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page>=pagination.totalPages}
+        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page>=pagination.totalPages}
           onClick={()=>void load({filter,page:pagination.page+1})}>Next</Button>
       </nav> : null}
       </div>
