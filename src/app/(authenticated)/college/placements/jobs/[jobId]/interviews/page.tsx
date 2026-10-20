@@ -54,7 +54,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
             <option key={status} value={status}>{status}</option>)}
         </Select>
       </label>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+      <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}
