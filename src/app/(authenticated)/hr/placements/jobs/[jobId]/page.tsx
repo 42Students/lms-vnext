@@ -294,7 +294,7 @@ export default async function HrPlacementJobPage({
               workspace.job.status ===
               "PUBLISHED"
                 ? "success"
-                : "neutral"
+                : workspace.job.status === "DRAFT" ? "warning" : workspace.job.status === "CANCELLED" ? "error" : "neutral"
             }
           >
             {workspace.job.status==="PUBLISHED"?"Live":workspace.job.status==="CLOSED"?"Completed":workspace.job.status==="CANCELLED"?"Cancelled":workspace.job.status==="DRAFT"?"Sent for review":workspace.job.status.replaceAll("_"," ")}
@@ -351,7 +351,7 @@ export default async function HrPlacementJobPage({
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
               <p className="mt-1 text-sm text-body">Employer-visible pipeline for this college. Applicants are limited to records shared by the placement cell; offer history may contain multiple versions per recipient.</p></div>
             {driveOverview.readOnly ? <StatusBadge tone="neutral">Read-only closed drive</StatusBadge> :
-              <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" ? "warning":"info"}>
+              <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" || driveOverview.deadlineState === "PASSED" ? "warning":"info"}>
                 {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
