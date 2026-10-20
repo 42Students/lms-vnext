@@ -13,7 +13,7 @@ export default function RouteError({ reset }: {
     <ErrorState
       title="Company & Team could not load"
       description="Company and team details are unavailable. Retry to load the authorized details."
-      action={<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Try again</Button>}
+      action={<Button type="button" variant="secondary" onClick={reset}>Try again</Button>}
     />
   </>;
 }
