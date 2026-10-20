@@ -50,9 +50,10 @@ type SearchParams = Record<
           ? "Enabled"
           : "Disabled"}
       </StatusBadge>
-      <p className="m-0 text-xs leading-5 text-muted-foreground">
-        {describeModuleDecision(decision)}
-      </p>
+      <Disclosure title="Rule source" className="min-w-0"
+        contentClassName="pb-2 pt-2 text-xs leading-5 text-muted-foreground">
+        <p className="break-words">{describeModuleDecision(decision)}</p>
+      </Disclosure>
       {decision.module === "placements" && !decision.enabled ? (
         <p className="m-0 text-xs leading-5 text-muted-foreground">
           Placement policy: {placementFeatureEffects(false).impact} This is a policy explanation, not confirmation that every downstream screen is enforced.
@@ -126,18 +127,18 @@ export default async function SuperAdminFeaturesPage({
 
       <section aria-label="Feature Controls overview" className="border-t border-border pt-6">
         <p className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
-        <h2 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Optional modules by college</h2>
-        <dl className="mt-3 grid gap-0 divide-y divide-border border-y border-border text-sm md:grid-cols-3 md:divide-x md:divide-y-0">
+        <h2 className="mt-1 text-lg font-semibold text-foreground">Optional modules by college</h2>
+        <dl className="mt-3 grid grid-cols-2 gap-0 divide-y divide-border border-y border-border text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges in scope</dt><dd className="mt-2 font-semibold">{result.total} matching current filters</dd></div>
           <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
-          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
+          <div className="min-w-0 col-span-2 px-4 py-3 sm:col-span-1"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
         </dl>
       </section>
       <section className="border-t border-border pt-6">
         <FilterBar title="Filters"><form
           action="/admin/features"
           method="get"
-          className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] max-[767px]:[&_label]:w-full"
+          className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-end"
         >
           <label className="grid min-w-0 w-full flex-1 md:min-w-60 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Find college
@@ -155,6 +156,10 @@ export default async function SuperAdminFeaturesPage({
               <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
             </Select>
           </label>
+          <Disclosure title="More college filters"
+            defaultOpen={Boolean(result.moduleFilter||result.stateFilter!=="ALL"||result.lockFilter!=="ALL"||result.presenceFilter!=="ANY"||result.recentFilter!=="ALL"||result.searchField!=="ALL")}
+            className="min-w-0 sm:w-full"
+            contentClassName="grid min-w-0 gap-3 pb-3 pt-2 sm:grid-cols-2 xl:grid-cols-3">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Explicit college rule for
             <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 md:min-h-9">
               <option value="">Any college</option><option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
@@ -185,9 +190,10 @@ export default async function SuperAdminFeaturesPage({
               <option value="ALL">Name and code</option><option value="NAME">College name</option><option value="CODE">College code</option>
             </Select>
           </label>
+          </Disclosure>
           <Button
             type="submit"
-            className="min-h-11 md:min-h-9"
+            className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
           >
             Search
           </Button>
@@ -201,8 +207,8 @@ export default async function SuperAdminFeaturesPage({
       </section>
 
       <section className="min-w-0 space-y-3">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+        <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="m-0 text-lg font-semibold text-foreground">
             College module matrix
           </h2>
           <Link href={adminFeatureExportHref({
@@ -232,7 +238,9 @@ export default async function SuperAdminFeaturesPage({
                 <strong className="break-words">{college.name}</strong>
                 <p className="text-xs text-muted-foreground">{college.code}</p>
                 <StatusBadge>{summary.enabled} of {college.modules.length} enabled</StatusBadge>
-                <p className="text-xs text-muted-foreground">{summary.locked} locked · {summary.persisted} rules with persisted source</p>
+                <Disclosure title="Stored-rule details" className="min-w-0" contentClassName="pt-1 pb-2">
+                  <p className="text-xs text-muted-foreground">{summary.locked} locked · {summary.persisted} rules with persisted source</p>
+                </Disclosure>
               </div>;
             }},
             ...OPTIONAL_MODULE_KEYS.map(module=>({
@@ -303,6 +311,7 @@ export default async function SuperAdminFeaturesPage({
         </nav>
       </section>
 
+      <Disclosure title="How to interpret module access" className="min-w-0" contentClassName="max-w-4xl pb-3 pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner&apos;s effective access. The CSV includes only the current permissioned page (up to 20 colleges) and excludes contacts. Source: module_access_rules and the existing
         optional-module resolver. A persisted global,
@@ -314,6 +323,7 @@ export default async function SuperAdminFeaturesPage({
         authorization gates may affect a learner&apos;s
         actual experience. Guarded inline college-policy editors are available from each cell. Every change still requires fresh impact review and server-side authorization.
       </p>
+      </Disclosure>
     </div>
   );
 }
