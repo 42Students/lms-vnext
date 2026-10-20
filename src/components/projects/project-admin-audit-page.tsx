@@ -149,6 +149,8 @@ export async function ProjectAdminAuditPage({
   if (to) {
     nextParams.set("to", to);
   }
+  const preservedRefreshQuery = nextParams.toString();
+  const refreshHref = basePath + "/audit" + (preservedRefreshQuery ? "?" + preservedRefreshQuery : "");
   if (result.nextCursor) {
     nextParams.set(
       "beforeOccurredAt",
@@ -313,7 +315,7 @@ export async function ProjectAdminAuditPage({
       </section>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <Link href={basePath + "/audit"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Refresh</Link>
+          <Link href={refreshHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Refresh</Link>
           {basePath === "/admin/projects" ? <Link href="/admin/audit" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">View activity log</Link> : null}
         </div>
         <ProjectAuditPageExport rows={result.items.map(item=>({
@@ -324,6 +326,7 @@ export async function ProjectAdminAuditPage({
       }))}/>
       </div>
       <ActivityCenter
+        emptyHref={basePath + "/audit"}
         groups={groups}
         nextRemaining={result.remainingCount}
         nextHref={
