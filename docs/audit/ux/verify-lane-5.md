@@ -167,3 +167,17 @@
 - Extra clutter/alignment fixes: 0. Hairline rows keep long identifiers and descriptions breakable, while the empty result retains its direct reporting action.
 - Inspected page and loading, parent tracker error and authenticated layout; EmptyState, ErrorState, Banner, PageHeader, StatusBadge and Link/Button styling; compared `polish-lane-15.md` evidence. No route-local error/not-found/template/layout.
 - Files changed: queue and verification proof only; verified, no page change. Static source review; no runtime or CI.
+
+## Surface 25 — Tracker issue reporting
+- Surface: `src/app/(authenticated)/tracker/page.tsx`.
+- Regressions fixed (2): prior polish proof claimed optional Evidence link and superadmin-only Similar issues were in native disclosures; both remained permanently expanded in the form. Wrapped the original field and similar search (including results and errors) in semantic keyboard-operable details/summary, with existing names, event handlers, permissions, API routes and copy unchanged.
+- Extra clutter/alignment fixes: 0 beyond restoring those planned disclosures. Primary required fields and submit remain immediate; optional controls collapse at 375/768.
+- Inspected route page/loading/error and authenticated shell; TrackerReportForm including draft, validation, link-known-error, success, similarity search and keyboard handling; Banner, InlineNotice, Button, Select, Input, Textarea, StatusBadge and `polish-lane-15.md`.
+- Files changed: `src/components/tracker/tracker-report-form.tsx`, queue and proof. Source-only verification; no tests/CI.
+
+## Surface 26 — Retired auth handoff
+- Surface: `src/app/auth/handoff/page.tsx`.
+- Regressions fixed: 0. The route still immediately redirects without inspecting or forwarding old tokens. Loading and error use existing shared public fallbacks; recovery destination remains `/?auth=handoff-retired`.
+- Extra clutter/alignment fixes: 0. Redirect has no rendered page; public fallback retains 375/768 single-column accessibility.
+- Inspected handoff page/loading/error, root layout, PublicPageLoading and GracefulErrorBoundary; compared `polish-lane-15.md`. No local not-found/template/layout.
+- Files changed: queue and proof only; verified, no page change. Static source review, no CI.

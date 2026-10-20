@@ -207,15 +207,18 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground">Up to 4000 characters</span>
       </label>
-      <label className={label}>Evidence link
-        <Input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
-        <span className="mt-1 block text-xs font-normal text-muted-foreground">
-          Optional — add a shareable HTTP/HTTPS evidence link (HTTPS recommended). Do not share private screenshots through public URLs. Direct clipboard paste and unscanned attachments are not accepted.
-        </span>
-      </label>
+      <details className="min-w-0 border-b border-border pb-4" defaultOpen={Boolean(draft.evidenceLink)}>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Optional evidence link</summary>
+        <label className={label + " mt-2"}>Evidence link
+          <Input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
+          <span className="mt-1 block text-xs font-normal text-muted-foreground">
+            Optional — add a shareable HTTP/HTTPS evidence link (HTTPS recommended). Do not share private screenshots through public URLs. Direct clipboard paste and unscanned attachments are not accepted.
+          </span>
+        </label>
+      </details>
       {canSearchSimilar ? <>
-      <section aria-label="Similar issues" className="border-y border-border py-4">
-        <h2 className="text-sm font-semibold text-foreground">Similar issues</h2>
+      <details aria-label="Similar issues" className="min-w-0 border-y border-border py-4" defaultOpen={Boolean(similarQuery.trim())}>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Similar issues</summary>
         <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
         <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
           <Input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
@@ -238,7 +241,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             </li>)}
           </ul>:<p>No existing reports match this phrase. You can submit a new issue.</p>}
         </div>:null}
-      </section>
+      </details>
       </> : null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
