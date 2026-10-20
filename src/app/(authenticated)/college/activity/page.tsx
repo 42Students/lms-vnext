@@ -8,7 +8,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
-import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref, collegeActivityTodayHref, collegeActivityAllTimeHref } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
@@ -28,7 +27,7 @@ export default async function CollegeActivityPage({
   searchParams,
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <div className="space-y-3"><PageHeader title="Activity Log"/><Alert tone="error">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</Alert></div>;
+  if (!context.membership) return <div className="space-y-3"><PageHeader title="Activity Log"/><ErrorState title="College activity access unavailable" description="Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail."/></div>;
   const parsed = collegeActivityQuerySchema.safeParse(
     activitySearchParams(await searchParams),
   );

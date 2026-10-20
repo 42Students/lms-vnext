@@ -9,6 +9,7 @@ import {
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import {ErrorState} from "@/components/ui/error-state";
+import {EmptyState} from "@/components/ui/empty-state";
 import {
   getAdminAttendanceGrid,
   getAdminAttendanceOptions,
@@ -38,7 +39,7 @@ export default async function CollegeAttendancePage({
     context.membership?.collegeId ??
     (isSuperAdmin(context) ? context.adminScope?.collegeId : null);
   if (!collegeId) {
-    return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><ErrorState title="Choose a college to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Return to college dashboard</Link>}/></div>;
+    return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><EmptyState title="Choose a college to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Return to college dashboard</Link>}/></div>;
   }
   const parsed = z.object({
     deliveryId: z.uuid().optional(),
