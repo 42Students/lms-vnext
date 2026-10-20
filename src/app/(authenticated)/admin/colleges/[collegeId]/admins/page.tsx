@@ -19,7 +19,7 @@ export default async function CollegeAdministratorsPage({params}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader title={data.college.name+" · Admins"}
    description="Manage college administrators and placement-cell officers in this college. New accounts use the canonical college membership workflow."
-   actions={<div className="flex flex-wrap items-center gap-2">
+   actions={<div className="flex w-full min-w-0 flex-wrap items-center gap-2 md:w-auto md:justify-end">
     <PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)} label="College setup"/>
     <PersonOnboardDialog collegeId={collegeId} forcedRole="COLLEGE_ADMIN"/>
     <PersonOnboardDialog collegeId={collegeId} forcedRole="TPO"/>
@@ -34,8 +34,8 @@ export default async function CollegeAdministratorsPage({params}:{
       {key:"roles",header:"Roles",mobilePriority:"secondary",cell:item=>item.roles.join(", ")},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"warning"}>{item.status==="ACTIVE"?"Enabled":"Suspended"}</StatusBadge>},
       {key:"access",header:"Access",mobilePriority:"action",cell:item=><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")}/>},
-      {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-primary-text underline">View active devices</Link>},
-      {key:"history",header:"History",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-primary-text underline">View history</Link>},
+      {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">View active devices</Link>},
+      {key:"history",header:"History",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">View history</Link>},
     ]}/>
   </section>
   {data.truncated?<p role="status" className="text-sm text-warning">Showing the first 500 role records. This directory needs a narrower scope to show every administrator.</p>:null}
