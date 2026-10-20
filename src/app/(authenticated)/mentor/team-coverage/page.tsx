@@ -42,7 +42,7 @@ export default async function MentorTeamCoveragePage({
     page:first(raw.page) ?? undefined,
   });
   if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid team coverage filters"} />
+    <PageHeader title="Team coverage" description="Invalid team coverage filters" />
     <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear filters</Link>
   </section>;
 
@@ -50,7 +50,7 @@ export default async function MentorTeamCoveragePage({
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const data = await getMentorTeamCoverage(context,parsed.data);
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Mentor · Projects" title="Team coverage"
+    <PageHeader title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
       actions={<Link data-unskin="" href="/mentor/projects"
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
@@ -117,7 +117,7 @@ export default async function MentorTeamCoveragePage({
         {data.items.length === 0
           ? data.projectCount===0
             ? <EmptyState title="No currently assigned active projects"
-                description="There are no current non-archived project assignments for this Mentor. No historical team or staffing status is inferred." />
+                description="There are no current non-archived project assignments for this mentor. No historical team or staffing status is inferred." />
             : <EmptyState title="No projects match these filters"
                 description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments." />
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
