@@ -86,7 +86,7 @@ export default async function HrMessagesPage({searchParams}:{
        <div className="flex flex-wrap items-center justify-between gap-2">
          <h2 className="font-semibold text-[var(--lms-heading)] text-[18px] leading-[1.4]">
            <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
-             className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{group.title}</Link>
+             className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{group.title}</Link>
          </h2>
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
@@ -115,7 +115,7 @@ export default async function HrMessagesPage({searchParams}:{
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Next</Link>:null}
       </div>
     </nav>
-   <p className="text-xs text-muted-foreground"><Link href="/hr/messages" className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
+   <p className="text-xs text-muted-foreground"><Link href="/hr/messages" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
   </>}
  </div>;
 }

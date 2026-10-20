@@ -168,13 +168,13 @@ export default async function CollegeOverviewPage() {
           ? <p className="text-sm text-muted-foreground">All held sessions have attendance recorded.</p>
           : <ul className="divide-y divide-border">
             {attendance.unattended.map(event => <li key={event.id}
-              className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+              className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3 text-sm">
               <div className="min-w-0">
                 <p className="font-semibold text-foreground">{event.title} · {event.section}</p>
                 <p className="text-muted-foreground">{event.faculty} · {new Date(event.when).toLocaleString("en-IN", {timeZone:"Asia/Kolkata"})}</p>
               </div>
               <Link href="/college/attendance"
-                className="font-semibold text-primary-text hover:underline">Open attendance</Link>
+                className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">Open attendance</Link>
             </li>)}
           </ul>}
         {attendance.unattendedCount > attendance.unattended.length &&
@@ -188,7 +188,7 @@ export default async function CollegeOverviewPage() {
             Under {lowAttendance.threshold}% attendance
           </h2>
           <Link href="/college/attendance"
-            className="font-semibold text-primary-text hover:underline">Review attendance</Link>
+            className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">Review attendance</Link>
         </div>
         <p className="text-sm text-muted-foreground">
           Last 30 days · marked sessions only · {lowAttendance.rows.length} learner(s) shown
@@ -210,8 +210,8 @@ export default async function CollegeOverviewPage() {
       {unstaffed?<>
       <section aria-label="Courses with no teacher" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Courses with no teacher</h2>
-          <Link href="/college/faculty-assignment" className="font-semibold text-primary-text hover:underline">
+          <h2 className="text-lg font-semibold text-foreground">Courses with no teacher</h2>
+          <Link href="/college/faculty-assignment" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">
             Manage faculty
           </Link>
         </div>
@@ -228,7 +228,7 @@ export default async function CollegeOverviewPage() {
               <p className="text-muted-foreground">{course.sections.length} unstaffed class(es): {course.sections.join(", ")}</p>
             </div>
             <Link href="/college/faculty-assignment"
-              className="font-semibold text-primary-text hover:underline">Assign faculty</Link>
+              className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">Assign faculty</Link>
           </li>)}
         </ul>}
       </section>
@@ -236,8 +236,8 @@ export default async function CollegeOverviewPage() {
       {pendingGrades?<>
       <section aria-label="Waiting to be graded" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Waiting to be graded</h2>
-          <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">
+          <h2 className="text-lg font-semibold text-foreground">Waiting to be graded</h2>
+          <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">
             Review assignments
           </Link>
         </div>
@@ -251,7 +251,7 @@ export default async function CollegeOverviewPage() {
                   {item.pending} submission(s) · Oldest: {item.oldest?.toLocaleDateString("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }) ?? "—"}
                 </p>
               </div>
-              <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">Review</Link>
+              <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">Review</Link>
             </li>)}
           </ul>}
       </section>

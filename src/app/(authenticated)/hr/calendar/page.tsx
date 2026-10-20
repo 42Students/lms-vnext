@@ -500,7 +500,7 @@ export default async function HrCalendarPage({
                       ))}
                       {day.resultsDue.map((item) => (
                         <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                          className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                          className="min-h-11 md:min-h-9 inline-flex items-center rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                           <strong className="block">Results due · {item.roundName}</strong>
                           <span className="mt-1 block text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
                         </Link>
