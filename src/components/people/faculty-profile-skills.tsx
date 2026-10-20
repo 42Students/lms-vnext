@@ -29,7 +29,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   event.preventDefault();
   if(changed&&!pending&&!skillsIssue)void onSave("skills",rows);
  }
- return <form id={facultyProfileAnchor("skills")} className="min-w-0 scroll-mt-6 space-y-4 border-b border-[var(--lms-canvas-border)] py-5"
+ return <form id={facultyProfileAnchor("skills")} className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]"
    aria-label="Skills" onSubmit={submit}>
   <div>
    <h2 className="font-semibold text-foreground">Skills</h2>
@@ -47,16 +47,16 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
   {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground">Clear search to reorder Skills.</p>:null}
   <div className="space-y-3">
-   {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] py-3 sm:grid-cols-2 sm:items-end">
+   {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] sm:grid-cols-2 sm:items-end">
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Skill {index+1}
-     <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.skill}
+     <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.skill}
       maxLength={120} required disabled={pending} onChange={event=>edit(skill.id,"skill",event.target.value)}/>
     </label>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Proficiency
-     <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.proficiency}
+     <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.proficiency}
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>
-    <div className="flex flex-wrap gap-2 sm:col-span-2">
+    <div className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)] sm:col-span-2 [&>button]:min-h-11">
       <Button variant="secondary" type="button" disabled={pending||index===0||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
        >Move up</Button>
