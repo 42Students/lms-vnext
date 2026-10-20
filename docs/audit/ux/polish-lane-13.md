@@ -275,3 +275,13 @@
 **Changes:** replace only the 4-instance local Metric wrapper with a continuous two-column phone/four-column desktop hairline KPI strip, keeping every label, value, caption and number formatting. All other lane-improved row geometry, actions, statuses, routes, aria relationships, role permissions, read-only behavior and overlays remain unchanged. Static source inspection only; no runtime/CI or screenshots.
 
 **Files:** project-workspace.tsx, lane queue, proof.
+
+## 43. Super Admin template college bulk assignment
+
+**Surface:** `src/components/projects/super-admin-template-college-bulk.tsx`; inspected client and parent availability listing, shared Checkbox/Button/StatusBadge/Banner/EmptyState/Disclosure/ConfirmDialog, permission and publish gates, assign/remove batch POST/DELETE, confirmation preview, partial-success retry, progress, empty/disabled and 375/768/1280 responsive CSS. The latest main had already integrated another lane's compact hairline list, published-state warning, live progress, selected-college confirmation, responsive assignment buttons and pending-close guard; all preserved. Source inspection only; no runtime/CI.
+
+**Problems fixed (5 in this pass):** selection count lacked live announcement, Select all/Clear selection still formed cramped unequal controls at 375, their hit areas lacked full-width alignment, permission-disabled college rows retained clickable hover/cursor, and repeated checkbox check events could duplicate selected IDs.
+
+**Changes:** add aria-live to the existing count; use full-width 44px stacked selection tools on phone and legacy 36px tools at tablet/desktop; distinguish disabled college rows without changing permission gates; deduplicate selected IDs. Preserve all original wording, names, routes, per-college safety checks, publish restrictions, failed-target retry, progress, confirmation and pinned workspace behavior. No new package or CI.
+
+**Files:** bulk control, lane queue and proof.
