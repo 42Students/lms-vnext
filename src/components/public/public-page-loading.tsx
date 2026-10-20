@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import styles from "./public-screen.module.css";
 
@@ -16,7 +17,7 @@ export function PublicPageLoading({ label = "Loading your page..." }: { label?: 
       </header>
       <div className={styles.center}>
         <section className={styles.card} aria-label={label}>
-          <h1 className={styles.heading}>{label}</h1>
+          <PageHeader title={label} />
           <div className={styles.loadingHost}>
             <GracefulPageLoading label={label} />
           </div>

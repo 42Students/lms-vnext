@@ -118,7 +118,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
        disabled={saving} className={field}/>
      </label>
      {error?<InlineNotice tone="error" message={error}/>:null}
-     <div className="flex justify-end gap-2">
+     <div className="flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
       <Button variant="secondary" type="button" disabled={saving} onClick={dismiss}
        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm md:min-h-9">Cancel</Button>
       <Button variant="primary" type="submit" disabled={saving||loading} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 md:min-h-9">
