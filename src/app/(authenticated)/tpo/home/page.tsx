@@ -16,8 +16,6 @@ import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-reg
 import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatTile } from "@/components/ui/stat-tile";
-import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -33,7 +31,7 @@ import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-r
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
- if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-6">
+ if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
   <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
    {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">{label}</Link></li>)}
@@ -174,26 +172,33 @@ export default async function TpoHome(){
    {label:"Pick your team",done:(placementTeam?.summary.total??0)>1,link:"/tpo/settings/team"},
   ],
  });
- return <div data-testid="tpo.home" className="min-w-0 space-y-6">
+ return <div data-testid="tpo.home" className="min-w-0 space-y-4 md:space-y-6">
  <TpoHomeReturnRefresh/>
  <p className="text-sm font-semibold text-muted-foreground leading-[22px]">{greeting.date}</p>
  <PageHeader title={greeting.title}/>
  {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
- <div role="group" aria-label="Placement overview" className="grid min-w-0 grid-cols-2 gap-3 min-[1280px]:grid-cols-4">
-  <StatTile className={tpoTileStyles.tile} label={rows[1]?.title ?? "Drives"} value={operationsResult?operations.summary.publishedJobs:"—"}
-    detail={rows[1]?.status} href={rows[1]?.href}/>
-  <StatTile className={tpoTileStyles.tile} label={rows[2]?.title ?? "Students"} value={studentStats?.summary.placementPool??"—"}
-    detail={rows[2]?.status} href={rows[2]?.href}/>
-  <StatTile className={tpoTileStyles.tile} label={rows[4]?.title ?? "Inbox"} value={pendingRequestCount!==null&&unreadMessages!==null?pendingRequestCount+unreadMessages:"—"}
-    detail={rows[4]?.status} href={rows[4]?.href}/>
-  <StatTile className={tpoTileStyles.tile} label={rows[5]?.title ?? "Team"} value={teamThreads?.status === "READY"
-      ? teamThreads.items.reduce((total, item) => total + item.unreadCount, 0) : "—"}
-    detail={rows[5]?.status} href={rows[5]?.href}/>
+ <div role="group" aria-label="Placement overview"
+  className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface lg:grid-cols-4">
+  {[
+    {label:rows[1]?.title ?? "Drives",value:operationsResult?operations.summary.publishedJobs:"—",detail:rows[1]?.status,href:rows[1]?.href},
+    {label:rows[2]?.title ?? "Students",value:studentStats?.summary.placementPool??"—",detail:rows[2]?.status,href:rows[2]?.href},
+    {label:rows[4]?.title ?? "Inbox",value:pendingRequestCount!==null&&unreadMessages!==null?pendingRequestCount+unreadMessages:"—",detail:rows[4]?.status,href:rows[4]?.href},
+    {label:rows[5]?.title ?? "Team",value:teamThreads?.status==="READY"?
+      teamThreads.items.reduce((total,item)=>total+item.unreadCount,0):"—",detail:rows[5]?.status,href:rows[5]?.href},
+  ].map((tile,index)=><Link key={tile.label} href={tile.href??"/tpo/home"}
+    className={"lms-inline-link flex min-w-0 flex-col gap-1 p-3 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:p-4 " +
+      (index<2?"border-b border-border lg:border-b-0 ":"")+
+      (index%2===0?"border-r border-border ":"")+
+      (index===1||index===2?"lg:border-r ":"lg:border-r-0 ")}>
+    <span className="text-xs font-semibold leading-5 text-muted-foreground">{tile.label}</span>
+    <strong className="break-words text-2xl font-semibold leading-8 tabular-nums text-[var(--lms-heading)]">{tile.value}</strong>
+    {tile.detail?<span className="min-w-0 break-words text-xs leading-5 text-muted-foreground">{tile.detail}</span>:null}
+  </Link>)}
  </div>
  <p aria-live="polite" className="text-sm font-semibold text-body leading-[22px]">{tpoHomeNeedsLine(rows)}</p>
- <div className="grid min-w-0 gap-8 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start">
+ <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start md:gap-6">
  <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6">
-  <h2 className="text-[var(--lms-heading)] font-semibold text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Next up</h2>
+  <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Next up</h2>
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
