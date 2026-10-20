@@ -26,10 +26,10 @@ export function TpoQuickCreate({ collegeId }: { collegeId: string }) {
 
   return <Dropdown align="end" className={style.createMenu} label="New placement work"
     triggerClassName={style.new} trigger={<><PlusIcon/><span className={style.newLabel}>New</span></>}>
-    <nav className="grid min-w-60 gap-1"
+    <nav className="grid min-w-[min(15rem,calc(100vw_-_5rem))] max-w-full gap-1"
       aria-label={company ? "Create work for " + company : "Create placement work"}>
       {links.map(link => <Link key={link.href} href={link.href}
-        className={style.menuItem}>
+        className={`${style.menuItem} min-w-0 break-words [overflow-wrap:anywhere]`}>
         {link.label}
       </Link>)}
       <hr className={style.menuDivider}/>

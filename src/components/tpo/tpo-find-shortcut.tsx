@@ -72,7 +72,7 @@ export function TpoFindShortcut(){
   if(event.key==="ArrowDown"){event.preventDefault();setActive(current=>showing.length?(current+1)%showing.length:0);}
   if(event.key==="ArrowUp"){event.preventDefault();setActive(current=>showing.length?(current-1+showing.length)%showing.length:0);}
   if(event.key==="Enter"&&showing[active]){event.preventDefault();select(showing[active]);}
-  if(event.key==="Escape"){event.preventDefault();setOpen(false);}
+  if(event.key==="Escape"){event.preventDefault();event.stopPropagation();setOpen(false);}
  }
  return <>
   <Button variant="ghost" type="button" onClick={()=>setOpen(true)}
@@ -84,11 +84,12 @@ export function TpoFindShortcut(){
     title="Find a student, recruiter or company" description="Search records in your college. Use arrow keys to navigate, Enter to open and Esc to close.">
    <label className="block text-sm font-semibold">Search records
     <Input ref={inputRef} autoFocus value={query} onKeyDown={handleKeyDown}
-      aria-controls="tpo-find-results" aria-activedescendant={showing.length?"tpo-find-result-"+active:undefined}
+      role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={open}
+      aria-controls="tpo-find-results" aria-activedescendant={active>=0&&active<showing.length?"tpo-find-result-"+active:undefined}
       onChange={event=>changeQuery(event.target.value)} placeholder="Type at least 2 characters"
       maxLength={100} className="mt-2 w-full"/>
    </label>
-   <PopoverListbox id="tpo-find-results" label="Matching records" className="mt-4 max-h-80 space-y-1 overflow-y-auto" onDismiss={() => inputRef.current?.focus()}>
+   <PopoverListbox id="tpo-find-results" label="Matching records" className="mt-4 max-h-80 space-y-1 overflow-y-auto" onDismiss={() => setOpen(false)}>
     {query.trim().length<2?<h3 className="text-xs font-semibold text-muted-foreground">Recently opened</h3>:null}
     {showing.map((row,index)=><button type="button" key={row.href}
       id={"tpo-find-result-"+index} role="option" aria-selected={active===index}

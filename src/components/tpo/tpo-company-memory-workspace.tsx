@@ -207,14 +207,14 @@ export function TpoCompanyMemoryWorkspace({
         <div className="flex flex-wrap gap-2">
           <Dropdown align="end" label={"New work for "+company.name} trigger="+ New">
            <nav aria-label={"New work for "+company.name}
-            className="w-60 space-y-1">
+            className="w-[min(15rem,calc(100vw_-_5rem))] max-w-full space-y-1">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New recruiter lead for {company.name}</Link>
+             className="lms-inline-link block min-h-11 rounded-[8px] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New drive for {company.name}</Link>
+             className="lms-inline-link block min-h-11 rounded-[8px] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New drive for {company.name}</Link>
             <MenuSeparator />
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
-             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Follow-up</Link>
+             className="lms-inline-link block min-h-11 rounded-[8px] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Follow-up</Link>
            </nav>
           </Dropdown>
           {company.canonicalCompanyId?<Link className={buttonStyle}
