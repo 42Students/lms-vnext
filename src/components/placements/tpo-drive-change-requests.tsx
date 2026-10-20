@@ -42,6 +42,8 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   }catch{setError("Could not save change request.");}finally{setBusy(false);}
  }
  return <div className="min-w-0 space-y-5">
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {success?<InlineNotice tone="success" message={success}/>:null}
   <Disclosure title={"Suggest a change or ask the "+(party==="TPO"?"company":"placement cell")} defaultOpen={requests.length===0} className="min-w-0 border-b border-border pb-3" contentClassName="min-w-0 space-y-3 pt-3">
    <p className="text-sm text-body">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 min-[768px]:grid-cols-2">
@@ -72,12 +74,12 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
       <h3 className="font-semibold">{item.field.replaceAll("_"," ")} · {item.mode.toLowerCase()}</h3>
       <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
-     <p className="whitespace-pre-wrap text-sm">{item.proposedValue}</p>
-     <p className="text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
+     <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm">{item.proposedValue}</p>
+     <p className="break-words [overflow-wrap:anywhere] text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
      {item.decisionNote?<Alert tone="info">Decision: {item.decisionNote}</Alert>:null}
      <Disclosure title={"Discussion ("+item.messages.length+")"} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
       {item.messages.length===0?<p className="text-sm text-body">No discussion yet.</p>:null}
-      {item.messages.map(message=><p key={message.id} className="border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm">
+      {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
       <label className="grid gap-1 text-sm">Reply or decision explanation
@@ -102,8 +104,6 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      </Disclosure>
     </article>)}
   </section>
-  {error?<InlineNotice tone="error" message={error}/>:null}
-  {success?<InlineNotice tone="success" message={success}/>:null}
   <ConfirmDialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!busy)setConfirmation(null);}}
    title={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
    confirmLabel={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}

@@ -119,7 +119,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       {tab === "company" ? (
         <section className="border-b border-border pb-6">
           <div className="flex min-w-0 flex-col items-start gap-3 min-[768px]:flex-row min-[768px]:justify-between">
-            <div>
+            <div className="min-w-0">
               <div className="min-w-0">
                 <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{result.company.name}</h2>
               </div>
@@ -136,19 +136,14 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             </div>
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Primary domain</dt>
-              <dd className="mt-1 text-sm text-foreground">{result.company.primaryDomain ? "@"+result.company.primaryDomain.replace(/^@/,"") : "Not provided"}</dd>
+              <dd className="mt-1 break-all text-sm text-foreground">{result.company.primaryDomain ? "@"+result.company.primaryDomain.replace(/^@/,"") : "Not provided"}</dd>
             </div>
           </dl>
           <p className="mt-3 text-sm text-body">Industry not set</p>
-          <p className="mt-2 text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
+          <p className="mt-2 max-w-prose text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
           <section aria-label="Hiring footprint" className="mt-5 border-t border-border pt-5">
             <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
-            <SummaryStrip label="Hiring footprint with this college" className="mt-4" steps={[
-              {label:"All visible drives",value:overview.total},
-              {label:"Live drives",value:overview.active},
-              {label:"Closed drives",value:overview.closed},
-            ]}/>
             {overview.recent.length ? <div className="mt-4 space-y-2">
               <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
               <div className="divide-y divide-border border-y border-border">
@@ -159,6 +154,11 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               </Link>)}
               </div>
             </div> : <p className="mt-4 text-sm text-muted-foreground">No published or closed drives for this relationship.</p>}
+            <SummaryStrip label="Hiring footprint with this college" className="mt-4" steps={[
+              {label:"All visible drives",value:overview.total},
+              {label:"Live drives",value:overview.active},
+              {label:"Closed drives",value:overview.closed},
+            ]}/>
           </section>
         </section>
       ) : (
