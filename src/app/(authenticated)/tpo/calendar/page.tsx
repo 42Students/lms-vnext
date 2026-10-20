@@ -48,7 +48,8 @@ export default async function TpoCalendarPage({
     <Link href="/tpo/calendar" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">Reset calendar filters</Link>
   </div>;
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-4">
+      <nav aria-label="Calendar actions" className="flex min-w-0 flex-wrap items-center gap-2">
       <Link href="/tpo/calendar/export"
         className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
         Export upcoming rounds CSV →
@@ -61,6 +62,7 @@ export default async function TpoCalendarPage({
         className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
         Create, reschedule or cancel a drive round →
       </Link>
+      </nav>
       <PlacementCalendarWorkspace
         context={context}
         collegeId={context.membership.collegeId}
