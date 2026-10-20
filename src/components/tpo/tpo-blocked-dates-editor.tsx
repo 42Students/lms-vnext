@@ -39,25 +39,26 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
     e instanceof Error?e.message:"Blocked dates could not be updated.");}finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-4">
-  <form className="grid min-w-0 gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-[1fr_1fr_2fr_auto]"
+  <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 min-[1280px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_auto]"
    onSubmit={e=>{e.preventDefault();if(!validRange||busy)return;
     void request("/api/placements/tpo/settings/blocked-dates","POST",{startDay,endDay,reason:reason.trim()||"Blocked"});}}>
-   <label className="text-sm">From
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">From
     <Input type="date" required min={today} value={startDay} disabled={busy}
      onChange={e=>{setStartDay(e.target.value);if(endDay&&endDay<e.target.value)setEndDay(e.target.value);}}
-     className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/></label>
-   <label className="text-sm">Until
+     className="min-h-11 w-full min-[768px]:min-h-9"/></label>
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Until
     <Input type="date" required min={startDay||today} value={endDay} disabled={busy}
      onChange={e=>setEndDay(e.target.value)}
-     className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/></label>
-   <label className="text-sm">Label (optional)
+     className="min-h-11 w-full min-[768px]:min-h-9"/></label>
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Label (optional)
     <Input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
-     placeholder="Blocked" className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/></label>
+     placeholder="Blocked" className="min-h-11 w-full min-[768px]:min-h-9"/></label>
    {reason.trim().length>0&&reason.trim().length<3?<InlineNotice tone="error" message="Use at least 3 characters for a label, or leave it blank."/>:null}
-   <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end"
+   <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[1280px]:w-auto self-end"
     disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</Button>
   </form>
-  <div className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2">
+  <Disclosure title="Filter blocked dates" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]">
+   <div className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Filter by month
       <Input type="month" value={month} onChange={e=>setMonth(e.target.value)}
         className="min-h-11 min-[768px]:min-h-9 w-full"/>
@@ -67,13 +68,14 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
         placeholder="Reason or YYYY-MM-DD"
         className="min-h-11 min-[768px]:min-h-9 w-full"/>
     </label>
-  </div>
+   </div>
+  </Disclosure>
   <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked days across {ranges.length} displayed ranges · Maximum 90 days per range</p>
   {pastCount>0?<Button type="button" variant="secondary" onClick={()=>setShowPast(value=>!value)}
    className="min-h-11 min-[768px]:min-h-9">{showPast?"Hide past blocked dates":`Show past blocked dates (${pastCount})`}</Button>:null}
   {visible.length===0?<EmptyState title={!showPast&&pastCount>0?"No upcoming blocked dates.":tpoBlockedDatesEmptyMessage(items.length)}/>:
    <ul className="grid min-w-0 gap-2 min-[768px]:grid-cols-2">{ranges.map(range=><li key={range.items[0].id}
-    className="flex min-w-0 flex-wrap justify-between gap-3 border-b border-border px-1 py-4">
+    className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-4)]">
     <div className="min-w-0"><strong>{range.startDay===range.endDay?range.startDay:range.startDay+" – "+range.endDay}</strong><p className="break-words text-sm">{range.reason}</p><p className="text-xs text-muted-foreground">{range.items.length} day(s) · Individual day removal below</p></div>
     {range.items.length>1?<Button type="button" variant="secondary" disabled={busy} onClick={async()=>{
      if(!(await askConfirm("Remove all "+range.items.length+" blocked days in this range?")))return;
@@ -81,9 +83,9 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
       startDay:range.startDay,endDay:range.endDay,
       versions:range.items.map(item=>({id:item.id,expectedVersion:item.updatedAt})),
      });
-    }} className="min-h-11 min-[768px]:min-h-9">Remove whole range</Button>:null}
-    <Disclosure title={`Manage individual days (${range.items.length})`} className="min-w-0">
-     <div className="mt-2 flex max-h-48 flex-wrap gap-1 overflow-y-auto">{range.items.map(item=><Button key={item.id} variant="secondary" type="button" disabled={busy} onClick={async()=>{
+    }} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Remove whole range</Button>:null}
+    <Disclosure title={`Manage individual days (${range.items.length})`} className="min-w-0 w-full">
+     <div className="mt-[var(--lms-space-2)] flex max-h-48 min-w-0 flex-wrap gap-[var(--lms-space-2)] overflow-y-auto">{range.items.map(item=><Button key={item.id} variant="secondary" type="button" disabled={busy} onClick={async()=>{
      if(!(await askConfirm("Remove "+item.day+" from blocked dates?")))return;
      void request("/api/placements/tpo/settings/blocked-dates/"+item.id,"DELETE",{expectedVersion:item.updatedAt});
     }} className="min-h-11 min-[768px]:min-h-9">Remove {item.day}</Button>)}</div></Disclosure></li>)}</ul>}
