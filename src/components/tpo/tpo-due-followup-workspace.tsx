@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Disclosure } from "@/components/ui/disclosure";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -142,13 +143,14 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         {data.leads.length === 0 ? (
           <p className="mt-3 text-sm text-body">
             There are no eligible recruiter leads to schedule. Add a recruiter lead first.
+            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline">Open recruiter leads</Link>
           </p>
         ) : (
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
             <label className="block min-w-0 text-sm font-semibold text-foreground">
               Recruiter
               <Select className={"mt-1 " + field} value={leadId} disabled={pending}
-                onChange={(event) => setLeadId(event.target.value)}>
+                onChange={(event) => {setLeadId(event.target.value);setError("");}}>
                 {data.leads.map((lead) => (
                   <option key={lead.id} value={lead.id}>
                     {lead.name + (lead.companyName ? " · " + lead.companyName : "")}
@@ -159,7 +161,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
             <label className="block text-sm font-semibold text-foreground">
               Follow-up time (local)
               <Input type="datetime-local" className={"mt-1 " + field}
-                value={dueLocal} disabled={pending} onChange={(event) => setDueLocal(event.target.value)} />
+                value={dueLocal} disabled={pending} onChange={(event) => {setDueLocal(event.target.value);setError("");}} />
             </label>
             <label className="block min-w-0 text-sm font-semibold text-foreground sm:col-span-2">
               Preparation note (optional)
@@ -195,7 +197,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
                     {row.companyName ? <p className="text-sm text-body">{row.companyName}</p> : null}
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Due {displayDate(row.dueAt)}
+                      Due {displayDate(row.dueAt)} {row.overdue?<StatusBadge tone="warning">Overdue</StatusBadge>:null}
                     </p>
                     {row.canContact?<div className="mt-2 flex flex-wrap gap-3 text-sm font-semibold">
                       {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="lms-inline-link inline-flex min-h-11 items-center text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Call recruiter ↗</a>:null}
@@ -229,7 +231,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                     <label className="block min-w-0 text-sm font-semibold text-foreground sm:col-span-2">
                       Outcome note (required)
                       <Textarea maxLength={500} value={doneNote} disabled={pending}
-                        onChange={(event) => setDoneNote(event.target.value)}
+                        onChange={(event) => {setDoneNote(event.target.value);setError("");}}
                         className={"mt-1 " + field} rows={2} />
                     </label>
                     <Button variant="primary" type="button" onClick={() => setConfirmComplete(row)}
