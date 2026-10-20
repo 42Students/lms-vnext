@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
+import { Disclosure } from "@/components/ui/disclosure";
 import { TenantDomainManager, type TenantDomainClientRow } from "@/components/admin/tenant-domain-manager";
 import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
 import { CollegeServiceError } from "@/modules/colleges/service";
@@ -27,16 +28,16 @@ export default async function CollegeWebAddress({ params }: {
   lastCheckedAt:domain.lastCheckedAt?.toISOString()??null,
   lastCheckResult:domain.lastCheckResult,
  }));
- return <div className="min-w-0 max-w-full space-y-6">
+ return <div className="min-w-0 max-w-full space-y-[var(--lms-space-6)]">
    <PageHeader title={college.name}
      description="Manage this college's verified web addresses, including its subdomain. Only a verified address can become primary."
      actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>
    <section aria-label="Managed college address" className="min-w-0">
      <ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>
    </section>
-   <section aria-label="Verified custom addresses" className="min-w-0">
+   <Disclosure ariaLabel="Verified custom addresses" title="Verified custom addresses" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
      <TenantDomainManager collegeId={college.id} domains={domains}/>
-   </section>
+   </Disclosure>
    <p className="text-xs text-muted-foreground">Moving an address between colleges is not supported by this manager. Remove it from the previous college after confirming the migration plan; do not bypass host ownership checks.</p>
  </div>;
 }
