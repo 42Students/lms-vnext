@@ -24,9 +24,9 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/company/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/drives/new/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/page.tsx`
-- [ ] `src/app/quiz/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/page.tsx`
+- [x] `src/app/quiz/page.tsx`
