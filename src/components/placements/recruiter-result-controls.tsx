@@ -355,7 +355,7 @@ export function RecruiterResultControls({
   }
 
   return (
-    <div className="space-y-5" tabIndex={0} role="region" aria-label="Recruiter results editor" aria-keyshortcuts="S W H R A Z"
+    <div className="min-w-0 space-y-4" tabIndex={0} role="region" aria-label="Recruiter results editor" aria-keyshortcuts="S W H R A Z"
       onKeyDown={event=>{
         if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey||pendingKey!==null||bulkPending!==null)return;
         const target=event.target as HTMLElement;
@@ -384,8 +384,8 @@ export function RecruiterResultControls({
               key={round.id}
               className="min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0"
             >
-              <div className="border-b border-border pb-4">
-                <div className="flex flex-wrap items-center gap-2">
+              <div className="border-b border-border pb-3">
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
                   <h2 className="m-0 text-base font-semibold text-foreground">
                     {round.sequence}.{" "}
                     {round.name}
@@ -406,9 +406,14 @@ export function RecruiterResultControls({
                     )}
                   </StatusBadge>
                 </div>
-                {canStage?<div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-body">
-                  <span aria-live="polite" aria-atomic="true">{(selected[round.id]??[]).length} selected for results</span>
-                  <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
+                {canStage?<div className="mt-3 min-w-0 space-y-2 text-xs text-body"><div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center">                  <span aria-live="polite" aria-atomic="true">{(selected[round.id]??[]).length} selected for results</span>                  <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={bulkPending===round.id} disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
+                    
+                    onClick={()=>void stageSelected(round)}>
+                    {bulkPending===round.id?"Sending results…":
+                      "Send "+(selected[round.id]??[]).length+" results"}
+                  </Button></div>
+
+                  <details className="min-w-0 border-t border-border py-2"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-body md:min-h-9">Outcome shortcuts</summary><p className="pb-2 text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</p><div className="flex min-w-0 flex-wrap gap-2">
                   {([
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
                   ] as const).map(([outcome,label])=><Button key={outcome} type="button" className="min-h-11 md:min-h-9"
@@ -421,19 +426,15 @@ export function RecruiterResultControls({
                     onClick={undoDraftOutcome} variant="secondary">
                     Undo draft
                   </Button>
-                  <Button type="button" className="min-h-11 md:min-h-9" loading={bulkPending===round.id} disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
-                    
-                    onClick={()=>void stageSelected(round)}>
-                    {bulkPending===round.id?"Sending results…":
-                      "Send "+(selected[round.id]??[]).length+" results"}
-                  </Button>
-                  <Button type="button" className="min-h-11 md:min-h-9" disabled={bulkPending!==null||pendingKey!==null}
+
+                  <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={bulkPending!==null||pendingKey!==null}
                     variant="secondary"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
                         []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>
                     {(selected[round.id]??[]).length?"Clear selection":"Select all eligible"}
                   </Button>
+                  </div></details>
                 </div>:null}
                 <p className="mt-1 text-sm text-body">
                   {humanize(round.kind)} ·{" "}
@@ -457,7 +458,7 @@ export function RecruiterResultControls({
                 ) : null}
               </div>
 
-              {evaluative&&round.participants.length>0?<div className="hidden min-w-0 md:block">
+              {evaluative&&round.participants.length>0?<details className="hidden min-w-0 border-b border-border py-3 md:block"><summary className="min-h-9 cursor-pointer py-2 text-sm font-semibold">Round results overview</summary>
                 <RecruiterResultReviewGrid scopeKey={round.id}
                   rows={round.participants.map(person=>{
                     const draft=drafts[round.id+":"+person.applicationId];
@@ -474,7 +475,7 @@ export function RecruiterResultControls({
                       editHref:"#result-editor-"+round.id+"-"+person.applicationId,
                     };
                   })}/>
-              </div>:null}
+              </details>:null}
               {!evaluative ? (
                 <p className="m-0 py-4 text-sm text-muted-foreground">
                   Informational rounds do not collect candidate outcomes.
@@ -578,7 +579,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <Select
                                   aria-label="Outcome"
-                                  className="w-full"
+                                  className="min-h-11 w-full min-w-0 md:min-h-9"
                                   value={
                                     draft.outcome
                                   }
@@ -622,7 +623,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <Input
                                   aria-label="Score %"
-                                  className="w-full"
+                                  className="min-h-11 w-full min-w-0 md:min-h-9"
                                   type="number"
                                   min="0"
                                   max="100"
@@ -659,7 +660,7 @@ export function RecruiterResultControls({
                                   </span>
                                   <Input
                                     aria-label="Waitlist rank"
-                                    className="w-full"
+                                    className="min-h-11 w-full min-w-0 md:min-h-9"
                                     type="number"
                                     min="1"
                                     max="100000"
@@ -695,7 +696,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <Select
                                   aria-label="Reason category"
-                                  className="w-full"
+                                  className="min-h-11 w-full min-w-0 md:min-h-9"
                                   value={
                                     draft.reasonCategory
                                   }
@@ -742,7 +743,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <Textarea
                                   aria-label="Candidate message"
-                                  className="min-h-20 w-full"
+                                  className="min-h-20 w-full min-w-0"
                                   value={
                                     draft.candidateMessage
                                   }
@@ -771,7 +772,7 @@ export function RecruiterResultControls({
 
                               <div className="flex flex-wrap items-center gap-3 md:col-span-2">
                                 <Button
-                                  size="sm" className="min-h-11 md:min-h-9" loading={pendingKey===key}
+                                  size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pendingKey===key}
                                   disabled={
                                     pendingKey !==
                                     null || bulkPending !== null
