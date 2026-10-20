@@ -14,10 +14,11 @@ import {projectMutation} from "./project-api";
 import {mentorEstimateLabel,mentorEstimateOptions} from "@/modules/projects/mentor-estimation-unit-model";
 
 export function MentorTaskCreate({
-  projectId,sprintId,updatedAt,estimationUnit,sprints=[],learners=[],
+  projectId,sprintId,updatedAt,estimationUnit,sprints=[],learners=[],primary=false,
 }:{projectId:string;sprintId:string;updatedAt:string;estimationUnit?:string|null;
   sprints?:readonly {id:string;title:string;status:string;updatedAt:string}[];
   learners?:readonly {membershipId:string;displayName:string|null}[];
+  primary?:boolean;
 }){
   const router=useRouter();
   const {showToast}=useToast();
@@ -74,7 +75,7 @@ export function MentorTaskCreate({
     }finally{setBusy(false);}
   }
   return <>
-    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Create task</Button>
+    <Button size="sm" variant={primary?"primary":"secondary"} onClick={()=>setOpen(true)}>Create task</Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Confirm new task"
       description="Leave Sprint blank for the backlog. Select an assignee, priority and task details."
       footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
