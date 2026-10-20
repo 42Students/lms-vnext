@@ -64,48 +64,49 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    setError("Could not reach the server. Your entered times are still here.");
   }finally{submitLock.current=false;setSubmitting(false);}
  }
- return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid min-w-0 gap-3 min-[768px]:grid-cols-2">
+ return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid min-w-0 gap-4 sm:grid-cols-2">
   <Input type="hidden" name="action" value="CREATE"/>
-  <label className="grid gap-1 text-sm text-body">Interview round
-   <Select name="roundId" required defaultValue="" className="text-sm">
+  <label className="grid min-w-0 gap-1 text-sm text-body">Interview round
+   <Select name="roundId" required defaultValue="" className="min-h-11 w-full text-sm md:min-h-9">
     <option value="" disabled>Select an interview round</option>
     {rounds.map(row=><option key={row.id} value={row.id}>{row.sequence}. {row.name}</option>)}
    </Select>
   </label>
-  <label className="grid gap-1 text-sm text-body">Mode
-   <Select name="mode" required defaultValue="VIRTUAL" className="text-sm">
+  <label className="grid min-w-0 gap-1 text-sm text-body">Mode
+   <Select name="mode" required defaultValue="VIRTUAL" className="min-h-11 w-full text-sm md:min-h-9">
     <option value="VIRTUAL">Virtual</option><option value="ON_CAMPUS">On campus</option>
    </Select>
   </label>
-  <label className="grid gap-1 text-sm text-body">Start (IST)
+  <label className="grid min-w-0 gap-1 text-sm text-body">Start (IST)
    <Input name="startAt" type="datetime-local" min={today} required value={start}
     onChange={event=>{const next=event.target.value;setStart(next);if(end&&end<=next)setEnd("");setError(null);}}
-    className="text-sm"/>
+    className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
-  <label className="grid gap-1 text-sm text-body">End (IST)
+  <label className="grid min-w-0 gap-1 text-sm text-body">End (IST)
    <Input name="endAt" type="datetime-local" min={start||today} required value={end}
     onChange={event=>{setEnd(event.target.value);setError(null);}}
-    className="text-sm"/>
+    className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
-  <label className="grid gap-1 text-sm text-body">Capacity
+  <label className="grid min-w-0 gap-1 text-sm text-body">Capacity
    <Input name="capacity" type="number" min={1} max={100} defaultValue={1}
-    required className="text-sm"/>
+    required className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
-  <details className="min-w-0 min-[768px]:col-span-2">
-   <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-body min-[768px]:min-h-9">Panel label (not a learner name) · Meeting location</summary>
-   <div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2">
+  <details className="min-w-0 border-t border-border py-2 sm:col-span-2">
+   <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-body md:min-h-9">Panel label (not a learner name) · Meeting location</summary>
+   <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2">
     <label className="grid min-w-0 gap-1 text-sm text-body">Panel label (not a learner name)
-     <Input name="panelLabel" maxLength={160} className="text-sm"/>
+     <Input name="panelLabel" maxLength={160} className="min-h-11 w-full text-sm md:min-h-9"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm text-body">Meeting location
-     <Input name="meetingLocation" maxLength={500} className="text-sm"/>
+     <Input name="meetingLocation" maxLength={500} className="min-h-11 w-full text-sm md:min-h-9"/>
     </label>
    </div>
   </details>
-  {error?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
+  {!rounds.length?<p role="status" className="text-sm text-muted-foreground sm:col-span-2">No interview rounds are available to propose a slot.</p>:null}
+  {error?<div className="sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   {notice?<div className="md:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <Button type="submit" disabled={!rounds.length||submitting} loading={submitting} aria-busy={submitting}
-    variant="primary" className="min-h-11 w-full min-[768px]:min-h-9 md:col-span-2">
+    variant="primary" className="min-h-11 w-full sm:col-span-2 md:min-h-9">
     {submitting?"Sending time block…":"Propose slot"}
   </Button>
  </form>;
@@ -144,20 +145,21 @@ export function RecruiterInterviewSlotActions({action,slot}:{
    setError("Connection interrupted. Refresh this time block and retry.");
   }finally{actionLock.current=false;setBusy(null);setConfirmCancel(false);}
  }
- return <div className="space-y-2">
-  <div className="grid grid-cols-1 gap-2 min-[768px]:flex min-[768px]:flex-wrap">
+ return <div className="min-w-0 space-y-3">
+  <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
    {slot.status==="PROPOSED"?<Button type="button" disabled={busy!==null} onClick={()=>void act("OFFER")}
-    variant="secondary" className="min-h-11 min-[768px]:min-h-9">Offer time to college</Button>:null}
+    variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Offer time to college</Button>:null}
    {(slot.status==="OFFERED"||slot.status==="BOOKED")&&slot.bookedCount<slot.capacity?
     <Button type="button" disabled={busy!==null} onClick={()=>void act("BOOK")}
-     variant="secondary" className="min-h-11 min-[768px]:min-h-9">Reserve one internal slot</Button>:null}
+     variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Reserve one internal slot</Button>:null}
    {(slot.status==="PROPOSED"||slot.status==="OFFERED")?<Button type="button" disabled={busy!==null}
     onClick={()=>void act("CANCEL")}
-    variant="secondary" className="min-h-11 min-[768px]:min-h-9">Cancel time block</Button>:null}
+    variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel time block</Button>:null}
   </div>
+  {!["PROPOSED","OFFERED","BOOKED"].includes(slot.status)?<p className="text-sm text-muted-foreground">No actions available for this time block.</p>:null}
   {busy?<p role="status" className="text-xs text-body">Updating time block…</p>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
- <ConfirmDialog open={confirmCancel} onOpenChange={setConfirmCancel}
+ <ConfirmDialog open={confirmCancel} onOpenChange={next=>{if(!next&&!busy)setConfirmCancel(false);}}
      title="Cancel this proposed interview time block?" confirmLabel="Cancel time block"
      confirmVariant="danger" pending={busy!==null}
      onConfirm={()=>void act("CANCEL",true)}>
