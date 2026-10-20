@@ -3,26 +3,26 @@
 600 files (636 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: h1 30/600/#172033, subtitle colour, actions alignment, tab underline/active colour, filter bar spacing, breadcrumb separators, wrap at 768 and 375.
 Record ONE proof line per file in docs/audit/ux/dim-lane-1.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/account/security/page.tsx`
-- [ ] `src/app/(authenticated)/activity/[eventId]/page.tsx`
-- [ ] `src/app/(authenticated)/activity/loading.tsx`
-- [ ] `src/app/(authenticated)/activity/page.tsx`
-- [ ] `src/app/(authenticated)/admin/academics/page.tsx`
-- [ ] `src/app/(authenticated)/admin/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/admin/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/admin/attendance/error.tsx`
-- [ ] `src/app/(authenticated)/admin/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/admin/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/page.tsx`
-- [ ] `src/app/(authenticated)/admin/classes/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/account/security/page.tsx`
+- [x] `src/app/(authenticated)/activity/[eventId]/page.tsx`
+- [x] `src/app/(authenticated)/activity/loading.tsx`
+- [x] `src/app/(authenticated)/activity/page.tsx`
+- [x] `src/app/(authenticated)/admin/academics/page.tsx`
+- [x] `src/app/(authenticated)/admin/announcements/page.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/page.tsx`
+- [x] `src/app/(authenticated)/admin/attendance/error.tsx`
+- [x] `src/app/(authenticated)/admin/attendance/page.tsx`
+- [x] `src/app/(authenticated)/admin/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/page.tsx`
+- [x] `src/app/(authenticated)/admin/classes/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
