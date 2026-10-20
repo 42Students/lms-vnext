@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { DataTable } from "@/components/ui/data-table";
 import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MEMBERSHIP_ROLES, MEMBERSHIP_STATUSES, USER_PLATFORM_STATUSES } from "@/modules/identity/constants";
@@ -55,7 +56,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  const membershipOptions = ["ALL", ...MEMBERSHIP_STATUSES] as const;
  const platformOptions = ["ALL", ...USER_PLATFORM_STATUSES] as const;
  const tabForm=adminPeopleSearchState(data.query);
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Super Admin · People" title="People Directory"
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
@@ -74,7 +75,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    {" "}
    {data.contactVisible?"Contact shown within the explicitly selected college.":"Email and phone are masked outside a selected college."}
   </p>
-  <form method="get" className="grid gap-3 md:grid-cols-2 min-[1366px]:grid-cols-5">
+  <form method="get" className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-5">
    <Input type="hidden" name="tab" value={tabForm.hiddenTab} />
    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name or college
     <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
@@ -100,26 +101,34 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
-  {data.items.length?<div className="grid gap-3 md:grid-cols-2">
-   {data.items.map(row=><article key={row.membershipId} className="min-w-0 border-b border-border py-4">
-    <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)]">{row.displayName||"Unnamed user"}</h2>
-    <p className="mt-1 text-sm text-body">{row.collegeName}</p>
-    <p className="mt-1 break-all text-xs text-muted-foreground">
-     {data.contactVisible?(row.email??"No email recorded"):"Email masked"} ·
-     {" "}{data.contactVisible?(row.phoneE164??"No phone recorded"):"Phone masked"}
-    </p>
-    <div className="mt-3 flex flex-wrap gap-2">
-     <StatusBadge tone={row.platformStatus==="ACTIVE"?"success":"neutral"}>Platform {row.platformStatus}</StatusBadge>
-     <StatusBadge tone={row.membershipStatus==="ACTIVE"?"success":"neutral"}>Membership {row.membershipStatus}</StatusBadge>
-     {row.roles.map(role=><StatusBadge key={role}>{role}</StatusBadge>)}
-    </div>
-    <Link href={`/admin/people/directory/${encodeURIComponent(row.membershipId)}`}
-     className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-     View membership →
-    </Link>
-    <p className="mt-2 text-xs text-muted-foreground">Membership updated {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.updatedAt)} IST</p>
-   </article>)}
-  </div>:<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
+  {data.items.length ? <DataTable<(typeof data.items)[number]>
+   caption="People directory memberships"
+   rows={data.items}
+   getRowKey={row=>row.membershipId}
+   empty={<p>No matching users within this scope.</p>}
+   columns={[
+    {key:"name",header:"Person",mobilePriority:"primary",cell:row=>
+     <div className="min-w-0">
+      <p className="break-words font-semibold text-[var(--lms-heading)]">{row.displayName||"Unnamed user"}</p>
+      <p className="mt-1 break-all text-xs text-muted-foreground">
+       {data.contactVisible?(row.email??"No email recorded"):"Email masked"} ·
+       {" "}{data.contactVisible?(row.phoneE164??"No phone recorded"):"Phone masked"}
+      </p>
+     </div>},
+    {key:"college",header:"College",mobilePriority:"secondary",cell:row=><span className="break-words">{row.collegeName}</span>},
+    {key:"platform",header:"Platform",mobilePriority:"secondary",cell:row=>
+     <StatusBadge tone={row.platformStatus==="ACTIVE"?"success":"neutral"}>{row.platformStatus}</StatusBadge>},
+    {key:"membership",header:"Membership",mobilePriority:"secondary",cell:row=>
+     <StatusBadge tone={row.membershipStatus==="ACTIVE"?"success":"neutral"}>{row.membershipStatus}</StatusBadge>},
+    {key:"roles",header:"Roles",mobilePriority:"secondary",cell:row=>
+     <div className="flex flex-wrap gap-2">{row.roles.map(role=><StatusBadge key={role}>{role}</StatusBadge>)}</div>},
+    {key:"updated",header:"Updated",mobilePriority:"secondary",cell:row=>
+     <span className="whitespace-nowrap text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.updatedAt)} IST</span>},
+    {key:"action",header:"Actions",mobilePriority:"action",cell:row=>
+     <Link href={`/admin/people/directory/${encodeURIComponent(row.membershipId)}`}
+      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View membership →</Link>},
+   ]}/>
+   :<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
   <Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminUsersHref({...data.query,page})}/>
   <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Membership management</Link>
