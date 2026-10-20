@@ -41,10 +41,10 @@ export default async function TpoCandidateSchedulePage({
   const displayed = roundId ? readiness.displayed.filter(row => row.roundId === roundId) : readiness.displayed;
   return <div className="min-w-0 space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Back to drive</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Back to drive</Link>
     <PageHeader title={drive.job.title+" · Candidate round schedule"}
       description="Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes." />
-    <Banner tone={slotsReady ? "info" : "warning"} action={<Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-current px-3 text-sm font-semibold md:min-h-9">Edit existing shared round schedules →</Link>}>
+    <Banner tone={slotsReady ? "info" : "warning"} action={<Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-current bg-surface px-3 text-sm font-semibold hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Edit existing shared round schedules →</Link>}>
       {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
     </Banner>
@@ -67,7 +67,7 @@ export default async function TpoCandidateSchedulePage({
     <div className="flex flex-wrap gap-2">
       {drive.rounds.filter(round=>round.kind==="INTERVIEW").map(round=>
         <Link key={round.id} href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Slots and rooms · {round.name}
         </Link>)}
     </div>
@@ -76,7 +76,7 @@ export default async function TpoCandidateSchedulePage({
         {selectedRound ? <p className="font-semibold text-foreground">Round: {selectedRound.name}</p>
           : <Alert tone="error">That round is not part of this drive.</Alert>}
         <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/candidate-schedule"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Show all rounds</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show all rounds</Link>
       </div>
     ) : null}
     {drive.rounds.length === 0 ?

@@ -22,7 +22,7 @@ export default async function LearnerVerificationPage() {
     SENT_BACK: "Needs a change", VERIFIED: "Verified", UPDATE_PENDING: "Verified · update waiting",
   } as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
+    <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Profile</Link>
     <LearnerVerificationLiveRefresh />
     <PageHeader title="Profile verification"
       description="Your own Education and Identity review status. A saved detail does not mean it is verified." />
@@ -75,7 +75,7 @@ export default async function LearnerVerificationPage() {
           key={item.section+":"+row.version} section={item.section}
           expectedVersion={row.version}/> : null}
         {row.canResubmit ? <LearnerVerificationSubmit key={item.section+":"+row.version} section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
-        <Link href={item.edit} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
+        <Link href={item.edit} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review {item.heading.toLowerCase()} details</Link>
       </section>;
     })}</div>
   </div>;

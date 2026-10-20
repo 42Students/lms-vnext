@@ -20,7 +20,6 @@ export default async function FacultyCoursesPage({searchParams}: {
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
-        eyebrow="Faculty"
         title="My Teaching Courses"
         description="Your active Course deliveries, exact Sections and the learning items visible to each class."
       />

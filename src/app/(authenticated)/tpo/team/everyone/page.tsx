@@ -26,7 +26,7 @@ export default async function TpoEveryonePage({searchParams}:{
   <PageHeader title={TPO_EVERYONE_TITLE} description={TPO_EVERYONE_DESCRIPTION} />
   {result.status==="FAILED"?<Alert tone="error">
    <p>Could not load Everyone right now. Your messages were not changed.</p>
-   <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline lms-inline-link">Retry Everyone</Link>
+   <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">Retry Everyone</Link>
   </Alert>:result.status==="NOT_REGISTERED"?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
@@ -40,8 +40,8 @@ export default async function TpoEveryonePage({searchParams}:{
       </li>)}
      </ol>:<p role="status" className="text-sm">{TPO_EVERYONE_WELCOME}</p>}
     <nav aria-label="Everyone message pages" className="flex min-w-0 flex-wrap items-center gap-3 text-[13px]">
-     {result.page>1?<Link href={"/tpo/team/everyone?page="+(result.page-1)} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline lms-inline-link">Newer messages</Link>:null}
-     {result.page<result.pages?<Link href={"/tpo/team/everyone?page="+(result.page+1)} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline lms-inline-link">Older messages</Link>:null}
+     {result.page>1?<Link href={"/tpo/team/everyone?page="+(result.page-1)} className="inline-flex min-h-11 items-center text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">Newer messages</Link>:null}
+     {result.page<result.pages?<Link href={"/tpo/team/everyone?page="+(result.page+1)} className="inline-flex min-h-11 items-center text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">Older messages</Link>:null}
     </nav>
    </section>
    <TpoEveryoneControls muted={result.muted} actorUserId={context.user.id}/>

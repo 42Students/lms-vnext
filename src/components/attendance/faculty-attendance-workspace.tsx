@@ -33,6 +33,7 @@ import {
   indiaAttendanceMonthKey,
   shiftIndiaAttendanceMonth,
 } from "@/modules/attendance/faculty-grid-model";
+import {SegmentedControl} from "@/components/ui/segmented-control";
 
 type Course = {
   deliveryId: string;

@@ -26,7 +26,7 @@ export async function ProjectAdminReassignMentorPage({
 }: {
   collegeId: string;
   basePath: string;
-  eyebrow: string;
+  eyebrow?: string;
   searchParams: Record<
     string,
     string | string[] | undefined

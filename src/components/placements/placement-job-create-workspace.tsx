@@ -22,7 +22,7 @@ export async function PlacementJobCreateWorkspace({
 }: {
   context: RequestContext;
   collegeId: string;
-  eyebrow: string;
+  eyebrow?: string;
   basePath: string;
   initialCompanyName?: string;
 }) {

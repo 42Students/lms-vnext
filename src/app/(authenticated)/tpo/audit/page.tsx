@@ -105,7 +105,7 @@ export default async function TpoAuditPage({
           action={
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
             >
               Clear filters
             </Link>
@@ -174,16 +174,16 @@ export default async function TpoAuditPage({
             ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
             ...(query.q?{q:query.q}:{}),...(query.who?{who:query.who}:{}),
            }).toString()}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
            Export audit-log CSV
           </a>
           <a href={"/api/placements/tpo/audit/actors/export?"+new URLSearchParams({
            ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
           }).toString()}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
            Export actor audit CSV
           </a>
-          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">
             Actor / entity filters and CSV →
           </Link>
         </div>}
@@ -222,7 +222,7 @@ export default async function TpoAuditPage({
        <span className="self-center text-sm font-semibold">Quick looks</span>
        {quickLooks.map(look=><Link key={look.label} href={quickHref(look.from,look.to)}
         aria-current={query.from===look.from&&query.to===look.to?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
         {look.label}
        </Link>)}
       </nav>
@@ -242,7 +242,7 @@ export default async function TpoAuditPage({
             <Select
               name="kind"
               defaultValue={query.kind}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)] "
             >
               <option value="ALL">
                 All events
@@ -264,7 +264,7 @@ export default async function TpoAuditPage({
               type="date"
               name="from"
               defaultValue={query.from ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)] "
             />
           </label>
 
@@ -274,7 +274,7 @@ export default async function TpoAuditPage({
               type="date"
               name="to"
               defaultValue={query.to ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)] "
             />
           </label>
 
@@ -286,26 +286,26 @@ export default async function TpoAuditPage({
               maxLength={120}
               defaultValue={query.q}
               placeholder="What happened, job or who"
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)] "
             />
           </label>
 
           <label className="grid gap-1 text-sm font-semibold text-body">Who
             <Input type="search" name="who" maxLength={100} defaultValue={query.who}
-              placeholder="Actor name contains…" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+              placeholder="Actor name contains…" className="min-h-11 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)]"/>
           </label>
           <PageSizeSelect name="pageSize" defaultValue={String(pageSize)} options={[25,50,100]} />
 
           <div className="flex flex-wrap items-center gap-3 md:col-span-2 xl:col-span-5">
             <Button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover  md:min-h-9"
             >
               Apply filters
             </Button>
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
             >
               Clear filters
             </Link>
@@ -373,7 +373,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
               >
                 ← Previous
               </Link>
@@ -385,7 +385,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
               >
                 First page
               </Link>
@@ -397,7 +397,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
               >
                 Next →
               </Link>

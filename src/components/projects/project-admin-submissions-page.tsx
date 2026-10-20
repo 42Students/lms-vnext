@@ -51,7 +51,7 @@ export async function ProjectAdminSubmissionsPage({
 }: {
   collegeId: string;
   basePath: string;
-  eyebrow: string;
+  eyebrow?: string;
   searchParams: Record<
     string,
     string | string[] | undefined

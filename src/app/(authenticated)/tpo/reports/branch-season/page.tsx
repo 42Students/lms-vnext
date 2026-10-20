@@ -32,7 +32,7 @@ export default async function TpoBranchSeasonPage({
     <div data-tpo-presentation-report className="space-y-6">
       <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/branch-season" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <Link href="/tpo/reports/by-branch" className="text-sm font-semibold text-link hover:underline">
+      <Link href="/tpo/reports/by-branch" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         ← By Branch report
       </Link>
       <PageHeader
@@ -43,7 +43,7 @@ export default async function TpoBranchSeasonPage({
           <a
             href={"/api/placements/tpo/reports/branch-season/export?seasonId=" +
               encodeURIComponent(dashboard.season.id)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white"
+            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-white hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Export season CSV
           </a>
@@ -51,12 +51,12 @@ export default async function TpoBranchSeasonPage({
       />
       {dashboard.seasons.length ? (
         <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="text-sm font-semibold text-foreground">
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Placement season
             <Select
               name="seasonId"
               defaultValue={dashboard.season?.id ?? ""}
-              className="mt-2 block min-h-11 sm:min-h-9"
+              className="mt-2 block min-h-11 min-[768px]:min-h-9"
             >
               {dashboard.seasons.map((season) => (
                 <option key={season.id} value={season.id}>
@@ -67,7 +67,7 @@ export default async function TpoBranchSeasonPage({
           </label>
           <Button variant="secondary"
             type="submit"
-            className="min-h-11 sm:min-h-9"
+            className="min-h-11 min-[768px]:min-h-9"
           >
             View season
           </Button>

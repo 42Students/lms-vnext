@@ -37,11 +37,11 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
         description="Unique learners with accepted offers and confirmed joins by current branch and season."
         actions={report.season ? <a
           href={"/api/placements/reports/placed-branch?" + csvParams}
-          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Download CSV
         </a> : null}
       />
-      <Link href="/tpo/reports" className="text-sm font-semibold text-link hover:underline">← Reports</Link>
+      <Link href="/tpo/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Reports</Link>
       <form action="/tpo/reports/placed-branch" method="get"
         className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season

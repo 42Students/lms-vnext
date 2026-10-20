@@ -159,7 +159,7 @@ export default async function TpoPlacementBrandingPage() {
         </div>
 
         {branding.logoPreviewUrl ? (
-          <div className="mt-5 flex min-h-32 items-center justify-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-6">
+          <div className="mt-5 flex min-h-32 items-center justify-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 md:p-6">
             {/* Same validated public HTTPS image pattern
                 used by the college sign-in page. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
