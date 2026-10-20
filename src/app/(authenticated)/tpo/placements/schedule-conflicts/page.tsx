@@ -59,10 +59,10 @@ export default async function TpoScheduleConflictsPage({
         description="Potential same-venue overlaps in scheduled rounds of published drives. This is not a student timetable conflict detector."
       />
       <form method="get" className="flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
-        <label className="text-sm font-semibold text-foreground">
+        <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Upcoming window
           <Select name="days" defaultValue={String(data.days)}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
+            className="mt-[6px] block min-h-11 md:min-h-9 border border-border px-3 text-sm font-normal">
             {[7, 14, 30, 60, 90].map((days) => (
               <option key={days} value={days}>{days} days</option>
             ))}

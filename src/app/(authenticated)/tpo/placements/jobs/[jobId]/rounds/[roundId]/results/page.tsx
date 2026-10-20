@@ -48,11 +48,11 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <p className="text-sm text-body">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
   {data.truncated?<Alert tone="warning">Source capped at 500 application records; counts may be incomplete.</Alert>:null}
   <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-   <label className="min-w-0 flex-1 text-sm font-semibold text-body">Student or role
-    <Input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"/>
+   <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Student or role
+    <Input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-[6px] block min-h-11 w-full border border-border px-3 md:min-h-9"/>
    </label>
-   <label className="min-w-0 text-sm font-semibold text-body">Result state
-    <Select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9">
+   <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Result state
+    <Select name="status" defaultValue={selected.data.status} className="mt-[6px] block min-h-11 border border-border px-3 md:min-h-9">
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
     </Select>
    </label>

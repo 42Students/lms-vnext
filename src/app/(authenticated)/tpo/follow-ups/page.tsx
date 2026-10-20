@@ -53,9 +53,9 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       </nav>
       <form action="/tpo/follow-ups" method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
         <input type="hidden" name="scope" value={scope}/><input type="hidden" name="window" value={window}/>
-        <label className="min-w-0 flex-1 text-sm font-semibold text-body">Find recruiter or company
+        <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Find recruiter or company
           <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
-            className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+            className="mt-[6px] min-h-11 w-full border border-border px-3 text-foreground md:min-h-9"/>
         </label><Button type="submit" className="min-h-[var(--lms-control-height)]">Search</Button>
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Clear</Link>:null}
       </form>
