@@ -24,7 +24,7 @@ export default async function TrackerReportPage({
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="What went wrong?"
       description="Report an LMS issue · Pick the context, describe the problem, and submit."
-      actions={!isSuperAdmin(context)?<Link href="/tracker/mine" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">My reports</Link>:undefined}/>
+      actions={!isSuperAdmin(context)?<Link href="/tracker/mine" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] transition-colors duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none">My reports</Link>:undefined}/>
     {isSuperAdmin(context)?<TrackerAdminNav />:null}
     {!ready ? <Banner tone="warning">
       <strong>Reports are temporarily unavailable.</strong>
