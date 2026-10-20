@@ -30,7 +30,7 @@ export default async function RecruiterDriveProposalHistory({
  return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
   <PageHeader title="Sent drive proposals"
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
-  <nav className="flex flex-wrap gap-2">
+  <nav aria-label="Proposal actions" className="flex flex-wrap gap-2">
    <PageBackLink href="/hr/drives" label="Back to drives"/>
    <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Draft another proposal</Link>
   </nav>
@@ -96,9 +96,9 @@ export default async function RecruiterDriveProposalHistory({
    </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."/>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-2">
     {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
     {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Older proposals</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Older proposals</Link>:null}
    </nav>
   </>}
  </div>;

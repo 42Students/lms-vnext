@@ -106,7 +106,7 @@ export default async function RecruiterRequestDrivePage({
       View previously sent discussion proposals
     </Link>
     <Link href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">
       Record an outside-platform drive
     </Link>
     </nav>
