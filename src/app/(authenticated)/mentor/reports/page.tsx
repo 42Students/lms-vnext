@@ -27,7 +27,7 @@ export default async function MentorReportsPage({searchParams}:{
   });
   if(duplicated||!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid Mentor report filters"} />
-    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
   const statusMetrics=[
@@ -43,7 +43,7 @@ export default async function MentorReportsPage({searchParams}:{
     <PageHeader eyebrow="Mentor · Reports" title="Assigned Project reports"
       description="Persisted project states and actionable attention across your current assigned workspaces."
       actions={<Link data-unskin="" href="/mentor/projects"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] transition-colors duration-150 motion-reduce:transition-none">
         Projects list
       </Link>}/>
     {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
@@ -77,7 +77,7 @@ export default async function MentorReportsPage({searchParams}:{
           Stalled means no recently recorded qualifying activity, not a prediction.
         </p>
       </section>
-      <FilterBar title="Filters"><form method="get" action="/mentor/reports"
+      <FilterBar title="Filters"><form role="search" aria-label="mentor reports filters" method="get" action="/mentor/reports"
         className="flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
@@ -127,7 +127,7 @@ export default async function MentorReportsPage({searchParams}:{
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
-        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
+        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
       </form></FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/mentor/reports/export?"+
@@ -137,7 +137,7 @@ export default async function MentorReportsPage({searchParams}:{
             assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,
           }).toString()} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
           Export filtered project report CSV (max 100)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -149,7 +149,7 @@ export default async function MentorReportsPage({searchParams}:{
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
           "Clear filters to see the other currently assigned project records."}/>:
-        <ol className="grid gap-3 md:grid-cols-2">{data.items.map(project=>
+        <ol aria-label="mentor reports entries" className="grid gap-3 md:grid-cols-2">{data.items.map(project=>
           <li key={project.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="break-words font-semibold text-foreground">{project.title}</h3>
@@ -166,9 +166,9 @@ export default async function MentorReportsPage({searchParams}:{
             </p>
             <div className="mt-3 flex flex-wrap gap-3 text-sm">
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Open project</Link>
+                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Open project</Link>
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)+"/risk-readiness"}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Risk / readiness</Link>
+                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Risk / readiness</Link>
             </div>
           </li>)}</ol>}
       <Pagination label="Mentor report pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReportsHref({...data.query,page})}/>

@@ -52,7 +52,7 @@ export default async function FacultyContactsPage({
   if(!filters)return <section role="alert" className="min-w-0 space-y-3">
     <PageHeader title={"Invalid directory filters"} />
     <Link href={"/teacher/contacts/"+contactsTab}
-      className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Return to Contacts
     </Link>
   </section>;
@@ -131,7 +131,7 @@ export default async function FacultyContactsPage({
             </span>
             <Link
               href={baseHref}
-              className="font-semibold text-primary-text hover:underline inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="font-semibold text-primary-text hover:underline inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             >
               Clear search
             </Link>
