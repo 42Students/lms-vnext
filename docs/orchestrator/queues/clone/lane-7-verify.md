@@ -27,13 +27,13 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/components/hr/recruiter-round-inline-editor.tsx`
 - [x] `src/components/placements/college-application-detail-drawer.tsx`
 - [x] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/college-drive-deadline-action.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/college-drive-deadline-action.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/learner-application-detail-withdraw.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
 - [ ] `src/components/placements/learner-placement-notification-settings.tsx`
 - [ ] `src/components/placements/learner-placement-offers.tsx`
 - [ ] `src/components/placements/learner-support-cancel.tsx`
