@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
@@ -11,10 +11,12 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
 }){
  const router=useRouter();
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
+ const sendingRef=useRef(false);
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [outcome,setOutcome]=useState<{sent:number;failed:number;skipped:number}|null>(null);
  async function sendCampaign(){
-  if(busy||!ready||recipients===0)return;
+  if(busy||sendingRef.current||!ready||recipients===0)return;
+    sendingRef.current=true;
     setBusy(true);setError("");setOutcome(null);
     try{
      const response=await fetch("/api/placements/tpo/campaigns/drafts/"+encodeURIComponent(campaignId)+"/send",{
@@ -25,10 +27,12 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
       "Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.":
       data.error==="ALREADY_STARTED"?"This campaign has already started. Refresh for receipts.":
       "The campaign could not be sent. Refresh before retrying.");
-     setOutcome({sent:data.sent??0,failed:data.failed??0,skipped:data.skipped??0});
+     if (![data.sent,data.failed,data.skipped].every(value=>typeof value==="number" && Number.isSafeInteger(value) && value>=0))
+       throw new Error("The campaign response could not be verified. Refresh for receipts.");
+     setOutcome({sent:data.sent!,failed:data.failed!,skipped:data.skipped!});
      router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"The campaign could not be sent.");}
-    finally{setBusy(false);setConfirmOpen(false);}
+    finally{sendingRef.current=false;setBusy(false);setConfirmOpen(false);}
 
  }
  if(status!=="DRAFT")return <p className="text-sm text-body">
