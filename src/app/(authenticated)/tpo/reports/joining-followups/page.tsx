@@ -40,13 +40,13 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
   <Link href="/tpo/reports/joining-status" className="text-sm font-semibold text-link hover:underline">← Joining outcomes</Link>
   <form action="/tpo/reports/joining-followups" method="get"
    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
+    <label className="min-w-40 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Season
      <Select name="seasonId" defaultValue={report.season?.id??""}
       className="mt-2 block min-h-11 sm:min-h-9 w-full">
       {report.seasons.length===0?<option value="">No season</option>:null}
       {report.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
      </Select></label>
-    <label className="min-w-36 flex-1 text-sm font-semibold text-body">Follow-up
+    <label className="min-w-36 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Follow-up
      <Select name="state" defaultValue={report.state}
       className="mt-2 block min-h-11 sm:min-h-9 w-full">
       <option value="ALL">All open</option><option value="PENDING">Pending</option>

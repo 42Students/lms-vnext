@@ -35,9 +35,9 @@ export default async function CampaignHistory({searchParams}:PageProps){
    To send one, select recruiters in the table and choose Act, then Send an email.
   </p>
   <form method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="text-sm">Purpose
+   <label className="text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Purpose
     <Input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
-     placeholder="Filter by purpose" className="mt-1 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3"/>
+     placeholder="Filter by purpose" className="mt-[6px] block min-h-11 min-[768px]:min-h-9 border border-border px-3"/>
    </label>
    <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Apply</Button>
    <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline lms-inline-link">Clear</Link>
