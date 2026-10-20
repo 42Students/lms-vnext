@@ -2,9 +2,9 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function NotFound() {
-  return <section className="min-w-0 space-y-4">
+  return <section className="min-w-0 space-y-4 break-words">
     <PageHeader title="Page not found" />
     <p className="text-sm text-body">This page may have moved or is no longer available. Please return home.</p>
-    <Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Go to home</Link>
+    <Link href="/college" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Go to home</Link>
   </section>;
 }
