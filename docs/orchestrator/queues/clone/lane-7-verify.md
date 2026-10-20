@@ -44,10 +44,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/components/placements/tpo-general-requests-panel.tsx`
 - [x] `src/components/placements/tpo-remind-non-applicants.tsx`
 - [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/groups/college-group-detail-writes.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/components/admin/people-pagination.tsx`
-- [ ] `src/components/auth/session-response-guard.tsx`
+- [x] `src/components/groups/college-group-detail-writes.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/components/admin/people-pagination.tsx`
+- [x] `src/components/auth/session-response-guard.tsx`
 - [ ] `src/components/hr/recruiter-display-name-editor.tsx`
 - [ ] `src/components/projects/learner-board-task-index.tsx`
 - [ ] `src/components/public/offline-banner.tsx`
