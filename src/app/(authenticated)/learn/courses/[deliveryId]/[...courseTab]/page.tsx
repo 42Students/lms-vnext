@@ -160,38 +160,16 @@ export default async function LearnerCourseTabPage({
   }
 
   return (
-    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-      <PageHeader
-        title={workspace.course.name}
-        description="Course workspace"
-        actions={
-          <div className="flex min-w-0 w-full flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-            <Link
+    <div className="min-w-0 max-w-full space-y-4">
+      <nav aria-label="Course navigation" className="flex flex-wrap items-center gap-3">
+        <Link
               href="/learn/courses"
-              className="inline-flex min-h-11 w-full items-center justify-center md:min-h-[var(--lms-control-height)] sm:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
             >
               {LEARNER_BACK_TO_COURSES}
             </Link>
-            <details className="min-w-0 w-full border-t border-border pt-2 sm:w-auto sm:border-t-0 sm:pt-0">
-              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text sm:min-h-9">Detailed progress · Attendance history</summary>
-              <div className="flex min-w-0 flex-col items-stretch gap-2 pb-2 sm:flex-row sm:flex-wrap sm:pb-0">
-            <Link
-              href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
-              className="inline-flex min-h-11 w-full items-center justify-center md:min-h-[var(--lms-control-height)] sm:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-            >
-              Detailed progress
-            </Link>
-            <Link
-              href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
-              className="inline-flex min-h-11 w-full items-center justify-center md:min-h-[var(--lms-control-height)] sm:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-            >
-              Attendance history
-            </Link>
-              </div>
-            </details>
-          </div>
-        }
-      />
+      </nav>
+      <PageHeader title={workspace.course.name} description="Course workspace" />
       {readOnly?<Banner tone="info">
         Past semester course · Read only. Submitted work remains accessible.
       </Banner>:null}
@@ -199,6 +177,23 @@ export default async function LearnerCourseTabPage({
         tabName={learnerCourseTabs.find(tab=>tab.path===activeTab)?.label??"Overview"}/>
        <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
         persistentQuery={learnerCourseTabPersistentQuery(query)}/>
+      <details className="border-b border-border pb-3 text-sm">
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Course options</summary>
+        <nav aria-label="Additional course destinations" className="flex flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap">
+          <Link
+              href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
+              className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            >
+              Detailed progress
+            </Link>
+          <Link
+              href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
+              className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            >
+              Attendance history
+            </Link>
+        </nav>
+      </details>
       {content}
     </div>
   );
