@@ -61,7 +61,7 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
    confirmLabel="Clear all" confirmVariant="danger" onConfirm={clearAll}/>
   {views.length?<ul className="mt-3 min-w-0 divide-y divide-border border-y border-border">{views.map(view=>
    <li key={view.name} className="grid min-w-0 grid-cols-2 items-center gap-2 py-2 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
-    <Button className="min-h-11 min-w-0 w-full justify-start break-words text-left font-semibold text-link sm:w-auto md:min-h-9" variant="ghost" type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
+    <Button className="col-span-2 min-h-11 min-w-0 w-full justify-start break-words text-left font-semibold text-link sm:col-span-1 sm:w-auto md:min-h-9" variant="ghost" type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
      >{view.name}</Button>
     <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="ghost" type="button" onClick={()=>{if(!navigator.clipboard){setError("Clipboard unavailable. Open the view and copy its URL.");return;}void navigator.clipboard.writeText(window.location.origin+"/tpo/placements/lifecycle"+(view.query?"?"+view.query:"")).then(()=>{setCopied(view.name);setError("");}).catch(()=>setError("Copy failed. Open the view and copy its URL."));}}
      aria-label={"Copy link for saved view "+view.name} >Copy link</Button>
