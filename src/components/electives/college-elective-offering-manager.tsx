@@ -122,14 +122,13 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           <div className="flex flex-wrap items-center gap-2">
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
               encodeURIComponent(offering.offeringId) + "/roster"}
-              className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 font-semibold text-link">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
               Roster
             </Link>
             {offering.status === "ACTIVE" && <>
               <Button variant="secondary" type="button" onClick={() => startEdit(offering)}
                 >Edit</Button>
-              <Button variant="secondary" type="button" disabled={busy} onClick={() => void archive(offering)}
-                className="text-error">Archive</Button>
+              <Button variant="danger" type="button" disabled={busy} onClick={() => void archive(offering)}>Archive</Button>
             </>}
           </div>
         </div>)}
@@ -158,7 +157,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           {selectable.length === 0 && <p role="status" className="mt-2 text-sm">
             Create an active elective course delivery for this program before adding an offering.</p>}
           <div className="mt-3 flex flex-wrap gap-2">
-            <Button variant="primary" type="button" disabled={busy || loading || !deliveryId || selectable.length === 0}
+            <Button variant="primary" type="button" loading={busy} disabled={busy || loading || !deliveryId || selectable.length === 0}
               onClick={() => void save()} >
               {busy ? "Saving…" : editing ? "Save offering" : "Add offering"}
             </Button>
