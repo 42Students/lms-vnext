@@ -23,8 +23,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regre
 - [x] `src/components/shell/route-transition.tsx`
 - [x] `src/components/shell/shell-connectivity-notice.tsx`
 - [x] `src/components/shell/shell-nav-icons.tsx`
-- [ ] `src/components/shell/shell-widget-boundary.tsx`
-- [ ] `src/components/shell/sidebar-nav.tsx`
+- [x] `src/components/shell/shell-widget-boundary.tsx`
+- [x] `src/components/shell/sidebar-nav.tsx`
 - [ ] `src/components/shell/topbar/account-menu.tsx`
 - [ ] `src/components/shell/topbar/command-search.tsx`
 - [ ] `src/components/shell/topbar/icons.tsx`
