@@ -150,3 +150,21 @@ Files: `src/app/(authenticated)/admin/colleges/page.tsx`, queue and proof.
 Problems fixed (6): heavy breadcrumb link competed with the PageHeader; the three history metrics stacked unnecessarily at 375px; KPI label and number hierarchy drifted; gutters were narrow/inconsistent with legacy scale; data listing lacked consistent separation; long tables risked crowded mobile cards. Switched to shared back affordance, rendered compact two-column phone KPIs and three-column tablet row, normalized exact KPI font/weight/spacing and legacy section rhythm, retained DataTable responsive priorities, all statuses, navigation, 500-item warning and empty-state copy. Inspected page, status/DataTable/EmptyState/PageBackLink and error/loading routes, filled/empty/truncated 375/768/1280 source. No changes to route, permission/scope, IDs, wording or data. No CI/browser verification.
 
 Files: `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`, queue and proof.
+
+## Surface 22 — Super Admin Companies directory
+
+Problems fixed (11): 10 advanced filters expanded ahead of records; six KPIs and two zero-result curation sections dominated before company results; deeply technical per-company metadata/identities made each row several screens long; CSV export and secondary curation competed with search; all badges/actions/facts competed; mobile filter widths and number tiles misaligned; cluttered empty candidate states; unclear primary employer relationship paths. Kept Company search and Filter primary, folded the remaining search controls into More filters; moved both identity-duplicate review sections under one Company curation disclosure after results, moved CSV export after list/paging, aligned two-column phone KPI tiles and legacy spacing, and grouped detailed company notes, identities, edit/verify controls inside per-item Company details disclosure. Preserved all exact action labels, permissions, merges, rechecks, API calls, route filters, tab destinations, stats, pagination, copy, tokens and statuses. Inspected page, SuperAdminCompanyMerge/Restore/Verification/Edit/Identities, SuperAdminCollegeCompanyCreate/RelationshipActions, form/confirm controls and error/loading/empty/filled/archived scope, source 375/768/1280. No CI/screenshots.
+
+Files: `src/app/(authenticated)/admin/companies/page.tsx`, queue and proof.
+
+## Surface 23 — Course Progress overview
+
+Problems fixed (7): export competed with back navigation; five filters expanded above primary content; offering status and course/batch selectors crowded phone controls; search/action height uneven; three result metrics stacked unnecessarily on 375; glossary copy competed with list, and export sat above records. Kept search immediately usable, folded optional status/course/batch choices under shared More filters without changing GET fields, aligned filter action at tablet, put CSV after records/pagination, use two-column compact progress statistics and preserved alert explaining what records mean. Inspected page, SuperAdminLearningFilterFields, PageBackLink, Alert, Pagination, EmptyState/ErrorState, route error/loading and scoped/no-scope/empty/filled states at 375/768/1280 source. Preserved API, route, source counts, wording and legacy tokens. No CI/screenshots.
+
+Files: `src/app/(authenticated)/admin/course-progress/page.tsx`, queue and proof.
+
+## Surface 24 — Student Course Progress
+
+Problems fixed (6): CSV export competed with Back to Course Progress; four full-width KPI rows stacked vertically at 375; per-metric gutters were uneven; summary status and link drew attention away from learner list; metric values could exceed phone width; mobile actions were misaligned. Kept Back in header and moved CSV after actual learner results, aligned progress metrics in two columns at 375 and four from 768, constrained metric widths while preserving the exact 24px legacy number styles and glossary. Inspected page/parent fallback, DataTable, EmptyState, Alert, completed/empty/truncated/not-measured/error states, source 375/768/1280. No change to counts, export route, permissions, labels, wording or tokens. No CI/screenshots.
+
+Files: `src/app/(authenticated)/admin/course-progress/students/page.tsx`, queue and proof.
