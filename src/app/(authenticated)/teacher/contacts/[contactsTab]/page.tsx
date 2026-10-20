@@ -52,7 +52,7 @@ export default async function FacultyContactsPage({
   if(!filters)return <section role="alert" className="min-w-0 space-y-3">
     <PageHeader title={"Invalid directory filters"} />
     <Link href={"/teacher/contacts/"+contactsTab}
-      className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Return to Contacts
     </Link>
   </section>;
@@ -98,7 +98,7 @@ export default async function FacultyContactsPage({
             action={baseHref}
             className="flex w-full max-w-2xl flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch"
           >
-            <label className="grid min-w-0 w-full flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-auto">
+            <label className="grid min-w-0 w-full flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">
               Search contacts
               <Input
                 className="mt-1.5"
@@ -109,7 +109,7 @@ export default async function FacultyContactsPage({
                 placeholder="Name or department"
               />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">
               Contacts per page
               <Select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
@@ -119,7 +119,7 @@ export default async function FacultyContactsPage({
                 <option value="50">50</option>
               </Select>
             </label>
-            <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
+            <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">
               Search
             </Button>
           </form>

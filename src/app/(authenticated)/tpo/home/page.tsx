@@ -207,7 +207,7 @@ export default async function TpoHome(){
     <Link href={row.href} data-testid={"home.row."+row.key}
      className="flex min-h-16 min-w-0 items-center gap-3 p-4 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
      <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
-     <span className="min-w-0 flex-1"><strong className="block text-sm text-foreground">{row.title}</strong>
+     <span className="min-w-0 flex-1"><strong className="block break-words text-sm text-foreground">{row.title}</strong>
       <span className="block break-words text-xs text-muted-foreground">{row.status}</span></span>
      {row.needsAttention?<Badge aria-label="Needs you"  tone="warning" className="shrink-0">Needs you</Badge>:null}
      <span aria-hidden="true" className="shrink-0 text-link">›</span>

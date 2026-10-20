@@ -26,12 +26,12 @@ export default async function TpoRoundCalendarPage({searchParams}:{
     <PageBackLink href="/tpo/calendar" label="Calendar"/>
     <PageHeader title="Drive round scheduling"
       description="Schedule an existing pending drive round, reschedule an active one or cancel it. All times are IST." />
-    <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:min-w-56">Find rounds
       <Input type="search" name="q" maxLength={100} defaultValue={result.q}
        placeholder="Company, drive or round name" />
      </label>
-     <Button type="submit" variant="primary" className="min-h-11 px-4 min-[768px]:min-h-9">Find</Button>
+     <Button type="submit" variant="primary" className="min-h-11 w-full px-4 min-[768px]:w-auto min-[768px]:min-h-9">Find</Button>
      <Link href="/tpo/calendar/rounds" className="lms-inline-link inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Clear</Link>
     </form>
     <p role="status" className="text-[13px] text-[var(--lms-muted-text)]">Page {result.page}: {result.rows.length} rounds{result.limited?" · more available":""}</p>

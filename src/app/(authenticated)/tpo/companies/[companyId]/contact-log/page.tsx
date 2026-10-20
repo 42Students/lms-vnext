@@ -86,13 +86,13 @@ export default async function TpoCompanyContactLogPage({
               activity remains read-only.
             </Alert>
           )}
-          <form method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+          <form method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+            <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">
               Interaction type
               <Select
                 name="type"
                 defaultValue={log.type}
-                className="mt-[6px] block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+                className="mt-[6px] block w-full min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
               >
                 {["ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM"].map((type) => (
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
@@ -101,7 +101,7 @@ export default async function TpoCompanyContactLogPage({
             </label>
             <Button
               type="submit" variant="secondary"
-              className="min-h-11 md:min-h-9"
+              className="min-h-11 w-full md:min-h-9 md:w-auto"
             >
               Filter
             </Button>
@@ -124,7 +124,7 @@ export default async function TpoCompanyContactLogPage({
           />
           <nav aria-label="Contact log pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
             <span className="text-body">Page {log.page} of {log.pages}</span>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               {log.page > 1 ? (
                 <Link href={href(log.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                   ← Previous

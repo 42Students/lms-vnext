@@ -53,7 +53,7 @@ export default async function TpoNoShowReportPage({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-6)]">
-      <Link href={roundHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
+      <Link href={roundHref} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
         ← Back to round overview
       </Link>
       <PageHeader
