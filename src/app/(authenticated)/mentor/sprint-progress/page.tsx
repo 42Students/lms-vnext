@@ -51,36 +51,36 @@ export default async function MentorSprintProgressPage({
     </section> : <>
       <FilterBar title="Filters"><form role="search" aria-label="mentor sprint progress filters" action="/mentor/sprint-progress" method="get"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             placeholder="Sprint, release or project" className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
           <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint status
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint status
           <Select name="state" defaultValue={data.query.state}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All</option><option value="ACTIVE">Active</option>
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registered task attention
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registered task attention
           <Select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 md:min-h-9">
             <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="DONE">Sprints with recorded Done tasks</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Release status
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Release status
           <Select name="release" defaultValue={data.query.release}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All releases</option><option value="PLANNED">Planned</option>
             <option value="IN_PROGRESS">In progress</option><option value="SHIPPED">Shipped</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint order
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint order
           <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9">
             <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
           </Select>
@@ -104,18 +104,18 @@ export default async function MentorSprintProgressPage({
           Export omits {data.total-100} sprints beyond the 100-row cap.
         </span>:null}
       </div>
-      <p className="text-sm text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
+      <p className="text-sm text-body leading-[22px]">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
         description="No sprints matched the selected state and current Mentor assignments. Unmaterialized or missing pre-migration work is not counted." />
       : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
         <article key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <div><h2 className="font-semibold text-foreground">{item.title}</h2>
-              <p className="mt-1 text-sm text-body">{item.projectTitle} · {item.releaseTitle}</p>
+            <div><h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.title}</h2>
+              <p className="mt-1 text-sm text-body leading-[22px]">{item.projectTitle} · {item.releaseTitle}</p>
             </div>
             <span className="text-xs font-semibold text-body">{item.status}</span>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Release: {item.releaseStatus}</p>
+          <p className="mt-2 text-xs text-muted-foreground leading-5">Release: {item.releaseStatus}</p>
           <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-4">
             {([
               ["Tasks", item.tasks.total],
@@ -128,7 +128,7 @@ export default async function MentorSprintProgressPage({
                 <dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd>
               </div>)}
           </dl>
-          <p className="mt-3 text-sm text-body">
+          <p className="mt-3 text-sm text-body leading-[22px]">
             Completion: {item.tasks.completionPercent === null
               ? "Unknown (no tasks)" : item.tasks.completionPercent + "%"} of persisted tasks marked Done
           </p>
