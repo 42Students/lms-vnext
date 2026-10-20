@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -42,27 +43,37 @@ export default async function CollegeBatchPromotionPage({
       value !== undefined && value !== "",
     )),
   );
-  if (!parsed.success) return <div className="space-y-4">
-    <PageHeader title="Batch Promotion" />
+  if (!parsed.success) return <div className="min-w-0 space-y-5">
+    <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
       action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>} />
   </div>;
-  const options = await listCollegePromotionOptions(context, parsed.data);
-  const preview = parsed.data.cohortId
-    ? await previewCollegeBatchPromotion(context, parsed.data)
-    : null;
-  const facultySetup = preview?.plan.targetTermNumber && parsed.data.cohortId
-    ? await getPromotionFacultyReadiness(context, preview.batch.programId,
-      parsed.data.cohortId, preview.plan.targetTermNumber)
-    : null;
-  return <div className="min-w-0 overflow-x-clip space-y-6">
+  const read=await (async()=>{
+    const options=await listCollegePromotionOptions(context,parsed.data);
+    const preview=parsed.data.cohortId
+      ? await previewCollegeBatchPromotion(context,parsed.data)
+      : null;
+    const facultySetup=preview?.plan.targetTermNumber&&parsed.data.cohortId
+      ? await getPromotionFacultyReadiness(context,preview.batch.programId,
+          parsed.data.cohortId,preview.plan.targetTermNumber)
+      : null;
+    return {options,preview,facultySetup};
+  })().then(value=>({ok:true as const,value}))
+     .catch(()=>({ok:false as const}));
+  if(!read.ok)return <div className="min-w-0 space-y-5">
+    <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
+    <ErrorState title="Batch promotion preview unavailable"
+      description="Program, batch, promotion or faculty-readiness data could not be verified. No promotion has been applied."
+      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry promotion preview</Link>}/>
+  </div>;
+  const {options,preview,facultySetup}=read.value;
+  return <div className="min-w-0 space-y-6">
     <PageHeader title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
-      actions={<Link href="/college/batches"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Batches</Link>} />
+      actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <section className="border-t border-border pt-4">
-      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-3 max-[767px]:[&_label]:w-full md:grid-cols-2 lg:grid-cols-4">
+      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-3 max-[767px]:[&_label]:w-full md:grid-cols-2 min-[992px]:grid-cols-4">
         <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Program
           <Select name="programId" defaultValue={parsed.data.programId ?? ""}
@@ -90,8 +101,8 @@ export default async function CollegeBatchPromotionPage({
             placeholder="e.g., 2099-00"
             />
         </label>
-        <div className="flex items-end">
-          <Button type="submit" className="min-h-11 md:min-h-9">Preview</Button>
+        <div className="flex min-w-0 items-end">
+          <Button type="submit" className="min-h-11 w-full md:min-h-9">Preview</Button>
         </div>
       </form></FilterBar>
     </section>
