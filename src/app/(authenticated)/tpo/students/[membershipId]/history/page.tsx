@@ -49,23 +49,26 @@ export default async function TpoLearnerPlacementHistoryPage({
 
   return (
     <div className="min-w-0 space-y-4 min-[768px]:space-y-6">
-      <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-        ← Back to Students
-      </Link>
       <PageHeader
-        eyebrow="TPO · Students"
-        title={history.learner.displayName + " · Placement history"}
+         title={history.learner.displayName + " · Placement history"}
         description="Read-only application status, versioned round results, offer transitions and joining evidence across persisted placement seasons."
         actions={
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <Link
+            href="/tpo/students"
+            className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+          >← Back to Students</Link>
           <Link
             href={"/tpo/students/" +
               encodeURIComponent(history.learner.membershipId) + "/participation"}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground sm:w-auto md:min-h-9"
           >
             Participation decision
           </Link>
+          </div>
         }
       />
+      <Disclosure title="Placement history totals" className="min-w-0" contentClassName="pt-3">
       <section className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border min-[768px]:grid-cols-2 min-[992px]:grid-cols-4" aria-label="Placement history totals">
         {[
           ["Applications (all seasons)", history.total],
@@ -81,6 +84,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           </div>
         ))}
       </section>
+      </Disclosure>
       <p className="text-sm text-body">
         Membership status: {history.learner.membershipStatus}. Offer counts are historical
         versions, not necessarily distinct accepted placements. Joining is confirmed only
@@ -110,6 +114,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                 Applied {dateFormat.format(new Date(item.submittedAt))} IST ·
                 Channel: {item.channel}
               </p>
+              <Disclosure title="Application status history" className="min-w-0 border-t border-border pt-3" contentClassName="pt-3">
               <section aria-label="Application status changes">
                 <h3 className="mb-2 font-semibold text-foreground">
                   Application status history
@@ -129,7 +134,8 @@ export default async function TpoLearnerPlacementHistoryPage({
                   </ul>
                 )}
               </section>
-              <div className="grid gap-4 min-[992px]:grid-cols-2">
+              </Disclosure>
+              <div className="grid min-w-0 gap-4 xl:grid-cols-2">
                 <section>
                   <h3 className="mb-2 font-semibold text-foreground">
                     Applied round results ({item.appliedRounds.length})
@@ -169,7 +175,8 @@ export default async function TpoLearnerPlacementHistoryPage({
                   </Disclosure>
                 </section>
                 <section>
-                  <h3 className="mb-2 font-semibold text-foreground">
+                  <Disclosure title={"Offer history ("+item.offers.length+" version(s))"} className="min-w-0" contentClassName="pt-3">
+                  <h3 className="sr-only">
                     Offer history ({item.offers.length} version(s))
                   </h3>
                   {item.offers.length === 0 ? (
@@ -206,6 +213,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                       ))}
                     </ul>
                   )}
+                  </Disclosure>
                 </section>
               </div>
             </article>
@@ -227,6 +235,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           ) : null}
         </div>
       </nav>
+      <Disclosure title="History sources and limitations" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Source is registered in-app placement data, including archived historical drives.
         External offers, registration choices and background verification are not
@@ -235,6 +244,7 @@ export default async function TpoLearnerPlacementHistoryPage({
         reasons and messaging are not displayed. No learner eligibility is changed
         on this page.
       </p>
+      </Disclosure>
     </div>
   );
 }
