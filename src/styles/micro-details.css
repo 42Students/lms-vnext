@@ -60,12 +60,13 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12);
 }
 
-/* Legacy: components___accessibility.scss:49-60 — 50ms touch press,
-   scale .98 and opacity .9. Avoid any dialog, input or press action that
-   already has its own transform; native cards remain interactive. */
-@media (hover: none) and (prefers-reduced-motion: no-preference) {
+/* Legacy: components___accessibility.scss:49-60,116-124 — on touch,
+   tappable cards press to .98 scale and .9 opacity. The visual pressed state
+   is preserved for reduced-motion users; only its 50ms tween is suppressed.
+   Exclude disabled/actions with their own component-specific transforms. */
+@media (hover: none) {
   main :where([role="button"]:not([data-slot="button"]):not([aria-disabled="true"]),
-    [data-slot="card"][role="button"]):active:not(:where([data-unskin], [data-unskin] *)) {
+    [data-slot="card"][role="button"]:not([aria-disabled="true"])):active:not(:where([data-unskin], [data-unskin] *)) {
     transform: scale(0.98);
     opacity: 0.9;
     transition: transform 0.05s ease, opacity 0.05s ease;
@@ -154,18 +155,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    Existing table heading borders and sticky position remain intact.
    No shadow or layout override is applied here. */
 
-/* Legacy: components___variables.scss:253-259 normal 250ms material easing;
-   components___antddesign.scss:7-13 uses a page-panel entrance. The opener's
-   state remains controlled by native details / the existing overlay component. */
-@media (prefers-reduced-motion: no-preference) {
-  [data-slot="dropdown-root"][open] > [data-slot="dropdown"]:not(:where([data-unskin], [data-unskin] *)) {
-    animation: lms-micro-dropdown-enter 250ms cubic-bezier(0.2, 0, 0, 1) both;
-  }
-}
-@keyframes lms-micro-dropdown-enter {
-  from { opacity: 0; translate: 0 -6px; }
-  to { opacity: 1; translate: 0 0; }
-}
+/* The generic dropdown has no legacy-specific 250ms/6px animation.
+   components___variables.scss:253 lists a default component timing token,
+   not a dropdown timing requirement. The shared overlay layer (chat-16)
+   already paints 200ms ease-out from -8px. Do not override that with an
+   inferred micro animation; leave ownership and native <details> intact. */
 
 /* Legacy: components___accessibility.scss:116-124; existing globals.css
    has the same 0.01ms emergency limit. This additionally avoids an entrance
@@ -248,8 +242,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 :where([data-slot="table"], [data-slot="data-table"])
   [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  /* Legacy-skin.css:511-514 gives a generic important thumb fill and
+     a normal 1px radius. This narrower exception keeps the measured admin
+     20% gray fill and 2px radius (admin-list-pages.scss:102-105,250-253). */
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 2px !important;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child {
   scrollbar-width: thin;
@@ -260,8 +257,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   height: 3px;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  /* Legacy-skin.css:511-514 gives a generic important thumb fill and
+     a normal 1px radius. This narrower exception keeps the measured admin
+     20% gray fill and 2px radius (admin-list-pages.scss:102-105,250-253). */
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 2px !important;
 }
 /* Legacy: old-lms-shell.css:41-43 — sidebar hover thumb 4px / 28% grey;
    chat-19 handles sidebar scroll chrome, do not duplicate/override it here. */
@@ -400,22 +400,22 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   }
 }
 
-/* Legacy: components___common.scss:141-147 — 200ms ease box-shadow on
-   .ln-card-hvr; legacy only applies this treatment to opted-in hover cards.
-   Restrict to explicit interactive card semantics so static page sections
-   remain flat per the old LMS single-canvas design. */
+/* Legacy: components___common.scss:141-147 — only cards explicitly
+   marked .ln-card-hvr receive a 200ms ease hover shadow. A generic role=button
+   adds focus/touch feedback in accessibility.scss, NOT a hover elevation:
+   avoid elevating every interactive [data-slot=card] by accident. */
 @media (hover: hover) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)):hover {
+  main .ln-card-hvr:not(:where([data-unskin], [data-unskin] *)):hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)) {
+  main .ln-card-hvr:not(:where([data-unskin], [data-unskin] *)) {
     transition: box-shadow 200ms ease;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr) {
+  main .ln-card-hvr {
     transition: none !important;
   }
 }

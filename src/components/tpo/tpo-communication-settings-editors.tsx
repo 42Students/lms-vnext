@@ -6,6 +6,7 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
+import { InlineNotice } from "@/components/ui/inline-notice";
 
 type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
@@ -48,8 +49,8 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   <p className="text-xs text-muted-foreground">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
    className="min-h-11 md:min-h-9 print:hidden">Save</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm">{notice}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;
 }
 export function TpoEmailSignatureEditor({initial,version}:{initial:string;version:string|null}){
@@ -87,8 +88,8 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
   <p className="text-xs text-muted-foreground print:hidden">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value}
    className="min-h-11 md:min-h-9 print:hidden">Save</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm">{notice}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;
 }
 
@@ -126,7 +127,7 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
   <p className="text-xs text-muted-foreground">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===months}
    className="min-h-11 md:min-h-9 print:hidden">Save</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm">{notice}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;
 }

@@ -24,10 +24,11 @@ export default async function HrMessagesPage({searchParams}:{
   collegeId:raw.collegeId,unreadOnly:raw.unreadOnly,page:raw.page,q:raw.q,
  });
  if(!query.success)return <div className="min-w-0 max-w-full space-y-4">
-  <PageHeader title="Notifications"/>
-  <Link href="/hr/conversations" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter conversations</Link>
+  <PageHeader title="Notifications"
+   actions={<Link href="/hr/conversations"
+     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">Recruiter conversations</Link>}/>
   <ErrorState title="Invalid inbox filter." description="Review the college, search and unread options."
-   action={<Link href="/hr/notifications" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/>
+   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Reset</Link>}/>
  </div>;
  const result=await listHrNotifications(context,query.data);
  const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -36,9 +37,16 @@ export default async function HrMessagesPage({searchParams}:{
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."
-   actions={<Link href="/hr/conversations" className="inline-flex min-h-9 max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-     Open recruiter conversations
-   </Link>}/>
+   actions={<>
+     <Link href="/hr/conversations" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
+       Open recruiter conversations
+     </Link>
+     {result.status==="READY"?<Link
+       href={"/api/placements/recruiter/notifications/export?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)}
+       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
+       Export scoped notifications CSV
+     </Link>:null}
+   </>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    <NeedsDoingChips label="Authorized colleges:"
@@ -69,12 +77,7 @@ export default async function HrMessagesPage({searchParams}:{
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
-   <div className="flex justify-end">
-     <Link href={"/api/placements/recruiter/notifications/export?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-       Export scoped notifications CSV
-     </Link>
-   </div>
+
    {result.rows.length?<div className="space-y-5">
      <p className="text-xs text-muted-foreground">Grouped by drive within this page only. This is not a conversation thread.</p>
      {groupHrNotificationPage(result.rows).map(group=><section key={group.jobId}

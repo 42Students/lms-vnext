@@ -45,7 +45,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   finally{setSaving(false);}
  }
  const groups=[...new Set(keys.map(spec=>spec.group))];
- return <section aria-label="Edit Tenant Settings" className="space-y-5 border-b border-border pb-5">
+ return <section aria-label="Edit Tenant Settings" className="space-y-5 border-b border-border pb-5 print:hidden">
   <h2 className="text-lg font-semibold text-foreground">Edit Tenant Settings</h2>
   <p className="text-sm text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>
@@ -58,13 +58,13 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
       onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
-      className="min-h-11 min-[768px]:min-h-9 w-full"/>:
+      className="min-h-11 md:min-h-9 w-full"/>:
       <Input type={spec.type==="int"||spec.type==="decimal"?"number":"text"}
        min={"min" in spec?spec.min:undefined} max={"max" in spec?spec.max:undefined}
        step={spec.type==="int"?1:spec.type==="decimal"?"any":undefined}
        value={draft[spec.key]??""} maxLength={4096}
        onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
-       className="min-h-11 min-[768px]:min-h-9 w-full"/>}
+       className="min-h-11 md:min-h-9 w-full"/>}
      {"min" in spec&&spec.min!==undefined?<span className="text-xs text-muted-foreground">
        Range {spec.min}–{"max" in spec?spec.max:undefined}</span>:null}
     </label>)}
@@ -72,7 +72,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </fieldset>)}
   <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries}/>
   <div className="flex flex-wrap items-center gap-3">
-   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} className="min-h-11 min-[768px]:min-h-9" onClick={()=>void save()}>
+   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} className="min-h-11 md:min-h-9" onClick={()=>void save()}>
     {saving?"Saving…":"Save "+changed.length+" changed setting"+(changed.length===1?"":"s")}
    </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>
@@ -86,7 +86,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    onConfirm={()=>{void save(true);}}>
     <div className="space-y-2 text-sm text-body">
      <p>Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. {changed.length} changed setting(s); {changed.filter(item=>item.dangerous).length} high impact.</p>
-     <ul role="region" aria-label="High-impact settings review" tabIndex={0} className="max-h-48 list-disc space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] pl-5 focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     <ul role="region" aria-label="High-impact settings review" tabIndex={0} className="max-h-48 list-disc space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] pl-5 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       {changed.map(spec=><li key={spec.key} className="break-all">{spec.label} ({spec.key})</li>)}
      </ul>
      <p>Blank values restore the source default. These saved overrides do not automatically reconfigure deployment-managed authentication or SMS services.</p>
@@ -94,7 +94,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </ConfirmDialog>
   {results.length>0?<div role="status" className="space-y-2">
    <h3 className="font-semibold text-foreground">Save results</h3>
-   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] text-sm focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
+   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] text-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
     <strong className="break-all">{row.key}</strong><StatusBadge tone={row.status==="SAVED"?"success":row.status==="DELETED"?"info":"error"}>{row.status}</StatusBadge><span className="min-w-0 break-words text-body">{row.message}</span></li>)}</ul>
   </div>:null}
  </section>;

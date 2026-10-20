@@ -30,7 +30,7 @@ export default async function LearnerPlacementCellPage({
   ]);
   const requestWorkspace=requestRead.value;
   return (
-    <div className="space-y-7">
+    <div className="min-w-0 space-y-6">
       <PageHeader title="Placement cell" />
 
       <section id="registration" className="scroll-mt-24" aria-label="Registration">
@@ -39,10 +39,10 @@ export default async function LearnerPlacementCellPage({
       <section className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
-        <Link href="/learn/my-placements/support" className="mt-3 mr-4 inline-flex text-sm font-semibold text-primary-text">My support-request history →</Link>
-        <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
+        <Link href="/learn/my-placements/support" className="mr-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">My support-request history →</Link>
+        <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Read placement rules →</Link>
       </section>
-      <nav aria-label="Placement cell resources" className="flex flex-wrap gap-3">
+      <nav aria-label="Placement cell resources" className="flex min-w-0 flex-wrap gap-3">
         <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read all college notices →</Link>
         <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Placement-cell authored notices →</Link>
         <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
@@ -50,12 +50,12 @@ export default async function LearnerPlacementCellPage({
       {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
         <section role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
           Personal placement alerts are temporarily unavailable. Your official offers and requests remain accessible.
-          <Link href="/learn/my-placements/placement" className="ml-2 font-semibold text-primary-text underline">
+          <Link href="/learn/my-placements/placement" className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
             Retry personal alerts
           </Link>
         </section>
       )}
-      {!requestRead.available ? <p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="font-semibold text-primary-text underline">Retry requests</Link></p> : null}
+      {!requestRead.available ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry requests</Link></p> : null}
       {offerRows.length===0 ? (
         <section role="status" className="border-b border-border pb-5">
           <h2 className="text-base font-semibold text-foreground">Official offers</h2>

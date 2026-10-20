@@ -12,7 +12,7 @@ export default async function TpoLearnerBatchRegistrationHistory({params,searchP
  const {batchId,membershipId}=await params;
  const raw=await searchParams;
  const filters=tpoRegistrationHistoryQuery.safeParse({source:Array.isArray(raw.source)?raw.source[0]:raw.source,event:Array.isArray(raw.event)?raw.event[0]:raw.event});
- if(!filters.success)return <div role="alert">Invalid registration history filters. <Link href={"/tpo/batches/"+batchId+"/registrations/"+membershipId+"/history"}>Reset</Link></div>;
+ if(!filters.success)return <div role="alert">Invalid registration history filters. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/batches/"+batchId+"/registrations/"+membershipId+"/history"}>Reset</Link></div>;
  const data=await getTpoLearnerRegistrationHistory(await getCurrentRequestContext(),batchId,membershipId);
  const visible=filterTpoRegistrationEvents(data.events,filters.data);
  return <div className="min-w-0 space-y-5">

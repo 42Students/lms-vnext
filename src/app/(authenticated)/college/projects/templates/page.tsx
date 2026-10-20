@@ -8,6 +8,8 @@ import { ListToolbar } from "@/components/ui/list-toolbar";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { ProjectTemplateCatalogueExport } from "@/components/projects/project-template-catalogue-export";
@@ -22,11 +24,18 @@ export default async function CollegeProjectTemplatesPage({
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) return <ProjectAdminMissingCollege/>;
 
-  const templates =
-    await listAssignedProjectTemplates(
-      context,
-      collegeId,
-    );
+  const templateRead = await listAssignedProjectTemplates(context, collegeId)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}));
+  if(!templateRead.ok) return <div className="min-w-0 space-y-6">
+    <PageHeader title="Project templates"
+      description="Published project templates assigned to this college."/>
+    <ErrorState title="Project templates unavailable"
+      description="The assigned template catalogue could not be loaded. Your filters were not changed."
+      action={<Link href="/college/projects/templates"
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading templates</Link>}/>
+  </div>;
+  const templates = templateRead.value;
 
   const params = await searchParams;
   const rawSearch = params.q;
@@ -57,7 +66,7 @@ export default async function CollegeProjectTemplatesPage({
         className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View template</Link>},
   ];
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <ProjectAdminNav
         basePath="/college/projects"
         active="templates"
@@ -87,11 +96,12 @@ export default async function CollegeProjectTemplatesPage({
       {q ? <p role="status" className="text-sm text-body">{visible.length} of {templates.length} templates</p> : null}
       <DataTable caption="Assigned project templates" columns={columns} rows={visible}
         getRowKey={template=>template.assignmentId}
-        empty={<div role="status" className="space-y-3 text-sm text-body">
-          <p>{templates.length===0?"No project templates are currently assigned to this college.":"No project templates match this search."}</p>
-          {q?<Link href="/college/projects/templates"
-            className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear search</Link>:null}
-        </div>} />
+        empty={<EmptyState
+          title={templates.length===0?"No assigned project templates":"No matching project templates"}
+          description={templates.length===0?"No project templates are currently assigned to this college.":"No project templates match this search."}
+          action={q?<Link href="/college/projects/templates"
+            className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear search</Link>:undefined}
+        />} />
     </div>
   );
 }

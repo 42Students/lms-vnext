@@ -23,11 +23,9 @@ export default async function TrackerReportPage({
   const ready = trackerAdminRuntimeEnabled();
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Report an LMS issue" title="What went wrong?"
-      description="Pick the context, describe the problem, and submit." />
-    {isSuperAdmin(context)?<TrackerAdminNav />:
-      <Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-        My reports
-      </Link>}
+      description="Pick the context, describe the problem, and submit."
+      actions={!isSuperAdmin(context)?<Link href="/tracker/mine" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">My reports</Link>:undefined}/>
+    {isSuperAdmin(context)?<TrackerAdminNav />:null}
     {!ready ? <Banner tone="warning">
       <strong>Reports are temporarily unavailable.</strong>
       <span>Try again soon. Your report has not been submitted.</span>

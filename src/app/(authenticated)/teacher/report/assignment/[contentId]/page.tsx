@@ -45,7 +45,7 @@ export default async function FacultyAssignmentReportPage({
   } = report;
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <Link href="/teacher/allAssignments" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      <Link href="/teacher/allAssignments" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         ← My Assignments
       </Link>
       <PageHeader title={assignment.title} />
@@ -60,7 +60,7 @@ export default async function FacultyAssignmentReportPage({
             assignmentId:assignment.id,deliveryId:assignment.deliveryId,
             filter:"ALL",page:1,
           })}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
           Filter submissions and export
         </Link>
       </div>
@@ -125,7 +125,7 @@ export default async function FacultyAssignmentReportPage({
                   value={width} maximum={100} unit="percent" />
                 <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
-                 className="rounded-md border border-border p-2 text-sm [&>summary]:min-h-9 [&>summary]:px-0">
+                 className="rounded-[var(--lms-canvas-radius)] border border-border p-2 text-sm [&>summary]:min-h-11 md:[&>summary]:min-h-[var(--lms-control-height)] [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {submissions.filter(row=>{
                     if(row.gradingStatus!=="GRADED"||row.pointsAwarded===null||assignment.maxPoints<=0)return false;
@@ -191,7 +191,7 @@ export default async function FacultyAssignmentReportPage({
             Every currently eligible learner has submitted.
           </p>
         ) : (
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+          <ul className="mt-3 grid gap-2 md:grid-cols-2">
             {missingLearners.map((learner) => (
               <li
                 key={learner.membershipId}

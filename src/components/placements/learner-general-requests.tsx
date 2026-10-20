@@ -14,7 +14,7 @@ const kinds:readonly [Kind,string][]=[
  ["OFF_CAMPUS_OFFER","Off-campus offer"],["REGISTRATION_CHANGE","Registration change"],
  ["ABSENCE_DISPUTE","Absence dispute"],["OFFER_ACCEPTANCE_DISPUTE","Externally reported acceptance"],["CORRECTION_WITH_PROOF","Correction with proof"],
  ["PLACEMENT_AFTER_PLACEMENT","Placement after placement"]];
-const box="min-h-11 sm:min-h-9";
+const box="min-h-11 md:min-h-9";
 export function LearnerGeneralRequests({
  initialKind="OFF_CAMPUS_OFFER",initialApplicationId="",initialRoundId="",initialOfferId="",
 }:{initialKind?:Kind;initialApplicationId?:string;initialRoundId?:string;initialOfferId?:string}){
@@ -54,7 +54,7 @@ export function LearnerGeneralRequests({
    });
   }catch{setError("The request could not be sent. Your entered details are still here; please retry.");}
  }
- return <section aria-label="Other placement requests" className="space-y-3 border-b border-border pb-5">
+ return <section aria-label="Other placement requests" className="min-w-0 space-y-4 border-b border-border pb-5">
   <h2 className="text-lg font-semibold">Other placement requests</h2>
   <p className="text-sm">Tell your placement cell about an off-campus offer, registration change, disputed absence, record correction or a request to apply after placement.</p>
   <label className="grid gap-1 text-sm font-semibold text-body">Request kind<Select className={box} disabled={pending} value={kind}
@@ -75,7 +75,7 @@ export function LearnerGeneralRequests({
    {kind==="OFF_CAMPUS_OFFER"?"Annual CTC in LPA":
     kind==="ABSENCE_DISPUTE"?"Round ID":kind==="CORRECTION_WITH_PROOF"?"Corrected value":"Justification"}
    <Input className={box} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
-  </label>:target==="PLACEMENTS"?<label className="flex items-start gap-2 text-sm">
+  </label>:target==="PLACEMENTS"?<label className="flex min-h-11 min-w-0 items-start gap-2 py-2 text-sm">
    <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
    I request placement registration and consent to the placement rules.
   </label>:null}
@@ -85,12 +85,12 @@ export function LearnerGeneralRequests({
   <label className="grid gap-1 text-sm font-semibold text-body">Why are you requesting this?
    <Textarea className={box} rows={3} maxLength={2000} value={reason} onChange={e=>setReason(e.target.value)}/>
   </label>
-  <Button type="button" disabled={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send request"}</Button>
+  <Button className="max-md:min-h-11" type="button" disabled={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send request"}</Button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <h3 className="font-semibold">Request history</h3>
   {!rows.length?<p role="status" className="text-sm">No other placement requests recorded yet.</p>:
-   <ul className="space-y-2">{rows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+   <ul className="space-y-2">{rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-3 text-sm last:border-b-0">
     <strong>{row.kind.replaceAll("_"," ")}</strong> · {row.status.replaceAll("_"," ")}
     <p className="break-words">{row.reason}</p>
     {row.decisionNote?<p>Placement cell: {row.decisionNote}</p>:null}

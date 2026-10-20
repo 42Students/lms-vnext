@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -12,14 +13,13 @@ export function TpoRoundCheckIn({
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [target, setTarget] = useState<"PRESENT" | "ABSENT" | null>(null);
   const [error, setError] = useState<string | null>(null);
   if (!["WAITING", "PRESENT", "ABSENT"].includes(attendance) ||
       roundStatus === "CANCELLED" || roundStatus === "COMPLETED") return null;
   async function mark(status: "PRESENT" | "ABSENT") {
-    if (busy || !window.confirm(
-      "Confirm " + (status === "PRESENT" ? "checked-in" : "no-show") +
-      " for " + displayName + "? This records an audited attendance change.",
-    )) return;
+    if (busy) return;
+    setTarget(null);
     setBusy(true); setError(null);
     try {
       const response = await fetch(
@@ -42,18 +42,25 @@ export function TpoRoundCheckIn({
   return (
     <div className="mt-2 flex flex-wrap gap-2">
       {attendance !== "PRESENT" ? (
-        <Button variant="secondary" type="button" disabled={busy} onClick={() => void mark("PRESENT")}
-          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
+        <Button variant="secondary" type="button" disabled={busy} onClick={() => setTarget("PRESENT")}
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
           Mark checked-in
         </Button>
       ) : null}
       {attendance !== "ABSENT" ? (
-        <Button variant="secondary" type="button" disabled={busy} onClick={() => void mark("ABSENT")}
-          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
+        <Button variant="secondary" type="button" disabled={busy} onClick={() => setTarget("ABSENT")}
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
           Mark no-show
         </Button>
       ) : null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
+      <ConfirmDialog open={target !== null}
+        onOpenChange={next => { if (!next && !busy) setTarget(null); }}
+        title={"Confirm "+(target === "ABSENT" ? "no-show" : "checked-in")+"?"}
+        description={"Confirm "+(target === "ABSENT" ? "no-show" : "checked-in")+" for "+displayName+"? This records an audited attendance change."}
+        confirmLabel={target === "ABSENT" ? "Mark no-show" : "Mark checked-in"}
+        confirmVariant={target === "ABSENT" ? "danger" : "primary"} pending={busy}
+        onConfirm={() => { if (target) void mark(target); }}/>
     </div>
   );
 }

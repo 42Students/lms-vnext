@@ -514,3 +514,175 @@ Source scans: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/g
 Responsive source implications: **375px** and **700px** use one horizontal swipeable filter nav row, visible focus/44px targets; **768px+** wraps filter links within the available page width. The preparation error back link reaches 44px on phone and can use desktop height after 768px. No app rendering, screenshots, tests, TypeScript checking or CI in this turn; all 7 owner strict checklist items intentionally remain **unticked** pending executable proof.
 
 **Next exact file:** `src/app/(authenticated)/learn/my-placements/rules/page.tsx`, then `src/app/(authenticated)/learn/my-placements/placement/page.tsx` for remaining LRN-02 value/state verification. Other concurrent lanes may have modified main; sync with main before editing.
+
+## Learner rules, notices, offers and profile — source sweep 2026-10-20
+
+**North star:** all learner content continues to live inside the ONE authenticated white LMS page canvas; no replacement for vNext business text, data order, APIs, role gates, or status rules. Source-only edits were pushed to chatgpt/chat-1-b after first replaying this lane's earlier unmerged files onto `main` `fcabc6227301cac80742706822599d209309a1fb` (conflict-free at that comparison). A separate local pixel-diff and executable responsive proof has not been run, so no strict queue item is checked.
+
+### Value-by-value ledger — legacy values not approximations
+
+| Component/property/state | Old LMS exact source and value | Current learner source | Source result / remaining gap |
+|---|---|---|---|
+| Canvas and section structure | `docs/design/old-lms-pages.md:5-13`: one white 12px radius canvas, 1px #e5e9f0 border, 24px outer padding; ordinary sections only hairline separators | `my-placements/rules/page.tsx`, `profile/page.tsx`, `my-placements/offers/page.tsx`: redundant nested section wrappers replaced with `border-b border-border` and no second canvas | Source structural match; visual canvas supplied by shell owner |
+| Heading | `docs/design/old-lms-pages.md:6`: h1 ~30px/600, no small eyebrow above; shared PageHeader | `rules/page.tsx` removed `eyebrow="My Placements"`; `placement/page.tsx`, announcements, offers, profile use one PageHeader in their valid branch | Source match, actual h1 computed by shared UI owner |
+| Primary colour | `components___variables.scss:9-13`: #26bac7, hover #1e9aa8, text #1a95a1, pale #eff8fa | `--lms-primary`, `--lms-primary-hover`, `--lms-primary-text`, `--lms-primary-subtle` in learner links/chips/cards | Source token values verified in `src/app/globals.css:25-31`; computed/hover not rendered |
+| White and border | `components___variables.scss:21-45`: white #fff, border neutral-200 #e5e9f0, neutral-50 #fafbfc | `bg-surface`, `border-border`, `bg-[var(--lms-neutral-50)]` | Token match from `src/app/globals.css:32-45` |
+| Learner responsive cutoff | `components___learn-notifications.scss:9`: 767px last mobile pixel; >767px desktop tablet | All 10 audited files: no `sm:` or `min-[768px]:`; `md:` begins at 768px | Source match for breakpoint; browser layout/screenshot unverified |
+| Filter pill dimensions | `components___learn-notifications.scss:87-99`: 44px min height, 8px radius, 8px+16px padding, 14px font, 500 weight, 1.3 line-height | `profile/completeness/page.tsx`: `min-h-11 rounded-lg px-4 py-2 text-[14px] font-medium leading-[1.3]` and 44px even on desktop | Source match |
+| Filter default/hover | `components___learn-notifications.scss:100-116`: transparent/#6b7280, hover #26bac7, rgba teal .4 border/.05 background, transition .15s | `profile/completeness/page.tsx` default `bg-transparent text-[var(--lms-neutral-500)]`; hover exact rgba literal; 150ms transitions | Source match; real hover untested |
+| Filter active/focus | `components___learn-notifications.scss:117-125`: #26bac7 fill, white text, hover #1e9aa8; focus 2px teal outline/2px offset | Completion checklist selected item uses `bg-[var(--lms-primary)] text-[var(--lms-on-primary)] hover:bg-[var(--lms-primary-hover)]`, explicit `focus-visible:outline-2 outline-offset-2` | Source match |
+| Filter mobile scroll | `components___learn-notifications.scss:55-74`: max-width calc(100vw - 48px), flex nowrap, scrollbar hidden, overflow auto, desktop wrap | `profile/completeness/page.tsx`: `flex overflow-x-auto pb-2`, `md:flex-wrap md:overflow-visible md:pb-0` (no local max-width; parent constrains width) | Partial; exact max-width/scrollbar hiding not matched here |
+| Notice card geometry | `components___learn-notifications.scss:181-225`: border #e5e9f0 radius12, shadow 0 1px 2px rgba(0,0,0,.04), mobile padding16 desktop24 | `my-placements/announcements/page.tsx`: `rounded-xl border border-border bg-surface p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]` | Source match |
+| Notice hover and focus | `components___learn-notifications.scss:188-203`: shadow 0 2px 6px rgba(0,0,0,.06), border rgba(teal,.25), 200ms, focus 2px teal offset 2px | Announcements list item hover/shadow/transition/focus-within match properties, with `motion-reduce:transition-none` | Source match; focus-within isn't identical to element focus-visible, keyboard screenshot outstanding |
+| Empty UI | `components___learn-notifications.scss:314-348`: min-height180, 48px vertical/24px horizontal, 14px body, centred rich states | `my-placements/announcements/page.tsx` and offers: `min-h-[180px] bg-[var(--lms-neutral-50)] px-6 py-12` states | Source dimension match; existing EmptyState shared styles may differ |
+| Warning/error strip | `docs/design/old-lms-pages.md:7` and `components___variables.scss:75-85`: warning #d97706, subtle rgba(217,119,6,.1), thin left accent | `my-placements/placement/page.tsx`, offers: `border-l-2 border-warning bg-warning-subtle px-4 py-3` | Source token match, 2px vertical accent; full real computed style not measured |
+| Informational strip | `components___variables.scss:82-86`: info #26bac7 and subtle #eff8fa | `rules/page.tsx`, `profile/data-access/page.tsx`: `border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3` | Source token match |
+| Link touch target | `components___learn-notifications.scss:9-11`: >=44px on phone | `rules`, `placement`, `profile`, `data-access`, `academic-record` links use `min-h-11 md:min-h-9`; alerts snippets switch typography only at `md:` | Source match for inspected links |
+| Notification body typography | `components___learn-notifications.scss:258-287`: 13px phone, 14px >=768px, line-height1.5 | `learner-placement-alerts.tsx`: `text-[13px] leading-[1.5] md:text-[14px]` | Exact source size/line-height |
+| Profile sections | `docs/design/old-lms-pages.md:5-13`: no card-in-card, only genuinely separate object cards | `profile/page.tsx`: verification summary/status use `border-b`; `profile/data-access/page.tsx` notice slim info strip; academic record remains read-only | Source structure match, page contents unchanged |
+
+### Full-file grep-like inventory (read current GitHub source after writes)
+
+| File | Lines | Raw button/input/select/textarea | Hard-coded hex | `sm:` | Shared PageHeader occurrences | `min-h-11` tokens | `md:` utility tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `my-placements/rules/page.tsx` | 135 | 0 | 0 | 0 | 1 | 8 | 14 |
+| `my-placements/placement/page.tsx` | 96 | 0 | 0 | 0 | 1 | 9 | 9 |
+| `my-placements/announcements/page.tsx` | 266 | 0 | 0 | 0 | 1 | 18 | 20 |
+| `my-placements/offers/page.tsx` | 299 | 0 | 0 | 0 | 1 | 17 | 19 |
+| `placements/learner-general-requests.tsx` | 100 | 0 | 0 | 0 | — | 3 | 2 |
+| `placements/learner-placement-alerts.tsx` | 54 | 0 | 0 | 0 | — | 1 | 6 |
+| `profile/page.tsx` | 166 | 0 | 0 | 0 | 1 | 6 | 11 |
+| `profile/data-access/page.tsx` | 47 | 0 | 0 | 0 | 1 | 2 | 2 |
+| `profile/academic-record/page.tsx` | 35 | 0 | 0 | 0 | 1 | 1 | 2 |
+| `profile/completeness/page.tsx` | 79 | 0 | 0 | 0 | 1 | 2 | 5 |
+
+Scopes in table: `src/app/(authenticated)/learn/` for pages, `src/components/placements/` for components. Scans performed against **whole-file source text from GitHub**, not by running terminal grep, TSX parser or browser:
+- `/<(button|input|select|textarea)(?=\\s|>)/g` => 0 in each selected file.
+- `/#[0-9a-f]{6}\\b/gi` => 0 in each selected file.
+- `/\\bsm:/g` => 0 in each selected file.
+- `/min-\\[768px\\]:/g` => 0 in the three profile pages that formerly used this arbitrary breakpoint.
+- Parent section tags were counted and balanced in rules (6/6), placement (6/6), profile (4/4), data-access (3/3), academic-record (1/1), completeness (2/2); `announcements` 3/3 shared Buttons, `offers` 2/2.
+
+Suggested local exhaustive command **not executed**:
+```bash
+grep -RInE '<(button|input|select|textarea)([[:space:]>])|#[[:xdigit:]]{6}|sm:|min-\\[768px\\]:' \
+  'src/app/(authenticated)/learn' src/components/placements/learner-* \
+  src/components/attendance/learner-* --include='*.tsx'
+```
+
+### Source responsive proof (no screenshot or computed DOM)
+
+- **375px phone:** link touch targets >=44px; placement and profile facts single-column; options swipe where scrollable; notice cards get 16px padding and no additional page canvas.
+- **700px small tablet:** continues mobile design through old LMS's 767px boundary, not Tailwind's 640px default. Reusable tab/pill components remain single source of behaviour.
+- **768px tablet:** `md:` activates two-column academic facts and 24px notice/card padding; most standalone links can become 36px. Completion filters wrap but stay 44px like old legacy pills.
+- **1024px desktop:** third-column facts where relevant, page head remains shared PageHeader inside existing canvas, side-by-side status/figure cards only for discrete objects.
+
+**Still missing before strict ticks:** browser-side screenshot comparisons of default, active, hover, focus, disabled, loading, error and empty, full-tree grep beyond this set, TypeScript compile, and global computed skin parity. `LRN-01..LRN-07` remain **all OPEN**. Do not claim pixel-perfect achievement without these.
+
+Repeatable `scripts/codemods/chat1-learner-page-breakpoints.cjs` covers 8 learner-owned pages, dry-run by default and checks TSX syntax before optional apply; written, not executed.
+
+**Next file:** `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`, followed by `src/app/(authenticated)/learn/my-placements/jobs/page.tsx` remaining source-level state and action-value checks.
+
+## Placement schedule, loading/error states and profile checklist — additional source pass (2026-10-20)
+
+These source changes preserve the existing vNext page contents and authorization. They adjust control chrome, card geometry, mobile breakpoint and empty/error containers, **not** the placement eligibility, interview attendance, request semantics, or data.
+
+### Additional old-LMS value proof
+
+| Element / variant | Legacy exact source value | Adjusted learner source property | Outcome |
+|---|---|---|---|
+| Schedule round card default | `components___learn-notifications.scss:184-195`: 1px #e5e9f0, white background, radius12, `0 1px 2px rgba(0,0,0,.04)` | `my-placements/schedule/page.tsx` each of 3 article branches: `rounded-xl border border-border bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.04)]` | Source match |
+| Schedule card inside | `components___learn-notifications.scss:210-221`: padding 16px <=767px, 24px >=768px | `p-4 md:p-6` in scheduled, undated and past records | Source match |
+| Schedule card hover | `components___learn-notifications.scss:191-201`: teal border rgba(38,186,199,.25), `0 2px 6px rgba(0,0,0,.06)`, 200ms | `hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] duration-200`, motion reduce disabled | Source match |
+| Schedule warnings | `old-lms-pages.md:7`; `components___variables.scss:76-82`: slim amber alert, rgba(217,119,6,.10), #d97706 left accent | Confirmed-attendance and marked-absent cues `border-l-2 border-warning bg-warning-subtle px-4 py-3` | Source match |
+| Schedule empty | `components___learn-notifications.scss:314-348`: min-height180px, padding 48px vertical / 24px horizontal, centered | Coming/past branches `min-h-[180px] px-6 py-12 text-center` | Source dimensions match |
+| Recoverable route error | `docs/design/old-lms-pages.md:5-13`: no duplicate page canvas or center-aligned nested block, one shared error state and retry | Ten learner `my-placements/**/error.tsx` files: all centered **action rows removed** (`items-center gap-3`), retry Buttons shared and 44px on phone | Source-level align; shared ErrorState centering is **not** overridden |
+| Retry hit area | `components___learn-notifications.scss:9-11`: 44px min through 767px | Retry Buttons `max-md:min-h-11` or `min-h-11`; Back links `min-h-11 md:min-h-9` | Source match |
+| Route loading | `old-lms-pages.md:5-13`: one canvas, left-aligned PageHeader, loading state in body | Five loader files `{rules,placement,offers,applications,assessments}/loading.tsx`: `min-w-0 space-y-5/6` wrapping one PageHeader and one shared LoadingState | Source structural match; shared spinner rendering not verified |
+| Filter date breakpoint | `components___learn-notifications.scss:9-10`: 767px mobile limit | Every listed route error `sm:min-h-9` corrected to `md:min-h-9`; `profile/completeness` filter `md:flex-wrap`, 44px pill even when wider | Source match |
+| Filter scroll masking | `components___learn-notifications.scss:56-74`: `calc(100vw - 48px)` max width, no visible scrollbar, overflow auto mobile | `profile/completeness/page.tsx` nav now `max-w-[calc(100vw-48px)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full` | Source match |
+| Suspense loading | `old-lms-pages.md`: no handwritten blank placeholder where a shared loader exists | `my-placements/jobs/page.tsx` now uses shared `PageLoading variant="form"` (instead of one plain p), `applications/page.tsx` keeps same shared loader and retry action gets 44px phone hit target | Source structural match, live spinner unverified |
+
+### Full-file state proof (GitHub source read, not a shell grep or running TSX)
+
+| Path under `src/app/(authenticated)/learn/my-placements/` | Lines | Raw controls | Literal six-digit hex | `sm:` | Shared Button tags | 44px touch tokens |
+|---|---:|---:|---:|---:|---|---:|
+| `rules/error.tsx` | 29 | 0 | 0 | 0 | 1/1 | 2 |
+| `placement/error.tsx` | 27 | 0 | 0 | 0 | 1/1 | 2 |
+| `offers/error.tsx` | 29 | 0 | 0 | 0 | 1/1 | 2 |
+| `announcements/error.tsx` | 12 | 0 | 0 | 0 | 1/1 | 1 |
+| `preparation/error.tsx` | 20 | 0 | 0 | 0 | 1/1 | 1 |
+| `support/error.tsx` | 14 | 0 | 0 | 0 | 1/1 | 2 |
+| `applications/error.tsx` | 29 | 0 | 0 | 0 | 1/1 | 2 |
+| `assessments/error.tsx` | 27 | 0 | 0 | 0 | 1/1 | 2 |
+| `interviews/error.tsx` | 27 | 0 | 0 | 0 | 1/1 | 2 |
+| `calendar/error.tsx` | 13 | 0 | 0 | 0 | 1/1 | 2 |
+| `rules/loading.tsx` | 13 | 0 | 0 | 0 | — | 0 |
+| `placement/loading.tsx` | 13 | 0 | 0 | 0 | — | 0 |
+| `offers/loading.tsx` | 15 | 0 | 0 | 0 | — | 0 |
+| `applications/loading.tsx` | 13 | 0 | 0 | 0 | — | 0 |
+| `assessments/loading.tsx` | 13 | 0 | 0 | 0 | — | 0 |
+
+In the five loading files, source reads show exactly one PageHeader and one shared LoadingState per file. The other existing routes with shared `GracefulPageLoading` and `GracefulErrorBoundary` were inspected but not rewritten when already source-compliant.
+
+Scan patterns applied to full GitHub file source: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:/g`, `/<Button(?=\\s|>)/g`, `/<\\/Button>/g`. Counts are explicitly **not from a local shell**, because this lane was instructed not to run code/CI. Reproduction:
+```bash
+grep -RInE '<(button|input|select|textarea)([[:space:]>])|#[[:xdigit:]]{6}|sm:' \
+  'src/app/(authenticated)/learn/my-placements' --include='*.tsx'
+```
+Expected **selected 15-file subset**: zero matches; full route tree remains subject to orchestrator verification.
+
+### Responsive/no-regression proof (source-level only)
+
+**375px:** single-column status text, retry and back controls >=44px, canvas not doubly padded; date/round link hit target 44px, warning is slim accent strip. **700px:** still mobile, since `sm:` was corrected; tabs/pills scroll horizontally if needed. **768px:** conditional `md:` can reduce link height to 36px while keeping page head and controls within old LMS layout; schedule articles get 24px padding. **1024px:** existing row/columns and query/deep links unchanged. Retry handlers, membership guards, buttons' disabled/pending conditions, URL state and render panel identity were not changed. Shared UI component files remain untouched.
+
+`scripts/codemods/chat1-learner-placement-route-states.cjs` written with a dry-run default, 10 explicitly owned route-error files, replacements for `sm:`, retry and centered row, TSX compiler parse guard; **not run**.
+
+**Strict status: LRN-06 OPEN**, as is every other LRN-01..07 item. Missing: actual phone/tablet screenshots, mouse/keyboard hover/focus proof, computed values, full-tree zero-remaining-instances grep, local parser/typecheck, loading/error flows and global skin side-by-side comparison.
+
+**Next file:** `src/app/(authenticated)/learn/my-placements/announcements/page.tsx` personal search styles and `src/app/(authenticated)/learn/profile/completeness/page.tsx` (source fixes already made; rendered value proof remains), then `src/app/(authenticated)/learn/projects/page.tsx` LRN-05 sweep.
+
+## Learner projects entry and detail — source clone pass (2026-10-20)
+
+The learner Projects route pages were scoped to this lane; **project core workspace components** remain in their original owning lane and were not altered. Four page-level sources inspected and updated:
+`learn/projects/page.tsx`, `learn/projects/[projectId]/{page,error,loading}.tsx`. Existing membership-scoped project loader, permission gates, workspace panels, tasks, status and query validation remain untouched.
+
+| Property/state | Old LMS value and source | vNext file value / state | Source result |
+|---|---|---|---|
+| Disabled module | `old-lms-pages.md:5-13`: one content canvas with inline status; no nested pane | `projects/page.tsx` disabled branch `min-w-0 space-y-4`, one PageHeader, existing text unchanged | Source structural match |
+| Project pagination | `components___learn-notifications.scss:9-11`: minimum 44px mobile links | `projects/page.tsx`: `[&_a]:min-h-11 md:[&_a]:min-h-9`, `min-w-0` wrapper, no nested scroll | Source touch match; visual proof missing |
+| Project detail page actions | `components___learn-notifications.scss:9-10`: 767px mobile threshold, 44px hit | `projects/[projectId]/page.tsx`: all 4 legacy `sm:min-h-9` converted to `md:min-h-9` | Source breakpoint match |
+| Detail stale task state | `old-lms-pages.md:7`, `components___variables.scss:9-13`: slim pale info (#eff8fa) with #26bac7 accent | `projects/[projectId]/page.tsx`: `border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3` | Source token match; still read-only status |
+| Nested error page | `old-lms-pages.md:5-13`: left-aligned title/description/retry inside one page canvas; no center card | `projects/[projectId]/error.tsx`: `min-w-0 space-y-4`, left-aligned body `max-w-2xl`, wrap actions, retry Button `max-md:min-h-11`, back `md:min-h-9` | Source match; click flow unverified |
+| Nested loading | `old-lms-pages.md`: directory content should not show separate boxed card | `projects/[projectId]/loading.tsx`: `GracefulPageLoading shape="directory"` | Source-level structural match |
+
+### Full-file source grep / tag-balance proof (GitHub connector, not a local process)
+
+| File | Lines | Raw HTML controls | Hex literals | `sm:` old breakpoints | PageHeader source occurrences | 44px touch tokens | Shared Button pair / section pair |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `projects/page.tsx` | 215 | 0 | 0 | 0 | 2 (exclusive disabled/normal branches) | 1 | 0/0, 1/1 |
+| `projects/[projectId]/page.tsx` | 205 | 0 | 0 | 0 | 2 (invalid-filter and audit-only branches) | 4 | 0/0, 1/1 |
+| `projects/[projectId]/error.tsx` | 24 | 0 | 0 | 0 | 1 | 2 | 1/1, 1/1 |
+| `projects/[projectId]/loading.tsx` | 6 | 0 | 0 | 0 | 0 | 0 | 0/0, 0/0 |
+
+Regexes applied to fetched full strings: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:/g`, Button/section open-close counts. No code, app, CI or browser executed. Responsive *source-rule* comparison: 375px/700px both have 44px page-level links and same mobile content, 768px moves to optional 36px desktop targets and desktop controls, 1024px retains existing project tabs and board without another canvas. No computed DOM or screenshots.
+
+**Strict status:** LRN-05 still OPEN until project-workspace owner evidence, complete route-tree source coverage, mouse/focus/keyboard, rendered phone/tablet and old-LMS screenshot comparison exist.
+
+**Exact next file for source pass:** `src/app/(authenticated)/learn/notifications/page.tsx` (LRN-05 notifications page) and its owned route states, followed by `src/app/(authenticated)/learn/calendar/page.tsx` (calendar details).
+
+### Notifications and class schedule root source-only inspection (2026-10-20)
+
+No source modification was needed for `src/app/(authenticated)/learn/notifications/{page,error,loading}.tsx` or `src/app/(authenticated)/learn/calendar/page.tsx`. This is an **inspected but not counted as an edited file** set. Each normal route uses one PageHeader within one `min-w-0 space-y-6` canvas; notifications has shared `LearnerNotificationsInbox` in its separately owned `src/components/activity/` component, and calendar has shared `LearnerClassSchedule` in `src/components/academics/`. The latter two were not modified because of lane ownership.
+
+| Value/state | Legacy source | Inspected vNext page source | Verdict |
+|---|---|---|---|
+| Page heading | `old-lms-pages.md:5-13` one canvas/title/action | Notifications and Class Schedule each one PageHeader, no extra nested card | Source structure matches |
+| Error | `old-lms-pages.md` inline alert + visible retry | `notifications/error.tsx`: shared Alert, one PageHeader, shared Button retry and 44px mobile back to Home | Source structure matches |
+| Loading | `old-lms-pages.md`: directory-state skeleton, no nested card | `notifications/loading.tsx`: `GracefulPageLoading shape="directory"` | Source match |
+| Calendar action | `components___learn-notifications.scss:9-11`: >=44px mobile | `calendar/page.tsx`: attendance calendar action link `min-h-11 md:min-h-9` in `PageHeader.actions` | Source match |
+| Data/identity | Owner retains existing vNext content/access | Notifications service requires persisted learner membership; academic calendar filters validated, rendered by owned component | No source logic changed |
+
+**Source scan for those four inspected pages:** raw input/select/button/textarea: 0 each; `sm:` inappropriate breakpoint tokens: 0 each; hard-coded six-digit hex: 0 each. Phone at 375px and 700px stays in the mobile layout, 768px flips `md:` where present, desktop stays in existing authenticated canvas. Computed values, mobile screenshots and keyboard traversal remain unverified. LRN-05/06 remain open.
+
+**Next exact file:** `src/app/(authenticated)/learn/attendance/calendar/page.tsx` (LRN-05), then the learner attendance history and profile subpages requiring source proofs. Do not change shared `src/components/academics/**` or `src/components/activity/**` owned by other lanes.

@@ -1,5 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
+import {RecruiterResultReviewGrid} from "@/components/placements/recruiter-result-review-grid";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -366,9 +368,7 @@ export function RecruiterResultControls({
         if(outcome){event.preventDefault();draftSelectedOutcome(activeRoundId,outcome);}
       }}>
       {rounds.length === 0 ? (
-        <p className="m-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 text-sm text-muted-foreground">
-          The placement team has not configured any rounds yet.
-        </p>
+        <EmptyState title="No hiring rounds" description="The placement team has not configured any rounds yet."/>
       ) : (
         rounds.map((round) => {
           const evaluative =
@@ -382,9 +382,9 @@ export function RecruiterResultControls({
           return (
             <article
               key={round.id}
-              className="rounded-[var(--lms-radius-card)] border border-border bg-surface"
+              className="min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0"
             >
-              <div className="border-b border-border px-5 py-4">
+              <div className="border-b border-border pb-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="m-0 text-base font-semibold text-foreground">
                     {round.sequence}.{" "}
@@ -411,23 +411,23 @@ export function RecruiterResultControls({
                   <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
                   {([
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
-                  ] as const).map(([outcome,label])=><Button key={outcome} type="button"
+                  ] as const).map(([outcome,label])=><Button key={outcome} type="button" className="min-h-11 md:min-h-9"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
                     variant="secondary">
                     {label}
                   </Button>)}
-                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
+                  <Button type="button" className="min-h-11 md:min-h-9" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
                     onClick={undoDraftOutcome} variant="secondary">
                     Undo draft
                   </Button>
-                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
+                  <Button type="button" className="min-h-11 md:min-h-9" loading={bulkPending===round.id} disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
                     
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </Button>
-                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null}
+                  <Button type="button" className="min-h-11 md:min-h-9" disabled={bulkPending!==null||pendingKey!==null}
                     variant="secondary"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
@@ -450,22 +450,38 @@ export function RecruiterResultControls({
                     href={round.meetingUrl}
                     
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex min-h-9 items-center text-xs font-semibold text-primary-text hover:text-primary-hover"
+                    className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                   >
                     Open meeting →
                   </a>
                 ) : null}
               </div>
 
+              {evaluative&&round.participants.length>0?<div className="hidden min-w-0 md:block">
+                <RecruiterResultReviewGrid scopeKey={round.id}
+                  rows={round.participants.map(person=>{
+                    const draft=drafts[round.id+":"+person.applicationId];
+                    return {
+                      id:person.applicationId,
+                      applicant:person.displayName??"Candidate",
+                      email:person.email??"No email shared",
+                      outcome:person.result?.status==="APPLIED"?person.result.outcome:(draft?.outcome??"Not set"),
+                      score:person.result?.status==="APPLIED"?person.result.scorePercent:
+                        (draft?.scorePercent.trim()?Number(draft.scorePercent):null),
+                      waitlistRank:person.result?.status==="APPLIED"?person.result.waitlistRank:
+                        (draft?.outcome==="HOLD"&&draft.waitlistRank.trim()?Number(draft.waitlistRank):null),
+                      resultStatus:person.result?.status??"Not submitted",
+                      editHref:"#result-editor-"+round.id+"-"+person.applicationId,
+                    };
+                  })}/>
+              </div>:null}
               {!evaluative ? (
-                <p className="m-0 px-5 py-5 text-sm text-muted-foreground">
+                <p className="m-0 py-4 text-sm text-muted-foreground">
                   Informational rounds do not collect candidate outcomes.
                 </p>
               ) : round.participants.length ===
                 0 ? (
-                <p className="m-0 px-5 py-5 text-sm text-muted-foreground">
-                  No candidates are eligible for this round yet.
-                </p>
+                <EmptyState title="No eligible candidates" description="No candidates are eligible for this round yet."/>
               ) : (
                 <div className="divide-y divide-border">
                   {round.participants.map(
@@ -494,10 +510,11 @@ export function RecruiterResultControls({
 
                       return (
                         <div
+                          id={"result-editor-"+round.id+"-"+participant.applicationId}
                           key={
                             participant.applicationId
                           }
-                          className="grid gap-4 px-5 py-4 xl:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)]"
+                          className="grid min-w-0 scroll-mt-20 gap-4 py-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)]"
                         >
                           <div>
                             {canStage&&!applied?<label className="mb-2 flex items-center gap-2 text-xs text-body">
@@ -534,7 +551,11 @@ export function RecruiterResultControls({
                                       .status,
                                   )}
                                 </StatusBadge>
-                                <StatusBadge>
+                                <StatusBadge tone={
+                                  participant.result.outcome==="PASS"?"success":
+                                  participant.result.outcome==="FAIL"?"error":
+                                  participant.result.outcome==="HOLD"?"warning":"info"
+                                }>
                                   {humanize(
                                     participant
                                       .result
@@ -550,7 +571,7 @@ export function RecruiterResultControls({
                               The placement team applied this result. It is now part of the learner&apos;s official progression.
                             </p>
                           ) : canStage ? (
-                            <div className="grid gap-3 lg:grid-cols-2">
+                            <div className="grid min-w-0 gap-3 md:grid-cols-2">
                               <label>
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Outcome
@@ -715,7 +736,7 @@ export function RecruiterResultControls({
                                 </Select>
                               </label>
 
-                              <label className="lg:col-span-2">
+                              <label className="md:col-span-2">
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Candidate message
                                 </span>
@@ -748,9 +769,9 @@ export function RecruiterResultControls({
                                 />
                               </label>
 
-                              <div className="flex items-center gap-3 lg:col-span-2">
+                              <div className="flex flex-wrap items-center gap-3 md:col-span-2">
                                 <Button
-                                  size="sm"
+                                  size="sm" className="min-h-11 md:min-h-9" loading={pendingKey===key}
                                   disabled={
                                     pendingKey !==
                                     null || bulkPending !== null

@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useState} from "react";
 export function TpoNoticeAcknowledge({id}:{id:string}){
  const [read,setRead]=useState(false),[busy,setBusy]=useState(false);
@@ -19,6 +20,6 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
     }catch(e){setError(e instanceof Error?e.message:"Read status couldn't be saved");}
     finally{setBusy(false);}
    }}>{busy?"Saving…":read?"Read confirmed":"Mark notice read"}</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </div>;
 }

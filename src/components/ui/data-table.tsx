@@ -37,7 +37,7 @@ export type DataTableProps<Row> = {
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className }: DataTableProps<Row>) {
-  if(rows.length===0) return <div data-slot="data-table" aria-label={caption} className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:p-[var(--lms-canvas-padding)]", className)}>{empty}</div>;
+  if(rows.length===0) return <div data-slot="data-table" aria-label={caption} className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)]", className)}>{empty}</div>;
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
@@ -93,31 +93,31 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   });
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className={cx("min-w-0", className)}>
-    <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-[var(--lms-radius-md)] sm:border sm:border-[var(--lms-canvas-border)]">
-      <table className="block w-full border-separate border-spacing-0 text-left text-[13px] leading-5 tabular-nums sm:table sm:border-collapse sm:[&_tbody_tr:last-child_td]:border-b-0">
+    <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 md:rounded-[var(--lms-radius-md)] md:border md:border-[var(--lms-canvas-border)]">
+      <table className="block w-full border-separate border-spacing-0 text-left text-[13px] leading-5 tabular-nums md:table md:border-collapse md:[&_tbody_tr:last-child_td]:border-b-0">
         <caption className="sr-only">{caption ?? "Records"}</caption>
-        <thead className="hidden sm:table-header-group sm:bg-[var(--lms-white)]">
+        <thead className="hidden md:table-header-group md:bg-[var(--lms-white)]">
           <tr>{columns.map(col=><th key={col.key} scope="col" aria-sort={col.sortDirection}
-            className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] sm:sticky sm:top-0 sm:z-10 sm:bg-[var(--lms-white)] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
+            className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)] md:first:left-0 md:first:z-20",col.className)}>{col.header}</th>)}</tr>
         </thead>
-        <tbody className="block space-y-[var(--lms-space-3)] sm:table-row-group sm:space-y-0">
+        <tbody className="block space-y-[var(--lms-space-3)] md:table-row-group md:space-y-0">
           {prepared.map(item=><tr key={item.key} data-slot="data-table-row"
-            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:transition-colors sm:duration-[var(--lms-motion-fast)] sm:hover:bg-[var(--lms-white)] focus-within:border-[var(--lms-primary)] sm:focus-within:border-[var(--lms-canvas-border)] sm:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none">
+            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:table-row md:overflow-visible md:rounded-none md:border-0 md:p-0 md:transition-colors md:duration-[var(--lms-motion-fast)] md:hover:bg-[var(--lms-white)] focus-within:border-[var(--lms-primary)] md:focus-within:border-[var(--lms-canvas-border)] md:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none">
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
               return <td key={col.key} className={cx(
-                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[var(--lms-canvas-border)] sm:px-[var(--lms-space-4)] sm:py-[12px] sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-inherit",
+                "min-w-0 break-words py-1 text-body md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)] md:py-[12px] md:align-middle md:first:sticky md:first:left-0 md:first:z-10 md:first:bg-inherit",
                 phoneVisible?"block":"hidden",col.className,
               )}>
                 {phoneVisible && col.mobilePriority!=="action" ?
-                  <span className="mr-2 font-medium text-body sm:hidden">{col.mobileLabel??col.header}</span>:null}
+                  <span className="mr-2 font-medium text-body md:hidden">{col.mobileLabel??col.header}</span>:null}
                 {col===primary && (typeof content==="string"||typeof content==="number")
-                  ? <strong className="break-words text-base text-foreground sm:text-sm">{content}</strong>
+                  ? <strong className="break-words text-base text-foreground md:text-sm">{content}</strong>
                   : content}
               </td>;
             })}
-            {extra.length ? <td className="block min-w-0 py-1 sm:hidden">
+            {extra.length ? <td className="block min-w-0 py-1 md:hidden">
               <Disclosure title="More details" className="mt-2 pt-2">
                 <dl className="grid gap-[var(--lms-space-2)] text-[13px] leading-5">{extra.map(col=><div key={col.key} className="min-w-0">
                   <dt className="font-medium text-body">{col.mobileLabel??col.header}</dt>
@@ -125,7 +125,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
                 </div>)}</dl>
               </Disclosure>
             </td>:null}
-            {[...item.detailLinks.values()].some(Boolean) ? <td className="block min-w-0 py-1 sm:hidden">
+            {[...item.detailLinks.values()].some(Boolean) ? <td className="block min-w-0 py-1 md:hidden">
               <ul className="space-y-[var(--lms-space-2)]" aria-label="Fields on detail page">
                 {recoverable.filter(col=>item.detailLinks.get(col.key)).map(col=>
                   <li key={col.key}><Link href={item.detailLinks.get(col.key)!}
@@ -134,7 +134,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
                   </Link></li>)}
               </ul>
             </td>:null}
-            {item.detailHref ? <td className="block min-w-0 py-1 sm:hidden">
+            {item.detailHref ? <td className="block min-w-0 py-1 md:hidden">
               <Link href={item.detailHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View details</Link>
             </td>:null}
           </tr>)}

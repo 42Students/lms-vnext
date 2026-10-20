@@ -54,7 +54,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       <PageHeader title="Progress" />
       <ErrorState title="Invalid course progress filters"
         description="The search, offering status or page is invalid. No activity was loaded."
-        action={<Link href="/college/course-progress" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />
+        action={<Link href="/college/course-progress" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>} />
     </div>
   );
   const report=await getCollegeLearnerProgressReport(context,{
@@ -64,7 +64,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
   return <div className="min-w-0 overflow-x-clip space-y-4">
     <CollegeLearnerProgressReport data={report}/>
     <Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
-      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
       Export recorded course activity CSV
     </Link>
     <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} />
