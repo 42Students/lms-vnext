@@ -11,7 +11,7 @@ export default function Error({reset}: {
     <p className="m-0 text-sm text-body">
       The read failed; a missing display is not evidence that there are no records.
     </p>
-    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>
+    <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={reset}>
       Retry
     </Button>
   </section>;
