@@ -35,7 +35,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | probl
 - [x] `src/components/admin/super-admin-hr-detail-drawer.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/admin/super-admin-student-import-history.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/announcements/announcement-admin-workspace.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/attendance/admin-attendance-workspace.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/attendance/faculty-attendance-workspace.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/college/college-faculty-reassign-action.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/college/college-faculty-schedule-reassign.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
