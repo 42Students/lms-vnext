@@ -62,7 +62,7 @@ function FieldLabel({
   children: React.ReactNode;
 }) {
   return (
-    <span className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
+    <span className="mb-1.5 block text-sm leading-4 font-semibold text-body">
       {children}
     </span>
   );
