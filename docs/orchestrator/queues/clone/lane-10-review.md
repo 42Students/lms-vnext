@@ -6,9 +6,9 @@
 - [x] `src/app/(authenticated)/admin/courses/page.tsx`
 - [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/joining/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
 - [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx`
