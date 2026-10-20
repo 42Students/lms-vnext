@@ -195,20 +195,20 @@ export function TenantDomainManager({
   }
 
   return (
-    <div className="space-y-5">
-      <section className="border-t border-border pt-5 print:hidden">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
+      <section className="min-w-0 print:hidden">
         <form onSubmit={(event) => { event.preventDefault(); if (!creating && host.trim()) createDomain(); }}
-          className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+          className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
           <div>
             <label
               htmlFor="tenant-domain-host"
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               College hostname
             </label>
             <Input
               id="tenant-domain-host"
-              className="min-h-11 md:min-h-9"
+              className="min-h-11 w-full sm:w-auto md:min-h-9"
               value={host}
               onChange={(event) => setHost(event.target.value)}
               placeholder="lms.college.edu"
@@ -216,7 +216,7 @@ export function TenantDomainManager({
               autoCorrect="off"
               spellCheck={false}
             />
-            <p className="mt-2 text-xs leading-5 text-muted-foreground">
+            <p className="mt-[var(--lms-space-2)] max-w-[65ch] text-xs leading-5 text-muted-foreground">
               Enter only the hostname. Do not include
               https://, paths, ports, or credentials.
             </p>
@@ -252,12 +252,12 @@ export function TenantDomainManager({
             return (
               <section
                 key={domain.id}
-                className="min-w-0 border-t border-border pt-5"
+                className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"
               >
                 <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="m-0 break-all text-base font-semibold text-foreground">
+                      <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground [overflow-wrap:anywhere]">
                         {domain.host}
                       </h2>
                       <StatusBadge
@@ -286,12 +286,12 @@ export function TenantDomainManager({
                     </p>
                   </div>
 
-                  <div className="flex min-w-0 flex-wrap justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
+                  <div className="flex min-w-0 w-full flex-col items-stretch gap-[var(--lms-space-2)] print:hidden sm:w-auto sm:flex-row sm:flex-wrap md:justify-end">
                     {!domain.isVerified ? (
                       <Button
                         variant="secondary"
                         size="sm"
-                        className="min-h-11 md:min-h-9"
+                        className="min-h-11 w-full sm:w-auto md:min-h-9"
                         disabled={busy}
                         onClick={() =>
                           void runAction(
@@ -310,7 +310,7 @@ export function TenantDomainManager({
                       <Button
                         variant="secondary"
                         size="sm"
-                        className="min-h-11 md:min-h-9"
+                        className="min-h-11 w-full sm:w-auto md:min-h-9"
                         disabled={busy}
                         onClick={() => setPrimaryTarget(domain)}
                       >
@@ -323,7 +323,7 @@ export function TenantDomainManager({
                     <Button role="menuitem"
                       variant="danger"
                       size="sm"
-                      className="min-h-11 md:min-h-9"
+                      className="min-h-11 w-full sm:w-auto md:min-h-9"
                       disabled={busy}
                       onClick={() =>
                         setDeleteTarget(domain)
@@ -358,7 +358,7 @@ export function TenantDomainManager({
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Name
                         </dt>
-                        <dd className="mt-1 break-all rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
+                        <dd className="mt-1 break-words [overflow-wrap:anywhere] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
                           {dnsName(domain.host)}
                         </dd>
                       </div>
@@ -366,7 +366,7 @@ export function TenantDomainManager({
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Value
                         </dt>
-                        <dd className="mt-1 break-all rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
+                        <dd className="mt-1 break-words [overflow-wrap:anywhere] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
                           {dnsValue(
                             domain.verificationToken,
                           )}
@@ -420,7 +420,7 @@ export function TenantDomainManager({
           }
         }}
       >
-        {deleteTarget?.isPrimary ? <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type the full primary hostname
+        {deleteTarget?.isPrimary ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type the full primary hostname
           <Input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
             onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
