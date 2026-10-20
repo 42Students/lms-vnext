@@ -55,13 +55,13 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
   return <section aria-label="Saved issue views"
     className="border-b border-border pb-4">
     <h2 className="mb-2 font-semibold">Saved views</h2>
-    <div className="flex flex-wrap items-end gap-2">
-      <label className="grid gap-1 text-sm font-semibold">View name
+    <div className="flex min-w-0 flex-wrap items-end gap-2">
+      <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold md:w-[220px] md:basis-auto">View name
         <Input value={name} onChange={event=>setName(event.target.value)}
-          maxLength={60} className="min-h-11" placeholder="Name these filters"
+          maxLength={60} className="min-h-11 w-full" placeholder="Name these filters"
          />
       </label>
-      <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={save}
+      <Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={save}
        >
         Save current filters
       </Button>

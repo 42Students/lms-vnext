@@ -143,7 +143,7 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
           Production verified
         </label>
       </div>
-      <Button disabled={pending} loading={pending} onClick={save} className="min-h-11 md:min-h-9">
+      <Button disabled={pending} loading={pending} onClick={save} className="min-h-11 w-full md:min-h-9 md:w-auto">
         {pending ? "Saving…" : "Save workflow"}
       </Button>
 
@@ -153,9 +153,9 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
           <p className="text-sm font-semibold text-body">Does it work now?</p>
           <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
           <Textarea value={retestNote} maxLength={1000} placeholder="Optional retest note" onChange={(e) => setRetestNote(e.target.value)} />
-          <div className="flex gap-2">
-            <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 md:min-h-9">Works now</Button>
-            <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 md:min-h-9">Still broken</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 w-full md:min-h-9 md:w-auto">Works now</Button>
+            <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 w-full md:min-h-9 md:w-auto">Still broken</Button>
           </div>
         </div>
       ) : null}
