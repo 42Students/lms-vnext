@@ -144,3 +144,43 @@
 - Regressions found/fixed: 0. Read page/loading/error, authenticated shell, lane-14 proof, NotificationList/read API wiring, NotificationToolbar/mark-all confirmation, Alert, Button and GracefulErrorBoundary; invalid cursor recovery, All/Unread tab query and next-page cursor preserve contracts. No invalid JSX/import/prop regression observed.
 - Extra clutter/alignment: 0. Day headers, stacked phone action row, clear empty action and single older-notifications link have consistent legacy density.
 - Files changed: verified, no change. Source only; no runtime or CI.
+
+## 30. `src/app/(authenticated)/superadmin/[...legacy]/page.tsx`
+- Regressions found/fixed: 0. Read catch-all page, role gate, one-segment mapping model, query whitelist, loading/error/not-found and authenticated parent, PageHeader/ErrorState, GracefulPageLoading and GracefulErrorBoundary, plus lane-14 proof. Unknown destinations correctly call notFound; no dynamic route is invented or uncontrolled redirect query forwarded.
+- Extra clutter/alignment: 0. Route has no local content before redirect; not-found action/retry stay bound to one canvas at phone and tablet.
+- Files changed: verified, no change. Static only; no CI.
+
+## 31. `src/app/(authenticated)/superadmin/departments/page.tsx`
+- Regressions found/fixed: 0. Read alias, authorized legacyDepartmentDestination, loading/error, shared fallback primitives, authenticated layout and lane-14 proof. Branch chooses /admin/departments only for a super admin; unknown roles return /dashboard. No duplicate imports, JSX or props errors identified.
+- Extra clutter/alignment: 0. Named loading, error recovery and touch-safe retry are already consistent.
+- Files changed: verified, no change. No runtime or CI.
+
+## 32. `src/app/(authenticated)/superadmin/page.tsx`
+- Regressions found/fixed: 0. Read root alias, loading and error, authenticated layout, GracefulPageLoading, GracefulErrorBoundary and lane-14 proof; direct Next redirect remains exactly /admin/academics and is protected by destination. No JSX, import or wording regression.
+- Extra clutter/alignment: 0. Pure redirect has no duplicated page; recovery copy, canvas and phone CTA are consistent.
+- Files changed: verified, no change. Static only, no CI.
+
+## 33. `src/app/(authenticated)/superadmin/programs/page.tsx`
+- Regressions found/fixed: 0. Read route page/loading/error, protected legacyProgramDestination, parent shell and lane-14 proof. Role-aware program routing derives from Super Admin membership and retains fallback to dashboard for unauthorized callers; named loading and relevant error home target are intact.
+- Extra clutter/alignment: 0. No local controls to duplicate; bounded fallback and 375/768 retry geometry already match shared components.
+- Files changed: verified, no change. Static only, no CI.
+
+## 34. `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
+- Regressions found/fixed: 0. Read route/loading/error/not-found, Faculty parent permission layout, lane-14 proof, delivery-ID schema and authorized workspace, course display, FacultyCourseWorkspace and nested authoring, video, editing, review and preview components; checked shortcuts, lesson/assignment/quiz props, filters, report links, StatusBadge/Tabs/Disclosure contracts and empty/fallback routes. No broken JSX or import/prop mismatch found by static review.
+- Extra clutter/alignment: 0. Secondary shortcuts remain disclosed; blueprint rows and drilldowns preserve legacy hairline layout and mobile wrapping.
+- Files changed: verified, no change. Source only; no runtime or CI.
+
+## 35. `src/app/(authenticated)/teach/courses/page.tsx`
+- Regressions found/fixed: 0. Read route/loading/error, Faculty access layout, FacultyCourseList, auto-submit filter, list schema, Pagination, Disclosure, ScrollCue, Badge, Image, StatusBadge, Input and Select, lane-14 proof. Search/form names, authorized deliveries, pagination links, test ids and canonical route aliases unchanged; no invalid TSX found.
+- Extra clutter/alignment: 0. Compact course list and grouped filters adapt to 375/768, with assignment-empty and filtered-empty recovery.
+- Files changed: verified, no change. Static only; no CI.
+
+## 36. `src/components/hr/hr-drive-draft-form.tsx`
+- Regressions found/fixed: 0. Read entire drive draft form, round editor, off-campus URL and compensation fields, Zod schema and exact input/textarea/select contracts, ConfirmActionDialog/ConfirmDialog, InlineNotice, draft persistence, preview, guards and pending/receipt actions. Compared lane-14 polish evidence and routes from recruiter drive creation; handlers, draft fields, aria labels, validation, submission and copy remain intact.
+- Extra clutter/alignment: 1 — after successful request, align Go to Drives and Request another with Open the request as full-width phone actions; they return to compact auto-width at 768 without changing links or words.
+- Files changed: `src/components/hr/hr-drive-draft-form.tsx`. Static only; no runtime/CI.
+
+## 37. `src/components/hr/hr-unsent-drive-alert.tsx`
+- Regressions found/fixed: 0. Read saved-draft warning, cross-tab/focus storage refresh, scoped local and session lookup, discard action/confirmation, InlineNotice, Button, Alert and Link; checked lane-14 proof, preserved 44px controls, exact wording and draft persistence contract. No broken TSX, props or state transitions found.
+- Extra clutter/alignment: 0. Primary Continue and tertiary discard already form a touch-safe grouped row.
+- Files changed: verified, no change. Static only; no runtime/CI.

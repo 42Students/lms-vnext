@@ -237,9 +237,9 @@ export function HrDriveDraftForm({
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
         className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open the request</a>
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Go to Drives</a>
+        className="inline-flex min-h-11 w-full items-center justify-center min-[768px]:min-h-9 min-[768px]:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Go to Drives</a>
       <a href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Request another</a>
+        className="inline-flex min-h-11 w-full items-center justify-center min-[768px]:min-h-9 min-[768px]:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Request another</a>
     </div>
   </section>;
 
