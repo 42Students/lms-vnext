@@ -119,12 +119,12 @@ export default async function SuperAdminTenantSetup({
       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
-      {organizations.slice(0,20).map(o=><li key={o.id} className="break-words border-b border-border py-2">{o.name}</li>)}
+      {organizations.slice(0,20).map(o=><li key={o.id} className="break-words [overflow-wrap:anywhere] border-b border-border py-2">{o.name}</li>)}
      </ul>
      {organizations.length>20?<p className="mt-2 text-xs text-muted-foreground">First 20 shown; use Manage all for the full directory.</p>:null}
     </div>
     <div className="border-b border-border pb-4">
-     <div className="flex items-center justify-between gap-3">
+     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Colleges</h2>
       <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
      </div>

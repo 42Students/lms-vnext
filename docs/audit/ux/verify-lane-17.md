@@ -175,3 +175,23 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 31. Read the page/loading/error, `AdminScopedReadPage`, `CollegeStudentRegisterForm`, `CollegeStudentCsvImport`, import history, `SuperAdminStudentBulkAccess`, row lifecycle/edit/class-move controls, scoped register/filter-option models and parent layouts. Checked permissions, fail-closed registration choices, form validation, import preview/confirm, drawer/dialog states, bulk selection limit and roster empty/filter recovery.
 - Regressions found/fixed: 0. No broken JSX/imports or lost IDs/aria observed; register and CSV disclosures still preserve fields, selection and row action prop contracts are intact.
 - Extra clutter/alignment fixes (1): the roster's action-cell stack used `items-start` at phone widths, defeating the full-width mobile treatment already used by child controls. Stretch row action wrappers on phones and restore intrinsic widths from tablet upward. Files changed: `src/app/(authenticated)/admin/students/page.tsx`, proof, queue. Source-only, no code/CI.
+
+## Surface 32 — `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 32. Read create route/loading/error, `OrganizationCreateForm`, `CollegeCreateForm`, organization handoff model, scoped organization options, draft restoration, async guarded actions, optional address disclosure, validation/confirm paths, responsive forms and parent layouts.
+- Regression fixed (1): route error still rendered the full-screen `GracefulErrorBoundary` inside the authenticated canvas. Used the already backward-compatible in-shell fallback with `showHeader={false}`; existing route-specific Create tenant title, retry and telemetry stay intact.
+- Extra clutter/alignment fixes: 0. Native organization/college stages, back link, 44px phone CTAs and section borders align to legacy rhythm. Files changed: `src/app/(authenticated)/admin/tenants/create/error.tsx`, proof, queue. Source-only, no code/CI.
+
+## Surface 33 — `src/app/(authenticated)/admin/tenants/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 33. Inspected route/loading/error, tenant lifecycle query/service, table column/row links, status badges, CSV export and create/setup/domain actions, PageHeader, DataTable, Pagination, scope/error/empty/filtered states and shared admin layouts.
+- Regressions found/fixed: 0. Existing status/organization filters, CSV scope and safe hrefs, responsive controls, aria labels and styled legacy button variants match inspected component contracts.
+- Extra clutter/alignment fixes: 0. Four header actions retain mobile stacking and tablet wrap; search/filter, count, long IDs and clearable empty table retain their polished layout. Files changed: queue and proof only; no code/CI.
+
+## Surface 34 — `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 34. Read the route/loading/error, organization/college creation forms, `Tabs` navigation, `Card`, readiness summary and ordered journey model, query parser, service failure and scope guard branches. Verified structure/launch distinction, selected college requirement, scoped readiness report, link destinations and responsive overview.
+- Regressions found/fixed: 0. All tab links use renderPanel=false navigation, setup readiness stays fail-closed, checked route props/imports and fallback states; no broken TSX or dropped labels spotted.
+- Extra clutter/alignment fixes (2): wrap the Colleges panel heading/actions to prevent 375px collisions and allow college row codes to break anywhere for unusually long unspaced identifiers. Wording, links, scopes and typography are unchanged. Files: `src/app/(authenticated)/admin/tenants/setup/page.tsx`, proof, queue. No code run/CI.
+
+## Surface 35 — `src/app/(authenticated)/admin/verification/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 35. Read the route/loading/error, access and selected-college redirect guards, scoped empty-state/Browse colleges link, PageHeader, permission helpers and parent layouts. Reviewed no scope, forbidden, selected scope, and error path.
+- Regression fixed (1): the route's error component still rendered the full-screen shared recovery UI inside the authenticated canvas. Use the in-shell fallback with `showHeader={false}`, preserving the sole route-level Profile verification title, telemetry and retry.
+- Extra clutter/alignment fixes: 0. 44px Browse colleges CTA and original no-implicit-college safety text remain. Files: `src/app/(authenticated)/admin/verification/error.tsx`, proof, queue. Static review; no CI.
