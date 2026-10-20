@@ -26,7 +26,7 @@ export default async function TpoDriveDiscussion({params}:{
     action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Open Recruiter Messages</Link>}/>:<section aria-label="Recruiter conversations" className="space-y-3">
    <p role="status" className="text-sm text-body">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
    <ul className="divide-y divide-border">{data.threads.map(thread=><li key={thread.id} className="min-w-0 py-4">
-    <h2 className="break-words font-semibold">{thread.recruiterName?.trim()||"Recruiter"}</h2>
+    <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{thread.recruiterName?.trim()||"Recruiter"}</h2>
     {thread.lastPreview?<p className="mt-1 break-words text-sm text-body">{thread.lastPreview}</p>:null}
     <p className="text-sm text-body">{thread.count} recorded message(s) · {thread.unread} unread recruiter message(s)</p>
     <p className="text-xs text-muted-foreground">{thread.latestAt?

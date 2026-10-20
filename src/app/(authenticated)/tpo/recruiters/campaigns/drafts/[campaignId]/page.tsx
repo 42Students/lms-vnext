@@ -65,7 +65,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
     <TpoCampaignSendControl campaignId={campaignId} ready={deliveryReady}
       recipients={draft.total_recipients} status={draft.status}/>
     {recipients?.ready?<section aria-label="Campaign recipient statuses" className="space-y-3">
-     <h2 className="font-semibold">Recipients and delivery status</h2>
+     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recipients and delivery status</h2>
      <p className="text-xs text-muted-foreground">Names and recorded provider outcomes only. Sent means the email provider accepted the request, not that the recruiter read it.</p>
      {recipients.rows.length?<ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {recipients.rows.slice((page-1)*25,page*25).map(row=><li key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-[10px] text-sm">

@@ -52,7 +52,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link">Export filtered history as CSV</Link>
   </nav>
   <section aria-label="Email campaigns" className="space-y-3">
-   <h2 className="text-lg font-semibold text-foreground">Email campaigns</h2>
+   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Email campaigns</h2>
    {!drafts.ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
      {CAMPAIGN_DRAFT_UNAVAILABLE}
     </p>:drafts.rows.length===0?
@@ -76,11 +76,11 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </ul>}
    {!deliveryReady?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:null}
   </section>
-  <h2 className="text-lg font-semibold text-foreground">Delivery batch receipts</h2>
+  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
   {result.rows.length ? <ol className="grid gap-3 min-[768px]:grid-cols-2">
     {result.rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
-      <h2 className="break-words font-semibold text-foreground">
+      <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
         className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline-offset-2 hover:underline">{row.purpose}</Link>
       </h2>

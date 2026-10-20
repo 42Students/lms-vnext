@@ -59,7 +59,7 @@ export default async function TpoProfilePage() {
         aria-label="Your TPO profile"
         className="border-t border-border pt-5 min-[768px]:pt-6"
       >
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Account details
         </h2>
 
@@ -116,7 +116,7 @@ export default async function TpoProfilePage() {
         </dl>
       </section>
 
-      <p className="text-sm leading-6 text-muted-foreground">
+      <p className="text-sm text-muted-foreground leading-[1.6]">
         This page is read-only. Department information
         appears only when your own membership has a
         faculty profile linked to a department in your
