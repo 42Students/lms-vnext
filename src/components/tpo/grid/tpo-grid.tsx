@@ -29,7 +29,7 @@ import {gridClipboardTsv} from "./grid-export";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const quartz=themeQuartz.withParams({
- accentColor:"var(--lms-button-primary)",
+ accentColor:"var(--lms-primary)",
  backgroundColor:"var(--lms-white)",
  foregroundColor:"var(--lms-neutral-700)",
  borderColor:"var(--lms-canvas-border)",
