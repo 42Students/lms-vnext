@@ -16,9 +16,9 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
  const student=result.selected;
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Super Admin · Module Access" title="Student overrides and locks"
-   description={"Stored membership rules for "+(student.displayName||"Unnamed learner")+" in "+result.college.name+". No email or mobile details are exposed."} actions={<Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Learner access trace</Link>}/>
+   description={"Stored membership rules for "+(student.displayName||"Unnamed learner")+" in "+result.college.name+". No email or mobile details are exposed."} actions={<Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Learner access trace</Link>}/>
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history"}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
     View module override and lock history →
   </Link>
   <Alert tone="info">
