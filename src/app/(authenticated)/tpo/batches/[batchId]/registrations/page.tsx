@@ -68,7 +68,7 @@ export default async function BatchRegistrations({params,searchParams}:{
      {key:"learner",header:"Learner",mobileLabel:"Learner",mobilePriority:"primary" as const,
       cell:row=><strong className="break-words text-foreground">{row.name}</strong>},
      {key:"choice",header:"Choice",mobileLabel:"Choice",mobilePriority:"secondary" as const,
-      cell:row=><Badge tone={row.choice?"success":"warning"}>{row.choice?.replaceAll("_"," ")??"Not recorded"}</Badge>},
+      cell:row=><Badge tone={row.choice==="PLACEMENTS"?"success":row.choice===null?"warning":row.choice==="NOT_INTERESTED"?"neutral":"info"}>{row.choice?.replaceAll("_"," ")??"Not recorded"}</Badge>},
      {key:"source",header:"Recorded source",mobileLabel:"Recorded source",mobilePriority:"secondary" as const,
       cell:row=>row.source??"None"},
      {key:"updated",header:"Last recorded update",mobileLabel:"Last recorded update",mobilePriority:"secondary" as const,
