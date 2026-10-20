@@ -97,7 +97,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
       onClick={()=>{setEditing(material.id);setDraft({title:material.title,notes:material.notes??"",externalUrl:material.externalUrl??""});}}>
       Edit
      </Button>
-     <Button size="sm" type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
+     <Button size="sm" type="button" variant="danger" className="min-h-11 md:min-h-9" disabled={busy}
       onClick={()=>void submit("REMOVE",material.id)}>Remove</Button>
     </div>:null}
    </li>)}
@@ -117,7 +117,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      rows={2} className="min-h-28" disabled={busy}/>
    </label>
    <div className="flex gap-2">
-    <Button size="sm" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>
+    <Button size="sm" type="button" className="min-h-11 md:min-h-9" loading={busy} disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>
      {busy?"Saving…":editing?"Save material":"Add material"}
     </Button>
     {editing?<Button size="sm" type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
