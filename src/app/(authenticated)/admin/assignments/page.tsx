@@ -47,14 +47,17 @@ export default async function SuperAdminAssignmentsPage({
         className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline">Retry loading assignments</Link>} />
   </div>;
   const data=dataResult.value;
-  return <div className="min-w-0 space-y-4">
-    <PageHeader title="Assignments" actions={<a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)]">Export assignments.csv</a>} />
+  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
+    <PageHeader title="Assignments" />
     {lessonsResult.status==="fulfilled"
       ?<CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>
       :<Alert tone="warning" role="status">
         Assignment creation options are temporarily unavailable. Existing assignments remain visible.
       </Alert>}
     <AdminAssessmentDirectory data={data} showHeader={false} />
+    <div className="flex min-w-0 justify-start print:hidden">
+      <a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)]">Export assignments.csv</a>
+    </div>
   </div>;
 }

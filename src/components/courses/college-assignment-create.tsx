@@ -86,13 +86,13 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
   finally{lock.current=false;setPending(false);}
  }
- return <section className="space-y-3 border-b border-border pb-5">
-  <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 className="font-semibold text-foreground">Assignments</h2>
+ return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
+  <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
+   <div className="min-w-0"><h2 className="font-semibold text-foreground">Assignments</h2>
     <p className="text-xs text-muted-foreground">Create a shared or Section-specific assignment draft.</p>
    </div>
-   <Button type="button" variant="secondary" disabled={!lessons.length||pending}
-    className="min-h-11 md:min-h-9"
+   <Button type="button" variant="primary" disabled={!lessons.length||pending}
+    className="min-h-11 w-full min-[768px]:w-auto md:min-h-9"
     onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">
@@ -137,12 +137,12 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <Checkbox checked={keepOpen} disabled={pending}
      onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
    </label>
-   <div className="flex flex-wrap gap-2 md:col-span-2">
+   <div className="flex min-w-0 flex-col gap-2 md:col-span-2 md:flex-row md:items-center">
     <Button type="button" loading={pending} disabled={pending||!chosen||!title.trim()} onClick={()=>setConfirmCreate(true)}
-     className="min-h-11 md:min-h-9">
+     className="min-h-11 w-full md:min-h-9 md:w-auto">
      {pending?"Creating…":"Create draft"}</Button>
     <Button type="button" variant="secondary" disabled={pending} onClick={close}
-     className="min-h-11 md:min-h-9">Cancel</Button>
+     className="min-h-11 w-full md:min-h-9 md:w-auto">Cancel</Button>
    </div>
   </div>:null}
   <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
