@@ -33,20 +33,16 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const average=report.rows.map(row=>studentCourseCompletion(row))
   .filter((n):n is number=>n!==null);
  const mean=average.length?Math.round(average.reduce((a,n)=>a+n,0)/average.length):null;
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title="Student Course Progress"
     description="Persisted video completion, assignment submissions and quiz attempts for active enrolled students in the selected course offering."
-    actions={<div className="flex flex-wrap items-center gap-2">
-      {back}
-      <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] transition-colors hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Export CSV</a>
-    </div>}
+    actions={back}
   />
-  <dl className="grid gap-[var(--lms-space-4)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-4">
-   <div className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:border-b-0 md:border-r md:pr-[var(--lms-space-4)] md:last:border-r-0"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Average completion</dt><dd className="text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{mean===null?"Not measured":mean+"%"}</dd></div>
-   <div className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:border-b-0 md:border-r md:pr-[var(--lms-space-4)] md:last:border-r-0"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Students</dt><dd className="text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{report.rows.length}</dd></div>
-   <div className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:border-b-0 md:border-r md:pr-[var(--lms-space-4)] md:last:border-r-0"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Not started</dt><dd className="text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
-   <div className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:border-b-0 md:border-r md:pr-[var(--lms-space-4)] md:last:border-r-0"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Items measured</dt><dd className="text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{lowestMeasured===highestMeasured?
+  <dl className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-4)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-4">
+   <div className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] pb-[var(--lms-space-3)] md:border-b-0 md:border-r md:pr-[var(--lms-space-4)] md:last:border-r-0"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Average completion</dt><dd className="text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{mean===null?"Not measured":mean+"%"}</dd></div>
+   <div className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] pb-[var(--lms-space-3)] md:border-b-0 md:border-r md:pr-[var(--lms-space-4)] md:last:border-r-0"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Students</dt><dd className="text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{report.rows.length}</dd></div>
+   <div className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] pb-[var(--lms-space-3)] md:border-b-0 md:border-r md:pr-[var(--lms-space-4)] md:last:border-r-0"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Not started</dt><dd className="text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
+   <div className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] pb-[var(--lms-space-3)] md:border-b-0 md:border-r md:pr-[var(--lms-space-4)] md:last:border-r-0"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Items measured</dt><dd className="text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{lowestMeasured===highestMeasured?
      highestMeasured:lowestMeasured+"–"+highestMeasured+" per learner"}</dd></div>
   </dl>
   <p className="text-sm text-body">Video completions, submitted assignments and attempted quizzes are counted from persisted learner records. No completion percentage is inferred when there are no measurable items.</p>
@@ -67,5 +63,9 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     ]}
     empty={<EmptyState title="No enrolled students" description="No students are enrolled in this course offering."/>}
   />
+  <div className="flex min-w-0 justify-start print:hidden">
+    <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] transition-colors hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Export CSV</a>
+  </div>
  </div>;
 }
