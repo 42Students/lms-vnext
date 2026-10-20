@@ -249,3 +249,13 @@
 - Regressions fixed: 0. Read the error boundary, Faculty route guard/skip-target layout, loading/not-found, shared GracefulErrorBoundary/PageHeader/Button and lane-18/lane-19 proof. `insideShell` correctly removes duplicate public chrome; reset, safe messages, request id, chunk-reload and `/teach` recovery route remain intact. No missing exports or TSX mismatch.
 - Extra fixes: 0. One canvas, bounded header and 44px phone retry/home row at the documented breakpoints.
 - Files changed: verified, no change; source only, no CI.
+
+## Verify2 — 9. `src/app/(authenticated)/admin/not-found.tsx`
+- Regressions fixed: 0. Read 404 source, inherited Super Admin role gate/layout and group tabs, authenticated canvas, loading/error routes, shared PageHeader and lane-18 proof. The original Go to home link targets /admin, 44px phone/36px tablet sizing and teal primary legacy tokens survive unchanged; JSX/imports and focus states valid.
+- Extra fixes: 0. Single bounded error paragraph and primary recovery are proportionate without nested canvas at 375/768.
+- Files changed: verified, no change; static source review, no CI.
+
+## Verify2 — 10. `src/components/placements/tpo-drive-clone-action.tsx`
+- Regressions fixed: 1 — an arbitrary truthy jobId in a success response could close the confirmation and navigate even when persisted clone was unverified. Read full action, shared ConfirmDialog, Button, InlineNotice, toast and guarded-action callback, TPO clone route/service, lane-2 polish evidence. Added checks that jobId is UUID-shaped, sourceJobId matches the selected drive and status is DRAFT before redirect. Preserve error toast/menu closure, action label, duplicate prevention and checked permissions.
+- Extra fixes: 0. Full-width phone menu control, compact tablet dimensions and pending-safe dialog are already aligned.
+- Files changed: `src/components/placements/tpo-drive-clone-action.tsx`; source only, no CI.
