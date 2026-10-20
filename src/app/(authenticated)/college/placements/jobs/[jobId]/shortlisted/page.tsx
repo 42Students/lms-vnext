@@ -42,7 +42,7 @@ export default async function CollegeDriveShortlistedPage({
       description={data.drive.title}
       actions={<Link href={driveApplicationsHref(jobId,{...query,screening:"ALL"})}
         className="font-semibold text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Applications</Link>} />
-    <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+    <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
       <label className="grid min-w-0 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student
         <Input type="search" name="q" maxLength={100} defaultValue={query.q} className="min-h-11 min-w-0 md:min-h-9" />
       </label>
@@ -60,8 +60,8 @@ export default async function CollegeDriveShortlistedPage({
       empty={<EmptyState title="No shortlisted students" description="No shortlisted students match these filters."/>} />
     <nav aria-label="Shortlisted pages" className="flex flex-wrap items-center gap-4 text-sm">
       <span>Page {query.page} of {data.totalPages}</span>
-      {query.page>1 ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
-      {query.page<data.totalPages ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+      {query.page>1 ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
+      {query.page<data.totalPages ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
     </nav>
   </div>;
 }
