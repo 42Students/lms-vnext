@@ -238,7 +238,7 @@ export function AdminCourseOverview({
               "/" +
               offering.id
             }
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
           >
             Open learning
           </Link> : null}
@@ -472,18 +472,18 @@ export function AdminCourseOverview({
         </div>
         {catalogue&&catalogueQuery?<form method="get" action={courseBasePath}
          className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-         <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-sm font-semibold">Search courses
+         <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-xs font-semibold text-body">Search courses
           <Input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
-           placeholder="Name, code or department" className="min-h-11 min-w-0"/>
+           placeholder="Name, code or department" className="min-h-11 min-w-0 md:min-h-9"/>
          </label>
-         <label className="grid gap-1 text-sm font-semibold">Sort
+         <label className="grid gap-1 text-xs font-semibold text-body">Sort
           <Select name="sort" defaultValue={catalogueQuery.sort}
            className="min-h-11 md:min-h-9">
            <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
            <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
           </Select>
          </label>
-         {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-sm font-semibold">Per page
+         {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-xs font-semibold text-body">Per page
           <Select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
            className="min-h-11 md:min-h-9">
            <option value="25">25</option><option value="50">50</option><option value="100">100</option>

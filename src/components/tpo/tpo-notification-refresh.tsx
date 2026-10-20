@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -31,10 +32,10 @@ export function TpoNotificationRefresh(){
    document.removeEventListener("visibilitychange",onVisible);};
  },[router]);
  if(state==="refreshing")return <p role="status" className="text-sm text-muted-foreground">Refreshing notifications…</p>;
- if(state==="failed")return <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3 text-sm">
+ if(state==="failed")return <Alert tone="error">
   This refresh failed. Showing the last successful load.
   <Button variant="ghost" type="button" className="ml-3 min-h-11 min-[768px]:min-h-9 underline"
    onClick={()=>router.refresh()}>Retry</Button>
- </div>;
+ </Alert>;
  return null;
 }

@@ -65,7 +65,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
    setPending(false);
   }
  }
- return <div className="mt-4 space-y-3 border-t border-border pt-3">
+ return <div className="mt-4 space-y-3 border-t border-border pt-3 print:hidden">
   {blocked?<p className="text-xs text-warning-text">A broader locked rule prevents writing On/Off. You can still remove a stored membership override with Inherit.</p>:null}
   <label className="grid gap-1 text-[13px] font-semibold text-body">Stored override
    <Select value={choice} disabled={pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
@@ -73,14 +73,14 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
     <option value="INHERIT">Inherit</option><option value="ON" disabled={blocked}>On</option><option value="OFF" disabled={blocked}>Off</option>
    </Select>
   </label>
-  <label className="flex items-center gap-2 text-sm text-body">
+  <label className="flex min-h-11 items-center gap-2 text-sm text-body">
    <Checkbox checked={nextLocked} onChange={e=>setNextLocked(e.target.checked)}
     disabled={blocked||pending||choice==="INHERIT"}/>
    Lock this membership rule
   </label>
   <div className="flex flex-wrap gap-2">
-   <Button disabled={!canReviewStudentRule(choice,blocked,pending,noChange)} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
-   <Button disabled={pending} variant="ghost" onClick={()=>{void reload();}}>Recheck stored rule</Button>
+   <Button className="min-h-11 md:min-h-9" disabled={!canReviewStudentRule(choice,blocked,pending,noChange)} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
+   <Button className="min-h-11 md:min-h-9" disabled={pending} variant="ghost" onClick={()=>{void reload();}}>Recheck stored rule</Button>
   </div>
   {feedback?<p role="status" className="text-xs leading-5 text-body">{feedback}</p>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Confirm learner module access change"

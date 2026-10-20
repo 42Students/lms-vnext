@@ -68,25 +68,25 @@ export default async function MentorTaskReviewsPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Task or project
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground"
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground"
             placeholder="Search pending task reviews" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Page size
           <Select name="pageSize" defaultValue={String(data.pageSize)}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="20">20</option><option value="50">50</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full border border-[var(--lms-canvas-border)] px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All current assignments</option>
             <option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
@@ -94,7 +94,7 @@ export default async function MentorTaskReviewsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority
           <Select name="priority" defaultValue={data.query.priority}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             {(["ALL","CRITICAL","HIGH","MEDIUM","LOW"] as const).map(priority=>
               <option key={priority} value={priority}>{priority}</option>)}
           </Select>
@@ -102,21 +102,21 @@ export default async function MentorTaskReviewsPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Submission version
           <Input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
-            className="min-h-11 md:min-h-9 w-32 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground" />
+            className="min-h-11 md:min-h-9 w-32 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Waiting since
-          <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option><option value="OLDER_THAN_30_DAYS">Over 30 days old</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
           <Select name="order" defaultValue={data.query.order}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option><option value="PRIORITY">Critical priority first</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
@@ -141,8 +141,8 @@ export default async function MentorTaskReviewsPage({
             description={data.total > 0
               ? "This page is outside the matching result range. Return to page 1."
               : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."} />
-        : <div className="min-w-0 divide-y divide-border">{data.items.map(item =>
-          <article key={item.id} className="py-4">
+        : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+          <article key={item.id} className="py-[var(--lms-space-3)]">
             <p className="text-sm font-semibold text-foreground">{item.taskTitle}</p>
             <p className="mt-1 text-sm text-body">
               {item.projectTitle} · Version {item.version} · Priority {item.priority}

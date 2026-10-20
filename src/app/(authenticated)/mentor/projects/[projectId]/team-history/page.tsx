@@ -58,25 +58,25 @@ export default async function MentorTeamHistoryPage({
           <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-sm font-semibold text-body">Registered role
             <Select name="role" defaultValue={data.query.role}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="ALL">All roles</option>
               <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
             </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Primary Mentor record
             <Select name="primary" defaultValue={data.query.primary}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="ALL">All team records</option><option value="PRIMARY">Recorded primary Mentors only</option>
             </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Assignment chronology
             <Select name="order" defaultValue={data.query.order}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="OLDEST">Earliest started first</option>
               <option value="NEWEST">Most recent started first</option>
             </Select>
           </label>
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
             Filter role
           </Button>
         </form>
@@ -85,8 +85,8 @@ export default async function MentorTeamHistoryPage({
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
               description="No registered membership rows match this project and filter. History from before migration may not be available." />
-          : <div className="divide-y divide-border">{data.items.map(item =>
-              <article key={item.id} className="py-4">
+          : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+              <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-semibold text-foreground">{item.displayName}</h2>
                   <span className="text-xs font-semibold text-body">{item.state}</span>

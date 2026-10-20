@@ -63,12 +63,12 @@ export default async function MentorTeamCoveragePage({
           className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground"
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground"
               placeholder="Project name" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Team coverage
             <Select name="filter" defaultValue={data.query.filter}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground">
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
               <option value="ALL">All projects</option>
               <option value="NO_LEARNERS">No active learners</option>
               <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
@@ -82,23 +82,23 @@ export default async function MentorTeamCoveragePage({
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Project state
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="ALL">All current assignments</option>
               <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
               <option value="COMPLETED">Completed</option>
             </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
-            <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="ALL">All assignments</option><option value="PRIMARY">Primary Mentor</option><option value="SUPPORTING">Supporting Mentor</option>
             </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Team-size order
-            <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </Select>
           </label>
-          <Button type="submit" variant="primary">Filter</Button>
+          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>
           <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
         </form>
         <section aria-label="Registered team coverage summary"
@@ -122,8 +122,8 @@ export default async function MentorTeamCoveragePage({
                 description="There are no current non-archived project assignments for this Mentor. No historical team or staffing status is inferred." />
             : <EmptyState title="No projects match these filters"
                 description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments." />
-          : <div className="divide-y divide-border">{data.items.map(item =>
-            <article key={item.projectId} className="py-4">
+          : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+            <article key={item.projectId} className="py-[var(--lms-space-3)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="font-semibold text-foreground">{item.title}</h2>
                 <span className="text-xs font-semibold text-body">{item.status}</span>

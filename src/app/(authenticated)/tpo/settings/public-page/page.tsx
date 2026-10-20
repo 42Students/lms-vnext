@@ -1,4 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -32,7 +34,7 @@ export default async function PublicPlacementSettingsPage({
   <section className="border-t border-border pt-5">
    <PageHeader title="Public placements" />
    <p className="mt-2 text-sm text-body">{view.label}</p>
-   {updated==="1"?<p role="status" className="mt-2 text-sm">{view.enabled?"Your placements page is live":"Your placements page is off"}</p>:null}
+   {updated==="1"?<InlineNotice tone="success" message={view.enabled?"Your placements page is live":"Your placements page is off"}/>:null}
    <p className="mt-2 text-sm text-body">
     The public page displays live, college-scoped results from the last 12 months only after you opt in.
     Metrics below the publication threshold of five are not shown.
@@ -41,17 +43,15 @@ export default async function PublicPlacementSettingsPage({
       Active consented placement cohort: {view.populationCount??"Unavailable"}
     </p>:null}
    {value.ready?<TpoPublicPlacementToggle enabled={view.enabled} canEnable={view.canEnable}/>:
-    <p role="status" className="mt-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm text-warning-text">
+    <Alert tone="warning">
      Public placement settings storage is unavailable until the registered migration is ready. No publication preference was changed.
-    </p>}
-   {value.ready&&!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
-     Public statistics cannot be enabled without a recorded cohort of at least five.
-    </p>:null}
+    </Alert>}
+   {value.ready&&!view.canEnable&&!view.enabled?<Alert tone="warning">Public statistics cannot be enabled without a recorded cohort of at least five.</Alert>:null}
    <section aria-label="Published placement preview" className="mt-5 space-y-3 border-t border-border pt-4">
     <h2 className="font-semibold">How your public placements look</h2>
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
-    {!view.enabled?<p role="status" className="text-sm text-body">Publication is off; this preview does not make any statistics public.</p>:null}
-    {view.enabled&&!published?<p role="status" className="text-sm text-warning-text">{preview?.available?"Not enough data yet. There is no current published snapshot to preview. Figures remain withheld.":"The published preview could not be loaded. Figures remain withheld."}</p>:null}
+    {!view.enabled?<Alert tone="info">Publication is off; this preview does not make any statistics public.</Alert>:null}
+    {view.enabled&&!published?<Alert tone="warning">{preview?.available?"Not enough data yet. There is no current published snapshot to preview. Figures remain withheld.":"The published preview could not be loaded. Figures remain withheld."}</Alert>:null}
     {published?<p className="text-xs text-muted-foreground">Published as of {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(published.publishedAt))}.</p>:null}
     {published&&content.about?<p className="whitespace-pre-wrap text-sm text-body">{content.about}</p>:null}
     <div className="grid gap-3 min-[768px]:grid-cols-2">

@@ -24,8 +24,8 @@ export default async function MyTrackerReportsPage(){
       action={<Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>} />
   </div>;}
   return <section className="space-y-5">
-    <PageHeader title="My reports" description="See the issues you have reported."/>
-    <Link href="/tracker" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Report an issue</Link>
+    <PageHeader title="My reports" description="See the issues you have reported."
+      actions={<Link href="/tracker" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Report an issue</Link>}/>
     {!reports.length?<EmptyState title="No reports yet" description="You have not reported any issues yet." />:
       <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{reports.map(item=><li key={item.publicId}
         className="py-[var(--lms-space-3)]">
