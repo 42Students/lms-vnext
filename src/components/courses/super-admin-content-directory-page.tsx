@@ -91,32 +91,32 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    :<Banner tone="warning">Content authoring options are temporarily unavailable. Existing content remains visible.</Banner>}
   {sectionsResult.status==="rejected"?<Banner tone="warning">Section filter choices are temporarily unavailable. Your selected filters are still applied.</Banner>:null}
   <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-3">
-   <label className="grid gap-1 text-sm font-semibold text-body">Search
+   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      placeholder="Content, lesson or course" className="min-h-11 md:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Status
+   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="status" defaultValue={data.query.status}
      className="min-h-11 md:min-h-9">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Course / offering
+   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / offering
     <Select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 md:min-h-9">
      <option value="">All courses</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Lesson
+   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
     <Select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 md:min-h-9">
      <option value="">All lessons</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Section
+   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
     <Select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 md:min-h-9">
      <option value="">All sections</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Audience
+   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
     <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
       <option value="ALL">All audiences</option><option value="SHARED">All currently eligible sections</option><option value="SECTION">One specific section</option>
     </Select>

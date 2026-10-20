@@ -139,9 +139,9 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
-      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Visibility
+        <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1">
             <option value="">All visible states</option>
             <option value="LIVE">Live</option>
@@ -150,23 +150,23 @@ export default async function AnnouncementsPage({
             <option value="DELETED">Deleted only</option>
           </Select>
         </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pinned
+        <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pinned
           <Select name="pinned" defaultValue={params.pinned ?? ""} className="mt-1">
             <option value="">All notices</option><option value="PINNED">Pinned only</option><option value="UNPINNED">Not pinned</option>
           </Select>
         </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Published by
+        <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Published by
           <Select name="senderType" defaultValue={params.senderType ?? ""} className="mt-1">
             <option value="">All senders</option>{ANNOUNCEMENT_SENDER_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
           </Select>
         </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience type
+        <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience type
           <Select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1">
             <option value="">All audiences</option>
             {(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"] as const).map(type => <option key={type} value={type}>{type}</option>)}
           </Select>
         </label>
-        <label className="min-w-0 w-full flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-56">Search announcement title or message
+        <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-56">Search announcement title or message
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
         </label>
         <Button type="submit">Search</Button>
