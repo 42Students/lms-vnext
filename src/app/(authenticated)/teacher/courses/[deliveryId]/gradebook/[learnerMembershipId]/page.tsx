@@ -47,7 +47,7 @@ export default async function FacultyLearnerGradebookPage({
           description="There are no published assignment or quiz result records for this Section."/>:
         <ul className="grid gap-3">
           {data.assessments.map(item=><li key={item.kind+":"+item.assessmentId}
-            className="min-w-0 border-b border-border py-4 last:border-b-0">
+            className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
             <p className="text-xs font-semibold text-muted-foreground">{item.kind==="QUIZ"?"Quiz":"Assignment"}</p>
             <h3 className="mt-1 break-words font-semibold text-foreground">{item.title}</h3>
             <p className="mt-2 text-sm text-body">{item.status==="UNKNOWN"?
