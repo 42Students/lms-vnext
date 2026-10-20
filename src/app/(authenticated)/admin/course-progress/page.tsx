@@ -39,13 +39,13 @@ export default async function SuperAdminCourseProgressPage({
     <PageHeader title="Course Progress"
       description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners."
       actions={<div className="flex flex-wrap items-center gap-2"><PageBackLink href="/admin/courses" label="Courses" /><a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export course-progress.csv</a></div>}
+     className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export course-progress.csv</a></div>}
     />
     <Alert tone="info">
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
     </Alert>
     
-    <form className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-5">
+    <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 min-[1200px]:grid-cols-5">
       <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
