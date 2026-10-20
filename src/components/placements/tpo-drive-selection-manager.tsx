@@ -55,11 +55,11 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}finally{setPending(false);setConfirmOpen(false);}
  }
- return <section className="space-y-4">
-  <div className="flex flex-wrap gap-3">
-   <Button type="button" onClick={()=>open("RECORD")} disabled={!recordable.length}
+ return <section className="min-w-0 space-y-4">
+  <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+   <Button type="button" onClick={()=>open("RECORD")} disabled={!recordable.length} className="min-h-11 w-full sm:w-auto md:min-h-9"
     >Record a selection</Button>
-   <Button variant="secondary" type="button" onClick={()=>open("VERIFY_AND_RELEASE")} disabled={!releasable.length}
+   <Button variant="secondary" type="button" onClick={()=>open("VERIFY_AND_RELEASE")} disabled={!releasable.length} className="min-h-11 w-full sm:w-auto md:min-h-9"
     >
     Verify and release ({releasable.length})</Button>
   </div>
@@ -111,24 +111,24 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       </Button>
       <Button variant="ghost" type="button" disabled={pending||!chosen.length} onClick={()=>setChosen([])}>Clear selection</Button>
     </div>
-    <fieldset className="max-h-60 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-3 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+    <fieldset className="max-h-60 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border px-2">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
      {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
        visibleReleasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
-       .map(item=><label key={item.id} className="flex min-h-11 items-center gap-3 px-2 text-sm hover:bg-muted md:min-h-9">
+       .map(item=><label key={item.id} className="flex min-h-11 min-w-0 items-center gap-3 px-2 text-sm hover:bg-muted md:min-h-9">
         <Checkbox checked={chosen.includes(item.id)} disabled={pending} onChange={()=>toggle(item.id)}/>
-        <span>{item.name} · {item.note}</span>
+        <span className="min-w-0 break-words">{item.name} · {item.note}</span>
        </label>)}
     </fieldset>
     {error?<InlineNotice tone="error" message={error}/>:null}
     {report.length?<div role="status" tabIndex={0} aria-label="Selection release results, scroll for more" className="max-h-32 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_85%,transparent_100%)]">
      {report.map(x=><p key={x.selectionId}>{x.status}: {x.applicationId} {x.reason??""}</p>)}
     </div>:null}
-    <div className="flex gap-3">
-     <Button type="button" disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())}
+    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:justify-end">
+     <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())}
       onClick={()=>void submit()} >
       {pending?"Saving…":mode==="RECORD"?"Record "+chosen.length+" selection(s)":"Verify and release "+chosen.length+" offer(s)"}</Button>
-     <Button variant="secondary" type="button" disabled={pending} onClick={()=>{setMode(null);setError("");}}
+     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>{setMode(null);setError("");}}
       >Close</Button>
     </div>
     </div>
