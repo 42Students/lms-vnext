@@ -247,10 +247,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     <TpoDriveSavedViews scopeKey={savedViewScope}/>
 
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
-      <EmptyState title={TPO_REQUESTS_COPY.tab} description={TPO_REQUESTS_COPY.unavailable}/> :
+      <EmptyState title={TPO_REQUESTS_COPY.tab} description={TPO_REQUESTS_COPY.unavailable}
+        action={<Link href="/tpo/placements/overview" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Operations overview</Link>}/> :
       <section aria-label="Recruiter drive requests" className="space-y-3">
         <p role="status" className="text-sm">{data.totalMatching} recruiter drive requests</p>
-        {data.requestRows.length===0?<EmptyState title="No requests" description="No recruiter drive requests need review."/>:
+        {data.requestRows.length===0?<EmptyState title="No requests" description="No recruiter drive requests need review."
+            action={<Link href="/tpo/placements/lifecycle?view=DRAFT" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Drafts</Link>}/>:
           data.requestRows.map(item=><article key={item.id} className="border-b border-border py-4">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <h2 className="min-w-0 break-words font-semibold">{item.company} · {item.title}</h2>
@@ -306,8 +308,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             description={data.view==="LIVE"?"Published opportunities appear here once ready.":
              data.view==="DRAFT"?"Create a drive to start planning the next hiring opportunity.":
              data.view==="CLOSED"?"Completed and cancelled opportunities appear here.":
-              "No non-archived jobs match the selected season and filters."} />
-          <Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Create drive</Link>
+              "No non-archived jobs match the selected season and filters."} action={<Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Create drive</Link>} />
+
         </div> :
         <form action="/api/placements/tpo/drives/export" method="get" aria-label="Selected drive export" className="grid gap-3">
           {Array.from(exportParams.entries()).map(([key,value])=><Input type="hidden" key={key} name={key} value={value}/>)}
