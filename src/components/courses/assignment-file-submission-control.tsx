@@ -35,6 +35,7 @@ export function AssignmentFileSubmissionControl({
   const [responseText,setResponseText]=useState("");
   const [links,setLinks]=useState<AssignmentLinkPart[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
   const active = useRef<AbortController | null>(null);
   const locked = useRef(false);
 
@@ -57,7 +58,7 @@ export function AssignmentFileSubmissionControl({
     }
     void load();
     return () => { controller.abort(); active.current?.abort(); };
-  }, [assignmentId, deliveryId]);
+  }, [assignmentId, deliveryId, retryKey]);
 
   async function refresh(signal: AbortSignal) {
     const response = await fetch(
@@ -223,6 +224,10 @@ export function AssignmentFileSubmissionControl({
         {busy && !activeName ? "Submitting…" : "Submit Your Work"}
       </Button>
     </div> : null}
-    {error ? <Alert tone="error">{error}</Alert> : null}
+    {error ? <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
+      <Alert tone="error">{error}</Alert>
+      {!busy ? <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+        onClick={() => { setError(null); setLoading(true); setRetryKey(key => key + 1); }}>Retry</Button> : null}
+    </div> : null}
   </section>;
 }
