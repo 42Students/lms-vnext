@@ -46,18 +46,6 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   const parsed=parseSuperAdminCourseQuery(query);
   if(!parsed)return <div className="min-w-0 space-y-5">
     <PageHeader title="Courses"/>
-    <Tabs ariaLabel="Course and content directories" value="courses" renderPanel={false}
-      items={[
-        { value: "courses", label: "Courses", href: "/admin/courses" },
-        { value: "lessons", label: "Lessons directory →", href: "/admin/lessons" },
-        { value: "videos", label: "Videos directory →", href: "/admin/videos" },
-        { value: "resources", label: "Resources directory →", href: "/admin/resources" },
-        { value: "live", label: "Live Classes directory →", href: "/admin/live-classes" },
-        { value: "progress", label: "Course Progress →", href: "/admin/course-progress" },
-        { value: "assignments", label: "Assignments →", href: "/admin/assignments" },
-        { value: "quizzes", label: "Quizzes →", href: "/admin/quizzes" },
-      ]}
-    />
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
       action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
   </div>;
