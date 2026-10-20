@@ -766,9 +766,9 @@ export async function PlacementCalendarWorkspace({
           ].join(":")}
           action={basePath}
           method="get"
-          className="mt-5 grid gap-3 border-t border-border pt-5 md:grid-cols-2 xl:grid-cols-4"
+          className="mt-5 grid gap-3 border-t border-border pt-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4"
         >
-          <input
+          <Input
             type="hidden"
             name="view"
             value={state.view}
