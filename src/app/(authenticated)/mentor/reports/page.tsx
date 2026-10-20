@@ -41,8 +41,8 @@ export default async function MentorReportsPage({searchParams}:{
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Reports" title="Assigned Project reports"
       description="Persisted project states and actionable attention across your current assigned workspaces."
-      actions={<Link href="/mentor/projects"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      actions={<Link data-unskin="" href="/mentor/projects"
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-150 motion-reduce:transition-none">
         Projects list
       </Link>}/>
     {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
@@ -165,9 +165,9 @@ export default async function MentorReportsPage({searchParams}:{
             </p>
             <div className="mt-3 flex flex-wrap gap-3 text-sm">
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)}
-                className="min-h-11 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open project</Link>
+                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open project</Link>
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)+"/risk-readiness"}
-                className="min-h-11 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Risk / readiness</Link>
+                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Risk / readiness</Link>
             </div>
           </li>)}</ol>}
       <Pagination label="Mentor report pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReportsHref({...data.query,page})}/>
