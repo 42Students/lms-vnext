@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable } from "@/components/ui/data-table";
 import { collegePromotionQuerySchema, formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
@@ -42,7 +43,7 @@ export default async function CollegeBatchPromotionPage({
     <PageHeader title="Batch Promotion" />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
-      action={<Link href="/college/batch-promotion" className="font-semibold text-link">Clear filters</Link>} />
+      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>} />
   </div>;
   const options = await listCollegePromotionOptions(context, parsed.data);
   const preview = parsed.data.cohortId
@@ -56,9 +57,9 @@ export default async function CollegeBatchPromotionPage({
     <PageHeader title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<Link href="/college/batches"
-        className="rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 text-sm font-semibold text-link">Batches</Link>} />
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Batches</Link>} />
     <section className="border-t border-border pt-4">
-      <form method="get" action="/college/batch-promotion" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
           Program
           <Select name="programId" defaultValue={parsed.data.programId ?? ""}
@@ -87,17 +88,13 @@ export default async function CollegeBatchPromotionPage({
             />
         </label>
         <div className="flex items-end">
-          <Button type="submit" >
-            Preview
-          </Button>
+          <Button type="submit" className="min-h-11 md:min-h-9">Preview</Button>
         </div>
       </form>
     </section>
     {!preview ? (
       <section className="border-t border-border pt-6">
-        <p className="text-sm text-body">
-          Select a batch to calculate a preview from saved progression, semester and enrollment records.
-        </p>
+        <EmptyState title="No promotion preview" description="Select a batch to calculate a preview from saved progression, semester and enrollment records."/>
       </section>
     ) : (
       <>
