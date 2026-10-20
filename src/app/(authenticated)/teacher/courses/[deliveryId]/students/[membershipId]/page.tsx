@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable } from "@/components/ui/data-table";
 import { getFacultyStudentDetail } from "@/modules/courses/faculty-student-detail-service";
@@ -25,8 +24,8 @@ export default async function FacultyStudentDetailPage({
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")}
-      actions={<Link href={root + "/students"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Students</Link>} />
-    <section aria-label="Student details" className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+      actions={<Link href={root + "/students"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Students</Link>} />
+    <section aria-label="Student details" className="grid grid-cols-1 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-2 lg:grid-cols-4">
       {[
         ["Roll number", data.student.rollNumber ?? "Not assigned"],
         ["Email", data.student.email ?? "Not available"],
@@ -34,28 +33,28 @@ export default async function FacultyStudentDetailPage({
         ["Recorded attendance", data.summary.percent === null
           ? "Unknown" : data.summary.percent + "%"],
       ].map(([label, value]) =>
-        <div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
+        <div key={label} className="min-w-0 py-3">
           <p className="text-xs font-semibold text-muted-foreground leading-5">{label}</p>
-          <p className="mt-2 break-words font-semibold text-foreground">{value}</p>
+          <p className="mt-1 break-all text-sm font-semibold leading-6 text-foreground">{value}</p>
         </div>)}
     </section>
-    <section className="border-y border-[var(--lms-canvas-border)] bg-transparent py-5">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Course attendance</h2>
-      <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+    <section className="min-w-0 space-y-3">
+      <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Course attendance</h2>
+      <div className="grid grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
           ["Present", data.summary.present], ["Absent", data.summary.absent],
           ["Unmarked", data.summary.unmarked], ["Upcoming", data.summary.upcoming],
         ].map(([label, value]) =>
-          <StatTile key={label} label={label} value={value} className="min-h-[104px]" />)}
+          <div key={label} className="min-w-0 py-4"><p className="text-xs font-semibold leading-5 text-muted-foreground">{label}</p><p className="mt-1 text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">{value}</p></div>)}
       </div>
-      <p className="mt-4 text-xs leading-5 text-muted-foreground">
+      <p className="max-w-prose text-xs leading-5 text-muted-foreground">
         Attendance percentage uses recorded Present/Absent marks only.
         Unmarked or upcoming sessions are not assumed Present.
         This is a Course-level history, not an institution-wide eligibility ruling.
       </p>
     </section>
     <section className="space-y-3">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Session history</h2>
+      <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Session history</h2>
       {data.sessions.length === 0
         ? <EmptyState title="No scheduled sessions"
             description="No scheduled class sessions exist for this Course delivery." />
@@ -77,7 +76,7 @@ export default async function FacultyStudentDetailPage({
                 cell:row=>row.markedAt?dateText(row.markedAt):"Not recorded" },
             ]}/>}
       <Link href={root + "/attendanceDetail"}
-        className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
         View monthly class attendance →
       </Link>
     </section>

@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Button } from "@/components/ui/button";
 import {ActionPagination} from "@/components/ui/action-pagination";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -121,8 +120,8 @@ export function FacultyCourseRoster({
   }
 
   return (
-    <div className="space-y-5">
-      <div className="grid gap-3 md:grid-cols-3">
+    <div className="min-w-0 space-y-5">
+      <div className="grid grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] md:grid-cols-3">
         {[
           ["Students", learners.length],
           [rollLabel, missingRoll],
@@ -130,20 +129,20 @@ export function FacultyCourseRoster({
         ].map(([label, value]) => (
           <section
             key={label}
-            className="border-b border-border pb-4"
+            className="min-w-0 py-4 last:col-span-2 md:last:col-span-1"
           >
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               {label}
             </p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">
+            <p className="mt-2 text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">
               {value}
             </p>
           </section>
         ))}
       </div>
 
-      <section className="border-b border-border pb-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+        <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
               Class list
@@ -152,21 +151,11 @@ export function FacultyCourseRoster({
               {sectionName}
             </h2>
           </div>
-          <div className="flex w-full flex-wrap items-end gap-3 lg:w-auto">
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={filtered.length === 0}
-            onClick={exportFiltered}
-            aria-label="Download roster CSV"
-            className="min-h-11 md:min-h-9 print:hidden"
-          >
-            Download roster CSV (names and roll numbers)
-          </Button>
-          <label className="w-full max-w-md text-[13px] font-semibold text-[var(--lms-neutral-400)] print:hidden leading-4">
+          <div className="grid w-full min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end lg:max-w-[42rem]">
+          <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] print:hidden leading-4">
             Search students
             <Input
-              className="mt-[6px].5 min-h-11 md:min-h-9"
+              className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9"
               value={search}
               onChange={(event) => {
                 setSearch(event.target.value);
@@ -176,6 +165,16 @@ export function FacultyCourseRoster({
               aria-label="Search students"
             />
           </label>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={filtered.length === 0}
+            onClick={exportFiltered}
+            aria-label="Download roster CSV"
+            className="w-full sm:w-auto print:hidden"
+          >
+            Download roster CSV (names and roll numbers)
+          </Button>
           </div>
         </div>
         <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
