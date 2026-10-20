@@ -15,9 +15,9 @@ export function SuperAdminPlacementDetailView({data,extraActions}:{data:SuperAdm
    <StatusBadge tone={data.status==="ACTIVE"||data.status==="ACCEPTED"?"success":"neutral"}>{data.status}</StatusBadge>
   </div>
   <dl className="grid min-w-0 gap-3 md:grid-cols-2">
-   {data.facts.map(fact=><div key={fact.label} className="min-w-0 border-b border-border py-4">
-    <dt className="text-xs font-semibold text-muted-foreground">{fact.label}</dt>
-    <dd className="mt-2 break-words text-sm font-medium text-foreground">{fact.value}</dd>
+   {data.facts.map(fact=><div key={fact.label} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
+    <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{fact.label}</dt>
+    <dd className="mt-2 break-words text-[14px] font-medium leading-5 text-foreground">{fact.value}</dd>
    </div>)}
   </dl>
   <p className="text-xs text-muted-foreground">This is a read-only, selected-college view. Changing the scope never changes the record being requested; inaccessible records return not found.</p>
