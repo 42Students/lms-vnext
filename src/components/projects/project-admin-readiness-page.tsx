@@ -114,14 +114,11 @@ export async function ProjectAdminReadinessPage({
 
   return (
     <div className="min-w-0 space-y-4">
-      <div className="min-w-0">
-        <PageBackLink href={basePath} label="Project workspaces" />
-        <PageHeader title="Submission readiness"
-          description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to." />
-      </div>
+      <PageHeader title="Submission readiness"
+        description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to."
+        actions={<PageBackLink href={basePath} label="Project workspaces" />} />
       <ProjectAdminNav basePath={basePath} active="readiness" />
-      <section className="space-y-3 border-b border-border pb-5">
-        <h2 className="text-base font-semibold text-foreground">Select workspace</h2>
+      <Disclosure title="Select workspace" className="border-b border-border pb-4" defaultOpen={Boolean(selected || outsideScope)} contentClassName="space-y-3 pt-3">
         {outsideScope ? <Banner tone="warning" role="alert">This workspace belongs to a different college — switch colleges in the header and try again.</Banner> : null}
         <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
         {selected ? <>
@@ -144,7 +141,7 @@ export async function ProjectAdminReadinessPage({
               empty={<EmptyState title="No releases recorded" description="This workspace has no recorded releases." />}
             />}
         </> : null}
-      </section>
+      </Disclosure>
       <Disclosure title={"Active overrides ("+activeOverrides.length+")"} defaultOpen={activeOverrides.length>0} className="border-b border-border pb-4" contentClassName="min-w-0 pt-3">
         {!activeOverrides.length ? <p className="mt-3 text-sm text-muted-foreground">
           No workspace currently has a manual override — every gate is running on its own completion state.
@@ -167,7 +164,7 @@ export async function ProjectAdminReadinessPage({
           empty={<EmptyState title="No matching overrides" description="No workspace overrides match these filters." />}
         />}
       </Disclosure>
-      <div className="flex min-w-0 justify-end">
+      <div className="flex min-w-0 flex-wrap items-center justify-end">
       <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
         className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export overrides CSV</a>
       </div>
@@ -178,7 +175,7 @@ export async function ProjectAdminReadinessPage({
         <EmptyState title="No matching project workspaces" description="No project workspaces match these filters."
           action={<Link href={readinessPath} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
       ) : (
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-2">
           {result.items.map((project) => (
             <article
               key={project.id}
@@ -197,7 +194,7 @@ export async function ProjectAdminReadinessPage({
                   >
                     {project.title}
                   </Link>
-                  <Link href={basePath + "/" + project.id + "/readiness"} className="ml-3 text-sm text-primary-text underline">Manage</Link>
+
                   <p className="mt-1 text-xs text-muted-foreground">
                     {project.mentorName
                       ? "Mentor: " +
@@ -225,7 +222,7 @@ export async function ProjectAdminReadinessPage({
                 </div>
               </div>
 
-              <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[1366px]:grid-cols-4">
+              <div className="mt-4 grid min-w-0 grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-2 md:grid-cols-4">
                 <Metric
                   label="Progress"
                   value={
@@ -289,7 +286,7 @@ function Metric({
   value: string;
 }) {
   return (
-    <div className="min-w-0 px-3 py-3">
+    <div className="min-w-0 py-2">
       <p className="m-0 text-xs font-semibold text-muted-foreground">
         {label}
       </p>

@@ -17,7 +17,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
   (item.title+" "+item.id).toLocaleLowerCase().includes(search.toLocaleLowerCase())),[items,search]);
  const count=Math.max(1,Math.ceil(matching.length/pageSize)),current=Math.min(page,count);
  const rows=matching.slice((current-1)*pageSize,current*pageSize);
- return <form method="get" action={action} className={"space-y-3 "+styles.legacy}>
+ return <form method="get" action={action} className={"min-w-0 space-y-3 "+styles.legacy}>
   <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search workspace title or ID
    <Input value={search} onChange={e=>{setSearch(e.target.value);setPage(1)}}
     placeholder="Search workspace" className="mt-1 min-h-11 w-full md:min-h-9"/></label>
@@ -31,7 +31,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
    </label>)}
    {!rows.length?<EmptyState title="No matching workspaces" description="No matching workspaces."/>:null}
   </fieldset>
-  <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm text-body">
+  <div className="flex min-w-0 flex-col gap-2 text-sm text-body md:flex-row md:items-center md:justify-between">
    <span>{matching.length} matching · Page {current} of {count}</span>
    <div className="flex flex-wrap gap-2">
     <Button type="button" variant="secondary" disabled={current===1} onClick={()=>setPage(x=>Math.max(1,x-1))}
