@@ -36,16 +36,17 @@ export function ListToolbar({
   onFiltersClick, onViewsClick, onColumnsClick, onExportClick, filterCount,
   viewCount, bulkAction, className,
 }: ListToolbarProps) {
+  const toolbarButtonClass = "!border-[var(--lms-canvas-border)] hover:!border-[var(--lms-primary)] hover:!bg-[var(--lms-primary-subtle)] hover:!text-[var(--lms-primary-text)]";
   const count = typeof viewCount === "number" && Number.isFinite(viewCount) ? Math.max(0, Math.trunc(viewCount)) : null;
   const activeFilters = typeof filterCount === "number" && Number.isFinite(filterCount) ?
     Math.max(0, Math.trunc(filterCount)) : 0;
-  const filterControl = filters ?? (onFiltersClick ? <Button variant="secondary" size="sm" onClick={onFiltersClick}>Filters{activeFilters > 0 ? ` (${activeFilters})` : ""}</Button> : null);
-  const viewControl = views ?? (onViewsClick ? <Button variant="secondary" size="sm" onClick={onViewsClick}>Views</Button> : null);
-  const columnControl = columns ?? (onColumnsClick ? <Button variant="secondary" size="sm" onClick={onColumnsClick}>Columns</Button> : null);
-  const exportControl = exportAction ?? (onExportClick ? <Button variant="secondary" size="sm" onClick={onExportClick}>Export</Button> : null);
+  const filterControl = filters ?? (onFiltersClick ? <Button variant="secondary" size="sm" className={toolbarButtonClass} onClick={onFiltersClick}>Filters{activeFilters > 0 ? ` (${activeFilters})` : ""}</Button> : null);
+  const viewControl = views ?? (onViewsClick ? <Button variant="secondary" size="sm" className={toolbarButtonClass} onClick={onViewsClick}>Views</Button> : null);
+  const columnControl = columns ?? (onColumnsClick ? <Button variant="secondary" size="sm" className={toolbarButtonClass} onClick={onColumnsClick}>Columns</Button> : null);
+  const exportControl = exportAction ?? (onExportClick ? <Button variant="secondary" size="sm" className={toolbarButtonClass} onClick={onExportClick}>Export</Button> : null);
   return <section data-slot="list-toolbar" data-active-filters={activeFilters} aria-label={label} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
     <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
-      {search ? <div className="flex min-w-0 w-full flex-1 basis-[220px] items-center gap-[var(--lms-space-2)] sm:max-w-[380px]"><div className="min-w-0 flex-1">{search}</div>{searchAction}</div> : searchAction ?? null}
+      {search ? <div className="flex min-w-0 w-full flex-1 basis-[220px] items-center gap-[var(--lms-space-2)] min-[768px]:max-w-[220px]"><div className="min-w-0 flex-1">{search}</div>{searchAction}</div> : searchAction ?? null}
       {filterControl || viewControl || columnControl || exportControl ? <div role="toolbar" aria-label={`${label} actions`}
         className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         {filterControl}{viewControl}{columnControl}{exportControl}
