@@ -185,3 +185,53 @@
 **Changes:** make Start work/Resolve blocker the only primary action; demote Move up/down to separate ghost group and retain disabled semantics, use 44px stacked full-width phone state controls and responsive blocker form, connect the disclosure trigger with aria-expanded/controls and a stable React useId, align Save/Cancel with 44px targets, match max 2000/min 3 server requirements, show count/help and invalidate incomplete notes, retain toasts, retry and exact API routes/status actions. No overlay/modal newly introduced or package added; checked JSX source and focus semantics, not live browser/CI.
 
 **Files:** component, queue, proof.
+
+## 34. Mentor lane board
+
+**Surface:** `src/components/projects/mentor-lane-board.tsx`; inspected BoardColumn/legacy CSS, MentorTaskCreate and create/cancel/discard dialog, TaskDetailDialog, ProjectTaskAssigneeControl, ProjectTaskComments, MentorTaskDeleteControl, status confirmation/undo, drag/drop, empty filters and status loading/error. Checked phone 375, tablet 768 and desktop 1280 via source layout rules.
+
+**Problems fixed (10):** Create task lost emphasis to Review submission, six flat dense board controls cramped mobile, Lane selector duplicated lane chips, clear action lacked full-width phone target, long card titles sat on center-aligned buttons, nested task detail border reproduced separate cards in one white canvas, delete/assignee controls competed with Move, no next step on empty filtered board, blank horizontal lane region still displayed when no tasks, and swipe affordance was invisible on phones.
+
+**Changes:** Introduced optional primary treatment for Board's Create task without changing other usages; demoted Review submission and Back to project links; kept Release/Sprint visible and grouped scope/priority/assignee/lane in auto-open accessible disclosure, retaining every original URL filter key, select option and lane chip. Kept drag/drop and keyboard Move, native confirmation/blocker prompt, undo and error Alert; task actions/details/comments remain in a quieter task disclosure, task title is left-aligned and wraps, empty result offers Clear all, only nonempty board renders horizontal lanes and shows mobile sideways-scroll hint. Standardized 44px mobile targets and 768px two-column selectors, kept legacy board CSS/token values. Validated JSX by source reading only; no runtime/CI.
+
+**Files:** board, task-create (opt-in primary prop), lane queue, proof.
+
+## 35. Mentor product backlog
+
+**Surface:** `src/components/projects/mentor-product-backlog.tsx`; read complete create/edit/move flow, MentorTaskDetailsEdit dialog, useProjectEditorDiscardGuard, ConfirmDialog, Input/Select/Textarea/Badge/Disclosure and alert/empty states. Reviewed mobile 375, tablet 768 and full-width semantics from source.
+
+**Problems fixed (10):** bulky Velocity tile competing with backlog count, Add backlog task styled secondary, unlabelled expanded-state relationship, eight optional fields always filling page, double card shells inside single white canvas, lengthy Approach text breaking list scan, hidden mobile task actions next to huge content, Return buttons center-aligned in constrained columns, global error duplicated inside movement confirmation and uneven Save/Cancel width on phone.
+
+**Changes:** compact metric into inline summary, elevate Add backlog task as the single create action with expanded/control association, keep Title/Priority directly visible and put optional fields inside an accessible disclosure within the same form, retain exact original field names/validation/guard and request. Responsive one/two-column fields and full-width mobile Save/Cancel. Backlog now presents hairline-separated task rows, full Approach content remains accessible under disclosure, existing edit action and select-to-confirm sprint move unchanged. Demote return buttons to left-aligned secondary list; show move errors in the confirm dialog rather than duplicating in parent; retain success/error notices and permanent discard guard. Source review only, no runtime/CI.
+
+**Files:** backlog, queue, proof.
+
+## 36. Mentor project closeout confirmation
+
+**Surface:** `src/components/projects/mentor-project-closeout-control.tsx`; read the four persisted server readiness conditions, all three interactive acknowledgements, shared Checkbox/ConfirmDialog, pending, success, stale-write/error, keyboard/mouse behavior and legacy touch module. Reviewed 375/768 responsive shape.
+
+**Problems fixed (7):** acknowledgement list used independent separator borders, checkbox state stayed mutable during mutation, no progress feedback before CTA, mobile CTA sized to its text, confirmation overlay vanished before API response, failure was only visible beneath a closed overlay, and completion success had no on-screen feedback while the server route refreshed.
+
+**Changes:** one hairline acknowledgements group with each original statement, a count of completed confirmations, locked checkboxes while pending, 44px full-width phone primary control. Keep the native confirmation alertdialog open until success, surface errors inside it and outside if cancelled, use existing ToastProvider for completion feedback and refresh only on success. Preserve exactly the three flags, expectedUpdatedAt CAS, API endpoint and irreversible-confirm copy; no new package. Read source states only; no browser/CI.
+
+**Files:** control, queue, proof.
+
+## 37. Mentor release editor
+
+**Surface:** `src/components/projects/mentor-release-editor.tsx`; inspected Create/Edit fields, pending/save/error/success, shipped/linked-sprints restrictions, unsaved-change unload/discard confirmation and permanent-delete confirmation with shared Input, Textarea, Button and ConfirmDialog. Reviewed 375/768/1280 source layouts.
+
+**Problems fixed (10):** new release primary action looked secondary, disclosure button lacked expanded-state association, inline editor accepted only button clicks (not Enter submit), hand-styled fields deviated from shared legacy tokens, Save/Cancel cramped at 375, delete competed alongside Save, failed delete dismissed confirmation before API returned, delete error appeared under editor instead of dialog, no delete-success feedback, and fields stayed stale when release props changed while editor was closed.
+
+**Changes:** opt for primary Add release and secondary Edit release, connect toggle to form via React useId, use a native submit form and shared field styles, align full-width mobile Save/Cancel. Separate irreversible Delete release behind a hairline in the editor, keep confirmation overlay mounted through API pending/errors, show error in overlay and success through existing toast, refresh only on success. Sync closed editor fields to updated release details, preserving initial values while open, existing dirty guard, delete restrictions, labels, API/CAS tokens and messages. Source inspection only; no CI/browser.
+
+**Files:** release editor, queue, proof.
+
+## 38. Mentor task delete confirmation
+
+**Surface:** `src/components/projects/mentor-task-delete-control.tsx`; inspected inline dangerous action, ConfirmDialog overlay, pending/disabled/error success, CAS DELETE request and existing ToastProvider. Checked 375/768/1280 control flow, labels, focus semantics and board embedding.
+
+**Problems fixed (6):** filled red Delete competed with the board's main task action, trigger sat in a purposeless span, previous failed error remained on reopen, pending dialog could be closed through external state callback, long error/title could break the confirmation width, and success had no immediate notice during router refresh.
+
+**Changes:** demote destructive trigger to a clear red-text secondary link with a 44px phone hit area; maintain red destructive confirm action in the shared alertdialog, clear previous error when reopened, refuse state close while pending, wrap title/error for 375px, show persistent in-dialog failure and toast success on saved deletion. Same task ID, expectedUpdatedAt, confirm:true, irreversible copy and route behavior. Source-reviewed, no runtime/CI.
+
+**Files:** delete control, queue, proof.
