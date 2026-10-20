@@ -77,10 +77,10 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     <PageHeader title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
       actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Semester–Course Mapping</Link>} />
-    <AcademicSetupSteps step={3} />
+    <AcademicSetupSteps step={3} showRefresh={false} />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="border-b border-border pb-4" aria-label="Semester filters">
-      <form method="get" action="/admin/semesters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
+      <form method="get" action="/admin/semesters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]">
         <label className="grid min-w-44 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester or program
           <Input name="q" type="search" defaultValue={data.query.q} maxLength={100}
             className="min-h-11 w-full min-w-0 md:min-h-9" />
@@ -106,10 +106,11 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           </Select>
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+        <Link href="/admin/semesters" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text hover:underline md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
       </form>
     </section>
-    <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">
+    <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center">
+    <form method="get" action="/admin/semesters" aria-label="Refresh semester directory" className="w-full sm:w-auto">
       {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
       {data.query.programId ? <Input type="hidden" name="programId" value={data.query.programId} /> : null}
       <Input type="hidden" name="status" value={data.query.status} />
@@ -124,6 +125,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Export semesters.csv
     </a>
+    </div>
     <section aria-label="Semesters" className="min-w-0 space-y-3">
       <p role="status" className="m-0 break-words text-sm text-muted-foreground">{data.total} matching semesters</p>
       <DataTable
