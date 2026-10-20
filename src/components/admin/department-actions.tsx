@@ -133,7 +133,7 @@ export function DepartmentActions({
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
       <Button
         variant="secondary"
         size="sm"
