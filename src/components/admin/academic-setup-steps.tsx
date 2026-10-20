@@ -12,7 +12,7 @@ const steps = [
 ] as const;
 
 /** Legacy Super Admin Academic Setup: the first six daily-use setup steps. */
-export function AcademicSetupSteps({ step }: { step: 1 | 2 | 3 | 4 | 5 | 6 }) {
+export function AcademicSetupSteps({ step, showRefresh = true }: { step: 1 | 2 | 3 | 4 | 5 | 6; showRefresh?: boolean }) {
   const list: readonly (typeof steps)[number][] = steps;
   const before = list[step - 2];
   const after = list[step];
@@ -24,7 +24,7 @@ export function AcademicSetupSteps({ step }: { step: 1 | 2 | 3 | 4 | 5 | 6 }) {
         <p className="mt-1 text-xs text-muted-foreground">{steps[step - 1]?.label ?? "Academic Setup"}</p>
       </div>
       <div className="grid min-w-0 grid-cols-1 gap-2 text-sm sm:flex sm:flex-wrap sm:items-center">
-        <AcademicDirectoryRefresh/>
+        {showRefresh ? <AcademicDirectoryRefresh/> : null}
         <Link href="/admin/academics" className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Academic Setup overview →</Link>
         {before ? <Link href={before.href}
           className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
