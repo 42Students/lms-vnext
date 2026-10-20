@@ -39,24 +39,24 @@ export default async function SuperAdminElectivesPage({
     <>
       {options ? <CollegeSlotManager options={options} /> : null}
       <form aria-label="Filter elective slots" className="grid min-w-0 gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-5">
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input name="q" defaultValue={data.query.q} placeholder="Slot or program"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 md:min-h-9">
             <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select name="programId" defaultValue={data.query.programId ?? ""}
             className="min-h-11 md:min-h-9">
             <option value="">All programs</option>
             {data.programs.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
           <Select name="semesterNumber" defaultValue={data.query.semesterNumber ?? ""}
             className="min-h-11 md:min-h-9">
             <option value="">All semesters</option>

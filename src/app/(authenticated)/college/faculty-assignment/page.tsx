@@ -69,17 +69,17 @@ export default async function CollegeFacultyAssignmentPage({
       <CollegeFacultyAssignmentCreate {...options} />
       <section className="border-b border-border pb-4">
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-[8px]">
-          <label className="grid min-w-0 md:min-w-[220px] flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 md:min-w-[220px] flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Faculty, course or class
             <Input name="q" type="search" defaultValue={query.q} maxLength={100}
               />
           </label>
-          <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Exact course code
             <Input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}
               />
           </label>
-          <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Class
             <Select name="sectionCode" defaultValue={query.sectionCode ?? ""}
               >
@@ -92,7 +92,7 @@ export default async function CollegeFacultyAssignmentPage({
               First 200 active deliveries shown; a selected class outside this list is retained.
             </span>:null}
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Assignment lifecycle
             <Select name="status" defaultValue={query.status}
               >
@@ -101,7 +101,7 @@ export default async function CollegeFacultyAssignmentPage({
               <option value="ALL">All</option>
             </Select>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {FACULTY_ASSIGNMENT_COPY.roleLabel}
             <Select name="role" defaultValue={query.role}
               >

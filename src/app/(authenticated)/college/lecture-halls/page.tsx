@@ -104,13 +104,13 @@ export default async function CollegeLectureHallsPage({
       </Link>
       <section aria-label="Lecture hall filters" className="border-t border-border pt-4">
         <form action="/college/lecture-halls" method="get" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Room name
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
               placeholder="Search halls"
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select name="status" defaultValue={query.status}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -119,7 +119,7 @@ export default async function CollegeLectureHallsPage({
               <option value="ARCHIVED">Archived only</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Room type
             <Select name="roomType" defaultValue={query.roomType}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -128,7 +128,7 @@ export default async function CollegeLectureHallsPage({
                 <option key={value} value={value}>{label}</option>)}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Department
             <Select name="departmentId" defaultValue={query.departmentId ?? ""}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -137,13 +137,13 @@ export default async function CollegeLectureHallsPage({
                 <option key={dept.id} value={dept.id}>{dept.name}</option>)}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Minimum seats
             <Input name="minimumCapacity" type="number" min={1} max={5000} step={1}
               defaultValue={query.minimumCapacity ?? ""} placeholder="Any capacity"
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Scheduled upcoming classes
             <Select name="upcoming" defaultValue={query.upcoming}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -152,7 +152,7 @@ export default async function CollegeLectureHallsPage({
               <option value="NO">No upcoming scheduled classes</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Maximum seats
             <Input name="maximumCapacity" type="number" min={1} max={5000} step={1}
               defaultValue={query.maximumCapacity ?? ""} placeholder="Any capacity"

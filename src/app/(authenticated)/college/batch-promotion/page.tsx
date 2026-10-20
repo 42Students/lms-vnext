@@ -74,7 +74,7 @@ export default async function CollegeBatchPromotionPage({
       actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <section className="border-t border-border pt-4">
       <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-3 max-[767px]:[&_label]:w-full md:grid-cols-2 min-[992px]:grid-cols-4">
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Program
           <Select name="programId" defaultValue={parsed.data.programId ?? ""}
             >
@@ -84,7 +84,7 @@ export default async function CollegeBatchPromotionPage({
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Batch
           <Select name="cohortId" defaultValue={parsed.data.cohortId ?? ""}
             >
@@ -94,7 +94,7 @@ export default async function CollegeBatchPromotionPage({
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic year override (optional)
           <Input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}

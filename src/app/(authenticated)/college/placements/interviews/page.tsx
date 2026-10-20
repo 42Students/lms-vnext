@@ -62,16 +62,16 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.
    </Banner>:<>
    <SummaryStrip label="Interview summary" steps={[{label:"Scheduled",value:data.summary?.scheduled??0},{label:"Today",value:data.summary?.today??0},{label:"Companies",value:data.summary?.companies??0},{label:"Conflicts",value:data.summary?.conflicts??0}]}/>
-   <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-3">
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student, company or role
+   <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-3">
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student, company or role
      <Input name="q" defaultValue={valid.data.q} maxLength={100} />
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
      <Select name="companyId" defaultValue={valid.data.companyId??""} >
       <option value="">All companies</option>{data.companies.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
      <Select name="departmentId" defaultValue={valid.data.departmentId??""} >
       <option value="">All departments</option>{data.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
@@ -79,12 +79,12 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     {([{name:"type",label:"Type",values:["ALL","INTERVIEW","GD"]},
       {name:"status",label:"Status",values:["ALL","SCHEDULED","COMPLETED","NO_SHOW","CANCELLED"]},
       {name:"mode",label:"Mode",values:["ALL","ON_CAMPUS","VIRTUAL"]}]
-    ).map(filter=><label key={filter.name} className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{filter.label}
+    ).map(filter=><label key={filter.name} className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{filter.label}
      <Select name={filter.name} defaultValue={String(valid.data[filter.name as "type"|"status"|"mode"])}
       >
       {filter.values.map(value=><option key={value} value={value}>{value==="ALL"?"All":value.replaceAll("_"," ")}</option>)}
      </Select></label>)}
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
      <Select name="sort" defaultValue={valid.data.sort} >
       <option value="UPCOMING">Upcoming first</option><option value="RECENT">Recent first</option>
       <option value="STUDENT">Student name</option>

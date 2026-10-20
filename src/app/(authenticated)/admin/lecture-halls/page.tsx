@@ -70,24 +70,24 @@ export default async function SuperAdminLectureHallsPage({
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
     <section aria-label="Lecture hall filters" className="space-y-4 border-b border-border pb-4">
       <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room name
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room name
           <Input type="search" name="q" maxLength={100} defaultValue={query.q}
             placeholder="Search halls" className="min-h-11 w-full md:min-h-9"/>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Status
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={query.status} className="min-h-11 w-full md:min-h-9">
             <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Department
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
           <Select name="departmentId" defaultValue={query.departmentId ?? ""}
             className="min-h-11 w-full md:min-h-9">
             <option value="">All departments</option>
             {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Room type
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room type
           <Select name="roomType" defaultValue={query.roomType}
             className="min-h-11 w-full md:min-h-9">
             <option value="ALL">All types</option>
@@ -97,7 +97,7 @@ export default async function SuperAdminLectureHallsPage({
             <option value="CONFERENCE_ROOM">Conference Room</option>
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold leading-5 text-body">Rows per page
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
           <Select name="pageSize" defaultValue={query.pageSize}
             className="min-h-11 w-full md:min-h-9">
             {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
