@@ -199,7 +199,9 @@ export function PersonMembershipActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
+      <details className="group min-w-0 text-left print:hidden">
+       <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Actions</summary>
+       <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center md:justify-end">
         <PersonProfileDialog
           membershipId={membershipId}
           collegeId={collegeId}
@@ -210,7 +212,7 @@ export function PersonMembershipActions({
         <Button
           variant="secondary"
           size="sm"
-          className="min-h-11 md:min-h-9"
+          className="min-h-11 w-full sm:w-auto md:min-h-9"
           disabled={currentStatus === "ENDED" || lifecyclePending || Boolean(rolePending) || roleRequestPending.current}
           onClick={() => setRolesOpen(true)}
         >
@@ -253,7 +255,8 @@ export function PersonMembershipActions({
             End
           </Button>
         ) : null}
-      </div>
+       </div>
+      </details>
 
       <Dialog
         open={rolesOpen}
@@ -339,7 +342,7 @@ export function PersonMembershipActions({
           Suspension reason
         </label>
         <Textarea
-          className="min-h-11 md:min-h-9"
+          className="min-h-11 w-full sm:w-auto md:min-h-9"
           id={`suspension-reason-${membershipId}`}
           value={suspensionReason}
           onChange={(event) =>
