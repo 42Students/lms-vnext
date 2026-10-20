@@ -208,7 +208,7 @@ export function AssignmentSubmissionControl({
   return (
     <form
       onSubmit={submit}
-      className="min-w-0"
+      className="min-w-0 space-y-[var(--lms-space-4)]"
     >
       <fieldset disabled={submitting && submissionType !== "FILE"} className="min-w-0">
         <legend className="text-sm font-semibold text-foreground">
@@ -219,12 +219,12 @@ export function AssignmentSubmissionControl({
         </p>
 
         <div
-          className="mt-3 grid grid-cols-1 gap-2 sm:flex sm:flex-wrap"
+          className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] md:flex md:flex-wrap"
           role="group"
           aria-label="Submission type"
         >
           <FilterChip
-            className="min-h-11 w-full sm:w-auto md:min-h-9"
+            className="min-h-11 w-full md:w-auto md:min-h-9"
             type="button"
             disabled={submitting||!methodsLoaded||!mayWrite}
             aria-pressed={
@@ -237,7 +237,7 @@ export function AssignmentSubmissionControl({
             Written response
           </FilterChip>
           <FilterChip
-            className="min-h-11 w-full sm:w-auto md:min-h-9"
+            className="min-h-11 w-full md:w-auto md:min-h-9"
             type="button"
             disabled={submitting||!methodsLoaded||!mayLink}
             aria-pressed={
@@ -249,7 +249,7 @@ export function AssignmentSubmissionControl({
           >
             External Link
           </FilterChip>
-          <FilterChip type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!methodsLoaded || submitting ||
+          <FilterChip type="button" className="col-span-2 min-h-11 w-full md:col-span-1 md:w-auto md:min-h-9" disabled={!methodsLoaded || submitting ||
               (multipartEnabled ? !(mayWrite&&mayLink) && !(fileUploadsEnabled&&mayUpload) : !fileUploadsEnabled || !mayUpload)}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
             {multipartEnabled?"Combine work":"File Upload"}
@@ -274,12 +274,12 @@ export function AssignmentSubmissionControl({
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
-          <section className="mt-4 min-w-0">
-            <h3 className="mb-1.5 text-xs font-semibold text-body">Written response</h3>
+          <section className="mt-[var(--lms-space-4)] min-w-0">
+            <h3 className="mb-[6px] text-xs font-semibold text-body">Written response</h3>
             <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>
           </section>
         ) : (
-          <label className="mt-4 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="mt-[var(--lms-space-4)] block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Website / External Links<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
             </span>
@@ -301,8 +301,8 @@ export function AssignmentSubmissionControl({
 
         {error ? <Alert tone="error" className="mt-3">Assignment was not submitted. {error}</Alert> : null}
 
-        {submissionType !== "FILE" ? <div className="mt-4 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={submitting} disabled={!methodsLoaded||Boolean(methodsError)||submitting}>
+        {submissionType !== "FILE" ? <div className="mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] md:flex-row md:flex-wrap md:items-center">
+          <Button type="submit" className="min-h-11 w-full md:w-auto md:min-h-9" loading={submitting} disabled={!methodsLoaded||Boolean(methodsError)||submitting}>
             {submitting
               ? "Submitting…"
               : error?"Retry":"Submit"}
@@ -315,15 +315,15 @@ export function AssignmentSubmissionControl({
       </fieldset>
       <Dialog open={discardHref!==null} onOpenChange={open=>{if(!open)setDiscardHref(null);}}
         title="Discard this submission?" description="Your unsent answer will be lost."
-        footer={<>
-          <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setDiscardHref(null)}>Keep editing</Button>
-          <Button type="button" variant="danger" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
+        footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
+          <Button type="button" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>setDiscardHref(null)}>Keep editing</Button>
+          <Button type="button" variant="danger" className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>{
             if(submitting)return;
             const href=discardHref;
             setDiscardHref(null);setTextContent("");setSubmissionUrl("");
             if(href)router.push(href);
           }}>Discard</Button>
-        </>}>
+        </div>}>
         <p className="text-sm text-body">You have unsent work. Keep editing to preserve your answer.</p>
       </Dialog>
     </form>

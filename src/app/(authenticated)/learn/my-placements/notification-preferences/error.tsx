@@ -10,6 +10,6 @@ export default function Error({reset}:{
     <PageHeader title={"Could not load placement notification preferences"} />
     <p className="mt-2 text-sm text-body">The read failed. No saved-state assumption was made.</p>
     <Button type="button" variant="secondary" onClick={reset}
-      className="mt-4 min-h-11">Retry</Button>
+      className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">Retry</Button>
   </section>;
 }

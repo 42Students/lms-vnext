@@ -345,7 +345,7 @@ export function AdminOfferingLearningOverview({
     );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -422,7 +422,7 @@ export function AdminOfferingLearningOverview({
           </p>
         </section>
       ) : (
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-[var(--lms-space-4)]">
           <CollegeLessonDragOrder learningPathId={learningPath.id}
             lessons={workspace.lessons.map(row=>({id:row.id,name:row.name,sequence:row.sequence}))}/>
           {workspace.lessons.map(
@@ -436,7 +436,7 @@ export function AdminOfferingLearningOverview({
                 <section
                   id={"lesson-"+lesson.id}
                   key={lesson.id}
-                  className="min-w-0 border-b border-[var(--lms-canvas-border)] py-5 first:pt-0 last:border-b-0"
+                  className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>

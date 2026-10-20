@@ -19,26 +19,32 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
   throw e;
  }
  const base="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
- const facts=[["Current status",data.offer.status],["Issued",data.offer.issued.slice(0,10)],["Response",data.offer.responded?.slice(0,10)??"Not recorded"],["Expiry",data.offer.expires?.slice(0,10)??"Not recorded"],["Joining",data.joining??"Not applicable"]] as const;
- return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-  <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 print:hidden" href={base+"/offers"}>← Offer register</Link>
+ const dateInIst=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(value));
+ const momentInIst=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value))+" IST";
+ const facts=[["Current status",data.offer.status],["Issued",dateInIst(data.offer.issued)],["Response",data.offer.responded?dateInIst(data.offer.responded):"Not recorded"],["Expiry",data.offer.expires?dateInIst(data.offer.expires):"Not recorded"],["Joining",data.joining??"Not applicable"]] as const;
+ return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+
   <PageHeader eyebrow="TPO · Offer evidence" title={data.candidate.name+" · "+data.offer.role}
-   description="Persisted offer and joining events. Recorded internal reasons are disclosed only within authorized college scope."/>
-  <section aria-label="Current offer facts" className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5 print:overflow-visible">
-   {facts.map(([name,value])=><div key={name} className="min-w-0 border-b border-border px-1 py-4">
+   description="Persisted offer and joining events. Recorded internal reasons are disclosed only within authorized college scope."
+   actions={<>
+    <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:w-auto md:min-h-9 print:hidden" href={base+"/offers"}>← Offer register</Link>
+    <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:w-auto md:min-h-9 print:hidden" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</Link>
+   </>}/>
+  <section aria-label="Current offer facts" className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-5 print:overflow-visible">
+   {facts.map(([name,value])=><div key={name} className="min-w-0 border-b border-r border-border px-3 py-3 even:border-r-0 last:border-b-0 xl:border-b-0 xl:border-r xl:last:border-r-0">
     <p className="text-xs text-muted-foreground">{name}</p><p className="mt-2 break-words font-semibold">{name==="Current status"?<StatusBadge tone={value==="ACCEPTED"?"success":value==="DECLINED"?"error":value==="PENDING"?"warning":"neutral"}>{value}</StatusBadge>:value}</p>
    </div>)}
   </section>
-  <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 print:hidden" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</Link>
-  <section aria-label="Offer status and joining history" className="border-b border-border pb-6">
-   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recorded transitions</h2>
+
+  <section aria-label="Offer status and joining history" className="min-w-0 border-b border-border pb-4">
+   <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Recorded transitions</h2>
    {data.events.length===0?<EmptyState title="No persisted status or joining history events were found; absence is not evidence of a decision."/>:
-    <ol className="mt-4 divide-y divide-border">{data.events.map(event=><li key={event.id} className="py-4">
+    <ol className="mt-3 divide-y divide-border">{data.events.map(event=><li key={event.id} className="min-w-0 py-4">
      <div className="flex flex-wrap items-center justify-between gap-3">
-      <strong className="text-sm">{event.kind}: {event.from??"Initial"} → {event.to}</strong>
-      <time dateTime={event.when} className="text-xs text-muted-foreground">{event.when.slice(0,19).replace("T"," ")} UTC</time>
+      <strong className="min-w-0 break-words text-sm">{event.kind}: {event.from??"Initial"} → {event.to}</strong>
+      <time dateTime={event.when} className="text-xs text-muted-foreground">{momentInIst(event.when)}</time>
      </div>
-     {event.reason?<p className="mt-2 whitespace-pre-wrap text-sm text-body">Recorded reason: {event.reason}</p>:null}
+     {event.reason?<p className="mt-2 whitespace-pre-wrap break-words text-sm leading-5 text-body">Recorded reason: {event.reason}</p>:null}
     </li>)}</ol>}
   </section>
   <p className="text-xs text-muted-foreground">This page does not verify letter delivery, external acceptance, or employer confirmation.</p>

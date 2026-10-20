@@ -105,14 +105,14 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   finally{setPending(false);setRevokeTarget(null);}
  }
  return <section aria-label="Company applicant sharing"
-   className="space-y-3 border-b border-border pb-6">
+   className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Share shortlisted applicants with a company</h2>
   <p className="text-sm text-body">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum 90-day lifetime, use a separate six-digit code, and may be revoked immediately. Private notes stay excluded.</p>
   {!ready?<Alert tone="warning">
    External sharing is unavailable until its audited database migration is registered.
   </Alert>:<>
-   <div className="flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-4)] min-[768px]:grid-cols-2">
     <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expires in days
      <Select value={days} onChange={event=>changeExpiry(event.target.value)}
       className="w-full">
@@ -123,8 +123,9 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
      <Input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
       />
     </label>
-    <fieldset className="w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3">
-     <legend className="px-1 text-sm font-semibold">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
+    <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)] min-[768px]:col-span-2">
+      <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Columns to share ({selectedColumns.length} of 11 maximum)</summary>
+      <fieldset className="min-w-0"><legend className="sr-only">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
      <div className="grid min-w-0 gap-2 min-[768px]:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
       <label key={key} className="inline-flex min-h-11 items-center gap-2 text-sm">
        <Checkbox checked={selectedColumns.includes(key)}
@@ -133,9 +134,10 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
          [...current,key]:current.filter(col=>col!==key))}/>
        {label}
       </label>)}</div>
-    </fieldset>
+      </fieldset>
+    </details>
     <Button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
-     className="w-full min-[768px]:w-auto">
+     className="min-h-11 w-full min-[768px]:col-span-2 min-[768px]:w-auto min-[768px]:justify-self-end">
      Create expiring link
     </Button>
    </div>
@@ -143,24 +145,24 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     Share code: <strong className="font-mono text-lg">{newCode}</strong>.
     Give this six-digit code to the company separately. It cannot be recovered later.
    </Alert>:null}
-   {newUrl?<div className="rounded-[var(--lms-control-radius)] border border-border p-3">
+   {newUrl?<div className="min-w-0 space-y-[var(--lms-space-2)] border-y border-border py-[var(--lms-space-4)]">
     <p className="text-xs font-semibold text-[var(--lms-muted-text)]">Copy this URL now. The secret cannot be recovered later.</p>
     <Input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
-     className="mt-2 w-full"/>
+     className="w-full"/>
     <Button type="button" variant="link" onClick={()=>void copyLink()}
      className="mt-2 min-h-11 w-full md:min-h-9 md:w-auto">Copy URL</Button>
     {copyState==="COPIED"?<InlineNotice tone="success" message="Copied to clipboard."/>:null}
     {copyState==="MANUAL_COPY"?<InlineNotice tone="info" message="Clipboard unavailable. Select the URL field above and copy it manually."/>:null}
    </div>:null}
-   {links.length>0?<ul className="space-y-2">{links.map(link=><li key={link.id}
-    className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2 text-sm">
+   {links.length>0?<ul className="min-w-0 divide-y divide-border">{links.map(link=><li key={link.id}
+    className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-t border-border py-[var(--lms-space-3)] text-sm min-[768px]:flex-row min-[768px]:items-center">
     <span className="min-w-0 break-words">Link {link.id.slice(0,8)} · Expiry {link.expiresAt.slice(0,10)} ·
      {companyShareLifecycleLabel(companyShareLifecycleStatus(link,asOf))}</span>
     <span className="text-xs text-muted-foreground">
      {link.audit.views} views · {link.audit.exports} CSV downloads
     </span>
     {!link.revokedAt?<Button type="button" variant="link" disabled={pending}
-     onClick={()=>setRevokeTarget(link.id)} className="min-h-11 md:min-h-9">Revoke</Button>:null}
+     onClick={()=>setRevokeTarget(link.id)} className="min-h-11 w-full min-[768px]:ml-auto min-[768px]:w-auto md:min-h-9">Revoke</Button>:null}
    </li>)}</ul>:<p className="text-sm text-body">{companyShareEmptyMessage(status)}</p>}
   </>}
   <ConfirmDialog open={revokeTarget!==null} onOpenChange={open=>{if(!open)setRevokeTarget(null);}} pending={pending}
