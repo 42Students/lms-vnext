@@ -23,13 +23,12 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
   <PageHeader eyebrow="Super Admin · People" title={"Audit trail · "+(data.membership.name??"Unnamed person")}
    description={"Recorded events for this exact membership in the selected college: "+data.membership.collegeName} actions={<PageBackLink href={"/admin/people/directory/"+encodeURIComponent(membershipId)} label="Membership profile" />}/>
   <p role="status" className="text-sm text-body">Showing latest {data.events.length} recorded events. This is not an authentication-session or cross-college activity audit.</p>
-  <ol className="divide-y divide-border border-y border-border">{data.events.map(event=><li key={event.id} className="py-4">
+  {data.events.length ? <ol className="divide-y divide-border border-y border-border">{data.events.map(event=><li key={event.id} className="py-4">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="text-sm font-semibold">{event.summary}</h2>
      <time className="text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>{date.format(event.occurredAt)} IST</time>
     </div>
     <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><span>{event.module} · {event.eventType}</span><StatusBadge tone={event.importance==="HIGH"?"warning":"neutral"}>{event.importance}</StatusBadge></p>
-   </li>)}</ol>
-  {!data.events.length?<EmptyState title="No matching membership activity events have been recorded." />:null}
+   </li>)}</ol> : <EmptyState title="No membership activity" description="No matching membership activity events have been recorded."/>}
  </div>;
 }

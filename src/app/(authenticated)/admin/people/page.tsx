@@ -169,7 +169,7 @@ export default async function SuperAdminPeoplePage({
       <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Browse platform users & roles →
       </Link>
-      <DataTable empty={<EmptyState title="No records to show." />}
+      <DataTable empty={<EmptyState title="No matching contacts" description="No college memberships match the current filters." />}
         columns={columns}
         rows={people.items}
         getRowKey={(person) => person.membership.id}

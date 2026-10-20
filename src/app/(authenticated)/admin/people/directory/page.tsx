@@ -105,7 +105,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    caption="People directory memberships"
    rows={data.items}
    getRowKey={row=>row.membershipId}
-   empty={<p>No matching users within this scope.</p>}
+   empty={<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
    columns={[
     {key:"name",header:"Person",mobilePriority:"primary",cell:row=>
      <div className="min-w-0">
