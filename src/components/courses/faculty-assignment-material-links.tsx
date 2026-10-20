@@ -1,5 +1,6 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
+import { Disclosure } from "@/components/ui/disclosure";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -54,30 +55,32 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
   finally{lock.current=false;setPending(false);}
  }
  const parsed=facultyAssignmentMaterialLinkSchema.safeParse({title,externalUrl});
- return <section aria-label="Instructor assignment resources" className="min-w-0 space-y-3 border-t border-border pt-4 max-[767px]:[&_button]:min-h-11">
+ return <section aria-label="Instructor assignment resources" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] max-[767px]:[&_button]:min-h-11">
   <h3 className="text-base font-semibold">Instructions &amp; resources</h3>
   {loading?<LoadingState label="Loading instructor links…" />:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {!loading&&!error&&links.length===0?<p role="status" className="text-sm text-muted-foreground">No instructor resources yet.</p>:null}
   <ul className="divide-y divide-border">
-   {links.map(link=><li key={link.id} className="flex min-w-0 flex-col items-start gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-    <a href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-all font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{link.title}</a>
+   {links.map(link=><li key={link.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] py-[var(--lms-space-3)] text-sm md:flex-row md:items-center md:justify-between">
+    <a href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 min-w-0 max-w-full items-center break-words [overflow-wrap:anywhere] font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{link.title}</a>
     <Button variant="secondary" type="button" disabled={disabled||pending} onClick={()=>setRemoveId(link.id)} size="md">Remove</Button>
    </li>)}
   </ul>
-  {!disabled?<div className="grid min-w-0 gap-3 md:grid-cols-2">
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title
+  {!disabled?<Disclosure title="Add link" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+   <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title
     <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
-     className="mt-1 min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
+     className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
    </label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Secure resource link
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Secure resource link
     <Input value={externalUrl} onChange={e=>setExternalUrl(e.target.value)} type="url" maxLength={2048}
-     placeholder="https://" className="mt-1 min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
+     placeholder="https://" className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
    </label>
    <Button variant="secondary" type="button" disabled={pending||loading||links.length>=20||!parsed.success}
     onClick={()=>{if(parsed.success)void act({action:"ADD",link:parsed.data});}}
-    className="w-full md:w-auto md:justify-self-start" size="md">Add link</Button>
-  </div>:null}
+    className="w-full md:w-auto md:justify-self-end md:col-span-2" size="md">Add link</Button>
+   </div>
+  </Disclosure>:null}
   <p className="text-xs text-muted-foreground">Only HTTPS links can be added here. File handouts require verified private storage.</p>
   <ConfirmDialog
     open={removeId!==null}
