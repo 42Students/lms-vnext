@@ -5,6 +5,7 @@ import {
   type NotificationListItem,
 } from "@/components/activity/notification-list";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
 import { countOwnUnreadNotifications, listOwnNotificationPage } from "@/modules/activity/notification-service";
 import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
@@ -69,12 +70,12 @@ export default async function NotificationsPage({
       />
       <NotificationToolbar view={view} unreadCount={unreadCount} />
       {parsedCursor.invalid ? (
-        <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-primary-subtle p-4 text-sm text-foreground">
+        <Alert tone="error">
           The notification page link is invalid.{" "}
           <Link href={view === "unread" ? "/notifications?view=unread" : "/notifications?view=all"} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Return to the newest notifications
           </Link>
-        </div>
+        </Alert>
       ) : (
         <>
           <NotificationList
@@ -83,7 +84,7 @@ export default async function NotificationsPage({
           />
           {nextHref ? (
             <div className="flex justify-center">
-              <Link href={nextHref} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <Link href={nextHref} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Older notifications
               </Link>
             </div>
