@@ -401,22 +401,22 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   }
 }
 
-/* Legacy: components___common.scss:141-147 — 200ms ease box-shadow on
-   .ln-card-hvr; legacy only applies this treatment to opted-in hover cards.
-   Restrict to explicit interactive card semantics so static page sections
-   remain flat per the old LMS single-canvas design. */
+/* Legacy: components___common.scss:141-147 — only cards explicitly
+   marked .ln-card-hvr receive a 200ms ease hover shadow. A generic role=button
+   adds focus/touch feedback in accessibility.scss, NOT a hover elevation:
+   avoid elevating every interactive [data-slot=card] by accident. */
 @media (hover: hover) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)):hover {
+  main .ln-card-hvr:not(:where([data-unskin], [data-unskin] *)):hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)) {
+  main .ln-card-hvr:not(:where([data-unskin], [data-unskin] *)) {
     transition: box-shadow 200ms ease;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-slot="card"]:is([role="button"], .ln-card-hvr) {
+  main .ln-card-hvr {
     transition: none !important;
   }
 }
