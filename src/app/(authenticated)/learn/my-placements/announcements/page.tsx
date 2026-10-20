@@ -80,7 +80,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   return (
     <div className="min-w-0 space-y-6">
       <div>
-        <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to My Placements</Link>
+        <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to My Placements</Link>
         <PageHeader title={LEARNER_LEGACY_NOTICES_TITLE}
           description="Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown." />
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
@@ -90,7 +90,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <a href="#personal-updates" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
       </nav>
       <div id="college-notices" className="scroll-mt-24"/>
-      <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
+      <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="College notice search" className="flex min-w-0 flex-wrap items-end gap-3">
         {alertQ?<Input type="hidden" name="alertQ" value={alertQ}/>:null}
         {source==="placement-cell"?<Input type="hidden" name="source" value={source}/>:null}
         {pinnedOnly ? <Input type="hidden" name="pinned" value="1" /> : null}
@@ -106,7 +106,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
-      <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
+      <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="College notice sorting" className="flex min-w-0 flex-wrap items-end gap-3">
         {alertQ?<Input type="hidden" name="alertQ" value={alertQ}/>:null}
         {source==="placement-cell"?<Input type="hidden" name="source" value={source}/>:null}
         {pinnedOnly?<Input type="hidden" name="pinned" value="1"/>:null}
@@ -229,7 +229,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
       </nav>
-      <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
+      <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="Personal alert search" className="flex min-w-0 flex-wrap items-end gap-3">
         {pinnedOnly?<Input type="hidden" name="pinned" value="1"/>:null}
         {recentOnly?<Input type="hidden" name="recent" value="1"/>:null}
         {unreadOnly?<Input type="hidden" name="unread" value="1"/>:null}

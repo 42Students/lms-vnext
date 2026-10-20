@@ -529,7 +529,7 @@ export default async function LearnerPlacementsPage({
 
       {(await placementTableExists("placement_learner_general_requests"))?<LearnerGeneralRequests/>:null}
 
-      {rows ? <section className="space-y-3">
+      {rows ? <section aria-label="Live placement opportunities" className="space-y-3">
         <div>
           <h2 className="m-0 text-base font-semibold text-foreground">
             Live opportunities
