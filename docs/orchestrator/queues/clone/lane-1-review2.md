@@ -29,5 +29,5 @@ These 29 page routes were moved to chat-1 from the end of other lanes' review qu
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
 - [x] `src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx`
 - [x] `src/app/(authenticated)/mentor/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx`

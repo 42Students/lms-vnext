@@ -6,6 +6,7 @@ import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -41,20 +42,20 @@ export default async function TpoPlacementTeamPage() {
   const { members, summary, sources } = data;
 
   return (
-    <div className="space-y-6">
-      <TpoSettingsNav active="team" />
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Placement Team"
         description="A read-only directory of active TPO memberships, persisted faculty team assignments and dated Drive Day student coordinators in your college."
         actions={
           <Link
             href="/tpo/settings/trusted"
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
             Trusted Companies
           </Link>
         }
       />
+      <TpoSettingsNav active="team" />
 
       {!sources.teamAssignmentsAvailable ? (
         <Alert tone="warning">
@@ -80,7 +81,7 @@ export default async function TpoPlacementTeamPage() {
         </Alert>
       ) : null}
 
-      <section className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">
+      <section aria-label="Placement team summary" className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">
         {[
           ["Distinct active members", String(summary.total)],
           ["TPO memberships", String(summary.tpoMemberships)],
@@ -105,7 +106,7 @@ export default async function TpoPlacementTeamPage() {
         ].map(([label, value]) => (
           <div
             key={label}
-            className="border-b border-border px-1 py-4"
+            className="min-w-0 border-b border-[var(--lms-canvas-border)] px-4 py-4 last:border-b-0 min-[768px]:odd:border-r min-[768px]:odd:border-r-[var(--lms-canvas-border)] min-[768px]:last:border-r-0 min-[992px]:border-b-0 min-[992px]:border-r min-[992px]:border-r-[var(--lms-canvas-border)] min-[992px]:last:border-r-0"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {label}
@@ -131,16 +132,13 @@ export default async function TpoPlacementTeamPage() {
         </div>
 
         {members.length === 0 ? (
-          <div className="py-4 text-sm text-body">
-            No matching active TPO or coordinator memberships were
-            found in the available sources.
-          </div>
+          <EmptyState title="No matching active TPO or coordinator memberships were found in the available sources." />
         ) : (
           <DataTable
             rows={members}
             getRowKey={member=>member.membershipId}
             caption="Active team memberships"
-            empty={<p>No matching active TPO or coordinator memberships were found in the available sources.</p>}
+            empty={<EmptyState title="No matching active TPO or coordinator memberships were found in the available sources."/>}
             columns={[
               {key:"member",header:"Member",mobilePriority:"primary",cell:member=>
                 <span className="font-semibold text-foreground">{member.displayName}</span>},
@@ -160,7 +158,7 @@ export default async function TpoPlacementTeamPage() {
                   </p>
                   {member.studentDuties.map(duty=><p key={duty.jobId+":"+duty.onDate} className="text-xs text-body">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(duty.jobId)}
-                      className="font-semibold text-link underline">
+                      className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                       {duty.jobTitle}
                     </Link>
                     {" · "}{dutyDate(duty.onDate)}
