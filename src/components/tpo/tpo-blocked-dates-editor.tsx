@@ -2,6 +2,7 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
@@ -52,7 +53,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    <label className="text-sm">Label (optional)
     <Input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
      placeholder="Blocked" className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/></label>
-   {reason.trim().length>0&&reason.trim().length<3?<p role="alert" className="self-end text-xs text-error">Use at least 3 characters for a label, or leave it blank.</p>:null}
+   {reason.trim().length>0&&reason.trim().length<3?<InlineNotice tone="error" message="Use at least 3 characters for a label, or leave it blank."/>:null}
    <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end"
     disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</Button>
   </form>
@@ -70,7 +71,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
   <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked days across {ranges.length} displayed ranges · Maximum 90 days per range</p>
   {pastCount>0?<Button type="button" variant="secondary" onClick={()=>setShowPast(value=>!value)}
    className="min-h-11 min-[768px]:min-h-9">{showPast?"Hide past blocked dates":`Show past blocked dates (${pastCount})`}</Button>:null}
-  {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{!showPast&&pastCount>0?"No upcoming blocked dates.":tpoBlockedDatesEmptyMessage(items.length)}</p>:
+  {visible.length===0?<EmptyState title={!showPast&&pastCount>0?"No upcoming blocked dates.":tpoBlockedDatesEmptyMessage(items.length)}/>:
    <ul className="grid min-w-0 gap-2 min-[768px]:grid-cols-2">{ranges.map(range=><li key={range.items[0].id}
     className="flex min-w-0 flex-wrap justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
     <div className="min-w-0"><strong>{range.startDay===range.endDay?range.startDay:range.startDay+" – "+range.endDay}</strong><p className="break-words text-sm">{range.reason}</p><p className="text-xs text-muted-foreground">{range.items.length} day(s) · Individual day removal below</p></div>
@@ -87,7 +88,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
      void request("/api/placements/tpo/settings/blocked-dates/"+item.id,"DELETE",{expectedVersion:item.updatedAt});
     }} className="min-h-11 min-[768px]:min-h-9">Remove {item.day}</Button>)}</div></Disclosure></li>)}</ul>}
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
-  {notice?<p role="status" className="text-sm">{notice}</p>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
   {dialog}
  </section>;
 }

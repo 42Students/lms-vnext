@@ -102,12 +102,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     <PageHeader title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Request a drive
       </Link>} />
     <nav aria-label="Recruiter proposal history">
       <Link href={hrSentProposalsHref(selectedCollege)}
-       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        Sent discussion proposals
       </Link>
       <span className="self-center text-xs text-muted-foreground">
@@ -147,7 +147,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {query.data.view!=="WAITING"?<div className="flex justify-end">
       <Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:1})
         .replace("/recruiter/drives","/api/placements/recruiter/drives/export")}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Export matching drives CSV
       </Link>
     </div>:null}
@@ -193,27 +193,27 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           </Alert>:null}
           <p className="mt-2 text-xs text-muted-foreground">Requested {req.createdAt.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
           {editable?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&"+(req.status==="SENT_BACK"?"fix":"edit")+"="+encodeURIComponent(req.id)}
-            className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             {req.status==="SENT_BACK"?"Fix and Resend":"Edit your request"}
           </Link>:null}
           {editable?<RecruiterRequestCancelButton requestId={req.id} collegeId={selectedCollege} updatedAt={req.updatedAt.toISOString()}/>:null}
           {["REJECTED","CANCELLED"].includes(req.status)?<Link
             href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&copy="+encodeURIComponent(req.id)}
-            className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Hire again with changes
           </Link>:null}
           {req.status==="REJECTED"&&req.decisionNote?<p className="mt-2 text-sm text-body">Declined: “{req.decisionNote}”</p>:null}
           {req.approvedJobId && req.status==="DRAFT"?
             <p role="status" className="mt-2 text-sm text-body">Approved · draft. The placement cell will publish this drive before students can apply.</p>:null}
           {req.approvedJobId && req.status!=="DRAFT"?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-            className="mt-2 block text-sm text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">Open published drive</Link>:null}
+            className="mt-2 block text-sm text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 md:min-h-9">Open published drive</Link>:null}
         </li>;
       })}</ul>
     </section>:null}
     {query.data.view==="WAITING" && requestView.length===0
       ? <div className="space-y-2">
           <EmptyState title="No Sent for review drives" description="Choose another drive stage to see more."/>
-          <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View all drives</Link>
+          <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View all drives</Link>
         </div>
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
         ? <div className="space-y-2">
@@ -224,7 +224,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             : <EmptyState title={"No "+(query.data.view==="LIVE"?"Live":"Completed and cancelled")+" drives"}
               description="Choose another drive stage to see more."/>}
           <Link href={totals.all===0?recruiterDriveDraftHref({collegeId:selectedCollege}):recruiterDrivesHref({...query.data,view:"ALL",q:"",page:1})}
-            className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             {totals.all===0?"Request a drive":query.data.q?"Clear search":"View all drives"}
           </Link>
         </div>
@@ -235,7 +235,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {query.data.view !== "WAITING" ? <div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><p className="text-sm text-body">{pageResult.total===0?"No matching drives":
         "Showing "+(Math.min(pageResult.total,(pageResult.page-1)*pageResult.pageSize+1))+"–"+
         Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total}</p><Pagination label="Drive pages" page={pageResult.page} pageCount={pageResult.pages} hrefForPage={page=>recruiterDrivesHref({...query.data,collegeId:selectedCollege,page})}/></div>:null}
-    <Link href="/hr/round-results" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review round results →</Link>
+    <Link href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review round results →</Link>
     <p className="text-xs text-muted-foreground">Request history is saved. Placement-cell approval and external sending remain unavailable until the registered employer-request workflow is ready.</p>
   </div>;
 }

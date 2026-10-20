@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -30,8 +31,8 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
    <Input type="datetime-local" value={date} disabled={busy} onChange={event=>setDate(event.target.value)}
     className="min-h-11 md:min-h-9" />
   </label>
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
   <div className="flex flex-wrap gap-2">
    <Button type="submit" variant="secondary" disabled={busy||!date} className="min-h-11 md:min-h-9 text-xs">{busy?"Saving…":"Set away"}</Button>
    {until?<Button type="button" variant="secondary" disabled={busy} className="min-h-11 md:min-h-9 text-xs"

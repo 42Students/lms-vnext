@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { StatTile } from "@/components/ui/stat-tile";
 import metricStyles from "./learner-placement-metrics.module.css";
+import { PlacementSnapshotGlyph, type PlacementSnapshotGlyphKind } from "./learner-placement-snapshot-glyph";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
@@ -19,20 +20,22 @@ type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 const formatWhen=learnerDashboardDateLabel;
 
 function Metric({
-  label, value, href, detail,
+  label, value, href, detail, kind,
 }: {
   label: string;
   value: number | null;
   href: string;
   detail: string;
+  kind: PlacementSnapshotGlyphKind;
 }) {
   const metric = learnerDashboardMetricView(value, label, detail);
   return (
     <Link href={href} aria-label={metric.ariaLabel}
-      className={metricStyles.link+" group block outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
+      className={metricStyles.link+" group block"}>
       <StatTile label={label} value={metric.display}
         className={metricStyles.tile+" h-full"}>
-        <span className="mt-2 block text-xs leading-5 text-[var(--lms-body-text)] group-hover:text-[var(--lms-primary-text)]">
+        <span className={metricStyles.icon}><PlacementSnapshotGlyph kind={kind} /></span>
+        <span className={metricStyles.detail}>
           {metric.detail} →
         </span>
       </StatTile>
@@ -139,21 +142,21 @@ export function LearnerPlacementsDashboard({
         </section>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-2 md:gap-3 xl:grid-cols-4" aria-label="Placement snapshot">
+      <div className={metricStyles.snapshot} aria-label="Placement snapshot">
         <Metric
-          label="Published drives before deadline"
+          kind="jobs" label="Published drives before deadline"
           value={display.openJobs}
           href="/learn/my-placements/jobs"
           detail={`${display.eligibleJobs ?? "Unknown"} eligible · ${display.notOpenToApplyJobs ?? "Unknown"} not currently open to apply`}
         />
         <Metric
-          label="Applications"
+          kind="applications" label="Applications"
           value={display.applications}
           href="/learn/my-placements/applications"
           detail={`${display.activeApplications ?? "Unknown"} under consideration`}
         />
         <Metric
-          label="Upcoming assessments"
+          kind="assessments" label="Upcoming assessments"
           value={display.assessments}
           href="/learn/my-placements/assessments"
           detail={display.thisWeekAssessments===null
@@ -161,7 +164,7 @@ export function LearnerPlacementsDashboard({
             :`${display.thisWeekAssessments} in next seven IST calendar dates · not employer completion`}
         />
         <Metric
-          label="Upcoming interviews"
+          kind="interviews" label="Upcoming interviews"
           value={display.interviews}
           href="/learn/my-placements/interviews"
           detail={display.thisWeekInterviews===null

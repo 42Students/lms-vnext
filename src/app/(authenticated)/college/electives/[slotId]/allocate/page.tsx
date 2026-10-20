@@ -16,9 +16,15 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
 import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
 
 const uuid = z.string().uuid();
-const fieldStyle = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+const fieldStyle = "min-h-11 min-w-0 md:min-h-9";
 const base = (id: string) => "/college/electives/" + encodeURIComponent(id) + "/allocate";
 
 async function scopedSlot(slotId: string) {
@@ -155,46 +161,45 @@ export default async function CollegeElectiveAllocatePage({
   return <main className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
-      actions={<Link href="/college/electives" className="font-semibold text-link">Back to Electives</Link>} />
-    {input.added !== undefined && <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3">
+      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Back to Electives</Link>} />
+    {input.added !== undefined && <Alert tone={Number(input.failed ?? 0)>0?"warning":"success"}>
       Processed {input.added} learner(s); {input.failed ?? "0"} failed.
       {input.reason ? " " + input.reason : ""}
-    </p>}
+    </Alert>}
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-      <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Class/Section
-        <select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
+      <label className="grid min-w-0 md:min-w-52 flex-1 gap-1 text-sm font-semibold">Class/Section
+        <Select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
           <option value="">All sections</option>
           {allSections.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
-        </select>
+        </Select>
       </label>
-      <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Name, roll number or learner ID
-        <input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
+      <label className="grid min-w-0 md:min-w-52 flex-1 gap-1 text-sm font-semibold">Name, roll number or learner ID
+        <Input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
-      <Button >Search</Button>
+      <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
     </form>
     <form action={allocate} className="space-y-4 border-b border-border pb-4">
       <label className="grid gap-1 text-sm font-semibold">Allocate selected to…
-        <select name="offeringGroup" required className={fieldStyle}>
+        <Select name="offeringGroup" required className={fieldStyle}>
           <option value="">Choose elective offering</option>
           {offerings.map(o => <option key={o.id} value={o.groupId}>
             {o.name} · {o.enrolled}/{o.seats ?? "unlimited"} seats
           </option>)}
-        </select>
+        </Select>
       </label>
-      {offerings.length === 0 && <p className="text-sm text-muted-foreground">
-        Add a course offering to this slot before allocating learners.</p>}
+      {offerings.length === 0 && <EmptyState title="No elective offerings" description="Add a course offering to this slot before allocating learners."/>}
       <ScrollCue axis="y" label="Eligible students for allocation"
         className="min-w-0 rounded-[var(--lms-control-radius)] border border-border" viewportClassName="max-h-80">
         <DataTable
           caption="Eligible students for allocation"
           rows={students}
           getRowKey={student => student.membershipId}
-          empty={<p className="text-sm text-muted-foreground">No eligible students match these filters.</p>}
+          empty={<EmptyState title="No eligible learners" description="No eligible students match these filters."/>}
           columns={[
             { key: "select", header: "Select", mobilePriority: "action", cell: student =>
               <label className="flex min-h-11 min-w-11 items-center justify-center">
-                <input type="checkbox"
+                <Checkbox
                   aria-label={"Select " + (student.name ?? student.rollNumber ?? "student") + " for allocation"}
                   name="membershipId" value={student.membershipId} />
               </label> },
@@ -207,11 +212,10 @@ export default async function CollegeElectiveAllocatePage({
       <p className="text-xs text-muted-foreground">
         Showing up to 500 matching active learners. Filter by section or search for a smaller list.</p>
       <label className="grid gap-1 text-sm font-semibold">Or paste roll numbers / learner membership IDs
-        <textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
+        <Textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
-      <Button type="submit" disabled={!offerings.length}
-        >
+      <Button type="submit" disabled={!offerings.length} className="min-h-11 md:min-h-9">
         Allocate selected to…
       </Button>
     </form>

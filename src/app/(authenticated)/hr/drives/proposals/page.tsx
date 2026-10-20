@@ -2,6 +2,8 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {PageBackLink} from "@/components/ui/page-back-link";
+import {HrProposalHistoryGrid} from "@/components/hr/hr-proposal-history-grid";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -29,8 +31,8 @@ export default async function RecruiterDriveProposalHistory({
   <PageHeader title="Sent drive proposals"
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
   <nav className="flex flex-wrap gap-3">
-   <Link href="/hr/drives" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drives</Link>
-   <Link href="/hr/drives/new" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Draft another proposal</Link>
+   <PageBackLink href="/hr/drives" label="Back to drives"/>
+   <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Draft another proposal</Link>
   </nav>
   {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3">
    <h2 className="font-semibold">Choose a college</h2>
@@ -56,18 +58,31 @@ export default async function RecruiterDriveProposalHistory({
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
       page:data.page,sort:input.data.sort})}
-     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Export this page (summary CSV)
     </Link>:null}
    <p role="status" className="text-sm text-body">
     {data.total} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
    </p>
-   {data.items.length?<ol className="divide-y divide-border border-y border-border">
+   {data.items.length?<>
+    <div className="hidden min-w-0 md:block">
+      <HrProposalHistoryGrid scopeKey={context.user.id+":"+(data.collegeId??"")}
+       rows={data.items.map(row=>({
+        id:row.id,title:row.title,reference:row.referenceId,
+        sentAt:new Intl.DateTimeFormat("en-IN",{
+          dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+        }).format(row.createdAt)+" IST",
+        sentAtMs:row.createdAt.getTime(),
+        status:"Discussion only — not an approval request",
+        threadHref:"/hr/conversations/"+row.threadId,
+       }))}/>
+    </div>
+    <ol className="divide-y divide-border border-y border-border md:hidden">
     {data.items.map(row=><li key={row.id}
-     className="p-4">
+     className="py-4">
      <Link href={"/hr/conversations/"+row.threadId}
-      className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{row.title}</Link>
+      className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 md:min-h-9">{row.title}</Link>
      <p className="mt-2 text-xs text-muted-foreground">
       Proposal reference: {row.referenceId}
      </p>
@@ -78,12 +93,12 @@ export default async function RecruiterDriveProposalHistory({
      </p>
      <p className="mt-2 text-xs text-body">No approval or drive publication is implied.</p>
     </li>)}
-   </ol>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."/>}
+   </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."/>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-3">
     {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
     {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Older proposals</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Older proposals</Link>:null}
    </nav>
   </>}
  </div>;

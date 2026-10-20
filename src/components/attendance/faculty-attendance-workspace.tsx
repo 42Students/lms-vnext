@@ -535,7 +535,7 @@ export function FacultyAttendanceWorkspace({
               </div>
               <div className="flex items-end gap-2">
                 <Button
-                  size="sm"
+                  size="md"
                   variant="secondary"
                   aria-label="Previous month"
                   onClick={() =>
@@ -558,7 +558,7 @@ export function FacultyAttendanceWorkspace({
                   />
                 </label>
                 <Button
-                  size="sm"
+                  size="md"
                   variant="secondary"
                   aria-label="Next month"
                   onClick={() =>
@@ -807,12 +807,12 @@ export function FacultyAttendanceWorkspace({
             <section className="border-b border-border pb-5">
               <div className="grid gap-4 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
                 <div>
-                  <label className="block text-xs font-semibold text-body">
+                  <label className="block text-[13px] font-semibold leading-4 text-body">
                     Date
                     <Input type="date" className="mt-1.5" value={selectedDate}
                       onChange={event=>chooseDate(event.target.value)}/>
                   </label>
-                  <label htmlFor={sessionSelectId} className="mt-3 block text-xs font-semibold text-body">
+                  <label htmlFor={sessionSelectId} className="mt-3 block text-[13px] font-semibold leading-4 text-body">
                     Class session
                   </label>
                   <Select
@@ -881,7 +881,7 @@ export function FacultyAttendanceWorkspace({
                 />
                 <div className="flex flex-wrap gap-2">
                   <Button
-                    size="sm"
+                    size="md"
                     variant="secondary"
                     disabled={
                       workspace.roster.length === 0
@@ -893,7 +893,7 @@ export function FacultyAttendanceWorkspace({
                     Mark all present
                   </Button>
                   <Button
-                    size="sm"
+                    size="md"
                     variant="secondary"
                     disabled={
                       workspace.roster.length === 0
@@ -953,7 +953,7 @@ export function FacultyAttendanceWorkspace({
                             </div>
                             <div className="flex gap-2">
                               <Button
-                                size="sm"
+                                size="md"
                                 className="min-h-11 md:min-h-[var(--lms-control-height)]"
                                 variant={
                                   !isAbsent
@@ -974,7 +974,7 @@ export function FacultyAttendanceWorkspace({
                                 Present
                               </Button>
                               <Button
-                                size="sm"
+                                size="md"
                                 className="min-h-11 md:min-h-[var(--lms-control-height)]"
                                 variant={
                                   isAbsent
@@ -1056,7 +1056,7 @@ export function FacultyAttendanceWorkspace({
                     Attendance saves are atomic: no partial roster will be committed on a rejected request.
                     Reload the saved roster before retrying if the connection was interrupted.
                   </span>
-                  <Button size="sm" variant="secondary" onClick={() => setConfirmingRosterReload(true)}>
+                  <Button size="md" variant="secondary" onClick={() => setConfirmingRosterReload(true)}>
                     Reload saved roster
                   </Button>
                 </p>
@@ -1146,7 +1146,7 @@ export function FacultyAttendanceWorkspace({
                       ) : null}
                       {canMark ? (
                         <Button
-                          size="sm"
+                          size="md"
                           variant="secondary"
                           onClick={() => {
                             chooseSession(session.id);

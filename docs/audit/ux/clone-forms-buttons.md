@@ -774,3 +774,12 @@ Phone: <=767px uses 24px/32px h1, 20px/30px h2, 16px/26px h3, 44px raw form/acti
 | Missing picker with alternate | No exact legacy WebView fallback surface established | `file-upload.tsx:126,159` status + optional fallback, unchanged by global error paint | Mismatch cannot be ticked without old WebView reference |
 
 These are static whole-file code comparisons only. The file-owning change is pushed as `[chat-17]`; there is no new layout, no API behavior change, and no fabricated browser evidence. **A1–A4, C1–C7, D remain 0/12 strictly ticked.**
+
+
+### A2 special-theme selected text, after foundation pass
+
+The separate tracker opt-in `data-tracker-theme="dark"` now retains legible selected text through `src/styles/legacy-skin.css`'s tracker-only `::selection` override. The old LMS light canvas keeps the original neutral-900 text on `--lms-primary-subtle`. This corrects the low-contrast dark-on-dark selection combination without changing user-visible content, caret position or ordinary light-theme styling. This is a **source-only contrast guard**, not evidence of a rendered browser comparison.
+
+The attempted repository-subtree-wide source inventory could not be completed within the connected source reader's request limit; only the previously listed complete-file regex results are verified. Do not imply the required `grep -rlE ... src` commands ran. **A2 and A4 stay unticked; all 12 strict category items stay open.**
+
+Next exact source file: `src/styles/legacy-skin.css` — finish remaining label/error/link A2 contrast and A4 scroll/focus exceptions with legacy declarations, then audit `src/app/globals.css` again.

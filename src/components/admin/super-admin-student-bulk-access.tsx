@@ -42,27 +42,27 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
   <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
    <p role="status" className="text-sm text-muted-foreground">{selected.length}/25 students selected</p></div>
   <p className="text-xs text-muted-foreground">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
-  <label className="flex min-h-11 items-center gap-2 text-sm text-body">
+  <label className="flex min-h-11 items-center gap-2 text-sm text-body print:hidden">
    <Checkbox checked={capped.length>0&&selected.length===Math.min(capped.length,25)}
     onChange={e=>setSelected(e.target.checked?capped.slice(0,25).map(x=>x.id):[])} disabled={busy}/>
    Select first {Math.min(25,capped.length)} students in these search results
   </label>
-  <div role="region" aria-label="Bulk student selection" tabIndex={0} className="grid max-h-44 gap-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] min-[768px]:grid-cols-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+  <div role="region" aria-label="Bulk student selection" tabIndex={0} className="grid max-h-44 gap-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] md:grid-cols-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] print:hidden">
    {capped.map(learner=><label key={learner.id} className="flex min-h-11 items-center gap-2 text-sm text-body">
     <Checkbox checked={selected.includes(learner.id)} disabled={busy||(!selected.includes(learner.id)&&selected.length>=25)}
      onChange={e=>setSelected(curr=>e.target.checked?[...curr,learner.id]:curr.filter(id=>id!==learner.id))}/>
     <span className="truncate">{learner.name}</span>
    </label>)}
   </div>
-  <div className="flex flex-wrap items-end gap-3 text-sm">
+  <div className="flex flex-wrap items-end gap-3 text-sm print:hidden">
    <label className="grid gap-1 text-[13px] font-semibold text-body">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
-    className="min-h-11 w-full min-[768px]:min-h-9">
+    className="min-h-11 w-full md:min-h-9">
     <option value="projects">Projects</option><option value="electives">Electives</option></Select></label>
    <label className="grid gap-1 text-[13px] font-semibold text-body">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
-    className="min-h-11 w-full min-[768px]:min-h-9">
+    className="min-h-11 w-full md:min-h-9">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
     <option value="INHERIT">Clear override / Inherit</option></Select></label>
-   <Button variant="primary" type="button" disabled={busy||!selected.length} onClick={()=>void submit()}
+   <Button variant="primary" type="button" className="min-h-11 md:min-h-9" disabled={busy||!selected.length} onClick={()=>void submit()}
     >{busy?"Saving…":"Apply to selected"}</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

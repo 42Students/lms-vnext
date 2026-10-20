@@ -880,3 +880,57 @@ Direct GitHub branch fetch inspected all of `src/components/tpo/recruiter-leads-
 **Coverage limitation:** GitHub indexed default-branch search for `window.confirm(` revealed **51 src files** before this batch. It is a bounded search, not a checkout `git grep` and cannot prove the remaining count; these 8 files were directly read from the lane branch, each showing **zero** native confirmation calls after migration. The broader F1 coverage remains open: need owner-orchestrated `git grep -n 'window.confirm' -- src`, replacement of other relevant browser prompts, exact legacy variant table and live focus test.
 
 **Next F1 file:** `src/components/placements/tpo-week-hour-calendar.tsx` (multiple independent blocked-date/dirty-draft confirmations, requiring stateful two-step dialogs), then `src/components/tpo/recruiter-lead-detail-workspace.tsx` (unsaved form/one-time invitation confirmation).
+
+
+## Chat-16 weekly calendar sequential confirmation migration — 2026-10-20
+
+**F1 source stage:** seven blocking browser prompts for calendar reschedule, blocked dates, unsaved-draft dismissal and link navigation are now one stateful shared `ConfirmDialog` sequencer. The original messages, order and server mutation payloads are retained. No app, browser, test or CI was executed.
+
+| Surface or state | Old LMS source/requirement | Lane vNext source | Result |
+| --- | --- | --- | --- |
+| Legacy confirmation content | `docs/design/legacy-styles/components___antddesign.scss:899-906`: padding **15px 15px 5px**, footer top gap **21px** | `src/components/ui/confirm-dialog.tsx:15-19` and `legacy-overlays.css:394-405` | Numeric match |
+| Legacy confirmation on phone | `components___antddesign.scss:1037-1041,1057-1072`: 767px boundary, viewport minus32px width, minus48px height, actions gap8px and min44px | `src/components/ui/dialog.tsx:39-55` and `legacy-overlays.css:407-413` | Static numeric match |
+| Blocked-date move prompt | Old `window.confirm`: ask permission for blocked date before moving | `src/components/placements/tpo-week-hour-calendar.tsx`: MOVE typed prompts first warn when blocked | Source sequence preserved |
+| Unavailable blocked-date settings | Old prompt permitted an explicit acknowledgment, then final move prompt | MOVE prompts conditionally include the unavailable warning before final action | Source sequence preserved |
+| Move follow-up confirmation | Old final prompt names the destination day/time | MOVE last prompt keeps date/time and PATCH to same endpoint after confirmation | Source behavior preserved |
+| Add follow-up warnings | Old prompted only on blocked dates or failed settings availability | ADD prompts contain only those two optional warning stages; clear dates save without extra prompt | Source behavior preserved |
+| Draft discard | Old `window.confirm` only if lead/note/query populated | DISCARD prompt and preserved `hasDraft` check | Source behavior preserved |
+| Link/navigation discard | Old document capture prevented losing unfinished draft | LEAVE prompt stores href and continues same-origin router navigation or external assignment only after confirmation | Static path reviewed |
+| Browser unload | Old `beforeunload` preserved on dirty draft | Still uses browser-required unload guard, bypassing second browser prompt only after accepted external navigation | Source behavior retained |
+| Keyboard/focus | Old SCSS lacks a native keyboard algorithm | One shared native alertdialog, auto-focused Cancel, connected opener recovery and Escape dismissal when idle | Needs actual browser proof |
+
+**Direct branch source grep equivalent:** inspected the entire updated `src/components/placements/tpo-week-hour-calendar.tsx` and found **0** `window.confirm(` and **1** `<ConfirmDialog` instance. Existing `<Dialog>` pairs remain for create/move forms. This is a file-specific source check, not an exhaustive checkout grep.
+
+**Responsive expressions:** 280/375/640/767px share the 32px width margin, 48px height margin and 44px minimum actions; 768/1024px use max36rem shared desktop Dialog. Warnings update the active modal copy in sequence; there is no stack of simultaneous independent warning dialogs. Computed style, drag/drop, focus trapping, soft keyboard, scroll and screenshots remain untested.
+
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx` — blocked/unavailable move and add warnings, draft discard, link navigation confirmations; JSX/typed intent source reviewed.
+- [ ] F1 and F2 category gates stay **unticked** until checkout-wide grep, complete legacy state tables, real viewport and focus/browser proof.
+
+**Next source file:** `src/components/placements/use-unsaved-drive-guard.ts`, then `src/components/tpo/recruiter-lead-detail-workspace.tsx`.
+
+
+## Chat-16 recruiter detail multi-action confirmation parity — 2026-10-20
+
+| Item/state | Old LMS reference or original protected action | vNext source after source migration | Result |
+| --- | --- | --- | --- |
+| Confirmation content and spacing | `docs/design/legacy-styles/components___antddesign.scss:899-906`: padding **15px 15px 5px**, actions margin-top **21px** | `src/components/ui/confirm-dialog.tsx:15-19`, `src/components/ui/legacy-overlays.css:394-405` | Matched static skin values |
+| Confirmation mobile dimensions | `components___antddesign.scss:1037-1041,1057-1072`: through 767px, viewport minus32 width, minus48 height, footer gap8 and min44 actions | `src/components/ui/dialog.tsx:39-55` with shared ConfirmDialog/mobile CSS | Numeric source match |
+| Recruiter navigation with dirty form | Original `window.confirm`: Leave this recruiter? Unsaved changes will be lost | `src/components/tpo/recruiter-lead-detail-workspace.tsx:145-154,394-400,714-750`: LEAVE intent holds route, confirms before `router.push` | Source behavior maintained |
+| Edit cancel with dirty field | Original `window.confirm`: Discard unsaved recruiter changes? | `recruiter-lead-detail-workspace.tsx:253-261,667-695`: CLOSE_EDIT only if values differ; Cancel click lambda doesn't pass React MouseEvent as bypass token | Source branch checked |
+| Not Now reason/revisit discard | Original `window.confirm`: Discard your Not now reason and revisit date? | CLOSE_NOT_NOW only when reason/date entered; preserving empty-form cancel behavior | Source check |
+| Save contact identity | Original blocking confirmation warns about duplicate checks/outreach and activity log | SAVE_EDIT in shared dialog; same PATCH payload and duplicate conflict handling | Source mutation untouched |
+| Stage Not Now mutation | Original warns about reason/revisit date and no invitation | MARK_NOT_NOW confirmation, same POST `confirmed:true` and auditable decision payload | Source mutation untouched |
+| Invitation valid seven days | Original confirmation warns previous link will stop working | CREATE_INVITE intent; same email/company validation, one-time token and POST remain unchanged | Source mutation untouched |
+| Close one-time invitation preview | Original warned token/message won't be shown again | CLOSE_INVITE danger confirmation; clears invite token/message/notice/expiry only on approval | Source check |
+| Keyboard and pending | Browser-native confirm previously blocked all other UI; old SCSS doesn't define a key algorithm | Shared native `ConfirmDialog` auto-focus Cancel, `role=alertdialog`, disabled pending; parent edit/Not Now dialogs remain shared `Dialog` | Runtime focus-trap/stack test still required |
+| Exact old exit animation | Bundled old stylesheet doesn't give one universal confirmation exit duration | Shared native Dialog uses 180ms exit with reduced-motion support | **Not legacy-proven** |
+
+**Source grep equivalent:** direct GitHub lane-branch read of the complete 754-line `src/components/tpo/recruiter-lead-detail-workspace.tsx` found **0** `window.confirm(`, **1** `<ConfirmDialog` and paired **2** `<Dialog>` / **2** `</Dialog>` elements. The seven former native prompts are now discriminated `confirmation` state values. Existing conditional actions, network requests and link destinations were not removed.
+
+**Responsive source matrix:** 280/375/640/767px: shared confirm 32px horizontal/48px vertical viewport margin, button min44, source geometry; nested edit and Not Now forms retain 44px controls. At 768/1024px: max36rem modal with existing compact 36px form controls where defined. In all sizes the same one foreground ConfirmDialog handles all seven intents, instead of seven separate handcrafted dialogs. Visual screenshot/soft-keyboard/focus restoration not executed.
+
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx` F1 source stage: seven native confirmations replaced, shared dialog, all original actions and guards retained.
+- [ ] F1 category remains unticked: native confirmation calls still exist in many other components, and no full checkout grep/browser test.
+- [ ] F2 remains unticked: popup exit and legacy toast policy still not proven.
+
+**Next:** `src/components/placements/use-unsaved-drive-guard.ts` — the hook returns state only, so a shared ConfirmDialog needs a controlled UI host without changing existing call semantics.

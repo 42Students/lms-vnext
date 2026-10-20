@@ -90,13 +90,13 @@ export default async function MentorSprintProgressPage({
         <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={"/api/mentor/sprint-progress/export?"+
+        <Link data-unskin="" href={"/api/mentor/sprint-progress/export?"+
           new URLSearchParams({
             state:data.query.state,release:data.query.release,search:data.query.search,
             projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
             order:data.query.order,
           }).toString()}
-          download className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-150 motion-reduce:transition-none">
           Export filtered sprint CSV (max 100)
         </Link>
         {data.total>100?<span role="status">
@@ -115,7 +115,7 @@ export default async function MentorSprintProgressPage({
             <span className="text-xs font-semibold text-body">{item.status}</span>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">Release: {item.releaseStatus}</p>
-          <dl className="mt-4 grid gap-3 sm:grid-cols-4">
+          <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-4">
             {([
               ["Tasks", item.tasks.total],
               ["Done", item.tasks.completed],

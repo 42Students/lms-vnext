@@ -47,7 +47,7 @@ export default async function MentorTeamMeetingsPage({
     </section>:<>
       <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Active team coverage</h2>
-        <dl className="mt-4 grid gap-3 sm:grid-cols-3">
+        <dl className="mt-4 grid gap-3 md:grid-cols-3">
           <div><dt className="text-xs text-muted-foreground">Learners</dt>
             <dd className="mt-1 text-xl font-semibold">{data.team.learners}</dd></div>
           <div><dt className="text-xs text-muted-foreground">Mentors</dt>

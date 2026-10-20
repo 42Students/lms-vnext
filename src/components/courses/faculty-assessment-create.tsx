@@ -1,7 +1,6 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
-
-
+import { EmptyState } from "@/components/ui/empty-state";
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Drawer} from "@/components/ui/drawer";
@@ -45,9 +44,7 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
    </div>
    <Button className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
   </div>
-  {!courses.length?<p role="status" className="text-sm text-muted-foreground">
-   No assigned courses found. Assign yourself to a course before creating a {name.toLowerCase()}.
-  </p>:null}
+  {!courses.length?<EmptyState title="No assigned courses found" description={`Assign yourself to a course before creating a ${name.toLowerCase()}.`}/>:null}
   <Drawer open={open} onOpenChange={closeDrawer}
    title={kind==="QUIZ"?"Create quiz":"Create Assignment"}
    description="Choose your assigned course and lesson before opening the assessment builder.">
@@ -65,9 +62,7 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
       {lessonChoices.map(item=><option key={item.lessonId} value={item.lessonId}>{item.lessonName}</option>)}
      </Select>
     </label>
-    {!lessonChoices.length?<p role="status" className="text-sm text-muted-foreground">
-     No lessons in this course yet. Create a lesson before attaching a {name.toLowerCase()} to this course.
-    </p>:null}
+    {!lessonChoices.length?<Alert tone="info">No lessons in this course yet. Create a lesson before attaching a {name.toLowerCase()} to this course.</Alert>:null}
     <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3 text-sm">
       <strong>Quizzes are attached to lessons</strong>
       <p>This keeps faculty creation and learner attempts under the same course structure.</p>
