@@ -6,6 +6,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {useRef,useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
+import {Disclosure} from "@/components/ui/disclosure";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import {VerificationExportControl} from "./VerificationExportControl";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
@@ -65,11 +66,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
   for(const [k,v] of Object.entries(changes)){if(v)params.set(k,v);else params.delete(k);}
   router.push(base+"?"+params.toString());
  };
- return <div className="min-w-0 space-y-4">
-  <div className="flex flex-wrap justify-end gap-2">
-   <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
-   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Refresh</Button>
-  </div>
+ return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   {activeTab==="WAITING"&&candidates.length>0?<div className="flex flex-wrap gap-3">
    <Button variant="secondary" type="button" onClick={()=>{
     const picks=candidates.slice(0,20);setSequence(picks);setSequenceIndex(0);setSelected(picks[0]??null);
@@ -78,8 +75,13 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    </Button>
    <p className="self-center text-xs text-muted-foreground">Review up to 20 waiting requests on this page. Each decision keeps its own audit history.</p>
   </div>:null}
-  {activeTab==="WAITING"&&candidates.length>0?<section aria-label="Super Admin bulk verification" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
-   <h2 className="font-semibold">Act on selected verification requests</h2>
+  <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={filters=>navigate({...filters,page:"1"})}/>
+  <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
+   initialTab={activeTab} initialKind={initialKind}
+   onTabChange={tab=>navigate({tab,page:"1"})}
+   onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
+   onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
+  {activeTab==="WAITING"&&candidates.length>0?<Disclosure ariaLabel="Super Admin bulk verification" title={<h2 className="font-semibold">Act on selected verification requests</h2>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
@@ -117,13 +119,11 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
     </Button>
    </div>:null}
    {bulkMessage?<p role="status" className="text-sm">{bulkMessage}</p>:null}
-  </section>:null}
-  <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={filters=>navigate({...filters,page:"1"})}/>
-  <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
-   initialTab={activeTab} initialKind={initialKind}
-   onTabChange={tab=>navigate({tab,page:"1"})}
-   onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
-   onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
+  </Disclosure>:null}
+  <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)]">
+   <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
+   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Refresh</Button>
+  </div>
   <nav aria-label="Verification pages" className="flex flex-wrap gap-3 text-sm">
    <span>Showing {rows.length} of {total} in this status</span>
    {page>1?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="min-h-[var(--lms-control-height)] underline">Previous</Button>:null}
