@@ -82,10 +82,10 @@ export default async function MentorTaskReviewHistoryPage({
       </form>
       <p className="text-sm text-body">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={"/api/mentor/task-review-history/export?"+
+        <Link data-unskin="" href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,
             order:data.query.order,search:data.query.search}).toString()}
-          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-150 motion-reduce:transition-none">
           Export reviewed task decisions CSV (max 200)
         </Link>
         {data.total>200?<span role="status">
