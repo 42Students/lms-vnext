@@ -355,13 +355,13 @@ function CalendarEventCard({
   const href = eventHref(event, audience);
 
   return (
-    <article className="border-b border-border py-4 md:py-5">
+    <article className="min-w-0 border-b border-border py-[var(--lms-space-4)] first:pt-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="m-0 text-xs font-bold uppercase tracking-wide text-[var(--lms-link-text)]">
+          <p className="m-0 break-words text-xs font-semibold text-[var(--lms-muted-text)]">
             {event.companyName}
           </p>
-          <h3 className="mt-1 text-base font-semibold text-foreground">
+          <h3 className="mt-[var(--lms-space-1)] break-words text-base font-semibold text-[var(--lms-heading)]">
             {event.title}
           </h3>
           {event.jobTitle ? (
@@ -559,7 +559,7 @@ export async function PlacementCalendarWorkspace({
   const calendarFollowupsWritable =
     isTpo && process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
         title={
           isTpo
@@ -664,7 +664,7 @@ export async function PlacementCalendarWorkspace({
       </section>
 
       <section className={isTpo?"border-b border-border pb-5 "+calendarStyles.tpoCommandBar:"border-b border-border pb-5"}>
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
               Calendar controls
@@ -759,7 +759,7 @@ export async function PlacementCalendarWorkspace({
           ].join(":")}
           action={basePath}
           method="get"
-          className="mt-5 grid gap-3 border-t border-border pt-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4"
+          className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3"
         >
           <Input
             type="hidden"
@@ -767,7 +767,7 @@ export async function PlacementCalendarWorkspace({
             value={state.view}
           />
 
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm font-semibold text-body">
             Date
             <Input
               type="date"
@@ -778,7 +778,7 @@ export async function PlacementCalendarWorkspace({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm font-semibold text-body">
             Company
             <Input
               type="search"
@@ -806,7 +806,7 @@ export async function PlacementCalendarWorkspace({
              .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
           </datalist>:null}
           {isTpo ? (
-            <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+            <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm font-semibold text-body">
               Event type
               <Select
                 name="kind"
@@ -824,8 +824,10 @@ export async function PlacementCalendarWorkspace({
               </Select>
             </label>
           ) : (
-            <>
-              <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+            <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
+              <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
+              <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
+              <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm font-semibold text-body">
                 Round type
                 <Select
                   name="roundKind"
@@ -843,7 +845,7 @@ export async function PlacementCalendarWorkspace({
                 </Select>
               </label>
 
-              <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+              <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm font-semibold text-body">
                 Job
                 <Input
                   type="search"
@@ -854,11 +856,12 @@ export async function PlacementCalendarWorkspace({
                   className="w-full"
                 />
               </label>
-            </>
+              </div>
+            </details>
           )}
 
           <div className="flex items-end">
-            <Button type="submit" className="w-full"
+            <Button type="submit" className="min-h-11 w-full lg:min-h-9"
             >
               Apply filters
             </Button>
@@ -1073,7 +1076,7 @@ export async function PlacementCalendarWorkspace({
         aria-label="Calendar agenda"
         className="space-y-4"
       >
-        <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
               {state.view === "agenda"
