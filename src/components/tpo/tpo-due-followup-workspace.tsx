@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Disclosure } from "@/components/ui/disclosure";
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,7 +40,7 @@ type Queue = {
 };
 
 const field = "min-h-11 w-full md:min-h-9";
-const action = "min-h-11 md:min-h-9";
+const action = "min-h-11 w-full sm:w-auto md:min-h-9";
 function displayDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -82,10 +83,11 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
     if(inFlightRef.current||pending)return;
     let parsedDue:Date|null=null;
     try{parsedDue=dueLocal?new Date(calendarLocalIstToOffset(dueLocal)):null;}catch{parsedDue=null;}
-    if (!leadId || !parsedDue || Number.isNaN(parsedDue.getTime())) {
-      setError("Select a recruiter and a valid follow-up date and time.");
+    if (!leadId || !parsedDue || Number.isNaN(parsedDue.getTime()) || parsedDue.getTime()<=Date.now()) {
+      setError("Select a recruiter and a valid future follow-up date and time.");
       return;
     }
+    inFlightRef.current=true;
     inFlightRef.current=true;
     setPending(true); setError(""); setSuccess("");
     try {
