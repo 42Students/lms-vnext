@@ -27,8 +27,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-12.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
