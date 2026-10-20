@@ -72,20 +72,20 @@ export default async function CollegeOverviewPage() {
         actions={
           <>
             <Link href="/college/contacts"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Contacts
             </Link>
             <Link href="/college/announcements"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Announcements
             </Link>
             <Link href="/college/verification"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Verification
             </Link>
             <Link
               href="/college/branding"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
             >
               Branding
             </Link>
@@ -160,7 +160,7 @@ export default async function CollegeOverviewPage() {
             </p>
           </div>
           <Link href="/college/attendance"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Open attendance
           </Link>
         </div>
@@ -174,7 +174,7 @@ export default async function CollegeOverviewPage() {
                 <p className="text-muted-foreground">{event.faculty} · {new Date(event.when).toLocaleString("en-IN", {timeZone:"Asia/Kolkata"})}</p>
               </div>
               <Link href="/college/attendance"
-                className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">Open attendance</Link>
+                className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open attendance</Link>
             </li>)}
           </ul>}
         {attendance.unattendedCount > attendance.unattended.length &&
@@ -188,7 +188,7 @@ export default async function CollegeOverviewPage() {
             Under {lowAttendance.threshold}% attendance
           </h2>
           <Link href="/college/attendance"
-            className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">Review attendance</Link>
+            className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review attendance</Link>
         </div>
         <p className="text-sm text-muted-foreground">
           Last 30 days · marked sessions only · {lowAttendance.rows.length} learner(s) shown
@@ -211,7 +211,7 @@ export default async function CollegeOverviewPage() {
       <section aria-label="Courses with no teacher" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Courses with no teacher</h2>
-          <Link href="/college/faculty-assignment" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">
+          <Link href="/college/faculty-assignment" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Manage faculty
           </Link>
         </div>
@@ -228,7 +228,7 @@ export default async function CollegeOverviewPage() {
               <p className="text-muted-foreground">{course.sections.length} unstaffed class(es): {course.sections.join(", ")}</p>
             </div>
             <Link href="/college/faculty-assignment"
-              className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">Assign faculty</Link>
+              className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Assign faculty</Link>
           </li>)}
         </ul>}
       </section>
@@ -237,7 +237,7 @@ export default async function CollegeOverviewPage() {
       <section aria-label="Waiting to be graded" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Waiting to be graded</h2>
-          <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">
+          <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Review assignments
           </Link>
         </div>
@@ -251,7 +251,7 @@ export default async function CollegeOverviewPage() {
                   {item.pending} submission(s) · Oldest: {item.oldest?.toLocaleDateString("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }) ?? "—"}
                 </p>
               </div>
-              <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline">Review</Link>
+              <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review</Link>
             </li>)}
           </ul>}
       </section>
@@ -262,7 +262,7 @@ export default async function CollegeOverviewPage() {
         <p className="text-sm text-muted-foreground">Records still missing a critical academic relationship.</p>
         <div className="grid gap-[8px] md:grid-cols-2 lg:grid-cols-4">
           {setupGaps.map(item => <Link key={item.label} href={item.href}
-            className="rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary">
+            className="rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             <p className="text-sm text-muted-foreground">{item.label}</p>
             <p className="mt-2 text-xl font-semibold tabular-nums">{item.count}</p>
             <span className="text-xs font-semibold text-primary-text">Review →</span>
