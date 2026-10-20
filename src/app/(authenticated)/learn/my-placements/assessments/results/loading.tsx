@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function LearnerAssessmentResultsLoading() {
@@ -7,7 +7,7 @@ export default function LearnerAssessmentResultsLoading() {
       <PageHeader
         title="Official assessment results"
         description="Retrieving applied assessment outcomes for your own applications." />
-      <LoadingState label="Loading official assessment results…" />
+      <GracefulPageLoading label="Loading official assessment results…" shape="directory" />
     </div>
   );
 }
