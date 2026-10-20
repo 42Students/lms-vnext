@@ -48,17 +48,17 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
   setFilters(old=>({...old,[key]:value}));setSelected(null);setSequenceIndex(null);
  }
  return <section className="min-w-0 space-y-3">
-  <div className="flex flex-wrap gap-3">
-   <Button variant="secondary" type="button" className="max-md:min-h-11" onClick={()=>router.refresh()}>Refresh</Button>
-   {serverTab==="WAITING"&&waiting.length>0?<Button variant="secondary" type="button" className="text-primary-text max-md:min-h-11"
+  <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+   <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>router.refresh()}>Refresh</Button>
+   {serverTab==="WAITING"&&waiting.length>0?<Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
     onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Review one by one ({waiting.length})</Button>:null}
+   {serverTab==="WAITING"?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
+    onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</Button>:null}
   </div>
-  {serverTab==="WAITING"?<Button variant="secondary" type="button" className="text-primary-text max-md:min-h-11"
-   onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</Button>:null}
-  <section aria-label="Verification filters" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-2">
+  <section aria-label="Verification filters" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2">
    <label className="text-sm font-semibold">Marksheets
     <Select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
-     className="mt-1 block min-h-11 w-full md:min-h-9">
+     className="mt-1 block min-h-11 w-full min-w-0 md:min-h-9">
      <option value="ANY">Any</option><option value="MISSING">Missing</option><option value="PRESENT">All uploaded</option>
     </Select>
    </label>
@@ -72,7 +72,10 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    <p className="text-xs text-muted-foreground md:col-span-2">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
   </section>
   {serverTab==="WAITING"&&visible.length>0?
-   <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible} scope="verification"/>:null}
+   <details className="border-b border-border pb-3">
+    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:py-2">Verify profiles / Send back for correction</summary>
+    <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible} scope="verification"/>
+   </details>:null}
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
    legacyTpoCopy initialTab={serverTab} initialKind={serverKind} counts={counts}
    disableLocalSearch preserveServerOrder showTabCounts={true}
