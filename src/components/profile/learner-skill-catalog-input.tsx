@@ -9,7 +9,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
  const id=useId();
  const selectedSkill=useRef<string|null>(null);
  const rootRef=useRef<HTMLDivElement>(null);
- const [popupOpen,setPopupOpen]=useState(true);
+ const [popupOpen,setPopupOpen]=useState(false);
  const [items,setItems]=useState<Item[]>([]);
  const [activeIndex,setActiveIndex]=useState(-1);
  const [status,setStatus]=useState<"loading"|"ready"|"unavailable">("loading");
@@ -41,11 +41,11 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
   document.addEventListener("pointerdown",outside);
   return ()=>document.removeEventListener("pointerdown",outside);
  },[popupOpen]);
- return <div ref={rootRef} data-slot="searchable-select" className="relative md:col-span-2"
+ return <div ref={rootRef} data-slot="searchable-select" className="relative min-w-0 md:col-span-2"
   onBlur={event=>{
    if(!event.currentTarget.contains(event.relatedTarget)){setPopupOpen(false);setActiveIndex(-1);}
   }}>
-  <label htmlFor={id} className="text-xs font-semibold text-body">Skill</label>
+  <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Skill</label>
   <Input id={id} value={value} maxLength={160} autoComplete="off"
    onFocus={()=>setPopupOpen(true)}
    onChange={event=>{selectedSkill.current=null;setPopupOpen(true);setStatus("loading");setItems([]);setActiveIndex(-1);onChange(event.target.value);}}
@@ -67,21 +67,21 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={popupOpen&&status==="ready"&&items.length>0}
    aria-controls={popupOpen&&status==="ready"&&items.length>0?id+"-choices":undefined}
    aria-activedescendant={popupOpen&&status==="ready"&&activeIndex>=0&&activeIndex<items.length?`${id}-choice-${activeIndex}`:undefined}
-   className="mt-1 min-h-11 md:min-h-9 w-full"/>
-  {status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
-  {status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
+   className="mt-[6px] w-full"/>
+  {popupOpen&&status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
+  {popupOpen&&status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
     No catalog suggestions found. You can still save your own skill name.
   </p>:null}
-  {status==="unavailable"?<p role="status" className="mt-1 text-xs text-body">
+  {popupOpen&&status==="unavailable"?<p role="status" className="mt-1 text-xs text-body">
    Skill catalog temporarily unavailable. You can save the entered skill name.
   </p>:null}
   {popupOpen&&status==="ready"&&items.length>0?<PopoverListbox id={id+"-choices"} label="Suggested skills"
-    className="absolute left-0 top-full mt-1 z-[var(--lms-z-dropdown)] max-h-48 min-h-32 w-full overflow-y-auto pt-1" onDismiss={() => {setPopupOpen(false);setActiveIndex(-1);}}>
-    <ul className="m-0 list-none p-0">
+    className="absolute left-0 top-full z-[var(--lms-z-dropdown)] mt-[var(--lms-space-2)] max-h-48 w-full min-w-0 overflow-y-auto" onDismiss={() => {setPopupOpen(false);setActiveIndex(-1);}}>
+    <ul className="m-0 divide-y divide-[var(--lms-canvas-border)] list-none p-0">
     {items.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value} className="min-h-11">
-      <Button type="button" variant="ghost" className="!min-h-11 w-full justify-start !rounded-none !px-3 !py-2 text-left text-sm !transition-[background-color] !duration-[200ms] !ease-in-out hover:!bg-[var(--lms-primary-subtle)]"
+      <Button type="button" variant="ghost" className="!min-h-11 w-full min-w-0 justify-start !rounded-none !px-[var(--lms-space-3)] !py-[var(--lms-space-2)] text-left text-[13px] !transition-[background-color] !duration-[200ms] !ease-in-out hover:!bg-[var(--lms-primary-subtle)]"
        onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setPopupOpen(false);setItems([]);setActiveIndex(-1);}}>
-       {item.displayName}{item.category?<span className="ml-2 text-xs text-muted-foreground">{item.category}</span>:null}
+       <span className="min-w-0 flex-1 truncate">{item.displayName}</span>{item.category?<span className="ml-[var(--lms-space-2)] shrink-0 text-xs text-muted-foreground">{item.category}</span>:null}
       </Button>
     </li>)}
   </ul>
