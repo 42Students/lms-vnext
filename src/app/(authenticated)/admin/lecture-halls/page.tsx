@@ -83,7 +83,7 @@ export default async function SuperAdminLectureHallsPage({
           </label>
           <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>
         </div>
-        <details className="group min-w-0" open={Boolean(query.departmentId || query.roomType !== "ALL" || query.pageSize !== 25)}>
+        <details className="group min-w-0" open={Boolean(query.departmentId || query.roomType !== "ALL" || query.pageSize !== 10 || query.minimumCapacity || query.maximumCapacity || query.upcoming !== "ALL") || undefined}>
           <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
           <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
             <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
@@ -103,6 +103,19 @@ export default async function SuperAdminLectureHallsPage({
             <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
               <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11 w-full md:min-h-9">
                 {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
+              </Select>
+            </label>
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum seats
+              <Input type="number" name="minimumCapacity" min={1} max={5000} step={1} defaultValue={query.minimumCapacity ?? ""} placeholder="Any capacity" className="min-h-11 w-full md:min-h-9" />
+            </label>
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum seats
+              <Input type="number" name="maximumCapacity" min={1} max={5000} step={1} defaultValue={query.maximumCapacity ?? ""} placeholder="Any capacity" className="min-h-11 w-full md:min-h-9" />
+            </label>
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Scheduled upcoming classes
+              <Select name="upcoming" defaultValue={query.upcoming} className="min-h-11 w-full md:min-h-9">
+                <option value="ALL">Any scheduling</option>
+                <option value="YES">Upcoming classes scheduled</option>
+                <option value="NO">No upcoming scheduled classes</option>
               </Select>
             </label>
           </div>
