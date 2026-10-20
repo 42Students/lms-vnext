@@ -49,13 +49,13 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
    title={kind==="QUIZ"?"Create quiz":"Create Assignment"}
    description="Choose your assigned course and lesson before opening the assessment builder.">
    <div className="space-y-4">
-    <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Select course and class
+    <label className="grid gap-1 text-xs leading-4 font-semibold text-body">Select course and class
      <Select value={course?.deliveryId??""} aria-label="Select course and class" onChange={e=>selectCourse(e.target.value)}>
       <option value="">Select course and class</option>
       {courses.map(item=><option key={item.deliveryId} value={item.deliveryId}>{item.name}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Select lesson
+    <label className="grid gap-1 text-xs leading-4 font-semibold text-body">Select lesson
      <Select value={lesson?.lessonId??""} aria-label="Select lesson" onChange={e=>selectLesson(e.target.value)}
       disabled={!course}>
       <option value="">Select lesson</option>
