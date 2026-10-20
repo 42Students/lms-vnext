@@ -131,7 +131,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
   <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
    <label className="grid min-w-0 gap-1 text-xs">View name
     <Input value={name} maxLength={50} className="min-h-11 w-full md:min-h-9" disabled={!ready||busy}
-     onChange={event=>setName(event.target.value)}
+     onChange={event=>{setName(event.target.value);setError("");setMessage("");}}
      />
    </label>
    <Button variant="secondary" type="button" onClick={()=>void save()} disabled={!ready||busy||!name.trim()}
@@ -139,7 +139,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
   </div>
   {views.length?<div className="mt-3 grid min-w-0 grid-cols-2 gap-2 border-t border-border pt-3 sm:grid-cols-4">
    <label className="col-span-2 grid min-w-0 gap-1 text-xs sm:col-span-4">Saved view
-    <Select value={selected} className="min-h-11 w-full md:min-h-9" onChange={event=>setSelected(event.target.value)}
+    <Select value={selected} className="min-h-11 w-full md:min-h-9" onChange={event=>{setSelected(event.target.value);setError("");setMessage("");}}
      disabled={!ready||busy} >
      <option value="">Select a view</option>
      {views.map(view=><option key={view.id} value={view.id}>
@@ -148,17 +148,18 @@ export function TpoAuditSavedViews({filters}:{filters:{
     </Select>
    </label>
    <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void open()}
-    className="min-h-11 md:min-h-9">Open</Button>
+    className="min-h-11 w-full md:min-h-9">Open</Button>
    <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void pin()}
-    className="min-h-11 md:min-h-9">
+    className="min-h-11 w-full md:min-h-9">
     {selectedView?.pinned?"Unpin":"Pin"}
    </Button>
    <Button variant="secondary" type="button" disabled={!selectedView||busy||!name.trim()} onClick={()=>void rename()}
-    className="min-h-11 md:min-h-9">Rename</Button>
+    className="min-h-11 w-full md:min-h-9">Rename</Button>
    <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>setConfirmDelete(true)}
-    className="min-h-11 md:min-h-9">Delete</Button>
-  </div>:null}
-  <ConfirmDialog open={confirmDelete} onOpenChange={setConfirmDelete}
+    className="min-h-11 w-full md:min-h-9">Delete</Button>
+  </div>:ready&&!loading?<p className="mt-3 text-sm text-muted-foreground">No saved audit views yet. Name the current filters to save your first view.</p>:null}
+  {selectedView?<p className="mt-2 text-xs text-muted-foreground">To rename the selected view, enter the new name in View name above.</p>:null}
+  <ConfirmDialog open={confirmDelete} onOpenChange={next=>{if(!busy)setConfirmDelete(next);}}
    title="Delete saved audit view?" description="Delete this saved audit view?"
    confirmLabel="Delete view" confirmVariant="danger" pending={busy}
    onConfirm={()=>void remove()}/>

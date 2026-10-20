@@ -6,6 +6,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Disclosure } from "@/components/ui/disclosure";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,7 +41,7 @@ type Queue = {
 };
 
 const field = "min-h-11 w-full md:min-h-9";
-const action = "min-h-11 md:min-h-9";
+const action = "min-h-11 w-full sm:w-auto md:min-h-9";
 function displayDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -82,8 +84,8 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
     if(inFlightRef.current||pending)return;
     let parsedDue:Date|null=null;
     try{parsedDue=dueLocal?new Date(calendarLocalIstToOffset(dueLocal)):null;}catch{parsedDue=null;}
-    if (!leadId || !parsedDue || Number.isNaN(parsedDue.getTime())) {
-      setError("Select a recruiter and a valid follow-up date and time.");
+    if (!leadId || !parsedDue || Number.isNaN(parsedDue.getTime()) || parsedDue.getTime()<=Date.now()) {
+      setError("Select a recruiter and a valid future follow-up date and time.");
       return;
     }
     inFlightRef.current=true;
@@ -107,6 +109,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       setError("Record a brief outcome note before completing the follow-up.");
       return;
     }
+    inFlightRef.current=true;
     setPending(true); setError(""); setSuccess("");
     try {
       await post(
@@ -126,11 +129,10 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       {error ? <InlineNotice tone="error" message={error}/> : null}
       {success ? <InlineNotice tone="success" message={success}/> : null}
-      <section className="border-y border-border py-5">
-        <h2 className="text-base font-semibold text-foreground">Schedule a follow-up</h2>
+      <Disclosure title="Schedule a follow-up" className="min-w-0 border-y border-border py-3" contentClassName="pt-3">
         <p className="mt-1 text-sm text-body">
           Select a college recruiter, choose an India-local date and time, and confirm.
           Both the task and its staff-attributed activity record are saved together.
@@ -141,13 +143,14 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         {data.leads.length === 0 ? (
           <p className="mt-3 text-sm text-body">
             There are no eligible recruiter leads to schedule. Add a recruiter lead first.
+            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline">Open recruiter leads</Link>
           </p>
         ) : (
-          <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <label className="block text-sm font-semibold text-foreground">
+          <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
+            <label className="block min-w-0 text-sm font-semibold text-foreground">
               Recruiter
               <Select className={"mt-1 " + field} value={leadId} disabled={pending}
-                onChange={(event) => setLeadId(event.target.value)}>
+                onChange={(event) => {setLeadId(event.target.value);setError("");}}>
                 {data.leads.map((lead) => (
                   <option key={lead.id} value={lead.id}>
                     {lead.name + (lead.companyName ? " · " + lead.companyName : "")}
@@ -158,9 +161,9 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
             <label className="block text-sm font-semibold text-foreground">
               Follow-up time (local)
               <Input type="datetime-local" className={"mt-1 " + field}
-                value={dueLocal} disabled={pending} onChange={(event) => setDueLocal(event.target.value)} />
+                value={dueLocal} disabled={pending} onChange={(event) => {setDueLocal(event.target.value);setError("");}} />
             </label>
-            <label className="block text-sm font-semibold text-foreground md:col-span-2">
+            <label className="block min-w-0 text-sm font-semibold text-foreground sm:col-span-2">
               Preparation note (optional)
               <Textarea rows={2} maxLength={500} className={"mt-1 " + field}
                 value={createNote} disabled={pending} onChange={(event) => setCreateNote(event.target.value)} />
@@ -171,9 +174,9 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
             </Button>
           </div>
         )}
-      </section>
-      <section className="border-b border-border">
-        <div className="border-b border-border p-5">
+      </Disclosure>
+      <section className="min-w-0 border-b border-border">
+        <div className="border-b border-border py-4">
           <h2 className="text-base font-semibold text-foreground">
             {data.window==="DUE"?"Follow-ups due":"Upcoming follow-ups"} ({data.total})
           </h2>
@@ -187,14 +190,14 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         ) : (
           <div className="divide-y divide-border">
             {data.rows.map((row) => (
-              <article key={row.id} className="space-y-3 p-5">
-                <div className="flex flex-wrap items-center justify-between gap-3">
+              <article key={row.id} className="min-w-0 space-y-3 py-4">
+                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
                       href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
                     {row.companyName ? <p className="text-sm text-body">{row.companyName}</p> : null}
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Due {displayDate(row.dueAt)}
+                      Due {displayDate(row.dueAt)} {row.overdue?<StatusBadge tone="warning">Overdue</StatusBadge>:null}
                     </p>
                     {row.canContact?<div className="mt-2 flex flex-wrap gap-3 text-sm font-semibold">
                       {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="lms-inline-link inline-flex min-h-11 items-center text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Call recruiter ↗</a>:null}
@@ -207,13 +210,13 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       setActiveId(activeId === row.id ? null : row.id);
                       setDoneNote(""); setOutcome("CONTACTED");
                     }}
-                    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground md:min-h-9">
+                    className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground sm:w-auto md:min-h-9">
                     {activeId === row.id ? "Cancel" : "Record outcome and Done"}
                   </Button>
                 </div>
                 {row.note ? <p className="whitespace-pre-wrap text-sm text-body">{row.note}</p> : null}
                 {activeId === row.id ? (
-                  <div className="grid min-w-0 gap-3 border-l-2 border-primary bg-primary-subtle px-4 py-3 md:grid-cols-2">
+                  <div className="grid min-w-0 gap-3 border-l-2 border-primary bg-primary-subtle px-3 py-3 sm:grid-cols-2">
                     <label className="block text-sm font-semibold text-foreground">
                       Outcome
                       <Select value={outcome} disabled={pending}
@@ -225,10 +228,10 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                         <option value="OTHER">Other</option>
                       </Select>
                     </label>
-                    <label className="block text-sm font-semibold text-foreground md:col-span-2">
+                    <label className="block min-w-0 text-sm font-semibold text-foreground sm:col-span-2">
                       Outcome note (required)
                       <Textarea maxLength={500} value={doneNote} disabled={pending}
-                        onChange={(event) => setDoneNote(event.target.value)}
+                        onChange={(event) => {setDoneNote(event.target.value);setError("");}}
                         className={"mt-1 " + field} rows={2} />
                     </label>
                     <Button variant="primary" type="button" onClick={() => setConfirmComplete(row)}
@@ -242,11 +245,11 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           </div>
         )}
       </section>
-      <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
+      <ConfirmDialog open={confirmCreate} onOpenChange={next=>{if(!pending)setConfirmCreate(next);}}
        title="Schedule this follow-up and record an immutable staff audit entry?"
        confirmLabel="Confirm" confirmVariant="primary" pending={pending}
        onConfirm={()=>void create()}/>
-      <ConfirmDialog open={confirmComplete!==null} onOpenChange={open=>{if(!open)setConfirmComplete(null);}}
+      <ConfirmDialog open={confirmComplete!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmComplete(null);}}
        title={confirmComplete?"Mark the follow-up for "+confirmComplete.leadName+
         " done with outcome "+outcome+"? This action is terminal and audited.":""}
        confirmLabel="Confirm" pending={pending}
