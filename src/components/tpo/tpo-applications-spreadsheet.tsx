@@ -39,7 +39,9 @@ const columns:readonly TpoGridColumn<Row>[]=[
  {key:"channel",label:"Channel",read:r=>r.channel},
  {key:"eligibility",label:"Eligibility evidence",read:r=>r.eligibilityStatus},
  {key:"flags",label:"Flags",read:r=>r.flags.length?r.flags.join(" · "):"None"},
- {key:"submitted",label:"Submitted (IST)",read:r=>tpoGridTimeLabel(r.submittedAt)},
+ {key:"submitted",label:"Submitted (IST)",sortKind:"date",
+  sortValue:r=>{const instant=Date.parse(r.submittedAt);return Number.isFinite(instant)?instant:null;},
+  read:r=>tpoGridTimeLabel(r.submittedAt)},
  {key:"screening",label:"Screening",read:r=>r.screeningStatus??"Pending"},
  {key:"screeningUpdated",label:"Screening updated",read:r=>r.screeningUpdatedAt,exportOnly:true},
 ];
