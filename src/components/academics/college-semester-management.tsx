@@ -47,6 +47,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(pending)return;
     setNotice("");
     const parsed = createCollegeSemesterSchema.safeParse({
       programId, termNumber: Number(termNumber), name,
@@ -75,7 +76,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
         <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
       ) : (
         <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-3)] md:grid-cols-2">
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.programLabel}
             <Select required value={programId} onChange={e => setProgramId(e.target.value)}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -84,13 +85,13 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
               </option>)}
             </Select>
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.numberLabel}
             <Input required type="number" min={1} max={12} step={1} value={termNumber} placeholder={SEMESTER_COPY.numberPlaceholder}
               onChange={e => setTermNumber(e.target.value)}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)} placeholder={SEMESTER_COPY.namePlaceholder}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
@@ -132,6 +133,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
 
   function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(pending)return;
     setNotice("");
     const parsed = updateCollegeSemesterSchema.safeParse({
       name, totalCredits: null, isActive,
@@ -155,6 +157,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   }
 
   function remove() {
+    if(pending)return;
     setNotice("");
     startTransition(async () => {
       try {
@@ -171,7 +174,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   return (
     <div className="min-w-0 space-y-[var(--lms-space-2)]">
       {!editing && !confirming ? (
-        <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+        <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:justify-end">
           <Button variant="secondary" type="button" disabled={pending} onClick={() => { setNotice(""); setName(row.name);setIsActive(row.isActive);setEditing(true); }}
             >
             Edit
@@ -190,7 +193,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         <form onSubmit={save} className="grid min-w-0 gap-[var(--lms-space-4)]">
           
           
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />

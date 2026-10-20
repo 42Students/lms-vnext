@@ -9,12 +9,12 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-6-b with [chat-6] after every 2 surfaces.
 
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/admin/college-archive-button.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/admin/college-archive-button.tsx`
 - [ ] `src/components/admin/college-edit-dialog.tsx`
 - [ ] `src/components/admin/department-actions.tsx`
 - [ ] `src/components/admin/inbound-mail-list.tsx`
