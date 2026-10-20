@@ -763,3 +763,35 @@ grep -nE 'isDescending|descending\?|sortValue&&|selectedVisible|selection\?\.sel
 ```
 
 **Next exact file:** `src/components/tpo/grid/grid-workspace.tsx` — source-count audit of toolbar/filter/views/export controls and 44px phone hit areas, then E8 legacy runtime/dependency gate.
+
+
+### 2026-10-20 chat-14 — TPO GridWorkspace and FilterPanel source completion
+
+After main advanced, the lane merged it while preserving the newer per-row mobile dropdown labels from upstream, the upstream mobile filter panel borders/heights, and both lanes' audit history. Only chatgpt/chat-14-b was written.
+
+| Value/state | Legacy value/source | New source | Source-only verification |
+|---|---|---|---|
+| Toolbar composition | old-lms-pages.md:5-6 — Search, Filters, Views, Columns, Export and Act on N | grid-workspace.tsx:174-204,244-262: same grouping, aria-expanded/controls and selected count | Same source structure, render untested |
+| Active filter chip | components___antddesign.scss:1092-1100 — 44px min-height and 12px mobile padding | grid-workspace.tsx:206 and tpo-grid-filter-panel.tsx:30 — FilterChip with aria-pressed=true, shared min-h-11 and px-[12px] | Exact phone geometry, selected semantics |
+| Mobile filter sheet | old-lms-shell.css:23,73 — <=767 phone and >=768 desktop | tpo-grid-filter-panel.tsx:35-55 — Select 16px/44px on phone, 14px/36px from md; phone BottomSheet, desktop aside | Exact cutoff, OS select popup untested |
+| Filter region ID | aria-controls must name the controlled visible region | tpo-grid-filter-panel.tsx:15,47,53 — useId filterPanelId on trigger and panel | Matching unique IDs from source |
+| Filter scroll | Filtering/reset in place must not jump to top | tpo-grid-filter-panel.tsx:20,42 — router.replace with scroll:false; GridWorkspace uses scroll:false on URL changes | Source preserves viewport |
+| XLSX export link | components___antddesign.scss:1081-1100 — actionable 44px mobile target | grid-workspace.tsx:232 — min-h-11 md:min-h-9 (44px/36px) and same authorized xlsxHref | Match for phone tap geometry |
+| TSV copy | E8 clipboard copies only authorized visible/selected rows | grid-workspace.tsx:143-150 — common gridClipboardTsv with existing status/error notices | No extra rows/columns fetched |
+
+Full-file GitHub-fetched grep equivalents, NOT shell commands executed locally:
+- grid-workspace.tsx: 14 Button opening/closing pairs, 1 FilterChip pair, 1 self-closing Input and 1 self-closing Textarea; 0 raw button/input/select/textarea/details; 5 scroll:false occurrences.
+- tpo-grid-filter-panel.tsx: 2 Button pairs, 1 FilterChip pair, 1 Select pair, 1 BottomSheet pair, 0 raw controls, 2 scroll:false calls, 3 references to the same filterPanelId.
+- tpo-spreadsheet-grid.tsx retains newer upstream row-specific mobile action dropdown labels, the 48px selection column and the partial-selection checkbox.
+
+Reproduce in checkout (commands not run):
+```sh
+grep -nE '<(button|input|select|textarea|details)([[:space:]>])|<Button|</Button>|<FilterChip|</FilterChip>|scroll:false|aria-pressed=' src/components/tpo/grid/grid-workspace.tsx src/components/tpo/tpo-grid-filter-panel.tsx
+grep -nE 'filterPanelId|min-h-11|md:text-sm|<BottomSheet|aria-expanded|aria-controls' src/components/tpo/tpo-grid-filter-panel.tsx
+```
+
+Phone <=767px: chip and Select have 44px touch floor, active chips selected and mobile sheet shown. Tablet >=768px: 36px controls and inline aside; saved filter/column state and server exports are unchanged. Error messages for clipboard/unknown filters and loading states remain intact.
+
+E8 stays [ ]: no browser screenshot, compilation, CI, tests or full old TpoGrid value comparison; AG Grid packages are still undeclared in package.json. This section certifies source changes only.
+
+Next exact file: src/components/tpo/tpo-students-spreadsheet.tsx — verify E8 roster header and its authorized 48px selection, sorting, toolbar and phone cards.
