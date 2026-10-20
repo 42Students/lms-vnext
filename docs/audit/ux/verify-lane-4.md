@@ -134,3 +134,13 @@
 - Regressions found/fixed: 0. Read route redirect, loading/error, alias and authenticated layouts, shared fallbacks, same legacy role resolver and lane-14 polish evidence. Destination still derives exclusively from authorized request context; no copy, field or label drift.
 - Extra clutter/alignment: 0. Loading and retry remain single-canvas and phone safe; redirect renders no redundant UI.
 - Files changed: verified, no change. Source only; no runtime or CI.
+
+## 28. `src/app/(authenticated)/dashboard/page.tsx`
+- Regressions found/fixed: 0. Read all role branches, page loading/error, authenticated canvas, lane-14 polish proof, MetricCard, CollegeAtGlancePanel/StatTile, SuperAdminTodayBoard, dashboard quick actions, MembershipChooser/Radio, workspace model, EmptyState and PageHeader. Props/exports, protected links, membership selection, request context and scope guards are consistent; no broken JSX or copied labels detected.
+- Extra clutter/alignment: 0. Setup and lower-priority scope material remain behind disclosure; metric tiles wrap safely at 375/768.
+- Files changed: verified, no change. Static only; no runtime or CI.
+
+## 29. `src/app/(authenticated)/notifications/page.tsx`
+- Regressions found/fixed: 0. Read page/loading/error, authenticated shell, lane-14 proof, NotificationList/read API wiring, NotificationToolbar/mark-all confirmation, Alert, Button and GracefulErrorBoundary; invalid cursor recovery, All/Unread tab query and next-page cursor preserve contracts. No invalid JSX/import/prop regression observed.
+- Extra clutter/alignment: 0. Day headers, stacked phone action row, clear empty action and single older-notifications link have consistent legacy density.
+- Files changed: verified, no change. Source only; no runtime or CI.
