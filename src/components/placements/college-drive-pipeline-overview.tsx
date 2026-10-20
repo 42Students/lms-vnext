@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { StatTile } from "@/components/ui/stat-tile";
+import { Disclosure } from "@/components/ui/disclosure";
 import type {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import type {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
@@ -11,16 +12,17 @@ export function CollegeDrivePipelineOverview({jobId,data,attention}:{
 }){
  const base="/college/placements/jobs/"+encodeURIComponent(jobId);
  const flags=attention.categories.filter(x=>x.jobId===jobId);
- return <div className="space-y-5">
-  <nav className="flex flex-wrap gap-3" aria-label="Drive quick actions">
-   <Link href={base+"/applications"} className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Applications</Link>
-   <Link href={base+"/interviews"} className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Schedule</Link>
-   <Link href={base+"/settings"} className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Edit</Link>
+ return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  <nav className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]" aria-label="Drive quick actions">
+
+   <Link href={base+"/interviews"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 font-semibold text-primary-text hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] md:min-h-9">Schedule</Link>
+   <Link href={base+"/shortlisted"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Shortlisted</Link>
+
   </nav>
   <section className="space-y-3" aria-label="College application pipeline">
    <h2 className="text-lg font-semibold">Application pipeline</h2>
    <p className="text-xs text-muted-foreground">These are current registered College Admin application stages, not cumulative funnel conversions.</p>
-   <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+   <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-3 xl:grid-cols-5">
     {stages.map(stage=><StatTile key={stage} href={base+"/applications?stage="+stage}
       label={labels[stage]} value={data.totals[stage]??0}>
       <span className="mt-2 block text-xs text-primary-text underline">View applications</span>
@@ -37,7 +39,7 @@ export function CollegeDrivePipelineOverview({jobId,data,attention}:{
       </Link>
       <span className="ml-2 text-sm">{flag.count} candidate(s)</span>
     </li>)}</ul>}
-   <p className="mt-3 text-xs text-muted-foreground">Missing offer-letter evidence is not inferred without a registered private document record.</p>
+   <Disclosure title="Evidence note" className="mt-[var(--lms-space-3)]"><p className="max-w-[75ch] pt-2 text-xs text-muted-foreground">Missing offer-letter evidence is not inferred without a registered private document record.</p></Disclosure>
   </section>
  </div>;
 }
