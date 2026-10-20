@@ -17,7 +17,10 @@ export function SuperAdminDriveDuplicate({jobId,title}:{jobId:string;title:strin
     method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({confirmed:true}),
    });
    const result=await response.json().catch(()=>null);
-   if(!response.ok||!result?.jobId)throw new Error("Could not duplicate drive.");
+   if(!response.ok || !result || typeof result !== "object" ||
+      typeof result.jobId !== "string" ||
+      !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(result.jobId) ||
+      result.status !== "DRAFT") throw new Error("Could not duplicate drive.");
    setConfirmOpen(false);
    router.push("/admin/placements/jobs/"+encodeURIComponent(result.jobId));
    router.refresh();
