@@ -3,6 +3,7 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import Link from "next/link";
@@ -52,6 +53,8 @@ export function DriveDayRoster({
   const [query, setQuery] = useState("");
   const [pendingId, setPendingId] =
     useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<"PRESENT" | "ABSENT" | null>(null);
+  const pendingRef = useRef(false);
 
   useEffect(() => {
     const timer = window.setInterval(
@@ -104,7 +107,10 @@ export function DriveDayRoster({
     student: Student,
     status: "PRESENT" | "ABSENT",
   ) {
+    if (pendingRef.current) return;
+    pendingRef.current = true;
     setPendingId(student.applicationId);
+    setPendingAction(status);
     try {
       const response = await fetch(
         `/api/placements/drive-day/${round.id}/attendance`,
@@ -155,7 +161,9 @@ export function DriveDayRoster({
             : "Please try again.",
       });
     } finally {
+      pendingRef.current = false;
       setPendingId(null);
+      setPendingAction(null);
     }
   }
 
@@ -184,7 +192,7 @@ export function DriveDayRoster({
         }
       />
 
-      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-2 overflow-hidden border-y border-border xl:grid-cols-4">
         {[
           ["On roster", counts.total],
           ["Checked in", counts.present],
@@ -194,23 +202,21 @@ export function DriveDayRoster({
           <div
             key={String(label)}
             className={"min-w-0 p-3 sm:p-4 " +
-              (index < 3 ? "border-b border-border " : "") +
-              (index === 2 ? "md:border-b-0 " : "") +
-              (index % 2 === 0 ? "md:border-r md:border-border " : "") +
-              (index < 2 ? "xl:border-b-0 " : "") +
-              (index < 3 ? "xl:border-r xl:border-border " : "xl:border-r-0 ")}
+              (index < 2 ? "border-b border-border xl:border-b-0 " : "") +
+              (index % 2 === 0 ? "border-r border-border " : "") +
+              (index === 1 ? "xl:border-r xl:border-border " : "")}
           >
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
               {label}
             </p>
-            <p className="mt-1 text-2xl font-semibold text-foreground">
+            <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
               {value}
             </p>
           </div>
         ))}
       </section>
 
-      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
+      <section className="min-w-0 border-t border-border">
         <div className="border-b border-border p-4">
           <Input
             className={inputClass}
@@ -264,7 +270,7 @@ export function DriveDayRoster({
                 <div className="grid min-w-0 grid-cols-2 gap-2 md:flex md:flex-wrap">
                   <Button
                     size="sm"
-                    className="w-full min-w-0 md:w-auto"
+                    className="min-h-11 w-full min-w-0 md:min-h-9 md:w-auto"
                     disabled={
                       pendingId !== null ||
                       student.attendance ===
@@ -277,11 +283,11 @@ export function DriveDayRoster({
                       )
                     }
                   >
-                    Present
+                    {pendingId === student.applicationId && pendingAction === "PRESENT" ? "Saving…" : "Present"}
                   </Button>
                   <Button
                     size="sm"
-                    className="w-full min-w-0 md:w-auto"
+                    className="min-h-11 w-full min-w-0 md:min-h-9 md:w-auto"
                     variant="danger"
                     disabled={
                       pendingId !== null ||
@@ -292,7 +298,7 @@ export function DriveDayRoster({
                       mark(student, "ABSENT")
                     }
                   >
-                    Absent
+                    {pendingId === student.applicationId && pendingAction === "ABSENT" ? "Saving…" : "Absent"}
                   </Button>
                 </div>
               </article>
