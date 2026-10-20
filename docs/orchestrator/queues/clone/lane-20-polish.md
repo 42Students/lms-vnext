@@ -44,7 +44,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-20.md: surface | probl
 - [x] `src/components/shell/tpo-topbar-messages.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
 - [x] `src/app/maintenance/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/app/offline/page.tsx` (Other page (super admin, public, auth, misc))
-- [ ] `src/app/page.tsx` (Other page (super admin, public, auth, misc))
+- [x] `src/app/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/placements/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/platform/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/privacy-policy/page.tsx` (Other page (super admin, public, auth, misc))
