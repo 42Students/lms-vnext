@@ -182,8 +182,8 @@ export function LectureHallManager({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end print:hidden">
-        <Button className="min-h-11 md:min-h-9" onClick={() => open("new")}>{LECTURE_HALL_COPY.createTitle}</Button>
+      <div className="flex min-w-0 justify-stretch print:hidden md:justify-end">
+        <Button className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={() => open("new")}>{LECTURE_HALL_COPY.createTitle}</Button>
       </div>
 
       {halls.length === 0 ? (
@@ -252,7 +252,7 @@ export function LectureHallManager({
             <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={() => setEditing(null)}>
               Cancel
             </Button>
-            <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={save}>
+            <Button className="min-h-11 md:min-h-9" loading={pending} disabled={pending} onClick={save}>
               {pending ? "Saving…" : editing === "new" ? LECTURE_HALL_COPY.createButton : "Save hall"}
             </Button>
           </div>
