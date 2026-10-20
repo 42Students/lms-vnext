@@ -239,3 +239,11 @@
 **Problems fixed (7):** user could not see 1–10 constraint until error; two selection controls squeezed phones; primary reminder action lacked full phone width; success notice inaccurately painted partial-failure batches green; controls floated without group boundary; pending status felt detached; incomplete preview consequences weren't obvious. Kept all buttons and copy, added limits hint, separate hairline toolbar, 44px stacked phone controls and warning-toned outcome when failures are present. Existing explicit preview/confirm token flow, selected-form IDs, skip logic, limit, and API behavior unchanged.
 
 **Files:** `src/components/placements/tpo-bulk-drive-reminder.tsx`, queue, proof. No tests/CI.
+
+## Surface 41 — Drive change requests
+
+**Reviewed:** TPO/company party modes, request/ask form validation, OPEN and resolved statuses, messages and decisions, accept/answer/decline/withdraw confirmation and failures, shared Alert, Notice, StatusBadge, Disclosure, at 375/768 source breakpoints. No runtime/CI.
+
+**Problems fixed (10):** always-expanded create form; conversations expanded for every request; two competing oversized headings; custom inconsistent status chip; cramped phone request headings; multi-action rows wrapped irregularly; no empty discussion explanation; non-accept confirmations falsely described acceptance; send action undersized; long threads pushed next request offscreen. Used native disclosures for create and per-request discussion, shared status badge, 44px phone buttons, accurate conditional modal semantics and empty reply state. All IDs, mode logic, 409 optimistic tokens, routes and API contracts retained.
+
+**Files:** `src/components/placements/tpo-drive-change-requests.tsx`, queue, proof. No CI.
