@@ -103,26 +103,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-9.md: file, number of i
 - [x] `src/components/courses/college-quiz-attempts.tsx`
 - [x] `src/components/courses/college-quiz-create.tsx`
 - [x] `src/components/courses/college-quiz-questions-editor.tsx`
-- [ ] `src/components/courses/faculty-assessment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-content-order-editor.tsx`
-- [ ] `src/components/courses/faculty-lesson-authoring.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-attendance.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/courses/learner-rich-response-editor.tsx`
-- [ ] `src/components/courses/lesson-resource-materials-control.tsx`
-- [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/courses/super-admin-content-actions.tsx`
-- [ ] `src/components/courses/super-admin-course-bulk-visibility.tsx`
-- [ ] `src/components/electives/college-elective-offering-manager.tsx`
+- [x] `src/components/courses/faculty-assessment-editor.tsx`
+- [x] `src/components/courses/faculty-assignment-editor.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-content-order-editor.tsx`
+- [x] `src/components/courses/faculty-lesson-authoring.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/courses/learner-rich-response-editor.tsx`
+- [x] `src/components/courses/lesson-resource-materials-control.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/courses/super-admin-content-actions.tsx`
+- [x] `src/components/courses/super-admin-course-bulk-visibility.tsx`
+- [x] `src/components/electives/college-elective-offering-manager.tsx`
 - [ ] `src/components/electives/college-slot-manager.tsx`
 - [ ] `src/components/groups/college-group-actions.tsx`
 - [ ] `src/components/groups/college-study-member-actions.tsx`
