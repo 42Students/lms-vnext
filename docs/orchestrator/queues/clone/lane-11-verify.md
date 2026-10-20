@@ -57,5 +57,5 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-11.md: surface | regre
 - [x] `src/components/tpo/recruiter-roster-display-controls.tsx`
 - [x] `src/components/tpo/tpo-batch-invitation-control.tsx`
 - [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-mobile-footer.tsx`
+- [x] `src/components/tpo/tpo-mobile-footer.tsx`
 - [ ] `src/components/tpo/tpo-team-assign-unowned.tsx`
