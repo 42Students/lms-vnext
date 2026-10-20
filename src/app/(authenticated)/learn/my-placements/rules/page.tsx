@@ -26,7 +26,7 @@ export default async function LearnerPlacementRulesPage({
       <PageHeader title="Placement rules"
         description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
       <section aria-labelledby="placement-preparation-heading"
-        className="min-w-0 border-b border-border pb-5 md:pb-6">
+        className="min-w-0 border-b border-border pb-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 id="placement-preparation-heading" className="text-base font-semibold text-[var(--lms-heading)]">
@@ -79,7 +79,7 @@ export default async function LearnerPlacementRulesPage({
           </Link>
         </div>
       </section>
-      <section aria-labelledby="placement-how-eligibility-works" className="border-b border-border py-5">
+      <section aria-labelledby="placement-how-eligibility-works" className="border-b border-border py-6">
         <h2 id="placement-how-eligibility-works" className="m-0 text-base font-semibold text-[var(--lms-heading)]">How eligibility works</h2>
         <p className="mt-2 text-sm leading-6 text-body">Each published drive carries its own eligibility configuration. Your verified academic evidence is evaluated against that drive when you open or apply to it. A drive can therefore be available, eligible, or blocked with an explainable reason.</p>
         <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Check current drives →</Link>
@@ -100,7 +100,7 @@ export default async function LearnerPlacementRulesPage({
         </Link>
       </section>
       <div className="grid gap-4 md:grid-cols-2">
-        <section className="border-b border-border py-5">
+        <section className="border-b border-border py-6">
           <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Your academic evidence</h2>
           <dl className="mt-4 grid min-w-0 grid-cols-1 gap-3 text-sm md:grid-cols-2">
             <div><dt className="text-muted-foreground">CGPA</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.cgpa ?? "Not recorded"}</dd></div>
@@ -110,7 +110,7 @@ export default async function LearnerPlacementRulesPage({
           </dl>
           <Link href="/learn/my-placements#placement-academic-evidence" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Open academic record →</Link>
         </section>
-        <section className="border-b border-border py-5">
+        <section className="border-b border-border py-6">
           <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Your job preferences</h2>
           <p className="mt-3 text-sm leading-6 text-body">{preferences.preferredRoleTitles.length ? preferences.preferredRoleTitles.join(", ") : "No preferred roles recorded."}</p>
           <p className="mt-2 text-sm leading-6 text-body">{preferences.preferredLocations.length ? preferences.preferredLocations.join(", ") : "No preferred locations recorded."}</p>
@@ -122,7 +122,7 @@ export default async function LearnerPlacementRulesPage({
         {policyView?<div className="mt-3 space-y-3">
           <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Where you stand:</h3>
           <p role="status" className="text-sm leading-6 text-body">{policyView.personal}</p>
-          <ul className="list-disc space-y-2 pl-5 text-sm leading-6 text-body">
+          <ul className="list-disc space-y-2 pl-6 text-sm leading-6 text-body">
             {policyView.points.map(point=><li key={point}>{point}</li>)}
           </ul>
           <p className="text-xs text-muted-foreground">Drive-level eligibility and the saved terms of each offer remain authoritative. Changes are not assumed to apply retroactively.</p>

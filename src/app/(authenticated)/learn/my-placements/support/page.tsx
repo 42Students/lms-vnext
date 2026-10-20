@@ -13,14 +13,15 @@ export default async function LearnerSupportHistory({searchParams}:{
   const data=await getOwnLearnerSupportRequests(await getCurrentRequestContext(),query);
   const choices=["ALL","PENDING","APPROVED","REJECTED","CANCELLED"] as const;
   const requestTypes=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
-  const supportFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+  const supportFilterPillClass =
+    "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[13px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] aria-[current=page]:hover:bg-[var(--lms-primary-subtle)] aria-[current=page]:hover:text-[var(--lms-primary-text)]";
   const supportFilterNavClass =
     "min-w-0 max-w-[calc(100vw_-_var(--lms-space-7))] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
   return <div className="min-w-0 space-y-6">
     <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">← Placement Cell</Link>
     <PageHeader title="My support requests"
       description="Your application withdrawal, round rescheduling and offer-extension requests from your college placement team." />
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-border pb-6">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">What is covered?</h2>
       <p className="mt-2 text-sm leading-[1.6] text-body">
         Only persisted placement requests are shown. General helpdesk tickets and free-form feedback are not yet available because their data source is not registered.
@@ -50,7 +51,7 @@ export default async function LearnerSupportHistory({searchParams}:{
       {data.items.map(row=><li key={row.request.id} className="min-w-0 bg-transparent px-1 py-4">
         <div className="flex flex-wrap justify-between gap-2">
           <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{placementRequestTypeLabel(row.request.requestType)}</h2>
-          <StatusBadge tone={row.request.status==="PENDING"?"warning":row.request.status==="APPROVED"?"success":row.request.status==="REJECTED"?"error":"neutral"}>{row.request.status}</StatusBadge>
+          <StatusBadge tone={row.request.status==="PENDING"?"warning":row.request.status==="APPROVED"?"success":"neutral"}>{row.request.status}</StatusBadge>
         </div>
         <p className="mt-2 text-sm text-body">{row.company.name} · {row.roleOption.title}</p>
         <p className="mt-1 text-xs text-muted-foreground">

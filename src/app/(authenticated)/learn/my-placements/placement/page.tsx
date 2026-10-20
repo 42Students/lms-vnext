@@ -37,7 +37,7 @@ export default async function LearnerPlacementCellPage({
       <section id="registration" className="scroll-mt-24" aria-label="Registration">
         <LearnerPlacementRegistration registration={registration}/>
       </section>
-      <section className="border-b border-border pb-5">
+      <section className="border-b border-border pb-6">
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
         <Link href="/learn/my-placements/support" className="mr-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">My support-request history →</Link>
@@ -58,7 +58,7 @@ export default async function LearnerPlacementCellPage({
       )}
       {!requestRead.available ? <Alert tone="warning" role="alert">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry requests</Link></Alert> : null}
       {offerRows.length===0 ? (
-        <section aria-labelledby="learner-official-offers-heading" className="border-b border-border pb-5">
+        <section aria-labelledby="learner-official-offers-heading" className="border-b border-border pb-6">
           <h2 id="learner-official-offers-heading" className="text-base font-semibold text-[var(--lms-heading)]">Official offers</h2>
           <p className="mt-2 text-sm text-body">{learnerPlacementCellOfferEmptyMessage(offerRows.length)}</p>
           <Link href="/learn/my-placements/applications"
@@ -88,7 +88,7 @@ export default async function LearnerPlacementCellPage({
           initialOfferId={prefillAcceptance?validUuid(query.offerId):""}
         />
       </section>
-      <section id="rules" className="scroll-mt-24 border-b border-border pb-5">
+      <section id="rules" className="scroll-mt-24 border-b border-border pb-6">
         <h2 className="font-semibold text-[var(--lms-heading)]">Placement rules</h2>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Read placement rules</Link>
       </section>
