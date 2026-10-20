@@ -660,24 +660,26 @@ export function RecruiterLeadsWorkspace({
   }
 
   return (
-    <section className="space-y-5" aria-label="Recruiter leads">
+    <section className="min-w-0 space-y-4" aria-label="Recruiter leads">
       <PageHeader
         title={TPO_OWNER_PAGE_COPY.recruiterLeads}
         description="Every company contact you find, and what you will do next."
         actions={
-          <div className="flex flex-wrap items-center gap-2">
-          <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
-          <Link href="/tpo/recruiters/campaigns" className={buttonStyle}>Campaign history</Link>
-          <Link href="/tpo/follow-ups" className={buttonStyle}>
-            Follow-ups Due
-          </Link>
-          <RecruiterLeadCsvImport onImported={() => void load()} />
-          <Button variant="primary" ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase !== "ready"}
-            onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null);setReviewingCreate(false); }}>
-            <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
-            Add recruiter lead
-          </Button>
-        </div>
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
+            <Button variant="primary" ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase!=="ready"}
+              onClick={()=>{setAdding(true);setForm(EMPTY);setSaveError("");setDuplicate(null);setReviewingCreate(false);}}>
+              <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
+              Add recruiter lead
+            </Button>
+            <Dropdown mobileSheet align="end" label="More recruiter actions" trigger="More ···">
+              <nav aria-label="Recruiter workspace links" className="flex min-w-48 flex-col gap-1">
+                <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
+                <Link href="/tpo/recruiters/campaigns" className={buttonStyle}>Campaign history</Link>
+                <Link href="/tpo/follow-ups" className={buttonStyle}>Follow-ups Due</Link>
+                <RecruiterLeadCsvImport onImported={()=>void load()} />
+              </nav>
+            </Dropdown>
+          </div>
         }
       />
 
@@ -726,7 +728,7 @@ export function RecruiterLeadsWorkspace({
             </Link>
             {!needsExpanded?<p className="text-xs text-muted-foreground">Show needs doing to review outreach priorities.</p>:null}
           </section>
-          <div className="flex flex-wrap gap-3 border-b border-border py-4">
+          <div className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
             <label className="min-w-48 flex-1 text-sm">
               Search name, company or contact
               <Input className={inputStyle + " mt-1"} value={query} onChange={e => updateFilter("query",e.target.value)}
@@ -739,7 +741,7 @@ export function RecruiterLeadsWorkspace({
                 {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : RECRUITER_STAGE_LEGACY_LABELS[x]}</option>)}
               </Select>
             </label>
-            <Tabs ariaLabel="Engage views" controlledOnly renderPanel={false} value={view}
+            <div className="min-w-0 sm:col-span-2"><Tabs ariaLabel="Engage views" controlledOnly renderPanel={false} value={view}
               items={[{value:"table",label:"Table"},{value:"board",label:"Board"},
                 {value:"companies",label:"Companies",count:companies.length},{value:"campaigns",label:"Emails"}]}
               onValueChange={next=>{
@@ -749,7 +751,7 @@ export function RecruiterLeadsWorkspace({
                 if(next==="table")params.delete("view");else params.set("view",next);
                 window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
                 setView(next as "table"|"board"|"companies");
-              }}/>
+              }}/></div>
           </div>
           <div className="space-y-3">
             {view!=="table"?<Button variant="secondary" type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
@@ -767,7 +769,7 @@ export function RecruiterLeadsWorkspace({
               </FilterChip>)}
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
-              className="grid gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-4">
+              className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4">
               <label className="text-sm">Status
                 <Select className={inputStyle+" mt-1"} value={statusFilter}
                   onChange={e=>updateFilter("status",e.target.value)}>
@@ -1125,8 +1127,7 @@ export function RecruiterLeadsWorkspace({
           dismissible={!saving} title="Add recruiter lead">
           <form ref={createDialogRef} onSubmit={e=>void create(e)}
             className="min-w-0 space-y-4">
-            <div className="flex items-center justify-between gap-4">
-              <h2 className="text-xl font-semibold">Add recruiter lead</h2>
+            <div className="flex justify-end">
               <Button variant="secondary" type="button" className={buttonStyle} onClick={()=>closeAddDialog()} disabled={saving}>Close</Button>
             </div>
             <label className="block text-sm">Name *<Input ref={createNameRef} className={inputStyle + " mt-1"} required maxLength={150}
@@ -1180,7 +1181,7 @@ export function RecruiterLeadsWorkspace({
             </div>:null}
             {saveError && <p role="alert" className="text-sm text-foreground">{saveError}</p>}
             <div className="flex justify-end">
-              <Button variant="primary" type="submit" className={primaryStyle}
+              <Button variant="primary" type="submit" className={primaryStyle+" w-full sm:w-auto"}
                 disabled={saving || checking || Boolean(duplicate)}>
                 {saving ? "Creating…" : reviewingCreate?"Confirm and create recruiter":"Review and create recruiter"}
               </Button>
