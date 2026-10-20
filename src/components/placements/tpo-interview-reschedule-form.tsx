@@ -39,7 +39,7 @@ export function TpoInterviewRescheduleForm({round}:{
  function askToReschedule(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(!pending)setConfirmOpen(true);
  }
- return <><Disclosure title="Confirm interview reschedule" className="mt-3 border-t border-[var(--lms-canvas-border)]" contentClassName="pt-3"><form ref={formRef} onSubmit={askToReschedule} className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+ return <><Disclosure title="Confirm interview reschedule" className="min-w-0 border-y border-border py-2" contentClassName="pt-3"><form ref={formRef} onSubmit={askToReschedule} className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
   <label className="text-sm text-body">New interview time (IST)
    <Input required type="datetime-local" name="localDateTime" defaultValue={initial} className={field}/></label>
   <label className="text-sm text-body">Mode
