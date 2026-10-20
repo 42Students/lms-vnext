@@ -99,9 +99,9 @@ function FacultyContentOrderEditorInner({
   }
 
   return (
-    <section className="mt-3 border-t border-border pt-4 max-[767px]:[&_button]:min-h-11">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+    <section className="mt-3 min-w-0 border-t border-border pt-4">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
               Section content order
@@ -112,16 +112,18 @@ function FacultyContentOrderEditorInner({
               </StatusBadge>
             ) : null}
           </div>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+          <p className="mt-1 max-w-[65ch] break-words text-xs leading-5 text-muted-foreground">
             Reorder shared and Section-specific lesson content for this
             Section only. Assessments keep their own sequence.
           </p>
         </div>
-        {dirty ? <Button type="button" size="md" variant="secondary"
+        <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row sm:items-center">
+        {dirty ? <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" size="md" variant="secondary"
           disabled={pending} onClick={()=>setOrder(facultyResetContentOrder(items))}>
           Reset order
         </Button> : null}
         <Button
+          className="min-h-11 w-full sm:w-auto md:min-h-9"
           type="button"
           size="md"
           loading={pending}
@@ -130,16 +132,17 @@ function FacultyContentOrderEditorInner({
         >
           {pending ? "Saving…" : dirty ? "Save order" : "Order saved"}
         </Button>
+        </div>
       </div>
 
-      <ol className="mt-3 space-y-2">
+      <ol className="mt-3 min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {order.map((id, index) => {
           const item = byId.get(id);
           if (!item) return null;
           return (
             <li
               key={id}
-              className="flex min-w-0 items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle px-3 py-2 md:gap-3"
+              className="flex min-w-0 items-center gap-2 py-2 sm:gap-3"
             >
               <span className="w-6 shrink-0 text-xs font-semibold text-muted-foreground">
                 {index + 1}.
@@ -149,7 +152,7 @@ function FacultyContentOrderEditorInner({
               </span>
               <Button
                 type="button"
-                size="md"
+                size="icon"
                 variant="secondary"
                 aria-label={`Move ${item.title} up`}
                 disabled={
@@ -165,7 +168,7 @@ function FacultyContentOrderEditorInner({
               </Button>
               <Button
                 type="button"
-                size="md"
+                size="icon"
                 variant="secondary"
                 aria-label={`Move ${item.title} down`}
                 disabled={
