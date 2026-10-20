@@ -41,7 +41,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
    <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Name, roll, branch, batch, email, phone or role
-    <Input name="search" defaultValue={result.search} maxLength={100} className="w-full mt-[6px] block"/>
+    <Input type="search" name="search" defaultValue={result.search} maxLength={100} className="w-full mt-[6px] block"/>
    </label>
    <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Channel
     <Select name="channel" defaultValue={result.channel} className="w-full mt-[6px] block">
@@ -74,7 +74,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     {result.rows.map(row=><article key={row.applicationId} className="border-b border-border py-4">
      <h2 className="font-semibold text-foreground">{row.studentName??"Name unavailable"}</h2>
      <p className="text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
-     <p className="text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+     <p className="text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})} IST</p>
      <dl className="mt-3 grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] text-xs text-body min-[768px]:grid-cols-4">
       <div><dt>Roll number</dt><dd className="font-semibold text-foreground">{row.rollNumber??"Not recorded"}</dd></div>
       <div><dt>Batch</dt><dd className="font-semibold text-foreground">{row.batchName??"Not recorded"}</dd></div>
