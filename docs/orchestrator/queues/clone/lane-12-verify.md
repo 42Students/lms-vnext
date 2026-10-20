@@ -23,8 +23,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-12.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx`
