@@ -22,7 +22,7 @@ export default async function CollegeProgramsPage() {
   const contents = await listProgramContents(context, collegeId, programs.map(program => program.id));
 
   return (
-    <main className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Programs"
         description="Create, find and manage the programs in your college."
@@ -47,6 +47,6 @@ export default async function CollegeProgramsPage() {
       <section aria-label="Archived programs" className="min-w-0">
         <CollegeArchivedPrograms programs={archived} />
       </section>
-    </main>
+    </div>
   );
 }
