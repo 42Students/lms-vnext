@@ -15,12 +15,12 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-13.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-13-b with [chat-13], ticking [x] in this queue in the same push.
 
 - [x] `src/app/(authenticated)/mentor/activity/page.tsx` (Mentor page)
-- [ ] `src/app/(authenticated)/mentor/allQuizzes/page.tsx` (Mentor page)
-- [ ] `src/app/(authenticated)/mentor/calendar/page.tsx` (Mentor page)
-- [ ] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx` (Mentor page)
-- [ ] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx` (Mentor page)
-- [ ] `src/app/(authenticated)/mentor/courses/page.tsx` (Mentor page)
-- [ ] `src/app/(authenticated)/mentor/fileExplorer/page.tsx` (Mentor page)
+- [x] `src/app/(authenticated)/mentor/allQuizzes/page.tsx` (Mentor page)
+- [x] `src/app/(authenticated)/mentor/calendar/page.tsx` (Mentor page)
+- [x] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx` (Mentor page)
+- [x] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx` (Mentor page)
+- [x] `src/app/(authenticated)/mentor/courses/page.tsx` (Mentor page)
+- [x] `src/app/(authenticated)/mentor/fileExplorer/page.tsx` (Mentor page)
 - [ ] `src/app/(authenticated)/mentor/notifications/page.tsx` (Mentor page)
 - [ ] `src/app/(authenticated)/mentor/page.tsx` (Mentor page)
 - [ ] `src/app/(authenticated)/mentor/profile/page.tsx` (Mentor page)
