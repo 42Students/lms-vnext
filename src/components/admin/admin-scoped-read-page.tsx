@@ -67,9 +67,23 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  const peopleSummary=summaries&&summaries[0].status==="fulfilled"&&
   summaries[1].status==="fulfilled"&&summaries[2].status==="fulfilled"
   ?[summaries[0].value,summaries[1].value,summaries[2].value]:null;
+ const refreshAction=(
+  <form method="get" action={path} aria-label="Refresh directory" className="w-full print:hidden md:w-auto">
+    {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
+    <Input type="hidden" name="status" value={data.query.status} />
+    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+    {data.query.pipelineStage!=="ALL"?<Input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
+    {data.query.channel!=="ALL"?<Input type="hidden" name="channel" value={data.query.channel}/>:null}
+    {data.query.source!=="ALL"?<Input type="hidden" name="source" value={data.query.source}/>:null}
+    {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<Input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
+    <Input type="hidden" name="page" value={String(data.query.page)} />
+    <Input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
+    <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>
+  </form>
+ );
  return <div className="min-w-0 space-y-5">
   {heading(peopleFilters?"People":"Super Admin · Read-only",description,
-    exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:undefined)}
+    <>{exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}{refreshAction}</>)}
   {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
@@ -87,6 +101,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
+  {headingMode==="section"?refreshAction:null}
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-body">Search
@@ -159,18 +174,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    </label>
    <Button type="submit" variant="primary" className="min-h-11 self-end md:min-h-9">Filter</Button>
   </form>
-  <form method="get" action={path} aria-label="Refresh directory" className="print:hidden">
-    {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
-    <Input type="hidden" name="status" value={data.query.status} />
-    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
-    {data.query.pipelineStage!=="ALL"?<Input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
-    {data.query.channel!=="ALL"?<Input type="hidden" name="channel" value={data.query.channel}/>:null}
-    {data.query.source!=="ALL"?<Input type="hidden" name="source" value={data.query.source}/>:null}
-    {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<Input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
-    <Input type="hidden" name="page" value={String(data.query.page)} />
-    <Input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
-    <Button type="submit" variant="secondary" className="min-h-11 self-end md:min-h-9">Refresh</Button>
-  </form>
+
   {applicationFilters?<p role="status" className="text-sm text-body">
     {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
     ? "Active filters: "+[
