@@ -49,7 +49,7 @@ export default async function AnnouncementsPage({
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
         {ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
-          : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="border-b border-border py-3">
+          : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
@@ -143,7 +143,7 @@ export default async function AnnouncementsPage({
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
         {ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
-          : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="border-b border-border py-3">
+          : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
