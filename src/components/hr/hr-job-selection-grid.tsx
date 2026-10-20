@@ -27,6 +27,6 @@ export function HrJobSelectionGrid({rows,scopeKey}:{
   scopeKey: string;
 }) {
   return <TpoGrid rows={rows} columns={columns} rowKey={row=>row.id}
-    mobilePrimaryKeys={["candidate","role","status"]}
+    mobilePrimaryKeys={["candidate","role","ctc","status"]}
     storageKey={"hr-selection:"+scopeKey}/>;
 }
