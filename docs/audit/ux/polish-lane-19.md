@@ -349,3 +349,19 @@
 **Fixed:** No source mutation; retained `can(context, permission, resource)` as the central permission decision, denial wording and cross-tenant safety, `data-slot` and fallback precedence. Inspected UX-PLAYBOOK §19.4 and the matching authorization test by source; no runtime or CI.
 
 **Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit-only).
+
+## Surface 42 — `src/app/(authenticated)/teacher/error.tsx`
+
+**Problems found (5):** Nested full-screen public branded frame inside the already-authenticated AppShell white canvas; duplicated PageHeader/full-screen main landmark; oversized centered error card competing with legacy page continuity; retry/home actions landed far below the normal faculty page heading; 375px and 768px fallback inherited public-screen grid instead of existing responsive canvas gutter.
+
+**Fixed:** Passed `insideShell` to the already-shared `GracefulErrorBoundary`, so faculty route failures appear as a single alert with one PageHeader and concise copy on the existing white canvas, with a full-width mobile Try again primary and Go to home secondary action. Preserved route's `error`/`reset` props, stale-chunk one-time reload, reference copy, telemetry/privacy, original wording and destination. Reviewed `teacher/layout.tsx`, nearest authenticated layout's AppShell/PageCanvas, `teacher/loading.tsx`, `GracefulErrorBoundary`, `GracefulScreen` and `GracefulPageLoading`; source checked 375px, 768px, failure/retry/reference, no browser/CI.
+
+**Files changed:** `src/app/(authenticated)/teacher/error.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
+
+## Surface 43 — `src/app/(authenticated)/admin/layout.tsx`
+
+**Problems found (5):** Legacy group tabs touched the page heading without a consistent gutter; missing shared separation between navigation and content; no `min-w-0` guard for wider tab groups; responsive page header spacing depended on individual children; and print tab spacing could leave an unwanted gutter.
+
+**Fixed:** Preserved request-context permission gating and redirect, all grouped tab routes and labels, and children. Grouped the existing tabs and page body in one width-safe non-card container with legacy 16px phone / 24px desktop vertical spacing and no print gap. When the tab model returns null, only the content child renders and no extra margin is produced. Reviewed authenticated AppShell/PageCanvas, group routing, shared Tabs/ScrollCue, admin error/loading/not-found states, 375px and 768px by source. No runtime or CI.
+
+**Files changed:** `src/app/(authenticated)/admin/layout.tsx`; `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md`.
