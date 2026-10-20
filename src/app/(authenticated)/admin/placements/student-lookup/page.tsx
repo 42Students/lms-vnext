@@ -24,20 +24,22 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
     .then(value=>({ok:true as const,value}))
     .catch(()=>({ok:false as const})):null;
  const data=lookup&&lookup.ok?lookup.value:null;
- return <div className="min-w-0 space-y-6">
-  <PageHeader title="Student placement lookup"
-   actions={<>
-    <PageBackLink href="/admin/placements" label="Placement overview" />
-    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Analytics</Link>
-   </>}/>
-  <form action="/admin/placements/student-lookup" role="search" className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:flex-row md:items-end">
-   <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:max-w-xl">Name, roll number or email
+ return <div className="min-w-0 space-y-5">
+  <div className="min-w-0">
+   <PageBackLink href="/admin/placements" label="Placement overview" />
+   <PageHeader title="Student placement lookup" />
+  </div>
+  <form action="/admin/placements/student-lookup" role="search" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+   <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
       placeholder="Find one student in this college"
       className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!ctx.adminScope?.collegeId}>Search students</Button>
   </form>
+  <div className="flex min-w-0 flex-wrap items-center justify-end gap-3">
+   <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Analytics</Link>
+  </div>
   {invalid?<ErrorState title="Invalid student search"
    description="Enter 3 to 150 characters in a single search to find students in the selected college."
    action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear search</Link>}/>:null}
@@ -48,12 +50,14 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
   {!ctx.adminScope?.collegeId?<div id="placement-student-scope-hint" role="status">
    <EmptyState title="Select a college to continue" description="Choose a college in the header above to look up student placements."/>
   </div>:null}
-  {data&&!data.students.length?<EmptyState title="No matching students" description="No students in the selected college match this name, roll number or email." />:null}
-  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-4 last:border-0">
-   <div className="flex flex-wrap items-center justify-between gap-2">
-    <div><h2 className="font-semibold text-[var(--lms-heading)]">{person.name??person.roll??"Student"}</h2>
-     <p className="text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>
-    <StatusBadge tone={person.placed?"success":"neutral"}>{person.placed?"Joined (confirmed)":"No confirmed joining recorded"}</StatusBadge>
+  {data&&!data.students.length?<EmptyState title="No matching students" description="No students in the selected college match this name, roll number or email."
+   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear search</Link>} />:null}
+  {data?.truncated?<p className="text-xs text-muted-foreground">Showing first 15 matching students; narrow the search.</p>:null}
+  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-4)] last:border-0">
+   <div className="grid min-w-0 gap-[var(--lms-space-2)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-[var(--lms-space-4)]">
+    <div className="min-w-0"><h2 className="m-0 break-words font-semibold text-[var(--lms-heading)]">{person.name??person.roll??"Student"}</h2>
+     <p className="mt-1 break-words text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>
+    <div className="flex min-w-0 items-center sm:justify-end"><StatusBadge tone={person.placed?"success":"neutral"}>{person.placed?"Joined (confirmed)":"No confirmed joining recorded"}</StatusBadge></div>
    </div>
    <DataTable
     caption="Student applications"
@@ -69,6 +73,5 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
    />
    {person.truncated?<p className="text-xs text-muted-foreground">Showing newest 100 application/offer records.</p>:null}
   </section>)}
-  {data?.truncated?<p className="text-xs text-muted-foreground">Showing first 15 matching students; narrow the search.</p>:null}
  </div>;
 }
