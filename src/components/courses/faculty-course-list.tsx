@@ -64,8 +64,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
   }
 
   return (
-    <div className="min-w-0 max-w-full space-y-5">
-      <div className="flex flex-wrap items-center gap-3 text-sm text-body" role="status">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+      <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm text-body" role="status">
         <Disclosure title={`${scopeCount} Teaching assignment(s)`} className="relative rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
           <ScrollCue axis="y" label="Teaching assignments" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
@@ -82,9 +82,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         </Disclosure>
       </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
-        className="space-y-3">
+        className="min-w-0 space-y-3">
         <FacultyCourseFilterAutoSubmit />
-        <div className="grid gap-3 md:grid-cols-4">
+        <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
           <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Search courses
             <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Course, code, Section or academic period"
@@ -114,9 +114,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
             </Select>
           </label>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>
+        <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center">
+          <Button type="submit" variant="primary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Apply filters</Button>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] min-[768px]:w-auto bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
           </p>
@@ -126,26 +126,27 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         <EmptyState
           title={query.q?"No courses match “"+query.q+"”":"No teaching assignments in this section."}
           description="Try changing the filters to see your courses."
+          action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9">Clear filters</Link>}
         />
       ) : (
-      <div data-testid="teacher.courses.grid" className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div data-testid="teacher.courses.grid" className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-3">
       {rows.map(({ course, workspace }) => (
         <Link
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
           data-testid="teacher.courses.card.open"
-          className="group flex min-h-64 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="group flex min-h-0 min-w-0 flex-col border-b border-border bg-transparent py-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          <div className="flex items-start justify-between gap-3">
-            <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle">
+          <div className="flex min-w-0 flex-wrap items-start gap-3">
+            <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-[var(--lms-control-radius)] bg-primary-subtle">
               <Image src="/assets/images/common/course.svg" alt="" width={64} height={64}
-                className="size-full rounded-[var(--lms-control-radius)] object-contain" />
+                className="size-full object-contain" />
             </span>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
                 {course.courseCode}
               </p>
-              <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-[var(--lms-heading)]">
+              <h2 className="mt-1 break-words text-lg font-semibold text-[var(--lms-heading)]">
                 {course.courseName}
               </h2>
             </div>
@@ -160,12 +161,12 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
             </StatusBadge>
           </div>
 
-          <p className="mt-3 line-clamp-2 min-h-11 text-sm leading-5 text-body">
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-body">
             {course.courseDescription ??
               "Teaching workspace for this exact Section delivery."}
           </p>
 
-          <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
+          <div className="mt-3 flex min-w-0 flex-wrap gap-2 text-xs text-muted-foreground">
             <Badge  tone="neutral">
               {course.sectionName} ({course.cohortName})
             </Badge>
@@ -180,7 +181,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
             </Badge>:null}
           </div>
 
-          <div className="mt-auto pt-5">
+          <div className="mt-auto pt-4">
             <SummaryStrip label="Course content summary" steps={[
               {label:"Content",value:workspace.summary.contents},
               {label:"Assignments",value:workspace.summary.assignments},
