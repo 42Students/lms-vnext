@@ -40,20 +40,20 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
   finally{setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-5" aria-label="Managed college web address">
-  <h2 className="font-semibold text-foreground">Web address · Managed subdomain</h2>
+  <h2 className="font-semibold">Web address · Managed subdomain</h2>
   {!state.ready?<Alert tone="warning">
    One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</Alert>:
    <>
-    <p className="text-sm text-body">Platform domain: {state.baseDomain}</p>
-    <p className="text-sm text-body">Current: {state.currentHost??"Not allotted"}</p>
-    <label className="grid max-w-md gap-1 text-[13px] font-semibold text-body>Subdomain
+    <p className="text-sm">Platform domain: {state.baseDomain}</p>
+    <p className="text-sm">Current: {state.currentHost??"Not allotted"}</p>
+    <label className="grid max-w-md gap-1 text-sm">Subdomain
       <div className="flex items-center gap-2">
        <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false}
         onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
        <span>.{state.baseDomain}</span>
       </div>
     </label>
-    <div className="flex flex-wrap gap-2 print:hidden">
+    <div className="flex flex-wrap gap-2">
      <Button type="button" disabled={busy||!label.trim()} onClick={()=>setPendingAction(state.currentHost?"CHANGE":"ALLOT")}
       className="min-h-11 md:min-h-9">
       {state.currentHost?"Change":"Allot"}</Button>
