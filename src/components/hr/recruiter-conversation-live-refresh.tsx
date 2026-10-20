@@ -7,12 +7,13 @@ export function RecruiterConversationLiveRefresh(){
  const router=useRouter();
  useEffect(()=>{
   const update=()=>{
-   if(document.visibilityState!=="visible")return;
+   if(document.visibilityState!=="visible" || !navigator.onLine)return;
    const current=document.activeElement;
    if(current instanceof HTMLElement&&current.closest("input,textarea,select,[contenteditable=true]"))return;
    // A polling refresh must not collapse a menu, dialog, or message details
    // disclosure while a recruiter is navigating it with keyboard or touch.
-   if(document.querySelector('dialog[open], [role="dialog"][aria-modal="false"], [data-slot="dropdown-root"][open], [data-slot="info-popover"][open], details[open]'))return;
+   if(document.querySelector('dialog[open], [role="dialog"], details[open], [aria-expanded="true"], [data-slot="dropdown-root"][open], [data-slot="info-popover"][open]'))return;
+   if(window.getSelection()?.toString().trim())return;
    router.refresh();
   };
   const id=window.setInterval(update,4000);
