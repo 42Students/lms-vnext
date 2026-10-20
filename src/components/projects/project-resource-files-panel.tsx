@@ -5,6 +5,8 @@ import barStyles from "./project-workspace-readiness.module.css";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Disclosure } from "@/components/ui/disclosure";
+import { Alert } from "@/components/ui/alert";
 
 import {useRef,useState,type FormEvent} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -72,10 +74,13 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
   const [editTitle,setEditTitle]=useState("");
   const [editDescription,setEditDescription]=useState("");
   const xhrRef=useRef<XMLHttpRequest|null>(null);
+  const fileInputRef=useRef<HTMLInputElement|null>(null);
+  const [feedbackTone,setFeedbackTone]=useState<"success"|"error"|"info">("info");
   const editingFile=files.find(file=>file.id===editing);
   const dirty=Boolean(selected||uploadTitle.trim()||uploadDescription.trim()||linkedResourceId)||
     Boolean(editingFile&&(editTitle!==editingFile.title||editDescription!==(editingFile.description??"")));
   function discardDraft(){
+    if(fileInputRef.current)fileInputRef.current.value="";
     setSelected(null);setUploadTitle("");setUploadDescription("");setLinkedResourceId("");
     setEditing(null);setEditTitle("");setEditDescription("");
   }
@@ -87,6 +92,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
     setFiles(next.files);
   }
   function problem(error:unknown){
+    setFeedbackTone("error");
     setFeedback(error instanceof FileApiError?error.message:storageErrorMessage(null));
   }
   async function upload(event:FormEvent<HTMLFormElement>){
@@ -116,7 +122,9 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       const completed=await jsonRequest<FileResponse>(fileEndpoint(response.file.id)+"/complete","POST");
       setFiles(current=>current.map(row=>row.id===completed.file.id?completed.file:row));
       await refresh();
+      if(fileInputRef.current)fileInputRef.current.value="";
       setSelected(null);setUploadTitle("");setUploadDescription("");setLinkedResourceId("");
+      setFeedbackTone("success");
       setFeedback(completed.file.status==="READY"?"Attached":fileStatusDescriptor(completed.file.status).label);
     }catch(error){
       problem(error);
@@ -130,7 +138,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       const completed=await jsonRequest<FileResponse>(fileEndpoint(file.id)+"/complete","POST");
       setFiles(rows=>rows.map(row=>row.id===file.id?completed.file:row));
       await refresh();
-      setFeedback(fileStatusDescriptor(completed.file.status).label);
+      setFeedbackTone("success");setFeedback(fileStatusDescriptor(completed.file.status).label);
     }catch(error){problem(error);}finally{setBusy(false);}
   }
   async function download(file:ProjectResourceFile){
@@ -158,7 +166,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
         title:editTitle.trim(),description:editDescription.trim()||null,
       });
       setFiles(rows=>rows.map(row=>row.id===file.id?result.file:row));
-      setEditing(null);
+      setEditing(null);setFeedbackTone("success");setFeedback("Resource updated.");
     }catch(error){problem(error);}finally{setBusy(false);}
   }
   async function remove(file:ProjectResourceFile){
@@ -167,13 +175,20 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
     try{
       await jsonRequest<FileResponse>(fileEndpoint(file.id),"DELETE");
       setFiles(rows=>rows.filter(row=>row.id!==file.id));
-      setDeleteTarget(null);
+      setDeleteTarget(null);setFeedbackTone("success");setFeedback("Resource removed.");
     }catch(error){problem(error);}finally{setBusy(false);}
   }
-  return <section className="space-y-4 border-b border-border pb-5">
+  return <section className="min-w-0 space-y-4 border-b border-border pb-5">
     <h3 className="m-0 text-base font-semibold text-foreground">Attached</h3>
-    {canUpload&&<form onSubmit={upload} className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-2">
+    {canUpload&&<form onSubmit={upload} className="min-w-0 space-y-3 border-b border-border pb-4">
+      <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
+      <Input ref={fileInputRef} id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
+        disabled={busy||files.length>=PROJECT_FILE_LIMIT}
+        onChange={event=>{setSelected(event.target.files?.[0]??null);setFeedback(null);}}
+        className="block min-h-11 max-w-full text-sm text-body file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link"/>
+      <p className="text-xs text-muted-foreground">{limitsSummary("project-resource")}</p>
+      <Disclosure title="File details (optional)" defaultOpen={Boolean(uploadTitle||uploadDescription||linkedResourceId)} contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
         <label className="text-sm font-medium text-body">Title
           <Input className="mt-1 block w-full"
             maxLength={200} value={uploadTitle} onChange={event=>setUploadTitle(event.target.value)}
@@ -192,24 +207,19 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
           {resources.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
         </Select>
       </label>:null}
-      <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
-      <Input id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
-        disabled={busy||files.length>=PROJECT_FILE_LIMIT}
-        onChange={event=>setSelected(event.target.files?.[0]??null)}
-        className="block min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm text-body file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link"/>
-      <p className="text-xs text-muted-foreground">{limitsSummary("project-resource")}</p>
+      </Disclosure>
       {progress!==null&&<div role="status" className="text-xs text-body">
         Uploading… {progress}%
         <MetricBar role="progressbar" label="Project file upload progress"
           value={progress} maximum={100} unit="percent" className={barStyles.track+" mt-2 w-full"} />
       </div>}
-      <div className="flex flex-wrap gap-2">
-        <Button variant="primary" type="submit" disabled={busy||!selected}
-          className="">
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <Button variant="primary" type="submit" loading={busy} disabled={busy||!selected}
+          className="min-h-11 w-full md:min-h-9 sm:w-auto">
           {busy?"Uploading…":"Upload file"}
         </Button>
-        {busy&&<Button variant="secondary" type="button" onClick={()=>xhrRef.current?.abort()}
-          className="">Cancel</Button>}
+        {busy&&<Button variant="secondary" type="button" disabled={!xhrRef.current} onClick={()=>xhrRef.current?.abort()}
+          className="min-h-11 w-full md:min-h-9 sm:w-auto">Cancel</Button>}
       </div>
     </form>}
     {files.length===0?<EmptyState title="No resources yet"
@@ -220,10 +230,10 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <p className="break-words font-semibold text-foreground">{file.title}</p>
-              <p className="break-all text-xs text-muted-foreground">
+              <p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground">
                 {file.originalName} · {formatFileSize(file.sizeBytes)}
               </p>
-              {file.description&&<p className="mt-1 text-sm text-body">{file.description}</p>}
+              {file.description&&<p className="mt-1 break-words text-sm text-body">{file.description}</p>}
               {file.resourceId&&resources.some(item=>item.id===file.resourceId)?
                 <p className="mt-1 text-xs font-semibold text-body">Resource: {resources.find(item=>item.id===file.resourceId)?.title}</p>:null}
               <p className="mt-1 text-xs text-muted-foreground">
@@ -236,19 +246,17 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 {descriptor.label}
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
               {projectFileUsable(file)&&<Button variant="secondary" type="button" disabled={busy} onClick={()=>void download(file)}
-                className="">Open file</Button>}
-              {canManage&&<>
-                {file.status==="UPLOADING"&&<Button variant="secondary" type="button" disabled={busy}
-                  onClick={()=>void retryComplete(file)} className="">Retry</Button>}
-                <Button variant="secondary" type="button" disabled={busy} onClick={()=>beginEdit(file)}
-                  className="">Edit resource</Button>
-                <Button variant="danger" type="button" disabled={busy} onClick={()=>setDeleteTarget(file)}
-                  className="">Delete</Button>
-              </>}
+                className="min-h-11 w-full md:min-h-9 sm:w-auto">Open file</Button>}
+              {canManage&&file.status==="UPLOADING"&&<Button variant="secondary" type="button" disabled={busy}
+                  onClick={()=>void retryComplete(file)} className="min-h-11 w-full md:min-h-9 sm:w-auto">Retry</Button>}
             </div>
           </div>
+          {canManage?<Disclosure title="Manage file" className="mt-2" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
+            <Button variant="secondary" disabled={busy} onClick={()=>beginEdit(file)} className="min-h-11 w-full md:min-h-9 sm:w-auto">Edit resource</Button>
+            <Button variant="link" disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full !text-[var(--lms-error)] md:min-h-9 sm:w-auto">Delete</Button>
+          </Disclosure>:null}
           {editing===file.id&&canManage&&<form onSubmit={event=>void saveEdit(event,file)}
             className="mt-3 grid gap-2 sm:grid-cols-2">
             <label className="text-sm text-body">Title
@@ -261,17 +269,17 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 onChange={event=>setEditDescription(event.target.value)}
                 className="mt-1 block w-full"/>
             </label>
-            <div className="flex gap-2 sm:col-span-2">
-              <Button variant="secondary" type="submit" disabled={busy||!editTitle.trim()}
-                className="">Update resource</Button>
+            <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:col-span-2">
+              <Button variant="primary" type="submit" loading={busy} disabled={busy||!editTitle.trim()}
+                className="min-h-11 w-full md:min-h-9 sm:w-auto">Update resource</Button>
               <Button variant="secondary" type="button" disabled={busy} onClick={discardGuard.requestClose}
-                className="">Cancel</Button>
+                className="min-h-11 w-full md:min-h-9 sm:w-auto">Cancel</Button>
             </div>
           </form>}
         </li>;
       })}
     </ul>}
-    {feedback&&<p role="status" className="text-sm text-body">{feedback}</p>}
+    {feedback&&!(deleteTarget&&feedbackTone==="error")?<Alert tone={feedbackTone} role={feedbackTone==="error"?"alert":"status"}>{feedback}</Alert>:null}
     <ConfirmDialog open={discardGuard.discardOpen} onOpenChange={discardGuard.setDiscardOpen}
       title="Discard resource changes?"
       description="You have unsaved project changes. Leave this page and discard them?"
@@ -280,6 +288,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       title={deleteTarget?`Delete "${deleteTarget.title}"?`:"Delete resource?"}
       description="This permanently removes the resource for everyone on the project."
       confirmLabel="Delete resource" confirmVariant="danger" pending={busy}
-      onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}/>
+      onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}>
+      {feedback&&feedbackTone==="error"?<Alert tone="error" role="alert">{feedback}</Alert>:null}
+    </ConfirmDialog>
   </section>;
 }
