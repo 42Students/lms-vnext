@@ -60,5 +60,5 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-18.md: surface | probl
 - [x] `src/components/ui/password-input.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [x] `src/app/(authenticated)/teach/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
 - [x] `src/app/(authenticated)/teacher/loading.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
-- [ ] `src/app/(authenticated)/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
-- [ ] `src/app/(authenticated)/loading.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [x] `src/app/(authenticated)/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [x] `src/app/(authenticated)/loading.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
