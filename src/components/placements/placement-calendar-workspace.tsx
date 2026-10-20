@@ -561,13 +561,6 @@ export async function PlacementCalendarWorkspace({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow={
-          isTpo
-            ? "TPO"
-            : audience === "SUPER_ADMIN"
-              ? "Super Admin · Placements"
-              : "College Admin · Placements"
-        }
         title={
           isTpo
             ? TPO_OWNER_PAGE_COPY.calendar
