@@ -110,6 +110,8 @@ export function TpoCompanyMemoryWorkspace({
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [driveSearch,setDriveSearch]=useState("");
+  // Capture once on mount; expiry labels must not call Date.now during render.
+  const [renderedAt] = useState(currentTimeMs);
   // A newer retry or route change must win over a slower older response.
   const activeLoad=useRef<AbortController|null>(null);
 
@@ -342,7 +344,7 @@ export function TpoCompanyMemoryWorkspace({
               <ul className="mt-3 divide-y divide-border">
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
-                  <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<currentTimeMs()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
+                  <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<renderedAt?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
                   <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
