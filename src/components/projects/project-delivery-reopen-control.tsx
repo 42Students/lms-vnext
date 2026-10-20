@@ -40,16 +40,16 @@ export function ProjectDeliveryReopenControl({projectId,submissionId,expectedUpd
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
       title="Reopen this submission for revision?"
       description="The learner will be able to edit and resubmit it."
-      footer={<>
-        <Button variant="secondary" disabled={pending} onClick={guard.requestClose}>Cancel</Button>
-        <Button disabled={pending||!reason.trim()} onClick={()=>void reopen()}>Reopen</Button>
-      </>}>
-      <label className="grid gap-2 text-sm font-semibold text-body">Review feedback
-        <Textarea required value={reason} maxLength={4000} disabled={pending}
+      footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+        <Button variant="secondary" className="w-full sm:w-auto" disabled={pending} onClick={guard.requestClose}>Cancel</Button>
+        <Button className="w-full sm:w-auto" loading={pending} disabled={pending||!reason.trim()} onClick={()=>void reopen()}>Reopen</Button>
+      </div>}>
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review feedback
+        <Textarea required value={reason} maxLength={4000} rows={4} disabled={pending}
           onChange={event=>setReason(event.target.value)}
           placeholder="Feedback for the learner"/>
       </label>
-      {error&&<p role="alert" className="mt-2 text-sm text-error">{error}</p>}
+      {error&&<p role="alert" className="mt-[var(--lms-space-2)] max-w-prose break-words text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>}
     </Dialog>
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard review feedback?"

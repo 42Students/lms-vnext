@@ -562,6 +562,7 @@ export function FinalReviewControl({
         setStaleReview(true);
       }
       setConfirmReview(false);
+      setOpen(true);
       showToast({
         tone: "error",
         title: "Submission review could not be saved",
@@ -603,7 +604,7 @@ export function FinalReviewControl({
           <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
             <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={guard.requestClose}>Cancel</Button>
             <Button className="w-full sm:w-auto" loading={pending} disabled={pending||staleReview||(decision==="CHANGES_REQUESTED"&&!feedback.trim())}
-              onClick={()=>setConfirmReview(true)}>{decision==="APPROVED"?"Accept submission":"Request changes"}</Button>
+              onClick={()=>{setOpen(false);setConfirmReview(true);}}>{decision==="APPROVED"?"Accept submission":"Request changes"}</Button>
           </div>
         }
       >
@@ -641,7 +642,7 @@ export function FinalReviewControl({
           </label>
         </div>
       </Dialog>
-      <ConfirmDialog open={confirmReview} onOpenChange={setConfirmReview}
+      <ConfirmDialog open={confirmReview} onOpenChange={next=>{if(!pending){setConfirmReview(next);if(!next)setOpen(true);}}}
         title={decision==="APPROVED"?"Accept this submission?":"Request changes on this submission?"}
         description={decision==="APPROVED"
           ?"The submission will be accepted and the student will see the decision."
