@@ -249,8 +249,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 :where([data-slot="table"], [data-slot="data-table"])
   [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  /* Important override is needed: legacy-skin.css:513-514 gives every
+     nested scrollbar thumb a generic important 1px-radius style. The
+     admin table/tab exception must retain its 2px radius and 20% gray. */
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 2px !important;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child {
   scrollbar-width: thin;
@@ -261,8 +264,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   height: 3px;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  /* Important override is needed: legacy-skin.css:513-514 gives every
+     nested scrollbar thumb a generic important 1px-radius style. The
+     admin table/tab exception must retain its 2px radius and 20% gray. */
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 2px !important;
 }
 /* Legacy: old-lms-shell.css:41-43 — sidebar hover thumb 4px / 28% grey;
    chat-19 handles sidebar scroll chrome, do not duplicate/override it here. */
