@@ -36,8 +36,6 @@ export default async function CollegeQuizzesPage({
   }
   const data = await listCollegeAssessmentAggregate(context, "QUIZ", validation.data);
   const lessons=await getCollegeQuizAuthoringOptions(context);
-  return <div className="min-w-0 space-y-4">
-    <CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
-    <CollegeAssessmentAggregate data={data}/>
-  </div>;
+  return <CollegeAssessmentAggregate data={data}
+    leading={<CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>} />;
 }
