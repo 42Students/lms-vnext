@@ -89,7 +89,7 @@ export default async function TpoDriveShortlistPage({
           ) : null}
           {data.page < data.totalPages ? (
             <Link href={pathname + "?page=" + (data.page + 1)}
-              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] hover:underline min-[768px]:min-h-9">Next →</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] hover:underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next →</Link>
           ) : null}
         </div>
       </nav>

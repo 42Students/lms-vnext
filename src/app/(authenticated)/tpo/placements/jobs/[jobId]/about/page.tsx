@@ -37,9 +37,9 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · About this drive"}
    description="Eligibility, reach, packages, employer details, closed summary and the most recent audit activity."/>
   <nav aria-label="Drive details sections" className="flex min-w-0 flex-wrap gap-[var(--lms-space-4)] text-sm font-semibold">
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={root+"/applicants-pipeline"}>Applicants</Link>
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={root+"/selections"}>Selections</Link>
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={root+"/change-requests"}>Company change requests</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] hover:text-[var(--lms-primary-text)]" href={root+"/applicants-pipeline"}>Applicants</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] hover:text-[var(--lms-primary-text)]" href={root+"/selections"}>Selections</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] hover:text-[var(--lms-primary-text)]" href={root+"/change-requests"}>Company change requests</Link>
   </nav>
   <section className="border-b border-border pb-6">
    <h2 className="text-lg font-semibold">Eligibility and reach</h2>
