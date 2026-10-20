@@ -44,11 +44,11 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-17.md: surface | regre
 - [x] `src/app/(authenticated)/admin/tenants/page.tsx`
 - [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
 - [x] `src/app/(authenticated)/admin/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/videos/page.tsx`
-- [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
-- [ ] `src/components/admin/college-feature-rule-editor.tsx`
-- [ ] `src/components/admin/managed-college-subdomain.tsx`
-- [ ] `src/components/admin/student-rule-editor.tsx`
-- [ ] `src/components/admin/super-admin-batch-roster-manager.tsx`
+- [x] `src/app/(authenticated)/admin/videos/page.tsx`
+- [x] `src/components/admin/college-admin-lifecycle-action.tsx`
+- [x] `src/components/admin/college-feature-rule-editor.tsx`
+- [x] `src/components/admin/managed-college-subdomain.tsx`
+- [x] `src/components/admin/student-rule-editor.tsx`
+- [x] `src/components/admin/super-admin-batch-roster-manager.tsx`
 - [ ] `src/components/admin/super-admin-company-verification.tsx`
 - [ ] `src/components/admin/tenant-restore-action.tsx`

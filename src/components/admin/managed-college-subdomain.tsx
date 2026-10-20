@@ -81,7 +81,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
    confirmLabel={pendingAction==="REMOVE"?"Remove":pendingAction==="CHANGE"?"Change":"Allot"} confirmVariant={pendingAction==="REMOVE"?"danger":"primary"}
    pending={busy} confirmDisabled={!state.ready||(pendingAction!=="REMOVE"&&(!normalizedLabel||labelInvalid))}
    onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>
-   <div className="min-w-0 space-y-3 px-4 py-4 md:px-6">
+   <div className="min-w-0 space-y-3">
     <p className="m-0 break-words text-sm leading-5 text-body">Current: {state.currentHost??"Not allotted"}</p>
     {pendingAction!=="REMOVE"?<p className="m-0 break-all text-sm font-semibold leading-5 text-foreground">New: {normalizedLabel}.{state.baseDomain}</p>:null}
     {message&&messageTone==="error"?<Alert tone="error">{message}</Alert>:null}
