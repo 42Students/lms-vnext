@@ -36,7 +36,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
       {data ? <AcademicSetupSteps step={6} /> : null}
     {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
     {data && options ? <>
-      <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
+      <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} academicSetupHref="/admin/academics" />
       <section aria-label="Filter managed classes" className="border-b border-border pb-4">
         <form method="get" action="/admin/classes" role="search" aria-label="Class filters" className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
           <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
@@ -55,7 +55,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
               className="min-h-11 md:min-h-9" />
           </label>
           <Disclosure title="More filters" defaultOpen={Boolean(data.query.status!=="ALL" || data.query.pageSize!==25 || data.query.cohortCode)}
-            className="min-w-0 md:col-span-2 xl:col-span-4"
+            className="order-last min-w-0 md:col-span-2 xl:col-span-4"
             contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] md:grid-cols-2">
           <label className="grid min-w-0 w-full md:min-w-32 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
             <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">

@@ -15,11 +15,11 @@ export default function CollegeBrandingPreviewError({
       title="Could not load college branding"
       description="Branding settings could not be retrieved. No default or missing-data conclusion is inferred."
       action={
-        <div className="flex flex-wrap justify-center gap-3">
-          <Button variant="secondary" onClick={reset}>Retry</Button>
+        <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+          <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
           <Link
             href="/admin/colleges"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-[650] text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] sm:w-auto border border-border bg-surface px-4 text-sm font-[650] text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
           >
             Colleges
           </Link>

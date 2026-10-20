@@ -35,8 +35,8 @@ function capacityInput(value: string): number | null {
   return value.trim() === "" ? null : Number(value);
 }
 
-export function CollegeClassCreate({ cohorts, periods }: {
-  cohorts: Cohort[]; periods: Period[];
+export function CollegeClassCreate({ cohorts, periods, academicSetupHref = "/college/academics" }: {
+  cohorts: Cohort[]; periods: Period[]; academicSetupHref?: string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -82,7 +82,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         {!cohorts.length
           ? "No planned or active batches in this college. Create a batch first."
           : <>No usable academic periods in this college. Create a period first.{" "}
-            <Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
+            <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
       : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[920px] grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
