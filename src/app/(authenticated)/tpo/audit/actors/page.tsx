@@ -1,5 +1,7 @@
 import { DateInput } from "@/components/ui/date-input";
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
+import { EmptyState } from "@/components/ui/empty-state";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -83,11 +85,11 @@ export default async function TpoActorAuditPage({
         </Link>
       </>}/>
     <form role="search" aria-label="audit actors filters" action="/tpo/audit/actors" method="get"
-      className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
+      className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
+      <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {([
         ["actorId", "Actor user UUID", "00000000-0000-4000-8000-000000000000"],
         ["entityType", "Entity type", "placement_offer"],
-        ["entityId", "Entity ID", "Stored subject ID"],
       ] as const).map(([name, label, placeholder]) => <label key={name}
         className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {label}
@@ -100,6 +102,16 @@ export default async function TpoActorAuditPage({
         <DateInput mode="date" name={name} defaultValue={parsed.data[name] ?? ""}
           className="min-h-11 md:min-h-9 w-full"/>
       </label>)}
+      </div>
+      <Disclosure title="Entity ID · Sort date · Page size"
+        defaultOpen={Boolean(parsed.data.entityId || parsed.data.sort !== "NEWEST" || parsed.data.pageSize !== 25)}
+        className="border-t border-[var(--lms-canvas-border)]" contentClassName="pt-3">
+        <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Entity ID
+            <Input name="entityId" defaultValue={parsed.data.entityId ?? ""} placeholder="Stored subject ID"
+              className="min-h-11 w-full md:min-h-9"/>
+          </label>
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
        Sort date
        <Select name="sort" defaultValue={parsed.data.sort}
@@ -114,9 +126,11 @@ export default async function TpoActorAuditPage({
           {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
         </Select>
       </label>
-      <div className="flex flex-wrap items-end gap-3 md:col-span-2 lg:col-span-3">
-        <Button type="submit">Apply filters</Button>
-        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center text-sm font-semibold text-link">
+        </div>
+      </Disclosure>
+      <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+        <Button type="submit" className="w-full sm:w-auto">Apply filters</Button>
+        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Reset filters
         </Link>
       </div>
