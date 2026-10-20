@@ -80,8 +80,8 @@ export default async function MentorReviewOverviewPage({
  <p className="text-sm text-body">{data.total} registered delivery version{data.total===1?"":"s"}</p>
  {data.items.length===0?<EmptyState title="No registered final delivery"
  description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history."/>
- :<ol className="divide-y divide-border">{data.items.map(item=>
- <li key={item.id} className="py-4">
+ :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
+ <li key={item.id} className="py-[var(--lms-space-3)]">
  <div className="flex flex-wrap items-center justify-between gap-3">
  <h2 className="font-semibold">Delivery version {item.version}</h2>
  <span className="text-xs font-semibold text-body">{item.status}</span></div>

@@ -106,8 +106,8 @@ export default async function MentorSprintProgressPage({
       <p className="text-sm text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
         description="No sprints matched the selected state and current Mentor assignments. Unmaterialized or missing pre-migration work is not counted." />
-      : <div className="divide-y divide-border">{data.items.map(item =>
-        <article key={item.id} className="py-4">
+      : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+        <article key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div><h2 className="font-semibold text-foreground">{item.title}</h2>
               <p className="mt-1 text-sm text-body">{item.projectTitle} · {item.releaseTitle}</p>

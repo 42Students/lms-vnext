@@ -111,8 +111,8 @@ export default async function MentorProjectActivityHistoryPage({
       </div>
       {data.items.length===0 ? <EmptyState title="No recorded project activity"
         description="No registered activity events match this project and importance filter. Missing audit producers or pre-migration records cannot be inferred." />
-        : <ol className="divide-y divide-border">{data.items.map(event=>
-          <li key={event.id} className="min-w-0 break-words py-4">
+        : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(event=>
+          <li key={event.id} className="min-w-0 break-words py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm font-semibold text-foreground">{event.label}</p>
               <span className="text-xs text-body">{event.importance}</span>
