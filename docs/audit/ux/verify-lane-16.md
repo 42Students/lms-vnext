@@ -36,3 +36,19 @@ Second-pass checked complete page and other lane's polish-lane-6.md evidence, ex
 ## 10. src/app/(authenticated)/admin/people/directory/page.tsx
 Verified page/other-lane polish-lane-6.md proof, CsvControl export (no private contact fields), Tabs, DataTable, Pagination, status badges, adminUserDirectory query parsing/role handling, route loading/error and parent admin layout; route-local not-found/template absent. No duplicate JSX attributes, missing components, broken links or role/filter defaults identified. All/faculty/student tabs, masked/unmasked contacts, invalid search, permission denial, CSV failure, empty/filled, 375/768 layout stay coherent; no source fix required. Files: queue/proof; no CI.
 
+
+## 11. src/app/(authenticated)/admin/people/page.tsx
+Read entire page, other lane's polish-lane-6.md proof, PersonMembershipActions plus its PersonProfileDialog/roles/suspend/end/ConfirmDialog, PersonOnboardDialog, PageSizeSelect, CsvControl, DataTable, Pagination, loading/error boundaries and super-admin layout. JSX/imported props, export query shape, membership scope, role options, endpoints, copy, redaction and ids retained. At 375/768 primary onboarding, advanced status/rows disclosure, action menu, failure feedback, empty/no-scope and pagination stay cohesive. No confirmed regressions or further fixes. Files: queue/proof; no CI.
+
+
+## 12. src/app/(authenticated)/admin/people/unassigned/page.tsx
+Reviewed source, adminUnassignedUsersQuerySchema/permission scope, Pagination and PageHeader/ErrorState/EmptyState, other-lane polish-lane-6.md entry, local loading/error and parent layout. Fixed 2 layout/semantic issues: invalid-filter page had only ErrorState h2 and no page h1; added same title via PageHeader without rewording. Route loading had duplicate identical announced status paragraph plus GracefulPageLoading; removed redundant paragraph and kept named directory loading/recovery. Other state/role/query/CTA/375-768 layout preserved; JSX and export props remain valid. Files: page.tsx, loading.tsx, queue/proof. No CI.
+
+
+## 13. src/app/(authenticated)/admin/placements/analytics/page.tsx
+Verified other lane's polish-lane-6.md entry and full report, MetricBar props, funnel CSS, DateInput, responsive filters, DataTable/CSV and route loading/error (no local template/not-found). Confirmed JSX/attributes/exports, status labels/metric keys and scoped read paths; 10 KPI strip 2/3/5 layout, guarded 5,000-drive truncation notice, empty report, dates and mobile/tablet controls reviewed. No demonstrated regression requiring an edit; legacy funnel styling retained. Source only, no CI. Files: verification queue/proof.
+
+
+## 14. src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx
+Read entire page and other lane polish-lane-6.md proof, shared SuperAdminPlacementDetailView, PageHeader/BackLink, status badges, contextual links, exact membership application audit service behavior, local loading/error/not-found and parent admin. Related actions disclosure retains both route destinations and direct drive navigation; stage history uses unique ids, safe dates and 375/768 breakpoints. No JSX/import/prop/copy/permission regression confirmed, and no further clutter issue. Source only, no CI. Files: queue/proof.
+

@@ -30,8 +30,11 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   const parsed = adminUnassignedUsersQuerySchema.safeParse(validShape
     ?{q:raw.q,platformStatus:raw.platformStatus,role:raw.role,page:raw.page}
     :{invalid:true});
-  if (!parsed.success) return <ErrorState title="Invalid user filters" description="Review search, status, role and page."
-    action={<Link href="/admin/people/unassigned" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />;
+  if (!parsed.success) return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+    <PageHeader title="Users without college memberships" />
+    <ErrorState title="Invalid user filters" description="Review search, status, role and page."
+    action={<Link href="/admin/people/unassigned" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
+  </div>;
   const loaded = await listSuperAdminUnassignedUsers(context, parsed.data)
     .then(value => ({ok:true as const,value}))
     .catch(error => ({ok:false as const,denied:error instanceof AuthorizationError}));
