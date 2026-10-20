@@ -314,7 +314,7 @@ export function LectureHallManager({
         onOpenChange={(value) => !value && setArchiving(null)}
         title="Archive lecture hall"
         description={`Archive ${archiving?.name ?? "this hall"}? It can't be archived while it has upcoming classes.`}
-        confirmLabel="Archive hall"
+        confirmLabel="Archive hall" confirmVariant="danger"
         pending={pending}
         onConfirm={() => archiving && setStatus(archiving, "ARCHIVED")}
       />

@@ -46,7 +46,7 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title={action==="SUSPEND"?"Suspend administrator access?":"Reactivate administrator access?"}
    description={action==="SUSPEND"?"This administrator will lose college access and be signed out from active devices.":"Restore college access for this administrator?"}
-   confirmLabel={action==="SUSPEND"?"Suspend":"Reactivate"} pending={busy}
+   confirmLabel={action==="SUSPEND"?"Suspend":"Reactivate"} confirmVariant={action==="SUSPEND"?"danger":"primary"} pending={busy}
    onConfirm={()=>void submit()}/>
  </div>;
 }
