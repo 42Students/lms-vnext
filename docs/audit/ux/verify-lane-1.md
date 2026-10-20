@@ -57,3 +57,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** reviewed validated URL filters, authorized schedule service and DTO mapping, `LearnerClassSchedule` JSX/CSS/CalendarGrid/Disclosure/EventCard/StatusBadge, course links, period navigation and no-event states, plus loading/error/not-found and parent layouts; no source-level TSX/props/ARIA regressions identified.
 - **Extra clutter/alignment fixes (0):** existing month/week/day navigation, horizontal grid containment and filter disclosure preserve readable phone/tablet layouts. Verified, no change to source.
 - **Files changed:** verification proof and queue only.
+
+## Surface 9 — Learner course tab workspace
+- **Surface:** `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 9.
+- **Regressions found/fixed (0):** reviewed catchall tab redirect/URLSearchParams, authenticated delivery/permissions, document title, tab prop contract, Overview/Roadmap/Attendance/Discussions modules and their nested assignment/media/message controls, Banner, PageHeader, loading/error/not-found and nearest layout. No missing TSX imports/exports, duplicate attributes or altered aria/IDs found in static review.
+- **Extra clutter/alignment fixes (0):** the tab strip, responsive back link, secondary Course options disclosure and read-only state retain clear hierarchy at 375/768.
+- **Files changed:** verification proof and queue only (verified, no change to source).
+
+## Surface 10 — Learner course attendance history
+- **Surface:** `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 10.
+- **Regressions found/fixed (1):** fixed optional overall-percentage check to treat null **or missing overall data** as `No marked attendance` with neutral status, instead of accidentally warning when overall was undefined. Kept all counts, labels and policy calculations untouched.
+- **Extra clutter/alignment fixes (0):** inspected disclosures, month Tabs and shared StatTile/StatusBadge contracts, responsive chronological rows, empty/load/error/not-found and authorization checks; no other alignment regressions detected.
+- **Files changed:** `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`; verification proof and queue.
