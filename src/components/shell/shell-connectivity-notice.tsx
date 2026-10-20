@@ -3,9 +3,11 @@ import {useEffect,useState} from "react";
 import {InlineNotice} from "@/components/ui/inline-notice";
 /** GR-16: independent connection state; never blocks navigation or removes drafts. */
 export function ShellConnectivityNotice(){
- const [offline,setOffline]=useState(()=>typeof navigator!=="undefined"&&!navigator.onLine);
+ const [offline,setOffline]=useState(false);
  useEffect(()=>{
   const update=()=>setOffline(!navigator.onLine);
+  // Server markup cannot know navigator.onLine. Reconcile after hydration.
+  update();
   window.addEventListener("online",update);
   window.addEventListener("offline",update);
   return ()=>{window.removeEventListener("online",update);window.removeEventListener("offline",update);};
