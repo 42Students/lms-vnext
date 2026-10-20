@@ -1,6 +1,5 @@
 import { DateInput } from "@/components/ui/date-input";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Card } from "@/components/ui/card";
 import { ErrorState } from "@/components/ui/error-state";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
@@ -162,7 +161,7 @@ function RecruiterCalendarEventCard({
   const href = eventHref(event);
 
   return (
-    <Card as="article">
+    <article className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
@@ -227,7 +226,7 @@ function RecruiterCalendarEventCard({
           Open hiring drive →
         </Link>
       ) : null}
-    </Card>
+    </article>
   );
 }
 
@@ -314,16 +313,10 @@ export default async function HrCalendarPage({
       <PageHeader
         title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
-        actions={<>
-          <Link href="/hr/placements"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body min-[768px]:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-            Drives →
-          </Link>
-          {!noCollegeAccess?<Link href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text min-[768px]:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-            Export calendar CSV
-          </Link>:null}
-        </>}
+        actions={<Link href="/hr/placements"
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 md:w-auto">
+          Drives →
+        </Link>}
       />
       {noCollegeAccess ? (
         <section className="border-b border-[var(--lms-canvas-border)] pb-6">
@@ -347,142 +340,90 @@ export default async function HrCalendarPage({
         </section>
       ) : (
         <>
-          <SummaryStrip label="Recruiter calendar summary" steps={[
-            {label:"Hiring rounds",value:calendar.summary.rounds},
-            {label:"Application deadlines",value:calendar.summary.deadlines},
-            {label:"All events",value:eventCount},
-            {label:"Accessible drives",value:calendar.authorizedJobCount},
-            {label:"Results due",value:calendar.resultsDue.length},
-          ]} />
-
-          <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Results due in this period</h2>
-            <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
-            {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2">
-              {calendar.resultsDue.map(item => (
-                <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                  className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-                  <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
-                  <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
-                  <span className="mt-2 block text-xs text-muted-foreground">Due {eventDateTime(item.dueAt)} IST · {item.status}</span>
-                </Link>
-              ))}
-            </div> : <EmptyState title="No results due" description="No results deadlines are recorded in this calendar period."/>}
-          </section>
-
-          <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
-                  Calendar controls
-                </h2>
+          <section className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
+            <h2 className="sr-only">Calendar controls</h2>
+            <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-end min-[768px]:justify-between">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-foreground">{heading}</p>
                 <p className="mt-1 text-sm text-body">
-                  {dateLabel(window.from)} –{" "}
-                  {dateLabel(window.to)} · IST
+                  {dateLabel(window.from)} – {dateLabel(window.to)} · IST
                 </p>
               </div>
-
-              <Tabs renderPanel={false} ariaLabel="Calendar event types" value={category}
-                items={HR_CALENDAR_CATEGORIES.map(option=>({value:option,
-                  label:option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
-                    option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
-                  href:calendarHref(anchor,view,option)}))}/>
               <Tabs renderPanel={false} ariaLabel="Calendar views" value={view}
+                className="w-full min-[768px]:w-auto"
                 items={VIEWS.map(option=>({value:option,label:option.charAt(0).toUpperCase()+option.slice(1),
                   href:calendarHref(anchor,option,category)}))}/>
             </div>
 
-            <div className={"mt-6 "+styles.nav}>
-              <Link
-                href={calendarHref(
-                  previous,
-                  view,
-                  category,
-                )}
-                aria-label={
-                  view === "week"
-                    ? "Previous week"
-                    : "Previous month"
-                }
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-              >
-                ← Previous
-              </Link>
+            <Tabs renderPanel={false} ariaLabel="Calendar event types" value={category}
+              items={HR_CALENDAR_CATEGORIES.map(option=>({value:option,
+                label:option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
+                  option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
+                href:calendarHref(anchor,view,option)}))}/>
 
-              <Link
-                href={calendarHref(today, view, category)}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-              >
-                Today
-              </Link>
-
-              <Link
-                href={calendarHref(next, view, category)}
-                aria-label={
-                  view === "week"
-                    ? "Next week"
-                    : "Next month"
-                }
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-              >
-                Next →
-              </Link>
-
-              <span className="ml-2 text-sm font-semibold text-foreground">
-                {heading}
-              </span>
+            <div className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-4 min-[1100px]:flex-row min-[1100px]:items-start min-[1100px]:justify-between">
+              <nav aria-label="Calendar period navigation" className={styles.nav}>
+                <Link href={calendarHref(previous,view,category)}
+                  aria-label={view==="week"?"Previous week":"Previous month"}
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  ← Previous
+                </Link>
+                <Link href={calendarHref(today,view,category)}
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  Today
+                </Link>
+                <Link href={calendarHref(next,view,category)}
+                  aria-label={view==="week"?"Next week":"Next month"}
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  Next →
+                </Link>
+              </nav>
+              <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start">
+                <details className="min-w-0">
+                  <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                    Jump to date
+                  </summary>
+                  <form action="/hr/calendar" method="get"
+                    className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-end">
+                    <Input type="hidden" name="view" value={view} />
+                    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                      Jump to date
+                      <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
+                      <DateInput mode="date" key={anchor} name="date" defaultValue={anchor}
+                        required className="w-full" />
+                    </label>
+                    <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Go to date</Button>
+                  </form>
+                </details>
+                {!noCollegeAccess ? <Link
+                  href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 min-[768px]:w-auto">
+                  Export calendar CSV
+                </Link> : null}
+              </div>
             </div>
-
-            <form
-              action="/hr/calendar"
-              method="get"
-              className="mt-6 flex min-w-0 flex-wrap items-end gap-3 border-t border-[var(--lms-canvas-border)] pt-4"
-            >
-              <Input
-                type="hidden"
-                name="view"
-                value={view}
-              />
-
-              <label className="flex min-w-0 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                Jump to date
-                <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-    <DateInput mode="date"
-                  key={anchor}
-                  name="date"
-                  defaultValue={anchor}
-                  required
-                  className="w-full"
-                />
-              </label>
-
-              <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Go to date</Button>
-            </form>
           </section>
 
           {nextVisible ? (
-            <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+            <section aria-label="Next event in this period"
+              className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] py-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Next event in this period
               </p>
-
-              <p className="mt-2 text-sm font-semibold text-foreground">
-                {context.recruiter?.companyName ?? "Employer"}
-                {" · "}
-                {nextVisible.title}
-              </p>
-
-              <p className="mt-1 text-sm text-body">
-                {eventDateTime(
-                  nextVisible.at,
-                )}{" "}
-                IST
-              </p>
+              <div className="min-w-0">
+                <p className="break-words text-sm font-semibold text-foreground">
+                  {context.recruiter?.companyName ?? "Employer"}{" · "}{nextVisible.title}
+                </p>
+                <p className="text-sm text-body">{eventDateTime(nextVisible.at)} IST</p>
+              </div>
             </section>
           ) : null}
 
           {eventCount === 0 ? (
-            <EmptyState title={view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"} description="Rounds, slots and deadlines appear here as soon as they are dated."/>
+            <EmptyState title={view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
+              description="Rounds, slots and deadlines appear here as soon as they are dated."
+              action={<Link href={calendarHref(today,view,category)}
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text min-[768px]:min-h-9">Today</Link>} />
           ) : null}
 
           {view !== "agenda" ? (
@@ -490,7 +431,7 @@ export default async function HrCalendarPage({
               aria-label={`${view} recruiter calendar`}
               className={styles.boardFrame}
             >
-              <div className="space-y-4 min-[861px]:hidden">
+              <div className="space-y-3 min-[1100px]:hidden">
                 {mobileDays.map((day) => (
                   <article key={day.day} className={styles.mobileDay}>
                     <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{dateLabel(day.day)}</h3>
@@ -500,21 +441,21 @@ export default async function HrCalendarPage({
                       ))}
                       {day.resultsDue.map((item) => (
                         <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                          className="min-h-11 md:min-h-9 inline-flex items-center rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                          className="inline-flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-primary-text min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">
                           <strong className="block">Results due · {item.roundName}</strong>
-                          <span className="mt-1 block text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
+                          <span className="block max-w-full break-words text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
                         </Link>
                       ))}
                     </div>
                   </article>
                 ))}
-                {mobileDays.length === 0 ? (
+                {mobileDays.length === 0 && eventCount > 0 ? (
                   <p role="status" className="p-4 text-sm text-muted-foreground">
                     No rounds, deadlines or results due in this calendar period.
                   </p>
                 ) : null}
               </div>
-              <CalendarGrid className={"hidden min-[861px]:grid "+styles.board}>
+              <CalendarGrid className={"hidden min-[1100px]:grid "+styles.board}>
                 {[
                   "Mon",
                   "Tue",
@@ -652,25 +593,72 @@ export default async function HrCalendarPage({
                       : ""}
                   </h3>
 
-                  <div className="grid gap-3 lg:grid-cols-2">
+                  <div className="grid min-w-0 gap-x-6 gap-y-2 lg:grid-cols-2">
                     {day.events.map((event) => (
                       <RecruiterCalendarEventCard key={event.id} event={event} />
                     ))}
                     {day.resultsDue.map((item) => (
-                      <Card as="article" key={"due:" + item.id}>
+                      <article key={"due:" + item.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
                         <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
                         <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
                         <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                           Open hiring rounds →
                         </Link>
-                      </Card>
+                      </article>
                     ))}
                   </div>
                 </div>
               ))}
             </section>
           ) : null}
+          {view !== "agenda" && (category === "ALL" || category === "RESULTS_DUE") ? (
+            <section aria-label="Results due in this period"
+              className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
+              <div>
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+                  Results due in this period
+                </h2>
+                <p className="mt-1 text-sm text-body">
+                  Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.
+                </p>
+              </div>
+              {calendar.resultsDue.length ? (
+                <ul className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+                  {calendar.resultsDue.map(item => (
+                    <li key={item.id} className="min-w-0 py-3">
+                      <Link href={hrResultsDueHref(item.jobId,item.id)}
+                        className="flex min-h-11 min-w-0 flex-col justify-center gap-2 py-1 hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between min-[768px]:gap-4">
+                        <span className="min-w-0">
+                          <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
+                          <span className="block break-words text-sm text-body">{item.jobTitle}</span>
+                        </span>
+                        <span className="shrink-0 text-xs text-muted-foreground">
+                          Due {eventDateTime(item.dueAt)} IST · {item.status}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : <EmptyState title="No results due"
+                description="No results deadlines are recorded in this calendar period." />}
+            </section>
+          ) : null}
+
+          <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body min-[768px]:min-h-9">
+              Recruiter calendar summary
+            </summary>
+            <div className="mt-3">
+              <SummaryStrip label="Recruiter calendar summary" steps={[
+                {label:"Hiring rounds",value:calendar.summary.rounds},
+                {label:"Application deadlines",value:calendar.summary.deadlines},
+                {label:"All events",value:eventCount},
+                {label:"Accessible drives",value:calendar.authorizedJobCount},
+                {label:"Results due",value:calendar.resultsDue.length},
+              ]} />
+            </div>
+          </details>
         </>
       )}
     </div>
