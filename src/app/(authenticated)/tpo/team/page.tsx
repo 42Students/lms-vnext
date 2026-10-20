@@ -88,7 +88,7 @@ export default async function TpoTeamPage({searchParams}:{
     <p role="status" className="text-sm text-body">{people.length} people</p>
     {unowned?.ready?<TpoTeamAssignUnowned drives={unowned.drives} companies={unowned.companies}
       members={activeTeam.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
-       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/></Disclosure>:null}
+       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
     <Disclosure title="About placement team" className="border-b border-border" contentClassName="py-3">
       <p className="text-xs text-muted-foreground">The college&apos;s TPO and college-admin accounts are always in the team. Everyone in it can do everything in placements.</p>
     </Disclosure>
@@ -167,7 +167,7 @@ export default async function TpoTeamPage({searchParams}:{
     {conversations?.status==="READY"?<Disclosure title="Start a private placement team conversation" className="mt-3 border-b border-border" contentClassName="pb-3"><TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
       member=>member.membershipId!==context.membership?.id&&
       (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
-      .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
+      .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/></Disclosure>:null}
     {conversations?.status==="FAILED"?<Alert tone="error">
      Could not load conversations right now. Your search has been kept.
      <Link className="ml-2 font-semibold text-link underline lms-inline-link" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
