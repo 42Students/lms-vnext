@@ -397,6 +397,7 @@ export function ProjectTemplateActions({
         {allowGlobalActions && lifecycle.canPublish ? (
           <Button
             size="sm"
+            loading={pending === "Publish template"}
             disabled={pending !== null}
             onClick={() =>
               void mutate(
@@ -414,6 +415,7 @@ export function ProjectTemplateActions({
           <Button
             size="sm"
             variant="secondary"
+            loading={pending === "Unpublish template"}
             disabled={pending !== null}
             onClick={() =>
               void mutate(
@@ -450,6 +452,7 @@ export function ProjectTemplateActions({
             size="sm"
             variant="secondary"
             disabled={pending !== null}
+            loading={pending === "Assign to college"}
             onClick={() => {
               if (assignedToSelectedCollege) setConfirmRevoke(true);
               else void mutate("Assign to college", "/api/projects/templates/" + templateId + "/assignments",
