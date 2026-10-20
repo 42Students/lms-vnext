@@ -32,7 +32,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
  }
  return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" onSubmit={submit}
   className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-  <h2 className="text-lg font-semibold text-foreground">Additional metadata</h2>
+  <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg">Additional metadata</h2>
   <p className="text-sm text-muted-foreground">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
   {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find metadata
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
