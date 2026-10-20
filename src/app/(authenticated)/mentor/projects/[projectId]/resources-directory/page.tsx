@@ -41,32 +41,32 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    </p>
    <form method="get" action={base+"/resources-directory"}
     className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
-    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Resource title or description
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Requirement
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Requirement
      <Select name="required" defaultValue={data.query.required}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">All</option><option value="REQUIRED">Required</option>
       <option value="OPTIONAL">Optional</option>
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">HTTPS link availability
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">HTTPS link availability
      <Select name="link" defaultValue={data.query.link}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
       <option value="UNAVAILABLE">No safe HTTPS link</option>
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Description recorded
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Description recorded
      <Select name="description" defaultValue={data.query.description}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">Any</option><option value="RECORDED">Has a description</option>
       <option value="MISSING">No written description</option>
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Resource order
+    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Resource order
      <Select name="order" defaultValue={data.query.order}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
