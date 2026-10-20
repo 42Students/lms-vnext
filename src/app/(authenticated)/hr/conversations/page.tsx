@@ -148,7 +148,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
-   <form method="get" action="/hr/conversations" className="flex min-w-0 flex-wrap items-end gap-2">
+   <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-2">
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>

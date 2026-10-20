@@ -49,8 +49,8 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   return <div className="space-y-6">
     <PageHeader title={item.title} actions={<Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>} />
     <div className="grid gap-4 md:grid-cols-2">
-      <section className="border-b border-border py-4">
-        <h2 className="text-xs font-semibold text-muted-foreground">Due</h2>
+      <section aria-labelledby="assignment-due-title" className="border-b border-border py-4">
+        <h2 id="assignment-due-title" className="text-xs font-semibold text-muted-foreground">Due</h2>
         <p className="mt-2 text-foreground">{formatDate(item.dueAt)}</p>
       </section>
       <section className="border-b border-border py-4">

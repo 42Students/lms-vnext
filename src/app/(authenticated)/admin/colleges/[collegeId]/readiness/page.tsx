@@ -213,7 +213,7 @@ export default async function CollegeReadinessPage({
           </StatusBadge>
         </div>
 
-        <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
+        <form method="get" role="search" aria-label="Readiness check filters" className="mt-4 flex flex-wrap items-end gap-3">
           <label className="grid w-full min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-40">Show checks
             <Select name="status" defaultValue={parsed.status} className="min-h-11 min-[768px]:min-h-9">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
