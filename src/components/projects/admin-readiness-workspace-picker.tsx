@@ -31,7 +31,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
    </label>)}
    {!rows.length?<EmptyState title="No matching workspaces" description="No matching workspaces."/>:null}
   </fieldset>
-  <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
+  <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm text-body">
    <span>{matching.length} matching · Page {current} of {count}</span>
    <div className="flex flex-wrap gap-2">
     <Button type="button" variant="secondary" disabled={current===1} onClick={()=>setPage(x=>Math.max(1,x-1))}
@@ -40,7 +40,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
       >Next</Button>
    </div>
   </div>
-  <Button type="submit" disabled={!choice} >
+  <Button type="submit" disabled={!choice} className="min-h-11 w-full md:min-h-9 md:w-auto">
    View readiness</Button>
  </form>;
 }
