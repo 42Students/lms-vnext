@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 
@@ -69,11 +70,11 @@ export function ProjectReadinessOverrideForm({
       <form onSubmit={requestSave} className="space-y-3 border-b border-border pb-5">
         <h2 className="text-lg font-semibold text-foreground">{copy.overrideTitle}</h2>
         {hasSubmission && state !== "CLEAR" ? (
-          <p role="status" className="text-sm text-warning-text">
+          <Alert tone="warning">
             Force Unlock/Block will have no effect here while a submission already exists.
-          </p>
+          </Alert>
         ) : null}
-        <label className="block text-[var(--lms-font-sm)] font-semibold text-body" htmlFor="project-readiness-override">{copy.stateLabel}</label>
+        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="project-readiness-override">{copy.stateLabel}</label>
         <Select
           id="project-readiness-override"
           className="w-full"
@@ -91,7 +92,7 @@ export function ProjectReadinessOverrideForm({
         </Select>
         {state !== "CLEAR" ? (
           <>
-            <label className="block text-[var(--lms-font-sm)] font-semibold text-body" htmlFor="project-readiness-note">{copy.note}</label>
+            <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="project-readiness-note">{copy.note}</label>
             <Textarea
               id="project-readiness-note"
               value={note}
@@ -105,10 +106,10 @@ export function ProjectReadinessOverrideForm({
             />
           </>
         ) : null}
-        <Button type="submit" variant="primary" disabled={pending} className="">
+        <Button type="submit" variant="primary" disabled={pending}>
           {copy.submit}
         </Button>
-        {feedback ? <p role="status" className="text-sm text-body">{feedback}</p> : null}
+        {feedback ? <Alert tone={feedback === copy.failed ? "error" : "success"} role="status">{feedback}</Alert> : null}
       </form>
       <ConfirmDialog
         open={confirmOpen}

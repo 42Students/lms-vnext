@@ -14,8 +14,8 @@ export function SuperAdminDrivePipeline({rows}: {rows: Pipeline}) {
     <div className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0 xl:grid-cols-6">
       {rows.funnel.map((stage) => <div key={stage.key}
         className="min-w-0 px-3 py-3">
-        <p className="text-xs font-semibold text-body">{stage.label}</p>
-        <p className="mt-1 text-xl font-semibold tabular-nums text-foreground">{stage.count}</p>
+        <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{stage.label}</p>
+        <p className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{stage.count}</p>
         <p className="mt-1 text-xs text-muted-foreground">
           {stage.percentPrevious===null ? "Current stage" :
             `${stage.percentPrevious}% of previous stage`}
