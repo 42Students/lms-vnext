@@ -158,7 +158,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
                 className="flex min-h-11 flex-wrap items-center justify-between gap-2 px-1 py-3 text-sm transition-colors hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                 <span className="font-medium text-primary-text">{job.title}</span>
-                <StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge>
+                <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":job.status==="CANCELLED"?"error":"neutral"}>{job.status}</StatusBadge>
               </Link>)}
               </div>
             </div> : <p className="mt-4 text-sm text-muted-foreground">No published or closed drives for this relationship.</p>}

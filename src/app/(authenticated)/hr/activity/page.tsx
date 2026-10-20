@@ -66,7 +66,7 @@ export default async function HrJobActivityPage({searchParams}:{
     <li key={item.id} className="py-3">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
       className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{item.title}</Link>
-     <p className="mt-1 text-sm text-body"><StatusBadge tone={item.status==="PUBLISHED"?"success":"neutral"}>{item.status}</StatusBadge> · {fmt(item.occurredAt)} IST</p>
+     <p className="mt-1 text-sm text-body"><StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="DRAFT"?"warning":"neutral"}>{item.status}</StatusBadge> · {fmt(item.occurredAt)} IST</p>
     </li>)}</ol>:<EmptyState title="No hiring activity" description="No visible publication or closure activity at this college."/>}
 
    <nav aria-label="Activity history pages" className="flex flex-wrap items-center gap-3">
