@@ -13,15 +13,14 @@ export default function SuperAdminTemplateDetailError({
   reset: () => void;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-5">
       <ProjectAdminNav
         basePath="/admin/projects"
         active="templates"
       />
 
       <PageHeader
-        eyebrow="Super Admin · Projects"
-        title="Project Template"
+        title="Project template"
         description="The requested template section is unavailable."
       />
 
@@ -29,7 +28,7 @@ export default function SuperAdminTemplateDetailError({
         title="Could not load template details"
         description="The template may no longer be available, or the current administrative scope may not permit this global read. Retry or return to the template catalogue."
         action={
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <Button
               variant="secondary"
               onClick={reset}
@@ -39,7 +38,7 @@ export default function SuperAdminTemplateDetailError({
 
             <Link
               href="/admin/projects/templates"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-[650] text-body hover:bg-muted md:min-h-9 hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-[650] text-body hover:bg-muted md:min-h-9 hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
             >
               Template catalogue
             </Link>
