@@ -32,7 +32,7 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
   finally{setBusy(false);}
  }
  return <section className="border-b border-border pb-5">
-  <Button variant="secondary" className="min-h-11 sm:min-h-9" type="button" onClick={()=>setOpen(value=>!value)}>
+  <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" onClick={()=>setOpen(value=>!value)}>
    Edit workspace summary</Button>
   {open&&<div className="mt-3 grid gap-3">
    <label className="text-sm">Workspace title
@@ -51,7 +51,7 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
    <p className="text-xs text-muted-foreground">Activating requires a Mentor; completing requires an approved final submission.</p>
    <div className="flex gap-2"><Button type="button" className=""
     disabled={busy||!title.trim()} onClick={()=>void save()}>{busy?"Saving…":"Save changes"}</Button>
-    <Button type="button" variant="secondary" className="min-h-11 sm:min-h-9" disabled={busy}
+    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
      onClick={()=>setOpen(false)}>Cancel</Button></div>
   </div>}
   {error&&<Banner tone="error">{error}</Banner>}
