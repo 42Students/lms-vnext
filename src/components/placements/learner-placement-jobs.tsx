@@ -518,7 +518,7 @@ export function LearnerPlacementJobs({
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="min-w-0 divide-y divide-border">
       {items.map((item) => {
         const failedChecks =
           item.eligibility.checks.filter(
@@ -532,7 +532,7 @@ export function LearnerPlacementJobs({
         return (
           <article
             key={item.roleOption.id}
-            className="min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-primary hover:shadow-sm motion-reduce:transition-none md:p-6"
+            className="min-w-0 border-b border-border py-4 first:pt-0 last:pb-0 md:py-5"
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
