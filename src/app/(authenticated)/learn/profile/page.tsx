@@ -43,7 +43,17 @@ export default async function LearnerProfilePage({
         title="Profile"
       />
       <LearnerVerificationLiveRefresh/>
-      <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4 md:pb-6">
+      <LearnerProfileWorkspace
+        initialSection={initialSection}
+        displayName={person.user.displayName}
+        primaryEmail={person.user.email}
+        primaryPhone={person.user.phoneE164}
+        rollNumber={profile.rollNumber}
+        registrationNumber={profile.registrationNumber}
+        initialDocument={profile.profileDocument}
+      />
+
+      <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-[var(--lms-heading)]">Profile verification</h2>
           <Badge  tone="neutral">
@@ -70,7 +80,7 @@ export default async function LearnerProfilePage({
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Review verification status</Link>
       </section>
       {sectionNotice ? <Banner tone="warning">{sectionNotice}</Banner> : null}
-      <section aria-label="Academic identity" className="border-b border-border pb-6">
+      <section aria-label="Academic identity" className="min-w-0 border-b border-border pb-4">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
         {!academicOutcome.available ? <Banner tone="info" className="mt-3">
@@ -101,15 +111,17 @@ export default async function LearnerProfilePage({
           </Banner>
         )}
       </section>
+      <nav aria-label="Profile resources" className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
       <Link href="/learn/profile/academic-record"
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         View my academic record →
       </Link>
       <Link href="/learn/profile/data-access"
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         Who has my data →
       </Link>
-      <section aria-label="Verification status" className="min-w-0 border-b border-border pb-4 md:pb-6">
+      </nav>
+      <section aria-label="Verification status" className="min-w-0 border-b border-border pb-4">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
         {verification?<div className="mt-4 space-y-3">
@@ -151,15 +163,6 @@ export default async function LearnerProfilePage({
           <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Edit coding links →</Link>
         </div>
       </section>
-      <LearnerProfileWorkspace
-        initialSection={initialSection}
-        displayName={person.user.displayName}
-        primaryEmail={person.user.email}
-        primaryPhone={person.user.phoneE164}
-        rollNumber={profile.rollNumber}
-        registrationNumber={profile.registrationNumber}
-        initialDocument={profile.profileDocument}
-      />
     </div>
   );
 }
