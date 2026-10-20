@@ -51,7 +51,7 @@ export default async function LearnerAssessmentResultsPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href="/learn/my-placements/assessments"
-        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
         ← Assessment schedule
       </Link>
       <PageHeader
@@ -65,13 +65,13 @@ export default async function LearnerAssessmentResultsPage({
           Search published results
           <Input type="search" name="q" defaultValue={q} maxLength={100}
             placeholder="Company, role or round"
-            className="mt-1 min-h-11"/>
+            className="mt-1 min-h-11 md:min-h-[var(--lms-control-height)]"/>
         </label>
-        <Button type="submit" className="min-h-11">
+        <Button type="submit" className="min-h-11 md:min-h-[var(--lms-control-height)]">
           Search
         </Button>
         {q?<Link href={href(view,1,"")}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
       </form>
       <p role="status" className="text-sm text-body">
         Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
@@ -88,7 +88,7 @@ export default async function LearnerAssessmentResultsPage({
           </p>
           {results.counts.all > 0 ? (
             <Link href="/learn/my-placements/assessments/results"
-              className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
               View all official results →
             </Link>
           ) : null}
@@ -135,7 +135,7 @@ export default async function LearnerAssessmentResultsPage({
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link href={"/learn/my-placements/applications?applicationId=" +
                   encodeURIComponent(item.applicationId)}
-                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
                   View application →
                 </Link>
               </div>
@@ -146,12 +146,12 @@ export default async function LearnerAssessmentResultsPage({
       {paged.pages>1?<nav aria-label="Assessment results pagination"
         className="flex flex-wrap items-center justify-between gap-3">
         {paged.page>1?<Link href={href(view,paged.page-1)}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Previous
         </Link>:<span/>}
         <span className="text-sm tabular-nums text-body">Page {paged.page} of {paged.pages}</span>
         {paged.page<paged.pages?<Link href={href(view,paged.page+1)}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Next
         </Link>:<span/>}
       </nav>:null}
