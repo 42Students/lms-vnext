@@ -61,10 +61,10 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
   {open?<div className="space-y-3 border-t border-border pt-3">
    <p className="text-sm font-semibold">{release?"Edit release":"New release"}</p>
    <label className="block text-sm font-semibold">Title
-    <Input className="mt-1 min-h-11 w-full md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[var(--lms-font-base)]" maxLength={200}
+    <Input className="mt-1 min-h-11 w-full md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[length:var(--lms-font-base)]" maxLength={200}
      required value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="block text-sm font-semibold">What ships in this release?
-    <Textarea className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[var(--lms-font-base)]"
+    <Textarea className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[length:var(--lms-font-base)]"
      maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
    <div className="flex flex-wrap gap-2">
     <Button variant="primary" type="button" disabled={pending||!title.trim()} onClick={()=>void save()}
