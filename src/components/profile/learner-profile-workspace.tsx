@@ -1,6 +1,4 @@
 "use client";
-import { PageHeader } from "@/components/ui/page-header";
-
 import {LEARNER_EDUCATION_TYPES,learnerQualifyingExamSuggestions,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -543,9 +541,9 @@ export function LearnerProfileWorkspace(props: {
           </Link>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
       </nav>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
-        <Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
+      <div className="flex flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
+        <p className="min-w-0 text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
+        <Button className="w-full sm:w-auto" size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
           onClick={()=>{lastRefreshAt.current=Date.now();router.refresh();}}>
           Refresh saved profile
         </Button>
@@ -554,18 +552,15 @@ export function LearnerProfileWorkspace(props: {
         <div className="flex flex-col gap-5 md:flex-row md:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[50%] bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
-            <PageHeader
-              
-              title={props.displayName || "Learner"}
-              description={document.headline || "Add a headline to introduce yourself."}
-            />
+            <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.35] text-[var(--lms-heading)]">{props.displayName || "Learner"}</h2>
+            <p className="mt-[var(--lms-space-1)] min-w-0 break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{document.headline || "Add a headline to introduce yourself."}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {props.rollNumber ? <StatusBadge>Roll {props.rollNumber}</StatusBadge> : null}
               {props.registrationNumber ? <StatusBadge>Reg {props.registrationNumber}</StatusBadge> : null}
               <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>{percent}% complete</StatusBadge>
             </div>
           </div>
-          <Button className="min-h-11 md:min-h-9" variant="primary" onClick={openDetails}>Edit profile</Button>
+          <Button className="w-full md:w-auto" variant="primary" onClick={openDetails}>Edit profile</Button>
         </div>
         <details className="mt-4 border-t border-border pt-2">
           <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Profile image and resume availability</summary>
@@ -835,7 +830,7 @@ export function LearnerProfileWorkspace(props: {
         description="Account phone/email stay authoritative. These are your self-service profile fields."
         footer={<><Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
       >
-        <div className="max-h-[65vh] space-y-6 overflow-y-auto pr-1">
+        <div className="space-y-[var(--lms-space-5)]">
           <fieldset className="grid gap-4">
             <legend className="text-sm font-semibold text-foreground">About</legend>
             <label className="text-xs font-semibold text-body">Headline<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.headline} onChange={(event) => setDetailsDraft({ ...detailsDraft, headline: event.target.value })} /></label>

@@ -196,7 +196,7 @@ export function TpoCalendarMoveFollowup({
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-4 flex flex-wrap items-end gap-2 border-t border-border pt-4">
+    <form onSubmit={onSubmit} className="grid min-w-0 gap-[var(--lms-space-3)]">
       <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-semibold text-body">
         Move follow-up (IST)
         <Input
@@ -208,10 +208,10 @@ export function TpoCalendarMoveFollowup({
           className={inputClass}
         />
       </label>
-      <Button variant="secondary"
+      <Button variant="primary"
         type="submit"
         disabled={busy}
-        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
+        className="w-full sm:w-auto"
       >
         {busy ? "Moving…" : "Reschedule"}
       </Button>
