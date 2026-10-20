@@ -29,5 +29,5 @@ These 29 page routes were moved to chat-2 from the end of other lanes' review qu
 - [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/page.tsx`
 - [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/page.tsx`
+- [x] `src/app/(authenticated)/tpo/page.tsx`
+- [x] `src/app/(authenticated)/tracker/page.tsx`
