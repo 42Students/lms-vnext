@@ -54,12 +54,12 @@ export default async function LearnerNotificationHistoryPage({
       <nav aria-label="Notification history filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
         <Link href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
-          className={!page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9"}>
+          className={!page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-filter-radius,8px)] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-filter-radius,8px)] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9"}>
           All personal
         </Link>
         <Link href="/learn/notifications/history?unread=1"
           aria-current={page.unreadOnly ? "page" : undefined}
-          className={page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9"}>
+          className={page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-filter-radius,8px)] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-filter-radius,8px)] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9"}>
           Unread only
         </Link>
       </nav>

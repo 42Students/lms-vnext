@@ -61,7 +61,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
       updates. Essential college, academic and security messages are not controlled here.
     </p>
     <div className="mt-5 grid gap-4">
-      <label className={"flex min-h-12 cursor-pointer items-start gap-3 rounded-[8px] border p-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(matching?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 rounded-[var(--lms-filter-radius,8px)] border p-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(matching?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
         <Checkbox checked={matching} onChange={e=>setMatching(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Matching opportunities</span>
@@ -69,7 +69,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
             Choose whether to receive matching placement-job notifications.
           </span></span>
       </label>
-      <label className={"flex min-h-12 cursor-pointer items-start gap-3 rounded-[8px] border p-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(updates?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 rounded-[var(--lms-filter-radius,8px)] border p-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(updates?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
         <Checkbox checked={updates} onChange={e=>setUpdates(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Application updates</span>
