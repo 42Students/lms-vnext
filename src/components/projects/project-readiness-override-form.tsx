@@ -69,13 +69,15 @@ export function ProjectReadinessOverrideForm({
 
   return (
     <>
-      <form onSubmit={requestSave} className={compactLayout?"min-w-0 space-y-3 pb-4":"space-y-3 border-b border-border pb-5"}>
+      <form onSubmit={requestSave} className={compactLayout?"min-w-0 space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]":"min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-5)]"}>
         {compactLayout?null:<h2 className="text-lg font-semibold text-foreground">{copy.overrideTitle}</h2>}
+        {feedback ? <Alert tone={feedback === copy.failed ? "error" : "success"} role="status">{feedback}</Alert> : null}
         {hasSubmission && state !== "CLEAR" ? (
           <Alert tone="warning">
             Force Unlock/Block will have no effect here while a submission already exists.
           </Alert>
         ) : null}
+        <div className="grid min-w-0 gap-[6px]">
         <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="project-readiness-override">{copy.stateLabel}</label>
         <Select
           id="project-readiness-override"
@@ -92,8 +94,9 @@ export function ProjectReadinessOverrideForm({
           <option value="FORCE_BLOCK">{copy.block}</option>
           <option value="CLEAR">{copy.clear}</option>
         </Select>
+        </div>
         {state !== "CLEAR" ? (
-          <>
+          <div className="grid min-w-0 gap-[6px]">
             <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="project-readiness-note">{copy.note}</label>
             <Textarea
               id="project-readiness-note"
@@ -106,12 +109,13 @@ export function ProjectReadinessOverrideForm({
               rows={3}
               className="w-full"
             />
-          </>
+          </div>
         ) : null}
-        <Button type="submit" variant="primary" disabled={pending} className={compactLayout?"w-full sm:w-auto":undefined}>
+        <div className="flex min-w-0 justify-stretch md:justify-end">
+        <Button type="submit" variant="primary" disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
           {copy.submit}
         </Button>
-        {feedback ? <Alert tone={feedback === copy.failed ? "error" : "success"} role="status">{feedback}</Alert> : null}
+        </div>
       </form>
       <ConfirmDialog
         open={confirmOpen}
