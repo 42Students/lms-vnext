@@ -101,17 +101,17 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     variant="danger" className="min-h-11 md:min-h-9"
     onClick={()=>void command("ARCHIVE")}>Delete</Button>:null}
   </div>
-  {editing?<div className="grid gap-2 border-y border-border p-3">
-   <label className="grid gap-1 text-xs font-semibold">Title
+  {editing?<div className="grid gap-2 border-y border-border py-3">
+   <label className="grid gap-1 text-xs font-semibold text-body>Title
     <Input maxLength={200} disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
      className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-1 text-xs font-semibold">Points
+   <label className="grid gap-1 text-xs font-semibold text-body>Points
     <Input type="number" min={1} max={10000} disabled={busy} value={points}
      onChange={e=>setPoints(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
+   <label className="grid gap-1 text-xs font-semibold text-body>Deadline (IST)
     <Input type="datetime-local" disabled={busy} value={dueAt} onChange={e=>setDueAt(e.target.value)}
      className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-1 text-xs font-semibold">Instructions
+   <label className="grid gap-1 text-xs font-semibold text-body>Instructions
     <Textarea value={description} disabled={busy} maxLength={10000} rows={3}
      onChange={e=>setDescription(e.target.value)} className="min-h-24"/></label>
    <FacultyAssignmentMethodPicker methods={methods} onChange={next=>{setMethods(next);setMethodsDirty(true);}} disabled={busy}/>
