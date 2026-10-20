@@ -29,7 +29,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-3.md: surface | proble
 - [x] `src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/recruiters/campaigns/preview/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/recruiters/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/recruiters/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/reports/[slug]/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/reports/after-college/page.tsx` (TPO page)
