@@ -1,3 +1,4 @@
+import { SummaryStrip } from "@/components/ui/summary-strip";
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
@@ -627,21 +628,14 @@ export function FacultyAttendanceWorkspace({
                 />
               ) : null}
             </div>
-            <dl className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-              {[
-                ["Students", monthSummary.learnerCount],
-                ["Sessions", monthSummary.sessionCount],
-                ["Absences", monthSummary.absentMarks],
-                ["Not marked", monthSummary.unmarkedMarks],
-                ["Active days", monthDays.filter(day=>day.sessions.length>0).length],
-                ["Upcoming", monthSummary.upcomingSessions],
-              ].map(([label, value]) => (
-                <div key={label} className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3">
-                  <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
-                  <dd className="mt-1 text-xl font-semibold text-foreground">{value}</dd>
-                </div>
-              ))}
-            </dl>
+            <SummaryStrip label="Faculty monthly attendance summary" steps={[
+              {label:"Students",value:monthSummary.learnerCount},
+              {label:"Sessions",value:monthSummary.sessionCount},
+              {label:"Absences",value:monthSummary.absentMarks},
+              {label:"Not marked",value:monthSummary.unmarkedMarks},
+              {label:"Active days",value:monthDays.filter(day=>day.sessions.length>0).length},
+              {label:"Upcoming",value:monthSummary.upcomingSessions},
+            ]}/>
             <section aria-label="Attendance threshold guidance" className="mt-5 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
               <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
                 College attendance guidance: {attendanceRisk.threshold}%
@@ -1007,7 +1001,7 @@ export function FacultyAttendanceWorkspace({
                 <label className="mt-4 block space-y-2 text-sm font-semibold text-body">
                   Correction explanation (required)
                   <Textarea value={correctionReason} maxLength={500} rows={3}
-                    className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal"
+                    className="w-full text-sm font-normal"
                     placeholder="What changed in the recorded attendance?"
                     onChange={event=>setCorrectionReason(event.target.value)}/>
                   <span className="block text-xs font-normal text-muted-foreground">

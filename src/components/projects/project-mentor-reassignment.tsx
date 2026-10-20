@@ -214,7 +214,7 @@ export function ProjectMentorReassignment({
             {workspaces.map((workspace) => (
               <label
                 key={workspace.id}
-                className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+                className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 motion-safe:transition-colors motion-reduce:transition-none hover:border-primary hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
               >
                 <Checkbox
                   checked={selected.includes(

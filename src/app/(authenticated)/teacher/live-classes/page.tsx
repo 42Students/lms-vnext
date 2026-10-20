@@ -18,7 +18,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   page:first(raw.page)??undefined,
  });
  if(!parsed.success)return <section role="alert" className="space-y-3">
-  <PageHeader title={"Invalid live-class filters"} /><Link href="/teacher/live-classes" className="underline inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+  <PageHeader title={"Invalid live-class filters"} /><Link href="/teacher/live-classes" className="underline inline-flex min-h-11 items-center md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
  </section>;
  const data=await getFacultyLiveClasses(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
@@ -38,14 +38,14 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
    className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid gap-1 text-[13px] font-semibold leading-4">When
     <Select name="view" defaultValue={data.query.view}
-     className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     className="text-sm">
      <option value="UPCOMING">Upcoming and in progress</option>
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
     </Select></label>
    <label className="grid gap-1 text-[13px] font-semibold leading-4">Section
     <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
-     className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     className="text-sm">
      <option value="">All assigned Sections</option>
      {data.courses.map(c=><option key={c.deliveryId} value={c.deliveryId}>
       {c.courseName} · {c.sectionName}
@@ -70,7 +70,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      Secure meeting link unavailable. Only HTTPS links are exposed.
     </p>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
-     className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] text-sm text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open course</Link>
+     className="inline-flex min-h-11 items-center md:min-h-9 text-sm text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open course</Link>
    </li>)}</ul>}
   <Pagination label="Live-class pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyLiveClassesHref({...data.query,page})}/>
   <p className="text-xs text-muted-foreground">

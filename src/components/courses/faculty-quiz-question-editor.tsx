@@ -412,7 +412,7 @@ export function FacultyQuizQuestionEditor({
     <>
       <Button
         size="md"
-        className="min-h-11 md:min-h-[var(--lms-control-height)]"
+        
         variant="secondary"
         onClick={() => void load()}
       >
