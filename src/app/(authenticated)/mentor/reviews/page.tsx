@@ -48,7 +48,7 @@ export default async function MentorReviewsPage({
     {!data.enabled ? <div role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No project data was loaded.
     </div> : <>
-      <form action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
+      <form role="search" aria-label="mentor reviews filters" action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             placeholder="Project title" className="min-h-11 md:min-h-9" />
