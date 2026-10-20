@@ -81,18 +81,18 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="border-b border-border pb-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="flex flex-wrap items-end gap-3">
-        <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Semester or program
+        <label className="grid min-w-44 flex-1 gap-1 text-[13px] font-semibold text-body">Semester or program
           <Input name="q" type="search" defaultValue={data.query.q} maxLength={100}
             className="w-full" />
         </label>
-        <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">Program
+        <label className="grid min-w-40 gap-1 text-[13px] font-semibold text-body">Program
           <Select name="programId" defaultValue={data.query.programId ?? ""}
             className="w-full">
             <option value="">All programs</option>
             {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Status
+        <label className="grid min-w-32 gap-1 text-[13px] font-semibold text-body">Status
           <Select name="status" defaultValue={data.query.status}
             className="w-full">
             <option value="ALL">All statuses</option>
@@ -100,7 +100,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
             <option value="INACTIVE">Inactive</option>
           </Select>
         </label>
-        <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
+        <label className="grid min-w-32 gap-1 text-[13px] font-semibold text-body">Rows per page
           <Select name="pageSize" defaultValue={data.query.pageSize} className="w-full">
             {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
           </Select>
@@ -110,11 +110,11 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       </form>
     </section>
     <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">
-      {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
-      {data.query.programId ? <input type="hidden" name="programId" value={data.query.programId} /> : null}
-      <input type="hidden" name="status" value={data.query.status} />
-      <input type="hidden" name="page" value={String(data.query.page)} />
-      <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
+      {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
+      {data.query.programId ? <Input type="hidden" name="programId" value={data.query.programId} /> : null}
+      <Input type="hidden" name="status" value={data.query.status} />
+      <Input type="hidden" name="page" value={String(data.query.page)} />
+      <Input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
       <Button type="submit" variant="secondary">Refresh</Button>
     </form>
     <a href={"/api/admin/semesters/export?"+new URLSearchParams({
