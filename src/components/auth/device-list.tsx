@@ -57,7 +57,8 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
   const others = devices.filter((device) => !device.current).length;
 
   return (
-    <section className="border-y border-border">
+    <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
+      {devices.length === 0 ? <p role="status" className="py-5 text-sm leading-6 text-[var(--lms-body-text)]">No device sessions to display.</p> : null}
       <ul className="m-0 list-none divide-y divide-border p-0">
         {devices.map((device) => (
           <li
@@ -65,13 +66,13 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
             className="flex min-w-0 flex-col gap-3 py-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between"
           >
             <div className="min-w-0 flex-1">
-              <p className="m-0 flex flex-wrap items-center gap-2 break-words text-sm font-semibold text-foreground">
+              <p className="m-0 flex min-w-0 flex-wrap items-center gap-2 break-words text-sm font-semibold text-foreground">
                 {device.label}
                 {device.current ? (
                   <StatusBadge tone="success">This device</StatusBadge>
                 ) : null}
               </p>
-              <p className="mt-1 break-words text-xs leading-5 text-muted-foreground">
+              <p className="mt-1 min-w-0 break-words text-xs leading-5 text-muted-foreground">
                 Signed in {when(device.createdAt)} · last active{" "}
                 {when(device.lastSeenAt)}
               </p>
@@ -99,9 +100,9 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
       </ul>
 
       {others > 0 ? (
-        <details className="border-t border-border py-4">
+        <details className="border-t border-[var(--lms-canvas-border)] py-4">
           <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Sign out everywhere else</summary>
-          <div className="mt-3 flex min-w-0 flex-col items-start gap-2">
+          <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 min-[768px]:items-start">
           <Button
             variant="danger"
             size="sm"
