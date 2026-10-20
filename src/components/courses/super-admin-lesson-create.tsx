@@ -39,7 +39,7 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
  if(!paths.length)return <p role="status" className="border-y border-border py-4 text-sm text-body">Open a course offering to create its first lesson.</p>;
  return <form aria-label="Add lesson" onSubmit={event=>void submit(event)} className="grid gap-3 border-b border-border pb-5">
   <h2 className="font-semibold text-foreground">Add Lesson</h2>
-  <label className="grid gap-1 text-xs font-semibold text-body">Course / Offering
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / Offering
    <Select required value={pathId} onChange={event=>setPathId(event.target.value)}
     className="min-h-11 w-full md:min-h-9">
     {paths.map(path=><option key={path.id} value={path.id}>
@@ -47,11 +47,11 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
     </option>)}
    </Select>
   </label>
-  <label className="grid gap-1 text-xs font-semibold text-body">Lesson name
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson name
    <Input required maxLength={255} value={name} onChange={event=>setName(event.target.value)}
     className="min-h-11 w-full md:min-h-9"/>
   </label>
-  <label className="grid gap-1 text-xs font-semibold text-body">Description (optional)
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
    <Textarea maxLength={5000} rows={2} value={description}
     onChange={event=>setDescription(event.target.value)}
     className="min-h-11 w-full md:min-h-9"/>
