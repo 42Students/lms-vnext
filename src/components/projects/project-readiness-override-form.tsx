@@ -16,11 +16,13 @@ export function ProjectReadinessOverrideForm({
   initialState,
   initialNote,
   hasSubmission = false,
+  compactLayout = false,
 }: {
   projectId: string;
   initialState: ReadinessOverrideState | null;
   initialNote: string | null;
   hasSubmission?: boolean;
+  compactLayout?: boolean;
 }) {
   const router = useRouter();
   const [state, setState] = useState<ReadinessOverrideState>(initialState ?? "CLEAR");
@@ -67,8 +69,8 @@ export function ProjectReadinessOverrideForm({
 
   return (
     <>
-      <form onSubmit={requestSave} className="space-y-3 border-b border-border pb-5">
-        <h2 className="text-lg font-semibold text-foreground">{copy.overrideTitle}</h2>
+      <form onSubmit={requestSave} className={compactLayout?"min-w-0 space-y-3 pb-4":"space-y-3 border-b border-border pb-5"}>
+        {compactLayout?null:<h2 className="text-lg font-semibold text-foreground">{copy.overrideTitle}</h2>}
         {hasSubmission && state !== "CLEAR" ? (
           <Alert tone="warning">
             Force Unlock/Block will have no effect here while a submission already exists.
@@ -106,7 +108,7 @@ export function ProjectReadinessOverrideForm({
             />
           </>
         ) : null}
-        <Button type="submit" variant="primary" disabled={pending}>
+        <Button type="submit" variant="primary" disabled={pending} className={compactLayout?"w-full sm:w-auto":undefined}>
           {copy.submit}
         </Button>
         {feedback ? <Alert tone={feedback === copy.failed ? "error" : "success"} role="status">{feedback}</Alert> : null}
