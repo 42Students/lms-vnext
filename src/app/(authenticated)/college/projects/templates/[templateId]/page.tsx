@@ -25,7 +25,7 @@ export default async function CollegeProjectTemplateDetailPage({
     );
 
   return (
-    <div className="min-w-0 space-y-[16px]">
+    <div className="min-w-0 space-y-6">
       <ProjectAdminNav
         basePath="/college/projects"
         active="templates"
@@ -36,7 +36,7 @@ export default async function CollegeProjectTemplateDetailPage({
           detail.version.summary ??
           "Published template assigned to this college."
         }
-        actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2">
           <PageBackLink href="/college/projects/templates" label="Template catalogue" />
           <Badge tone="neutral">Version {detail.version.version}</Badge>
         </div>}

@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,11 +35,11 @@ export function TpoInterviewRescheduleForm({round}:{
   }catch(e){setError(e instanceof Error?e.message:"Interview reschedule failed");}
   finally{setPending(false);}
  }
- const field="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-foreground";
+ const field="mt-1 min-h-11 w-full md:min-h-9";
  function askToReschedule(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(!pending)setConfirmOpen(true);
  }
- return <><form ref={formRef} onSubmit={askToReschedule} className="mt-4 grid gap-3 border-t border-border pt-4 min-[768px]:grid-cols-2">
+ return <><Disclosure title="Confirm interview reschedule" className="mt-3 border-t border-[var(--lms-canvas-border)]" contentClassName="pt-3"><form ref={formRef} onSubmit={askToReschedule} className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
   <label className="text-sm text-body">New interview time (IST)
    <Input required type="datetime-local" name="localDateTime" defaultValue={initial} className={field}/></label>
   <label className="text-sm text-body">Mode
@@ -54,7 +55,7 @@ export function TpoInterviewRescheduleForm({round}:{
   {error?<div className="min-w-0 min-[768px]:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50 min-[768px]:col-span-2">
     {pending?"Rescheduling…":"Confirm interview reschedule"}</Button>
- </form><ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
+ </form></Disclosure><ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
   title="Reschedule this interview?"
   description="Venue occupancy and version will be checked before saving, and the change is audited."
   confirmLabel="Confirm interview reschedule"

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Disclosure} from "@/components/ui/disclosure";
 import {getMentorDeliveryVersion} from "@/modules/projects/mentor-delivery-version-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 export default async function MentorDeliveryVersionPage({params}:{
@@ -14,15 +15,15 @@ export default async function MentorDeliveryVersionPage({params}:{
   const format=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
     dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
   }).format(date)+" IST";
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title={"Delivery version "+v.version}
       description={data.projectTitle+" · "+data.projectStatus}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-body min-[768px]:min-h-9 hover:bg-primary-subtle hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-safe:transition-colors motion-safe:duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Review overview
       </Link>}/>
-    <section className="border-b border-border pb-[var(--lms-space-5)]">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Registered review decision</h2>
+    <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Registered review decision</h2>
       <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Submission state</dt>
           <dd className="mt-1 text-sm font-semibold">{v.status}</dd></div>
@@ -54,14 +55,14 @@ export default async function MentorDeliveryVersionPage({params}:{
           No written reviewer feedback is recorded for this version.
         </p>}
     </section>
-    <section className="border-b border-border pb-[var(--lms-space-5)]">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Learner notes</h2>
+    <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Learner notes</h2>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
         {v.notes||"No learner notes were attached to this version."}
       </p>
     </section>
-    <section className="border-b border-border pb-[var(--lms-space-5)]">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Submitted source and demo links</h2>
+    <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Submitted source and demo links</h2>
       <div className="mt-3 flex flex-wrap gap-3">
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
           {label:"Demo",href:safeProjectExternalHref(v.demoUrl)}]).map(item=>
@@ -72,8 +73,8 @@ export default async function MentorDeliveryVersionPage({params}:{
           <p className="text-sm text-muted-foreground leading-[22px]">No valid source or demo URL.</p>:null}
       </div>
     </section>
-    <section className="border-b border-border pb-[var(--lms-space-5)]">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Additional submission files and links ({attachments.length})</h2>
+    <Disclosure title={<>Additional submission files and links ({attachments.length})</>} className="min-w-0 border-b border-border" contentClassName="min-w-0 pb-4">
+      <div className="min-w-0 space-y-2">
       {!attachments.length?<p className="mt-2 text-sm text-muted-foreground leading-[22px]">No extra attachments recorded.</p>:null}
       <ul className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-border">{attachments.map((entry,index)=>{
         const name=typeof entry.name==="string"?entry.name:"Attachment "+(index+1);
@@ -87,9 +88,10 @@ export default async function MentorDeliveryVersionPage({params}:{
             <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}
         </li>;
       })}</ul>
-    </section>
-    <section className="border-b border-border pb-[var(--lms-space-5)]">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recorded submission history</h2>
+      </div>
+    </Disclosure>
+    <Disclosure title={"Recorded submission history"} className="min-w-0 border-b border-border" contentClassName="min-w-0 pb-4">
+      <div className="min-w-0 space-y-2">
       <ol className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-border text-sm">
         {v.createdAt?<li className="py-[var(--lms-space-3)]">Draft created · {format(v.createdAt)} · {data.createdByName??"Project learner"}</li>:null}
         {v.submittedAt?<li className="py-[var(--lms-space-3)]">Submitted · {format(v.submittedAt)} · {data.submittedByName??"Project learner"}</li>:null}
@@ -103,7 +105,8 @@ export default async function MentorDeliveryVersionPage({params}:{
       </ol>
       {!v.createdAt&&!v.submittedAt&&!v.reviewedAt&&!data.events.length?
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">No submission history recorded.</p>:null}
-    </section>
+      </div>
+    </Disclosure>
     <p className="text-xs text-muted-foreground leading-5">
       This version&apos;s evidence and history are visible only to authorized project mentors.
       External URLs open only after safety checks. Uploaded file metadata is shown

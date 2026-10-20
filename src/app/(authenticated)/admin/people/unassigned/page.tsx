@@ -53,27 +53,27 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   const roles = ["ALL", "SUPER_ADMIN", "NONE"] as const;
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Users without college memberships"
-      description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." />
-    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Users & Roles</Link>
-    <form method="get" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 lg:grid-cols-4">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name<Input type="search" name="q" maxLength={100}
+      description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." actions={<Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">← Users & Roles</Link>} />
+
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_minmax(0,13rem)_auto]">
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name<Input type="search" name="q" maxLength={100}
         defaultValue={data.query.q} className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm" /></label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
         className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{statuses.map(status => <option key={status}>{status}</option>)}</Select></label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">System role<Select name="role" defaultValue={data.query.role}
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">System role<Select name="role" defaultValue={data.query.role}
         className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{roles.map(role => <option key={role}>{role}</option>)}</Select></label>
-      <Button type="submit" variant="primary" className="self-end">Filter</Button>
+      <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
     </form>
-    <p className="text-xs text-muted-foreground">{data.total} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
-    {data.items.length ? <div className="divide-y divide-border border-y border-border">{data.items.map(row => <article key={row.id}
-      className="min-w-0 py-4">
-      <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{row.displayName ?? "Unnamed user"}</h2>
-      <div className="flex flex-wrap gap-2"><StatusBadge tone={row.platformStatus === "ACTIVE" ? "success" : "neutral"}>{row.platformStatus}</StatusBadge>
+    <p role="status" className="text-xs text-muted-foreground">{data.total} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
+    {data.items.length ? <div className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(row => <article key={row.id}
+      className="min-w-0 py-[var(--lms-space-4)] first:pt-0">
+      <h2 className="break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{row.displayName ?? "Unnamed user"}</h2>
+      <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-wrap gap-[var(--lms-space-2)]"><StatusBadge tone={row.platformStatus === "ACTIVE" ? "success" : "neutral"}>{row.platformStatus}</StatusBadge>
         {row.roles.length ? row.roles.map(role => <StatusBadge key={role}>{role}</StatusBadge>) : <StatusBadge>No system role</StatusBadge>}</div>
       <p className="mt-3 text-xs text-muted-foreground">Created {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(row.createdAt)} IST</p>
       <p className="text-xs text-muted-foreground">Updated {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(row.updatedAt)} IST</p>
     </article>)}</div> : <EmptyState title="No matching users" description="No users without college memberships match these filters." />}
-    <Pagination page={data.page} pageCount={data.totalPages}
-      hrefForPage={page=>adminUnassignedUsersHref({...data.query,page})} label="Unassigned user pages"/>
+    <div className="border-t border-border pt-[var(--lms-space-3)]"><Pagination page={data.page} pageCount={data.totalPages}
+      hrefForPage={page=>adminUnassignedUsersHref({...data.query,page})} label="Unassigned user pages"/></div>
   </div>;
 }

@@ -77,11 +77,11 @@ export function MembershipSwitcher({
 
   // PUB-auth-public-22: no interactive chooser is needed for a single workspace.
   if (choices.length === 1 && active) {
-    return <p className="max-w-60 truncate text-sm font-semibold text-body">{choices[0].label}</p>;
+    return <p className="block min-w-0 max-w-60 truncate text-sm font-semibold text-body">{choices[0].label}</p>;
   }
 
   return (
-    <div className="w-44 min-w-0 sm:w-60">
+    <div className="grid w-full min-w-0 max-w-60 gap-[var(--lms-space-2)]">
       <label className="sr-only" htmlFor="membership-switcher">
         Switch workspace
       </label>
@@ -90,7 +90,7 @@ export function MembershipSwitcher({
         value={active?.value ?? ""}
         disabled={pending}
         onChange={(event) => switchWorkspace(event.target.value)}
-        className="min-h-10 py-0"
+        className="w-full min-w-0"
       >
         <option value="" disabled>Switch workspace</option>
         {choices.map((choice) => (
@@ -99,7 +99,7 @@ export function MembershipSwitcher({
           </option>
         ))}
       </Select>
-      {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError(null)}/>:null}
+      {error?<div className="min-w-0 break-words"><InlineNotice tone="error" message={error} onDismiss={()=>setError(null)}/></div>:null}
     </div>
   );
 }

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Card } from "@/components/ui/card";
 import {HrRecruiterDrivesGrid,type HrRecruiterDriveSheetRow} from "@/components/placements/hr-recruiter-drives-grid";
 import { cx } from "@/lib/class-names";
 import type { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
@@ -96,9 +95,9 @@ export function RecruiterPlacementPortfolio({
       </div>:null}
       <div className={sheetScopeKey?"grid gap-4 min-[768px]:hidden":"grid gap-4"}>
       {sortedJobs.map((item) => (
-        <Card as="article"
+        <article
           key={item.job.id}
-          className={cx("border-b border-[var(--lms-canvas-border)] px-1 py-4", (unansweredRequests[item.job.id]??0)>0 ? "border-warning bg-[var(--lms-warning-subtle)]" : "border-border bg-surface")}
+          className={cx("min-w-0 border-b border-[var(--lms-canvas-border)] py-4", (unansweredRequests[item.job.id]??0)>0 ? "border-warning" : "border-border")}
         >
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0">
@@ -174,13 +173,13 @@ export function RecruiterPlacementPortfolio({
             <Link
               href={"/recruiter/drives/" + item.job.id +
                 (returnTo ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
-              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="inline-flex min-h-11 w-full shrink-0 items-center justify-center min-[768px]:min-h-9 min-[768px]:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
             >
               Open hiring flow
             </Link>
           </div>
           <nav aria-label={"Actions for "+item.job.title}
-            className="mt-4 flex min-w-0 flex-wrap gap-3 border-t border-[var(--lms-canvas-border)] pt-3">
+            className="mt-3 flex min-w-0 flex-col gap-2 border-t border-[var(--lms-canvas-border)] pt-3 min-[768px]:flex-row min-[768px]:flex-wrap">
             <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
               className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               {item.job.status==="CLOSED"?"Hire again":"Hire again with changes"}
@@ -190,7 +189,7 @@ export function RecruiterPlacementPortfolio({
               Answer
             </Link>
           </nav>
-        </Card>
+        </article>
       ))}
       </div>
     </>

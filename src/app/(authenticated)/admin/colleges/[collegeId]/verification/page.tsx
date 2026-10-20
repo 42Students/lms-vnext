@@ -7,6 +7,7 @@ import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
+import {Disclosure} from "@/components/ui/disclosure";
 import {ErrorState} from "@/components/ui/error-state";
 import {SuperAdminVerificationPanel} from "@/components/verification/SuperAdminVerificationPanel";
 import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenant-lifecycle-service";
@@ -42,7 +43,7 @@ export default async function AdminCollegeVerification({
  const header=<PageHeader title={college.name}
   description="College-scoped learner Education and Identity verification. Review only the currently selected college."
   actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>;
- if(!parsed?.success)return <div className="min-w-0 space-y-5">{header}
+ if(!parsed?.success)return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
   <ErrorState title="Invalid verification filters" description="Choose a valid set of verification filters."
    action={<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Reset filters</Link>}/>
  </div>;
@@ -50,7 +51,7 @@ export default async function AdminCollegeVerification({
  try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
  catch(e){
   if(!(e instanceof VerificationUnavailableError)&&!(e instanceof VerificationQueueLimitError))throw e;
-  return <div className="min-w-0 space-y-5">{header}
+  return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
    <ErrorState title="Verification queue unavailable"
     description={e instanceof VerificationUnavailableError?
      "Verification storage is not yet available. No queue decisions can be made.":
@@ -62,10 +63,13 @@ export default async function AdminCollegeVerification({
   .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,college.id)).limit(1);
  const query:Record<string,string>={};
  for(const [k,v] of Object.entries(data.filter)){if(v!==undefined&&v!==null)query[k]=String(v);}
- return <div className="min-w-0 space-y-5">{header}
-   <TpoVerificationSwitch collegeId={college.id} initialEnabled={policy?.enabled??true}/>
+ return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
+
    <SuperAdminVerificationPanel collegeId={college.id} rows={data.rows}
     counts={data.counts} activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
     page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>
+   <Disclosure title="Placement-cell verification setting" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+   <TpoVerificationSwitch collegeId={college.id} initialEnabled={policy?.enabled??true}/>
+   </Disclosure>
  </div>;
 }

@@ -105,7 +105,7 @@ export function TopbarAccountMenu({
     });
   }
 
-  return <div className="relative shrink-0" ref={root}
+  return <div className="relative min-w-0 shrink-0" ref={root}
     onBlur={event => {
       const next = event.relatedTarget;
       if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
@@ -116,9 +116,9 @@ export function TopbarAccountMenu({
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </Button>
-    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={style.menu}
+    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={`${style.menu} !min-h-0`}
       tabIndex={-1} onDismiss={() => { setOpen(false); trigger.current?.focus(); }}>
-      <div className="px-2 pb-2 text-left">
+      <div className="min-w-0 px-2 pb-[var(--lms-space-2)] text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
         <p className={style.accountSubheading}>{organizationName}</p>
       </div>
@@ -135,7 +135,7 @@ export function TopbarAccountMenu({
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
         <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </Button>
-      {error ? <p role="alert" className="px-2 pt-2 text-xs text-error">{error}</p> : null}
+      {error ? <p role="alert" className="min-w-0 break-words px-2 pt-[var(--lms-space-2)] text-xs text-error">{error}</p> : null}
     </PopoverPanel> : null}
   </div>;
 }

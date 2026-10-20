@@ -43,7 +43,9 @@ export default async function LearnerCourseAttendanceSummaryPage({
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />
-      <section aria-label="All-time course attendance" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <details className="border-b border-border pb-3">
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">All-time course attendance</summary>
+        <section aria-label="All-time course attendance" className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Marked attendance", value: attendance.overall?.markedSessions ?? 0 },
           { label: "Present", value: attendance.overall?.present ?? 0 },
@@ -52,7 +54,8 @@ export default async function LearnerCourseAttendanceSummaryPage({
         ].map((metric) => (
           <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
-      </section>
+        </section>
+      </details>
       <section className="border-b border-border py-4" aria-label="Threshold context">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Attendance threshold</h2>
@@ -64,7 +67,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
               ? "No marked attendance" : attendance.overall.percentage + "% recorded"}
           </StatusBadge>
         </div>
-        <p className="mt-2 text-sm text-body">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
           College policy threshold: {attendance.thresholdPercent}%. Percentage is based on marked
           sessions only; unmarked or future classes are not treated as absences.
         </p>
@@ -89,7 +92,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
         <section aria-label="Course attendance by month" className="space-y-4">
           {filtered.map((month) => (
             <article key={month.month} className="border-b border-border py-4 md:py-5">
-              <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:gap-3">
                 <div>
                   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{month.month}</h2>
                   <p className="mt-1 text-sm text-body">
@@ -102,10 +105,10 @@ export default async function LearnerCourseAttendanceSummaryPage({
                   {month.percentage === null ? "No marked sessions" : month.percentage + "%"}
                 </StatusBadge>
               </div>
-              <ul className="mt-3 grid gap-2 md:grid-cols-2">
+              <ul className="mt-3 divide-y divide-border">
                 {month.records.map((row) => (
-                  <li key={row.id} className="flex min-w-0 flex-wrap items-start justify-between gap-2 border-b border-border py-3">
-                    <div className="min-w-0">
+                  <li key={row.id} className="flex min-w-0 flex-col items-start justify-between gap-2 py-3 sm:flex-row sm:gap-3">
+                    <div className="min-w-0 flex-1 break-words">
                       <p className="text-sm font-semibold text-foreground">{row.title}</p>
                       <time dateTime={row.startsAt.toISOString()}
                         className="mt-1 block text-xs text-muted-foreground">{formatWhen(row.startsAt)}</time>

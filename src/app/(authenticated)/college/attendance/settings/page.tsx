@@ -1,7 +1,7 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {isSuperAdmin} from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { CollegeAttendancePolicyForm } from "@/components/attendance/college-attendance-policy-form";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -27,19 +27,19 @@ export default async function CollegeAttendanceSettingsPage() {
     );
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title="Attendance policy"
         description={`Set the attendance eligibility threshold and correction window for ${college.name}.`}
         actions={
-          <PageBackLink href="/college/attendance" label="Back to Attendance"/>
+          <PageBackLink href="/college/attendance" label="Back to Attendance" />
         }
       />
 
-      <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+      <section className="min-w-0 pt-[var(--lms-space-2)]">
         <CollegeAttendancePolicyForm
-        collegeId={college.id}
-        initialPolicy={policy}
+          collegeId={college.id}
+          initialPolicy={policy}
         />
       </section>
     </div>

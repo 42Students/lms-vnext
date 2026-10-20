@@ -35,7 +35,7 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
   ...selected.finalYears.map(value=>({key:"final-year",label:String(value),remove:()=>toggleYear(value)}))];
  const count=filterTpoBatchFacets(rows,selected).length;
  const facetCount=(next:TpoBatchFacetQuery)=>filterTpoBatchFacets(rows,next).length;
- return <Disclosure title="Filters · State, Department, Program, Final year" className="min-w-0 border-y border-border py-3">
+ return <Disclosure title="Filters · State, Department, Program, Final year" className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
   <form action="/tpo/batches" method="get" className="mt-3 space-y-3">
    {Object.entries(baseQuery).filter(([,value])=>Boolean(value)).map(([key,value])=>
     <Input key={key} type="hidden" name={key} value={value}/>)}

@@ -20,7 +20,7 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
       return groups;
     },{}));
   return <section aria-label="Bulk action preview" className="min-w-0 space-y-3 border-y border-border py-3 md:py-4">
-    <h2 className="font-semibold">Review bulk action: {actionLabel}</h2>
+    <h3 className="font-semibold">Review bulk action: {actionLabel}</h3>
     <p role="status" className="text-sm">{ready} ready; {rows.length - ready} skipped.</p>
     <ul className="max-h-72 min-w-0 divide-y divide-border overflow-y-auto overscroll-contain break-words text-sm print:max-h-none print:overflow-visible">
       {rows.map((row, i) => <li key={row.id + ":" + i} className="py-2">

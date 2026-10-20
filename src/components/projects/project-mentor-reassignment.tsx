@@ -187,7 +187,7 @@ export function ProjectMentorReassignment({
         <h2 className="m-0 text-base font-semibold text-foreground">
           Select workspaces
         </h2>
-        <div className="mt-3 flex flex-wrap items-center gap-3">
+        <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
           <Button variant="secondary" type="button" disabled={pending || !matchingWorkspaces.length}
             onClick={() => setSelected(matchingWorkspaces.map(row => row.id))}
             className="">
@@ -249,8 +249,8 @@ export function ProjectMentorReassignment({
         <h2 className="m-0 text-base font-semibold text-foreground">
           Reassign to mentor
         </h2>
-        <div className="mt-4 grid min-w-0 gap-4 min-[768px]:grid-cols-2">
-          <label className="grid gap-1 text-[13px] font-semibold text-body">
+        <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
+          <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-body">
             Search mentors
             <Input
               type="search"
@@ -374,9 +374,9 @@ export function ProjectMentorReassignment({
               {workspaces.find(row=>row.id===failure.projectId)?.title ?? "Unavailable workspace"} — could not reassign. Review access or refresh before retrying.
             </li>)}
           </ul>
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={()=>setFailureOpen(false)}>Close</Button>
-            <Button disabled={pending || !result?.failures.length}
+          <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
+            <Button variant="secondary" className="w-full md:w-auto" onClick={()=>setFailureOpen(false)}>Close</Button>
+            <Button className="w-full md:w-auto" disabled={pending || !result?.failures.length}
               onClick={()=>{setFailureOpen(false);setConfirmOpen(true);}}>Retry failed workspaces</Button>
           </div>
         </div>

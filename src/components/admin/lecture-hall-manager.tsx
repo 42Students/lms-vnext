@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
 import { Dialog } from "@/components/ui/dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
@@ -176,7 +178,7 @@ export function LectureHallManager({
     });
   }
 
-  const field = "mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
+  const field = "mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
 
   return (
     <div className="space-y-4">
@@ -216,22 +218,21 @@ export function LectureHallManager({
               mobilePriority: "action",
               className: "text-right",
               cell: (hall) => (
-                <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
+                <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
                   <Link href={`${availabilityBase}/${hall.id}`}
                     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                     Availability
                   </Link>
-                  <details className="group relative min-w-0">
-                    <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
-                    <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col gap-[var(--lms-space-2)]">
-                      <Button className="min-h-11 md:min-h-9" variant="secondary" size="sm" onClick={() => open(hall)}>Edit</Button>
+                  <Dropdown label="Lecture hall actions" trigger="Actions" mobileSheet align="end" triggerClassName="md:!min-h-9">
+                    <Menu className="w-full min-w-0">
+                      <MenuItem onClick={() => open(hall)}>Edit</MenuItem>
                       {hall.status === "ACTIVE" ? (
-                        <Button className="min-h-11 md:min-h-9" variant="danger" size="sm" onClick={() => setArchiving(hall)}>Archive</Button>
+                        <MenuItem onClick={() => setArchiving(hall)}>Archive</MenuItem>
                       ) : (
-                        <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => setStatus(hall, "ACTIVE")}>Restore</Button>
+                        <MenuItem disabled={pending} onClick={() => setStatus(hall, "ACTIVE")}>Restore</MenuItem>
                       )}
-                    </div>
-                  </details>
+                    </Menu>
+                  </Dropdown>
                 </div>
               ),
             },
@@ -247,17 +248,17 @@ export function LectureHallManager({
         title={editing === "new" ? LECTURE_HALL_COPY.createTitle : "Edit lecture hall"}
         description="Hall names stay unique among the college's active halls."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={() => setEditing(null)}>
               Cancel
             </Button>
             <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={save}>
               {pending ? "Saving…" : editing === "new" ? LECTURE_HALL_COPY.createButton : "Save hall"}
             </Button>
-          </>
+          </div>
         }
       >
-        <div className="space-y-3">
+        <div className="space-y-[var(--lms-space-4)]">
           {formError ? (
             <Banner tone="error">
               {formError}
@@ -268,7 +269,7 @@ export function LectureHallManager({
             <Input className="min-h-11 md:min-h-9" id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
           </div>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] md:grid-cols-2">
             <div>
               <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
               <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
