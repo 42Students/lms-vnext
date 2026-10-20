@@ -120,9 +120,9 @@ export default async function LearnerOffersPage({
       {invalidQuery ? <Banner tone="warning">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</Banner> : null}
       <Tabs ariaLabel="Offer status" renderPanel={false} value={view} items={tabs.map(tab=>({value:tab.id,label:tab.label,count:offers.counts[tab.id],href:learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}))}/>
       {view==="pending"&&expiredIssuedCount>0 ? (
-        <p role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
+        <p role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
           {expiredIssuedCount} issued {expiredIssuedCount===1?"offer has":"offers have"} passed the recorded response deadline. They remain in issued history but cannot be accepted or declined after expiry.
-          <Link href="/learn/my-placements/offers?status=pending&expiry=expired" className="ml-2 font-semibold text-primary-text underline">
+          <Link href="/learn/my-placements/offers?status=pending&expiry=expired" className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
             View expired issued offers
           </Link>
         </p>
@@ -202,15 +202,15 @@ export default async function LearnerOffersPage({
         ))}
       </nav>
       {pageClamped ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           The requested offer page no longer exists in your filtered results. Showing page {paginated.page} of {paginated.pages}.
           <Link href={pageUrl(paginated.page)} className="ml-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Use this page link</Link>
         </p>
       ) : null}
       {learnerOfferFocusMissing(query.focus,focused.found) ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           The linked offer is not displayed in these results. It may be outside the selected filters or no longer accessible.
-          <Link href={learnerOfferRecoveryHref(query.focus)} className="ml-2 font-semibold text-primary-text underline">Find this offer in all my offers</Link>
+          <Link href={learnerOfferRecoveryHref(query.focus)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Find this offer in all my offers</Link>
         </p>
       ) : null}
       {expiringSoon > 0 && view !== "pending" ? (
@@ -220,13 +220,13 @@ export default async function LearnerOffersPage({
         </Link>
       ) : null}
       {expiringSoon > 0 ? (
-        <div role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
+        <div role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
           <strong>{expiringSoon} {expiringSoon === 1 ? "offer" : "offers"} awaiting response</strong> in this view have a recorded expiry within 24 hours. Check the official offer deadline before acting.
         </div>
       ) : null}
-      {!requestRead.available ? <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
+      {!requestRead.available ? <p role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5 md:p-6">
+        <section role="status" className="flex min-h-[180px] min-w-0 flex-col justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-sm leading-[1.5] text-body">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (
@@ -279,7 +279,7 @@ export default async function LearnerOffersPage({
         <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
         {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Next</Link> : null}
       </nav> : null}
-      <section aria-label="How offers work at your college" className="rounded-xl border border-border bg-surface p-5">
+      <section aria-label="How offers work at your college" className="min-w-0 border-b border-border py-4 md:py-6">
         <h2 className="font-semibold text-foreground">How offers work at your college</h2>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
         <div className="mt-3 flex flex-wrap gap-4">

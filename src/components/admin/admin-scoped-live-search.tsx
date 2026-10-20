@@ -16,11 +16,11 @@ export function AdminScopedLiveSearch({initial,path}:{initial:string;path:string
   },400);
   return ()=>clearTimeout(handle);
  },[value,initial,path,router]);
- return <div className="space-y-1">
+ return <div className="space-y-1 print:hidden">
   <Input type="search" name="q" maxLength={100} value={value}
    onChange={event=>setValue(event.target.value)}
    aria-label="Search directory" placeholder="Search directory"
-   className="w-full"/>
+   className="min-h-11 w-full md:min-h-9"/>
   <p className="text-xs text-muted-foreground">Results refresh automatically as you search.</p>
  </div>;
 }

@@ -11,6 +11,7 @@ import chartStyles from "./legacy-company-bar.module.css";
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {Dropdown} from "@/components/ui/dropdown";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */

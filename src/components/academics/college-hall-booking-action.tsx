@@ -5,6 +5,7 @@ import { Select } from "@/components/ui/select";
 
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 type Classroom={id:string;name:string;cohortName:string;periodStart:string;periodEnd:string;updatedAt:string};
 type Faculty={id:string;displayName:string|null};
 export function CollegeHallBookingAction({hallId,classes,faculty}:{

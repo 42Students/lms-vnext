@@ -5,6 +5,8 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
 import {collegeCorrectionReadSchema} from "@/modules/attendance/college-correction-read-model";
 import {getCollegeCorrectionRead} from "@/modules/attendance/college-correction-read-service";
 
@@ -23,16 +25,16 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
     <PageHeader title="Correction windows"/>
     <ErrorState title="Invalid date range"
       description="Enter both valid IST calendar dates, up to 31 days, without duplicate or unrelated filters."
-      action={<Link href="/college/attendance/corrections" className="font-semibold text-link lms-inline-link">Reset filters</Link>}/>
+      action={<Link href="/college/attendance/corrections" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Reset filters</Link>}/>
   </div>;
   const data=await getCollegeCorrectionRead(await getCurrentRequestContext(),query.data);
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader title="Attendance correction windows"
       description={"Persisted scheduled sessions and the current college policy for "+data.collegeName+"."}
-      actions={<Link href="/college/attendance/settings" className="text-sm font-semibold text-link lms-inline-link">Policy settings</Link>}/>
+      actions={<Link href="/college/attendance/settings" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Policy settings</Link>}/>
     <section className="border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Policy evidence</h2>
-      <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
+      <dl className="mt-3 grid min-w-0 gap-3 text-sm md:grid-cols-3">
         <div><dt>Eligibility threshold</dt><dd>{data.policy.eligibilityThresholdPercent}%</dd></div>
         <div><dt>Faculty correction window</dt><dd>{data.policy.correctionWindowHours} hours after class end</dd></div>
         <div><dt>Policy source</dt><dd>{data.policySource==="SAVED"?"Saved college policy":"System defaults (no saved college row)"}</dd></div>
@@ -42,24 +44,20 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
         No separate correction-request table is registered; request history and request totals are unavailable.
       </p>
     </section>
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border bg-surface p-5">
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
         <Input name="from" type="date" required defaultValue={data.query.from??""}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
+          className="min-h-11 md:min-h-9"/>
       </label>
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">To (IST)
         <Input name="to" type="date" required defaultValue={data.query.to??""}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
+          className="min-h-11 md:min-h-9"/>
       </label>
-      <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">View sessions</Button>
+      <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">View sessions</Button>
     </form>
-    {!data.queried?<p className="rounded-[8px] border border-border bg-surface p-6 text-sm text-body">
-      Select an IST date range to inspect recorded sessions and their Faculty marking windows.
-    </p>:<section className="space-y-3">
-      {data.truncated?<p role="status" className="text-sm text-warning">More than 250 sessions match. Results are truncated; narrow the date range.</p>:null}
-      {data.items.length===0?<p className="rounded-[8px] border border-border bg-surface p-6 text-sm text-body">
-        No persisted scheduled sessions overlap this date range. This does not mean no attendance corrections occurred.
-      </p>:<DataTable rows={data.items} getRowKey={item=>item.id}
+    {!data.queried?<Alert tone="info">Select an IST date range to inspect recorded sessions and their Faculty marking windows.</Alert>:<section className="space-y-3">
+      {data.truncated?<Alert tone="warning">More than 250 sessions match. Results are truncated; narrow the date range.</Alert>:null}
+      {data.items.length===0?<EmptyState title="No scheduled sessions" description="No persisted scheduled sessions overlap this date range. This does not mean no attendance corrections occurred."/>:<DataTable rows={data.items} getRowKey={item=>item.id}
         caption="Recorded attendance correction windows"
         columns={[
           {key:"session",header:"Session / class",mobilePriority:"primary",cell:item=>item.title+" · "+item.sectionName},
@@ -67,7 +65,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
           {key:"attendance",header:"Attendance",mobilePriority:"secondary",cell:item=>item.attendanceStatus??"No attendance session row"},
           {key:"window",header:"Faculty window",mobilePriority:"secondary",cell:item=>item.facultyMarkingWindow.replaceAll("_"," ")},
         ]}
-        empty={<p className="text-sm text-body">No persisted scheduled sessions overlap this date range.</p>}/>}
+        empty={<EmptyState title="No scheduled sessions" description="No persisted scheduled sessions overlap this date range."/>}/>}
     </section>}
   </div>;
 }

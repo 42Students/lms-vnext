@@ -17,7 +17,7 @@ export default async function FacultyDiscussionParticipationPage({
     </Link>
     <PageHeader eyebrow="Faculty · Section" title="Discussion participation"
       description={data.delivery.courseName+" · "+data.delivery.sectionName}/>
-    <section aria-label="Recorded participation" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <section aria-label="Recorded participation" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
       {([["Messages",data.counts.total],["Faculty messages",data.counts.faculty],
         ["Learner messages",data.counts.learner],["Pinned messages",data.counts.pinned]] as const)
         .map(([title,count])=><div key={title}

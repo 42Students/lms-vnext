@@ -11,6 +11,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {SuperAdminTemplatePageExport} from "@/components/projects/super-admin-template-page-export";
 import {SuperAdminTemplateArchiveControl} from "@/components/projects/super-admin-template-archive-control";
@@ -73,29 +74,40 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <ListToolbar label="Global project templates" viewCount={data.total}
     exportAction={<SuperAdminTemplatePageExport items={data.items}/>} />
   <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
-  {data.items.length?<div className="grid gap-4 md:grid-cols-2">
-   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-    <div className="flex flex-wrap items-start justify-between gap-2">
-     <h2 className="m-0 break-words text-base font-semibold text-[var(--lms-heading)]">{item.title}</h2>
-     <StatusBadge tone={tone(item.status)}>{item.status}</StatusBadge>
-    </div>
-    <p className="mt-1 text-xs text-muted-foreground">{item.slug}</p>
-    {item.summary?<p className="mt-2 text-sm text-body">{item.summary}</p>:null}
-    {item.sectionCounts?<div className="mt-3 flex flex-wrap gap-2 text-xs text-body">
-      <Badge tone="info">Overview</Badge>
-      <Badge tone="info">Sprints {item.sectionCounts.sprints}</Badge>
-      <Badge tone="info">Tasks {item.sectionCounts.tasks}</Badge>
-      <Badge tone="info">Resources {item.sectionCounts.resources}</Badge>
-    </div>:null}
-    <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
-    <div className="mt-3 flex flex-wrap items-center gap-3">
-      <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-2 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Inspect template →</Link>
-      {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
-        templateId={item.id} title={item.title} status={item.status}/>:null}
-    </div>
-   </article>)}
-  </div>:<EmptyState title="No matching templates" description="No global template metadata matches these filters."/>}
+  <DataTable<(typeof data.items)[number]>
+    caption="Global project template catalogue"
+    rows={data.items}
+    getRowKey={item=>item.id}
+    columns={[
+      {key:"template",header:"Template",mobilePriority:"primary",cell:item=><>
+        <Link href={"/admin/projects/templates/"+encodeURIComponent(item.id)}
+          className="break-words font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{item.title}</Link>
+        <span className="mt-1 block break-all text-xs text-muted-foreground">{item.slug}</span>
+        {item.summary?<p className="mt-2 break-words text-sm text-body">{item.summary}</p>:null}
+      </>},
+      {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
+        <StatusBadge tone={tone(item.status)}>{item.status}</StatusBadge>},
+      {key:"sections",header:"Sections",mobilePriority:"secondary",cell:item=>item.sectionCounts?
+        <div className="flex min-w-0 flex-wrap gap-1.5">
+          <Badge tone="info">Overview</Badge>
+          <Badge tone="info">Sprints {item.sectionCounts.sprints}</Badge>
+          <Badge tone="info">Tasks {item.sectionCounts.tasks}</Badge>
+          <Badge tone="info">Resources {item.sectionCounts.resources}</Badge>
+        </div>:<span className="text-muted-foreground">Not configured</span>},
+      {key:"version",header:"Versions",mobilePriority:"secondary",cell:item=>
+        <span className="text-xs text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"}</span>},
+      {key:"assignments",header:"Assignments",mobilePriority:"secondary",cell:item=>
+        <span className="tabular-nums text-sm text-body">{item.activeAssignments} active in scope</span>},
+      {key:"action",header:"Action",mobilePriority:"action",cell:item=>
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <Link href={"/admin/projects/templates/"+encodeURIComponent(item.id)}
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Inspect template →</Link>
+          {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
+            templateId={item.id} title={item.title} status={item.status}/>:null}
+        </div>},
+    ]}
+    empty={<EmptyState title="No matching templates" description="No global template metadata matches these filters."/>}
+  />
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateDirectoryHref({...data.query,page})} label="Template pages" />
  </div>;
 }

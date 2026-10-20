@@ -25,10 +25,12 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
  }
  return <div className="min-w-28 space-y-2">
   <Button variant="ghost" type="button" aria-label={"Edit stage for "+lead.name}
+    aria-expanded={open} disabled={busy}
+    className="min-h-11 max-w-full justify-start rounded-[8px] px-3 text-left transition-[background-color] duration-[200ms] ease-[ease] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none"
     onClick={()=>setOpen(value=>!value)}>
    {lead.stage.replaceAll("_"," ")} · Edit
   </Button>
-  {open?<div className="space-y-2">
+  {open?<div role="group" aria-label={"Edit stage for "+lead.name} className="min-w-0 space-y-2">
    <label className="block text-xs">Stage
     <Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
      className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface">

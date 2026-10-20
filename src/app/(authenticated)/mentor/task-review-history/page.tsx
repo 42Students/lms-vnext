@@ -48,11 +48,11 @@ export default async function MentorTaskReviewHistoryPage({
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground" />
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Decision
           <Select name="decision" defaultValue={data.query.decision}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All reviews</option>
             <option value="APPROVED">Approved</option>
             <option value="CHANGES_REQUESTED">Changes requested</option>
@@ -60,7 +60,7 @@ export default async function MentorTaskReviewHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Task priority
           <Select name="priority" defaultValue={data.query.priority}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
@@ -68,12 +68,12 @@ export default async function MentorTaskReviewHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
           <Select name="order" defaultValue={data.query.order}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Most recently reviewed</option>
             <option value="OLDEST">Earliest reviewed first</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
@@ -94,8 +94,8 @@ export default async function MentorTaskReviewHistoryPage({
       </div>
       {data.items.length===0 ? <EmptyState title="No reviewed task submissions"
         description="No registered approved or changes-requested task versions match this filter and your current project assignments. Unmigrated history is not inferred." />
-      : <ol className="divide-y divide-border">{data.items.map(item=>
-        <li key={item.id} className="py-4">
+      : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
+        <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-foreground">{item.taskTitle}</h2>
             <span className="text-sm font-semibold text-body">{taskReviewDecisionLabel(item.status)}</span>

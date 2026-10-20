@@ -1394,3 +1394,190 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 ```
 
 **Responsive source**: 0–767px classes target 44px, 768px+ target 36px. **Print**: interactive creation forms hidden. No runtime app, TypeScript strict pass, CI or screenshot; G4/G5 remain `[ ]`.
+
+## Replacement chat-6 continued — Super Admin tenant, policy and navigation screens
+
+**Work queue (source remediation, not final G4/G5 pixel-parity ticks):**
+- [x] `src/components/admin/tenant-domain-manager.tsx` — Tenant domain GET state/list, verified/primary badges and last DNS-check dates retained; edit, Verify/Make primary/Delete controls suppressed in print, TXT verification value suppressed in print, input and dangerous confirmation focus/touch sized.
+- [x] `src/components/admin/managed-college-subdomain.tsx` — Managed hostname current-state paragraphs retained in print while editable subdomain input and allot/change/remove are paper-hidden; wildcard warning remains.
+- [x] `src/components/admin/college-edit-dialog.tsx` — College edit launcher paper-hidden and all eight edit modal inputs sized; saved college details and API behavior unchanged.
+- [x] `src/components/admin/college-setup-checklist.tsx` — Setup list ActionLink has exact local teal 2px/3px focus, 44px/36px and no printed Open nav controls.
+- [x] `src/components/admin/college-dashboard-section-failure.tsx` — Failure retry link has 2px teal/3px outline and print exclusion; shared ErrorState retained.
+- [x] `src/components/admin/academic-setup-steps.tsx` — Academic setup step links, disabled step labels, and refresh action excluded on paper; 44px/36px targets and 2px teal/3px focus.
+- [x] `src/components/admin/department-actions.tsx` — Department Rename/Archive action group excluded from print; input 44px/36px; custom ConfirmDialog/discard/archival dependency logic retained.
+- [x] `src/components/admin/organization-actions.tsx` — Organization action group excluded from print, edit input 44px/36px; archival and rename dialogs retained.
+- [x] `src/components/admin/person-membership-actions.tsx` — Member roles/suspend/reactivate/end row actions excluded on paper, text areas and Buttons 44px/36px; permission and state guards unchanged.
+- [x] `src/components/admin/descendant-feature-rule-editor.tsx` — Descendant feature rule selectors/actions excluded on paper; six breakpoint modifiers normalized to md 36px; original guarded policy actions untouched.
+- [x] `src/components/admin/student-rule-editor.tsx` — Student module override editing hidden on paper; Select/Checkbox/action minimums match 44px mobile and 36px desktop; ConfirmDialog remains guarded.
+- [ ] **Next exact file:** `src/components/admin/admin-dashboard-actions.tsx` — focus of Quick Actions cards and keyboard/hover states; then `src/components/admin/tenant-settings-editor.tsx`, `src/components/admin/super-admin-platform-block-action.tsx`.
+
+Legacy numeric design constraints: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` = 44px min phone through 767px; `docs/design/ui-clone-checklist.md:46-47` = 36px desktop, 9px radius, font 14px/650; `docs/design/legacy-styles/components___accessibility.scss:18-21` = 2px solid teal, offset 3px; `docs/design/old-lms-pages.md:9` = compact table/borders, status and badges. Domain verification TXT values are deliberately **not printed**; they are editable tenant proof, not historical report output. We neither printed them nor changed access-control behavior.
+
+### Individual legacy/vNext property matrices
+
+#### `src/components/admin/tenant-domain-manager.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/tenant-domain-manager.tsx:193, 207, 274, 293, 305, 405` `min-h-11` (6 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/tenant-domain-manager.tsx:193, 207, 274, 293, 305, 405` `md:min-h-9` (6 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/tenant-domain-manager.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/tenant-domain-manager.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/tenant-domain-manager.tsx:182, 269, 320` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Tenant domain GET state/list, verified/primary badges and last DNS-check dates retained; edit, Verify/Make primary/Delete controls suppressed in print, TXT verification value suppressed in print, input and dangerous confirmation focus/touch sized | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/managed-college-subdomain.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/managed-college-subdomain.tsx:52, 58, 61` `min-h-11` (3 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/managed-college-subdomain.tsx:52, 58, 61` `md:min-h-9` (3 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/managed-college-subdomain.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/managed-college-subdomain.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/managed-college-subdomain.tsx:49, 56` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Managed hostname current-state paragraphs retained in print while editable subdomain input and allot/change/remove are paper-hidden; wildcard warning remains | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/college-edit-dialog.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/college-edit-dialog.tsx:92, 115, 124, 140, 151, 169, 187, 205` `min-h-11` (8 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/college-edit-dialog.tsx:92, 115, 124, 140, 151, 169, 187, 205` `md:min-h-9` (8 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/college-edit-dialog.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/college-edit-dialog.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/college-edit-dialog.tsx:92` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | College edit launcher paper-hidden and all eight edit modal inputs sized; saved college details and API behavior unchanged | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/college-setup-checklist.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/college-setup-checklist.tsx:35` `min-h-11` (1 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/college-setup-checklist.tsx:35` `md:min-h-9` (1 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/college-setup-checklist.tsx:35` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/college-setup-checklist.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/college-setup-checklist.tsx:35` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Setup list ActionLink has exact local teal 2px/3px focus, 44px/36px and no printed Open nav controls | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/college-dashboard-section-failure.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/college-dashboard-section-failure.tsx:9` `min-h-11` (1 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/college-dashboard-section-failure.tsx:9` `md:min-h-9` (1 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/college-dashboard-section-failure.tsx:9` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/college-dashboard-section-failure.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/college-dashboard-section-failure.tsx:9` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Failure retry link has 2px teal/3px outline and print exclusion; shared ErrorState retained | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/academic-setup-steps.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/academic-setup-steps.tsx:28, 30, 32, 34, 36` `min-h-11` (5 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/academic-setup-steps.tsx:28, 30, 32, 34, 36` `md:min-h-9` (5 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/academic-setup-steps.tsx:28, 30, 34` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/academic-setup-steps.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/academic-setup-steps.tsx:21` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Academic setup step links, disabled step labels, and refresh action excluded on paper; 44px/36px targets and 2px teal/3px focus | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/department-actions.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/department-actions.tsx:188, 229` `min-h-11` (2 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/department-actions.tsx:188, 229` `md:min-h-9` (2 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/department-actions.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/department-actions.tsx:none` status and `:229` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/department-actions.tsx:133` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Department Rename/Archive action group excluded from print; input 44px/36px; custom ConfirmDialog/discard/archival dependency logic retained | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/organization-actions.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/organization-actions.tsx:146` `min-h-11` (1 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/organization-actions.tsx:146` `md:min-h-9` (1 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/organization-actions.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/organization-actions.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/organization-actions.tsx:92` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Organization action group excluded from print, edit input 44px/36px; archival and rename dialogs retained | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/person-membership-actions.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/person-membership-actions.tsx:213, 224, 236, 252, 277, 311, 319, 347` `min-h-11` (8 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/person-membership-actions.tsx:213, 224, 236, 252, 277, 311, 319, 347` `md:min-h-9` (8 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/person-membership-actions.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/person-membership-actions.tsx:292` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/person-membership-actions.tsx:202` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Member roles/suspend/reactivate/end row actions excluded on paper, text areas and Buttons 44px/36px; permission and state guards unchanged | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/descendant-feature-rule-editor.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/descendant-feature-rule-editor.tsx:45, 54, 59, 61, 64, 65` `min-h-11` (6 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/descendant-feature-rule-editor.tsx:45, 54, 59, 61, 64, 65` `md:min-h-9` (6 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/descendant-feature-rule-editor.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/descendant-feature-rule-editor.tsx:67` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/descendant-feature-rule-editor.tsx:43` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Descendant feature rule selectors/actions excluded on paper; six breakpoint modifiers normalized to md 36px; original guarded policy actions untouched | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/student-rule-editor.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/student-rule-editor.tsx:72, 76, 82, 83` `min-h-11` (4 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/student-rule-editor.tsx:72, 82, 83` `md:min-h-9` (3 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/student-rule-editor.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/student-rule-editor.tsx:85` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/student-rule-editor.tsx:68` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Student module override editing hidden on paper; Select/Checkbox/action minimums match 44px mobile and 36px desktop; ConfirmDialog remains guarded | File reviewed, no runtime or TypeScript tests |
+
+### Whole-file scoped grep and JSX pairing source proof
+
+| Scoped TSX file | Native button/input/select/textarea/table | Local CSS hex literals | Shared Button open/close | Print-hide markers |
+|---|---|---:|---:|---:|
+| `src/components/admin/tenant-domain-manager.tsx` | 0/0/0/0/0 | 0 | 4/4 | 3 |
+| `src/components/admin/managed-college-subdomain.tsx` | 0/0/0/0/0 | 0 | 2/2 | 2 |
+| `src/components/admin/college-edit-dialog.tsx` | 0/0/0/0/0 | 0 | 3/3 | 1 |
+| `src/components/admin/college-setup-checklist.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/college-dashboard-section-failure.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/academic-setup-steps.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/department-actions.tsx` | 0/0/0/0/0 | 0 | 7/7 | 1 |
+| `src/components/admin/organization-actions.tsx` | 0/0/0/0/0 | 0 | 4/4 | 1 |
+| `src/components/admin/person-membership-actions.tsx` | 0/0/0/0/0 | 0 | 6/6 | 1 |
+| `src/components/admin/descendant-feature-rule-editor.tsx` | 0/0/0/0/0 | 0 | 2/2 | 1 |
+| `src/components/admin/student-rule-editor.tsx` | 0/0/0/0/0 | 0 | 2/2 | 1 |
+
+Source counts obtained from complete fetched file content for **exactly these eleven paths**, not global `src` coverage. `<Button>` open/close equality is lexical evidence, not JSX compilation.
+
+Reproduction commands, documented but **not run**:
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ 'src/components/admin/tenant-domain-manager.tsx' \
+ 'src/components/admin/managed-college-subdomain.tsx' \
+ 'src/components/admin/college-edit-dialog.tsx' \
+ 'src/components/admin/college-setup-checklist.tsx' \
+ 'src/components/admin/college-dashboard-section-failure.tsx' \
+ 'src/components/admin/academic-setup-steps.tsx' \
+ 'src/components/admin/department-actions.tsx' \
+ 'src/components/admin/organization-actions.tsx' \
+ 'src/components/admin/person-membership-actions.tsx' \
+ 'src/components/admin/descendant-feature-rule-editor.tsx' \
+ 'src/components/admin/student-rule-editor.tsx'
+```
+
+**Responsive source proof:** 44px `min-h-11` is in force through 767px where set locally; `md:min-h-9` yields 36px from 768px. Flex-wrapping navigations and dialogs persist; screen-only actions use `print:hidden`. Full screen/device pixel match, state-specific hover/active/disabled visual comparison, print/PDF sample, and hosted email typography are **not verified**. Do not tick G4 or G5. No app, compile, tests, lint or CI run.

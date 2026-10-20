@@ -56,35 +56,35 @@ export default async function MentorReviewHistoryPage({
         <Input type="hidden" name="decision" value={data.query.decision}/>
         <label className="grid gap-1 text-sm font-semibold text-body">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Project lifecycle
-          <Select name="projectState" defaultValue={data.query.projectState} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="projectState" defaultValue={data.query.projectState} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">Any project state</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Delivery submission version
-          <Input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 md:min-h-9 w-36 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
+          <Input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 md:min-h-9 w-36 border border-[var(--lms-canvas-border)] px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
-          <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Latest decision first</option><option value="OLDEST">Earliest decision first</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded decision within
-          <Select name="window" defaultValue={data.query.window} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="window" defaultValue={data.query.window} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">Search</Button>
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
         <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <Tabs ariaLabel="Review decision filter" renderPanel={false} value={data.query.decision} items={([["ALL","All decisions"],["APPROVED","Approved"],["CHANGES_REQUESTED","Changes requested"]] as const).map(([decision,label])=>({value:decision,label,href:mentorReviewHistoryHref({...data.query,decision,page:1})}))}/>
@@ -94,8 +94,8 @@ export default async function MentorReviewHistoryPage({
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"
             description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." />
-        : <ol className="divide-y divide-border">{data.items.map(item =>
-          <li key={item.id} className="py-4">
+        : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+          <li key={item.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-semibold text-foreground">{item.projectTitle}</h2>
               <span className="text-sm font-semibold text-body">

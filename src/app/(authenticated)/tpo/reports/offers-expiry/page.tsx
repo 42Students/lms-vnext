@@ -3,6 +3,7 @@ import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -34,9 +35,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
         </a> : null}
       />
       {process.env.DB09_TPO_API_READY !== "DB09_VERIFIED" ? (
-        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
-          CSV export is unavailable until the DB09 verification gate is enabled.
-        </p>
+        <Alert tone="warning">CSV export is unavailable until the DB09 verification gate is enabled.</Alert>
       ) : null}
       <Link href="/tpo/reports" className="text-sm font-semibold text-link hover:underline lms-inline-link">
         ← Reports
@@ -58,9 +57,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
         {data.scopeNote} Window: {data.asOfIst} through {data.throughIst} (IST, inclusive).
       </p>
       {data.truncated ? (
-        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm font-semibold text-body">
-          More than 200 offers match this date window; only the earliest 200 are shown and exported.
-        </p>
+        <Alert tone="warning">More than 200 offers match this date window; only the earliest 200 are shown and exported.</Alert>
       ) : null}
       {data.rows.length === 0 ? (
         <EmptyState title="No issued offers approaching expiry"

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -143,7 +144,7 @@ export default async function TpoLeadsReportPage({
          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
        </form>
        <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
-       {!companyFilter.valid?<p role="alert" className="text-sm text-warning-text">This company is not in the authorized college report. Clear the company filter.</p>:null}
+       {!companyFilter.valid?<Alert tone="error">This company is not in the authorized college report. Clear the company filter.</Alert>:null}
        <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
