@@ -271,3 +271,11 @@
 **Problems fixed (5):** action buttons compressed/uneven at 375px; 12px labels too small for key attendance action; errors shared the same line as action controls; modal did not disclose existing attendance; flex controls could become clipped in row containers. Stacked 44px full-width phone actions, adjusted font to legacy 14px, gave errors their own width and added explicit current status to confirmation. Existing two-step intentional change, result semantics and all API payload fields unchanged.
 
 **Files:** `src/components/placements/tpo-round-check-in.tsx`, queue and proof. No CI.
+
+## Surface 45 — TPO selection CSV import
+
+**Reviewed:** FileUpload validation/2 MB CSV restriction, file text parsing, unmatched/duplicate candidates, success/unmatched-only/error states, preview, 100-row chunked RECORD and partial-failure persistence, confirmation and release-vs-recording semantics, busy state, DataTable and Disclosure 375/768 source. No tests/CI.
+
+**Problems fixed (8):** no visible reading state while parsing file; upload allowed interaction during reading; matched preview viewport showed too few rows; preview lacked hairline table boundary; unmatched list expanded even when matched records needed decision; unmatched viewport was too short; record confirmation inherited destructive danger styling despite staging-only semantics; heading was underspecified. Added explicit read progress/disable guard, 320px preview and 256px unmatched panels, progressive disclosure focused on valid rows, positive primary confirmation, compact heading. Existing CSV mapping/limits, applicant IDs, 100-row transactions, no-release guarantee and failure statements unchanged.
+
+**Files:** `src/components/placements/tpo-selection-import.tsx`, queue, proof. No runtime/CI.

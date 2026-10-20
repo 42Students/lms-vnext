@@ -14,6 +14,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
  const router=useRouter();const [entries,setEntries]=useState<SelectionImportEntry[]>([]);
  const [unmatched,setUnmatched]=useState<Array<{line:number;value:string;reason:string}>>([]);
  const [error,setError]=useState("");const [busy,setBusy]=useState(false);const [done,setDone]=useState("");
+ const [reading,setReading]=useState(false);
  const [confirmOpen,setConfirmOpen]=useState(false);
  async function read(file:File|null){
   setEntries([]);setUnmatched([]);setError("");setDone("");
@@ -21,11 +22,13 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   if(!file.name.toLowerCase().endsWith(".csv")||file.size>2_000_000){
    setError("Choose a CSV file under 2 MB. Excel files should be saved as CSV first.");return;
   }
+  setReading(true);
   try{
    const prepared=prepareSelectionImport(await file.text(),candidates,"");
    setEntries(prepared.accepted);setUnmatched(prepared.unmatched);
    if(!prepared.accepted.length)setError("No rows can be recorded. Check the unmatched list below.");
   }catch(e){setError(e instanceof Error?e.message:"Could not read file");}
+  finally{setReading(false);}
  }
  async function confirm(){
   if(busy||!entries.length)return;
@@ -51,15 +54,16 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   }catch(e){setError((e instanceof Error?e.message:"Import failed")+
    ". Already recorded rows remain saved. Refresh before retrying.");}finally{setBusy(false);setConfirmOpen(false);}
  }
- return <section className="min-w-0 space-y-4 border-b border-border pb-4">
-  <h2 className="font-semibold text-foreground">Import the company&apos;s selection list</h2>
+ return <section className="min-w-0 space-y-3 border-b border-border pb-4">
+  <h2 className="text-base font-semibold leading-6 text-foreground">Import the company&apos;s selection list</h2>
   <p className="text-sm text-body">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
   <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Selection list (CSV)" accept=".csv,text/csv" maxBytes={2_000_000}
-     disabled={busy} onFiles={files=>void read(files?.[0]??null)}/>
+     disabled={busy||reading} onFiles={files=>void read(files?.[0]??null)}/>
+  {reading?<p role="status" className="text-sm text-body">Reading selection CSV…</p>:null}
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
-   <div className="max-h-52 min-w-0 overflow-auto print:max-h-none print:overflow-visible">
+   <div className="max-h-80 min-w-0 overflow-auto border-y border-border print:max-h-none print:overflow-visible">
     <DataTable<SelectionImportEntry> caption="Selection import preview" rows={entries}
      getRowKey={item=>item.applicationId} empty={<EmptyState title="No matched selections yet."/>}
      columns={[
@@ -76,10 +80,11 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
     title={"Record "+entries.length+" matched company selections?"}
     description={unmatched.length+" unmatched rows will not be recorded. No offers will be released yet."}
+    confirmVariant="primary"
     confirmLabel={"Confirm and record "+entries.length+" selections"}
     onConfirm={()=>void confirm()}/>
-  {unmatched.length?<Disclosure title={`${unmatched.length} unmatched or unusable rows`} className="border-t border-border pt-3" defaultOpen>
-   <div role="region" aria-label="Unmatched selection import rows" tabIndex={0} className="mt-2 max-h-40 min-w-0 overflow-auto print:max-h-none print:overflow-visible"><DataTable caption="Unmatched selection import rows" rows={unmatched} getRowKey={row=>String(row.line)} empty={<EmptyState title="No unmatched rows."/>} columns={[{key:"line",header:"Row",mobilePriority:"primary",cell:row=>row.line},{key:"identity",header:"Identifier",mobilePriority:"secondary",cell:row=>row.value||"Empty identifier"},{key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.reason}]}/></div>
+  {unmatched.length?<Disclosure title={`${unmatched.length} unmatched or unusable rows`} className="border-t border-border pt-3" defaultOpen={entries.length===0}>
+   <div role="region" aria-label="Unmatched selection import rows" tabIndex={0} className="mt-2 max-h-64 min-w-0 overflow-auto border-y border-border print:max-h-none print:overflow-visible"><DataTable caption="Unmatched selection import rows" rows={unmatched} getRowKey={row=>String(row.line)} empty={<EmptyState title="No unmatched rows."/>} columns={[{key:"line",header:"Row",mobilePriority:"primary",cell:row=>row.line},{key:"identity",header:"Identifier",mobilePriority:"secondary",cell:row=>row.value||"Empty identifier"},{key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.reason}]}/></div>
   </Disclosure>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
   {done?<InlineNotice tone="success" message={done}/>:null}
