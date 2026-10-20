@@ -35,17 +35,17 @@
 - [ ] `src/app/(authenticated)/college/assignments/error.tsx`
 - [ ] `src/app/(authenticated)/college/assignments/loading.tsx`
 - [ ] `src/app/(authenticated)/college/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/error.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/corrections/error.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/attendance/corrections/loading.tsx`
 - [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
-- [ ] `src/app/(authenticated)/college/attendance/departments/error.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/departments/error.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/attendance/departments/loading.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/departments/page.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/departments/page.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/attendance/error.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/attendance/loading.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/attendance/page.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
-- [ ] `src/app/(authenticated)/college/attendance/settings/error.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/settings/loading.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/settings/error.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
+- [ ] `src/app/(authenticated)/college/attendance/settings/loading.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/attendance/settings/page.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/batch-promotion/error.tsx`
 - [ ] `src/app/(authenticated)/college/batch-promotion/loading.tsx`
@@ -58,7 +58,7 @@
 - [ ] `src/app/(authenticated)/college/batches/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/branding/error.tsx`
 - [ ] `src/app/(authenticated)/college/branding/loading.tsx`
-- [ ] `src/app/(authenticated)/college/branding/page.tsx`
+- [ ] `src/app/(authenticated)/college/branding/page.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/classes/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/classes/loading.tsx`
 - [ ] `src/app/(authenticated)/college/classes/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
@@ -273,7 +273,7 @@
 - [ ] `src/app/(authenticated)/college/students/register/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/verification/error.tsx`
 - [ ] `src/app/(authenticated)/college/verification/loading.tsx`
-- [ ] `src/app/(authenticated)/college/verification/page.tsx`
+- [ ] `src/app/(authenticated)/college/verification/page.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/videos/error.tsx`
 - [ ] `src/app/(authenticated)/college/videos/loading.tsx`
 - [ ] `src/app/(authenticated)/college/videos/page.tsx`
@@ -2052,3 +2052,106 @@ Six College Admin route files (Classes, Batches, Courses index and their error s
 | Markup / permission | old-lms-pages.md:6: content/data behavior unchanged | Scoped existing request-context and service calls preserved; no local raw form/table markup, no handwritten modal | **Open/close tag scan is not a TSX parser; no regression testing** |
 
 **Strict status:** 0 newly checked. Known upstream typography mismatch and unobserved browser renders/focus plus no full-scoped zero-grep mean source migration only. `AcademicsSectionPage` caller explicitly passes an empty `eyebrow` string because the callee's TypeScript prop is required; shared header renders no extra eyebrow when blank. No application, build, CI or screenshots.
+
+
+### Replacement chat-4: Department attendance, policy fallbacks, branding and verification routes — 2026-10-20
+
+**Scope:** seven touched College Admin TSX files; all state changes are purely to shared UI anatomy or error/loading presentation; authorization, data copy and service semantics preserved. Scoped grep uses whole fetched file, **not** global repository coverage. No UI shared component changed or CI/browser compiled.
+
+| File | Raw `<button/input/select/textarea/table>` | Hard-coded hex | Inline fixed/dialog overlay | Native h1 | md / sm prefixes | Orphan closing tag families |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| `src/app/(authenticated)/college/attendance/corrections/error.tsx` | 0 | 0 | 0 | 0 | 1/0 | none found |
+| `src/app/(authenticated)/college/attendance/departments/error.tsx` | 0 | 0 | 0 | 0 | 1/0 | none found |
+| `src/app/(authenticated)/college/attendance/departments/page.tsx` | 0 | 0 | 0 | 0 | 1/0 | none found |
+| `src/app/(authenticated)/college/attendance/settings/error.tsx` | 0 | 0 | 0 | 0 | 1/0 | none found |
+| `src/app/(authenticated)/college/attendance/settings/loading.tsx` | 0 | 0 | 0 | 0 | 0/0 | none found |
+| `src/app/(authenticated)/college/branding/page.tsx` | 0 | 0 | 0 | 0 | 0/0 | none found |
+| `src/app/(authenticated)/college/verification/page.tsx` | 0 | 0 | 0 | 0 | 2/0 | none found |
+
+**Per-file scoped grep:** `/<(button|input|select|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`. The source counts and tag family checks above were gathered from post-save contents. Native JSX parser and keyboard tests were not executed.
+
+#### `src/app/(authenticated)/college/attendance/corrections/error.tsx`
+
+| Property/state | Old LMS source/value | vNext source/value | Status |
+| --- | --- | --- | --- |
+| Default page surface | old-lms-shell-spec.md:18-20: app #f1f4f9 + ONE white canvas #fff, 1px #e5e9f0 radius12 padding24 | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Shared structure, measured browser geometry pending** |
+| Header font/row | legacy-styles/components___listing-page-header.scss:26-35 single row with 1px border; 52-58 title 28px / 600 / 1.3 | Existing PageHeader handles title; central shared header renders 30px desktop and 20px below md | **28 vs 30 old-listing mismatch still unresolved** |
+| Button default/secondary | old-lms-shell-spec.md:22-24: 36px/radius9, 14px/650, primary #0a7c88 /white; secondary white/hairline | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Source variant and touch size checked, exact colour state not rendered** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 transition 150ms, 49-51 disabled; form.scss:22-36 :focus-visible keyboard | Shared Button focus-visible on retry, no new disabled action | **Upstream tokens presumed; active/focus live test missing** |
+| Error/loading/empty | old-lms-pages.md:6,11-12: in-canvas notices, pale yellow slim info bar; no fake no-data | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Shared treatment but no legacy screenshot of this route** |
+| Responsive 767/768 | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, title 20px; mobile 44px targets | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay; md classes switch at 768px where touched | **Source media clauses reviewed, 375px/768px computed screenshot missing** |
+| No visual regression | old-lms-pages.md:6: continuous canvas and data copy unaffected | Permission checks, source service reads and original routed content unchanged | **Source only; no TSX typecheck/CI or browser replay** |
+
+#### `src/app/(authenticated)/college/attendance/departments/error.tsx`
+
+| Property/state | Old LMS source/value | vNext source/value | Status |
+| --- | --- | --- | --- |
+| Default page surface | old-lms-shell-spec.md:18-20: app #f1f4f9 + ONE white canvas #fff, 1px #e5e9f0 radius12 padding24 | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Shared structure, measured browser geometry pending** |
+| Header font/row | legacy-styles/components___listing-page-header.scss:26-35 single row with 1px border; 52-58 title 28px / 600 / 1.3 | Existing PageHeader handles title; central shared header renders 30px desktop and 20px below md | **28 vs 30 old-listing mismatch still unresolved** |
+| Button default/secondary | old-lms-shell-spec.md:22-24: 36px/radius9, 14px/650, primary #0a7c88 /white; secondary white/hairline | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Source variant and touch size checked, exact colour state not rendered** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 transition 150ms, 49-51 disabled; form.scss:22-36 :focus-visible keyboard | Shared Button focus-visible on retry, no new disabled action | **Upstream tokens presumed; active/focus live test missing** |
+| Error/loading/empty | old-lms-pages.md:6,11-12: in-canvas notices, pale yellow slim info bar; no fake no-data | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Shared treatment but no legacy screenshot of this route** |
+| Responsive 767/768 | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, title 20px; mobile 44px targets | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay; md classes switch at 768px where touched | **Source media clauses reviewed, 375px/768px computed screenshot missing** |
+| No visual regression | old-lms-pages.md:6: continuous canvas and data copy unaffected | Permission checks, source service reads and original routed content unchanged | **Source only; no TSX typecheck/CI or browser replay** |
+
+#### `src/app/(authenticated)/college/attendance/departments/page.tsx`
+
+| Property/state | Old LMS source/value | vNext source/value | Status |
+| --- | --- | --- | --- |
+| Default page surface | old-lms-shell-spec.md:18-20: app #f1f4f9 + ONE white canvas #fff, 1px #e5e9f0 radius12 padding24 | Read-only CollegeDepartmentInsights delegation; invalid filters retain ErrorState and 44px reset-link | **Shared structure, measured browser geometry pending** |
+| Header font/row | legacy-styles/components___listing-page-header.scss:26-35 single row with 1px border; 52-58 title 28px / 600 / 1.3 | Existing PageHeader handles title; central shared header renders 30px desktop and 20px below md | **28 vs 30 old-listing mismatch still unresolved** |
+| Button default/secondary | old-lms-shell-spec.md:22-24: 36px/radius9, 14px/650, primary #0a7c88 /white; secondary white/hairline | Read-only CollegeDepartmentInsights delegation; invalid filters retain ErrorState and 44px reset-link | **Source variant and touch size checked, exact colour state not rendered** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 transition 150ms, 49-51 disabled; form.scss:22-36 :focus-visible keyboard | Existing shared child components own hover/loading/permission checks | **Upstream tokens presumed; active/focus live test missing** |
+| Error/loading/empty | old-lms-pages.md:6,11-12: in-canvas notices, pale yellow slim info bar; no fake no-data | Read-only CollegeDepartmentInsights delegation; invalid filters retain ErrorState and 44px reset-link | **Shared treatment but no legacy screenshot of this route** |
+| Responsive 767/768 | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, title 20px; mobile 44px targets | Read-only CollegeDepartmentInsights delegation; invalid filters retain ErrorState and 44px reset-link; md classes switch at 768px where touched | **Source media clauses reviewed, 375px/768px computed screenshot missing** |
+| No visual regression | old-lms-pages.md:6: continuous canvas and data copy unaffected | Permission checks, source service reads and original routed content unchanged | **Source only; no TSX typecheck/CI or browser replay** |
+
+#### `src/app/(authenticated)/college/attendance/settings/error.tsx`
+
+| Property/state | Old LMS source/value | vNext source/value | Status |
+| --- | --- | --- | --- |
+| Default page surface | old-lms-shell-spec.md:18-20: app #f1f4f9 + ONE white canvas #fff, 1px #e5e9f0 radius12 padding24 | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Shared structure, measured browser geometry pending** |
+| Header font/row | legacy-styles/components___listing-page-header.scss:26-35 single row with 1px border; 52-58 title 28px / 600 / 1.3 | Existing PageHeader handles title; central shared header renders 30px desktop and 20px below md | **28 vs 30 old-listing mismatch still unresolved** |
+| Button default/secondary | old-lms-shell-spec.md:22-24: 36px/radius9, 14px/650, primary #0a7c88 /white; secondary white/hairline | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Source variant and touch size checked, exact colour state not rendered** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 transition 150ms, 49-51 disabled; form.scss:22-36 :focus-visible keyboard | Shared Button focus-visible on retry, no new disabled action | **Upstream tokens presumed; active/focus live test missing** |
+| Error/loading/empty | old-lms-pages.md:6,11-12: in-canvas notices, pale yellow slim info bar; no fake no-data | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay | **Shared treatment but no legacy screenshot of this route** |
+| Responsive 767/768 | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, title 20px; mobile 44px targets | Scoped ErrorState + shared Button secondary Retry, 44px before 768px, 36px from md; no page-level handbuilt overlay; md classes switch at 768px where touched | **Source media clauses reviewed, 375px/768px computed screenshot missing** |
+| No visual regression | old-lms-pages.md:6: continuous canvas and data copy unaffected | Permission checks, source service reads and original routed content unchanged | **Source only; no TSX typecheck/CI or browser replay** |
+
+#### `src/app/(authenticated)/college/attendance/settings/loading.tsx`
+
+| Property/state | Old LMS source/value | vNext source/value | Status |
+| --- | --- | --- | --- |
+| Default page surface | old-lms-shell-spec.md:18-20: app #f1f4f9 + ONE white canvas #fff, 1px #e5e9f0 radius12 padding24 | GracefulPageLoading with supported shape='card' and label, shared skeleton, no custom loading boxes | **Shared structure, measured browser geometry pending** |
+| Header font/row | legacy-styles/components___listing-page-header.scss:26-35 single row with 1px border; 52-58 title 28px / 600 / 1.3 | Existing PageHeader handles title; central shared header renders 30px desktop and 20px below md | **28 vs 30 old-listing mismatch still unresolved** |
+| Button default/secondary | old-lms-shell-spec.md:22-24: 36px/radius9, 14px/650, primary #0a7c88 /white; secondary white/hairline | GracefulPageLoading with supported shape='card' and label, shared skeleton, no custom loading boxes | **Source variant and touch size checked, exact colour state not rendered** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 transition 150ms, 49-51 disabled; form.scss:22-36 :focus-visible keyboard | Graceful loading skeleton + deferred recovery from shared component | **Upstream tokens presumed; active/focus live test missing** |
+| Error/loading/empty | old-lms-pages.md:6,11-12: in-canvas notices, pale yellow slim info bar; no fake no-data | GracefulPageLoading with supported shape='card' and label, shared skeleton, no custom loading boxes | **Shared treatment but no legacy screenshot of this route** |
+| Responsive 767/768 | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, title 20px; mobile 44px targets | GracefulPageLoading with supported shape='card' and label, shared skeleton, no custom loading boxes; md classes switch at 768px where touched | **Source media clauses reviewed, 375px/768px computed screenshot missing** |
+| No visual regression | old-lms-pages.md:6: continuous canvas and data copy unaffected | Permission checks, source service reads and original routed content unchanged | **Source only; no TSX typecheck/CI or browser replay** |
+
+#### `src/app/(authenticated)/college/branding/page.tsx`
+
+| Property/state | Old LMS source/value | vNext source/value | Status |
+| --- | --- | --- | --- |
+| Default page surface | old-lms-shell-spec.md:18-20: app #f1f4f9 + ONE white canvas #fff, 1px #e5e9f0 radius12 padding24 | Branding view Alert(info) for Super-Admin-only changes, shared PageHeader, existing upload and form props | **Shared structure, measured browser geometry pending** |
+| Header font/row | legacy-styles/components___listing-page-header.scss:26-35 single row with 1px border; 52-58 title 28px / 600 / 1.3 | Existing PageHeader handles title; central shared header renders 30px desktop and 20px below md | **28 vs 30 old-listing mismatch still unresolved** |
+| Button default/secondary | old-lms-shell-spec.md:22-24: 36px/radius9, 14px/650, primary #0a7c88 /white; secondary white/hairline | Branding view Alert(info) for Super-Admin-only changes, shared PageHeader, existing upload and form props | **Source variant and touch size checked, exact colour state not rendered** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 transition 150ms, 49-51 disabled; form.scss:22-36 :focus-visible keyboard | Existing shared child components own hover/loading/permission checks | **Upstream tokens presumed; active/focus live test missing** |
+| Error/loading/empty | old-lms-pages.md:6,11-12: in-canvas notices, pale yellow slim info bar; no fake no-data | Branding view Alert(info) for Super-Admin-only changes, shared PageHeader, existing upload and form props | **Shared treatment but no legacy screenshot of this route** |
+| Responsive 767/768 | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, title 20px; mobile 44px targets | Branding view Alert(info) for Super-Admin-only changes, shared PageHeader, existing upload and form props; md classes switch at 768px where touched | **Source media clauses reviewed, 375px/768px computed screenshot missing** |
+| No visual regression | old-lms-pages.md:6: continuous canvas and data copy unaffected | Permission checks, source service reads and original routed content unchanged | **Source only; no TSX typecheck/CI or browser replay** |
+
+#### `src/app/(authenticated)/college/verification/page.tsx`
+
+| Property/state | Old LMS source/value | vNext source/value | Status |
+| --- | --- | --- | --- |
+| Default page surface | old-lms-shell-spec.md:18-20: app #f1f4f9 + ONE white canvas #fff, 1px #e5e9f0 radius12 padding24 | Verification failures display shared ErrorState and PageHeader in one inherited canvas; clear/retry links now min-h-11 md:min-h-9; nested p-4 removed | **Shared structure, measured browser geometry pending** |
+| Header font/row | legacy-styles/components___listing-page-header.scss:26-35 single row with 1px border; 52-58 title 28px / 600 / 1.3 | Existing PageHeader handles title; central shared header renders 30px desktop and 20px below md | **28 vs 30 old-listing mismatch still unresolved** |
+| Button default/secondary | old-lms-shell-spec.md:22-24: 36px/radius9, 14px/650, primary #0a7c88 /white; secondary white/hairline | Verification failures display shared ErrorState and PageHeader in one inherited canvas; clear/retry links now min-h-11 md:min-h-9; nested p-4 removed | **Source variant and touch size checked, exact colour state not rendered** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 transition 150ms, 49-51 disabled; form.scss:22-36 :focus-visible keyboard | Existing shared child components own hover/loading/permission checks | **Upstream tokens presumed; active/focus live test missing** |
+| Error/loading/empty | old-lms-pages.md:6,11-12: in-canvas notices, pale yellow slim info bar; no fake no-data | Verification failures display shared ErrorState and PageHeader in one inherited canvas; clear/retry links now min-h-11 md:min-h-9; nested p-4 removed | **Shared treatment but no legacy screenshot of this route** |
+| Responsive 767/768 | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, title 20px; mobile 44px targets | Verification failures display shared ErrorState and PageHeader in one inherited canvas; clear/retry links now min-h-11 md:min-h-9; nested p-4 removed; md classes switch at 768px where touched | **Source media clauses reviewed, 375px/768px computed screenshot missing** |
+| No visual regression | old-lms-pages.md:6: continuous canvas and data copy unaffected | Permission checks, source service reads and original routed content unchanged | **Source only; no TSX typecheck/CI or browser replay** |
+
+**Strict tick count:** 0 newly complete, because exact all-state, all-property side-by-side source values and 375/767/768 browser verification are not recorded. Scope-limited grep cannot certify parent/child workspace tree. No tests, build or CI.
