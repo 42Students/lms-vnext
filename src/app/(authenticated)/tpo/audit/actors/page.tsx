@@ -46,9 +46,9 @@ export default async function TpoActorAuditPage({
   };
   const parsed = tpoActorAuditQuerySchema.safeParse(filters);
   if (!parsed.success) {
-    return <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+    return <section role="alert" className="min-w-0 space-y-3">
       <PageHeader title="Invalid audit filters" />
-      <Link className="mt-2 inline-block text-link underline" href="/tpo/audit/actors">
+      <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/tpo/audit/actors">
         Clear filters
       </Link>
     </section>;
@@ -67,21 +67,21 @@ export default async function TpoActorAuditPage({
   const dateTime = new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
   });
-  return <div className="min-w-0 space-y-6">
-    <Link href="/tpo/audit" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-      ← All audit sources
-    </Link>
+  const hasExactFilters = Boolean(parsed.data.actorId || parsed.data.entityType || parsed.data.entityId ||
+    parsed.data.from || parsed.data.to);
+  return <div className="min-w-0 space-y-4">
     <PageHeader title="Actor and entity audit"
       description="Canonical placement activity events with exact persisted actor, entity and IST date filters."
-      actions={<a href={exportHref}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-        Export matching CSV (first 2,000)
-      </a>} />
-    <p className="text-sm text-body leading-[22px]">
-      Only the canonical PLACEMENTS activity stream has consistent actor/entity attribution.
-      Domain-history and share events remain on the original Audit log. An empty result
-      does not prove no action occurred in a domain without an activity writer.
-    </p>
+      actions={<>
+        <a href={exportHref}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
+          Export matching CSV (first 2,000)
+        </a>
+        <Link href="/tpo/audit"
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
+          ← All audit sources
+        </Link>
+      </>}/>
     <form role="search" aria-label="audit actors filters" action="/tpo/audit/actors" method="get"
       className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
       {([
