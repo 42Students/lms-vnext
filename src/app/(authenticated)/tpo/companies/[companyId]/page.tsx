@@ -203,7 +203,7 @@ export default async function TpoCompanyDetailPage({
       </Disclosure>
       <Disclosure title="Employer hiring pulse" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <section aria-label="College employer hiring pulse" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7" className="sr-only">Employer hiring pulse</h2>
+        <h2 className="sr-only">Employer hiring pulse</h2>
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
           Current college-linked drives and stored offer versions. Season counts reflect drives,
           not confirmed hires. A later activity timestamp is unavailable when no event exists.
