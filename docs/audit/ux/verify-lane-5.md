@@ -139,3 +139,17 @@
 - Extra clutter/alignment fixes (4): nearby logs loader now uses shared dotted loading state and a full-width 44px phone button; long log events/messages/paths wrap within mobile view instead of overflowing; message newlines retained and errors bounded, without changing API, log filter routes, issue data or copy.
 - Read issue page, complete TrackerWorkflowPanel, TrackerIssueLogsPanel, TrackerIssueCopyActions, TrackerAdminNav, PageHeader, StatusBadge, ThirdPartyLink, workflow model, loading/error and authenticated layout, and prior `polish-lane-15.md` entry. No local template/not-found/layout; 375px and 768px source-only review, no tests/CI.
 - Files changed: `src/components/tracker/tracker-issue-logs-panel.tsx`, queue, proof.
+
+## Surface 21 — Tracker issues triage
+- Surface: `src/app/(authenticated)/tracker/issues/page.tsx`.
+- Regressions fixed: 0. GET q/reporter/status/severity/environment/sort names and cursor preserved, advanced disclosure auto-opens for active filters, SavedViews remains keyboard-accessible, bulk-confirm writes respect issue versions, and private Super Admin scope still gates results.
+- Extra clutter/alignment fixes (1): removed an unexplained 12px top margin from each issue's h2 so title/status/preview align directly within the established hairline row padding at 375px and 768px.
+- Read page, TrackerIssueSavedViews persisted storage/save/delete, TrackerIssueBulkActions checked rows/confirm/failure/pending, StatusBadge/Input/Select/Button/Banner/EmptyState/ErrorState and TrackerAdminNav, route loading/error, authenticated layout and `polish-lane-15.md`; no local template/not-found/layout. Source-only/no CI.
+- Files changed: tracker issues page, queue, proof.
+
+## Surface 22 — Tracker Known Errors and logs
+- Surface: `src/app/(authenticated)/tracker/logs/page.tsx`.
+- Regressions fixed: 0. Reviewed Super Admin safety scope, environment Tabs, KnownErrorsWorkspace triage/ack/mute/mark-fixed and confirmation, LiveLogsExplorer search/range/export/report dialogs, Telegram digest/test confirmation, 40-record cap and partial configuration notices, all API field names and copy.
+- Extra clutter/alignment fixes: 0. Durable known errors remain first, optional live logs and Telegram tools in separate disclosures, live query opens its relevant section; 375px stacked and 768px compact actions match prior proof.
+- Read full route, KnownErrorsWorkspace, TrackerLiveLogsExplorer, TrackerTelegramManualPanel, Tabs/PageHeader/Alert/ErrorState, loading/error/authenticated parent layout and previous `polish-lane-15.md`; no local template/not-found/layout. No runtime/CI.
+- Files changed: queue and proof only.
