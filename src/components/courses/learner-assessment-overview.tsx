@@ -221,11 +221,11 @@ export function LearnerAssessmentOverview({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-[16px]">
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm font-semibold text-body">
           <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
-          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 rounded-[var(--lms-radius-control)] border border-border px-3 py-1">
+          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 rounded-[9px] border border-border px-[12px] py-[4px]">
             {submittedQuizzes.length>0 ? (
               <>
                 <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
@@ -283,7 +283,7 @@ export function LearnerAssessmentOverview({
           setPage(1);
         }}
       />
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid min-w-0 gap-[8px] md:grid-cols-2 lg:grid-cols-4">
         <label className="w-full">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
           <Input type="search" value={search} maxLength={100}

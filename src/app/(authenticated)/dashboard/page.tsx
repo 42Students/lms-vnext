@@ -74,7 +74,7 @@ function MetricCard({
       {content}
     </Link>
   ) : (
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
       {content}
     </section>
   );
@@ -111,7 +111,7 @@ async function SuperAdminDashboard({
       : "All-platform scope";
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-[16px]">
       <PageHeader
         eyebrow="Super Admin"
         title="Overview"
@@ -153,7 +153,7 @@ async function SuperAdminDashboard({
       </div>
       {collegeId?<CollegeAtGlancePanel collegeId={collegeId} initial={glance}/>:null}
       {collegeId?<SuperAdminTodayBoard data={today}/>:null}
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-[var(--lms-canvas-border)] py-[16px]">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Safety scope
         </h2>
@@ -179,7 +179,7 @@ async function RecruiterDashboard({
     );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[16px]">
       <PageHeader
         eyebrow="Employer Recruiter"
         title={context.recruiter?.companyName ?? "Hiring dashboard"}
@@ -324,7 +324,7 @@ async function MembershipDashboard({
     !hasActiveRecruiter(context)
   ) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-[16px]">
         <PageHeader
           eyebrow="College access"
           title="No workspace role assigned"
@@ -339,7 +339,7 @@ async function MembershipDashboard({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[16px]">
       <PageHeader
         eyebrow={roleLabel}
         title={
@@ -504,7 +504,7 @@ export default async function DashboardPage() {
       );
 
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-[16px]">
         <PageHeader
           eyebrow="College access"
           title="Choose your college"
