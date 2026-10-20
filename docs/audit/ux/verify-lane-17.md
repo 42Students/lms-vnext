@@ -87,3 +87,24 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 14. Redirect-only Overview alias read with loading/error boundaries, permission helper, template UUID schema and canonical subview resolver. Inspected absence of any independent rendered page controls.
 - Regressions found/fixed: 0. Authorizes before validation and canonical redirect, invalid UUID notFound; template-specific directory loader with unchanged error retry. No content/layout invented.
 - Extra clutter/alignment fixes: 0. Files changed: queue and this proof; source-only, no CI.
+
+## Surface 15 — `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
+- Prior evidence: `docs/audit/ux/polish-lane-7.md`, Surface 15. Reviewed route/loading/error and complete `ProjectTemplateView`, `TemplateMetadataEditControl`, `ProjectTemplateActions`, version/history labels, draft/published lifecycle, dialog submit/cancel and buttons, parent admin layout.
+- Regressions found/fixed: 0. No broken tags/imports, missing labels, dropped ID/aria, unauthorized interactive controls or mismatched props observed on source inspection; existing back destination precedes header, actions adapt in flex at phone widths and long version notes wrap.
+- Extra clutter/alignment fixes: 0. No files changed for this route; queue and proof only. No execution/CI.
+
+## Surface 16 — `src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx`
+- Prior evidence: `docs/audit/ux/polish-lane-7.md`, Surface 16. Reviewed route/loading/error, shared `SuperAdminTemplateSubviewPage`, `SuperAdminTemplateResourceEditor`, permission checks, version schema, all editor fields/buttons and layout wrappers.
+- Regression fixed (1): while resource mutation was pending, edited row controls and Close editor remained interactive. Lock editable fieldsets and editor toggle for the pending interval, preserving version confirmation, Save/Add disabled and errors.
+- Extra clutter/alignment fix (1): resource titles wrap and keys break safely in 375px rows, with shared 16px hairline rhythm, matching other template sections; affects only resources branch of shared subview.
+- Files changed: `src/components/projects/super-admin-template-resource-editor.tsx`, `src/components/projects/super-admin-template-subview-page.tsx`, queue and proof. Legacy wording, tokens, routes and aria unchanged; no runtime test.
+
+## Surface 17 — `src/app/(authenticated)/admin/projects/templates/[templateId]/sprints/page.tsx`
+- Prior proof: `docs/audit/ux/polish-lane-7.md`, Surface 17. Read route/loading/error, shared `SuperAdminTemplateSubviewPage` and `SuperAdminTemplatePlanEditor`, sprint/release validators, save/confirm, reorder, missing version/empty, archived read-only, permissions and responsive list/controls.
+- Regressions found/fixed: 0. Expanded editor trigger and all row/add/reset/save controls guard pending; shared labels and subtabs match typed routes. No broken JSX, duplicate props, dropped ids/aria or changed wording.
+- Extra clutter/alignment fixes: 0. Existing 16px hairline section and mobile full-width controls retained. Files changed: proof/queue only; source inspection, no CI.
+
+## Surface 18 — `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx`
+- Prior proof: `docs/audit/ux/polish-lane-7.md`, Surface 18. Read route/loading/error, shared subview and full `SuperAdminTemplatePlanEditor` task path, sprint prereq/link, validation, movement/removal, statuses, wide/phone layouts and error recovery.
+- Regressions found/fixed: 0. Required task fields, status badges, accessibility and routes still match their models. Focusable 44px phone buttons and wrapped texts are preserved.
+- Extra clutter/alignment fixes: 0. No task-specific edits; proof/queue only, no runtime tests.
