@@ -220,7 +220,7 @@ export function GridWorkspace<Row>({
    </FilterChip>)}
   </div>:null}
   {filterOpen&&filters.length?<div id={id+"-filters"}>
-   <TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet/>
+   <TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet autoOpenMobile onAutoClose={()=>setFilterOpen(false)}/>
   </div>:null}
   {viewsOpen&&savedViews?<div id={id+"-views"}>{savedViews}</div>:null}
   {columnsOpen?<div id={id+"-columns"}>
