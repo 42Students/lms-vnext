@@ -82,7 +82,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!changed || pending} onClick={()=>setConfirm(true)}>
         Review changes
       </Button>
-      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>{setMatching(initial.notifyMatchingJobs);setUpdates(initial.notifyApplicationUpdates);setConfirm(false);router.refresh();}}>Reload saved choices</Button>
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="link" disabled={pending} onClick={()=>{setMatching(initial.notifyMatchingJobs);setUpdates(initial.notifyApplicationUpdates);setConfirm(false);router.refresh();}}>Reload saved choices</Button>
       {changed ? <span className="text-xs text-body">Unsaved changes</span>
         : <span className="text-xs text-muted-foreground">No changes to save</span>}
     </div>
@@ -91,7 +91,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
       description="Only the two placement notification preferences will change. Other placement preferences remain intact."
       footer={<div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Keep current choices</Button>
-        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || !changed} onClick={()=>void save()}>
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending || !changed} onClick={()=>void save()}>
           {pending?"Saving…":"Confirm and save"}
         </Button>
       </div>}>
