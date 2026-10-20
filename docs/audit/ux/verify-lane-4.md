@@ -49,3 +49,43 @@
 - Regressions found/fixed: 0. Read page and route error/loading, parent layout, HrRoundEditorGrid/TpoGrid, PageBackLink, field primitives, POST `/api/placements/recruiter/drives/[jobId]/rounds/route.ts`, and lane-14 proof. Checked action, inputs, optimistic timestamp, editable gating, removal links, column props, empty state and mobile row fallback.
 - Extra clutter/alignment: 0; desktop grid and inline edit details are intentionally different tasks; mobile actions remain touch-sized and status visible.
 - Files changed: verified, no change. No CI/runtime.
+
+## 11. `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
+- Regressions found/fixed: 0. Read round removal and route error/loading, parent HR/round-editor layouts, shared PageBackLink, Button, Input and StatusBadge, round POST handler and lane-14 proof. Editable-only authorization, optimistic updatedAt token, REMOVE action and Keep round navigation retain contracts.
+- Extra clutter/alignment: 0; destructive button and safe navigation retain touch-sized responsive stack and bounded copy.
+- Files changed: verified, no change. Source-only, no CI.
+
+## 12. `src/app/(authenticated)/hr/drives/new/page.tsx`
+- Regressions found/fixed: 0. Read route page and error/loading, HR/authenticated layouts, full HrDriveDraftForm (draft restore, validation, preview, sending, edit/copy/resubmit, all confirmation states), its input/select/textarea/notice/confirm primitives, related hrDriveDraftQuerySchema/hrDriveDraftSchema and lane-14 polish proof. Props, grant guard, query selection, field names and copy retained.
+- Extra clutter/alignment: 1 — grouped all four round reorder/duplicate/remove controls in the third desktop grid column; previously Duplicate/Remove wrapped to an unrelated second row at 992px. Tablet action group spans both columns and phone actions wrap safely; controls/handlers/aria unchanged.
+- Files changed: `src/components/hr/hr-drive-draft-form.tsx`. Source-only, no CI.
+
+## 13. `src/app/(authenticated)/hr/drives/page.tsx`
+- Regressions found/fixed: 0. Read full page and route error/loading, HR parent layout, lane-14 proof, recruiter portfolio/AG grid, draft reminder, request cancel/feedback, summary/count and filter models, NeedsDoingChips, Tabs, Pagination, inputs and query URLs. Authorization, request stages, export, date filters and mobile status/navigation preserved.
+- Extra clutter/alignment: 1 — hide single-page/zero-drive pagination while retaining the exact showing-count text.
+- Files changed: `src/app/(authenticated)/hr/drives/page.tsx`. Static review only; no CI.
+
+## 14. `src/app/(authenticated)/hr/drives/proposals/page.tsx`
+- Regressions found/fixed: 0. Read page and error/loading, HR layout, lane-14 proof, HrProposalHistoryGrid/TpoGrid, proposal query/links model, title/date formatting, grants, search/sort, and CSV export; verified current filter and pagination URLs, mobile/desktop projection and access.
+- Extra clutter/alignment: 1 — suppress empty proposal pager at 0 or 1 pages rather than rendering an empty navigation landmark.
+- Files changed: `src/app/(authenticated)/hr/drives/proposals/page.tsx`. Static only; no CI.
+
+## 15. `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
+- Regressions found/fixed: 0. Read route page/error/loading, HR/authenticated layout, lane-14 proof, RecordedOutsideForm and its Input/Select/Textarea/Button primitives; compared college/grant selection, saved confirmation, form POST fields and historical-only notice. Controls are responsive and correct.
+- Extra clutter/alignment: 0; bounded form and recovery copy remain intact.
+- Files changed: verified, no change. No runtime or CI.
+
+## 16. `src/app/(authenticated)/hr/home/page.tsx`
+- Regressions found/fixed: 1 layout regression — actionable deadlines and upcoming rounds links were inline elements under a `divide-y` row list, preventing full-width rows/hit targets; make both block/min-w-0 and do the same for results-due rows. Inspected full 32k source, route error/loading, HR layout, lane-14 proof, Today action/due/results models, profile/portfolio data calls, shared Badge/Alert/EmptyState and draft reminder. Checked permission, IST clock, grant choice, partial outage and drill-down links.
+- Extra clutter/alignment: 2 — long deadline/event labels wrap rather than overflowing, and summary-list row hit areas now align across sections.
+- Files changed: `src/app/(authenticated)/hr/home/page.tsx`. Static inspection only, no CI.
+
+## 17. `src/app/(authenticated)/hr/messages/page.tsx`
+- Regressions found/fixed: 0. The alias re-exports the authorized `/hr/conversations/page.tsx` already verified under surface 7. Re-read alias, inbox component hierarchy, route error/loading, HR layout and lane-14 proof; imports, messages wording and fallback recovery remain intact.
+- Extra clutter/alignment: 0; route has no independently rendered page controls.
+- Files changed: verified, no change. No CI/runtime.
+
+## 18. `src/app/(authenticated)/hr/notifications/page.tsx`
+- Regressions found/fixed: 0. Read full page/error/loading, HR layout, lane-14 evidence, HrNotificationReadButton with receipt gating, hrNotificationsQuerySchema, grouped notices model, Tabs, NeedsDoingChips, StatusBadge, forms, unread/export URLs and empty state. Permissions and original labels retained.
+- Extra clutter/alignment: 2 — demote competing CSV export to tertiary text link rather than outlined button; when filtered inbox is empty provide Reset to selected college's unfiltered notifications.
+- Files changed: `src/app/(authenticated)/hr/notifications/page.tsx`. Static only; no CI.
