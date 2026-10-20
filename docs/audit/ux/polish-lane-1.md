@@ -111,3 +111,11 @@
 ## Surface 24 — Company Team discussion
 
 **Issues fixed (7):** detached back link below header, excessive 24px vertical rhythm, double message borders, message body unlimited line length, Send cramped on narrow viewport, no loading context, and no route-level recoverable error boundary. Moved Back to company into PageHeader actions, normalized single column chronological message list and 16px row rhythm with readable 72ch body, kept empty/history/unregistered/read-only banners intact, aligned Send full-width on 375 and left on tablet, created loading/error with Retry. Inspected writer's draft restoration/idempotency, permission checks and TpoLiveRefresh; behavior, ARIA, message IDs and URL unchanged; no CI/visual execution. **Files:** `src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx`, `src/app/(authenticated)/tpo/companies/[companyId]/team/loading.tsx`, `src/app/(authenticated)/tpo/companies/[companyId]/team/error.tsx`, `src/components/tpo/tpo-company-team-composer.tsx`.
+
+## Surface 25 — Archived company relationships
+
+**Reviewed:** `src/app/(authenticated)/tpo/companies/archived/page.tsx`, its `loading.tsx` and `error.tsx`, nearest TPO layout, shared PageHeader, EmptyState, GracefulPageLoading, ErrorState; role denial, populated/empty/truncated, navigation, and loading/error states. Mobile/tablet layout reviewed at 375/768 via classes, not screenshots or runtime (no CI).
+
+**Problems fixed (7):** (1) detached back link above page heading; (2) truncated 100-row notice had no warning styling; (3) empty state had no return action; (4) long names/actions wrapped unpredictably; (5) list lacked current-view count; (6) loading lost page title; (7) error lost heading and recovery destination. Placed existing back link into PageHeader actions, used slim legacy notice and hairline rows, stacked responsive rows at 375, gave empty/error states directory recovery, and labelled loading state. No changes to redirects, IDs, URLs, authorization or restoration behavior.
+
+**Files:** `src/app/(authenticated)/tpo/companies/archived/page.tsx`, `src/app/(authenticated)/tpo/companies/archived/loading.tsx`, `src/app/(authenticated)/tpo/companies/archived/error.tsx`, queue and proof log. Shared primitives and parent layout reviewed, unchanged. No execution or visual verification.
