@@ -179,7 +179,7 @@ export function TenantDomainManager({
 
   return (
     <div className="space-y-5">
-      <section className="border-t border-border pt-5">
+      <section className="border-t border-border pt-5 print:hidden">
         <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
           <div>
             <label
@@ -190,6 +190,7 @@ export function TenantDomainManager({
             </label>
             <Input
               id="tenant-domain-host"
+              className="min-h-11 md:min-h-9"
               value={host}
               onChange={(event) => setHost(event.target.value)}
               placeholder="lms.college.edu"
@@ -265,7 +266,7 @@ export function TenantDomainManager({
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap justify-end gap-2">
+                  <div className="flex flex-wrap justify-end gap-2 print:hidden">
                     {!domain.isVerified ? (
                       <Button
                         variant="secondary"
@@ -316,7 +317,7 @@ export function TenantDomainManager({
 
                 {!domain.isVerified &&
                 domain.verificationToken ? (
-                  <section aria-label="DNS ownership record" className="mt-5 border-t border-border pt-4">
+                  <section aria-label="DNS ownership record" className="mt-5 border-t border-border pt-4 print:hidden">
                     <h3 className="mb-2 text-sm font-semibold text-foreground">DNS ownership record</h3>
                     <p className="text-xs leading-5 text-body">
                       Publish this TXT record with your DNS
@@ -401,7 +402,7 @@ export function TenantDomainManager({
         {deleteTarget?.isPrimary ? <label className="grid gap-2 text-sm font-semibold text-body">Type the full primary hostname
           <Input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
             onChange={event => setDeleteHostConfirmation(event.target.value)}
-            className="w-full" />
+            className="min-h-11 w-full md:min-h-9" />
         </label> : null}
       </ConfirmDialog>
     </div>
