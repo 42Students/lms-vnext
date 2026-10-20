@@ -50,7 +50,7 @@ export function DateRangePicker({
       className={cx("grid min-w-0 gap-3 min-[768px]:grid-cols-2", className)}>
       <div className="grid min-w-0 gap-1.5">
         <label htmlFor={startId} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          {startLabel}{startRequired ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
+          {startLabel}{startRequired ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}{startRequired ? <span className="sr-only"> required</span> : null}
         </label>
         <DateInput {...startInputProps} id={startId} mode="date" value={start} min={startMin}
           max={startMax} disabled={disabled ?? startInputProps?.disabled} required={startRequired}
@@ -60,7 +60,7 @@ export function DateRangePicker({
       </div>
       <div className="grid min-w-0 gap-1.5">
         <label htmlFor={endId} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          {endLabel}{endRequired ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
+          {endLabel}{endRequired ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}{endRequired ? <span className="sr-only"> required</span> : null}
         </label>
         <DateInput {...endInputProps} id={endId} mode="date" value={end}
           min={endMin} max={endMax} disabled={disabled ?? endInputProps?.disabled} required={endRequired}
