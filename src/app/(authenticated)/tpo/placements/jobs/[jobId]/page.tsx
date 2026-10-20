@@ -44,9 +44,9 @@ export default async function TpoPlacementDrivePage({
     <div className="min-w-0 space-y-4">
       <nav aria-label="Drive shortcuts" className="flex flex-wrap items-center gap-3">
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Discuss →</Link>
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">Discuss →</Link>
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/interview-slots"}
-        className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-radius-control)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+        className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
         Employer interview slot proposals →
       </Link>
       </nav>

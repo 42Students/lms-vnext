@@ -29,5 +29,5 @@ These 29 page routes were moved to chat-3 from the end of other lanes' review qu
 - [x] `src/app/(authenticated)/tpo/calendar/page.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/see/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/quiz/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/quiz/page.tsx`
