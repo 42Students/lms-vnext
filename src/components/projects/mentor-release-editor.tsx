@@ -2,7 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {useEffect,useState} from "react";
+import {useEffect,useId,useRef,useState} from "react";
+import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -11,6 +12,9 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
  projectId:string;release?:Release;linkedSprints?:number;
 }){
  const router=useRouter(),[open,setOpen]=useState(false),[pending,setPending]=useState(false);
+ const editorId=useId();
+ const inFlight=useRef(false);
+ const {showToast}=useToast();
  const [title,setTitle]=useState(release?.title??"");
  const [description,setDescription]=useState(release?.description??"");
  const [error,setError]=useState(""),[message,setMessage]=useState("");
@@ -26,6 +30,9 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
    window.addEventListener("beforeunload",warn);
    return ()=>window.removeEventListener("beforeunload",warn);
  },[open,dirty]);
+ useEffect(()=>{
+   if(!open){setTitle(release?.title??"");setDescription(release?.description??"");}
+ },[open,release?.title,release?.description]);
  function requestClose(){
    if(pending)return;
    if(dirty)setConfirmDiscard(true);else setOpen(false);
@@ -34,52 +41,56 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
  const url="/api/projects/"+encodeURIComponent(projectId)+"/releases"+
   (release?"/"+encodeURIComponent(release.id):"");
  async function save(){
-  if(pending||!title.trim())return;
+  if(pending||inFlight.current||!title.trim())return;
+  inFlight.current=true;
   setPending(true);setError("");setMessage("");
   try{
    await projectMutation(url,release?"PATCH":"POST",{
     title:title.trim(),description:description.trim()||null,
     ...(release?{expectedUpdatedAt:new Date(release.updatedAt).toISOString()}:{}),
    });
-   setOpen(false);setMessage(release?"Release updated.":"Release added.");router.refresh();
+   setOpen(false);setMessage(release?"Release updated.":"Release added.");
+   showToast({tone:"success",title:release?"Release updated.":"Release added."});router.refresh();
   }catch{setError("Could not save the release. Review its latest details and try again.");}
-  finally{setPending(false);}
+  finally{inFlight.current=false;setPending(false);}
  }
  async function remove(){
-  if(!release||!canRemove)return;
+  if(!release||!canRemove||pending||inFlight.current)return;
+  inFlight.current=true;
   setPending(true);setError("");
   try{
    await projectMutation(url,"DELETE",{expectedUpdatedAt:new Date(release.updatedAt).toISOString()});
-   setOpen(false);router.refresh();
+   setConfirmDelete(false);setOpen(false);
+   showToast({tone:"success",title:"Release deleted."});router.refresh();
   }catch{setError("Could not delete the release. Reload its current status and retry.");}
-  finally{setPending(false);}
+  finally{inFlight.current=false;setPending(false);}
  }
  return <div className="space-y-2">
-  {(!release||release.status!=="SHIPPED")?<Button variant="secondary" type="button"
+  {(!release||release.status!=="SHIPPED")?<Button variant={release?"secondary":"primary"} type="button" aria-expanded={open} aria-controls={editorId}
    className="min-h-11 px-3 md:min-h-9"
    onClick={()=>{if(open)requestClose();else setOpen(true);}}>{release?"Edit release":"Add release"}</Button>:null}
-  {open?<div className="space-y-3 border-t border-border pt-3">
+  {open?<form id={editorId} onSubmit={event=>{event.preventDefault();void save();}} className="space-y-3 border-t border-border pt-3">
    <p className="text-sm font-semibold">{release?"Edit release":"New release"}</p>
    <label className="block text-sm font-semibold">Title
-    <Input className="mt-1 min-h-11 w-full md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[length:var(--lms-font-base)]" maxLength={200}
+    <Input className="mt-1 min-h-11 w-full md:min-h-9" maxLength={200}
      required value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="block text-sm font-semibold">What ships in this release?
-    <Textarea className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[length:var(--lms-font-base)]"
+    <Textarea className="mt-1 min-h-20 w-full"
      maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
-   <div className="flex flex-wrap gap-2">
-    <Button variant="primary" type="button" disabled={pending||!title.trim()} onClick={()=>void save()}
-     className="min-h-11 px-3 py-2 md:min-h-9">
+   <div className="flex flex-col gap-2 sm:flex-row">
+    <Button variant="primary" type="submit" disabled={pending||!title.trim()}
+     className="min-h-11 w-full px-3 py-2 sm:w-auto md:min-h-9">
      {pending?"Saving…":"Save release"}</Button>
     <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}
-     className="min-h-11 px-3 py-2 md:min-h-9">Cancel</Button>
-    {canRemove?<Button variant="danger" type="button" disabled={pending} onClick={()=>setConfirmDelete(true)}
-     className="min-h-11 px-3 py-2 md:min-h-9">Delete release</Button>:null}
+     className="min-h-11 w-full px-3 py-2 sm:w-auto md:min-h-9">Cancel</Button>
    </div>
+   {canRemove?<div className="border-t border-[var(--lms-canvas-border)] pt-3"><Button variant="link" type="button" disabled={pending} onClick={()=>{setError("");setConfirmDelete(true);}}
+     className="min-h-11 w-full !justify-start !text-[var(--lms-error)] sm:w-auto md:min-h-9">Delete release</Button></div>:null}
    {release&&linkedSprints>0?<p className="text-xs text-muted-foreground">
     Release cannot be deleted until its {linkedSprints} linked sprint(s) are removed.
    </p>:null}
-  </div>:null}
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  </form>:null}
+  {error&&!confirmDelete?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {message?<p role="status" className="text-xs text-success">{message}</p>:null}
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
     title="Discard unsaved project changes?"
@@ -87,8 +98,10 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
     confirmLabel="Discard changes" pending={pending}
     onConfirm={()=>{setConfirmDiscard(false);setOpen(false);
       setTitle(release?.title??"");setDescription(release?.description??"");}}/>
-  <ConfirmDialog open={confirmDelete} onOpenChange={setConfirmDelete}
+  <ConfirmDialog open={confirmDelete} onOpenChange={next=>{if(!pending)setConfirmDelete(next);}}
     title="Delete this release?" description="This cannot be undone."
-    confirmLabel="Delete release" pending={pending} onConfirm={()=>{setConfirmDelete(false);void remove();}}/>
+    confirmLabel="Delete release" pending={pending} onConfirm={()=>void remove()}>
+    {error?<p role="alert" className="break-words text-sm text-error">{error}</p>:null}
+  </ConfirmDialog>
  </div>;
 }

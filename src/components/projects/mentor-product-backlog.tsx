@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {useState} from "react";
+import {useId,useState} from "react";
 import { Select } from "@/components/ui/select";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -23,6 +23,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  projectId:string;tasks:Task[];sprints:Sprint[];readOnly?:boolean;
 }){
  const router=useRouter();
+ const draftId=useId();
  const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[approach,setApproach]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
  const [taskType,setTaskType]=useState(""),[dueDate,setDueDate]=useState(""),[blockerReason,setBlockerReason]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -54,17 +55,14 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    <div><h2 className="text-lg font-semibold">Product backlog</h2>
     <p className="mt-1 text-sm text-body">{backlog.length} backlog tasks</p>
    </div>
-   <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3">
-    <p className="text-xs font-semibold text-body">Velocity</p>
-    <p className="text-xl font-bold">{velocity} points completed</p>
-   </div>
+   <p className="text-sm text-body"><span className="font-semibold">Velocity</span> · {velocity} points completed</p>
   </div>
   {!readOnly?<section className="space-y-2">
-    <Button variant="secondary" type="button" onClick={()=>adding?guard.requestClose():setAdding(true)}
+    <Button variant="primary" type="button" aria-expanded={adding} aria-controls={draftId} onClick={()=>adding?guard.requestClose():setAdding(true)}
       className="min-h-11 px-3">
       Add backlog task
     </Button>
-    {adding?<form onSubmit={async e=>{
+    {adding?<form id={draftId} onSubmit={async e=>{
       e.preventDefault();if(busy)return;setError("");
       if(!title.trim()||!Number.isInteger(points?Number(points):0)||
         (points!==""&&(Number(points)<0||Number(points)>1000))){
@@ -93,6 +91,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
       </Select></label>
+      <Disclosure title="Additional task details" className="min-w-0 min-[768px]:col-span-2" contentClassName="grid min-w-0 gap-3 pt-3 min-[768px]:grid-cols-2">
       <label className="text-sm font-semibold">Description<Textarea maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
@@ -121,22 +120,21 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         <Textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
-      <div className="flex items-end gap-2"><Button variant="primary" type="submit"
+      </Disclosure>
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row min-[768px]:col-span-2"><Button variant="primary" type="submit"
         disabled={busy||!title.trim()||(points!==""&&
           (!Number.isInteger(Number(points))||Number(points)<0||Number(points)>1000))}
-        className="min-h-11 px-3">Add task</Button>
+        className="min-h-11 w-full px-3 sm:w-auto">Add task</Button>
       <Button variant="secondary" type="button" onClick={guard.requestClose}
-        className="min-h-11 px-3">Cancel</Button></div>
+        className="min-h-11 w-full px-3 sm:w-auto">Cancel</Button></div>
     </form>:null}
   </section>:null}
-  {error?<Alert tone="error">{error}</Alert>:null}
+  {error&&!moveRequest?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
-  <div className="grid gap-3 min-[768px]:grid-cols-2">
-   {backlog.map(task=><article key={task.id} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] p-3">
+  <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+   {backlog.map(task=><article key={task.id} className="min-w-0 py-3">
     <p className="font-semibold">{task.title}</p>
-    {task.approach?<p className="mt-2 whitespace-pre-wrap break-words text-xs text-body">
-      Approach: {task.approach}
-    </p>:null}
+    {task.approach?<Disclosure title="Approach" className="mt-2"><p className="whitespace-pre-wrap break-words text-xs text-body">Approach: {task.approach}</p></Disclosure>:null}
     <p className="mt-1 text-xs text-body">
       {task.priority} · {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
     </p>
@@ -158,13 +156,13 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
      </Select>
     </label>:null}
    </article>)}
-   {!backlog.length?<div className="min-[768px]:col-span-2"><EmptyState title="Backlog is empty." description="No backlog tasks to display." /></div>:null}
+   {!backlog.length?<div><EmptyState title="Backlog is empty." description="No backlog tasks to display." /></div>:null}
   </div>
   {!readOnly&&returnable.length>0?<Disclosure title="Return unfinished tasks to backlog">
     <div className="mt-2 space-y-2">
      {returnable.map(task=><Button variant="secondary" key={task.id} type="button" disabled={busy}
         onClick={()=>setMoveRequest({task,targetSprintId:null})}
-        className="block min-h-11 w-full p-2 text-left">
+        className="min-h-11 w-full !justify-start p-2 !text-left">
         {task.title} · Return to backlog
        </Button>)}
     </div>
