@@ -57,19 +57,19 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
-   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">New template →</Link>:undefined}/>
+   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">New template →</Link>:undefined}/>
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     className="w-full"/>
+     className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
-    <Select name="status" defaultValue={data.query.status} className="w-full">
+    <Select name="status" defaultValue={data.query.status} className="min-h-11 w-full min-w-0 md:min-h-9">
      {statuses.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <Button type="submit" className="self-end">Filter</Button>
+   <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
   </form>
   <ListToolbar label="Global project templates" viewCount={data.total}
     exportAction={<SuperAdminTemplatePageExport items={data.items}/>} />

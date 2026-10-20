@@ -76,7 +76,7 @@ export default async function SuperAdminTenantSetup({
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=can(context,"organization.manage");
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />} />
@@ -116,7 +116,7 @@ export default async function SuperAdminTenantSetup({
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold">Organizations</h2>
-      <Link href="/admin/organizations" className="text-sm font-semibold text-primary-text underline">Manage all</Link>
+      <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {organizations.slice(0,20).map(o=><li key={o.id} className="border-b border-border py-2">{o.name}</li>)}
@@ -126,7 +126,7 @@ export default async function SuperAdminTenantSetup({
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold">Colleges</h2>
-      <Link href="/admin/tenants" className="text-sm font-semibold text-primary-text underline">Manage all</Link>
+      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {list?.items.map(item=><li key={item.id} className="border-b border-border py-2">
@@ -138,7 +138,7 @@ export default async function SuperAdminTenantSetup({
      <p className="mt-2 text-xs text-muted-foreground">First page only. Archived colleges remain marked; no implicit restoration.</p>
     </div>
    </section>
-   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 min-[768px]:min-h-9  items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
+   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 md:min-h-9  items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="text-lg font-semibold">{college.name} · Launch setup</h2>
    <Banner tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
@@ -160,14 +160,14 @@ export default async function SuperAdminTenantSetup({
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="text-lg font-semibold">Launch checklist</h2>
-     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="text-sm font-semibold text-primary-text underline">Inspect persisted readiness →</Link>
+     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-x-5 gap-y-2 md:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-foreground">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>
-      <Link href={step.href} className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9  items-center text-sm font-semibold text-primary-text underline">Open workspace →</Link>
+      <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9  items-center text-sm font-semibold text-primary-text underline">Open workspace →</Link>
      </li>)}
     </ol>
    </section>
