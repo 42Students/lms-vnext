@@ -31,14 +31,17 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
   .then(value=>({ok:true as const,value}))
   .catch(()=>({ok:false as const}));
  const curriculum=curriculumResult.ok?curriculumResult.value:null;
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-5">
  <AdminScopedReadPage
-  intro={<section aria-label="Semester curriculum tools" className="min-w-0 space-y-4">
+  intro={<section aria-label="Semester curriculum tools" className="min-w-0 space-y-3">
    <AcademicSetupSteps step={4}/>
    {!curriculumResult.ok?<Banner tone="warning">
     Semester mapping editor is temporarily unavailable. The directory remains accessible.
    </Banner>:null}
-   {curriculum?<CollegeTermMappingManager data={curriculum}/>:null}
+   {curriculum?<details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
+    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Manage semester course mappings</summary>
+    <div className="min-w-0 pt-3"><CollegeTermMappingManager data={curriculum}/></div>
+   </details>:null}
   </section>}
   title="Semester–Course Mapping" path="/admin/semester-courses" statuses={statuses}
   exportPath="/api/admin/semester-courses/export" exportFilename="super-admin-semester-courses-ist.csv"
