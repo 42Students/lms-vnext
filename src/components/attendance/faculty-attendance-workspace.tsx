@@ -1,5 +1,5 @@
-import { SummaryStrip } from "@/components/ui/summary-strip";
 "use client";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
