@@ -31,7 +31,7 @@ export default async function LearnerApplicationDetailPage({params}:{
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge tone={applicationStatusTone(record.currentStatus)}>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
     <section className="border-b border-border py-4 md:py-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Application actions</h2>
         {record.currentStatus==="SUBMITTED"
           ? <LearnerApplicationDetailWithdraw applicationId={record.applicationId} requiresRequest={requiresRequest}/>
@@ -47,14 +47,14 @@ export default async function LearnerApplicationDetailPage({params}:{
     </section>
     <section className="border-b border-border py-4 md:py-6" aria-label="Recorded application timeline">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status timeline</h2>
-      <p className="mt-2 text-sm text-body">
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
         Only persisted application status changes are listed. Internal notes and actor IDs are withheld.
         Screening and interview decisions appear in your placement journey.
       </p>
-      {record.events.length?<ol className="mt-4 space-y-3">
-        {record.events.map(event=><li key={event.id} className="border-b border-border py-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{event.label}</h3>
+      {record.events.length?<ol className="mt-4 divide-y divide-border">
+        {record.events.map(event=><li key={event.id} className="min-w-0 py-3 first:pt-0 last:pb-0 sm:py-4">
+          <div className="flex min-w-0 flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+            <h3 className="min-w-0 break-words font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{event.label}</h3>
             <time className="text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>{when(event.occurredAt)}</time>
           </div>
           <p className="mt-2 text-sm text-body">
