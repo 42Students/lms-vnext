@@ -20,7 +20,7 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  if(Array.isArray(q.collegeId)||Array.isArray(q.saved))notFound();
  const raw=q.collegeId;
  const collegeId=raw??(context.recruiter.grants.length===1?context.recruiter.grants[0]?.collegeId:undefined);
- if(!collegeId)return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+ if(!collegeId)return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Choose a college for the external drive"/>
   {context.recruiter.grants.length?<NeedsDoingChips label="Authorized colleges:" items={context.recruiter.grants.map(g=>({
    key:g.collegeId,label:g.collegeName,
