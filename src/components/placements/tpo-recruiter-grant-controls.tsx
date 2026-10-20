@@ -50,7 +50,7 @@ export function TpoRecruiterGrantForm({ companies }: {
         <EmptyState title="No active linked companies are available for recruiter grants."/>
       ) : (
         <>
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             <label className="grid gap-1 text-sm font-semibold text-body">Company
               <Select value={relationshipId} disabled={busy}
                 onChange={(event) => setRelationshipId(event.target.value)}
@@ -70,7 +70,7 @@ export function TpoRecruiterGrantForm({ companies }: {
             </label>
           </div>
           <Button variant="primary" type="button" disabled={busy || !email.trim()} onClick={() => setConfirmOpen(true)}
-            className="min-h-11 md:min-h-9">
+            className="min-h-11 w-full sm:w-auto md:min-h-9">
             {busy ? "Saving..." : "Review and confirm grant"}
           </Button>
         </>
@@ -148,11 +148,11 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   }catch(caught){setError(caught instanceof Error?caught.message:"Access could not be extended.");}
   finally{setBusy(false);}
  }
- return <div className="mt-2 flex flex-wrap items-center gap-2">
+ return <div className="mt-2 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-end">
   <label className="text-xs">{ended?"Give access again":"Extend access"}
    <Select value={months} disabled={busy}
     onChange={e=>setMonths(Number(e.target.value) as 3|6|12)}
-    className="ml-2 min-h-11 md:min-h-9">
+    className="mt-1 min-h-11 w-full sm:ml-2 sm:mt-0 sm:w-auto md:min-h-9">
     <option value={3}>3 months</option><option value={6}>6 months</option><option value={12}>12 months</option>
    </Select>
   </label>
