@@ -51,7 +51,7 @@ export default async function LearnerAssessmentResultsPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href="/learn/my-placements/assessments"
-        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Assessment schedule
       </Link>
       <PageHeader
@@ -71,13 +71,13 @@ export default async function LearnerAssessmentResultsPage({
           Search
         </Button>
         {q?<Link href={href(view,1,"")}
-          className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
+          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
       </form>
       <p role="status" className="text-sm text-body">
         Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
       </p>
       {paged.items.length === 0 ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+        <section role="status" className="flex min-h-[180px] flex-col items-start justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12">
           <h2 className="text-base font-semibold text-foreground">
             {results.counts.all === 0 ? "No official assessment results yet" : "No results in this category"}
           </h2>
@@ -88,16 +88,16 @@ export default async function LearnerAssessmentResultsPage({
           </p>
           {results.counts.all > 0 ? (
             <Link href="/learn/my-placements/assessments/results"
-              className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               View all official results →
             </Link>
           ) : null}
         </section>
       ) : (
-        <section aria-label="Official assessment outcomes" className="grid gap-3">
+        <section aria-label="Official assessment outcomes" className="grid min-w-0 gap-3">
           {paged.items.map((item) => (
-            <article key={item.resultId} className="rounded-xl border border-border bg-surface p-4 sm:p-6">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <article key={item.resultId} className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
                     {item.companyName}
@@ -112,7 +112,7 @@ export default async function LearnerAssessmentResultsPage({
                   {item.outcome.replaceAll("_", " ")}
                 </StatusBadge>
               </div>
-              <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+              <dl className="mt-4 grid gap-3 text-sm md:grid-cols-2">
                 <div>
                   <dt className="font-semibold text-muted-foreground">Applied on</dt>
                   <dd className="mt-1 text-foreground">
@@ -127,7 +127,7 @@ export default async function LearnerAssessmentResultsPage({
                 </div>
               </dl>
               {item.candidateMessage ? (
-                <section className="mt-4 rounded-lg border border-border bg-surface-subtle p-3">
+                <section className="mt-4 min-w-0 border-t border-border pt-3">
                   <h3 className="text-xs font-semibold text-foreground">Shared feedback</h3>
                   <p className="mt-2 whitespace-pre-wrap text-sm text-body">{item.candidateMessage}</p>
                 </section>
@@ -135,7 +135,7 @@ export default async function LearnerAssessmentResultsPage({
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link href={"/learn/my-placements/applications?applicationId=" +
                   encodeURIComponent(item.applicationId)}
-                  className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
                   View application →
                 </Link>
               </div>
@@ -146,12 +146,12 @@ export default async function LearnerAssessmentResultsPage({
       {paged.pages>1?<nav aria-label="Assessment results pagination"
         className="flex flex-wrap items-center justify-between gap-3">
         {paged.page>1?<Link href={href(view,paged.page-1)}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Previous
         </Link>:<span/>}
         <span className="text-sm tabular-nums text-body">Page {paged.page} of {paged.pages}</span>
         {paged.page<paged.pages?<Link href={href(view,paged.page+1)}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Next
         </Link>:<span/>}
       </nav>:null}
