@@ -47,11 +47,11 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
  }
  return <div>
   <form onSubmit={event=>void save(event)} className="grid gap-2">
-   <label htmlFor="hr-first-name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">First name</label>
+   <label htmlFor="hr-first-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span></label>
    <Input id="hr-first-name" value={firstName} maxLength={100} required
     onChange={event=>setFirstName(event.target.value)}
     className="w-full"/>
-   <label htmlFor="hr-last-name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Last name</label>
+   <label htmlFor="hr-last-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last name</label>
    <Input id="hr-last-name" value={lastName} maxLength={100}
     onChange={event=>setLastName(event.target.value)}
     className="w-full"/>

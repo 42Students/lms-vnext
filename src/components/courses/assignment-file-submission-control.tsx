@@ -177,7 +177,7 @@ export function AssignmentFileSubmissionControl({
   return <section aria-label="Assignment file submission" className="mt-4 space-y-3">
     <h3 className="text-sm font-semibold text-foreground">{multipartEnabled?"Combined assignment submission":"File Upload"}</h3>
     {uploadsAllowed?<p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>:null}
-    {uploadsAllowed?<label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Choose a file to upload
+    {uploadsAllowed?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose a file to upload
       <Input type="file" multiple accept={pdfOnly?".pdf":acceptAttributeFor("assignment-submission")}
         disabled={loading || busy || staged.length >= MAX_ASSIGNMENT_FILES_PER_SUBMISSION}
         className="mt-2 min-h-11 max-w-full md:min-h-9"

@@ -279,7 +279,7 @@ export function AssignmentSubmissionControl({
             <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>
           </section>
         ) : (
-          <label className="mt-4 block">
+          <label className="mt-4 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Website / External Links<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
             </span>

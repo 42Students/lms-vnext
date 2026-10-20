@@ -63,7 +63,7 @@ export function CollegeStudyMemberActions({
       setError(null);
       setAction({ action: "ADD", membershipId });
     }} className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
-      <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
+      <label className="grid min-w-52 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
         Add learner
         <Select value={selection} onChange={(event) => setSelection(event.target.value)}
           className="min-h-11 min-w-0 md:min-h-9">
@@ -71,7 +71,7 @@ export function CollegeStudyMemberActions({
           {available.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
+      <label className="grid min-w-52 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
         Or learner membership ID
         <Input value={manualId} onChange={(event) => setManualId(event.target.value)}
           placeholder="UUID" className="min-h-11 min-w-0 md:min-h-9" />
