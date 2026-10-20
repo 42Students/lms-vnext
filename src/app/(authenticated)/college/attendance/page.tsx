@@ -118,7 +118,7 @@ export default async function CollegeAttendancePage({
         title="Attendance"
         description={`College-wide attendance oversight for ${options.college.name}, including unmarked sessions and admin corrections.`}
         actions={
-          <div className="flex flex-wrap gap-3">
+          <nav aria-label="Attendance views" className="flex min-w-0 flex-wrap gap-3 border-b border-border pb-2">
           <Link href="/college/attendance/departments"
             className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
             Attendance by Department
@@ -134,7 +134,7 @@ export default async function CollegeAttendancePage({
           >
             Attendance policy
           </Link>
-          </div>
+          </nav>
         }
       />
       <AdminAttendanceWorkspace
