@@ -75,14 +75,14 @@ export function CollegeDepartmentInsights({
     ) : null}
     <section aria-label="Department filters" className="border-t border-border pt-4">
       <form method="get" action={path} className="flex flex-wrap items-end gap-3">
-        <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
+        <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold text-body md:w-[220px] md:basis-auto md:flex-none">
           Department name
           <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"
             />
         </label>
-        <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">Search</Button>
-        <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear</Link>
+        <Button variant="primary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
+        <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">Clear</Link>
       </form>
     </section>
     <section aria-label="Department evidence results" className="min-w-0">

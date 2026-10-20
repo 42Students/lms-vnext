@@ -39,7 +39,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
       <h2 className="font-semibold text-foreground">Program and batch enrollments</h2>
       <form method="get" role="search" aria-label="Enrollment lifecycle filter" className="mt-3 flex min-w-0 flex-wrap items-end gap-3"
         action={`/college/students/${encodeURIComponent(membershipId)}`}>
-        <label className="grid gap-2 text-sm font-semibold text-body">
+        <label className="grid w-full min-w-0 basis-full gap-2 text-sm font-semibold text-body md:w-[220px] md:basis-auto">
           Enrollment lifecycle
           <Select name="status" defaultValue={data.filter.status}
             >
@@ -49,17 +49,17 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
             <option value="WITHDRAWN">Withdrawn</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
+        <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
       </form>
       <p className="mt-2 text-xs text-muted-foreground">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
       {data.enrollments.length === 0 ? <EmptyState title="No matching enrollments" description="No program enrollment matches the selected lifecycle status."/> :
-        <ul className="mt-3 divide-y divide-border">{data.enrollments.map(row =>
+        <ul className="mt-3 divide-y divide-border border-y border-border">{data.enrollments.map(row =>
           <li key={row.id} className="py-2 text-sm text-body">
             {row.programName} ({row.programCode}) · {row.cohortName} ({row.cohortCode}) · {row.status}
           </li>)}</ul>}
       <h3 className="mt-5 font-semibold text-foreground">Active classes</h3>
       {data.classes.length === 0 ? <EmptyState title="No active classes" description="No active class enrollment recorded."/> :
-        <ul className="mt-2 divide-y divide-border">{data.classes.map(row =>
+        <ul className="mt-2 divide-y divide-border border-y border-border">{data.classes.map(row =>
           <li key={row.enrollmentId + row.sectionCode} className="py-2 text-sm text-body">
             {row.sectionName} ({row.sectionCode})
           </li>)}</ul>}

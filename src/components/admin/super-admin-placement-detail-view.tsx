@@ -9,8 +9,7 @@ export function SuperAdminPlacementDetailView({data,extraActions}:{data:SuperAdm
   <PageHeader title={data.title} description={data.subtitle}
    actions={<>
     <PageBackLink href={data.backHref} label="Back to directory" className="print:hidden" />
-    {data.related?<Link href={data.related.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">{data.related.label} →</Link>:null}
-    {extraActions}
+    {data.related?<Link href={data.related.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] md:w-auto border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">{data.related.label} →</Link>:null}
    </>} />
   <div className="flex min-w-0 flex-wrap items-center gap-2">
    <StatusBadge tone={data.status==="ACTIVE"||data.status==="ACCEPTED"?"success":"neutral"}>{data.status}</StatusBadge>
