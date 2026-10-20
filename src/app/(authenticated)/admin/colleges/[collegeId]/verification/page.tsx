@@ -65,7 +65,7 @@ export default async function AdminCollegeVerification({
  for(const [k,v] of Object.entries(data.filter)){if(v!==undefined&&v!==null)query[k]=String(v);}
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
 
-   <SuperAdminVerificationPanel collegeId={college.id} rows={data.rows}
+   <SuperAdminVerificationPanel key={college.id+":"+JSON.stringify(query)} collegeId={college.id} rows={data.rows}
     counts={data.counts} activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
     page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>
    <Disclosure title="Placement-cell verification setting" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
