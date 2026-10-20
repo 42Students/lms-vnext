@@ -380,7 +380,7 @@ function CalendarEventCard({
             </p>
           ) : null}
           {event.note ? (
-            <p className="mt-1 whitespace-pre-wrap text-sm text-body">
+            <p className="mt-1 whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body">
               {event.note}
             </p>
           ) : null}
@@ -675,7 +675,7 @@ export async function PlacementCalendarWorkspace({
             </p>
           </div>
           <div
-            className={"flex flex-wrap gap-2 "+(isTpo?calendarStyles.tpoViewSwitch:"")}
+            className={"grid w-full min-w-0 grid-cols-3 gap-2 sm:flex sm:w-auto sm:flex-wrap "+(isTpo?calendarStyles.tpoViewSwitch:"")}
             role="group"
             aria-label="Calendar view"
           >
@@ -695,8 +695,8 @@ export async function PlacementCalendarWorkspace({
                 }
                 className={
                   state.view === view
-                    ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold capitalize text-[var(--lms-on-primary)]"
-                    : "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)]"
+                    ? "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-semibold capitalize text-[var(--lms-on-primary)] md:min-h-9 md:px-4"
+                    : "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-center text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:px-4"
                 }
               >
                 {view}
@@ -705,7 +705,7 @@ export async function PlacementCalendarWorkspace({
           </div>
         </div>
 
-        <div className={"mt-4 flex flex-wrap items-center gap-2 "+(isTpo?calendarStyles.tpoNavigationRow:"")}>
+        <div className={"mt-4 grid min-w-0 grid-cols-3 items-center gap-2 sm:flex sm:flex-wrap "+(isTpo?calendarStyles.tpoNavigationRow:"")}>
           <Link
             href={calendarHref(
               basePath,
@@ -714,7 +714,7 @@ export async function PlacementCalendarWorkspace({
               { anchor: previous },
             )}
             aria-label="Previous calendar period"
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
             ←
           </Link>
@@ -725,7 +725,7 @@ export async function PlacementCalendarWorkspace({
               state,
               { anchor: today },
             )}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
             Today
           </Link>
@@ -737,11 +737,11 @@ export async function PlacementCalendarWorkspace({
               { anchor: next },
             )}
             aria-label="Next calendar period"
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
             →
           </Link>
-          <span className="ml-2 text-sm font-semibold text-foreground">
+          <span className="order-first col-span-3 min-w-0 break-words text-sm font-semibold text-foreground sm:order-none sm:ml-2">
             {state.view === "week"
               ? `${dateLabel(window.from)} – ${dateLabel(window.to)}`
               : monthLabel(state.anchor)}
@@ -860,12 +860,18 @@ export async function PlacementCalendarWorkspace({
             </details>
           )}
 
-          <div className="flex items-end">
+          <div className="flex min-w-0 items-end">
             <Button type="submit" className="min-h-11 w-full lg:min-h-9"
             >
               Apply filters
             </Button>
           </div>
+          {!isTpo && (state.company || state.job || (state.roundKind && state.roundKind !== "INTERVIEW")) ? (
+            <Link href={basePath + "?" + new URLSearchParams({date:state.anchor,view:state.view}).toString()}
+              className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
+              Clear filters
+            </Link>
+          ) : null}
         </form>
         {isTpo && (state.company || state.kind || state.kinds.length) ? (
           <Link href={basePath} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Show everything</Link>
@@ -897,7 +903,7 @@ export async function PlacementCalendarWorkspace({
 
       <section
         aria-label="Next scheduled calendar event"
-        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5"
+        className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -905,7 +911,7 @@ export async function PlacementCalendarWorkspace({
               Next scheduled
             </h2>
             {summary.next ? (
-              <p className="mt-1 text-sm text-body">
+              <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm text-body">
                 {summary.next.companyName} ·{" "}
                 {summary.next.title} ·{" "}
                 {eventDateTime(
@@ -954,7 +960,7 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className={"hidden overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)] "+(isTpo?calendarStyles.tpoMonthFrame:"")}
+          className={"hidden min-w-0 overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[992px]:block "+(isTpo?calendarStyles.tpoMonthFrame:"")}
         >
           <CalendarGrid variant="hairline" className={"min-w-[56rem] "+calendarStyles.calendarHairline}>
             {[
@@ -1095,7 +1101,7 @@ export async function PlacementCalendarWorkspace({
           </p>
         </div>
 
-        {state.view!=="agenda"?<p className="text-xs text-muted-foreground md:hidden">Calendar events are listed below for a better fit on small screens.</p>:null}
+        {state.view!=="agenda"?<p className="text-xs text-muted-foreground min-[992px]:hidden">Calendar events are listed below for a better fit on small screens.</p>:null}
         {groups.length === 0 ? (
           <div className="border-y border-border py-8 text-sm text-body">
             {state.view==="agenda"?TPO_EMPTY_AGENDA:
@@ -1113,7 +1119,7 @@ export async function PlacementCalendarWorkspace({
                   ? " · Today"
                   : ""}
               </h3>
-              <div className="grid gap-3 lg:grid-cols-2">
+              <div className="grid min-w-0 gap-3 lg:grid-cols-2">
                 {group.events.map((event) => (
                   <CalendarEventCard
                     key={event.id}

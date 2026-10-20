@@ -11,15 +11,15 @@ export default function CollegePlacementCalendarError({ reset }: {
   return (
     <section
       role="alert"
-      className="rounded-xl border border-border bg-surface px-6 py-10 text-center"
+      className="min-w-0 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]"
     >
       <PageHeader title={"Couldn't load placement interviews"} />
-      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
+      <p className="max-w-2xl break-words text-sm leading-6 text-body">
         College placement rounds could not be retrieved.
         A failed read does not mean there are no interviews.
       </p>
       <Button
-        className="mt-5"
+        className="min-h-11 w-full sm:w-auto md:min-h-9"
         onClick={reset}
       >
         Retry
