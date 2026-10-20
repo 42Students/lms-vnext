@@ -29,7 +29,7 @@ export default async function LearnerApplicationHistoryPage({
   if (!history) notFound();
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       <Link
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(history.applicationId)}
@@ -44,19 +44,19 @@ export default async function LearnerApplicationHistoryPage({
       />
       <section className="border-b border-border py-4 sm:py-6">
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status history</h2>
-        <p className="mt-2 text-sm text-body">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
           Only recorded application status changes are shown. Screening
           and round decisions remain in your application details.
         </p>
         {history.events.length === 0 ? (
           <EmptyState title="No application-status history records available" description="Your current application status appears above." />
         ) : (
-          <ol className="mt-5 space-y-3">
+          <ol className="mt-4 divide-y divide-border">
             {history.events.map((event) => (
-              <li key={event.id} className="border-b border-border py-4">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <p className="m-0 text-sm font-semibold text-foreground">{event.label}</p>
-                  <time className="text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>
+              <li key={event.id} className="min-w-0 py-3 first:pt-0 last:pb-0 sm:py-4">
+                <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                  <p className="m-0 min-w-0 break-words text-sm font-semibold text-foreground">{event.label}</p>
+                  <time className="shrink-0 text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>
                     {dateInIst(event.occurredAt)}
                   </time>
                 </div>
