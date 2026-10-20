@@ -96,9 +96,9 @@ export default async function FacultyContactsPage({
           <form
             key={result.search + ":" + result.pageSize}
             action={baseHref}
-            className="flex w-full max-w-2xl flex-wrap items-end gap-2"
+            className="flex w-full max-w-2xl flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch"
           >
-            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-body">
+            <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-auto">
               Search contacts
               <Input
                 className="mt-1.5"
@@ -108,7 +108,7 @@ export default async function FacultyContactsPage({
                 placeholder="Name or department"
               />
             </label>
-            <label className="text-[13px] font-semibold leading-4 text-body">
+            <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Contacts per page
               <Select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
