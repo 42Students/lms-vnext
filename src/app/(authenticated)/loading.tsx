@@ -1,5 +1,5 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function AuthenticatedLoading() {
-  return <LoadingState />;
+  return <GracefulPageLoading shape="directory" />;
 }
