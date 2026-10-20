@@ -110,7 +110,7 @@ function ContentCard({
           href={item.externalUrl}
           
           rel="noopener noreferrer"
-          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
         >
           Open link ↗
         </a>
