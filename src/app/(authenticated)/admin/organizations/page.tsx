@@ -32,7 +32,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     <PageHeader title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/organizations" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold underline">Clear filters</Link>}/>
+      action={<Link href="/admin/organizations" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold underline">Clear filters</Link>}/>
   </div>;
   const organizations = await listOrganizations(context);
   const {q,pageSize}=filters;
@@ -107,18 +107,18 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
        {!archived.length?<p role="status" className="mt-3 text-sm text-body">No archived organizations in this scope.</p>:null}
       </Disclosure>:null}
       <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
-       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold text-body md:min-w-48">Search organizations
+       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-[13px] font-semibold text-body md:min-w-48">Search organizations
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="w-full" />
        </label>
-       <label className="flex flex-col gap-1 text-sm font-semibold text-body">Rows per page
+       <label className="flex flex-col gap-1 text-[13px] font-semibold text-body">Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)} className="w-full">
          {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
        </label>
        <Button type="submit">Search</Button>
-       <Link href="/admin/organizations" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm text-primary-text underline">Clear search</Link>
-       <Link href={href(page)} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm text-primary-text underline">Refresh</Link>
+       <Link href="/admin/organizations" className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link>
+       <Link href={href(page)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline">Refresh</Link>
       </form>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
       <DataTable caption="Existing Organizations" empty={<EmptyState
