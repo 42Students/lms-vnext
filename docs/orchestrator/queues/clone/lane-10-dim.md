@@ -43,26 +43,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-10.md: file, number of 
 - [x] `src/app/(authenticated)/admin/people/page.tsx`
 - [x] `src/app/(authenticated)/admin/people/unassigned/error.tsx`
 - [x] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/hiring/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/interviews/[roundId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/interviews/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/job-settings/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/job-settings/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/[offerId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/[offerId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/[applicationId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/hiring/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/interviews/[roundId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/interviews/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/job-settings/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/job-settings/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/joining/[offerId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/joining/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/[offerId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/screenings/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/seasons/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/error.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/shortlisted/error.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
