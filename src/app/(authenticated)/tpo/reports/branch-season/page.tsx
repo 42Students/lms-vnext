@@ -29,34 +29,32 @@ export default async function TpoBranchSeasonPage({
     context, { ...(seasonId ? { seasonId } : {}) },
   );
   return (
-    <div data-tpo-presentation-report className="space-y-6">
-      <TpoReportPresentation />
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/branch-season" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <Link href="/tpo/reports/by-branch" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        ← By Branch report
-      </Link>
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Branch by placement season"
         description="Current college branch attribution and persisted applicant/offer numerators; unknown registration denominators are never treated as zero."
-        actions={dashboard.season ? (
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <Link href="/tpo/reports/by-branch" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← By Branch report</Link>
+          {dashboard.season ? (
           <a
             href={"/api/placements/tpo/reports/branch-season/export?seasonId=" +
               encodeURIComponent(dashboard.season.id)}
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-white hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-white hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Export season CSV
           </a>
-        ) : undefined}
+        ) : null}
+        </div>}
       />
       {dashboard.seasons.length ? (
-        <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
-          <label className="block w-full min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">
+        <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+          <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Placement season
             <Select
               name="seasonId"
               defaultValue={dashboard.season?.id ?? ""}
-              className="mt-2 block w-full min-h-11 min-[768px]:w-auto min-[768px]:min-h-9"
+              className="mt-2 block min-h-11 w-full md:min-h-9"
             >
               {dashboard.seasons.map((season) => (
                 <option key={season.id} value={season.id}>
@@ -67,12 +65,14 @@ export default async function TpoBranchSeasonPage({
           </label>
           <Button variant="secondary"
             type="submit"
-            className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9"
+            className="min-h-11 w-full sm:w-auto md:min-h-9"
           >
             View season
           </Button>
         </form>
       ) : null}
+      <div className="flex min-w-0 flex-wrap items-center"><TpoReportPresentation /></div>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/branch-season" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       {!dashboard.season ? (
         <EmptyState title="No placement seasons are recorded for this college." description="No branch rate can be calculated."/>
       ) : (
