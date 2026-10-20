@@ -4,15 +4,18 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {useRouter,usePathname,useSearchParams} from "next/navigation";
-import {useId,useState} from "react";
+import {useEffect,useId,useState} from "react";
 import {BottomSheet} from "@/components/ui/bottom-sheet";
 import {updateTpoGridQuery} from "@/modules/placements/tpo-grid-model";
 import {activeTpoGridFilterCount,invalidTpoGridFilterValue,resolvedTpoGridFilterValue} from "@/modules/placements/tpo-grid-filter-state";
 import {clearTpoGridFilters} from "@/modules/placements/tpo-grid-filter-reset";
 export type TpoFilterField={key:string;label:string;urlKey?:string;allValue?:string;options:readonly {value:string;label:string}[]};
-export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter students"}:{fields:readonly TpoFilterField[];mobileSheet?:boolean;title?:string}){
+export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter students",autoOpenMobile=false,onAutoClose}:{fields:readonly TpoFilterField[];mobileSheet?:boolean;title?:string;autoOpenMobile?:boolean;onAutoClose?:()=>void}){
  const router=useRouter(),pathname=usePathname(),query=useSearchParams();
  const [sheetOpen,setSheetOpen]=useState(false);
+ useEffect(()=>{
+  if(autoOpenMobile&&mobileSheet&&window.matchMedia("(max-width: 767px)").matches)setSheetOpen(true);
+ },[autoOpenMobile,mobileSheet]);
  const filterPanelId=useId();
  const activeCount=activeTpoGridFilterCount(new URLSearchParams(query.toString()),fields);
  function update(field:TpoFilterField,value:string){
@@ -50,7 +53,7 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
    className="min-h-11 md:hidden">
    {title} ({activeCount})
   </Button>
-  <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title={title}>
+  <BottomSheet open={sheetOpen} onOpenChange={next=>{setSheetOpen(next);if(!next&&autoOpenMobile)onAutoClose?.();}} title={title}>
    <div id={filterPanelId} aria-label={title} className={wrapper}>{content}</div>
   </BottomSheet>
   <aside aria-label="Grid filters" className={wrapper+" hidden md:block"}>{content}</aside>
