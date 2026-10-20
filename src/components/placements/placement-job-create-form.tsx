@@ -115,7 +115,7 @@ export function PlacementJobCreateForm({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
+  const { dirty, markDirty, clearDirty, guardDialog } = useUnsavedDriveGuard();
   const formRef=useRef<HTMLFormElement>(null);
   const clearedBackup=useRef(false);
   // TPO-drives-45: apply the 11:59 PM IST default only to the first newly chosen date.
@@ -1443,7 +1443,6 @@ export function PlacementJobCreateForm({
       <details className="min-w-0 border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Who this reaches</summary>
       <section aria-label="Who this reaches" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-        <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
         <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>
@@ -1484,6 +1483,7 @@ export function PlacementJobCreateForm({
         Do not submit a second drive.
       </p>:null}
       {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
+      {guardDialog}
     </form>
   );
 }
