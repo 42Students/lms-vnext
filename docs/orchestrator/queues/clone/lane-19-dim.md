@@ -83,26 +83,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-19.md: file, number of 
 - [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
 - [x] `src/components/admin/super-admin-interview-operations.tsx`
 - [x] `src/components/admin/super-admin-learning-filter-fields.tsx`
-- [ ] `src/components/admin/super-admin-platform-block-action.tsx`
-- [ ] `src/components/admin/super-admin-student-bulk-access.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/admin/tenant-settings-editor.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/college/college-admin-profile-editor.tsx`
-- [ ] `src/components/college/college-department-insights.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/college/college-faculty-lifecycle-action.tsx`
-- [ ] `src/components/college/college-faculty-reassign-action.tsx`
-- [ ] `src/components/college/college-faculty-schedule-reassign.tsx`
-- [ ] `src/components/college/college-student-lifecycle-action.tsx`
-- [ ] `src/components/college/student-class-move-action.tsx`
-- [ ] `src/components/courses/admin-offering-section-preview.tsx`
-- [ ] `src/components/courses/assignment-file-submission-control.tsx`
-- [ ] `src/components/courses/assignment-submission-control.tsx`
-- [ ] `src/components/courses/college-assignment-review.tsx`
-- [ ] `src/components/courses/college-quiz-attempts.tsx`
-- [ ] `src/components/courses/faculty-assessment-create.tsx`
+- [x] `src/components/admin/super-admin-platform-block-action.tsx`
+- [x] `src/components/admin/super-admin-student-bulk-access.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/admin/tenant-settings-editor.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/college/college-admin-profile-editor.tsx`
+- [x] `src/components/college/college-department-insights.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/college/college-faculty-lifecycle-action.tsx`
+- [x] `src/components/college/college-faculty-reassign-action.tsx`
+- [x] `src/components/college/college-faculty-schedule-reassign.tsx`
+- [x] `src/components/college/college-student-lifecycle-action.tsx`
+- [x] `src/components/college/student-class-move-action.tsx`
+- [x] `src/components/courses/admin-offering-section-preview.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/courses/assignment-submission-control.tsx`
+- [x] `src/components/courses/college-assignment-review.tsx`
+- [x] `src/components/courses/college-quiz-attempts.tsx`
+- [x] `src/components/courses/faculty-assessment-create.tsx`
 - [ ] `src/components/courses/faculty-assignment-material-links.tsx`
 - [ ] `src/components/courses/faculty-course-roster.tsx`
 - [ ] `src/components/courses/faculty-course-tab-navigation.tsx`
