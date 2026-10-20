@@ -51,7 +51,7 @@ export function MentorMeetingReschedule(props:{
     }finally{setPending(false);}
   }
   return <div className={styles.legacy+" "+styles.contents}>
-    <Button variant="secondary" onClick={()=>{
+    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
       setStart(toIstLocalInput(props.startsAt));
       setEnd(toIstLocalInput(props.endsAt));setError(null);setOpen(true);
     }}>Reschedule</Button>
@@ -63,26 +63,26 @@ export function MentorMeetingReschedule(props:{
         <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
           <Input data-slot="input" type="datetime-local" required value={start}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
-            onChange={event=>setStart(event.target.value)}
+            onChange={event=>{setStart(event.target.value);setError(null);}}
             className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
         </label>
         <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
           <Input data-slot="input" type="datetime-local" required value={end}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
-            onChange={event=>setEnd(event.target.value)}
+            onChange={event=>{setEnd(event.target.value);setError(null);}}
             className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
         </label>
         {!parsed.success?<p id={validationId} role="alert" className="text-sm text-foreground">
           Select valid start/end times, with a duration up to 12 hours.</p>:null}
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-        <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={guard.requestClose}>Cancel</Button>
-          <Button type="submit" disabled={!parsed.success||!changed||pending}>
+        <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={guard.requestClose}>Cancel</Button>
+          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!parsed.success||!changed||pending}>
             Review reschedule</Button>
         </div>
       </form>
     </Dialog>
-    <ConfirmDialog open={confirm} onOpenChange={next=>{setConfirm(next);if(!next&&!pending)setOpen(true);}}
+    <ConfirmDialog open={confirm} onOpenChange={next=>{if(pending)return;setConfirm(next);if(!next)setOpen(true);}}
       title="Confirm meeting reschedule?" confirmLabel="Confirm reschedule"
       description="Your new IST time will be checked against this project's scheduled meetings. No external message is sent."
       pending={pending} onConfirm={save}>
