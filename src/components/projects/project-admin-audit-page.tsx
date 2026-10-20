@@ -175,8 +175,8 @@ export async function ProjectAdminAuditPage({
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
         actions={<div className="flex flex-wrap items-center justify-end gap-2">
-          <a href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Refresh</a>
-          {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">View activity log</a> : null}
+          <a href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Refresh</a>
+          {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View activity log</a> : null}
         </div>}
       />
       <ProjectAdminNav basePath={basePath} active="audit" />
@@ -193,7 +193,7 @@ export async function ProjectAdminAuditPage({
         action={basePath + "/audit"}
       >
         <label>
-          <span className="mb-1 block text-[13px] font-semibold text-body">
+          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
             Action
           </span>
           <Select className={inputClass} name="action" defaultValue={eventType??""}>
@@ -206,7 +206,7 @@ export async function ProjectAdminAuditPage({
           </Select>
         </label>
         <label>
-          <span className="mb-1 block text-[13px] font-semibold text-body">
+          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
             Importance
           </span>
           <Select
@@ -230,7 +230,7 @@ export async function ProjectAdminAuditPage({
           </Select>
         </label>
         <label>
-          <span className="mb-1 block text-[13px] font-semibold text-body">
+          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
             Subject
           </span>
           <Input
@@ -241,12 +241,12 @@ export async function ProjectAdminAuditPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-[13px] font-semibold text-body">Entity ID</span>
+          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">Entity ID</span>
           <Input className={inputClass} name="subjectId" defaultValue={subjectId??""}
             placeholder="Exact project or task UUID"/>
         </label>
         <label>
-          <span className="mb-1 block text-[13px] font-semibold text-body">
+          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
             From (IST)
           </span>
           <Input
@@ -257,7 +257,7 @@ export async function ProjectAdminAuditPage({
           />
         </label>
         <label>
-          <span className="mb-1 block text-[13px] font-semibold text-body">
+          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
             To (IST)
           </span>
           <Input
@@ -276,7 +276,7 @@ export async function ProjectAdminAuditPage({
           </Button>
           <a
             href={basePath + "/audit"}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Reset
           </a>
