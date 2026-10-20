@@ -272,7 +272,7 @@ export function CollegeCohortRowActions({ row, periods }: {
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)close();}}
       title={"Edit batch " + row.name}>
       <form onSubmit={save} className="space-y-3">
-        <h2 className="text-lg font-semibold text-foreground">Edit batch</h2>
+        
         <p className="text-sm text-muted-foreground">Program and starting period cannot change after creation.</p>
         <label className="grid gap-1 text-sm font-medium text-body">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}

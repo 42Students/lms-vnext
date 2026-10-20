@@ -189,7 +189,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
       title={"Edit class " + row.name}>
       <form onSubmit={save} className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Edit class</h2>
+        
         <p className="text-sm text-muted-foreground">
           Batch and academic period are immutable. Name and code changes require no dependent records.
         </p>
