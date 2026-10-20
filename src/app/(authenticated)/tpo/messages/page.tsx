@@ -80,7 +80,7 @@ export default async function TpoMessagesPage({
 
   if (!parsed.success) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           title="Messages"
           description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
@@ -127,7 +127,7 @@ export default async function TpoMessagesPage({
     : "Placement notifications";
   // TPO-inbox-team-11: do not disguise notification deliveries as messages
   // when the recruiter-thread tables are not available.
-  if(!isRecruiterInbox)return <div className="space-y-6">
+  if(!isRecruiterInbox)return <div className="min-w-0 space-y-6">
    <PageHeader title="Messages"
     description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
    <ErrorState title="Recruiter conversations are temporarily unavailable"
@@ -158,7 +158,7 @@ export default async function TpoMessagesPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <TpoLiveRefresh intervalMs={4000}/>
       <PageHeader
         title="Messages"
@@ -187,7 +187,7 @@ export default async function TpoMessagesPage({
         className="border-t border-border pt-5"
       >
         <div className="flex flex-wrap items-center gap-3">
-          <h2 className="font-semibold text-foreground">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             {sourceLabel}
           </h2>
           <StatusBadge
@@ -220,7 +220,7 @@ export default async function TpoMessagesPage({
 
       <section
         aria-label="Communication summary"
-        className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4"
+        className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4"
       >
         {[
           {
@@ -266,16 +266,16 @@ export default async function TpoMessagesPage({
           </Link>)}
       </nav> : null}
       <section className="border-t border-border pt-4 min-[768px]:pt-5">
-        <h2 className="text-base font-semibold text-foreground">
+        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Communication filters
         </h2>
 
         <form
           action="/tpo/messages"
           method="get"
-          className="mt-4 grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5"
+          className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5"
         >
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select
               name="status"
@@ -299,7 +299,7 @@ export default async function TpoMessagesPage({
             </Select>
           </label>
 
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
             <Input
               type="date"
@@ -309,7 +309,7 @@ export default async function TpoMessagesPage({
             />
           </label>
 
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
             <Input
               type="date"
@@ -319,7 +319,7 @@ export default async function TpoMessagesPage({
             />
           </label>
 
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search
             {isRecruiterInbox?<TpoInboxSearch
               value={query.q} placeholder="Recruiter, subject or message"/>:
@@ -328,7 +328,7 @@ export default async function TpoMessagesPage({
                 className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"/>}
           </label>
 
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
