@@ -10,8 +10,8 @@
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-18.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-18-b with [chat-18] after every 2 surfaces.
 
 
-- [ ] `src/components/placements/tpo-drive-deadline-form.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/placements/tpo-drive-deadline-form.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
 - [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
 - [ ] `src/components/placements/tpo-joining-update-form.tsx`
 - [ ] `src/components/tpo/tpo-batch-invitation-control.tsx`
