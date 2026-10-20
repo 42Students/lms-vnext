@@ -225,3 +225,13 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 41. Inspected full roster manager, DataTable, select/filter, member move action, `ConfirmDialog` and scoped section-enrollment API shape. Reviewed query and empty reset, unassigned/current/full/inactive/cross-period targets, confirmation/pending/error/success and responsive rows.
 - Regression fixed (1): Move buttons underneath the confirmation remained enabled, despite destination select being frozen. Disable all Move triggers while a pending-row review is open, preventing a new action from overwriting the reviewed row.
 - Extra clutter/alignment fix (1): remove duplicated inner modal padding now that common ConfirmDialog supplies 16px mobile / canvas desktop insets; current and destination detail columns retain their grid and text. Files: `src/components/admin/super-admin-batch-roster-manager.tsx`, proof, queue. No code/CI.
+
+## Surface 42 — `src/components/admin/super-admin-company-verification.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 42. Inspected the complete component, `apiFetch`, button/alert contracts and shared `ConfirmDialog`. Reviewed global verify/unverify request, company name, old/new status, modal/failed request visibility, pending dismissal, restored notice and responsive action variants.
+- Regressions found/fixed: 0. Correct POST and inverted `verified` flag, safe busy state, exact confirmation wording and retry behavior remain; no broken TSX or lost labels.
+- Extra clutter/alignment fix (1): removed an extra `px-4 py-4 md:px-6` body gutter now duplicated by common ConfirmDialog padding, preserving before/after status and in-dialog error. Files: component, proof, queue. No code/CI.
+
+## Surface 43 — `src/components/admin/tenant-restore-action.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 43. Read complete component, `useGuardedAction` timeout locking, `useToast`, `ConfirmDialog`, typed organization/college restoration target, success/failed modal and row action states. Checked 44px phone action, long names, pending/cancel, double click, original warning, status refresh, error visibility and recovery.
+- Regressions found/fixed: 0. Retained exact restore endpoints and warnings, active scope, busy guard, success/failure toasts, retry/reset and modal dismissal lock.
+- Extra clutter/alignment fix (1): remove duplicate child modal insets now provided by the shared confirmation component, preserving the full readiness caveat and failure alert. Files: `src/components/admin/tenant-restore-action.tsx`, proof, queue. Source-only; no CI.

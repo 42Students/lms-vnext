@@ -50,5 +50,5 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-17.md: surface | regre
 - [x] `src/components/admin/managed-college-subdomain.tsx`
 - [x] `src/components/admin/student-rule-editor.tsx`
 - [x] `src/components/admin/super-admin-batch-roster-manager.tsx`
-- [ ] `src/components/admin/super-admin-company-verification.tsx`
-- [ ] `src/components/admin/tenant-restore-action.tsx`
+- [x] `src/components/admin/super-admin-company-verification.tsx`
+- [x] `src/components/admin/tenant-restore-action.tsx`
