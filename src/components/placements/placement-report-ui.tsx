@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import {TpoReportPresentation} from "./tpo-report-presentation";
 import {TpoReportSavedFilters} from "./tpo-report-saved-filters";
 import {ReportInteractiveTable} from "./report-interactive-table";
@@ -57,10 +58,10 @@ export function ReportFilters({
   return (
     <section
       aria-label="Report filters"
-      className="grid gap-4 border-b border-border pb-6 lg:grid-cols-2 print:hidden"
+      className="grid min-w-0 grid-cols-1 gap-4 border-b border-[var(--lms-canvas-border)] pb-6 min-[992px]:grid-cols-2 print:hidden"
     >
       <form action={path} method="get" className="flex flex-wrap items-end gap-3">
-        <label className="min-w-48 flex-1 text-sm font-semibold text-body">
+        <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Placement season
           <Select
             name="seasonId"
@@ -90,13 +91,13 @@ export function ReportFilters({
 
       <form action={path} method="get" className="flex flex-wrap items-end gap-3">
         {workspace.selectedSeasonId ? (
-          <input
+          <Input
             type="hidden"
             name="seasonId"
             value={workspace.selectedSeasonId}
           />
         ) : null}
-        <label className="min-w-48 flex-1 text-sm font-semibold text-body">
+        <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Drive
           <Select
             name="jobId"
@@ -120,8 +121,8 @@ export function ReportFilters({
           Apply drive
         </Button>
       </form>
-      <div className="lg:col-span-2"><TpoReportSavedFilters path={path} collegeId={workspace.collegeId} userId={userId}/></div>
-      <p className="text-xs leading-5 text-muted-foreground lg:col-span-2">
+      <div className="min-[992px]:col-span-2"><TpoReportSavedFilters path={path} collegeId={workspace.collegeId} userId={userId}/></div>
+      <p className="text-xs leading-5 text-muted-foreground min-[992px]:col-span-2">
         Changing the season clears the drive filter. Changing the drive
         preserves the selected season. Reports are read-only and restricted
         to your college.

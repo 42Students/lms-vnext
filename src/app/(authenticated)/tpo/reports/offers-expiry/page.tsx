@@ -24,13 +24,13 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
   const data = await getTpoOfferExpiryWatchlist(context,
     first(query.days) === undefined ? {} : { days: first(query.days) });
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-6">
       <TpoReportPresentation />
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/offers-expiry" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
         actions={process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
+          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Export CSV
         </a> : null}
       />
@@ -42,14 +42,14 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       </Link>
       <form action="/tpo/reports/offers-expiry" method="get"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="text-sm font-semibold text-body">Expiring in the next N calendar days
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expiring in the next N calendar days
           <Select name="days" defaultValue={String(data.days)}
-            className="mt-2 block min-h-11 sm:min-h-9">
+            className="mt-2 block min-h-11 min-[768px]:min-h-9">
             {[1, 3, 7, 14, 30, 60, 90].map((value) =>
               <option key={value} value={value}>{value} days</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 sm:min-h-9">
+        <Button type="submit" className="min-h-11 min-[768px]:min-h-9">
           Apply window
         </Button>
       </form>
@@ -66,7 +66,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
         <section aria-label="Expiring offer records" className="grid gap-3">
           {data.rows.map((row) => (
             <article key={row.offerId} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div className="min-w-0">
                   <h2 className="font-semibold text-foreground">
                     {row.companyName} · {row.roleTitle}
@@ -79,7 +79,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
                   </p>
                 </div>
                 <Link href={"/tpo/placements/jobs/" + row.jobId}
-                  className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:underline">
+                  className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:underline">
                   Open drive
                 </Link>
               </div>

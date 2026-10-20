@@ -38,7 +38,7 @@ export default async function SuperAdminAttendancePage({
 
   if (!collegeId) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-5">
         <PageHeader
           
           title="Attendance"
@@ -129,9 +129,8 @@ export default async function SuperAdminAttendancePage({
   };
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader
-        
         title="Attendance"
         description={`Scoped attendance oversight for ${options.college.name}.`}
       />

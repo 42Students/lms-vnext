@@ -63,7 +63,7 @@ export default async function LearnerPlacementApplicationsPage() {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader title="Applications" actions={(
-        <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+        <Link href="/learn/my-placements/offers" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Review all official offers →
       </Link>
       )} />

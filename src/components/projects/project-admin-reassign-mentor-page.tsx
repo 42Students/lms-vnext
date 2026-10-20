@@ -33,8 +33,9 @@ export async function ProjectAdminReassignMentorPage({
   >;
 }) {
   const parsed=parseProjectAdminReassignMentorQuery(searchParams);
-  if(!parsed.success)return <div className="space-y-6">
-    <PageHeader title="Bulk mentor reassignment"/>
+  if(!parsed.success)return <div className="min-w-0 space-y-6">
+    <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
+    <ProjectAdminNav basePath={basePath} active="workspaces" />
     <ErrorState title="Invalid mentor reassignment filters"
       description="Check the mentor, workspace, search, status, page and rows filters, or clear them to continue."
       action={<Link href={basePath+"/reassign-mentor"}
@@ -53,8 +54,8 @@ export async function ProjectAdminReassignMentorPage({
   ]);
   if(projectsRead.status==="rejected"||
      mentorsRead.status==="rejected"||workloadRead.status==="rejected")
-    return <div className="space-y-6">
-      <PageHeader title="Bulk mentor reassignment"/>
+    return <div className="min-w-0 space-y-6">
+      <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
       <ProjectAdminNav basePath={basePath} active="workspaces"/>
       <ErrorState title="Mentor reassignment unavailable"
         description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
@@ -67,7 +68,7 @@ export async function ProjectAdminReassignMentorPage({
 
   const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Bulk mentor reassignment"
         description="Move selected non-archived project workspaces to a new primary mentor."
@@ -76,7 +77,7 @@ export async function ProjectAdminReassignMentorPage({
       <ProjectAdminNav basePath={basePath} active="workspaces" />
       <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Mentor workload</h2>
-        <div className="mt-3 grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {workload.map(row => {
             const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
             const filter = row.mentorMembershipId ?? "UNASSIGNED";
@@ -103,9 +104,9 @@ export async function ProjectAdminReassignMentorPage({
           <Input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
             placeholder="Enter mentor name or email" className="w-full"/>
         </label>
-        <Button type="submit" className="">Find mentor</Button>
-        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Clear mentor search</Link>:null}
-        <p className="w-full text-xs text-muted-foreground">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
+        <Button type="submit" className="min-h-11 w-full md:min-h-9">Find mentor</Button>
+        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear mentor search</Link>:null}
+        <p className="min-w-0 text-xs text-muted-foreground md:col-span-full">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <ProjectAdminFilters query={query} />
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
@@ -123,7 +124,7 @@ export async function ProjectAdminReassignMentorPage({
             </option>)}
           </Select>
         </label>
-        <Button type="submit" className="">
+        <Button type="submit" className="min-h-11 w-full md:min-h-9">
           Apply mentor filter
         </Button>
       </form>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {MentorProjectCloseoutControl} from "@/components/projects/mentor-project-closeout-control";
 import {getMentorProjectCloseout} from "@/modules/projects/mentor-closeout-service";
 
@@ -27,7 +28,7 @@ export default async function MentorProjectCloseoutPage({
       <h2 className="font-semibold text-foreground">Persisted completion checklist</h2>
       <ul className="mt-3 grid gap-2">{items.map(([label,passed])=>
         <li key={label} className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
-          <span className="min-w-0 flex-1 break-words">{label}</span><strong className="shrink-0">{passed?"Recorded":"Not satisfied"}</strong>
+          <span className="min-w-0 flex-1 break-words">{label}</span><StatusBadge tone={passed?"success":"warning"}>{passed?"Recorded":"Not satisfied"}</StatusBadge>
         </li>)}</ul>
       {!data.checklist.canComplete
         ? <p role="status" className="mt-4 text-sm text-body">

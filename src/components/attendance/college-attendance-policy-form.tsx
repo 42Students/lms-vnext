@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
@@ -103,7 +104,7 @@ export function CollegeAttendancePolicyForm({
         </p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 md:grid-cols-2">
         <div>
           <label
             htmlFor="attendance-eligibility-threshold"
@@ -165,13 +166,13 @@ export function CollegeAttendancePolicyForm({
         </div>
       </div>
 
-      <p className="rounded-[var(--lms-control-radius)] bg-muted px-4 py-3 text-sm leading-6 text-body">
+      <Alert tone="warning">
         Changing the correction window affects
         the permitted correction period for
         existing as well as future sessions.
         Existing attendance records are not
         modified by saving this policy.
-      </p>
+      </Alert>
 
       {message ? (
         <p
@@ -194,13 +195,15 @@ export function CollegeAttendancePolicyForm({
       <div className="flex flex-wrap items-center gap-3 border-t border-border pt-5">
         <Button
           type="submit"
+          className="min-h-11 md:min-h-9"
+          loading={saving}
           disabled={saving}
         >
           {saving
             ? "Saving policy…"
             : "Save attendance policy"}
         </Button>
-        <Button type="button" variant="secondary" disabled={saving||pending}
+        <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={saving||pending}
           onClick={()=>setResetOpen(true)}>Reset to default</Button>
         <span className="text-xs text-muted-foreground">
           Changes apply to this college only.

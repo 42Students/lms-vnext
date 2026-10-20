@@ -42,7 +42,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleSkills.length)}</span>
-    <Button variant="secondary" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setSearch("")}>Clear Skill search</Button>
+    <Button variant="secondary" type="button"  onClick={()=>setSearch("")}>Clear Skill search</Button>
    </div>:null}
   {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
   {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground">Clear search to reorder Skills.</p>:null}
@@ -66,7 +66,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     </div>
     <Button variant="secondary" type="button" disabled={pending} onClick={async()=>{if(!(await askConfirm("Remove skill "+(index+1)+" from the unsaved draft?")))return;
       setRows(current=>removeFacultySkillDraft(current,skill.id));setChanged(true);}}
-     className="min-h-11 text-error md:min-h-[var(--lms-control-height)]">Remove</Button>
+     className="text-error">Remove</Button>
    </div>)}
   </div>
   <div className="flex flex-wrap gap-3">

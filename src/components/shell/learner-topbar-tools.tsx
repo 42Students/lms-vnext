@@ -103,7 +103,7 @@ export function LearnerTopbarTools() {
                     setOpen(false);
                     setQuery("");
                   }}
-                  className="block min-h-11 rounded-lg px-3 py-2.5 hover:bg-[#d1f1f1] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)]"
+                  className="block min-h-11 rounded-lg px-3 py-2.5 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)]"
                 >
                   <p className="m-0 text-sm font-semibold text-foreground">
                     {course.courseName}

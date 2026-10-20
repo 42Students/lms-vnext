@@ -21,20 +21,20 @@ export default async function TpoPlacementsOverviewPage() {
         title={TPO_OWNER_PAGE_COPY.placementOperations}
         description="One prioritized command center for screening, drives, results and upcoming rounds."
         actions={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <Link href="/tpo/placements/lifecycle"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground">
               Drive lifecycle
             </Link>
             <Link
               href="/tpo/placements/schedule-conflicts"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground"
             >
               Review schedule conflicts
             </Link>
             <Link
               href="/tpo/placements/new"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-[650] transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground"
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-[650] transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground"
             >
               New opportunity
             </Link>

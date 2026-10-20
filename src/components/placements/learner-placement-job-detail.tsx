@@ -113,16 +113,16 @@ export function LearnerPlacementJobDetail({
           {availability.kind!=="OPEN" ? (
             <div className="mt-3 flex flex-wrap gap-4">
               <Link href="/learn/my-placements/applications"
-                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
                 Check my applications →
               </Link>
               <Link href="/learn/profile"
-                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
                 Review my profile →
               </Link>
               {(availability.kind==="NOT_OPEN" || availability.kind==="EVIDENCE") ? (
                 <Link href="/learn/my-placements#registration"
-                  className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
                   Register for placements →
                 </Link>
               ) : null}
@@ -140,7 +140,7 @@ export function LearnerPlacementJobDetail({
         </p>
         <ul className="mt-4 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
           {requirements.map(role=>(
-            <li key={role.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3">
+            <li key={role.id} className="min-w-0 border-b border-border py-3">
               <p className="break-words text-sm font-semibold text-foreground">{role.title}</p>
               <p className="mt-2 text-xs text-body">
                 {role.checked===0?"No detailed requirement checks available":
@@ -155,11 +155,11 @@ export function LearnerPlacementJobDetail({
         </ul>
         <div className="mt-4 flex flex-wrap gap-4">
           <Link href="/learn/my-placements/rules"
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Review placement rules →
           </Link>
           <Link href="/learn/profile"
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Review profile evidence →
           </Link>
         </div>

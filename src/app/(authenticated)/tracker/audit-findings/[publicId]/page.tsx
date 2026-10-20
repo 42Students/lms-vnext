@@ -2,6 +2,7 @@ import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {getIndependentAuditFinding,listIndependentAuditFindingEvents,listIndependentAuditFindings} from "@/modules/bug-tracker/independent-audit-findings-service";
 import {IndependentFindingActions} from "@/components/tracker/independent-finding-actions";
@@ -26,16 +27,16 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
  ];
  return <div className="min-w-0 space-y-5">
   <PageHeader title={finding.title} description={finding.externalId+" · "+finding.area+" · "+finding.kind}
-   actions={<Link href="/tracker/audit-findings" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Back to audit findings</Link>}/>
+   actions={<PageBackLink href="/tracker/audit-findings" label="Back to audit findings"/>}/>
   <TrackerAdminNav/>
   <div className="flex flex-wrap gap-2"><StatusBadge tone={finding.severity==="CRITICAL"?"error":finding.severity==="HIGH"?"warning":"neutral"}>{finding.severity}</StatusBadge><StatusBadge tone={finding.status==="VERIFIED"||finding.status==="RELEASED_PROD"?"success":finding.status==="NEW"||finding.status==="NEEDS_INFO"?"warning":"info"}>{finding.status}</StatusBadge>
    <StatusBadge>{finding.assignee??"Unassigned"}</StatusBadge></div>
-  {details.map(([label,value])=><section key={label} className="border-b border-border pb-4">
+  {details.map(([label,value])=><section key={label} className="min-w-0 border-b border-border pb-4">
    <h2 className="font-semibold">{label}</h2><p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{value??"Not recorded"}</p>
   </section>)}
   <section className="border-b border-border pb-4">
    <h2 className="font-semibold">Source and affected code</h2>
-   <p className="text-sm text-body">Repository: {finding.sourceRepo} · Source: {finding.sourcePath??"Not recorded"}</p>
+   <p className="break-all text-sm text-body">Repository: {finding.sourceRepo} · Source: {finding.sourcePath??"Not recorded"}</p>
    {([["Paths",finding.paths],["Pages",finding.pages],["Endpoints",finding.endpoints]] as const).map(([label,values])=>
     <div key={label} className="mt-3"><h3 className="text-sm font-semibold">{label}</h3>
      <ul className="list-disc pl-5 text-sm">{values.map(value=><li key={value} className="break-all">{value}</li>)}</ul></div>)}

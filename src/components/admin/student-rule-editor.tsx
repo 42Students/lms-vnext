@@ -67,7 +67,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
  }
  return <div className="mt-4 space-y-3 border-t border-border pt-3 print:hidden">
   {blocked?<p className="text-xs text-warning-text">A broader locked rule prevents writing On/Off. You can still remove a stored membership override with Inherit.</p>:null}
-  <label className="grid gap-1 text-[13px] font-semibold text-body">Stored override
+  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Stored override
    <Select value={choice} disabled={pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
     className="min-h-11 w-full min-[768px]:min-h-9">
     <option value="INHERIT">Inherit</option><option value="ON" disabled={blocked}>On</option><option value="OFF" disabled={blocked}>Off</option>

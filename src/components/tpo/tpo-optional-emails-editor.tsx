@@ -46,7 +46,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   }
  }
  return <section className="space-y-3 border-t border-border pt-5">
-  <h2 className="font-semibold">Optional emails</h2>
+  <h2 className="text-lg font-semibold text-foreground">Optional emails</h2>
   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
   {fields.map(([key,label,help])=><label key={key} className={"flex min-h-12 cursor-pointer items-center justify-between gap-4 rounded-[var(--lms-control-radius)] border-b border-border px-3 py-2 text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] print:hidden "+(value[key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
    <span><span className="font-medium">{label}</span><span className="block text-xs text-muted-foreground">{help}</span></span>
@@ -56,7 +56,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   <ul aria-label="Current optional email preferences" className="hidden space-y-2 text-sm print:block">{fields.map(([key,label,help])=><li key={key} className="break-words border-b border-border pb-2"><strong>{label}:</strong> {value[key]?"On":"Off"} · {help}</li>)}</ul>
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
   <Button type="button" disabled={busy||!dirty} onClick={()=>void save()}
-   className="min-h-11 md:min-h-9 print:hidden">Save changes</Button>
+   className="min-h-11 min-[768px]:min-h-9 print:hidden">Save changes</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {status?<InlineNotice tone="success" message={status}/>:null}
  </section>;

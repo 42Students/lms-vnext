@@ -125,7 +125,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       <PageHeader
         title="Colleges"
         description="Active colleges are constrained by the selected Super Admin safety scope."
-        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Search tenant directory →</Link>}
+        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Search tenant directory →</Link>}
       />
       {creatableOrganizations.length > 0 ? (
         <CollegeCreateForm
@@ -143,7 +143,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         />
       ) : null}
       {creatableOrganizations.length>0?<CollegeBulkImport organizations={creatableOrganizations.map(x=>({id:x.id,name:x.name}))}/>:null}
-      <form className="flex flex-wrap items-end gap-3 border-t border-border pt-4" method="get">
+      <form className="flex flex-wrap items-end gap-3 border-y border-border py-4" method="get">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search college, code, city or organization
         <Input type="search" name="q" defaultValue={q} maxLength={100} />
        </label>

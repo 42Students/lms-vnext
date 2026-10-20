@@ -39,15 +39,15 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/learn/projects/page.tsx`
 - [x] `src/app/(authenticated)/mentor/notifications/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/after-college/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/public-link/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/after-college/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/public-link/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/season/page.tsx`

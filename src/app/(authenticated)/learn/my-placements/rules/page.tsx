@@ -20,7 +20,7 @@ export default async function LearnerPlacementRulesPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={back.href}
-        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
         ← {back.label}
       </Link>
       <PageHeader title="Placement rules"
@@ -66,15 +66,15 @@ export default async function LearnerPlacementRulesPage({
         </ul>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href="/learn/my-placements#placement-academic-evidence"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             Review academic evidence →
           </Link>
           <Link href="/learn/my-placements/jobs"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             Check published drive eligibility →
           </Link>
           <Link href="/learn/profile/verification"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             View my college verification status →
           </Link>
         </div>
@@ -95,7 +95,7 @@ export default async function LearnerPlacementRulesPage({
           No retroactive eligibility decision is inferred.
         </p>
         <Link href="/learn/my-placements/applications"
-          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+          className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
           Review my saved applications →
         </Link>
       </section>

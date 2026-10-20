@@ -55,10 +55,10 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
    </label>)}
   </div>
   <div className="flex flex-wrap items-end gap-3 text-sm print:hidden">
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
+   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
     className="min-h-11 w-full md:min-h-9">
     <option value="projects">Projects</option><option value="electives">Electives</option></Select></label>
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
+   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
     className="min-h-11 w-full md:min-h-9">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
     <option value="INHERIT">Clear override / Inherit</option></Select></label>

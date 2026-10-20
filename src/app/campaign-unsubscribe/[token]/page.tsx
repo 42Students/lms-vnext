@@ -25,7 +25,7 @@ export default async function CampaignUnsubscribe({
       {unavailable ? (
         <Card as="section" role="alert">
           <p className="text-base leading-6 text-body">We couldn't check this confirmation link right now. No preference was changed.</p>
-          <Link className="mt-3 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/campaign-unsubscribe/"+encodeURIComponent(token)}>Retry</Link>
+          <Link className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-link md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/campaign-unsubscribe/"+encodeURIComponent(token)}>Retry</Link>
         </Card>
       ) : !kind ? (
         <Card as="section" role="alert">

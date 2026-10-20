@@ -89,7 +89,7 @@ export default async function SuperAdminBatchPromotionPage({
           {key:"semester",header:"Semester",mobilePriority:"secondary",cell:batch=>batch.currentTermNumber??"—"},
           {key:"year",header:"Academic Year",mobilePriority:"secondary",cell:batch=>batch.currentAcademicYearStart?`${batch.currentAcademicYearStart}–${batch.currentAcademicYearStart+1}`:"—"},
           {key:"students",header:"Students",mobilePriority:"secondary",cell:batch=><span className="tabular-nums">{batch.activeLearners}</span>},
-          {key:"status",header:"Status",mobilePriority:"secondary",cell:batch=>batch.status},
+          {key:"status",header:"Status",mobilePriority:"secondary",cell:batch=><StatusBadge tone={batch.status==="ACTIVE"?"success":"neutral"}>{batch.status}</StatusBadge>},
           {key:"action",header:"Action",mobilePriority:"action",cell:batch=><Link
             href={"/admin/batch-promotion?"+new URLSearchParams({
               ...(input.data.programId?{programId:input.data.programId}:{}),cohortId:batch.id,
@@ -109,7 +109,7 @@ export default async function SuperAdminBatchPromotionPage({
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
         </div>
         <p className="text-sm text-body">{preview.batch.programName} · {preview.batch.status}</p>
-        <dl className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid gap-0 divide-y divide-border border-y border-border min-[768px]:grid-cols-2 lg:grid-cols-4">
           {([
             ["Action", summary.action], ["Target term", summary.targetTerm ?? "Unavailable"],
             ["Learners checked", summary.learnersChecked], ["Learners with blockers", summary.blockedLearners],

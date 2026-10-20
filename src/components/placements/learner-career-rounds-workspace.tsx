@@ -412,7 +412,7 @@ export function LearnerCareerRoundsWorkspace({
           </h3>
           <p className="mt-2 text-sm text-body">{pastReview.notice}</p>
           <Link href="/learn/my-placements/assessments/results"
-            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Check officially applied results →
           </Link>
         </aside>
@@ -430,7 +430,7 @@ export function LearnerCareerRoundsWorkspace({
         </aside>
       ):null}
       {kind==="INTERVIEW"&&focus.hiddenByFilters ? (
-        <aside role="status" className="rounded-xl border border-primary bg-primary-subtle p-4">
+        <aside role="status" className="border-l-2 border-primary bg-primary-subtle px-4 py-3">
           <p className="text-sm font-semibold text-foreground">
             The linked interview is hidden by your current filters.
           </p>
@@ -471,14 +471,14 @@ export function LearnerCareerRoundsWorkspace({
             href={selected
               ? "/learn/my-placements/applications?applicationId=" + encodeURIComponent(selected.applicationId)
               : "/learn/my-placements/applications"}
-            className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
           >View application</Link>
           {kind === "INTERVIEW" && selected ? (
             <Link
               href={"/learn/my-placements/interviews?applicationId=" +
                 encodeURIComponent(selected.applicationId) +
                 "&roundId=" + encodeURIComponent(selected.roundId)}
-              className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
+              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
             >
               Direct link
             </Link>
@@ -487,12 +487,12 @@ export function LearnerCareerRoundsWorkspace({
             <Link
               href={"/learn/my-placements?requestRoundId=" +
                 encodeURIComponent(selected.roundId) + "#round-reschedule"}
-              className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
+              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
             >
               Request reschedule
             </Link>
           ) : null}
-          <Button className="min-h-11 md:min-h-9 w-full md:w-auto" onClick={() => setSelectedKey(null)}>Close</Button>
+          <Button className="min-h-[var(--lms-control-height)] max-md:min-h-11 w-full md:w-auto" onClick={() => setSelectedKey(null)}>Close</Button>
         </>}
       >
         {selected ? (
@@ -561,7 +561,7 @@ export function LearnerCareerRoundsWorkspace({
               ) : null}
               {meeting ? (
                 <a href={meeting} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
                   Open meeting ↗
                 </a>
               ) : null}
@@ -579,11 +579,11 @@ export function LearnerCareerRoundsWorkspace({
                 {interviewCalendar ? <div className="mt-3 flex flex-wrap gap-3">
                   <a download={interviewCalendar.filename}
                     href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(interviewCalendar.ics)}
-                    className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto">
+                    className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto">
                     Download .ics
                   </a>
                   <a href={interviewCalendar.googleUrl} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+                    className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
                     Add to Google Calendar ↗
                   </a>
                 </div> : <p className="mt-2 text-sm text-muted-foreground">
@@ -631,7 +631,7 @@ export function LearnerCareerRoundsWorkspace({
           <Button variant="secondary" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
           {confirmExternalTest ? <a href={confirmExternalTest} target="_blank" rel="noopener noreferrer"
             onClick={()=>setConfirmExternalTest(null)}
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
             Open external assessment ↗
           </a>:null}
         </>}>

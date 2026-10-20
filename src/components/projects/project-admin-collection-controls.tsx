@@ -72,24 +72,24 @@ export function ProjectAdminFilters({
   return (
     <form
       method="get"
-      className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
+      className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-4"
     >
-      <label className="grid gap-1 text-sm font-semibold text-body">
+      <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Search
         <Input
           name={legacyWorkspaces ? "search" : "q"}
           type="search"
           defaultValue={query.q ?? ""}
           placeholder={legacyWorkspaces ? "Search title or slug" : "Workspace title or slug"}
-          className="min-w-56"
+          className="w-full min-w-0"
         />
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">
+      <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Workspace status
         <Select
           name="status"
           defaultValue={query.status ?? ""}
-          className=""
+          className="w-full"
         >
           <option value="">All statuses</option>
           {PROJECT_STATUSES.map((status) => (
@@ -103,10 +103,10 @@ export function ProjectAdminFilters({
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
       {includeRiskSort ? (
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Sort by
           <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
-            className="">
+            className="w-full">
             <option value="INACTIVE">Inactive</option>
             <option value="SEVERITY">Severity</option>
             <option value="WORKSPACE">Workspace</option>
@@ -114,14 +114,14 @@ export function ProjectAdminFilters({
         </label>
       ) : null}
       {includeSubmissionStatus ? (
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Submission status
           <Select
             name="submissionStatus"
             defaultValue={
               query.submissionStatus ?? ""
             }
-            className=""
+            className="w-full"
           >
             <option value="">All submissions</option>
             {SUBMISSION_STATUSES.map((status) => (
@@ -132,14 +132,14 @@ export function ProjectAdminFilters({
           </Select>
         </label>
       ) : null}
-      <label className="grid gap-1 text-sm font-semibold text-body">
+      <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Rows
         <Select
           name="pageSize"
           defaultValue={String(
             query.pageSize ?? (legacyWorkspaces ? 20 : 25),
           )}
-          className=""
+          className="w-full"
         >
           {[10, 20, 25, 50, 100].filter((size) => !legacyWorkspaces || size !== 25).map((size) => (
             <option key={size} value={size}>
@@ -150,13 +150,13 @@ export function ProjectAdminFilters({
       </label>
       <Button
         type="submit"
-        className=""
+        className="min-h-11 w-full md:min-h-9"
       >
         Apply
       </Button>
       <Link
         href={filterView?"?view=NOT_SUBMITTED":"?"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
       >
         Clear
       </Link>

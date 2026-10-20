@@ -75,7 +75,7 @@ export default async function TpoTeamPage({searchParams}:{
  const filter=parsed.success?(parsed.data.filter??"FOLLOWING"):"FOLLOWING";
  const conversationCounts=conversations?.status==="READY"?tpoTeamConversationCounts(conversations.items):null;
  const visibleConversations=conversations?.status==="READY"?filterTpoTeamConversations(conversations.items,filter):[];
- return <div className="space-y-6">
+ return <div className="min-w-0 space-y-6">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader title={TPO_OWNER_PAGE_COPY.team}
    description="Who does what, and what you decided. Recruiters and students never see this." />
@@ -89,7 +89,7 @@ export default async function TpoTeamPage({searchParams}:{
       members={activeTeam.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
        .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
     <p className="text-xs text-muted-foreground">The college&apos;s TPO and college-admin accounts are always in the team. Everyone in it can do everything in placements.</p>
-    <nav aria-label="Sort team people" className="flex flex-wrap items-center gap-2 text-sm">
+    <nav aria-label="Sort team people" className="flex min-w-0 flex-wrap items-center gap-2 text-[13px]">
       <span className="font-semibold">Sort:</span>
       {([["WORK","Most assigned duties"],["OVERDUE","Overdue first"],["NAME","Name"]] as const).map(([value,label])=>
        <Link key={value} href={"/tpo/team?tab=people&sort="+value}
@@ -145,10 +145,10 @@ export default async function TpoTeamPage({searchParams}:{
       </li>)}
     </ul>:<EmptyState title="No active team assignments" description="No members match this college's currently active role evidence." />}
   </section>:<section className="border-b border-border py-5">
-    <h2 className="font-semibold text-foreground">Internal conversations</h2>
+    <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Internal conversations</h2>
     <div className="mt-3"><TpoTeamSearch value={search}/></div>
     {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the conversations on this page.</p>:null}
-    {conversationCounts?<nav aria-label="Filter team conversations" className="mt-3 flex flex-wrap gap-2">
+    {conversationCounts?<nav aria-label="Filter team conversations" className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
      {(["ALL","FOLLOWING","UNREAD","TOPICS","DECISIONS",...(conversations?.status==="READY"&&conversations.asksReady?["ASKS","AT_ME"] as const:[])] as const).map(key=><Link key={key}
       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter:key,...(search?{q:search}:{})}).toString()}
       aria-current={filter===key?"page":undefined}

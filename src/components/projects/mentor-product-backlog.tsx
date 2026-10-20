@@ -84,7 +84,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         router.refresh();
       }catch{setError("Could not add backlog task");}
       finally{setBusy(false);}
-    }} className="grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
+    }} className="grid gap-3 border-t border-border pt-3 min-[768px]:grid-cols-2">
       <label className="text-sm font-semibold">Title<Input required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
@@ -117,7 +117,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
-      <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
+      <label className="text-sm font-semibold min-[768px]:col-span-2">What&apos;s blocking this task?
         <Textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
@@ -131,7 +131,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   </section>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
-  <div className="grid gap-3 sm:grid-cols-2">
+  <div className="grid gap-3 min-[768px]:grid-cols-2">
    {backlog.map(task=><article key={task.id} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] p-3">
     <p className="font-semibold">{task.title}</p>
     {task.approach?<p className="mt-2 whitespace-pre-wrap break-words text-xs text-body">
@@ -158,7 +158,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
      </Select>
     </label>:null}
    </article>)}
-   {!backlog.length?<div className="sm:col-span-2"><EmptyState title="Backlog is empty." description="No backlog tasks to display." /></div>:null}
+   {!backlog.length?<div className="min-[768px]:col-span-2"><EmptyState title="Backlog is empty." description="No backlog tasks to display." /></div>:null}
   </div>
   {!readOnly&&returnable.length>0?<Disclosure title="Return unfinished tasks to backlog">
     <div className="mt-2 space-y-2">

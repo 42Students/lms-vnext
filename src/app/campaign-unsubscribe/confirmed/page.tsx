@@ -17,7 +17,7 @@ export default async function Unsubscribed({
             : "Your address has been suppressed from campaign email. Transactional account messages may use separate preferences."}
         </p>
       </Card>
-      <Link href="/" className="inline-flex min-h-9 items-center self-start rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Return home</Link>
+      <Link href="/" className="inline-flex min-h-11 items-center self-start md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Return home</Link>
     </main>
   );
 }

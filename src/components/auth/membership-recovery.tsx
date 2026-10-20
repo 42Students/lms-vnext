@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHeader } from "@/components/ui/page-header";
 import {
   useState,
   useTransition,
@@ -43,9 +44,7 @@ export function MembershipRecovery({
         <p className="m-0 text-sm font-semibold text-primary-text">
           College access changed
         </p>
-        <h1 className="mt-2 text-[30px] font-semibold leading-10 tracking-tight text-[var(--lms-heading)]">
-          Choose another active college
-        </h1>
+        <PageHeader title="Choose another active college" />
         <p className="mt-4 text-base leading-7 text-body">
           {reason === "MEMBERSHIP_NOT_ACTIVE"
             ? "Your previously selected college membership is no longer active."

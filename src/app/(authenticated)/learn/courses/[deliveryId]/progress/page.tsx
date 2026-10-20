@@ -31,7 +31,7 @@ export default async function LearnerCourseProgressPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
-        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course overview
       </Link>
       <PageHeader title="Course progress by lesson" />
@@ -54,7 +54,7 @@ export default async function LearnerCourseProgressPage({
       ) : (
         <section className="space-y-4" aria-label="Lesson completion">
           {progress.lessons.map((lesson) => (
-            <article key={lesson.id} className="rounded-xl border border-border bg-surface p-4 md:p-5">
+            <article key={lesson.id} className="border-b border-border py-4 md:py-5">
               <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <h2 className="text-base font-semibold text-foreground">{lesson.name}</h2>
@@ -95,7 +95,7 @@ export default async function LearnerCourseProgressPage({
               <Link
                 href={"/learn/courses/" + encodeURIComponent(deliveryId) +
                   "/roadmap?lesson=" + encodeURIComponent(lesson.id)}
-                className="mt-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+                className="mt-4 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
                 Open in learning path →
               </Link>
             </article>

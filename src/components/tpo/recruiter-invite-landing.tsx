@@ -1,6 +1,7 @@
 "use client";
 
 import authStyles from "@/components/public/public-auth-skin.module.css";
+import { PageHeader } from "@/components/ui/page-header";
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -22,7 +23,7 @@ type Invite = {
 };
 type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
 
-const actionLink="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const actionLink="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 py-2 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 motion-reduce:transition-none";
 
 export function RecruiterInviteLanding({ token }: { token: string }) {
   const [state, setState] = useState<State>("loading");
@@ -138,7 +139,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   if(state === "load_error") {
     return shell(<div className="space-y-4 text-center">
-      <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">{RECRUITER_INVITE_LOAD_ERROR_HEADING}</h1>
+      <PageHeader title={RECRUITER_INVITE_LOAD_ERROR_HEADING} />
       <p className="text-sm text-muted-foreground">Check your connection and try again. Your invitation has not been consumed.</p>
       <Button type="button" className="min-h-11 w-full md:min-h-9" onClick={()=>{
         setState("loading");setRetrySequence(i=>i+1);
@@ -149,7 +150,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   if (state === "invalid" || !invite) {
     return shell(
       <div className="text-center">
-        <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">This link is no longer valid</h1>
+        <PageHeader title="This link is no longer valid" />
         <p className="mt-2 text-sm text-muted-foreground">
           It may have expired or already been used. Ask the placement cell to send you a new one.
         </p>
@@ -159,7 +160,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   if(state==="joined"){
     return shell(<div className="text-center space-y-3">
-      <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">You now have access to {invite.collegeName}</h1>
+      <PageHeader title={"You now have access to "+invite.collegeName} />
       <p className="text-sm text-muted-foreground">Sign in with your work email, {invite.contactEmail}. We&apos;ll email you a code each time.</p>
       <Link className={actionLink} href="/login">Sign in</Link>
     </div>);
@@ -167,7 +168,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   if (state === "declined") {
     return shell(
       <div className="text-center">
-        <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">Thank you, we have told the placement cell</h1>
+        <PageHeader title="Thank you, we have told the placement cell" />
         <p className="mt-2 text-sm text-muted-foreground">
           You will not be contacted about this again.
         </p>
@@ -177,9 +178,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   return shell(
     <>
-      <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">
-        {invite.collegeName} would like you to hire from their students
-      </h1>
+      <PageHeader title={invite.collegeName+" would like you to hire from their students"} />
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         {invite.companyName ? "You are joining as " + invite.companyName + ". " : ""}
         You can request placement drives and review the students who apply.

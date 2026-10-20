@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
@@ -38,7 +39,7 @@ export default async function MentorTeamMeetingsPage({
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
       description={data.enabled?data.projectTitle:"Projects access is disabled. No private team or meeting data was loaded."}
       actions={<Link data-unskin="" href={board}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Team workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -61,9 +62,9 @@ export default async function MentorTeamMeetingsPage({
           role grants. No private member identities are loaded.
         </p>
       </section>
-      <form method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting status
+      <FilterBar title="Filters"><form method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
+        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All</option><option value="REQUESTED">Requested</option>
@@ -72,7 +73,7 @@ export default async function MentorTeamMeetingsPage({
             <option value="CANCELLED">Cancelled</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting type
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting type
           <Select name="type" defaultValue={data.query.type}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All types</option><option value="GENERAL">General</option>
@@ -80,21 +81,21 @@ export default async function MentorTeamMeetingsPage({
             <option value="REVIEW">Review</option><option value="RETRO">Retrospective</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recorded outcome
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Recorded outcome
           <Select name="outcome" defaultValue={data.query.outcome}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All meetings</option><option value="RECORDED">With written outcome</option>
             <option value="NOT_RECORDED">Without written outcome</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting order
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Most recent first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting title
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting title
           <Input type="search" name="search" maxLength={100}
             defaultValue={data.query.search}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
@@ -104,7 +105,7 @@ export default async function MentorTeamMeetingsPage({
         </Button>
         <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
           className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
-      </form>
+      </form></FilterBar>
       <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
         description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." />
