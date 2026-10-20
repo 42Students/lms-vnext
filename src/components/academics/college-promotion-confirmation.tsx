@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
@@ -25,8 +26,10 @@ export function CollegePromotionConfirmation({
   const [success, setSuccess] = useState<string | null>(null);
 
   function submit() {
+    if (pending) return;
     startTransition(async () => {
       setError(null);
+      setSuccess(null);
       try {
         const response = await fetch("/api/academics/batch-promotion/execute", {
           method: "POST",
@@ -57,20 +60,21 @@ export function CollegePromotionConfirmation({
   }
 
   return <div className="min-w-0 space-y-[var(--lms-space-3)]">
-    {success && <p role="status" className="text-sm font-semibold text-[var(--lms-teal-deep)]">{success}</p>}
-    <Button type="button" onClick={() => { setError(null); setOpen(true); }}
+    {success ? <Alert tone="success">{success}</Alert> : null}
+    <Button type="button" disabled={pending} onClick={() => { setError(null); setSuccess(null); setOpen(true); }}
       className="min-h-11 w-full sm:w-auto md:min-h-9">
       {BATCH_PROMOTION_COPY.promoteButton}
     </Button>
     <ConfirmDialog open={open} onOpenChange={setOpen} title="Promote Batch" description={"Confirm promotion to term "+targetTerm} confirmLabel="Yes, Promote" pending={pending} onConfirm={submit}>
-      <p className="m-0 break-words font-semibold text-foreground">Confirm promotion to term {targetTerm}</p>
-      <p className="mt-[var(--lms-space-2)] max-w-prose text-sm leading-5 text-body">
+      <div aria-busy={pending} className="min-w-0 space-y-3">
+      <p className="m-0 max-w-prose break-words text-sm leading-6 text-body">
         This changes the saved progression version and academic year for this batch.
         The server will reject any blockers or a stale preview.
         {promotionImpactMessage(learnerCount)}.
-        This operation does not move learners to a different class or period.
       </p>
-      {error ? <p role="alert" className="mt-[var(--lms-space-2)] break-words text-sm font-semibold text-error">{error}</p> : null}
+      <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-3 text-xs leading-5 text-muted-foreground">This operation does not move learners to a different class or period.</p>
+      {error ? <Alert tone="error">{error}</Alert> : null}
+      </div>
 
     </ConfirmDialog>
   </div>;
