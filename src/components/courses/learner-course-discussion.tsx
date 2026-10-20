@@ -487,7 +487,7 @@ export function LearnerCourseDiscussion({
               <div className="flex min-h-64 flex-col items-center justify-center gap-4 p-4 text-center">
                 <h3 className="text-base font-semibold text-foreground">Start the conversation</h3>
                 <p className="text-sm text-body">Welcome your class or share the week&apos;s focus.</p>
-                <div className="flex flex-wrap justify-center gap-3">
+                <div className="grid w-full min-w-0 gap-2 sm:flex sm:flex-wrap sm:justify-center">
                   <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9"
                     onClick={()=>{
                       setDraft("Welcome! Use this space for questions about the course.");
@@ -566,7 +566,7 @@ export function LearnerCourseDiscussion({
                     <p className={`${row.grouped ? "mt-0" : "mt-2"} whitespace-pre-wrap text-sm leading-6 text-body`}>
                       {row.item.messageText}
                     </p>
-                    {(canPost || (moderate && row.item.isMine)) ? (
+                    {canPost ? (
                       <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
                         {canPost ? <Button type="button" variant="ghost"
                           className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
