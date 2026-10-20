@@ -69,3 +69,23 @@
 - **Regressions found/fixed:** 1. The visible "Clear" link navigated to `/college/people`, the contacts directory, rather than clearing the current manage-directory filters; updated its href to `/college/people/manage`. Checked page/loading/error, parent college shell, membership scope/roles, filter query and pager, DataTable, PersonOnboardDialog (role defaults, validation/loading/success), PersonMembershipActions (roles, suspend, reactivate, end with server receipt verification), ProfileDialog and shared Dialog/Menu controls; copy and mutation routes unchanged.
 - **Extra clutter/alignment fixes:** Existing collapsed secondary actions, aligned responsive search controls and full-width mobile primary are retained; corrected destination keeps user in one workflow.
 - **Files changed:** `src/app/(authenticated)/college/people/manage/page.tsx`; queue/proof. Source 375/768, no CI.
+
+## Surface 15 — `src/app/(authenticated)/college/people/page.tsx`
+- **Regressions found/fixed:** 0. The historical People route is intentionally a server redirect to `/college/contacts`; this preserves the old read-only directory while `/college/people/manage` owns membership changes. Checked its loading/error route files and parent college layout, dashboard/contact destination constraints and chat-9 polish entry. No broken imports, lost labels or accessibility regression in redirect flow.
+- **Extra clutter/alignment fixes:** None; no transient second page header, duplicate card or extra action introduced.
+- **Files changed:** Queue and proof only; source review, no CI.
+
+## Surface 16 — `src/app/(authenticated)/college/placements/calendar/page.tsx`
+- **Regressions found/fixed:** 1 strict TS unused import: `ErrorState` remained imported in route `error.tsx` but recovery uses PageHeader, paragraph and Button; removed unused import. Inspected chat-9 proof, route/page loading/error/not-found/template, membership role check, shared PlacementCalendarWorkspace's audience filters, dates, event grouping, month/week/agenda panels, day navigation, mobile agenda, read-only college semantics and shared CalendarGrid/StatusBadge/Button. Retained all query keys, copy and event links.
+- **Extra clutter/alignment fixes:** None necessary: College Admin agenda is compact below the date/filter toolbar, multi-column calendar hides on narrow screens, error view uses existing canvas with clear retry.
+- **Files changed:** `src/app/(authenticated)/college/placements/calendar/error.tsx`; queue/proof. Source checked at 375/768, no CI.
+
+## Surface 17 — `src/app/(authenticated)/college/placements/drives/page.tsx`
+- **Regressions found/fixed:** 1: a filtered empty drive view had no directly accessible reset and basic toolbar offered no Clear action. Added a reset link beside Filter and an empty-view recovery without changing filters, route or list semantics. Read chat-9 proof; page/loading/error, college shell, CollegeDriveBulkActions, CollegeDriveRowLifecycleAction, CollegeDriveDeadlineAction, DateInput/Select/DataTable, 25-drive preview/confirm, error and pagination states. Retained all existing action/route/test IDs.
+- **Extra clutter/alignment fixes:** Collapsed deadline range, applicant minimum and sorting into active-aware Advanced filters; left title/status/season/company visible and preserved GET form values, 44px phone target and responsive 768px layout.
+- **Files changed:** `src/app/(authenticated)/college/placements/drives/page.tsx`; queue/proof. Source-only; no CI.
+
+## Surface 18 — `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- **Regressions found/fixed:** 2 unused imports (`Alert`, `StatTile`) remained despite SummaryStrip/Disclosure-based polish; removed to avoid strict TypeScript warnings/errors. Read chat-9 proof, page/loading/error, college shell, appointment service/schema, CollegeInterviewStatusActions with reason-confirm modal and versioned POST, shared Date/Select/Table/Disclosure/EmptyState/SummaryStrip/StatusBadge. Reviewed ready/unavailable/limited/empty/error, ICS/CSV, status changes and mobile.
+- **Extra clutter/alignment fixes:** Existing collapsed advanced fields and single Exports disclosure already match hierarchy; no additional rearrangement needed.
+- **Files changed:** `src/app/(authenticated)/college/placements/interviews/page.tsx`; queue/proof. No CI.
