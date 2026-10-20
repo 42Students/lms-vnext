@@ -22,24 +22,24 @@ export type NeedsDoingChipsProps = {
 };
 
 const tones = {
-  neutral: "border-[var(--lms-canvas-border)] bg-white text-[var(--lms-body-text)]",
-  info: "border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
-  success: "border-[var(--lms-canvas-border)] bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
-  warning: "border-[var(--lms-canvas-border)] bg-[var(--lms-warning-subtle)] text-[var(--lms-warning-text)]",
-  error: "border-[var(--lms-canvas-border)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
+  neutral: "bg-[rgba(0,0,0,0.04)] text-[var(--lms-neutral-500)]",
+  info: "bg-[rgba(0,0,0,0.04)] text-[var(--lms-neutral-500)]",
+  success: "bg-[rgba(0,0,0,0.04)] text-[var(--lms-neutral-500)]",
+  warning: "bg-[rgba(0,0,0,0.04)] text-[var(--lms-neutral-500)]",
+  error: "bg-[rgba(0,0,0,0.04)] text-[var(--lms-neutral-500)]",
 } as const;
 
 /** The old LMS's compact "Needs doing:" chips: genuine links or quick filters, never inert buttons. */
 export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs doing:", className }: NeedsDoingChipsProps) {
   if (!items.length) return null;
-  const base = "inline-flex min-h-8 max-w-full items-center gap-[var(--lms-space-2)] rounded-[var(--lms-radius-pill)] border px-[var(--lms-space-4)] py-[var(--lms-space-2)] text-[13px] font-medium leading-[17px] transition-colors duration-[var(--lms-motion-fast)] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+  const base = "inline-flex min-h-[36px] max-w-full items-center gap-[8px] rounded-[8px] px-[16px] py-[8px] text-[13px] font-medium leading-[1.3] transition-colors duration-[var(--lms-motion-fast)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:shadow-[0_0_0_4px_rgba(26,149,161,0.12)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
   return (
     <div data-slot="needs-doing-chips" role="group" aria-label={label.replace(/:$/, "")} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
       <span className="mr-1 text-[13px] font-semibold text-[var(--lms-neutral-500)]">{label}</span>
       {items.map(item => {
         const count = typeof item.count === "number" && Number.isFinite(item.count) ? Math.max(0, Math.trunc(item.count)) : null;
         const selected = selectedKey === item.key;
-        const classes = cx(base, (item.href !== undefined || onSelect) && "min-h-11 md:min-h-8", tones[item.tone ?? "neutral"], selected && "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
+        const classes = cx(base, (item.href !== undefined || onSelect) && "cursor-pointer hover:brightness-[0.97] max-[767px]:min-h-11", item.disabled && "cursor-not-allowed opacity-50 hover:brightness-100", tones[item.tone ?? "neutral"], selected && "bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
         const accessibleLabel = count !== null ? `${item.label} ${count}` : item.label;
         const content = <><span>{item.label}</span>{count !== null ? <span className="tabular-nums">{count}</span> : null}</>;
         if (item.href !== undefined) {
