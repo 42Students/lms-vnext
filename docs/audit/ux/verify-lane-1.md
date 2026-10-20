@@ -344,3 +344,10 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** read video-list abort/fetch/update, upload/thumbnail transfer, processing labels and progress MetricBar, guarded publish/lesson-content linkage, preview, reorder, replace/delete ConfirmDialog, duration/title editing and parent Lesson video contract. Checked shared Input/Alert/Button/EmptyState/LoadingState/StatusBadge types, unique per-video IDs, read-only guard and same-origin auth path; no malformed JSX, duplicate attribute or lost aria semantics in source.
 - **Extra clutter/alignment fixes (0):** primary Preview/Publish strip, More actions native disclosure, hairline video rows and full-width phone control sizes already fit old LMS geometry.
 - **Files changed:** proof and queue only.
+
+## Surface 50 — Faculty report PDF download
+- **Surface:** `src/components/courses/faculty-report-download.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-18.md`, entry for faculty-report-download.tsx.
+- **Regressions found/fixed (0):** read component and dependency-free FacultyReportPdfInput/buildFacultyReportPdf types and Blob URL cleanup, preserved authorized server-fed report fields, incomplete-report confirmation, generated PDF naming and error Alert, primary Button/ConfirmDialog APIs, mobile label/aria and retry. No duplicate TSX attrs, dropped labels, missing imports or type violations found.
+- **Extra clutter/alignment fixes (0):** one full-width phone download CTA, no extra cards and compact block-level error; original labels and incomplete-data warning retained without changes.
+- **Files changed:** verification proof and queue only.

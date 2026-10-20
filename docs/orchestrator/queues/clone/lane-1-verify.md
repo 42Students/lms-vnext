@@ -58,5 +58,5 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-1.md: surface | regres
 - [x] `src/components/courses/college-lesson-drag-order.tsx`
 - [x] `src/components/courses/faculty-item-actions.tsx`
 - [x] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-report-download.tsx`
+- [x] `src/components/courses/faculty-report-download.tsx`
 - [ ] `src/components/courses/learner-course-workspace.tsx`
