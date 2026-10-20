@@ -27,11 +27,13 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     throw error;
   }
   return <div className="min-w-0 max-w-full space-y-6">
-    <div className="flex min-w-0 items-center">
-      <PageBackLink href="/college/faculty" label="Back to faculty"/>
-    </div>
     <PageHeader title={data.person.name}
-      actions={<CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>} />
+      actions={<div className="flex w-full min-w-0 items-center gap-2 md:w-auto">
+        <PageBackLink href="/college/faculty" label="Back to faculty"/>
+        <div className="min-w-0 flex-1 md:flex-none">
+          <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
+        </div>
+      </div>} />
     <section className="min-w-0 border-b border-border pb-5">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Faculty record</h2>
@@ -53,7 +55,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </p>
       <p className="mt-2 max-w-2xl text-xs text-muted-foreground">College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure.</p>
       <details className="mt-4 min-w-0 border-y border-border py-2" open={data.filter.status!=="ALL"||data.filter.role!=="ALL"}>
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filter</summary>
+        <summary className="min-h-11 cursor-pointer py-2.5 font-semibold text-primary-text hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:py-2">Filter</summary>
         <form method="get" className="mt-3 grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
           action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">
