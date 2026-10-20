@@ -20,17 +20,17 @@ Fix every listed deviation using the shared components in src/components/ui and 
 - [x] `src/app/campaign-unsubscribe/confirmed/page.tsx` (score 1: arbitrary px size x1)
 - [x] `src/app/platform/page.tsx` (score 1: arbitrary px size x1)
 - [x] `src/components/tpo/tpo-new-followup-modal.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/tpo/tpo-topbar-new-menu.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/tpo/tpo-topbar-new-menu.tsx` (score 1: arbitrary px size x1)
 
 ## Section 2: page routes, full fidelity pass (20)
 For each page: page head via PageHeader (title, subtitle, actions exactly as the old LMS), canvas card (white, radius 12, border #e5e9f0, padding 24), tabs, filter row, tables/grids/cards, chips and badges, banners and inline notices, every modal and drawer the page opens, buttons and forms, empty/loading/error states, toasts, spacing and typography values, and responsive at 1280, 768 and 375 widths. Read the page and the components it renders, fix every deviation you find, not only the listed ones.
 
-- [ ] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx`
+- [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
+- [x] `src/app/(authenticated)/mentor/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/courses/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/fileExplorer/page.tsx`
