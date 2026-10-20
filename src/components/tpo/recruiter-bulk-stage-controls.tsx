@@ -166,7 +166,7 @@ export function RecruiterBulkStageControls({
           Each changed lead receives an immutable activity record.
         </p>
       </div>
-      {available.length === 0 ? (
+      <div className="print:hidden">{available.length === 0 ? (
         <p role="status" className="text-sm text-body">
           No editable recruiter leads in the current filter.
         </p>
@@ -230,7 +230,7 @@ export function RecruiterBulkStageControls({
                 </label>
               </>
             ) : null}
-            <Button
+            <Button className="min-h-11 md:min-h-9"
               type="button"
               disabled={!isValid || busy}
               onClick={() => void apply()}
@@ -242,13 +242,14 @@ export function RecruiterBulkStageControls({
           {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
             Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":action==="NEW"?"New":"Not now"}.
             {action==="NOT_NOW"?<p>Reason: {reason.trim()}{revisitDate?" · Revisit "+revisitDate:""}</p>:null}
-            <Button variant="secondary" type="button" className="lms-inline-link mt-2 min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={()=>setReviewOpen(false)}>Edit selection</Button>
+            <Button variant="secondary" type="button" className="lms-inline-link mt-2 min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>setReviewOpen(false)}>Edit selection</Button>
           </div>:null}
           <p aria-live="polite" className="text-xs text-body">
             {selected.length} / 100 leads selected.
           </p>
         </>
       )}
+      </div>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {results.length ? (
         <section aria-live="polite">
@@ -257,7 +258,7 @@ export function RecruiterBulkStageControls({
           {undoRunId?<div className="mt-3 rounded-lg border border-border p-3 text-sm">
            <p>Undo this audited batch within five minutes. Undo is rejected if any changed lead has since been edited.</p>
            {undoReview?<p role="status" className="mt-2">Restore the previous manual stage, reason and revisit date for each changed recruiter?</p>:null}
-           <div className="mt-2 flex gap-2">
+           <div className="mt-2 flex gap-2 print:hidden">
             <Button variant="secondary" type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
              {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo stage batch"}</Button>
             {undoReview?<Button variant="secondary" type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</Button>:null}
@@ -278,7 +279,7 @@ export function RecruiterBulkStageControls({
             unchanged: {results.filter((item) => item.status === "unchanged").length};
             ineligible: {results.filter((item) => item.status === "ineligible").length}.
           </p>
-          <ul className="mt-2 max-h-36 overflow-auto text-xs text-body">
+          <ul className="mt-2 max-h-36 overflow-auto text-xs text-body print:max-h-none print:overflow-visible">
             {results.map((item) => (
               <li key={item.leadId}>
                 {rows.find(row=>row.id===item.leadId)?.name??"Recruiter"}: {item.status}
