@@ -101,17 +101,11 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <Link
-        href="/admin/features"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
-      >
-        ← Feature Controls
-      </Link>
-
       <PageHeader
         eyebrow="Super Admin · Module Access"
         title={`${college.name} · Access hierarchy`}
         description={`Inspect and update college rules for ${college.code}. Higher-priority locks and learner participation gates still apply.`}
+        actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Feature Controls</Link>}
       />
 
       <LearnerModuleAccessDrawer collegeId={college.id}/>
@@ -130,7 +124,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </div>
           <Link
             href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Open learner access trace →
           </Link>
@@ -138,14 +132,14 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         View audited college module changes →
       </Link>
-      <section className="grid gap-3 md:grid-cols-3">
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {modules.map((decision) => (
           <article
             key={decision.module}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
+            className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4"
           >
             <h2 className="m-0 text-sm font-semibold text-foreground">
               {decision.label}
@@ -186,34 +180,34 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4" aria-label="Filter stored module overrides">
-        <label className="grid gap-1 text-sm font-semibold text-body">Stored descendant module
-          <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 sm:min-h-9">
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored descendant module
+          <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 md:min-h-9">
             <option value="">All modules</option>
             {OPTIONAL_MODULE_KEYS.map(key => <option key={key} value={key}>{ADMIN_MODULE_LABELS[key]}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Stored scope
-          <Select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 sm:min-h-9">
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored scope
+          <Select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 md:min-h-9">
             <option value="">All descendant scopes</option>
             {(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"] as const).map(key =>
               <option key={key} value={key}>{MODULE_SCOPE_LABELS[key]}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Lock state
-          <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 sm:min-h-9">
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lock state
+          <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">All stored rules</option><option value="LOCKED">Locked rules only</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Stored value
-          <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 sm:min-h-9">
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored value
+          <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">Any stored value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Exact scope ID (optional)
-          <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 sm:min-h-9"/>
+        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact scope ID (optional)
+          <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 md:min-h-9"/>
         </label>
-        <Button type="submit" className="min-h-11 sm:min-h-9">Filter overrides</Button>
-        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Reset</Link>
+        <Button type="submit" className="min-h-11 md:min-h-9">Filter overrides</Button>
+        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset</Link>
       </form>
 
       <section className="min-w-0 space-y-3">
@@ -252,7 +246,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <section aria-label="Academic module rules" className="border-t border-border pt-5">
-        <h2 className="font-semibold">Department, Program, Batch and Class access</h2>
+        <h2 className="font-semibold text-foreground">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
         <AcademicModuleScopeInventory scopes={academicScopes} page={academicPage}
@@ -302,11 +296,11 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.total} stored overrides ·
             page {result.page} of {result.totalPages}
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {result.page > 1 ? (
               <Link
                 href={pageHref(result.page - 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               >
                 ← Previous
               </Link>
@@ -314,7 +308,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page < result.totalPages ? (
               <Link
                 href={pageHref(result.page + 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               >
                 Next →
               </Link>

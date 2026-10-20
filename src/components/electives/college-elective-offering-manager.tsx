@@ -113,11 +113,11 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
       className="mt-2 min-w-64 max-w-xl space-y-3 border-t border-border pt-3">
       {loading && <p role="status">Loading eligible courses and groups…</p>}
       {data && <>
-        <h3 className="text-sm font-semibold">Courses in this elective slot</h3>
+        <h3 className="text-sm font-semibold text-foreground">Courses in this elective slot</h3>
         {data.offerings.length === 0 && <p className="text-sm text-muted-foreground">
           No courses added yet.</p>}
         {data.offerings.map(offering => <div key={offering.offeringId}
-          className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
+          className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
           <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers} · Waitlist: {offering.waitlistedCount} · {offering.status}</span>
           <div className="flex flex-wrap items-center gap-2">
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
@@ -135,7 +135,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
         </div>)}
         <div className="border-t border-border pt-3">
           <h4 className="text-sm font-semibold">{editing ? "Edit offering" : "Add offering"}</h4>
-          <label className="mt-2 block text-sm">Course
+          <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
             <Select className="mt-1 w-full"
               value={deliveryId} onChange={event => setDeliveryId(event.target.value)}>
               <option value="">Select course and class</option>
@@ -143,14 +143,14 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
                 {row.course} ({row.code}) · {row.section}</option>)}
             </Select>
           </label>
-          {!editing && <label className="mt-2 block text-sm">Group (optional)
+          {!editing && <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group (optional)
             <Select className="mt-1 w-full"
               value={groupId} onChange={event => setGroupId(event.target.value)}>
               <option value="">Create elective group automatically</option>
               {data.groups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
             </Select>
           </label>}
-          <label className="mt-2 block text-sm">Capacity
+          <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity
             <Input type="number" min="1" max="100000" required
               value={capacity} onChange={event => setCapacity(event.target.value)}
               className="mt-1 w-full" />
