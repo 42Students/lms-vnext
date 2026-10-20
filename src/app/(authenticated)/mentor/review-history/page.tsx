@@ -34,14 +34,14 @@ export default async function MentorReviewHistoryPage({
     page:first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid review history filters"} />
+    <PageHeader title="Delivery review history" description="Invalid review history filters" />
     <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const data=await getMentorReviewHistory(context,parsed.data);
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Mentor · Delivery" title="Delivery review history"
+    <PageHeader title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
       actions={<Link data-unskin="" href="/mentor/reviews"
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">

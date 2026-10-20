@@ -26,7 +26,7 @@ export default async function MentorReportsPage({searchParams}:{
     search:first(params.search)??undefined,page:first(params.page)??undefined,
   });
   if(duplicated||!parsed.success)return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid Mentor report filters"} />
+    <PageHeader title="Assigned project reports" description="Invalid mentor report filters" />
     <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
@@ -40,7 +40,7 @@ export default async function MentorReportsPage({searchParams}:{
     ["Meetings soon",data.attentionCounts.MEETING_SOON],
   ] as const;
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Mentor · Reports" title="Assigned Project reports"
+    <PageHeader title="Assigned project reports"
       description="Persisted project states and actionable attention across your current assigned workspaces."
       actions={<Link data-unskin="" href="/mentor/projects"
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] transition-colors duration-150 motion-reduce:transition-none">

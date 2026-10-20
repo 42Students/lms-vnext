@@ -26,12 +26,12 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     assignment:raw.assignment,view:raw.view,page:raw.page,pageSize:raw.pageSize,
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid activity filters"} />
+    <PageHeader title="Project activity" description="Invalid activity filters" />
     <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
-    <PageHeader eyebrow="Mentor · Projects" title="Project activity"
+    <PageHeader title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
       actions={<Link data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-safe:transition-colors motion-safe:duration-150 motion-reduce:transition-none">Projects</Link>} />
     {!data.enabled ? <div role="status" className="border-b border-border pb-4 text-sm text-body">
