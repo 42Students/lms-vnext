@@ -46,7 +46,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
     <PageHeader title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<PageBackLink href="/college/lecture-halls" label="Back to lecture halls"/>} />
-    <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+    <form method="get" className="flex min-w-0 flex-wrap items-end max-[767px]:flex-col max-[767px]:items-stretch gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">From (IST)
         <Input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
           />
