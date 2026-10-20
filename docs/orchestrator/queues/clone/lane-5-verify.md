@@ -19,16 +19,16 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-5.md: surface | regres
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/drives/new/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/home/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/messages/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/home/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/messages/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/profile/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
