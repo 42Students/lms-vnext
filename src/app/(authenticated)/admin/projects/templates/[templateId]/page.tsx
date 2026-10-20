@@ -6,8 +6,6 @@ import { projectTemplateIdSchema } from "@/modules/projects/validation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { EmptyState } from "@/components/ui/empty-state";
-import { Banner } from "@/components/ui/banner";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import { countTemplateBlueprintItems } from "@/modules/projects/template-subview-model";
@@ -99,7 +97,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
                 )
               }
             />
-            ) : <Banner tone="info">Clear admin scope for global template edits.</Banner>}
+            ) : <span className="text-xs text-muted-foreground">Clear admin scope for global template edits.</span>}
           </div>
         }
       />
@@ -117,15 +115,15 @@ export default async function SuperAdminProjectTemplateDetailPage({
           blueprint={detail.currentVersion.blueprint}
         />
       ) : (
-        <ErrorState title="Template version unavailable"
-          description="The current template version could not be resolved."/>
-      )
+        <section className="border-b border-border py-5 text-sm text-muted-foreground">
+          The current template version could not be resolved.
+        </section>
+      )}
       <section className="border-b border-border py-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Version history
         </h2>
         <div className="mt-3 space-y-2">
-          {!detail.versions.length?<EmptyState title="No template versions" description="No recorded versions are available for this template."/>:null}
           {detail.versions.map((version) => (
             <div
               key={version.id}
