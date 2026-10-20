@@ -7,6 +7,7 @@ import Link from "next/link";
 import {useState} from "react";
 import dynamic from "next/dynamic";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import {safeGridClipboardCell} from "./grid/grid-export";
 import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "@/modules/placements/tpo-audit-model";
 import type {TpoAuditRow} from "@/modules/placements/tpo-audit-service";
@@ -15,13 +16,11 @@ const TpoAuditQuartz=dynamic<TpoSpreadsheetGridProps<TpoAuditRow>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<TpoAuditRow>),
  {ssr:false,loading:()=> <p role="status" className="py-4 text-sm text-muted-foreground">Loading audit sheet…</p>},
 );
-function safeClipboardCell(field:string){
- const oneLine=field.replaceAll(/[\r\n\t]/g," ");
- return /^[\s\uFEFF]*[=+\-@]/u.test(oneLine)?"'"+oneLine:oneLine;
-}
 function when(value:string){
- return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
-  .format(new Date(value));
+ const instant=Date.parse(value);
+ return Number.isFinite(instant)?new Intl.DateTimeFormat("en-IN",{
+  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+ }).format(new Date(instant)):"Not recorded";
 }
 export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  const [showAbout,setShowAbout]=useState(true),[showDetail,setShowDetail]=useState(true);
@@ -36,12 +35,14 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
   const wanted=selected.length?visible.filter(row=>selected.includes(row.kind+":"+row.id)):visible;
   const text=wanted.map(row=>[formatTpoAuditEventType(row.eventType),
    TPO_AUDIT_KIND_LABELS[row.kind],row.title,row.detail,row.actorName,when(row.occurredAt)+" IST"]
-    .map(safeClipboardCell).join("\t")).join("\n");
+    .map(safeGridClipboardCell).join("\t")).join("\n");
   try{await navigator.clipboard.writeText(text);setNotice("Rows copied");}
   catch{setNotice("Could not copy rows. Select the table text instead.");}
  }
  const columns:readonly TpoGridColumn<TpoAuditRow>[]=[
-  {key:"when",label:"When",read:row=>when(row.occurredAt)+" IST"},
+  {key:"when",label:"When",sortKind:"date",
+   sortValue:row=>{const instant=Date.parse(row.occurredAt);return Number.isFinite(instant)?instant:null;},
+   read:row=>when(row.occurredAt)+" IST"},
   {key:"event",label:"Event",read:row=>formatTpoAuditEventType(row.eventType)},
   ...(showAbout?[{key:"about",label:"About",read:(row:TpoAuditRow)=>TPO_AUDIT_KIND_LABELS[row.kind]+": "+row.title}]:[]),
   ...(showDetail?[{key:"detail",label:"Detail",read:(row:TpoAuditRow)=>row.detail}]:[]),
@@ -51,16 +52,16 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
   <div className="flex min-w-0 flex-wrap items-end gap-3 border-y border-border py-3">
    <label className="min-w-0 flex-1 text-sm md:flex-none">What happened
     <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"
-     maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-sm" />
+     maxLength={120} className="mt-1 block w-full min-w-0" />
    </label>
    <label className="min-w-0 flex-1 text-sm md:flex-none">Who
     <Input value={who} onChange={event=>setWho(event.target.value)} type="search"
-     maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-sm" />
+     maxLength={120} className="mt-1 block w-full min-w-0" />
    </label>
    <label className="min-w-0 flex-1 text-sm md:flex-none">When
     <Select value={oldestFirst?"oldest":"newest"}
      onChange={e=>setOldestFirst(e.target.value==="oldest")}
-     className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-sm">
+     className="mt-1 block w-full min-w-0">
      <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
     </Select>
    </label>
