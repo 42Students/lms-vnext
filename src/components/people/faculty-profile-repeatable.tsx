@@ -62,7 +62,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   }
   return (
     <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
-      className="space-y-4 border-b border-border pb-5">
+      className="min-w-0 scroll-mt-6 space-y-4 border-b border-[var(--lms-canvas-border)] py-5">
       <div>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
@@ -80,14 +80,14 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
       <div className="space-y-3">
         {visibleRows.map(({row,index}) => (
-          <fieldset key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3 md:p-4">
+          <fieldset key={row.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
             <Button variant="secondary" type="button" className="mb-3 min-h-11 min-[768px]:min-h-9 px-3"
               aria-expanded={!collapsedIds.includes(row.id)}
               onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
               {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
             </Button>
-            {!collapsedIds.includes(row.id)?<div className="grid gap-3 min-[768px]:grid-cols-2">
+            {!collapsedIds.includes(row.id)?<div className="grid min-w-0 gap-3 sm:grid-cols-2">
               {fields.map(field => {
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
@@ -112,7 +112,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 </label>;
               })}
             </div>:null}
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-3 flex min-w-0 flex-wrap gap-2">
               <Button variant="secondary" type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} className="min-h-11 min-[768px]:min-h-9" onClick={async()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
               }}  aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</Button>

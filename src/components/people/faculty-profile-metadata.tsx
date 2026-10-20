@@ -31,7 +31,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   catch(error){setError(error instanceof Error?error.message:"Invalid metadata");}
  }
  return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" onSubmit={submit}
-  className="space-y-4 border-b border-border pb-5">
+  className="min-w-0 scroll-mt-6 space-y-4 border-b border-[var(--lms-canvas-border)] py-5">
   <h2 className="text-lg font-semibold text-foreground">Additional metadata</h2>
   <p className="text-sm text-muted-foreground">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
   {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find metadata
@@ -43,7 +43,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     <Button variant="secondary" type="button"  onClick={()=>setSearch("")}>Clear Metadata search</Button>
    </div>:null}
   {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No metadata fields match. Clear the search to view all.</p>:null}
-  {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 md:grid-cols-[1fr_2fr_auto] md:items-end">
+  {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] py-3 md:grid-cols-[1fr_2fr_auto] md:items-end">
    <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Field {index+1}
     <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0"
      maxLength={120} required disabled={pending} value={row.key} onChange={event=>edit(row.id,"key",event.target.value)}/>

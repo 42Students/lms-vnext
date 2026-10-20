@@ -8,28 +8,28 @@ export default async function FacultyOwnContactPage(){
  return <div className="min-w-0 max-w-full space-y-5">
  <PageHeader title="Contact details"
   description="Your college-managed sign-in details and the status of optional contact fields."
-  actions={<Link href="/teacher/profile" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile</Link>}/>
- <section className="border-b border-border pb-5">
-  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Registered identity contact</h2>
-  <dl className="mt-4 grid gap-4 md:grid-cols-2">
+  actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile</Link>}/>
+ <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
+  <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Registered identity contact</h2>
+  <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">
    <div><dt className="text-xs text-muted-foreground">Login email</dt>
-    <dd className="mt-1 break-words text-sm text-body">{data.loginEmail??"Not provided"}</dd></div>
+    <dd className="mt-1 break-all text-sm leading-6 text-body">{data.loginEmail??"Not provided"}</dd></div>
    <div><dt className="text-xs text-muted-foreground">Login phone</dt>
-    <dd className="mt-1 break-words text-sm text-body">{data.loginPhone??"Not provided"}</dd></div>
+    <dd className="mt-1 break-all text-sm leading-6 text-body">{data.loginPhone??"Not provided"}</dd></div>
   </dl>
   <p className="mt-3 text-xs text-muted-foreground">These identity fields are managed by your college and are not editable here.</p>
  </section>
- <section role="status" className="border-b border-border py-5">
-  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Alternate contact editing unavailable</h2>
+ <section role="status" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-5">
+  <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Alternate contact editing unavailable</h2>
   <p className="mt-2 text-sm text-body">{data.reason}</p>
-  <dl className="mt-4 grid gap-3 md:grid-cols-2">
+  <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">
    <div><dt className="text-xs text-muted-foreground">Alternate phone</dt>
     <dd className="text-sm text-body">Storage not registered</dd></div>
    <div><dt className="text-xs text-muted-foreground">Contact email</dt>
     <dd className="text-sm text-body">Storage not registered</dd></div>
   </dl>
  </section>
- <p className="text-xs text-muted-foreground">
+ <p className="max-w-prose text-xs leading-5 text-muted-foreground">
   A contact edit form will be enabled only after separate private Faculty contact
   fields and authorized update policy are migrated. No information has been saved.
  </p>
