@@ -142,7 +142,7 @@ function Metric({
   history?:readonly {at:string;label:string}[];
 }) {
   return (
-    <section className="min-w-0 rounded-xl border border-border bg-surface p-4">
+    <section className="min-w-0 border-b border-border py-3">
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </p>
@@ -274,10 +274,10 @@ export function LearnerAttendanceWorkspace({
   }
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{urlNotice}</p> : null}
       <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
           <label className="w-full max-w-sm text-xs font-semibold text-body">
             Course
             <Select
@@ -300,7 +300,7 @@ export function LearnerAttendanceWorkspace({
             </Select>
           </label>
 
-          <div className="flex flex-wrap items-end gap-2">
+          <div className="flex min-w-0 flex-wrap items-end gap-2">
             <Button className="max-md:min-h-11"
               size="sm"
               variant="secondary"
@@ -350,7 +350,7 @@ export function LearnerAttendanceWorkspace({
         </div>
 
         {course ? (
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-3 flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
             <p className="text-xs text-muted-foreground">
               {course.sectionName} ·{" "}{course.academicPeriodName}
             </p>
@@ -364,7 +364,8 @@ export function LearnerAttendanceWorkspace({
         ) : null}
       </section>
 
-      <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
+      <Disclosure title="Attendance" className="border-b border-border" contentClassName="pb-4">
+      <div className="grid min-w-0 gap-x-4 gap-y-2 md:grid-cols-2 xl:grid-cols-5">
         <Metric label="Total" value={monthRows.length}
           detail="All scheduled and held classes in the selected month."/>
         <Metric
@@ -398,6 +399,7 @@ export function LearnerAttendanceWorkspace({
           }
         />
       </div>
+      </Disclosure>
 
       <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -432,7 +434,7 @@ export function LearnerAttendanceWorkspace({
       </section>
 
       {recovery !== null ? (
-        <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body" role="note">
+        <p className="max-w-prose border-l-2 border-border bg-surface-subtle py-3 pl-4 pr-2 text-sm leading-[22px] text-body" role="note">
           {recovery === Infinity
             ? "At a 100% threshold, prior non-present marks cannot be offset by future attendance alone."
             : recovery === 0
@@ -442,10 +444,8 @@ export function LearnerAttendanceWorkspace({
       ) : null}
 
       <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
-        <h2 className="m-0 text-sm font-semibold text-foreground">
-          Course overview
-        </h2>
-        <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <Disclosure title="Course overview" className="border-b border-border" contentClassName="pb-4">
+        <div className="mt-3 grid min-w-0 gap-2 md:grid-cols-2 xl:grid-cols-3">
           {summaries.map((item) => (
             <Button className="max-md:min-h-11" variant="secondary"
               key={item.deliveryId}
@@ -489,22 +489,23 @@ export function LearnerAttendanceWorkspace({
             </Button>
           ))}
         </div>
+        </Disclosure>
       </section>
 
-      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
+      <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h2 className="text-sm font-semibold text-foreground">Session history</h2>
           <p className="mt-1 text-xs text-muted-foreground">Status filters affect only the session list, not attendance totals.</p>
         </div>
-        <div className="flex w-full min-w-0 flex-wrap gap-3 md:w-auto">
-        <label className="w-full min-w-44 flex-1 text-xs font-semibold text-body">Order
+        <div className="grid min-w-0 w-full gap-3 sm:grid-cols-2 md:w-auto">
+        <label className="min-w-0 w-full text-xs font-semibold text-body">Order
           <Select className="mt-1.5 min-h-11 md:min-h-9 w-full" value={historyOrder}
             onChange={event=>changeHistoryOrder(event.target.value as LearnerAttendanceOrder)}>
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
         </label>
-        <label className="w-full min-w-44 flex-1 text-xs font-semibold text-body">Show
+        <label className="min-w-0 w-full text-xs font-semibold text-body">Show
           <Select className="mt-1.5 min-h-11 md:min-h-9 w-full" value={historyFilter}
             onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
             {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -519,7 +520,7 @@ export function LearnerAttendanceWorkspace({
         </div>
       </div>
       {historyRows.length > 0 ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
+        <div className="flex min-w-0 flex-col items-start gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>{attendanceCsv.truncated ? "CSV includes the first 200 matching sessions; narrow the selection for remaining records." : "CSV includes the matching sessions shown for this month."}</span>
           <a download="learner-attendance-history.csv"
             href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}
