@@ -20,9 +20,6 @@ import {
 } from "./super-admin-hr-types";
 
 
-/** Wall-clock read kept out of render bodies (React purity rule). */
-function currentTimeMs(){return Date.now();}
-
 export function SuperAdminHrDetailDrawer({
   account,
   loading,
@@ -59,6 +56,7 @@ export function SuperAdminHrDetailDrawer({
   onTerminateRequest: (account: HrAccount) => void;
 }) {
   const id = useId();
+  const [renderNow] = useState(() => Date.now());
   const [validUntil,setValidUntil] = useState("");
   const [expiryError,setExpiryError] = useState("");
   const [
@@ -102,6 +100,7 @@ export function SuperAdminHrDetailDrawer({
   return (
     <Drawer
       open
+      dismissible={!pending}
       onOpenChange={(open) => {
         if (!open && !pending) {
           onClose();
@@ -156,7 +155,8 @@ export function SuperAdminHrDetailDrawer({
         />
       ) : (
         <div className="min-w-0 space-y-[var(--lms-space-4)]">
-          <section className="border-b border-border pb-5">
+          {actionError?<ErrorState title="Action failed" description={actionError}/>:null}
+          <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 
@@ -232,7 +232,7 @@ export function SuperAdminHrDetailDrawer({
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {grant.validUntil ? `Until ${new Date(grant.validUntil).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}`:"Expiry not recorded"}
-                        {" · "}{grant.validUntil && Date.parse(grant.validUntil)<=currentTimeMs()?"Expired":grant.verificationStatus}
+                        {" · "}{grant.validUntil && Date.parse(grant.validUntil)<=renderNow?"Expired":grant.verificationStatus}
                       </p>
                     </div>
                     <Button className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
@@ -260,7 +260,7 @@ export function SuperAdminHrDetailDrawer({
 
                 <label
                   htmlFor={`${id}-grant`}
-                  className="mb-[6px] mt-[var(--lms-space-3)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"
+                  className="mb-[var(--lms-space-2)] mt-[var(--lms-space-3)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"
                 >
                   College
                 </label>
@@ -293,12 +293,12 @@ export function SuperAdminHrDetailDrawer({
                   )}
                 </Select>
 
-                <label className="mb-[6px] mt-[var(--lms-space-3)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
+                <label className="mb-[var(--lms-space-2)] mt-[var(--lms-space-3)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
                  Until (optional)
                  <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
                   className="mt-1 min-h-11 w-full md:min-h-9"/>
-                 {expiryError?<span role="alert" className="mt-[6px] block text-[12px] leading-5 text-[var(--lms-error)]">{expiryError}</span>:null}
-                 <span className="mt-[6px] block text-[13px] font-normal leading-5 text-[var(--lms-muted-text)]">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
+                 {expiryError?<span role="alert" className="mt-[var(--lms-space-2)] block text-[12px] leading-5 text-[var(--lms-error)]">{expiryError}</span>:null}
+                 <span className="mt-[var(--lms-space-2)] block text-[13px] font-normal leading-5 text-[var(--lms-muted-text)]">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
                 </label>
                 {optionsLoading ? (
                   <p
@@ -368,7 +368,7 @@ export function SuperAdminHrDetailDrawer({
             <h3 className="font-semibold">College access history</h3>
             <ul className="mt-3 space-y-2 text-sm">{account.grantHistory.map(grant=><li key={grant.id} className="flex flex-wrap justify-between gap-2 border-b border-border pb-2">
               <span>{grant.collegeName}</span>
-              <span>{grant.status==="REVOKED"?"Revoked":grant.validUntil&&Date.parse(grant.validUntil)<=currentTimeMs()?"Expired":"Active"}
+              <span>{grant.status==="REVOKED"?"Revoked":grant.validUntil&&Date.parse(grant.validUntil)<=renderNow?"Expired":"Active"}
                {" · "}{grant.validUntil?"Until "+grant.validUntil.slice(0,10):"No recorded expiry"}</span>
             </li>)}</ul>
           </section>:null}
@@ -384,7 +384,7 @@ export function SuperAdminHrDetailDrawer({
             </p>
             {!account.accountManageable?<p role="status" className="mt-2 text-sm text-warning">Account-wide actions are unavailable: this recruiter has active access grants beyond your selected college or organization.</p>:null}
             <Button
-              className="mt-4 min-h-11 md:min-h-9"
+              className="mt-[var(--lms-space-4)] min-h-11 w-full sm:w-auto md:min-h-9"
               variant="danger"
               disabled={pending||!account.accountManageable}
               onClick={() =>
@@ -395,12 +395,7 @@ export function SuperAdminHrDetailDrawer({
             </Button>
           </section>
 
-          {actionError ? (
-            <ErrorState
-              title="Action failed"
-              description={actionError}
-            />
-          ) : null}
+
         </div>
       )}
     </Drawer>

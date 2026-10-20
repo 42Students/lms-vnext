@@ -6,7 +6,7 @@ import {Dropdown} from "@/components/ui/dropdown";
 import { Menu, MenuItem } from "@/components/ui/menu";
 
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -71,6 +71,8 @@ export function AnnouncementAdminWorkspace({
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
+  const flight=useRef(false);
+  const editFormRef=useRef<HTMLFormElement>(null);
   const [target, setTarget] = useState(
     targets[0] ? `${targets[0].type}:${targets[0].id}` : "",
   );
@@ -97,9 +99,11 @@ export function AnnouncementAdminWorkspace({
   }
 
   function create() {
-    if (!target || !createTiming.valid) return;
+    if (pending || flight.current || !target || !title.trim() || !message.trim() || !createTiming.valid) return;
+    flight.current=true;
     const receiver = splitTarget(target);
     startTransition(async () => {
+      try {
       const response = await fetch("/api/announcements/admin", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -126,6 +130,8 @@ export function AnnouncementAdminWorkspace({
       setReviewPublish(false);
       showToast({ tone: "success", title: "Announcement created" });
       router.refresh();
+      } catch {showToast({tone:"error",title:"Announcement creation failed",description:"Check the target and schedule."});}
+      finally {flight.current=false;}
     });
   }
 
@@ -133,7 +139,10 @@ export function AnnouncementAdminWorkspace({
     item: AnnouncementAdminItem,
     action: "DELETE" | "RESTORE" | "PIN",
   ) {
+    if(pending||flight.current)return;
+    flight.current=true;
     startTransition(async () => {
+      try {
       const url = action === "RESTORE"
         ? `/api/announcements/${item.id}/restore`
         : `/api/announcements/${item.id}`;
@@ -158,12 +167,14 @@ export function AnnouncementAdminWorkspace({
         return;
       }
       router.refresh();
+      } catch {showToast({tone:"error",title:"Announcement update failed",description:"Please retry."});}
+      finally {flight.current=false;}
     });
   }
 
   function saveEdit() {
-    if (!editing) return;
-    const form = document.querySelector<HTMLFormElement>("#announcement-edit-form");
+    if (!editing || pending || flight.current) return;
+    const form = editFormRef.current;
     if (!form) return;
     const data = new FormData(form);
     const targetValue = String(data.get("target") ?? "");
@@ -173,7 +184,9 @@ export function AnnouncementAdminWorkspace({
       showToast({tone:"error",title:"Invalid announcement timing",description:"Expiry must be after the scheduled time."});
       return;
     }
+    flight.current=true;
     startTransition(async () => {
+      try {
       const response = await fetch(`/api/announcements/${editing.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
@@ -203,6 +216,8 @@ export function AnnouncementAdminWorkspace({
       setEditConsent(false);
       showToast({ tone: "success", title: "Announcement updated" });
       router.refresh();
+      } catch {showToast({tone:"error",title:"Announcement edit failed",description:"Check the fields and schedule."});}
+      finally {flight.current=false;}
     });
   }
 
@@ -220,7 +235,7 @@ export function AnnouncementAdminWorkspace({
           <p className="text-sm text-muted-foreground">Select a college scope before creating an announcement.</p>
         ) : (
           <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Audience
               <Select
                 className="min-h-11 w-full md:min-h-9"
@@ -234,19 +249,19 @@ export function AnnouncementAdminWorkspace({
                 ))}
               </Select>
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Title
               <Input className="w-full" value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
               Message
               <Textarea className="w-full" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Schedule · local time
               <Input className="w-full" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Show until · local time
               <Input className="w-full" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
             </label>
@@ -294,7 +309,7 @@ export function AnnouncementAdminWorkspace({
                       Sender: {item.senderType} · Version {item.version}
                     </p>
                   </div>
-                  <div className="flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+                  <div className="flex min-w-0 shrink-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] min-[768px]:justify-end">
                     {!item.deletedAt ? (
                       <>
                         <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
@@ -319,7 +334,7 @@ export function AnnouncementAdminWorkspace({
 
 
 
-      {requiresPublicationConsent?<Dialog open={reviewPublish} onOpenChange={setReviewPublish} title="Confirm announcement publication"
+      {requiresPublicationConsent?<Dialog open={reviewPublish} dismissible={!pending} onOpenChange={next=>{if(!pending)setReviewPublish(next);}} title="Confirm announcement publication"
        description="The selected recipients will see this notice when it becomes visible. This does not send external SMS or email."
        footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto"><Button variant="secondary" disabled={pending} onClick={()=>setReviewPublish(false)}>Cancel</Button>
          <Button disabled={pending} onClick={create}>{pending?"Publishing…":"Confirm and publish"}</Button></div>}>
@@ -334,7 +349,8 @@ export function AnnouncementAdminWorkspace({
       </Dialog>:null}
       <Dialog
         open={Boolean(editing)}
-        onOpenChange={(open) => { if (!open) setEditing(null); }}
+        onOpenChange={(open) => { if (!open&&!pending) setEditing(null); }}
+        dismissible={!pending}
         title="Edit announcement"
         description="Retargeting is re-authorized server-side against both the old and new tenant scope."
         footer={
@@ -345,12 +361,12 @@ export function AnnouncementAdminWorkspace({
         }
       >
         {editing ? (
-          <form id="announcement-edit-form" className="grid gap-4">
+          <form id="announcement-edit-form" ref={editFormRef} className="grid gap-[var(--lms-space-4)]">
             {requiresPublicationConsent?<label className="flex items-start gap-2 text-sm text-body">
               <Checkbox checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
             </label>:null}
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Audience
               <Select
                 name="target"
@@ -373,19 +389,19 @@ export function AnnouncementAdminWorkspace({
                 ))}
               </Select>
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Title
               <Input name="title" defaultValue={editing.title} maxLength={255} className="w-full" />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Message
               <Textarea name="message" defaultValue={editing.message} maxLength={10000} className="w-full" />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Schedule · local time
               <Input name="scheduledAt" type="datetime-local" defaultValue={localInputValue(editing.scheduledAt)} className="w-full" />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Show until · local time
               <Input name="expiresAt" type="datetime-local" defaultValue={localInputValue(editing.expiresAt)} className="w-full" />
             </label>
