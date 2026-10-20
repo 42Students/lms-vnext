@@ -66,17 +66,17 @@ export default async function LearnerProfilePage({
             <Banner tone="warning">
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
             </Banner>:null}
-        </div>:<p role="status" className="mt-2 text-sm text-body">Verification status is temporarily unavailable.</p>}
+        </div>:<Banner tone="info" className="mt-2">Verification status is temporarily unavailable.</Banner>}
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Review verification status</Link>
       </section>
       {sectionNotice ? <Banner tone="warning">{sectionNotice}</Banner> : null}
       <section aria-label="Academic identity" className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
-        {!academicOutcome.available ? <div role="status" className="mt-3 text-sm text-body">
+        {!academicOutcome.available ? <Banner tone="info" className="mt-3">
           <p>Your academic summary is temporarily unavailable. Your saved profile remains available below; no missing enrollment has been inferred.</p>
           <LearnerProfileAcademicRetry />
-        </div> : academic?.enrollment ? (
+        </Banner> : academic?.enrollment ? (
           <dl className="mt-4 grid min-w-0 gap-3 text-sm min-[768px]:grid-cols-2 min-[1280px]:grid-cols-3">
             <div>
               <dt className="font-semibold text-muted-foreground">Program</dt>
@@ -94,11 +94,11 @@ export default async function LearnerProfilePage({
             </div>
           </dl>
         ) : (
-          <p role="status" className="mt-3 text-sm text-body">
+          <Banner tone="info" className="mt-3">
             No active program enrollment is recorded for your current college membership.
             This does not imply that your studies have ended. Contact your college administrator
             if your program should be listed.
-          </p>
+          </Banner>
         )}
       </section>
       <Link href="/learn/profile/academic-record"

@@ -245,7 +245,7 @@ export default async function LearnerPlacementsPage({
         </Link>
       </div>
 
-      {debarRead.status==="fulfilled"&&debarRead.value?<section role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-3 py-2">
+      {debarRead.status==="fulfilled"&&debarRead.value?<Alert tone="warning" role="alert">
         <h2 className="font-semibold text-foreground">You are barred from drives for now</h2>
         <p className="mt-2 text-sm text-body">
           The placement cell has recorded a temporary participation restriction.
@@ -255,13 +255,13 @@ export default async function LearnerPlacementsPage({
         <Link href="/learn/my-placements/support" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
           Think this is wrong? Tell the placement cell
         </Link>
-      </section>:null}
+      </Alert>:null}
       {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
-        <section role="alert" aria-label="Placement registration" className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
+        <Alert tone="warning" role="alert" aria-label="Placement registration">
           <h2 className="font-semibold text-foreground">Registration</h2>
           <p className="mt-2 text-sm text-body">Your batch registration status is temporarily unavailable. No registration choice has been assumed.</p>
           <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">Retry registration</Link>
-        </section>
+        </Alert>
       )}
       <section aria-labelledby="learner-placement-verification"
         className="min-w-0 border-b border-border py-4 md:py-6">
