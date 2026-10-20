@@ -24,7 +24,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  const {jobId}=await params;const query=await searchParams;
  const urlError=tpoApplicationFilterError(query,jobId);
  if(urlError)return <div className="space-y-4">
-  <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
+  <PageHeader title="Invalid applicant filters"
    description="No private application records were loaded."/>
   <Alert tone="error">{urlError}</Alert>
   <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Clear applicant filters</Link>
@@ -36,7 +36,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   sort:first(query.sort),submittedWithin:first(query.submittedWithin),
  });
  if(!filters.success)return <div className="min-w-0 space-y-4">
-  <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
+  <PageHeader title="Invalid applicant filters"
     description="This URL contains unsupported applicant filters or page values. No applications were loaded."/>
   <Alert tone="error">This URL contains unsupported applicant filters or page values. No applications were loaded.</Alert>
   <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">
@@ -48,7 +48,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  function pageHref(page:number){return {pathname:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline",
   query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,flag:data.flag,sort:data.sort,submittedWithin:data.submittedWithin,...(columns?{columns}:{}),page}};}
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-  <PageHeader eyebrow="TPO · Drive applicants" title={data.job.title}
+  <PageHeader title={data.job.title}
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."/>
   <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive</Link>
   <Link href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin}}}

@@ -82,7 +82,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   }};}
   return <div className="min-w-0 space-y-5">
     <TpoDriveSavedViews scopeKey={savedViewScope}/>
-    <PageHeader eyebrow="TPO" title="Drives"
+    <PageHeader title="Drives"
       description="Review requests, prepare drafts and run every placement drive from one workspace." />
     <div className="flex flex-wrap items-center justify-between gap-3">
       <Link href="/tpo/placements/overview" className="text-sm font-semibold text-primary-text hover:underline">Operations overview</Link>

@@ -50,14 +50,14 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
     if(!search.success)return <Alert tone="error">Invalid search. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
     const issue=tpoDriveDayIssueSchema.safeParse(Array.isArray(raw.issue)?raw.issue[0]:raw.issue);
     const sort=tpoDriveDaySortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
-    if(!sort.success)return <Alert tone="error">Invalid Drive Day sorting. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
-    if(!issue.success)return <Alert tone="error">Invalid Drive Day filter. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
+    if(!sort.success)return <Alert tone="error">Invalid drive day sorting. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
+    if(!issue.success)return <Alert tone="error">Invalid drive day filter. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
     const snapshot = await getTpoLiveDriveDaySummary(context);
     const liveTotals=summarizeTpoLiveTriage(snapshot.rows);
     const liveRows=sortTpoDriveDayRows(filterTpoDriveDayIssues(filterTpoLiveRoundSearch(snapshot.rows,search.data),issue.data),sort.data);
     return (
       <div className="min-w-0 space-y-[var(--lms-space-6)]">
-        <PageHeader eyebrow="TPO · Drive Day" title="Live rounds"
+        <PageHeader title="Drive day"
           description="Rounds happening now, using recorded schedule and duration plus persisted attendance." />
         <form action="/tpo/drive-day" method="get" className="flex flex-wrap gap-3">
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"/></label>
