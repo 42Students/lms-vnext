@@ -15,7 +15,7 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-16-b with [chat-16], ticking [x] in this queue in the same push.
 
 
-- [ ] `src/components/academics/section-operations.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/components/academics/section-operations.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/courses/faculty-assignment-editor.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/app/forbidden/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
