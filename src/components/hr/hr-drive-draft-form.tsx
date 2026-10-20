@@ -244,7 +244,7 @@ export function HrDriveDraftForm({
   </section>;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       <ConfirmActionDialog open={pendingLeave!==null}
        title="Discard this drive draft?" consequence="Leave without these changes?"
        confirmLabel="Discard" onCancel={()=>setPendingLeave(null)}
@@ -271,7 +271,7 @@ export function HrDriveDraftForm({
       ) : null}
       <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Role and work</h2>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="mt-4 grid min-w-0 gap-3 min-[768px]:grid-cols-2">
           <label className="grid gap-1 text-sm text-body md:col-span-2">
             Role title
             <Input className="w-full" value={draft.title} maxLength={200}
@@ -327,7 +327,7 @@ export function HrDriveDraftForm({
 
       <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Compensation and eligibility</h2>
-        <div className="mt-4 grid gap-4 md:grid-cols-3">
+        <div className="mt-4 grid min-w-0 gap-3 min-[768px]:grid-cols-3">
           <label className="grid gap-1 text-sm text-body">
             CTC (LPA){draft.employmentType==="INTERNSHIP"?" after the internship (optional)":""}
             <Input className="w-full" inputMode="decimal" value={draft.ctcLpa??""}
@@ -404,7 +404,7 @@ export function HrDriveDraftForm({
             Add round
           </Button>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
+        <div className="mt-3 flex min-w-0 flex-wrap gap-2" aria-label="Choose hiring round preset">
           {HR_DRIVE_ROUND_PRESETS.map(preset=><Button key={preset.id}
             type="button" variant="secondary"
             onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
@@ -461,14 +461,15 @@ export function HrDriveDraftForm({
         <p className="mt-1 text-sm text-body">
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <Button type="button" variant="secondary"
+        <div className="mt-4 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
+          <Button type="button" variant="secondary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
             onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</Button>
-          <Button type="button" disabled={!result.success||submitting}
+          <Button type="button" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto" disabled={!result.success||submitting}
             loading={submitting} aria-busy={submitting}
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </Button>
+          <details className="w-full min-[768px]:w-auto"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text min-[768px]:min-h-9">Save unsent draft</summary><div className="mt-2 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
           <Button type="button" disabled={!result.success}
             variant="secondary"
             onClick={() => void copyPreview()}>Copy validated draft</Button>
@@ -482,7 +483,7 @@ export function HrDriveDraftForm({
               if(hrDraftContainsWork(draft)){setDraftDecision("CLEAR");return;}
               try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
               setDraft(emptyHrDriveDraft());setBranchInput("");setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
-            }}>Start over</Button>
+            }}>Start over</Button></div></details>
         </div>
         {showPreview && !result.success ? (
           <Alert tone="error" title="Review the draft:" className="mt-4">
@@ -494,7 +495,7 @@ export function HrDriveDraftForm({
           </Alert>
         ) : null}
         {/* Live locally held student-facing draft preview; never imply publication. */}
-          <div className="mt-4 space-y-2 rounded-[var(--lms-control-radius)] bg-surface-secondary p-4 text-sm text-body">
+          <details open={showPreview} className="min-w-0 border-t border-border pt-3"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground min-[768px]:min-h-9">Preview and validate</summary><div className="mt-3 min-w-0 space-y-2 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
             <p>{draft.location} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
@@ -532,7 +533,7 @@ export function HrDriveDraftForm({
             <p className="text-xs text-muted-foreground">
               Live preview of your unsent request. The college decides what students see after approval.
             </p>
-          </div>
+          </div></details>
         {notice ? <InlineNotice tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"} message={notice}/> : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
