@@ -57,5 +57,5 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-19.md: surface | probl
 - [x] `src/components/ui/permission-action.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [x] `src/app/(authenticated)/teacher/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
 - [x] `src/app/(authenticated)/admin/layout.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
-- [ ] `src/app/(authenticated)/hr/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
-- [ ] `src/app/(authenticated)/teach/layout.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [x] `src/app/(authenticated)/hr/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [x] `src/app/(authenticated)/teach/layout.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
