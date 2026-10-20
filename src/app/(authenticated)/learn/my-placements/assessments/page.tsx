@@ -41,8 +41,14 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
       <PageHeader
         title="Assessments"
         description="Scheduled placement tests and assessments for your shortlisted applications."
+        actions={
+          <Link href="/learn/my-placements/assessments/results"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+            View official assessment results →
+          </Link>
+        }
       />
-      <aside role="note" className="rounded-xl border border-info/40 bg-primary-subtle p-4">
+      <aside role="note" className="min-w-0 border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3 md:px-6">
         <h2 className="m-0 text-sm font-semibold text-foreground">
           Submit assessments on the employer’s platform
         </h2>
@@ -52,10 +58,7 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
           instructions. The recruiter controls official submission and results.
         </p>
       </aside>
-      <Link href="/learn/my-placements/assessments/results"
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-        View official assessment results →
-      </Link>
+
       <LearnerCareerRoundsWorkspace
         key={link.key ?? "all-assessments"}
         initialSelectedKey={link.key}
