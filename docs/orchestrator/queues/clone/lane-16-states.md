@@ -9,9 +9,9 @@ Shared UI components that every page inherits. For each file: compare EVERY stat
 - [x] `src/components/ui/filter-chip.tsx`
 - [x] `src/components/ui/input-group.tsx`
 - [x] `src/components/ui/menu.tsx`
-- [ ] `src/components/ui/overlay-close-icon.tsx`
-- [ ] `src/components/ui/pagination.tsx`
-- [ ] `src/components/ui/scroll-cue.tsx`
-- [ ] `src/components/ui/skeleton.tsx`
-- [ ] `src/components/ui/summary-strip.tsx`
-- [ ] `src/components/ui/toast.tsx`
+- [x] `src/components/ui/overlay-close-icon.tsx`
+- [x] `src/components/ui/pagination.tsx`
+- [x] `src/components/ui/scroll-cue.tsx`
+- [x] `src/components/ui/skeleton.tsx`
+- [x] `src/components/ui/summary-strip.tsx`
+- [x] `src/components/ui/toast.tsx`
