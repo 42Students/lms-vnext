@@ -5,8 +5,8 @@ import { ErrorState } from "@/components/ui/error-state";
 
 export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return <ErrorState
-    title="\n        Unable to load your profile\n      "
-    description="Your own TPO membership information could not be\n        retrieved. No account details are inferred from\n        this failure."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    title="Unable to load your profile"
+    description="Your own TPO membership information could not be retrieved. No account details are inferred from this failure."
+    action={<Button type="button" onClick={reset} className="w-full sm:w-auto">Retry</Button>}
   />;
 }
