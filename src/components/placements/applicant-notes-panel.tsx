@@ -1,5 +1,5 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
@@ -27,12 +27,14 @@ export function ApplicantNotesPanel({
   audience: string;
 }) {
   const router = useRouter();
+  const inFlightRef = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending) return;
+    if (inFlightRef.current || pending) return;
+    inFlightRef.current = true;
     const form = event.currentTarget;
     const body = String(new FormData(form).get("body") ?? "");
     setPending(true);
@@ -58,6 +60,7 @@ export function ApplicantNotesPanel({
       setError(e instanceof Error ? e.message : "The note could not be saved.");
       router.refresh();
     } finally {
+      inFlightRef.current = false;
       setPending(false);
     }
   }
@@ -95,6 +98,7 @@ export function ApplicantNotesPanel({
             name="body"
             rows={3}
             maxLength={APPLICANT_NOTE_MAX_LENGTH}
+            disabled={pending}
             className="mt-2 w-full"
           />
         </label>
@@ -104,6 +108,7 @@ export function ApplicantNotesPanel({
         <Button
           type="submit"
           disabled={pending}
+          loading={pending}
           className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
         >
           {pending ? "Saving…" : "Save note"}
