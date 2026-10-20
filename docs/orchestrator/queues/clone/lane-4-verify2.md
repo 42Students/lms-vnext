@@ -18,8 +18,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-4.md: surface | regres
 - [x] `src/components/tpo/tpo-mobile-footer.tsx`
 - [x] `src/components/public/public-page-loading.tsx`
 - [x] `src/app/(authenticated)/teach/error.tsx`
-- [ ] `src/app/(authenticated)/admin/not-found.tsx`
-- [ ] `src/components/placements/tpo-drive-clone-action.tsx`
+- [x] `src/app/(authenticated)/admin/not-found.tsx`
+- [x] `src/components/placements/tpo-drive-clone-action.tsx`
 - [ ] `src/components/placements/tpo-trust-toggle.tsx`
 - [ ] `src/components/tpo/tpo-notice-undo-toast.tsx`
 - [ ] `src/app/(authenticated)/admin/hr/page.tsx`
