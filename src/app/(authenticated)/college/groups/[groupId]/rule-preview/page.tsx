@@ -50,7 +50,7 @@ export default async function CollegeGroupRulePreviewPage({
       {label:"Matches not currently active",value:projection.potentiallyNew},
     ]}/>
     <section aria-label="Configured criteria" className="space-y-3 border-t border-border pt-5">
-      <h2 className="text-lg font-semibold text-foreground">Persisted rule criteria</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Persisted rule criteria</h2>
       <dl className="grid min-w-0 gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Programs allowed</dt>
           <dd className="font-semibold text-foreground">{criteria.allowedProgramIds.length || "Not restricted"}</dd></div>

@@ -85,8 +85,8 @@ export default async function CollegeGroupsPage({
         method="get"
         className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4"
       >
-        <label className="block min-w-0 w-full md:w-auto md:min-w-44 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">
-          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="block min-w-0 w-full md:w-auto md:min-w-44 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
+          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Type
           </span>
           <Select name="kind" defaultValue={kind ?? ""}>
@@ -98,8 +98,8 @@ export default async function CollegeGroupsPage({
             ))}
           </Select>
         </label>
-        <label className="block min-w-0 w-full md:w-auto md:min-w-40 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">
-          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="block min-w-0 w-full md:w-auto md:min-w-40 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
+          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
           </span>
           <Select name="status" defaultValue={status ?? ""}>
