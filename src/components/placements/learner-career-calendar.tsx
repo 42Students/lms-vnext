@@ -152,8 +152,7 @@ export function LearnerCareerCalendar({
         </div>
         <div className={styles.views} role="group" aria-label="Calendar view">
           {views.map((option) => (
-            <Button className="max-md:min-h-11"
-              type="button"
+            <Button type="button"
               key={option}
               aria-pressed={view === option}
               onClick={() => changeCalendar({view:option})}
