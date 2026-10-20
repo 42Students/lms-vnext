@@ -53,11 +53,11 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
       href:"/admin/inbound-mail?"+url.toString()};
     })}/>
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+   <label className="min-w-0 flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-w-0" placeholder="Sender, subject or message body"/></label>
-   <label className="min-w-0 flex-1 basis-48 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recipient inbox
+   <label className="min-w-0 flex-1 basis-48 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recipient inbox
     <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-w-0" placeholder="inbox@example.edu"/></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+   <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="status" defaultValue={parsed.data.status} className="mt-1 w-full">
      <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
     </Select></label>
