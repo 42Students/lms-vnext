@@ -90,3 +90,27 @@ Files: `src/app/(authenticated)/admin/classes/page.tsx`, `src/components/academi
 Problems fixed (5): CSV export competed with navigation in title row; history pagination crowded the header affordances; event count lacked subdued hierarchy; list rows needed consistent vertical gutters; mobile actions needed a single leading-edge rhythm. Moved CSV export below the history table, kept the existing College admins back action visible, aligned pagination and reused the legacy 24px section rhythm. Reviewed page, route loading/error fallbacks, PageHeader, PageBackLink, DataTable, EmptyState, ErrorState and empty/invalid/filled/paginated states at 375/768/1280 in source. Preserved all wording, CSV URL, page parsing, permissions, accessibility labels, event values and table identity. No CI/runtime pixel verification.
 
 Files: `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`, queue, proof.
+
+## Surface 12 — Administrator active sessions
+
+Problems fixed (6): history navigation competed with the back control; session metadata extended mobile width; session count lacked secondary hierarchy; the destructive global sign-out looked like a normal row action; sign-out control was narrower than the phone layout; content gutters drifted. Moved Administrator activity history to a secondary link after the table, separated global sign-out with a legacy hairline and full-width touch action on phones, broke long user agents safely, used subdued count and consistent 24px vertical rhythm. Inspected page, AdminRevokeSessions (pending/error/confirmation), PageHeader, PageBackLink, DataTable, EmptyState, ConfirmDialog and route loading/error fallbacks, 375/768/1280 source states. Preserved all wording, permissions, cross-college revoke semantics, IDs, labels, URLs, and tokens. No CI or browser verification.
+
+Files: `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`, `src/components/admin/admin-revoke-sessions.tsx`, queue, proof.
+
+## Surface 13 — College administrator directory
+
+Problems fixed (7): ambiguous equal-width header onboarding controls crowded 375px; three table action columns overwhelmed mobile; per-row suspension reason appeared before it was needed; modal trigger widths mismatched; table actions lacked grouped hierarchy; header/section gutters drifted; role status was visually secondary to technical details. Changes: stacked the two existing onboarding actions using responsive grid (same exact labels and handlers), preserved back navigation, moved row lifecycle controls into an accessible Access disclosure, aligned mobile buttons and minimized the nested controls without changing suspension/reactivation confirmation, roles, warning state, or mutations. Audited page, PersonOnboardDialog (empty/filled/validation/error/loading), CollegeAdminLifecycleAction (mentor guarded, suspended, pending), DataTable/StatusBadge/Disclosure, route loading/error, at 375/768/1280 via source. No CI/runtime screenshots.
+
+Files: `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`, `src/components/admin/college-admin-lifecycle-action.tsx`, `src/components/admin/person-onboard-dialog.tsx`, queue, proof.
+
+## Surface 14 — College branding / Look and feel
+
+Problems fixed (8): very tall read-only branding preview displaced live editor; duplicated mock sign-in view competed with the editing preview; technical preview caveat separated from its content; 8 URL fields stacked as a narrow column on wide screens; saved action lacked full-width mobile alignment; crop/remove actions were uneven at 375; inconsistent section gutters; the immediate task was visually behind secondary information. Changes: keep editable branding section, uploader, forms and live preview first; move stored read-only preview and its caveat into a native keyboard-operable Disclosure below; align URL/support form inputs in a responsive two-column grid and actions across 375/768/1280. Inspected page and route loading/error, CollegeBrandingPreview, CollegeBrandingForm, CollegeLogoUploader including empty/pre-upload/crop/pending/error/remove/read-only, shared Card/Disclosure/ConfirmDialog, all existing preview states. Colours, radii, copy, labels, permissions, validation, upload, URLs and API behaviour unchanged. No CI/browser verification.
+
+Files: `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`, `src/components/admin/college-branding-form.tsx`, `src/components/admin/college-logo-uploader.tsx`, queue, proof.
+
+## Surface 15 — College tenant overview
+
+Problems fixed (7): equal-priority setup links were buried beneath eight read-only metadata cells; Activity CSV competed with the College tab; seven settings links wrapped unevenly at 375; no clear grid scan path on tablet; archived restore warning competed with navigation; density drift between top sections; utility export overshadowed primary setup. Moved authorized college setup destinations ahead of identity metadata, aligned the same links into a full-width mobile/2-col tablet/3-col desktop grid, retained all lifecycle checks and archived warnings, and moved CSV export after the identity overview. Reviewed page, TenantRestoreAction (pending/success/failure/confirm), Tabs, PageHeader/PageBackLink and route notFound/error/loading. Source layout checked 375/768/1280; permissions, labels, routes, wording, tokens and REST lifecycle unchanged. No CI or browser verification.
+
+Files: `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`, queue, proof.

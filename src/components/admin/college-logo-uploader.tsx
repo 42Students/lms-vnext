@@ -71,7 +71,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:"Upload failed.");}
   finally{setBusy(false);}
  }
- return <section aria-label="College logo upload" className="space-y-3 border-t border-border pt-4">
+ return <section aria-label="College logo upload" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)]">
   <h3 className="font-semibold text-foreground">College logo</h3>
   <p className="text-sm text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
   {(savedUrl||currentUrl)?<Card as="div" className="w-fit p-3">
@@ -97,12 +97,12 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
      <Input aria-label="Crop zoom" className="block !h-auto !min-h-0 !w-full !max-w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
     </label>
     <Button type="button" disabled={busy} onClick={()=>void upload()}
-     className="min-h-11 md:min-h-9">
+     className="min-h-11 w-full md:min-h-9 md:w-auto">
       {busy?"Uploading…":"Crop and upload logo"}
     </Button>
    </div>:null}</>:<Alert tone="info">You can view the logo, but cannot change it.</Alert>}
   {canEdit&&(savedUrl||currentUrl)?<Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirmRemove(true)}
-   className="min-h-11 md:min-h-9 print:hidden">
+   className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden">
    Remove uploaded logo
   </Button>:null}
   <ConfirmDialog open={confirmRemove} onOpenChange={setConfirmRemove} title="Remove this college's uploaded logo?" description="The uploaded logo will be removed from this college." confirmLabel="Remove uploaded logo" confirmVariant="danger" pending={busy} onConfirm={()=>void remove()}/>
