@@ -235,3 +235,33 @@
 **Changes:** demote destructive trigger to a clear red-text secondary link with a 44px phone hit area; maintain red destructive confirm action in the shared alertdialog, clear previous error when reopened, refuse state close while pending, wrap title/error for 375px, show persistent in-dialog failure and toast success on saved deletion. Same task ID, expectedUpdatedAt, confirm:true, irreversible copy and route behavior. Source-reviewed, no runtime/CI.
 
 **Files:** delete control, queue, proof.
+
+## 39. Mentor task status transition
+
+**Surface:** `src/components/projects/mentor-task-status-transition.tsx`; inspected allowedMentorTaskTransition and Zod input schema, Select, shared ConfirmDialog, ToastProvider, PATCH, pending, invalid blocked state, current sprint gate and 375/768 layouts.
+
+**Problems fixed (8):** status select and blocker input competed horizontally at 375, a 2000-character blocker explanation used a single-line input, Move action was visually secondary, confirmation incorrectly defaulted to destructive red, stale local selection survived parent status refresh, ConfirmDialog close callback could dismiss during pending, server requires blockerReason even if prior blocker was recorded yet component omitted it, and long errors overflowed mobile overlay.
+
+**Changes:** stack fields/actions at 375, use multiline Textarea preserving the original accessible label/2000 limit, elevate the only action and use primary confirmation, sync selection after authoritative parent status updates, guard pending and invalid moves, reuse existing blocker reason for a BLOCKED PATCH when present (matching server schema), and let ConfirmDialog retain focus/error while pending. All task statuses, permission gating, CAS token, endpoint, wording and success/error toast behavior remain. Source-reviewed; no runtime/CI.
+
+**Files:** status transition, queue, proof.
+
+## 40. Project readiness manual override
+
+**Surface:** `src/components/projects/project-readiness-override-form.tsx`; inspected legacy-copy constants, Zod schema, Select/Textarea/Alert and FormEvent guards, duplicate-write behavior, pending/error/confirmation/clear/unlock/block and hasSubmission warning, compact/noncompact use in project workspace and 375/768 widths.
+
+**Problems fixed (7):** failure closed the confirmation even though no override saved, feedback appeared only beneath the form, dialog could close during pending, error lacked assertive semantics, stale required-note error persisted after input was corrected, textarea invalid state was not exposed, and Save lacked full-width mobile/working state.
+
+**Changes:** retain original override choices, labels, conditional note and API payload; hold the shared primary ConfirmDialog open on failure, show request errors in the overlay and after cancellation, prevent dismissal while pending, reset stale feedback on state/note edits, expose aria-invalid for required note, preserve warning when submission exists, and align one 44px full-width phone primary button with desktop legacy control height. No permission, persistence or route changes. Source-reviewed only; no CI/browser.
+
+**Files:** readiness override form, queue, proof.
+
+## 41. Project resource files panel
+
+**Surface:** `src/components/projects/project-resource-files-panel.tsx`; inspected storage declaration/grant validation, XMLHttpRequest upload/progress/abort, server reconciliation, scoped resource linking, signed download grants, edit/delete/discard confirmation, incomplete-upload RETRY, empty/limit/error and shared form/MetricBar/ConfirmDialog. Reviewed 375/768/1280 source rules.
+
+**Problems fixed (12):** file picker buried after optional metadata, long always-visible fields displaced files, Cancel shown without an active PUT, native picker not reset after upload/discard, Edit/Delete inflated every list row, red Delete competed with Open, file names/description overflowed narrow widths, inline Edit Save/Cancel cramped on phone, plain feedback missed success/error treatment, delete failure appeared behind confirmation, inconsistent row action widths and indistinct upload/list separation.
+
+**Changes:** file selection and Upload are primary; optional title/description/resource linkage inside a native disclosure with all original fields; live progress and Cancel enabled only during XHR, reset native file input after success/discard, group file management behind accessible disclosure while keeping Open/Retry visible, align full-width mobile actions and wrap filenames. Use shared Alerts with tone/role and surface delete errors inside confirm. Preserve MIME/size validation, safe signed URLs, grant expiry, status retries, existing labels, access and routes. Source-only review, no CI/browser.
+
+**Files:** file panel, queue, proof.
