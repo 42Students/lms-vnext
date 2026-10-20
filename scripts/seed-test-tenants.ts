@@ -75,7 +75,7 @@ const per = (
     phone: `+91910006${base + 5}`,
     email: `tpo.${key}@vnext.test`,
     name: `Test TPO ${key.toUpperCase()}`,
-    memberships: { [key]: ["FACULTY", "TPO"] },
+    memberships: { [key]: ["TPO"] },
   },
 ];
 
