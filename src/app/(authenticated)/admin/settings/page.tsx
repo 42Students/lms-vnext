@@ -131,7 +131,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
-      <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
         <label className="grid min-w-48 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Setting or source
           <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 md:min-h-9"/>
         </label>
@@ -145,7 +145,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       </form>
       {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."
         action={<Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/> : null}
-      <nav
+      {sections.length ? <nav
         aria-label="Settings sections"
         className="flex min-w-0 gap-[var(--lms-tab-gap)] min-[1600px]:gap-[40px] overflow-x-auto border-b border-[var(--lms-canvas-border)] pb-0"
       >
@@ -158,7 +158,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
             {section.title}
           </a>
         ))}
-      </nav>
+      </nav> : null}
 
       {sections.map((section) => (
         <section

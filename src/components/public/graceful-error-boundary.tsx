@@ -18,12 +18,13 @@ export function isStaleChunkError(error: Error): boolean {
     .test(error.message);
 }
 
-export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", legacyWorkspaceCopy = false, insideShell = false }: {
+export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", legacyWorkspaceCopy = false, insideShell = false, showHeader = true }: {
   error: Error & { digest?: string };
   reset: () => void;
   homeHref?: string;
   legacyWorkspaceCopy?: boolean;
   insideShell?: boolean;
+  showHeader?: boolean;
 }) {
   const [requestId, setRequestId] = useState<string | null>(null);
   const stale = isStaleChunkError(error);
@@ -69,7 +70,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
   if (insideShell) {
     const reference = friendlyReference(requestId);
     return <section role="alert" className="min-w-0 space-y-[var(--lms-space-4)]">
-      <PageHeader title={title} />
+      {showHeader ? <PageHeader title={title} /> : null}
       <p className="max-w-prose break-words text-sm text-body">{message}</p>
       {reference ? <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] break-words text-xs text-muted-foreground">
         <span>{reference}</span>
