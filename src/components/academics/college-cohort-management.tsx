@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
+import {Disclosure} from "@/components/ui/disclosure";
+import {Dropdown} from "@/components/ui/dropdown";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -86,8 +88,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
     });
   }
 
-  return <section aria-label="Create batch" className="border-t border-border pt-4">
-    <h2 className="m-0 text-lg font-semibold text-foreground">Create batch</h2>
+  return <Disclosure ariaLabel="Create batch" title={<h2 className="m-0 text-lg font-semibold text-foreground">Create batch</h2>} className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
     {programs.length === 0 || periods.length === 0
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
         {programs.length === 0 ? "Create a program before adding batches." : <>
@@ -95,7 +96,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
           <Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
         </>}
       </p>
-      : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
+      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId} onChange={e => setProgramId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
@@ -137,20 +138,20 @@ export function CollegeCohortCreateForm({ programs, periods }: {
           <Input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <div className="sm:col-span-2 lg:col-span-5 text-sm text-body">
+        <div className="md:col-span-2 xl:col-span-3 text-sm text-body">
           <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
           <p>Academic Year: {year?`${year}–${year+1}`:"Select a start period to see the academic year."}</p>
           {dateInvalid?<p role="alert" className="text-error">End date cannot be before start date.</p>:null}
         </div>
-        <div className="sm:col-span-2 lg:col-span-5">
-          <Button variant="primary" disabled={pending||dateInvalid} type="submit"
+        <div className="md:col-span-2 xl:col-span-3">
+          <Button variant="primary" disabled={pending||dateInvalid} type="submit" className="w-full md:w-auto"
             >
             {pending ? "Creating…" : "Create batch"}
           </Button>
         </div>
       </form>}
     {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
-  </section>;
+  </Disclosure>;
 }
 
 export function CollegeCohortRowActions({ row, periods }: {
@@ -236,13 +237,15 @@ export function CollegeCohortRowActions({ row, periods }: {
     });
   }
 
-  return <div className="min-w-28">
-    <div className="flex flex-wrap gap-2">
+  return <div className="min-w-0">
+    <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
     <Button variant="secondary" type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
       >
       Edit
     </Button>
+    <Dropdown trigger="More" label="Batch lifecycle actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+      <div className="grid min-w-0 gap-[var(--lms-space-2)]">
     {row.status === "ACTIVE" && <Button variant="secondary" type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
       onClick={graduate}
@@ -257,6 +260,8 @@ export function CollegeCohortRowActions({ row, periods }: {
       >
       Remove
     </Button>
+      </div>
+    </Dropdown>
     </div>
     <ConfirmDialog open={Boolean(pendingLifecycleAction)}
       onOpenChange={next=>{if(!next)setPendingLifecycleAction(null);}}

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import {Fragment} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 
 export type ActivityCenterGroup = {
@@ -118,8 +117,8 @@ export function ActivityCenter({
           const previousDay=index>0?activityDay(groups[index-1].latest.event.occurredAt):null;
           return (
             <Fragment key={group.key+":"+item.event.id}>
-            {day!==previousDay?<h3 className="mt-5 text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
-            <Card as="article" className="min-w-0">
+            {day!==previousDay?<h3 className="mt-[var(--lms-space-6)] text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
+            <article className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -199,7 +198,7 @@ export function ActivityCenter({
                   </div>)}
                 </dl>
               </Disclosure>
-            </Card>
+            </article>
             </Fragment>
           );
         })}
