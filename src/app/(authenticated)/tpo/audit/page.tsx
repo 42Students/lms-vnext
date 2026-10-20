@@ -292,7 +292,7 @@ export default async function TpoAuditPage({
 
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Who
             <Input type="search" name="who" maxLength={100} defaultValue={query.who}
-              placeholder="Actor name contains…" className="min-h-11"/>
+              placeholder="Actor name contains…" className="min-h-11 md:min-h-9"/>
           </label>
           <PageSizeSelect name="pageSize" defaultValue={String(pageSize)} options={[25,50,100]} />
 

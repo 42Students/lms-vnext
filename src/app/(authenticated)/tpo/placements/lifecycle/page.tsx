@@ -94,46 +94,46 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     </div>
     <form role="search" aria-label="placements lifecycle filters" action="/tpo/placements/lifecycle" method="get"
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
-      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Season
         <Select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
           className="mt-2 block w-full">
           <option value="">All college seasons</option>
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </Select>
       </label>
-      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Batch
         <Select name="cohortId" defaultValue={data.cohortId??""}
           className="mt-2 block w-full">
           <option value="">All batches</option>
           {data.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.programName} · {batch.name}</option>)}
         </Select>
       </label>
-      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Company
         <Select name="companyId" defaultValue={data.companyId??""}
           className="mt-2 block w-full">
           <option value="">All companies</option>
           {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
         </Select>
       </label>
-      {data.view!=="REQUESTS"?<label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Created by
+      {data.view!=="REQUESTS"?<label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Created by
         <Select name="ownerUserId" defaultValue={data.ownerUserId??""}
           className="mt-2 block w-full">
           <option value="">Any creator</option>
           {data.owners.map(owner=><option key={owner.id} value={owner.id}>{owner.name??"College staff"}</option>)}
         </Select>
       </label>:null}
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lifecycle
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Lifecycle
         <Select name="view" defaultValue={data.view}
           className="mt-2 block w-full">
           <option value="ALL">All jobs</option><option value="REQUESTS">Requests</option><option value="DRAFT">Drafts</option>
           <option value="LIVE">Live</option><option value="CLOSED">Closed</option>
         </Select>
       </label>
-      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company or drive
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Company or drive
        <Input name="search" defaultValue={data.search} maxLength={100}
         className="mt-2 block w-full"/>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline state
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Deadline state
         <Select name="deadline" defaultValue={data.deadline} className="mt-2 block w-full">
           <option value="ALL">All deadlines</option>
           <option value="TODAY">Today (IST)</option>
@@ -142,12 +142,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="OVERDUE">Live · passed</option><option value="UNSET">No recorded deadline</option>
         </Select>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Card columns
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Card columns
         <Select name="display" defaultValue={data.display} className="mt-2 block w-full">
           <option value="DETAILED">Detailed</option><option value="COMPACT">Compact</option>
         </Select>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where it is
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Where it is
         <Select name="journey" defaultValue={data.journey}
           className="mt-2 block w-full">
           <option value="ALL">Every stage</option>
@@ -157,41 +157,41 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="COMPLETE">Closed or cancelled</option>
         </Select>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Work mode
         <Select name="workMode" defaultValue={data.workMode} className="mt-2 block w-full">
           <option value="ALL">All modes</option><option value="ONSITE">On-site</option>
           <option value="REMOTE">Remote</option><option value="HYBRID">Hybrid</option>
         </Select>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment type
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Employment type
         <Select name="employmentType" defaultValue={data.employmentType} className="mt-2 block w-full">
           <option value="ALL">All employment</option><option value="FULL_TIME">Full-time</option>
           <option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
         </Select>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort drives
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Sort drives
         <Select name="sort" defaultValue={data.sort} className="mt-2 block w-full">
           <option value="COMPANY">Company name</option><option value="DEADLINE_ASC">Earliest recorded deadline</option>
           <option value="DEADLINE_DESC">Latest recorded deadline</option>
         </Select>
       </label>
-      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. applied
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body max-[767px]:min-w-0 max-[767px]:basis-full">Min. applied
         <Input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
           className="mt-2 block w-full"/>
       </label>
-      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. applied
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body max-[767px]:min-w-0 max-[767px]:basis-full">Max. applied
         <Input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
           className="mt-2 block w-full"/>
       </label>
-      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body max-[767px]:min-w-0 max-[767px]:basis-full">Min. offers
         <Input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
           className="mt-2 block w-full"/>
       </label>
-      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. offers
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body max-[767px]:min-w-0 max-[767px]:basis-full">Max. offers
         <Input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
           className="mt-2 block w-full"/>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pay category
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Pay category
         <Select name="payCategory" defaultValue={data.payCategory}
           className="mt-2 block w-full">
           <option value="ALL">All categories</option><option value="REGULAR">Regular</option>
@@ -273,7 +273,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </nav>
       </section>
     ) : <>
-      <section aria-label="Drive lifecycle counts" className="grid min-w-0 grid-cols-2 gap-0 border-y border-[var(--lms-canvas-border)] min-[768px]:grid-cols-4">
+      <section aria-label="Drive lifecycle counts" className="grid min-w-0 grid-cols-1 gap-0 border-y border-[var(--lms-canvas-border)] min-[768px]:grid-cols-4">
         {metrics.map(([name,n]) =>
           <div key={name} className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] min-[768px]:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0">
             <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</p>

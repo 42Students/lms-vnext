@@ -59,7 +59,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  />
  <section aria-label="Placement journey" className="space-y-3 border-b border-border pb-4">
   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Placement journey</h2>
-  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
+  <dl className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
    {([["Students",journey.total],["Eligible",journey.eligible],
       ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],
       ["Registered",journey.registered]] as const).map(([label,value])=>

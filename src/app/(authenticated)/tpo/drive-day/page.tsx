@@ -66,7 +66,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <Button type="submit" className="self-end min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Apply</Button>
         </form>
         <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Reset focus</Link></div>
-        <dl aria-label="Current authorized live-round snapshot" className="grid min-w-0 grid-cols-2 gap-3 min-[768px]:grid-cols-3 lg:grid-cols-6">{[
+        <dl aria-label="Current authorized live-round snapshot" className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-3 lg:grid-cols-6">{[
           ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
           ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
         ].map(([name,count])=><div key={name} className="border-b border-border px-1 py-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
@@ -98,7 +98,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                   </Link></div>
                 </div>
                 <p role="status" className="mt-3 text-sm text-body">{tpoLiveAttendanceAttention(round.counts)}</p>
-                <dl className="mt-4 grid grid-cols-2 gap-3 min-[768px]:grid-cols-5">
+                <dl className="mt-4 grid grid-cols-1 gap-3 min-[768px]:grid-cols-5">
                   {([
                     ["Roster", round.counts.total], ["Checked in", round.counts.checkedIn],
                     ["Explicit no-shows", round.counts.noShow], ["Pending", round.counts.pending],
