@@ -8,7 +8,6 @@ import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-actio
 import {TpoDriveSavedViews} from "@/components/placements/tpo-drive-saved-views";
 import {TpoDriveActOnPanel} from "@/components/placements/tpo-drive-act-on-panel";
 import { PageHeader } from "@/components/ui/page-header";
-import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -176,19 +175,19 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="DEADLINE_DESC">Latest recorded deadline</option>
         </Select>
       </label>
-      className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Min. applied
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. applied
         <Input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
           className="mt-2 block w-full"/>
       </label>
-      className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Max. applied
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. applied
         <Input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
           className="mt-2 block w-full"/>
       </label>
-      className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Min. offers
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
         <Input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
           className="mt-2 block w-full"/>
       </label>
-      className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Max. offers
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. offers
         <Input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
           className="mt-2 block w-full"/>
       </label>
@@ -209,21 +208,26 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         Export all matching drives (CSV)
       </Link>
     </div>
-    <NeedsDoingChips label="Needs doing:" selectedKey={data.attention}
-      items={[
-        ...([
-        ["NO_APPLICANTS","Nobody has applied",data.attentionCounts.noApplicants],
-        ["NO_DEADLINE","Live with no deadline",data.attentionCounts.noDeadline],
-        ["DUE_SOON","Close in the next 7 days",data.attentionCounts.dueSoon],
-        ["OVERDUE","Deadline passed, still open",data.attentionCounts.overdue],
-        ["ALL","All drives",data.counts.total],
-      ] as const).map(([attention,label,count])=>({
-        key:attention,label,count,href:"/tpo/placements/lifecycle?"+
-        new URLSearchParams({...(data.season?{seasonId:data.season.id}:{}),
-          attention,view:"ALL",page:"1"}).toString(),
-      })),
-        {key:"REQUESTS",label:"Waiting for your review",count:data.needsReviewCount,
-        href:"/tpo/placements/lifecycle?view=REQUESTS"}]}/>
+    <nav aria-label="Needs doing" className="flex flex-wrap gap-2">
+      <span className="mr-2 self-center text-sm font-semibold">Needs doing:</span>
+      {([
+       ["NO_APPLICANTS","Nobody has applied",data.attentionCounts.noApplicants],
+       ["NO_DEADLINE","Live with no deadline",data.attentionCounts.noDeadline],
+       ["DUE_SOON","Close in the next 7 days",data.attentionCounts.dueSoon],
+       ["OVERDUE","Deadline passed, still open",data.attentionCounts.overdue],
+       ["ALL","All drives",data.counts.total],
+      ] as const).map(([attention,label,n])=><Link key={attention} href={{
+        pathname:"/tpo/placements/lifecycle",query:{
+          ...(data.season?{seasonId:data.season.id}:{}),
+          attention,view:"ALL",page:1,
+        },
+       }} className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm "+
+       (data.attention===attention?"border-primary bg-primary-subtle font-semibold":"border-border")}>
+       {label} · {n}
+      </Link>)}
+      <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm md:min-h-9"
+       href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
+    </nav>
     <Tabs ariaLabel="Drive status tabs" value={data.view} renderPanel={false}
       items={([["REQUESTS","Requests",data.needsReviewCount],["LIVE","Live",data.statusCounts.live],
        ["DRAFT","Drafts",data.statusCounts.drafts],["CLOSED","Closed",data.statusCounts.closed],
