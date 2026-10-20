@@ -49,8 +49,8 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
      maxLength={40} minLength={2} value={label} disabled={busy} onChange={event=>setLabel(event.target.value)}/>
    </label>
    <fieldset className="min-w-0 space-y-[var(--lms-space-2)] text-sm"><legend>Does an offer of this type count as placed?</legend>
-    <label><Radio name="placed" checked={countsAsPlaced===true} onChange={()=>setCountsAsPlaced(true)}/> Yes</label>
-    <label><Radio name="placed" checked={countsAsPlaced===false} onChange={()=>setCountsAsPlaced(false)}/> No</label>
+    <label><Radio name="placed" disabled={busy} checked={countsAsPlaced===true} onChange={()=>setCountsAsPlaced(true)}/> Yes</label>
+    <label><Radio name="placed" disabled={busy} checked={countsAsPlaced===false} onChange={()=>setCountsAsPlaced(false)}/> No</label>
    </fieldset>
    <Button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Add job type</Button>
   </form>
