@@ -22,7 +22,7 @@ export default async function CollegeResourcesPage({
   const parsed = collegeContentQuerySchema.safeParse(raw);
   if (!parsed.success) {
     return (
-      <div className="min-w-0 space-y-4">
+      <div className="min-w-0 space-y-5 md:space-y-6">
         <PageHeader title="Resources" />
         <ErrorState title="Invalid resource filters"
           description="The title, status or page filter is invalid. No content was loaded."
@@ -35,10 +35,10 @@ export default async function CollegeResourcesPage({
     <PageHeader title="Resources"
       actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Lessons</Link>} />
     <CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>
+    <CollegeContentAggregate showHeader={false} data={await listCollegeContentAggregate(context, "RESOURCE", parsed.data)} />
     <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",parsed.data)}
-      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 md:min-h-9 text-sm font-semibold text-link hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Export filtered resource metadata CSV
     </Link>
-    <CollegeContentAggregate showHeader={false} data={await listCollegeContentAggregate(context, "RESOURCE", parsed.data)} />
   </div>;
 }
