@@ -5,6 +5,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {getDb} from "@/db/client";
 import {and,eq,inArray,sql} from "drizzle-orm";
 import {placementLearnerRequests} from "@/db/schema";
@@ -41,7 +42,7 @@ export default async function TpoDriveRoundsPage({
     value ? new Intl.DateTimeFormat("en-IN", {
       timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
     }).format(value) + " IST" : "To be scheduled";
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader eyebrow="TPO · Drive workspace" title="Rounds and schedule"
       description="Plan the drive rounds, check bookings and record company results." />
     <Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
@@ -49,23 +50,23 @@ export default async function TpoDriveRoundsPage({
     </Link>
     {drive.rounds.length === 0
       ? <EmptyState title="No rounds planned" description="Add an evaluation round in the drive workspace before scheduling students." />
-      : <div className="grid gap-4">
+      : <div className="grid min-w-0 gap-[var(--lms-space-4)]">
         {drive.rounds.map((round) => {
           const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
           const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
-          return <article key={round.id} className="min-w-0 border-b border-border py-5">
+          return <article key={round.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-5)]">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold text-body">Round {round.sequence} · {round.kind}</p>
                 <h2 className="mt-1 text-lg font-semibold text-foreground">{round.name}</h2>
-                <p className="mt-1 text-sm text-body">{round.status} · {round.mode} · {date(round.scheduledAt)}</p>
+                <p className="mt-1 flex min-w-0 flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={round.status==="COMPLETED"?"success":round.status==="CANCELLED"?"error":round.status==="SCHEDULED"?"info":"warning"}>{round.status}</StatusBadge><span>{round.mode} · {date(round.scheduledAt)}</span></p>
               </div>
               <Link href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                 See who / record results
               </Link>
             </div>
-            <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+            <dl className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] text-sm min-[768px]:grid-cols-3">
               <div><dt className="text-body">Students in round</dt><dd className="font-semibold">{round.participants.length}</dd></div>
               <div><dt className="text-body">Results</dt><dd className="font-semibold">{applied} applied · {staged} waiting to apply</dd></div>
               <div><dt className="text-body">Results expected</dt><dd>{date(round.resultsDueAt)}</dd></div>
@@ -87,9 +88,9 @@ export default async function TpoDriveRoundsPage({
             </Link>:null}
             {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}
             {round.meetingUrl ? <a href={round.meetingUrl}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Meeting link</a> : null}
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Meeting link</a> : null}
             {round.testUrl ? <a href={round.testUrl}
-              className="ml-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Test link</a> : null}
+              className="ml-0 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] min-[768px]:ml-4 md:min-h-9">Test link</a> : null}
           </article>;
         })}
       </div>}
