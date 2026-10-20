@@ -79,7 +79,7 @@ export function SuperAdminFacultyScheduleReassignAction({
       title="Reassign upcoming class schedules?"
       description={sourceName+" → "+(target?.displayName??"faculty")+
         ". Only upcoming scheduled sessions without a target timetable conflict will be moved; audit history stays preserved."}
-      confirmLabel="Reassign class schedules" pending={pending}
+      confirmLabel="Reassign class schedules" confirmVariant="primary" pending={pending}
       confirmDisabled={!target}
       onConfirm={submit}/>
   </div>;

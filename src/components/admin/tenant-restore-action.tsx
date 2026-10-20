@@ -39,6 +39,6 @@ export function TenantRestoreAction({
   <ConfirmDialog open={open} onOpenChange={setOpen}
    title={"Restore "+name+"?"}
    description={"The archived "+kind+" will become active again. Child accounts, domains, and service readiness are not automatically enabled. Review before allowing access."}
-   confirmLabel={"Restore "+kind} pending={pending} onConfirm={()=>void restore()}/>
+   confirmLabel={"Restore "+kind} confirmVariant="primary" pending={pending} onConfirm={()=>void restore()}/>
  </>;
 }
