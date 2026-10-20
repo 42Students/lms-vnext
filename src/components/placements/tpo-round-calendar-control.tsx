@@ -87,6 +87,14 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
         const body = await response.json().catch(() => null) as { error?: string } | null;
         throw new Error(body?.error || "Schedule conflicted or has changed. Refresh and review.");
       }
+      const receipt: unknown = await response.json().catch(() => null);
+      const saved = receipt && typeof receipt === "object" && !Array.isArray(receipt)
+        ? (receipt as { round?: unknown }).round : null;
+      if (!saved || typeof saved !== "object" || Array.isArray(saved) ||
+          (saved as Record<string, unknown>).id !== round.id ||
+          (saved as Record<string, unknown>).status !== (action === "CANCEL" ? "CANCELLED" : "SCHEDULED")) {
+        throw new Error("Round update could not be confirmed. Refresh and review.");
+      }
       setId(""); setReason(""); router.refresh();
     } catch (e) { setError(e instanceof Error ? e.message : "Calendar update failed."); }
     finally { setPending(false); }
