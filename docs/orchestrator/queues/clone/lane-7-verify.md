@@ -36,8 +36,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/components/placements/learner-placement-jobs.tsx`
 - [x] `src/components/placements/learner-placement-notification-settings.tsx`
 - [x] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-support-cancel.tsx`
-- [ ] `src/components/placements/placement-offer-controls.tsx`
+- [x] `src/components/placements/learner-support-cancel.tsx`
+- [x] `src/components/placements/placement-offer-controls.tsx`
 - [ ] `src/components/placements/tpo-applicant-review-drawer.tsx`
 - [ ] `src/components/placements/tpo-drive-edit-form.tsx`
 - [ ] `src/components/placements/tpo-drive-selection-manager.tsx`

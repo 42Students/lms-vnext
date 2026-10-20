@@ -335,7 +335,13 @@ export function PlacementOfferControls({
       </div>
 
       {isTpo ? (
-        <TpoOfferLifecyclePanel
+        <details className="group min-w-0 border-b border-border pb-4">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+            TPO administrative offer actions
+            <span aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180">⌄</span>
+          </summary>
+          <div className="min-w-0 space-y-5 pt-4">
+            <TpoOfferLifecyclePanel
           jobId={jobId}
           choices={candidates.flatMap((item) => item.offer ? [{
             id: item.offer.id,
@@ -344,10 +350,7 @@ export function PlacementOfferControls({
             joiningStatus: item.joining?.status ?? null,
           }] : [])}
         />
-      ) : null}
-
-      {isTpo ? (
-        <PlacementBulkOfferWithdraw
+            <PlacementBulkOfferWithdraw
           jobId={jobId}
           choices={candidates.flatMap((item) => item.offer ? [{
             id: item.offer.id,
@@ -356,6 +359,8 @@ export function PlacementOfferControls({
             joiningStatus: item.joining?.status ?? null,
           }] : [])}
         />
+          </div>
+        </details>
       ) : null}
 
       {candidates.length === 0 ? (
@@ -383,17 +388,17 @@ export function PlacementOfferControls({
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="m-0 font-semibold text-foreground">
+                    <p className="m-0 min-w-0 break-words font-semibold text-foreground">
                       {item.displayName ??
                         "Candidate"}
                     </p>
-                    <p className="mt-1 text-sm text-body">
+                    <p className="mt-1 break-words text-sm text-body">
                       {item.roleTitle} ·{" "}
                       {item.email ??
                         "No email on profile"}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex min-w-0 flex-wrap gap-2">
                     <StatusBadge
                       tone={
                         item.offerReady
@@ -459,7 +464,7 @@ export function PlacementOfferControls({
                 {!active &&
                 item.offerReady &&
                 draft ? (
-                  <div className="grid gap-3 lg:grid-cols-4">
+                  <div className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
                     <label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Record type
@@ -618,7 +623,7 @@ export function PlacementOfferControls({
                         }
                       />
                     </label>
-                    <div className="lg:col-span-4">
+                    <div className="md:col-span-2 lg:col-span-4">
                       <Button
                         size="sm"
                         disabled={
@@ -656,7 +661,7 @@ export function PlacementOfferControls({
                 ) : null}
 
                 {accepted && draft ? (
-                  <div className="grid gap-3 border-b border-border py-4 lg:grid-cols-4">
+                  <div className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2 lg:grid-cols-4">
                     <label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Joining outcome
@@ -802,7 +807,7 @@ export function PlacementOfferControls({
                         placeholder="Required when correcting a recorded outcome"
                       />
                     </label>
-                    <div className="lg:col-span-4">
+                    <div className="md:col-span-2 lg:col-span-4">
                       <Button
                         size="sm"
                         disabled={
@@ -830,7 +835,13 @@ export function PlacementOfferControls({
         </div>
       )}
       {withdrawTarget?.offer?<Dialog open={Boolean(withdrawTarget.offer)} onOpenChange={next=>{if(!next&&pendingKey===null)setWithdrawTarget(null);}}
-        dismissible={pendingKey===null} title={"Withdraw offer for "+(withdrawTarget.displayName??"learner")+"?"} className="max-w-lg">
+        dismissible={pendingKey===null} title={"Withdraw offer for "+(withdrawTarget.displayName??"learner")+"?"} className="max-w-lg"
+        footer={<div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingKey!==null} onClick={()=>setWithdrawTarget(null)}>Keep offer</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="danger" loading={pendingKey!==null}
+            disabled={pendingKey!==null||(withdrawReason==="Other"&&withdrawDetail.trim().length<3)}
+            onClick={()=>void withdraw(withdrawTarget)}>Confirm withdrawal</Button>
+        </div>}>
         <div className="space-y-4">
           <p className="text-sm text-body">This notifies the learner and recalculates held-offer eligibility. History is retained.</p>
           <label className="grid gap-2 text-sm">Reason<Select className={inputClass} value={withdrawReason}
@@ -840,11 +851,7 @@ export function PlacementOfferControls({
           <label className="grid gap-2 text-sm">Additional details
            <Textarea className={inputClass} maxLength={500} value={withdrawDetail} onChange={e=>setWithdrawDetail(e.target.value)}/>
           </label>
-          <div className="flex gap-3">
-            <Button variant="danger" disabled={pendingKey!==null||(withdrawReason==="Other"&&withdrawDetail.trim().length<3)}
-              onClick={()=>void withdraw(withdrawTarget)}>Confirm withdrawal</Button>
-            <Button variant="secondary" disabled={pendingKey!==null} onClick={()=>setWithdrawTarget(null)}>Keep offer</Button>
-          </div>
+
         </div>
       </Dialog>:null}
     </section>
