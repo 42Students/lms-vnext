@@ -304,12 +304,12 @@ export function LearnerCourseList({
         <Disclosure title="Semester information" className="mt-3 border-t border-border" contentClassName="pt-2">
           <div className="flex flex-wrap gap-2 text-xs">
           <Disclosure title="Semester Details" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 [&>summary]:px-0">
-            <dl className="mt-2 space-y-1 text-body">
+            <div className="mt-2 space-y-1 text-body">
               <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>
               <div>Batch: {periodRows[0]?.course.cohortName??"Not recorded"}</div>
               <div>Academic Year: {selectedPeriod?.startDate?.slice(0,4)??"Not recorded"}</div>
               <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
-            </dl>
+            </div>
           </Disclosure>
           <Disclosure title="All Courses" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 [&>summary]:px-0">
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
