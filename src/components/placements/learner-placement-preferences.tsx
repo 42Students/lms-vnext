@@ -19,7 +19,7 @@ type Preferences = {
   notifyApplicationUpdates: boolean;
 };
 
-const inputClass = "min-h-11 md:min-h-9";
+const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
 
 function splitList(value: string) {
   return value
@@ -169,7 +169,7 @@ export function LearnerPlacementPreferences({
           Tell the placement workspace what kinds of roles should surface first for you.
         </p>
       </div>
-      <div className="grid min-w-0 gap-4 py-5 lg:grid-cols-2">
+      <div className="grid min-w-0 gap-4 py-4 sm:grid-cols-2">
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Preferred role titles
@@ -205,7 +205,7 @@ export function LearnerPlacementPreferences({
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Employment types
           </span>
-          <div className="flex min-w-0 flex-wrap gap-2 rounded-lg border border-border bg-surface px-3 py-2.5">
+          <div className="flex min-w-0 flex-wrap gap-x-4 gap-y-2 py-1">
             {[
               ["FULL_TIME", "Full time"],
               ["INTERNSHIP", "Internship"],
@@ -257,6 +257,10 @@ export function LearnerPlacementPreferences({
             </option>
           </Select>
         </label>
+      </div>
+      <details className="min-w-0 border-t border-border py-3">
+       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Additional preferences</summary>
+       <div className="grid min-w-0 gap-4 py-3 sm:grid-cols-2">
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Shift preference
@@ -356,9 +360,10 @@ export function LearnerPlacementPreferences({
             Application updates
           </label>
         </div>
-      </div>
+       </div>
+      </details>
       <div className="border-t border-border py-4">
-        <Button className="max-md:min-h-11"
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
           size="sm"
           disabled={
             pending ||
