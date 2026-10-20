@@ -87,10 +87,10 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  }
  const available=rounds.filter(r=>["SCHEDULED","PENDING"].includes(r.status));
  return <section className="space-y-4 border-b border-border pb-5">
-  <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
+  <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:justify-between">
+   <div className="min-w-0"><h2 className="text-lg font-semibold">Candidate interviews</h2>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
-   <Button type="button" disabled={!available.length||!candidates.length} onClick={()=>open()}
+   <Button type="button" className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9" disabled={!available.length||!candidates.length} onClick={()=>open()}
     >Schedule interview</Button>
   </div>
   {!available.length||!candidates.length?<Banner tone="info">Schedule an interview when a pending or scheduled round and a candidate are available.</Banner>:null}
@@ -109,16 +109,16 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         cell:row=>(row.mode==="VIRTUAL"?"Virtual":"On campus")+" · "+(row.venue??row.meetingUrl??"—")},
       {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",
         cell:row=>row.interviewer??"Not recorded"},
-      {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status}</StatusBadge>},
+      {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"error":"warning"}>{row.status}</StatusBadge>},
       {key:"actions",header:"Actions",mobilePriority:"action",
-        cell:row=><div className="flex flex-wrap gap-2">
+        cell:row=><div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
      {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
       }))} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[14px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Download .ics</a>:null}
-     {row.status==="SCHEDULED"?<>
+     {row.status==="SCHEDULED"?<details className="min-w-0"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Actions</summary><div className="mt-2 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap">
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>open(row)}
        >Edit</Button>
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>void decide(row,"COMPLETED")}
@@ -127,7 +127,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        >No Show</Button>
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>void decide(row,"CANCEL")}
        >Cancel</Button>
-     </>:<span className="text-body">Recorded</span>}
+     </div></details>:<span className="text-body">Recorded</span>}
     </div>},
     ]}
     empty={<EmptyState title="No candidate interviews" description="No candidate interviews have been scheduled for this drive."/>}
@@ -136,7 +136,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}>
     <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round<Select value={roundId} disabled={Boolean(editing)}
+    <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
+    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round<Select value={roundId} disabled={Boolean(editing)}
      onChange={e=>setRoundId(e.target.value)} className="w-full">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
     </Select></label>
@@ -144,24 +145,27 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      onChange={e=>setApplicationId(e.target.value)} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
+    </div>
     <div className="grid min-w-0 gap-3 md:grid-cols-2">
      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>setStart(e.target.value)} className="w-full"/></label>
      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
       onChange={e=>setDuration(Number(e.target.value))} className="w-full"/></label>
     </div>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
+    <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
+    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
      className="w-full">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></Select></label>
     <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
      <Input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
       className="w-full"/></label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interviewer (optional)<Input value={interviewer}
+    </div>
+    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interviewer (optional)<Input value={interviewer}
      onChange={e=>setInterviewer(e.target.value)} className="w-full"/></label>
     {editing?<label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for change<Textarea rows={2} value={reason}
      onChange={e=>setReason(e.target.value)} className="w-full"/></label>:null}
     {error?<Banner tone="error">{error}</Banner>:null}
-    <div className="flex flex-wrap gap-3">
+    <div className="flex min-w-0 flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:justify-end [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
      <Button type="button" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)}
       onClick={()=>void save()} >
       {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</Button>
