@@ -133,7 +133,7 @@ export function CourseActions({
         <Button
           size="sm"
           className="min-h-11 md:min-h-9"
-          variant="ghost"
+          variant="danger"
           onClick={() =>
             setArchiveOpen(true)
           }
@@ -335,7 +335,7 @@ export function OfferingActions({
         {!hideArchive ? <Button
           size="sm"
           className="min-h-11 md:min-h-9"
-          variant="ghost"
+          variant="danger"
           onClick={() => setArchiveOpen(true)}
         >
           Archive
@@ -496,7 +496,7 @@ export function DeliveryActions({
       <Button
         size="sm"
           className="min-h-11 md:min-h-9"
-        variant="ghost"
+        variant="danger"
         onClick={() => setOpen(true)}
       >
         End
@@ -552,7 +552,7 @@ export function TeachingAssignmentActions({
       <Button
         size="sm"
           className="min-h-11 md:min-h-9"
-        variant="ghost"
+        variant="danger"
         onClick={() => setOpen(true)}
       >
         End
