@@ -69,3 +69,22 @@
 **Files changed:** `src/components/courses/faculty-course-workspace.tsx`, `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/error.tsx`, `loading.tsx`, new `not-found.tsx`, queue and proof. Teacher parent layout, lesson authoring, video manager, content order editor, quiz editor/review, item lifecycle, and home signals inspected.
 
 **Verification boundary:** source-only review; no runtime/test/CI.
+
+## 08 · Teacher / Section assessment health
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`  
+**Problems found (9):** Scope heading competing with h1, assessment row titles rendered as oversized page headings, filter controls wrapping at 375px, narrow 4-column metric grids on tablets, page header action lacking a mobile width rule, heavy repeated report-item borders, permanent pagination even for one page, dense grading-methodology disclaimer occupying primary content, and a generic card-shaped loading/error treatment.
+
+**Fix:** restore one h1 visual hierarchy, use compact row titles/status Badge and legacy dividers, make filter grid 1/3 responsive with 44px touch targets, metric pairs on phones/tablets and four cells on wide screens, hide single-page pagination, move methodology explanation into an accessible native disclosure, align Retry and switch loading to directory shape. Kept counts, unknown-data semantics, permitted Section-only links, filters and URL pagination unchanged.
+
+**Files changed:** assessment-health `page.tsx`, `error.tsx`, `loading.tsx`, queue and proof; nearest faculty course layout and inherited not-found states checked.
+
+**Verification boundary:** static state/class review only; no runtime or CI.
+
+## 09 · Teacher / Section assignments management
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
+**Problems found (8):** unconstrained draft selector, overlarge secondary heading, stacked fields wasting tablet width, create/edit/publish/archive actions conflicting at 375px, methods fieldset nested as another card, empty resources using a full-page state within the form, resource rows unaligned on narrow devices, and route error with custom non-legacy padding and no safe exit.
+
+**Fix:** place title/instructions and side-by-side due date/points in one responsive form grid; keep draft selector bounded and accessible; use one row of full-width phone actions and compact desktop actions; remove the nested method card and list resource links as separated aligned rows with safe touch targets and a compact empty message; align retry/back actions to PageHeader. Preserved unsaved-switch/archive confirmations, per-assignment method loading, validation, submissions restrictions, pending state and authoring APIs. Reviewed nearest parent access layout and route loading; no route-local not-found/template existed.
+
+**Files changed:** assignment editor, method picker, resource links, manage/error.tsx, manage/loading.tsx, queue and proof.
+**Verification:** static TypeScript/JSX inspection; runtime, tests and CI deliberately not run.
