@@ -14,6 +14,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { parseAdminCompanyDirectoryParams } from "@/modules/placements/admin-company-directory-model";
 import { listSuperAdminCompanyDirectory } from "@/modules/placements/admin-company-directory-service";
@@ -143,7 +144,7 @@ export default async function SuperAdminCompaniesPage({
         <h2 className="text-base font-semibold text-foreground">Potential duplicate companies</h2>
         <p className="mt-1 text-sm text-body">Different company identities sharing the same website domain within this authorized result page. These are suggestions, not verified merges.</p>
       </div>
-      {candidates.length===0?<p className="text-sm text-muted-foreground">No matching domains found in this result page.</p>:
+      {candidates.length===0?<EmptyState title="No matching domains" description="No matching domains found in this result page."/>:
        <ul className="grid gap-2 md:grid-cols-2">{candidates.map(group=>
         <li key={group.domain} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
           <p className="break-all text-sm font-semibold">{group.domain}</p>
@@ -157,7 +158,7 @@ export default async function SuperAdminCompaniesPage({
     <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Name identity review">
       <h2 className="text-base font-semibold text-foreground">Same-name identities to review</h2>
       <p className="text-sm text-body">Distinct employer IDs with matching normalized names may be aliases, franchises or unrelated companies. No automatic verification or merge is made.</p>
-      {nameConflicts.length===0?<p className="text-sm text-muted-foreground">No distinct IDs share a normalized name in this page.</p>:
+      {nameConflicts.length===0?<EmptyState title="No duplicate names" description="No distinct IDs share a normalized name in this page."/>:
        <ul className="grid gap-2 md:grid-cols-2">{nameConflicts.map(group=><li key={group.key} className="min-w-0 border-b border-border py-3">
         <h3 className="break-words text-sm font-semibold">{group.label}</h3>
         <p className="mt-2 text-xs text-muted-foreground">{group.companyIds.length} distinct identities · manual verification required</p>
@@ -211,7 +212,7 @@ export default async function SuperAdminCompaniesPage({
           Review this employer&apos;s relationships →
         </Link>
       </article>)}
-    </div> : <p className="border-t border-border py-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
+    </div> : <EmptyState title="No company relationships" description="No company relationships match the current scope and filters."/>}
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
       {data.query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
