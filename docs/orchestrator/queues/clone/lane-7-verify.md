@@ -40,8 +40,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/components/placements/placement-offer-controls.tsx`
 - [x] `src/components/placements/tpo-applicant-review-drawer.tsx`
 - [x] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
-- [ ] `src/components/placements/tpo-general-requests-panel.tsx`
+- [x] `src/components/placements/tpo-drive-selection-manager.tsx`
+- [x] `src/components/placements/tpo-general-requests-panel.tsx`
 - [ ] `src/components/placements/tpo-remind-non-applicants.tsx`
 - [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
 - [ ] `src/components/groups/college-group-detail-writes.tsx`
