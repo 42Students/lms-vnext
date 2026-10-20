@@ -208,7 +208,7 @@ export function AssignmentSubmissionControl({
   return (
     <form
       onSubmit={submit}
-      className="mt-4 rounded-xl border border-border bg-surface-subtle p-4"
+      className="mt-4 border-y border-border py-4"
     >
       <fieldset disabled={submitting && submissionType !== "FILE"}>
         <legend className="text-sm font-semibold text-foreground">
