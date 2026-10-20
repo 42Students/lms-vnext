@@ -1,6 +1,6 @@
 # UI/UX polish queue: lane chat-3
 
-33 surfaces, in order. ONE SURFACE PER TURN: take only the first unticked surface, make it excellent, tick it, and stop. The next surface comes with the next message. Never work on several surfaces at once.
+33 surfaces, in order. Work the next eight unticked surfaces per turn, strictly sequentially. Finish and record one before inspecting the next; stop after eight surfaces or approximately 50 minutes.
 
 Polish checklist (apply every point to the surface and to every component it renders, in every state):
 1. Clutter: one clear primary action per surface, secondary actions demoted or moved into a menu; merge duplicate links/buttons; remove decoration that carries no information; collapse rarely used filters or fields behind a disclosure; no card inside card.
@@ -13,7 +13,7 @@ Polish checklist (apply every point to the surface and to every component it ren
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-3.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-3-b with [chat-3], ticking [x] in this queue in the same push.
 
 - [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/new/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/overview/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/page.tsx` (TPO page)
