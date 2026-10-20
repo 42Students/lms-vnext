@@ -63,7 +63,7 @@ export default async function HrJobActivityPage({searchParams}:{
        href:"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q),
      }))} />
    {result.events.length?<ol className="divide-y divide-border border-y border-border">{result.events.map(item=>
-    <li key={item.id} className="py-4">
+    <li key={item.id} className="py-3">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
       className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{item.title}</Link>
      <p className="mt-1 text-sm text-body"><StatusBadge tone={item.status==="PUBLISHED"?"success":"neutral"}>{item.status}</StatusBadge> · {fmt(item.occurredAt)} IST</p>

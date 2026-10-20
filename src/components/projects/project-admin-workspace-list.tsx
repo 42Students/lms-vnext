@@ -97,7 +97,7 @@ export function ProjectAdminWorkspaceList({
       {key:"members",header:"Members",mobilePriority:"secondary",cell:item=>item.memberCount},
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open</Link>
+          <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open</Link>
           <ProjectArchiveControl projectId={item.id} projectTitle={item.title}
             status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
         </div>},
@@ -109,7 +109,7 @@ export function ProjectAdminWorkspaceList({
       {items.map((item) => (
         <article
           key={item.id}
-          className="flex min-h-60 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
+          className="flex min-h-60 flex-col rounded-[8px] border border-border bg-surface p-5"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
