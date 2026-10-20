@@ -62,7 +62,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
     } finally { setBusy(false); }
   }
   return (
-    <section className="space-y-4 border-b border-border pb-6">
+    <section className="min-w-0 space-y-4 border-b border-border pb-5">
       <h3 className="text-base font-semibold text-foreground">
         {edit ? "Edit active season" : "Start new season"}
       </h3>
@@ -70,19 +70,19 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
         <Alert tone="warning">An active season already exists. Close that season through the existing lifecycle workflow before creating another one.</Alert>
       ) : (
         <>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
             {(["name", "code", "startDate", "endDate"] as const).map((key) => (
-              <label key={key} className="grid gap-1 text-sm font-semibold text-body">
+              <label key={key} className="grid min-w-0 gap-1 text-sm font-semibold text-body">
                 {key === "startDate" ? "Start date" : key === "endDate" ? "End date" : key === "name" ? "Season name" : "Season code"}
                 <Input type={key.endsWith("Date") ? "date" : "text"}
                   value={form[key]} disabled={busy}
                   onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-                  className="min-h-11 md:min-h-9"
+                  className="min-h-11 w-full min-w-0 md:min-h-9"
                   required />
               </label>
             ))}
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button type="button" onClick={() => void save()} disabled={busy}
               className="min-h-11 w-full sm:w-auto md:min-h-9">
               {busy ? "Saving..." : edit ? "Review and confirm edit" : "Review and confirm new season"}
@@ -93,10 +93,13 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
         </>
       )}
       {seasons.filter((season) => season.status === "ACTIVE").map((season) => (
-        <Button type="button" variant="ghost" key={season.id} onClick={() => select(season)}
-          className="min-h-11 w-full sm:w-auto md:min-h-9 text-sm underline">
+        <div className="flex min-w-0 flex-col gap-2 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between" key={season.id}>
+         <p className="min-w-0 break-words text-sm font-semibold">{season.name}</p>
+         <Button type="button" variant="secondary" disabled={busy} onClick={() => select(season)}
+          className="min-h-11 w-full sm:w-auto md:min-h-9 text-sm">
           Edit {season.name} →
-        </Button>
+         </Button>
+        </div>
       ))}
       {error ? <InlineNotice tone="error" message={error}/> : null}
       <ConfirmDialog open={reviewOpen} onOpenChange={setReviewOpen}
@@ -105,7 +108,13 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
           ? "Confirm change to this active season? Existing registration deadlines are not updated."
           : "Create and activate this placement season? This does not open learner registration."}
         confirmLabel={edit ? "Confirm edit" : "Activate season"}
-        confirmVariant="primary" pending={busy} onConfirm={() => void save()}/>
+        confirmVariant="primary" pending={busy} onConfirm={() => void save()}>
+        <dl className="min-w-0 space-y-2 text-sm">
+         <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Season name</dt><dd className="break-words font-semibold">{form.name}</dd></div>
+         <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Season code</dt><dd className="break-words">{form.code}</dd></div>
+         <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Dates</dt><dd className="break-words">{form.startDate} – {form.endDate}</dd></div>
+        </dl>
+      </ConfirmDialog>
     </section>
   );
 }
