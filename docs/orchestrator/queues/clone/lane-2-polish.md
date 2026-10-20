@@ -15,10 +15,10 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-2.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-2-b with [chat-2], ticking [x] in this queue in the same push.
 
 - [x] `src/app/(authenticated)/tpo/messages/notifications/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/messages/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/more/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/notifications/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/more/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/notifications/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx` (TPO page)

@@ -47,9 +47,9 @@ export default async function TpoNotificationsPage({
   });
   if (!parsed.success) {
     return (
-      <section className="space-y-3">
+      <section className="min-w-0 space-y-4">
         <PageHeader title="Invalid notification filters" />
-        <Alert tone="error"><Link href={TPO_NOTIFICATIONS_PATH} className="text-primary-text underline">
+        <Alert tone="error"><Link href={TPO_NOTIFICATIONS_PATH} className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Return to newest notifications
         </Link></Alert>
       </section>
@@ -78,13 +78,13 @@ export default async function TpoNotificationsPage({
         title="Notifications"
         description="A clean history of what happened across placements. Actionable work stays on Home under Needs you."
       />
-      <NotificationToolbar
+      {!inbox.cursor.invalid ? <NotificationToolbar
         view={inbox.query.view}
         unreadCount={inbox.unreadCount}
         allLabel={nextHref?"Latest "+items.length:"All ("+items.length+")"}
         baseHref={TPO_NOTIFICATIONS_PATH}
         markAllEndpoint="/api/tpo/notifications/read-all"
-      />
+      /> : null}
       <TpoNotificationRefresh/>
       {inbox.cursor.invalid ? (
         <Alert tone="error">
@@ -95,8 +95,11 @@ export default async function TpoNotificationsPage({
         </Alert>
       ) : (
         <>
+          {firstPage&&olderUnread>0?<Alert tone="info">
+            {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
+          </Alert>:null}
           <div className={notificationStyles.feed}>
-          <NotificationList
+            <NotificationList
             variant="tpo"
             items={items}
             emptyAction={emptyNavigation ? <p role="status" className="mt-4 text-sm text-body">Your unread inbox is clear.{" "} <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link></p> : null}
@@ -104,14 +107,11 @@ export default async function TpoNotificationsPage({
             emptyText={inbox.query.view === "unread" ? "No unread notifications" : "Nothing yet"}
           />
           </div>
-          {firstPage&&olderUnread>0?<Alert tone="info">
-            {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
-          </Alert>:null}
           {nextHref ? (
             <div className="flex justify-stretch min-[768px]:justify-center">
               <Link
                 href={nextHref}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9 min-[768px]:w-auto"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 min-[768px]:w-auto"
               >
                 Older notifications
               </Link>
