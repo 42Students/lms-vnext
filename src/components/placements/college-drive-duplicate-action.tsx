@@ -21,8 +21,8 @@ export function CollegeDriveDuplicateAction({jobId}:{jobId:string}){
   }catch(e){setError(e instanceof Error?e.message:"Could not duplicate the drive.");}
   finally{setBusy(false);}
  }
- return <div className="inline-flex flex-col gap-1">{confirmation}
-  <Button variant="secondary" type="button" disabled={busy} onClick={()=>void duplicate()}
+ return <div className="flex min-w-0 flex-col gap-1">{confirmation}
+  <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void duplicate()}
    >
    {busy?"Creating draft…":"Duplicate as new drive"}</Button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}

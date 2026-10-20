@@ -22,7 +22,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const {jobId}=await params;
   const query=driveInterviewsParams(await searchParams);
   if(!query) return <ErrorState title="Invalid interview filters"
-    description="Round kind, status or page is invalid. No records were loaded." />;
+    description="Round kind, status or page is invalid. No records were loaded." action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
   const [data,appointments]=await Promise.all([
     listCollegeDriveInterviews(context,jobId,query),
     getCollegeRoundSlotAppointments(context,jobId),
@@ -36,13 +36,12 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     {key:"venue",header:"Venue",cell:item=>item.venue??"Not recorded"},
     {key:"mode",header:"Mode",cell:item=>item.mode??"Not recorded"},
     {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="CANCELLED"?"error":"info"}>{item.status}</StatusBadge>},
-    {key:"slots",header:"Candidate slots",cell:()=>"See candidate interviews above"},
   ];
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Drive overview</Link>} />
-    <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end max-[767px]:flex-col max-[767px]:items-stretch min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+    <form method="get" role="search" aria-label="Interview round filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
         <Select name="kind" defaultValue={query.kind} >
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
@@ -54,7 +53,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
             <option key={status} value={status}>{status}</option>)}
         </Select>
       </label>
-      <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center"><Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
+      {(query.kind!=="ALL" || query.status!=="ALL") ? <Link href={driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1})} className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : null}</div>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}
@@ -62,10 +62,10 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     <section aria-label="Persisted interview rounds" className="space-y-2">
       <p role="status" className="text-sm text-body">{data.total} matching interview/GD rounds</p>
       <DataTable caption="Persisted interview rounds" columns={columns} rows={data.items}
-        getRowKey={item=>item.id} empty={<EmptyState title="No matching interview rounds" description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}/>} />
+        getRowKey={item=>item.id} empty={<EmptyState title="No matching interview rounds" description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."} action={<Link href={data.total===0?driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1}):driveInterviewsHref(jobId,{...query,page:Math.max(1,query.page-1)})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">{data.total===0?"Clear filters":"Previous page"}</Link>}/>} />
     </section>
-    <nav aria-label="Interview round pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-sm text-body">
-      <span>Page {query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
+    <nav aria-label="Interview round pages" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-border pt-[var(--lms-space-3)] text-sm text-body sm:flex-row sm:items-center">
+      <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&_a]:flex-1 max-[767px]:[&_a]:justify-center">
         {query.page>1?<Link href={driveInterviewsHref(jobId,{...query,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
         {query.page<data.totalPages?<Link href={driveInterviewsHref(jobId,{...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
       </div>
