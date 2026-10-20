@@ -79,8 +79,8 @@ export default async function LearnerPlacementRulesPage({
           </Link>
         </div>
       </section>
-      <section className="border-b border-border py-5">
-        <h2 className="m-0 text-base font-semibold text-foreground">How eligibility works</h2>
+      <section aria-labelledby="placement-how-eligibility-works" className="border-b border-border py-5">
+        <h2 id="placement-how-eligibility-works" className="m-0 text-base font-semibold text-foreground">How eligibility works</h2>
         <p className="mt-2 text-sm leading-6 text-body">Each published drive carries its own eligibility configuration. Your verified academic evidence is evaluated against that drive when you open or apply to it. A drive can therefore be available, eligible, or blocked with an explainable reason.</p>
         <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Check current drives →</Link>
       </section>

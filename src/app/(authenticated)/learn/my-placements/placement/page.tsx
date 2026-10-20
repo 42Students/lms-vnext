@@ -58,8 +58,8 @@ export default async function LearnerPlacementCellPage({
       )}
       {!requestRead.available ? <Alert tone="warning" role="alert">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry requests</Link></Alert> : null}
       {offerRows.length===0 ? (
-        <section role="status" className="border-b border-border pb-5">
-          <h2 className="text-base font-semibold text-foreground">Official offers</h2>
+        <section aria-labelledby="learner-official-offers-heading" className="border-b border-border pb-5">
+          <h2 id="learner-official-offers-heading" className="text-base font-semibold text-foreground">Official offers</h2>
           <p className="mt-2 text-sm text-body">{learnerPlacementCellOfferEmptyMessage(offerRows.length)}</p>
           <Link href="/learn/my-placements/applications"
             className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">

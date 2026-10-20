@@ -104,7 +104,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader title="Schedule" description="Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice." />
-      {needsConfirmation>0?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm font-semibold">{needsConfirmation} rounds need your confirmation</p>:null}
+      {needsConfirmation>0?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm font-semibold">{needsConfirmation} rounds need your confirmation</p>:null}
       <Tabs ariaLabel="Schedule view" value={view} renderPanel={false} items={[
         { value: "coming", label: "Coming up", href: "/learn/my-placements/schedule?view=coming" },
         { value: "past", label: "Past", href: "/learn/my-placements/schedule?view=past" },
@@ -139,7 +139,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} surface="schedule" />
         </Suspense>
       </section>:null}
-      {view==="past"?<section className="space-y-3">
+      {view==="past"?<section aria-label="Past placement rounds" className="space-y-3">
         <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Past</h2>
         {past.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">No past rounds yet.</p> : past.map(row =>
           <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:py-6">

@@ -55,7 +55,7 @@ export default async function MentorTeamHistoryPage({
           Projects access is disabled. Team history cannot be displayed.
         </section>
       : <>
-        <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
+        <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} role="search" aria-label="Team history filters"
           className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
           <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Registered role

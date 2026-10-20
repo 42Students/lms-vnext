@@ -127,7 +127,7 @@ export default async function LearnerOffersPage({
           </Link>
         </p>
       ) : null}
-      <form method="GET" action="/learn/my-placements/offers" className="flex min-w-0 flex-wrap items-end gap-3">
+      <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer search" className="flex min-w-0 flex-wrap items-end gap-3">
         {view !== "all" ? <Input type="hidden" name="status" value={view} /> : null}
         {dueOnly ? <Input type="hidden" name="due" value="1" /> : null}
         {order !== "priority" ? <Input type="hidden" name="sort" value={order} /> : null}
@@ -139,11 +139,11 @@ export default async function LearnerOffersPage({
           <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
             placeholder="Employer or role" className="min-h-11 min-w-0" />
         </label>
-        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Search</Button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
-      <form method="GET" action="/learn/my-placements/offers" className="flex flex-wrap items-end gap-3">
+      <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer sorting" className="flex flex-wrap items-end gap-3">
         {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}
         {searchTerm?<Input type="hidden" name="q" value={searchTerm}/>:null}
         {dueOnly?<Input type="hidden" name="due" value="1"/>:null}
@@ -158,7 +158,7 @@ export default async function LearnerOffersPage({
             <option value="company">Company A–Z</option>
           </Select>
         </label>
-        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply sort</Button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Apply sort</Button>
       </form>
       {hasActiveFacets ? (
         <Link href={learnerOfferClearFiltersHref(view)}
