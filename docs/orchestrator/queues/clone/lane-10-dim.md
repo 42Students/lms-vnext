@@ -33,16 +33,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-10.md: file, number of 
 - [x] `src/app/(authenticated)/admin/inbound-mail/error.tsx`
 - [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
 - [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lessons/error.tsx`
-- [ ] `src/app/(authenticated)/admin/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/admin/live-classes/error.tsx`
-- [ ] `src/app/(authenticated)/admin/module-access/page.tsx`
-- [ ] `src/app/(authenticated)/admin/organizations/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/error.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/error.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
+- [x] `src/app/(authenticated)/admin/lessons/error.tsx`
+- [x] `src/app/(authenticated)/admin/lessons/page.tsx`
+- [x] `src/app/(authenticated)/admin/live-classes/error.tsx`
+- [x] `src/app/(authenticated)/admin/module-access/page.tsx`
+- [x] `src/app/(authenticated)/admin/organizations/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/error.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/unassigned/error.tsx`
+- [x] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/error.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/applications/error.tsx`
