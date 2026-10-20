@@ -38,12 +38,12 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regre
 - [x] `src/components/shell/tpo-mobile-footer.tsx`
 - [x] `src/components/shell/tpo-topbar-messages.tsx`
 - [x] `src/app/maintenance/page.tsx`
-- [ ] `src/app/offline/page.tsx`
-- [ ] `src/app/page.tsx`
-- [ ] `src/app/placements/page.tsx`
-- [ ] `src/app/platform/page.tsx`
-- [ ] `src/app/privacy-policy/page.tsx`
-- [ ] `src/app/quiz/page.tsx`
+- [x] `src/app/offline/page.tsx`
+- [x] `src/app/page.tsx`
+- [x] `src/app/placements/page.tsx`
+- [x] `src/app/platform/page.tsx`
+- [x] `src/app/privacy-policy/page.tsx`
+- [x] `src/app/quiz/page.tsx`
 - [ ] `src/app/recruiter-invite/[token]/page.tsx`
 - [ ] `src/app/request-demo/page.tsx`
 - [ ] `src/app/superadmin-login/page.tsx`
