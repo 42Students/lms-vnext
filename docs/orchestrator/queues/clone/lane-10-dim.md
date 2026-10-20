@@ -93,16 +93,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-10.md: file, number of 
 - [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
 - [x] `src/app/(authenticated)/college/attendance/departments/error.tsx`
 - [x] `src/app/(authenticated)/college/attendance/error.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/settings/error.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/error.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/error.tsx`
-- [ ] `src/app/(authenticated)/college/branding/error.tsx`
-- [ ] `src/app/(authenticated)/college/classes/error.tsx`
-- [ ] `src/app/(authenticated)/college/classes/recurring-preview/error.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/error.tsx`
+- [x] `src/app/(authenticated)/college/attendance/settings/error.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/error.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/error.tsx`
+- [x] `src/app/(authenticated)/college/branding/error.tsx`
+- [x] `src/app/(authenticated)/college/classes/error.tsx`
+- [x] `src/app/(authenticated)/college/classes/recurring-preview/error.tsx`
+- [x] `src/app/(authenticated)/college/college-profile/error.tsx`
 - [ ] `src/app/(authenticated)/college/companies/error.tsx`
 - [ ] `src/app/(authenticated)/college/companies/page.tsx`
 - [ ] `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx`
