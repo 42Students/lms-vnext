@@ -169,10 +169,10 @@ export function LearnerCourseList({
   );
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-[16px]">
       <section className="py-1">
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-          <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-[16px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div className="grid gap-[8px] md:grid-cols-2">
             <label className="text-xs font-semibold text-body">
               Semester
               <Select
@@ -232,7 +232,7 @@ export function LearnerCourseList({
           ) : null}
         </div>
 
-        <div className="mt-3 flex flex-wrap items-end gap-3">
+        <div className="mt-[8px] flex flex-wrap items-end gap-[8px]">
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Term access
             <Select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}

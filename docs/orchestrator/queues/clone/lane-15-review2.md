@@ -10,11 +10,11 @@ These 16 page routes were moved to chat-15 from the end of other lanes' review q
 - [x] `src/app/(authenticated)/learn/allAssignments/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
 - [x] `src/app/(authenticated)/college/faculty/import/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/import/page.tsx`
-- [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/register/page.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/assignments/page.tsx`
+- [x] `src/app/(authenticated)/college/students/import/page.tsx`
+- [x] `src/app/(authenticated)/college/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/page.tsx`
+- [x] `src/app/(authenticated)/college/students/register/page.tsx`
