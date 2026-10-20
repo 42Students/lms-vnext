@@ -67,7 +67,7 @@ export default async function MentorTaskReviewsPage({
       Projects access is disabled for this membership. No task data was loaded.
     </section> : <>
       <form role="search" aria-label="mentor task reviews filters" method="get" action="/mentor/task-reviews"
-        className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2">
+        className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Task or project
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
@@ -80,7 +80,11 @@ export default async function MentorTaskReviewsPage({
             {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
           </Select>
         </label>
-        <Disclosure title="More task review filters" defaultOpen={hasAdvancedFilters} className="md:col-span-2" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
+          <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+          {hasFilters?<Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        </div>
+        <Disclosure title="More task review filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Page size
           <Select name="pageSize" defaultValue={String(data.pageSize)}
@@ -121,10 +125,7 @@ export default async function MentorTaskReviewsPage({
           </Select>
         </label>
         </Disclosure>
-        <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-2">
-          <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-          <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
-        </div>
+
       </form>
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
         <p className="text-sm text-body leading-[22px]">{data.total === 0 ? "No matching submissions" : "Showing " + data.first + "–" + data.last + " of " + data.total + " pending submissions"}</p>
