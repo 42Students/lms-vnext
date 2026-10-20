@@ -43,8 +43,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-8.md: surface | regres
 - [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
 - [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
 - [x] `src/components/tpo/tpo-after-college-editor.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/groups/college-study-member-actions.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/groups/college-study-member-actions.tsx`
 - [ ] `src/components/admin/super-admin-legacy-group-tabs.tsx`
 - [ ] `src/components/college/college-legacy-group-tabs.tsx`
 - [ ] `src/components/placements/college-drive-legacy-nav.tsx`

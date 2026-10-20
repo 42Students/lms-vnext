@@ -29,11 +29,13 @@ export type NotificationListItem = {
 };
 
 function formatWhen(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Date unavailable";
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  }).format(date);
 }
 
 export function NotificationList({
