@@ -122,7 +122,7 @@ export default async function AnnouncementsPage({
     : null;
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
         title="Announcements"
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
@@ -137,6 +137,13 @@ export default async function AnnouncementsPage({
       />
 
       <AnnouncementAdminWorkspace items={items} targets={targets} />
+      {next ? (
+        <div className="flex justify-center">
+          <Link href={next} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            Older announcements
+          </Link>
+        </div>
+      ) : null}
       <Disclosure title="Your college notifications" className="min-w-0" contentClassName="min-w-0 pb-[var(--lms-space-4)]">
       <section aria-label="Personal college notifications" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -156,13 +163,7 @@ export default async function AnnouncementsPage({
         <Link href="/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
       </Disclosure>
-      {next ? (
-        <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            Older announcements
-          </Link>
-        </div>
-      ) : null}
+
     </div>
   );
 }

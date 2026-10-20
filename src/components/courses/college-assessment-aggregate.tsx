@@ -73,7 +73,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
   const summary = collegeAssessmentSummary(data.items);
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
         eyebrow=""
         title={name}
@@ -102,7 +102,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
       {leading ? <section aria-label="New assessment" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
 
       <section aria-label="Assessment directory filters"
-        className="border-b border-border pb-5">
+        className="border-b border-border pb-6">
         <form method="get"
           action={isAssignment ? "/college/assignments" : "/college/quizzes"}
           className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] [&>label]:min-w-[min(100%,13rem)]">
