@@ -158,6 +158,7 @@ export function CreateLearningPathPanel({
       <div className="mt-4">
         <Button
           type="submit"
+          loading={pending}
           disabled={
             pending || !title.trim()
           }
