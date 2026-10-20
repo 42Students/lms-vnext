@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -29,7 +30,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
   <PageHeader eyebrow="Mentor · Project resources" title="Registered resource links"
    description={data.projectTitle}
    actions={<Link data-unskin="" href={base+"?tab=resources"}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
      Project resources
    </Link>}/>
   {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
@@ -39,7 +40,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {data.registered} active resource records · {data.requiredCount} required ·
     {" "}{data.linkableCount} with HTTPS links.
    </p>
-   <form method="get" action={base+"/resources-directory"}
+   <FilterBar title="Filters"><form method="get" action={base+"/resources-directory"}
     className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
     <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
@@ -78,11 +79,11 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     <Link href={base+"/resources-directory" } className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
      Clear
     </Link>
-   </form>
+   </form></FilterBar>
    <div className="flex flex-wrap items-center gap-3">
     <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
       "/mentor-resources-export"+filters}
-      download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+      download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
      Export resource metadata CSV (max 200)
     </Link>
     {data.exportOmitted>0?<p role="status" className="text-xs text-body">

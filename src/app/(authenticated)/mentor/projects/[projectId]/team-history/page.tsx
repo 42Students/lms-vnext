@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
@@ -45,7 +46,7 @@ export default async function MentorTeamHistoryPage({
     <PageHeader eyebrow="Mentor · Project Team" title="Team membership history"
       description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
       actions={<Link data-unskin="" href={back}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Team workspace
       </Link>} />
     {!data.enabled
@@ -53,8 +54,8 @@ export default async function MentorTeamHistoryPage({
           Projects access is disabled. Team history cannot be displayed.
         </section>
       : <>
-        <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
-          className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
+        <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
+          className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
           <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Registered role
             <Select name="role" defaultValue={data.query.role}
@@ -79,7 +80,7 @@ export default async function MentorTeamHistoryPage({
           <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
             Filter role
           </Button>
-        </form>
+        </form></FilterBar>
         <Tabs ariaLabel="Team membership history views" renderPanel={false} value={data.query.view} items={([["ALL","All records"],["OPEN","Open membership records"],["ENDED","Ended membership records"]] as const).map(([view,label])=>({value:view,label,href:mentorTeamHistoryHref(projectId,{view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:1})}))}/>
         <p className="text-sm text-body">{data.total} matching membership record{data.total === 1 ? "" : "s"}</p>
         {data.items.length === 0

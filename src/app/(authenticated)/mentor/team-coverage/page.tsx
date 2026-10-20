@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -51,7 +52,7 @@ export default async function MentorTeamCoveragePage({
     <PageHeader eyebrow="Mentor · Projects" title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
       actions={<Link data-unskin="" href="/mentor/projects"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Projects
       </Link>} />
     {!data.enabled
@@ -59,8 +60,8 @@ export default async function MentorTeamCoveragePage({
           Projects access is disabled for this membership. No team records were loaded.
         </section>
       : <>
-        <form method="get" action="/mentor/team-coverage"
-          className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+        <FilterBar title="Filters"><form method="get" action="/mentor/team-coverage"
+          className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
           <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
               className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground"
@@ -100,7 +101,7 @@ export default async function MentorTeamCoveragePage({
           </label>
           <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>
           <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
-        </form>
+        </form></FilterBar>
         <section aria-label="Registered team coverage summary"
           className="grid gap-3 md:grid-cols-3">
           {([
@@ -108,7 +109,7 @@ export default async function MentorTeamCoveragePage({
             ["Projects with no active learners",data.summary.zeroLearnerProjects],
             ["Projects without primary Mentor",data.summary.withoutPrimaryMentor],
           ] as const).map(([label,value])=>
-            <div key={label} className="rounded-xl border border-border bg-surface p-4">
+            <div key={label} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
               <p className="text-xs font-semibold text-muted-foreground">{label}</p>
               <p className="mt-2 text-xl font-semibold tabular-nums">{value}</p>
             </div>)}
