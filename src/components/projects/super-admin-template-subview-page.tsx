@@ -245,10 +245,10 @@ export async function SuperAdminTemplateSubviewPage({
         ) : (
           <section
             aria-label="Template sprints"
-            className="space-y-4"
+            className="min-w-0 space-y-3"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="m-0 text-lg font-semibold leading-7 text-[var(--lms-heading)]">
                 Sprints
               </h2>
               <StatusBadge>
@@ -269,14 +269,14 @@ export async function SuperAdminTemplateSubviewPage({
               .map((sprint) => (
                 <article
                   key={sprint.key}
-                  className="border-b border-border py-5 last:border-b-0"
+                  className="min-w-0 border-b border-border py-4 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="m-0 text-base font-semibold text-foreground">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="m-0 break-words text-base font-semibold text-foreground">
                         {sprint.title}
                       </h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="mt-1 break-all text-xs text-muted-foreground">
                         Key: {sprint.key}
                       </p>
                     </div>
@@ -302,7 +302,7 @@ export async function SuperAdminTemplateSubviewPage({
                     <DetailField label="Due" value={sprint.dueLabel ?? "Not set"} />
                   </dl>
 
-                  <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-body">
+                  <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-body">
                     {sprint.goal || sprint.description ||
                       "No sprint description recorded."}
                   </p>
@@ -326,10 +326,10 @@ export async function SuperAdminTemplateSubviewPage({
         ) : (
           <section
             aria-label="Template tasks"
-            className="space-y-4"
+            className="min-w-0 space-y-3"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="m-0 text-lg font-semibold leading-7 text-[var(--lms-heading)]">
                 Tasks
               </h2>
               <StatusBadge>
@@ -350,14 +350,14 @@ export async function SuperAdminTemplateSubviewPage({
               .map((task) => (
                 <article
                   key={task.key}
-                  className="border-b border-border py-5 last:border-b-0"
+                  className="min-w-0 border-b border-border py-4 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="m-0 text-base font-semibold text-foreground">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="m-0 break-words text-base font-semibold text-foreground">
                         {task.title}
                       </h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="mt-1 break-all text-xs text-muted-foreground">
                         Key: {task.key}
                       </p>
                     </div>
@@ -398,7 +398,7 @@ export async function SuperAdminTemplateSubviewPage({
                       <h4 className="text-xs font-semibold text-muted-foreground">
                         Description
                       </h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-body">
+                      <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">
                         {task.description}
                       </p>
                     </div>
@@ -408,7 +408,7 @@ export async function SuperAdminTemplateSubviewPage({
                     <h4 className="text-xs font-semibold text-muted-foreground">
                       Acceptance criteria
                     </h4>
-                    <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-body">
+                    <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">
                       {task.acceptanceCriteria ||
                         "No acceptance criteria recorded."}
                     </p>
