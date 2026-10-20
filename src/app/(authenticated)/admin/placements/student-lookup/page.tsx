@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import {DataTable} from "@/components/ui/data-table";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -25,7 +26,10 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
  const data=lookup&&lookup.ok?lookup.value:null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
-   actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Analytics</Link>}/>
+   actions={<>
+    <PageBackLink href="/admin/placements" label="Placement overview" />
+    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Analytics</Link>
+   </>}/>
   <form action="/admin/placements/student-lookup" role="search" className="min-w-0 border-b border-border pb-4">
    <label className="grid max-w-xl gap-2 text-sm font-semibold text-body">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
