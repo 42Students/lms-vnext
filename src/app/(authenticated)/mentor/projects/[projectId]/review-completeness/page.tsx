@@ -25,11 +25,11 @@ export default async function MentorProjectReviewCompletenessPage({
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorProjectReviewCompleteness(context,parsed.data);
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project Overview" title="Delivery review completeness"
       description={data.projectTitle??"Current assigned project"}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Delivery workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -41,14 +41,14 @@ export default async function MentorProjectReviewCompletenessPage({
         {" · "}Project state: {data.projectStatus}
       </p>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
-        description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history."/>
+        description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history." action={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Delivery workspace</Link>}/>
       :<ol aria-label="Recorded delivery review versions" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
-        <li key={item.id} className="py-[var(--lms-space-3)]">
+        <li key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="min-w-0 break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery version {item.version}</h2>
+            <h2 className="m-0 min-w-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">Delivery version {item.version}</h2>
             <StatusBadge tone={item.status==="APPROVED"?"success":item.status==="REJECTED"?"error":"neutral"}>{item.status}</StatusBadge>
           </div>
-          <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
+          <dl className="mt-2 grid min-w-0 gap-2 md:grid-cols-2">
             <div><dt className="text-xs text-muted-foreground">Review decision</dt>
               <dd className="mt-1 text-sm font-semibold">{item.reviewLabel}</dd>
             </div>
@@ -71,7 +71,7 @@ export default async function MentorProjectReviewCompletenessPage({
             }).format(item.reviewedAt)} IST
           </p>:null}
         </li>)}</ol>}
-      <Pagination label="Review version pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewCompletenessHref({projectId,page})}/>
+      {data.totalPages>1?<Pagination label="Review version pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewCompletenessHref({projectId,page})}/>:null}
     </>}
     <p className="text-xs text-muted-foreground leading-[1.6]">
       A review is recorded only when a persisted review decision exists.
