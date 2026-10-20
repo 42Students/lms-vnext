@@ -37,8 +37,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-8.md: surface | regres
 - [x] `src/components/projects/project-team-controls.tsx`
 - [x] `src/components/projects/project-template-controls.tsx`
 - [x] `src/components/projects/template-metadata-edit-control.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
 - [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
 - [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
 - [ ] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
