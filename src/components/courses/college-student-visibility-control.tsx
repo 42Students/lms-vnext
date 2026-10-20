@@ -1,5 +1,5 @@
 "use client";
-import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import { Alert } from "@/components/ui/alert";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
@@ -40,11 +40,11 @@ export function CollegeStudentVisibilityControl({contentId,initialVisible,initia
     });
   }
   return <div className="mt-2 min-w-0 space-y-1">
-    <Button type="button" variant="secondary" disabled={pending} onClick={toggle}
+    <FilterChip type="button" disabled={pending} onClick={toggle}
       aria-label={action.label} aria-pressed={visible}
       className="min-h-11 max-w-full md:min-h-9">
       {pending?"Saving…":action.label}
-    </Button>
+    </FilterChip>
     {notice?<Alert tone="error">{notice}</Alert>:null}
   </div>;
 }
