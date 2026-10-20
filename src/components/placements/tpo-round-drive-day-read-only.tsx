@@ -100,8 +100,8 @@ export function TpoRoundDriveDayReadOnly({
       />
 
       <nav aria-label="Round operational actions" className="flex flex-wrap gap-3">
-        <Link href={destinations.results} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
-        <Link href={destinations.schedule} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
+        <Link href={destinations.results} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Review round results →</Link>
+        <Link href={destinations.schedule} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Candidate schedule →</Link>
       </nav>
       <p className="text-sm text-body">
         <a
@@ -115,7 +115,7 @@ export function TpoRoundDriveDayReadOnly({
         </span>
         <Link
           href={destinations.noShows}
-          className="ml-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:underline"
+          className="ml-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link hover:underline"
         >
           Review explicit no-shows →
         </Link>
@@ -146,7 +146,7 @@ export function TpoRoundDriveDayReadOnly({
           </StatusBadge>
         </div>
 
-        <dl className="mt-5 grid gap-4 text-sm md:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-5 grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
           <div>
             <dt className="font-semibold text-muted-foreground">
               Job

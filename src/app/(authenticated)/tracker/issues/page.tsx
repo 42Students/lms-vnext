@@ -57,7 +57,7 @@ export default async function TrackerIssuesPage({
         <PageHeader title="Issues" description="Review and triage reported LMS issues." />
         <TrackerAdminNav />
         <ErrorState title="Invalid issue filter." description="Review and triage reported LMS issues."
-          action={<Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline" href="/tracker/issues">
+          action={<Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline" href="/tracker/issues">
             Reset filters
           </Link>}/>
       </div>
@@ -97,36 +97,36 @@ export default async function TrackerIssuesPage({
       <form className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-5">
         <label className="text-xs font-semibold text-body">
           Search
-          <Input name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
+          <Input className="min-h-11 w-full md:min-h-9" name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
         </label>
         <label className="text-xs font-semibold text-body">
           Reporter
-          <Input name="reporter" defaultValue={current.reporter??""} maxLength={100} placeholder="Reporter name"/>
+          <Input className="min-h-11 w-full md:min-h-9" name="reporter" defaultValue={current.reporter??""} maxLength={100} placeholder="Reporter name"/>
         </label>
         <label className="text-xs font-semibold text-body">
           Status
-          <Select name="status" defaultValue={current.status ?? ""}>
+          <Select className="min-h-11 w-full md:min-h-9" name="status" defaultValue={current.status ?? ""}>
             <option value="">All statuses</option>
             {BUG_STATUSES.map((x) => <option key={x} value={x}>{x}</option>)}
           </Select>
         </label>
         <label className="text-xs font-semibold text-body">
           Severity
-          <Select name="severity" defaultValue={current.severity ?? ""}>
+          <Select className="min-h-11 w-full md:min-h-9" name="severity" defaultValue={current.severity ?? ""}>
             <option value="">All severities</option>
             {BUG_SEVERITIES.map((x) => <option key={x} value={x}>{x}</option>)}
           </Select>
         </label>
         <label className="text-xs font-semibold text-body">
           Environment
-          <Select name="environment" defaultValue={current.environment ?? ""}>
+          <Select className="min-h-11 w-full md:min-h-9" name="environment" defaultValue={current.environment ?? ""}>
             <option value="">All environments</option>
             {BUG_ENVIRONMENTS.map((x) => <option key={x} value={x}>{x}</option>)}
           </Select>
         </label>
         <label className="text-xs font-semibold text-body">
           Sort
-          <Select name="sort" defaultValue={current.sort}>
+          <Select className="min-h-11 w-full md:min-h-9" name="sort" defaultValue={current.sort}>
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
           </Select>
@@ -143,7 +143,7 @@ export default async function TrackerIssuesPage({
 
       {page.items.length === 0 ? (
         <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
-          action={<Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Reset</Link>}/>
+          action={<Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">Reset</Link>}/>
       ) : (
         <div className="divide-y divide-[var(--lms-canvas-border)]">
           {page.items.map((issue) => (
@@ -156,7 +156,7 @@ export default async function TrackerIssuesPage({
                     <StatusBadge>{issue.environment}</StatusBadge>
                   </div>
                   <h2 className="mt-3 text-base font-semibold text-foreground">
-                    <Link className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
+                    <Link className="inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
                       {issue.publicId} · {issue.issueType}
                     </Link>
                   </h2>
