@@ -41,7 +41,7 @@ export default async function AnnouncementsPage({
   }
   const params = parseSuperAdminAnnouncementParams(await searchParams);
   if (!params) {
-    return <div className="min-w-0 space-y-5">
+    return <div className="min-w-0 space-y-6">
       <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
       <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline">Reset filters</Link></p>
     </div>;
@@ -183,7 +183,7 @@ export default async function AnnouncementsPage({
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
       }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
-      {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-5">
+      {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-6">
        <h2 className="text-lg font-semibold text-foreground">Placement-cell read receipts</h2>
        <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read.</p>
        <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{

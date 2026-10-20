@@ -23,19 +23,19 @@ export default async function SuperAdminCourseProgressPage({
   const context = await getCurrentRequestContext();
   requirePermission(context,"admin-scope.select");
   const parsed = parseSuperAdminCourseProgressParams(await searchParams);
-  if (!parsed) return <div className="min-w-0 space-y-5">
+  if (!parsed) return <div className="min-w-0 space-y-6">
     <PageHeader title="Course Progress" />
     <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
       action={<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Clear filters</Link>} />
   </div>;
-  if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
+  if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-6">
     <PageHeader title="Course Progress" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its course progress." />
   </div>;
   const [data,filtersResult] = await Promise.all([listCollegeCourseProgress(context, parsed),getSuperAdminLearningFilterOptions(context).then(value=>({status:"fulfilled" as const,value}),()=>({status:"rejected" as const}))]);
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
   const summary = adminProgressStats(data.items);
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
     <PageHeader title="Course Progress"
       description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners."
       actions={<div className="flex flex-wrap items-center gap-2"><PageBackLink href="/admin/courses" label="Courses" /><a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}

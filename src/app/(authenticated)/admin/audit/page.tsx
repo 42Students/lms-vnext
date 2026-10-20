@@ -12,7 +12,7 @@ export default async function SuperAdminAuditPage({ searchParams }: {
 }) {
   if (!isSuperAdmin(await getCurrentRequestContext())) redirect("/dashboard");
   const parsed = validateSuperAdminAuditRouteQuery(await searchParams);
-  if (!parsed) return <div className="min-w-0 space-y-5">
+  if (!parsed) return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin" title="Activity Log"
       actions={<Link href="/tracker/audit-findings"
         className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Audit Findings</Link>} />
