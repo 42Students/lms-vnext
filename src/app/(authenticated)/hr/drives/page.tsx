@@ -204,7 +204,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           </Link>:null}
           {req.status==="REJECTED"&&req.decisionNote?<p className="mt-2 text-sm text-body">Declined: “{req.decisionNote}”</p>:null}
           {req.approvedJobId && req.status==="DRAFT"?
-            <p role="status" className="mt-2 text-sm text-body">Approved · draft. The placement cell will publish this drive before students can apply.</p>:null}
+            <Alert tone="info" className="mt-2">Approved · draft. The placement cell will publish this drive before students can apply.</Alert>:null}
           {req.approvedJobId && req.status!=="DRAFT"?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
             className="mt-2 block text-sm text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 md:min-h-9">Open published drive</Link>:null}
         </li>;
