@@ -724,3 +724,22 @@ grep -nE 'gridClipboardTsv|safeGridClipboardCell|replaceAll|rows on this page|on
 - Missing proof: no native AG Grid build, row interaction test, clipboard permission test, real phone/tablet pixel screenshot, exact old grid height/hover focus measurement, or comprehensive repo-wide E8 census. `package.json` remains missing `ag-grid-community` and `ag-grid-react`, and `docs/design/legacy-grid/TpoGrid.jsx.txt` is not accessible. The manifest is explicitly out of lane scope.
 
 **E8 remains [ ]** despite this completed source-level file batch. Next exact file: `src/components/tpo/grid/view-memory.ts` for saved layout visibility/pinning behavior and corruption handling; do not mark E8 without upstream packages and rendered parity.
+
+
+### 2026-10-20 chat-14 E8 follow-up — saved layout corruption and descending blanks
+
+| Property/state | Legacy source / requirement | Corrected vNext file:line | Source proof |
+|---|---|---|---|
+| Persisted per-column width | `ui-clone-checklist.md:57` per-storageKey layout memory, clamp to safe grid widths | `src/components/tpo/grid/view-memory.ts:18-32,42-56` filters to permitted keys, deduplicates, requires finite width, clamps and rounds **100..500px** during both parse and serialize | No nonfinite width can be persisted as `null` in JSON; no content values stored |
+| Saved pin and column visibility | E8 width/pin/hidden layout state | `view-memory.ts:30-31,53-54` round-trips boolean pinned/hidden; `tpo-grid.tsx:120-140,244-256` reapplies width/pin only to current allowed schema, while URL/columns selector remains visibility authority | Preserves prior behavior; hidden layout field is not re-applied independently of URL by design |
+| Asc/desc null sorting | Legacy fallback `src/components/tpo/grid/grid-sort.ts:25-32` keeps absent numbers/dates at end of both directions | `src/components/tpo/grid/tpo-grid.tsx:49-65,211-216` uses `isDescending` comparator arg to counter AG Grid's automatic direction reversal for nulls | Native and fallback preserve the same blank-last source rule |
+| Filter-hidden selection / clipboard | Only selected authorized visible rows may export, even when global selection holds hidden IDs | Native `tpo-grid.tsx:176-193`: `selection?.selected.length` now governs use of `selectedVisible`, not `selectedVisible.length`; no unselected visible row is copied when all selected IDs are filtered out | No unintended widening of copied data |
+
+Full-file GitHub re-fetch: `view-memory.ts` has **two Number.isFinite(width)** guards, both directions clamp width 100..500, and pin/hidden are booleans; no imported UI or HTML. `tpo-grid.tsx` has `isDescending` in comparator and two explicit null-ordering branches. No CI, unit test, application, browser, compiled AG Grid or screenshot verification; E8 remains **[ ]**. Reproduce in checkout (not executed):
+
+```sh
+grep -nE 'allowed.has|used.has|Number.isFinite|Math.max\(100|Math.min\(500|pinned:|hidden:' src/components/tpo/grid/view-memory.ts
+grep -nE 'isDescending|descending\?|sortValue&&|selectedVisible|selection\?\.selected.length' src/components/tpo/grid/tpo-grid.tsx
+```
+
+**Next exact file:** `src/components/tpo/grid/grid-workspace.tsx` — source-count audit of toolbar/filter/views/export controls and 44px phone hit areas, then E8 legacy runtime/dependency gate.
