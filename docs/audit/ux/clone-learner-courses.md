@@ -936,3 +936,75 @@ Regex on fully fetched UTF-8 source: `/<(button|input|select|textarea|table)(?=[
 **STRICT-TICK STATUS:** H1–H6 remain `[ ]`. Source code migration and tables are complete for the six named files, but this does **not** prove pixel-level default/hover/focus/disabled/loading/error state parity until computed-value/screenshot checks and full-area grep against refreshed inventory happen. Shared skin and global Button/Alert ownership belong to chat-17/chat-5; no other lane code was altered.
 
 **Next exact unticked file:** `src/components/courses/learner-course-attendance.tsx` (376 lines; calendar month controls/table/status pill responsive and value proof), followed by `src/components/courses/learner-course-state-retry.tsx` and the learner live-session status file.
+
+## 2026-10-20 chat-7 — batch 10, 15 whole-file Learner/Courses judgement cases
+
+**Source-completed scope:** The following 15 TSX files were read, edited for old-LMS visual parity, committed to `chatgpt/chat-7-b`, then re-fetched and scanned in their entirety. No UI code, CI, tests, build, app process or screenshots executed. File-level source proof does **not** equate to a rendered/pixel-perfect pass. Strict portal ticks H1–H6 are still open, since their exhaustively measured browser-state proof does not exist yet.
+
+### Explicit legacy comparison values applicable to every file
+
+| Visual property and state | Exact legacy reference/value | Current vNext shared skin or route value | Assessment |
+| --- | --- | --- | --- |
+| Form label default | `docs/design/legacy-styles/components___form.scss:107-115`: font-size **13px**, weight **600**, line-height **16px**, neutral-400 **#a9a7ae** | `src/styles/legacy-skin.css`, authenticated canvas `label`: 13px/600/neutral-400 `!important`; edited labels use text-xs/font-semibold token (global skin wins) | Matching CSS declaration; actual computed line height not measured |
+| Input normal and focus | `components___form.scss:117-140`: text **14px/20px**, letter spacing **0.2px**, surface **#fbfcfd**, radius **10px**, focus teal halo **2px** with 15% alpha; error border `#ef4444` | Every editable control in this batch consumes `Input`, `Select`, `Textarea` or `Checkbox` (plus global skin) without page-level literal hex or native unstyled controls | Source component routing correct; disabled/focus pixels require browser |
+| Page canvas and list | `docs/design/old-lms-pages.md:1-12`: **#f1f4f9** shell; white canvas **12px** radius, **1px #e5e9f0** border, **24px** padding; ordinary list rows separated by **1px** hairlines, no nested ordinary cards | Auth shell/canvas inherited; preview/section rows and quiz question editor sections use `border-y/divide-y/border-b border-border` | Correct semantic hierarchy at edited rows; rendered dimensions open |
+| Buttons and disabled | `docs/orchestrator/queues/master-queue.md:4-9`: primary **#0a7c88**, white, height **36px**, radius **9px**, **14px/650**, hover **#086873**; secondary outlined, danger for destructive | Shared `Button` variants `primary`/`secondary`/`danger`, pending and disabled flags preserved; explicit `min-h-11 md:min-h-9` where applicable | Source semantic match; actual focus/hover/active state rendering open |
+| Mobile/tablet cutoff | `components___learn-layout.scss:34,361-383` and `components___antddesign.scss:239-264`: phone **<=767px**, touch target **44px**, tablet/desktop from **768px** | `min-h-11` (44px) and `md:min-h-9` (36px) for edited interactive controls; no `sm:` styling in any of the 15 source files | Source 768px breakpoint/touch rule checked; actual responsive screenshots outstanding |
+| Link hover and focus | `components___variables.scss:10-14`: base teal **#26bac7**, hover **#1e9aa8**, text **#1a95a1**, pale hover **#eff8fa**; `components___form.scss:23-28` teal focus | Semantic `hover:text-primary-hover`, `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary` on edited links; shared focus rings for buttons | Declared state/token path checked; keyboard traversal open |
+| Badge and banner status | `components___variables.scss:64-78`: success **#059669**, warning **#d97706**, error **#ef4444**, info **#26bac7**; semantic tints 10%, no separate nested frames | All newly touched failed/partial/success/ended/published/visible states use `Alert tone` or `StatusBadge tone` | Semantic routing matches expected state and copies retained; exact pill/background dimensions shared-owner and browser |
+| Loading/empty/retry | `old-lms-pages.md:1-12,27`: retained in-canvas notices, small spinner on first dev compile; empty table directly on canvas | Original `EmptyState`, `Alert`, `PageHeader`, `Dialog`, `ConfirmDialog` and loading guards preserved; edits do not fabricate missing content or bypass scopes | Branch/source path preservation checked, not runtime |
+
+### 15 source-reviewed file results with state and responsive proof
+
+All paths below have root `src/components/courses/`. For each, old-LMS values are those explicitly enumerated in the table above; local exceptions are named in the row.
+
+| File | File-specific exact UI values and states addressed | Responsive proof / preserved interaction |
+| --- | --- | --- |
+| `learner-course-attendance.tsx` | Held-but-unmarked monthly sessions now shared `Alert tone=warning role=status`, retains wording; Attendance History heading standard `text-lg font-semibold` under global heading skin. Present/Absent/etc uses existing `StatusBadge`. | Month forward/back 44px touch `min-h-11 min-w-11 md:min-h-9 md:min-w-9`; date `Input` same; `DataTable`, no-record `EmptyState`, month/IST conversion and summary counts retained |
+| `learner-youtube-player.tsx` | Unplayable URL now shared red `Alert tone=error` instead of a hand-framed nested gray card; save-failure also red `Alert`, two external YouTube links get keyboard-focus outline 2px offset2. | Fallback links 44px phone/36px tablet, `md:`2; source-safe external URL, video player lifecycle/teardown, persistence and review-only mode unchanged |
+| `quiz-attempt-control.tsx` | Active, start and post-submit failures now `Alert tone=error`; success receipt `Alert tone=success role=status`; all six quiz command `Button` controls explicit phone44/desktop36; existing answer correctness `StatusBadge` retained | Choice `Checkbox`/`Radio`, 2-column question layout, review disclosure, pending guards, 44px mobile selectors and no-premature-result states intact; `md:`8 |
+| `super-admin-content-authoring.tsx` | Lesson picker gets inherited 13px/600 old-LMS form label; absent lesson choices marked semantic status without nested card; shared Select field. | 44px phone/36px desktop, `md:`1; acting-college scoped lesson resolution, YouTube-only fallback and real upload gating unchanged |
+| `super-admin-lesson-create.tsx` | Three form labels conform to inherited 13px/600/neutral-400; absent offering state becomes status text on single hairline bordered row rather than boxed card. | 44px phone/36px desktop fields and CTA, `md:`4; request validation, pending disabled, `Alert tone=error`, draft reset and sequence cap retained |
+| `learner-video-player.tsx` | Native private lesson video frame uses legacy control-radius token rather than autonomous 12px card radius; loading/save progress `role=status aria-live=polite`; shared `Alert` for grant/playback/save failures. | Full-width 16:9 aspect ratio, 44px phone playback speed and retry, `md:`2; private signed playback URL never persisted, autoplay/resume and read-only flags preserved |
+| `learner-live-class-link.tsx` | Ended meeting now shared `StatusBadge tone=neutral` alongside original explanation; active link and Copy keep secondary shared 44px button. | `md:`1; timer still updates at 15 seconds and drops Join/Copy upon end; copied/failed-copy messages retained and no unauthorized link exposed |
+| `learner-formatted-response.tsx` | Student-authored response body now explicit legacy **14px/20px** (`text-sm leading-5`) with preserved `break-words`, line grouping and bullets. | Plain text React nodes only (no injected HTML), no viewport-specific rules necessary; wraps through 320/375/768 widths from parent; sanitization/formatting unchanged |
+| `admin-offering-section-preview.tsx` | Section title rows and visibility/publication metadata become `StatusBadge tone=success/neutral/warning` instead of raw inline state text; removed each nested `rounded-xl` ordinary lesson frame for hairline `border-b py-4`; picker label uses shared 13px/600. | Filter Select and View Section button 44px phone/36px desktop, `md:`2; Section selection, invalid/truncated `Alert`, shared-vs-section semantics and no-file-link exposure unchanged |
+| `college-course-missing-scope.tsx` | Removed nonlegacy PageHeader eyebrow from no-admin-scope page; shared `PageHeader` and `Alert tone=error` now one canvas and one inline message without redundant nested paragraph | No controls or breakpoint needed, inherited responsive canvas; missing-college denial and instructions preserved |
+| `admin-course-create-panel.tsx` | All four workflow submissions — Create Course, Create Offering, Add Section Delivery, Assign Faculty — use 44px phone/36px desktop primary shared buttons; both department/copy recovery links use teal hover and focus-visible 2px offset2. | Four independent forms `form` 4/4; responsive setup stages `md:`19, no `sm:`; validation/disabled gates, prefilled copy, department/cohort/section/faculty conditions unchanged |
+| `college-quiz-create.tsx` | Six authored quiz form labels follow 13px/600, seven input/select widgets 44px phone/36px tablet; ordinary question area loses extra nested rounded frame, uses border-t; Remove Question/Option explicitly `variant=danger` not red text atop secondary. | Correct-answer Checkbox/Radio, max100 questions/20 options, shuffle, submission/Cancel and deadline/publishing error/success remain; `md:`19 |
+| `college-quiz-actions.tsx` | Four editor labels match inherited 13px/600 neutral-400 and four controls are 44px phone/36px tablet; editor uses flat hairline top/bottom with no embedded card padding. | `md:`7; pending/archived states, change deadlines/attempts, shuffle toggles and success/error `Alert` remain |
+| `college-archived-lesson-restore.tsx` | Restore failure previously unstyled red inline text becomes shared `Alert tone=error` inside valid **div** (not invalid span-wrapping-div), with responsive ghost Restore action. | `md:`1, 44px phone/36px desktop; modal still uses shared `ConfirmDialog` with Escape/focus trap owner implementation, pending guard and restore API untouched |
+| `college-content-preview.tsx` | Scoped content metadata preview uses `divide-y divide-border` hairlines rather than undivided plain descriptions; status Published/Draft/Archived and Students visible/hidden use shared `StatusBadge` semantic success/warning/neutral. | `md:`2; shared `Dialog`, Preview/Close phone44/desktop36 buttons, private URL concealment and selected metadata values retained |
+
+### Actual post-write source probes
+
+A full `fetch_file` call for each of the fifteen final branch blobs was scanned with:
+- `/<(button|select|input|textarea|table)(?=[\\s>])/g` — **0 matches across all 15**
+- `/#[0-9a-fA-F]{6}\\b/g` — **0 matches across all 15**
+- `/fixed inset-0|role=["']dialog["']/g` — **0 hand-rolled overlays across all 15** (the permitted shared `<Dialog>`/ConfirmDialog are not caught)
+- `/\\bsm:/g` — **0 premature 640px breakpoints across all 15**
+- `/\\bmd:/g` — **77 768px transition utilities across the 15 files** (after final quiz-control button sizing)
+
+| File | `md:` | JSX structural source proof |
+| --- | ---: | --- |
+| learner-course-attendance | 9 | Alert 1/1, Button 3/3, StatusBadge 1/1 |
+| learner-youtube-player | 2 | Alert 2/2 |
+| quiz-attempt-control | 8 | Alert 3/3, Button 6/6, StatusBadge 3/3 |
+| super-admin-content-authoring | 1 | label 1/1, section 1/1 |
+| super-admin-lesson-create | 4 | form 1/1, label 3/3, Alert 1/1, Button 1/1 |
+| learner-video-player | 2 | Alert 2/2, Button 1/1 |
+| learner-live-class-link | 1 | StatusBadge 1/1, Button 1/1 |
+| learner-formatted-response | 0 | paragraph alternatives each balanced; no raw controls |
+| admin-offering-section-preview | 2 | StatusBadge 3/3, form 1/1, Alert 2/2 |
+| college-course-missing-scope | 0 | Alert 1/1, PageHeader shared |
+| admin-course-create-panel | 19 | form 4/4, Button 5/5 |
+| college-quiz-create | 19 | label 10/10, fieldset 1/1, Alert 2/2, Button 9/9 |
+| college-quiz-actions | 7 | label 6/6, Alert 2/2, Button 3/3 |
+| college-archived-lesson-restore | 1 | Alert 1/1, Button 1/1, shared ConfirmDialog |
+| college-content-preview | 2 | Dialog 1/1, StatusBadge 2/2, Button 2/2 |
+
+All audited `<Alert>`, `<Button>`, `<StatusBadge>`, `<Dialog>`, `<form>`, `<fieldset>`, `<section>`, `<label>`, `<p>` opening/closing counters match in every one of these source files. Self-closing controls are excluded from pair counts appropriately. **No TypeScript parser or compiled syntax check was run**, so this is a balanced-JSX probe, not a formal parse proof.
+
+**Completion assessment:** 15 files **source-adjusted with file-specific legacy value mapping, source regex/grep equivalent output, 767px/768px responsive class evidence, preserved state-branch analysis**. The strict H1–H6 work-queue checkboxes remain `[ ]` because every element's computed default/hover/active/focus/disabled/loading/error/empty pixels and actual phone/tablet side-by-side comparison (plus full 247+ area-wide source inventory) are missing; these are prerequisites, not cosmetic extras. The orchestrator owns screenshot side-by-side verification and the shared form/button/alert skins remain with their owning lanes. Do not mark strict full pixel completion yet.
+
+**NEXT EXACT UNTICKED FILE:** `src/components/courses/learner-roadmap-item-dialog.tsx` — shared modal launcher focus, selected ring, 44px tap row and tablet overflow/close controls, followed by `learner-rich-response-editor.tsx`.
