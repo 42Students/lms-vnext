@@ -558,3 +558,10 @@
 .topbarNotificationEmptyIcon svg { width:36px; height:36px; }
 .topbarNotificationEmptyTitle { margin:0; color:var(--lms-muted-text); font-size:14px; font-weight:500; line-height:1.5; }
 .topbarNotificationEmptyDescription { display:block; max-width:260px; color:var(--lms-neutral-400); font-size:14px; line-height:1.5; }
+
+/* Lane-10 verification: older bell rules had reintroduced card-in-card styles
+ * on the learner's hairline notification rows. Keep other portal rules. */
+.learnerBell > div > section ul[aria-label="Recent learner notifications"] { padding:0; }
+.learnerBell > div > section ul[aria-label="Recent learner notifications"] > li { margin:0; overflow:visible; border-radius:0; }
+.learnerBell > div > section ul[aria-label="Recent learner notifications"] > li > a { border:0; border-radius:0; background:transparent; box-shadow:none; padding:12px; }
+.learnerBell > div > section ul[aria-label="Recent learner notifications"] > li > a:hover { border-color:transparent; background:var(--lms-primary-subtle); box-shadow:none; }
