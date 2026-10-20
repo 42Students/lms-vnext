@@ -56,7 +56,7 @@ export default async function CollegeProjectTemplatesPage({
       <p className="font-semibold">{template.title}</p>
       {template.summary?<p className="mt-1 max-w-lg text-xs text-muted-foreground">{template.summary}</p>:null}
     </div>},
-    {key:"version",header:"Version",cell:template=><StatusBadge tone="success">Version {template.version}</StatusBadge>},
+    {key:"version",header:"Version",cell:template=><StatusBadge tone="neutral">Version {template.version}</StatusBadge>},
     {key:"sections",header:"Sections",cell:template=>{
       const counts=projectTemplateSectionCounts(template.blueprint);
       return `${counts.overview} overview · ${counts.releases} releases · ${counts.sprints} sprints · ${counts.tasks} tasks · ${counts.resources} resources`;

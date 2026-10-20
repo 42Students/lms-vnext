@@ -29,7 +29,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
         <Link href={`/college/placements/jobs/${jobId}/settings`} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link min-[768px]:min-h-9 lms-inline-link">Edit</Link>
         <CollegeDriveDuplicateAction jobId={jobId}/></div>} />
     <div className="flex min-w-0 flex-wrap items-center gap-3 text-[13px] text-[var(--lms-body-text)]">
-      <span className="inline-flex items-center gap-2">Status: <StatusBadge tone={drive.status==="PUBLISHED"?"success":drive.status==="DRAFT"?"warning":"neutral"}>{drive.status}</StatusBadge></span><span>Type: {drive.employmentType}</span>
+      <span className="inline-flex items-center gap-2">Status: <StatusBadge tone={drive.status==="PUBLISHED"?"success":drive.status==="DRAFT"?"warning":drive.status==="CANCELLED"?"error":"neutral"}>{drive.status}</StatusBadge></span><span>Type: {drive.employmentType}</span>
       <span>Mode: {drive.workMode}</span><span>Openings: {drive.openings ?? "Not recorded"}</span>
     </div>
     <p className="whitespace-pre-wrap text-body">{drive.description}</p>
