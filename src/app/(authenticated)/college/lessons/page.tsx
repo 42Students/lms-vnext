@@ -53,7 +53,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-4">
       <PageHeader eyebrow="College Admin · Courses & Content" title="Lessons" />
       <ErrorState title="Invalid lesson filters"
         description="The search, lesson status or page is invalid. No lesson data was loaded."
@@ -65,15 +65,15 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   return <CollegeLearningDirectory
     data={await listCollegeLessons(context, parsed.data)}
     courseChoices={courseChoices}
-    prepend={<div className="min-w-0 space-y-4">
+    prepend={<div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-start">
 
     <CollegeLessonCreateControl options={authoringOptions} />
     <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
-      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Export filtered lessons CSV
     </Link>
     <Link href="/college/live-classes"
-      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       View college live classes
     </Link>
     </div>}
