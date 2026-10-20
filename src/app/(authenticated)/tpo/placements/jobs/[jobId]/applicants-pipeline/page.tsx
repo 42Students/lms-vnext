@@ -27,7 +27,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
    description="No private application records were loaded."/>
   <Alert tone="error">{urlError}</Alert>
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="font-semibold text-[var(--lms-teal-deep)] underline">Clear applicant filters</Link>
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Clear applicant filters</Link>
  </div>;
  const columns=first(query.columns)?.slice(0,800);
  const filters=parseTpoApplicantPipelineLink({jobId,
@@ -99,7 +99,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
     </Select></label>
-   <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Apply</Button>
+   <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Apply</Button>
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
