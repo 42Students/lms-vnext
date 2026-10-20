@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Tabs } from "@/components/ui/tabs";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -45,8 +46,8 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
-      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
-    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
+      actions={<PageBackLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} label="Drive overview" />} />
+    <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} className="w-full" />
       </label>

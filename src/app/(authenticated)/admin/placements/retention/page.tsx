@@ -3,12 +3,13 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {getSuperAdminPlacementRetentionReport} from "@/modules/admin-ui/super-admin-placement-retention-service";
 import {PageHeader} from "@/components/ui/page-header";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Banner} from "@/components/ui/banner";
 export default async function SuperAdminRetentionPage(){
  const context=await getCurrentRequestContext();
- if(!context.adminScope?.collegeId)return <div className="space-y-5"><PageHeader title="Data retention report"/>
+ if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5"><PageHeader title="Data retention report" actions={<PageBackLink href="/admin/placements" label="Placement overview" />}/>
   <EmptyState title="Select a college" description="Choose a college to review candidate retention candidates."/></div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
  const report=await getSuperAdminPlacementRetentionReport(context);
@@ -23,8 +24,8 @@ export default async function SuperAdminRetentionPage(){
  ];
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Data retention report"
-   description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."/>
-  <nav><Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/admin/placements">← Placements</Link></nav>
+   description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."
+   actions={<PageBackLink href="/admin/placements" label="Placement overview" />}/>
   <p role="status" className="text-sm text-body">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}; cutoff {fmt(new Date(report.cutoff))}.</p>
   <Banner tone="warning">
    This is a review-only report, not an automated deletion or proof of legal retention eligibility. Account for offers, disputes and local retention policy before removing anything.
