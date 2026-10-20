@@ -65,20 +65,20 @@ export default async function TpoNoShowReportPage({
           <div className="flex flex-wrap gap-2">
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows/export"}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary"
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Export explicit no-shows CSV
             </a>
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-primary-subtle"
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Export complete attendance CSV
             </a>
           </div>
         }
       />
-      <section className="grid min-w-0 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 xl:grid-cols-4" aria-label="Attendance reconciliation">
+      <section className="grid min-w-0 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[1280px]:grid-cols-4" aria-label="Attendance reconciliation">
         {[
           ["Current round roster", report.totalRoster],
           ["Explicit no-shows", report.explicitlyAbsentCount],

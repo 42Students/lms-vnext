@@ -15,19 +15,19 @@ These 29 page routes were moved to chat-2 from the end of other lanes' review qu
 - [x] `src/app/e2e/chat17-ui-kit/page.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/activity/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
-- [ ] `src/app/placements/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/messages/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
+- [x] `src/app/placements/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/page.tsx`
