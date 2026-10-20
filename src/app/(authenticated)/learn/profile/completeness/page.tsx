@@ -25,24 +25,27 @@ export default async function ProfileCompleteness({searchParams}:{
     {value:"missing",label:"Not filled"},
     {value:"filled",label:"Filled"},
   ] as const;
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-5">
     <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">
       ← Back to Profile
     </Link>
     <PageHeader title="Profile completion checklist"
       description="Read-only coverage of the fields saved to your learner profile." />
-    <section className="py-2">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{readiness.filled} of {readiness.total} sections filled</h2>
+    <section className="min-w-0 border-b border-border pb-4">
+      <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">{readiness.filled} of {readiness.total} sections filled</h2>
       <p className="mt-2 text-sm font-semibold text-foreground">{career.percentage??0}% career profile complete · {learnerCareerCompletionMessage(career.percentage??0)}</p>
-      <p className="mt-2 text-sm text-body">
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
         {readiness.missing} sections have no saved entries. This is not a verification, placement eligibility or application readiness score.
       </p>
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p className="mt-2 max-w-3xl break-words text-xs leading-5 text-muted-foreground">
         Academic identity: {academic.title}. Sections are based on your own current college profile.
       </p>
-      <p className="mt-2 text-sm text-body">
+      <details className="mt-3 border-t border-border pt-2">
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Identity data and checklist limits</summary>
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
         National identity details are optional and are not required for this checklist. Sensitive identity storage and verification are not available through this view.
       </p>
+      </details>
     </section>
     <nav aria-label="Checklist filters" className="flex min-w-0 max-w-full flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0">
       {options.map(option=><Link key={option.value}
@@ -56,14 +59,14 @@ export default async function ProfileCompleteness({searchParams}:{
         {option.label}
       </Link>)}
     </nav>
-    <section className="border-t border-border pt-6">
+    <section className="border-t border-border pt-4">
       <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your sections</h2>
       {readiness.items.length===0 ? <p className="mt-3 text-sm text-body">
         No sections match this filter. Choose All sections to review the full checklist.
       </p> : <ul className="mt-4 divide-y divide-border border-y border-border">
         {readiness.items.map(item=><li key={item.section} className="min-w-0">
           <Link href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 items-center justify-between gap-3 px-1 py-3 text-sm text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="flex min-h-11 min-w-0 flex-col items-start gap-2 px-1 py-3 text-sm text-foreground hover:bg-primary-subtle sm:flex-row sm:items-center sm:justify-between sm:gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             <span className="min-w-0 break-words">{item.label}
               {(["personal-details","contacts","education","skills"].includes(item.section))?
                 <span className="ml-2 text-xs font-semibold text-muted-foreground">Required</span>:null}
