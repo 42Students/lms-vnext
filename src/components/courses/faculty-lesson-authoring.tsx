@@ -813,9 +813,7 @@ export function FacultyLessonAuthoring({
                 </p>
                 {(startsAt&&facultyIstQuarterHourIssue(startsAt)||
                   endsAt&&facultyIstQuarterHourIssue(endsAt))?
-                  <p role="alert" className="text-xs text-warning">
-                    Choose 15-minute start and end times before publishing.
-                  </p>:null}
+                  <Alert tone="warning">Choose 15-minute start and end times before publishing.</Alert>:null}
               </div>
             ) : null}
 
