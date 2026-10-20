@@ -144,7 +144,7 @@ export default async function TpoRecruiterAccessPage({
       }))} />
 
       <section className="border-t border-border pt-4">
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           College recruiter grants
         </h2>
 
@@ -159,9 +159,9 @@ export default async function TpoRecruiterAccessPage({
         <form
           action="/tpo/settings/recruiters"
           method="get"
-          className="mt-4 flex flex-wrap items-end gap-3"
+          className="mt-4 flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4"
         >
-          <label className="grid min-w-44 gap-2 text-sm font-semibold text-body">
+          <label className="grid min-w-[180px] flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Grant status
             <Select
               name="status"
@@ -185,7 +185,7 @@ export default async function TpoRecruiterAccessPage({
             </Select>
           </label>
 
-          <label className="grid min-w-44 gap-2 text-sm font-semibold text-body">
+          <label className="grid min-w-[180px] flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search name, designation or company
             <Input type="search" name="q" defaultValue={query.q} maxLength={80}
               placeholder="Recruiter, role or company"
@@ -209,7 +209,7 @@ export default async function TpoRecruiterAccessPage({
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Grant records
           </h2>
           <div className="flex flex-wrap gap-2">
