@@ -79,7 +79,7 @@ export function TpoCompanyInteractionForm({
   }
 
   return (
-    <section className="space-y-4 border-b border-border pb-6">
+    <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
       <h2 className="text-base font-semibold text-foreground">Record a contact interaction</h2>
       <p className="text-sm leading-6 text-body">
         This records an internal CRM event, not a delivered call, email or message.
@@ -120,12 +120,12 @@ export function TpoCompanyInteractionForm({
           maxLength={2000} rows={3} disabled={busy}
           className="mt-1 block w-full" />
       </label>
-      {reviewing?<div role="group" aria-label="Review company interaction" className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
+      {reviewing?<div role="group" aria-label="Review company interaction" className="border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
         <p>{interactionConfirmationSummary({type,contactName:contacts.find(c=>c.id===leadId)?.name??"contact"})}</p>
         <Button type="button" variant="link" className="mt-2 min-h-11 max-[767px]:min-h-11" onClick={()=>setReviewing(false)}>Cancel review</Button>
       </div>:null}
       <Button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
-        >
+        className="w-full sm:w-auto">
         {busy ? "Recording..." : reviewing?"Confirm activity":"Review and confirm activity"}
       </Button>
       {error ? <InlineNotice tone="error" message={error}/> : null}

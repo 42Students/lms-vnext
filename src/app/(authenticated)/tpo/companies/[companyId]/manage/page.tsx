@@ -18,9 +18,9 @@ export default async function TpoManageCompanyPage({
   const { companyId } = await params;
   const company = await getTpoCompanyLifecycle(context, companyId);
   if (!company) notFound();
-  return <div className="min-w-0 space-y-4 md:space-y-6">
+  return <div className="min-w-0 space-y-4">
     <PageHeader actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-      className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+      className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       ← Company details
     </Link>} title={company.name + " · Relationship settings"}
       description="Change this college's trusted state or archive/restore its employer relationship with audit history." />
