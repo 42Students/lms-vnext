@@ -91,12 +91,17 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    <Input name="capacity" type="number" min={1} max={100} defaultValue={1}
     required className="text-sm"/>
   </label>
-  <label className="grid gap-1 text-sm text-body">Panel label (not a learner name)
-   <Input name="panelLabel" maxLength={160} className="text-sm"/>
-  </label>
-  <label className="grid min-w-0 gap-1 text-sm text-body md:col-span-2">Meeting location
-   <Input name="meetingLocation" maxLength={500} className="text-sm"/>
-  </label>
+  <details className="min-w-0 min-[768px]:col-span-2">
+   <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-body min-[768px]:min-h-9">Panel label (not a learner name) · Meeting location</summary>
+   <div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2">
+    <label className="grid min-w-0 gap-1 text-sm text-body">Panel label (not a learner name)
+     <Input name="panelLabel" maxLength={160} className="text-sm"/>
+    </label>
+    <label className="grid min-w-0 gap-1 text-sm text-body">Meeting location
+     <Input name="meetingLocation" maxLength={500} className="text-sm"/>
+    </label>
+   </div>
+  </details>
   {error?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   {notice?<div className="md:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <Button type="submit" disabled={!rounds.length||submitting} loading={submitting} aria-busy={submitting}

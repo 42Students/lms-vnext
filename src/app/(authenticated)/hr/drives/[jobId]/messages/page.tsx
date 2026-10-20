@@ -23,22 +23,22 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
   if(error instanceof TpoMessagingError || error instanceof PlacementsServiceError)notFound();
   throw error;
  }
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
   <PageHeader title="Messages"
    description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}
    actions={<Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive overview</Link>}/>
-  <section className="border-b border-border pb-5">
-   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Drive conversation</h2>
+  <details open={result.threads.length===0} className="min-w-0 border-b border-border pb-4">
+   <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] min-[768px]:min-h-9">Drive conversation</summary>
    <p className="mt-2 text-sm text-body">Open or resume the conversation tied to this authorized employer drive.</p>
-   <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
+   <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3 flex min-w-0 flex-wrap items-center">
     <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>
     <Input type="hidden" name="jobId" value={result.workspace.job.id}/>
-    <Button type="submit">Open drive discussion</Button>
+    <Button type="submit" className="w-full min-[768px]:w-auto">Open drive discussion</Button>
    </form>
-  </section>
-  {result.threads.length?<ol className="divide-y divide-border border-y border-border">
-   {result.threads.map(thread=><li key={thread.id} className="py-4">
-    <Link href={"/hr/conversations/"+thread.id} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Continue discussion</Link>
+  </details>
+  {result.threads.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
+   {result.threads.map(thread=><li key={thread.id} className="min-w-0 py-4">
+    <Link href={"/hr/conversations/"+thread.id} className="inline-flex min-h-11 min-w-0 max-w-full items-center break-words font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Continue discussion</Link>
    </li>)}
   </ol>:<EmptyState title="No drive conversation" description="No conversation has been started for this drive."/>}
  </div>;
