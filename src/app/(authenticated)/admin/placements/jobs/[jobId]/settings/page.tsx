@@ -22,7 +22,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
    actions={<PageBackLink href={base} label="Drive overview"/>}/>
   <section className="space-y-2 border-b border-border pb-5">
-   <h2 className="font-semibold">{job.title}</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{job.title}</h2>
    <p className="flex flex-wrap items-center gap-2 text-sm text-body">Status: <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{job.status}</StatusBadge></p>
    <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
@@ -36,10 +36,10 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     }} />:null}
   {job.legacyPostingDetails?<section className="space-y-3 border-b border-border pb-5"
     aria-label="Additional job details">
-    <h2 className="font-semibold">Additional job details</h2>
+    <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Additional job details</h2>
     <p className="text-xs text-muted-foreground">Informational posting terms; enforceable learner eligibility remains in the drive policy.</p>
     {job.legacyPostingDetails.responsibilities?<div>
-      <h3 className="text-sm font-semibold">Responsibilities</h3>
+      <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Responsibilities</h3>
       <p className="whitespace-pre-wrap text-sm text-body">{job.legacyPostingDetails.responsibilities}</p>
     </div>:null}
     {job.legacyPostingDetails.assessmentUrl?
@@ -49,12 +49,12 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       Assessment deadline (IST): {driveSettingsIstDate(job.legacyPostingDetails.assessmentDeadline)}
     </p>:null}
     {job.legacyPostingDetails.importantDates?.length?<div>
-      <h3 className="text-sm font-semibold">Important dates</h3>
+      <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Important dates</h3>
       <ul className="mt-2 space-y-1 text-sm">{job.legacyPostingDetails.importantDates.map((date,i)=>
         <li key={i}>{date.label}: {driveSettingsIstDate(date.at)}</li>)}</ul>
     </div>:null}
     {job.legacyPostingDetails.customEligibilityRules?.length?<div>
-      <h3 className="text-sm font-semibold">Custom eligibility rules (informational)</h3>
+      <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Custom eligibility rules (informational)</h3>
       <ul className="mt-2 space-y-1 text-sm">{job.legacyPostingDetails.customEligibilityRules.map((rule,i)=>
         <li key={i}>{rule.label}: {rule.value}</li>)}</ul>
     </div>:null}
