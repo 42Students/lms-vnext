@@ -138,7 +138,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
    </label>
    <div className="flex flex-wrap gap-2 md:col-span-2">
-    <Button type="button" disabled={pending||!chosen||!title.trim()} onClick={()=>setConfirmCreate(true)}
+    <Button type="button" loading={pending} disabled={pending||!chosen||!title.trim()} onClick={()=>setConfirmCreate(true)}
      className="min-h-11 md:min-h-9">
      {pending?"Creating…":"Create draft"}</Button>
     <Button type="button" variant="secondary" disabled={pending} onClick={close}
