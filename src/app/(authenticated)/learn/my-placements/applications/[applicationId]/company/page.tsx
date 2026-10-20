@@ -24,17 +24,14 @@ export default async function LearnerApplicationCompanyPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
 
-      <PageHeader
-        title={company.companyName}
-        description="Read-only company profile from your own placement application."
-        actions={<div className="flex flex-wrap items-center gap-3">
-          <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
+      <nav aria-label="Application navigation" className="flex min-w-0 flex-wrap items-center gap-2">
+        <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Back to application</Link>
-          <StatusBadge tone={company.companyStatus === "ACTIVE" ? "success" : "neutral"}>
+      </nav>
+      <PageHeader title={company.companyName} description="Read-only company profile from your own placement application." />
+      <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={company.companyStatus === "ACTIVE" ? "success" : "neutral"}>
             {company.companyStatus.replaceAll("_", " ")}
-          </StatusBadge>
-        </div>}
-      />
+          </StatusBadge></div>
       <section aria-label="What the company sees" className="border-b border-border py-4 md:py-6">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">What the company sees</h2>
         <p className="mt-2 text-sm text-body">
@@ -47,7 +44,7 @@ export default async function LearnerApplicationCompanyPage({
           <div className="min-w-0"><dt className="font-semibold">Learner</dt><dd className="break-words">{company.companySharePreview.learnerName}</dd></div>
           <div><dt className="font-semibold">Email</dt><dd className="break-all">{company.companySharePreview.email??"No email recorded"}</dd></div>
         </dl>
-        <p className="mt-4 rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-xs text-body">
+        <p className="mt-4 max-w-3xl border-l-2 border-border pl-3 text-xs leading-5 text-body">
           This is the current selected-applicant share projection, not proof that a recruiter opened your record.
           Short-lived or revoked employer links cannot reveal your application. Phone numbers, private documents,
           attendance and other learners are not included.
@@ -79,12 +76,15 @@ export default async function LearnerApplicationCompanyPage({
             </dd>
           </div>
         </dl>
-        <Banner tone="info" className="mt-6">
+        <details className="mt-4 border-t border-border pt-2">
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Employer access privacy details</summary>
+          <Banner tone="info" className="mt-3">
           What the company sees here is limited to the verified public employer profile
           associated with your own application. This is not a live employer-access audit.
           Your private files, personal contacts and other learners&apos; applications
           are never included in this preview.
-        </Banner>
+          </Banner>
+        </details>
       </section>
     </div>
   );

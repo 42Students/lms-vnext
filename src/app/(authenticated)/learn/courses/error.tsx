@@ -21,14 +21,14 @@ export default function LearnerCoursesError({
       <Alert tone="error">
         {isList?"Check your connection and try again. Your courses have not been changed.":"This course may not exist or you may not have access. Please try again or return to your courses."}
       </Alert>
-      <div className="flex flex-wrap items-center gap-2">
-        <Button className="min-h-11 md:min-h-9" onClick={reset}>{isList?"Try again":"Retry"}</Button>
-        <Link
+      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>{isList?"Try again":"Retry"}</Button>
+        {!isList ? <Link
           href="/learn/courses"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           {LEARNER_BACK_TO_COURSES}
-        </Link>
+        </Link> : null}
       </div>
     </div>
   );
