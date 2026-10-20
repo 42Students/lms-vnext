@@ -31,7 +31,7 @@ export default async function TpoCompanyTeamPage({params}:{
    "Company discussion · "+result.companyName:"Company discussion"}
    description="A college-private conversation about this company. Recruiters and students cannot read it."/>
   <Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
-   className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to company</Link>
+   className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to company</Link>
   {result.status==="NOT_REGISTERED"?
    <Alert tone="warning">
     Company Team discussions require their registered database migration. No messages were inferred from private conversations.
