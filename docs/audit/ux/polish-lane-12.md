@@ -165,3 +165,11 @@
 **Fix:** retain validated redirect to the existing Course home tab; align loading shape, error PageHeader, mobile 44px Retry and Back to courses actions to the single canvas. Reviewed faculty course tab loader/error/not-found, dynamic course id validation and parent faculty shell. No fake intermediate content added.
 
 **Files changed:** base course `error.tsx`, `loading.tsx`, queue and proof. Source-only review, no CI.
+
+## 19 · Teacher / Section quiz builder
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
+**Problems found (8):** duplicate Back to course links, excessive header spacing, large secondary quiz builder heading, nested question/preview cards inside canvas, unbalanced type/points controls on tablets, Create and publish checkbox competing for button width on phones, generic loading message, and route error without safe recovery.
+
+**Fix:** one PageHeader Back to course action; flatter hairline question/preview sections; responsive two-column type/points controls; stacked mobile Create and publish; route-specific loading and error/retry/return UI. Read the 446-line QuizChoiceBuilder including local draft reconciliation, question/option order, publish/archive confirmations, paste options, learner preview and validation; preserved APIs, ids, labels, question behaviour and confirmations.
+
+**Files changed:** manage page, error, loading, shared choice builder, queue and proof. Static-only, no runtime/CI.
