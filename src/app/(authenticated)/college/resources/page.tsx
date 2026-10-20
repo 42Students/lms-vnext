@@ -22,18 +22,18 @@ export default async function CollegeResourcesPage({
   const parsed = collegeContentQuerySchema.safeParse(raw);
   if (!parsed.success) {
     return (
-      <div className="space-y-5">
-        <PageHeader eyebrow="College Admin · Courses & Content" title="Resources" />
+      <div className="min-w-0 space-y-4">
+        <PageHeader title="Resources" />
         <ErrorState title="Invalid resource filters"
           description="The title, status or page filter is invalid. No content was loaded."
-          action={<Link href="/college/resources" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
+          action={<Link href="/college/resources" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
       </div>
     );
   }
   const authoring=await getCollegeContentAuthoringOptions(context,"RESOURCE");
   return <div className="min-w-0 space-y-4">
-    <PageHeader title="Resources" eyebrow="College Admin · Courses & Content"
-      actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Lessons</Link>} />
+    <PageHeader title="Resources"
+      actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Lessons</Link>} />
     <CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>
     <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",parsed.data)}
       className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">

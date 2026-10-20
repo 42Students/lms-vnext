@@ -42,14 +42,14 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
    }
   });
  }
- const field="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
+ const field="min-h-11 w-full md:min-h-9";
  return <section className="space-y-3">
   <Button variant="primary" type="button" disabled={pending} onClick={()=>setOpen(value=>!value)}
     aria-expanded={open} className="min-h-11 px-4">
     Add company
   </Button>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
-  {open?<form onSubmit={submit} className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2">
+  {open?<form onSubmit={submit} className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2">
     <h2 className="font-semibold sm:col-span-2">Add company</h2>
     <label className="grid gap-1 text-sm font-semibold">Company name
       <Input required minLength={2} maxLength={150} value={name} onChange={e=>setName(e.target.value)}
