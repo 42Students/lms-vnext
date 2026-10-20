@@ -55,25 +55,25 @@ export default async function MentorBoardReviewPage({
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-2"/>
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2"/>
         </label>
         <label className="grid gap-1 text-sm">Status
           <Select name="status" defaultValue={data.query.status}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-2">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
             {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm">Priority
           <Select name="priority" defaultValue={data.query.priority??"ALL"}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-2">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
             {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm">Sprint
           <Select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-2">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2">
             <option value="ALL">All sprints</option>
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </Select>

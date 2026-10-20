@@ -58,20 +58,20 @@ export default async function MentorTeamHistoryPage({
           <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-sm font-semibold text-body">Registered role
             <Select name="role" defaultValue={data.query.role}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="ALL">All roles</option>
               <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
             </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Primary Mentor record
             <Select name="primary" defaultValue={data.query.primary}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="ALL">All team records</option><option value="PRIMARY">Recorded primary Mentors only</option>
             </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Assignment chronology
             <Select name="order" defaultValue={data.query.order}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+              className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
               <option value="OLDEST">Earliest started first</option>
               <option value="NEWEST">Most recent started first</option>
             </Select>
