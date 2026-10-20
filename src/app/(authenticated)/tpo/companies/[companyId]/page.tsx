@@ -126,7 +126,7 @@ export default async function TpoCompanyDetailPage({
           <StatusBadge tone={relationship?.isTrusted ? "success" : "neutral"}>
             {relationship?.trustLabel ?? "Trust unavailable"}
           </StatusBadge>
-          <StatusBadge>{relationship?.relationshipStatus ?? "Status unavailable"}</StatusBadge>
+          <StatusBadge tone={relationship?.relationshipStatus==="ACTIVE"?"success":"neutral"}>{relationship?.relationshipStatus ?? "Status unavailable"}</StatusBadge>
           <span className="text-sm text-body">
             Updated {relationship?.updatedAt ? dateLabel(new Date(relationship.updatedAt)) + " IST" : "not recorded"}
           </span>
@@ -297,7 +297,7 @@ export default async function TpoCompanyDetailPage({
                       tone={
                         contact.stage === "NOT_NOW"
                           ? "warning"
-                          : "neutral"
+                          : contact.stage === "JOINED" || contact.stage === "RECRUITED" ? "success" : contact.stage === "DRIVE_PLANNED" ? "info" : "neutral"
                       }
                     >
                       {({NOT_NOW:"Not now",DRIVE_PLANNED:"Drive planned",RECRUITED:"Recruited",JOINED:"Joined",INVITED:"Invited",CONTACTED:"Contacted",NEW:"New"} as Record<string,string>)[contact.stage]??"Recorded"}
@@ -338,7 +338,7 @@ export default async function TpoCompanyDetailPage({
                     <p className="mt-1 text-xs text-muted-foreground leading-5">{drive.employmentType.replaceAll("_"," ")}</p>
                    </div>},
                   {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",
-                   cell:drive=><StatusBadge tone={drive.status==="PUBLISHED"?"success":"neutral"}>
+                   cell:drive=><StatusBadge tone={drive.status==="PUBLISHED"?"success":drive.status==="DRAFT"?"warning":drive.status==="CANCELLED"?"error":"neutral"}>
                     {({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[drive.status]??"Recorded"}
                    </StatusBadge>},
                   {key:"created",header:"Created",mobileLabel:"Created",mobilePriority:"secondary",
@@ -377,7 +377,7 @@ export default async function TpoCompanyDetailPage({
                 {key:"ctc",header:"Annual CTC",mobileLabel:"Annual CTC",mobilePriority:"secondary",
                  cell:offer=>currency(offer.annualCtcInr)},
                 {key:"offer",header:"Offer",mobileLabel:"Offer",mobilePriority:"secondary",
-                 cell:offer=><StatusBadge tone={offer.status==="ACCEPTED"?"success":offer.status==="DECLINED"?"warning":"neutral"}>
+                 cell:offer=><StatusBadge tone={offer.status==="ACCEPTED"?"success":offer.status==="DECLINED"?"error":offer.status==="PENDING"?"warning":"neutral"}>
                   {({ACCEPTED:"Accepted",DECLINED:"Declined",PENDING:"Pending",WITHDRAWN:"Withdrawn"} as Record<string,string>)[offer.status]??"Recorded"}
                  </StatusBadge>},
                 {key:"joining",header:"Joining",mobileLabel:"Joining",mobilePriority:"secondary",
