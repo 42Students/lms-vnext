@@ -90,42 +90,49 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
    :<Banner tone="warning">Content authoring options are temporarily unavailable. Existing content remains visible.</Banner>}
   {sectionsResult.status==="rejected"?<Banner tone="warning">Section filter choices are temporarily unavailable. Your selected filters are still applied.</Banner>:null}
-  <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-3">
-   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
-    <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     placeholder="Content, lesson or course" className="min-h-11 md:min-h-9"/>
-   </label>
-   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
-    <Select name="status" defaultValue={data.query.status}
-     className="min-h-11 md:min-h-9">
-     {statuses.map(status=><option key={status}>{status}</option>)}
-    </Select>
-   </label>
-   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / offering
-    <Select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 md:min-h-9">
-     <option value="">All courses</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
-    </Select>
-   </label>
-   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
-    <Select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 md:min-h-9">
-     <option value="">All lessons</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
-    </Select>
-   </label>
-   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
-    <Select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 md:min-h-9">
-     <option value="">All sections</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
-    </Select>
-   </label>
-   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
-    <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
-      <option value="ALL">All audiences</option><option value="SHARED">All currently eligible sections</option><option value="SECTION">One specific section</option>
-    </Select>
-   </label>
-   <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
+  <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
+   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
+      placeholder="Content, lesson or course" className="min-h-11 md:min-h-9"/>
+    </label>
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+     <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
+      {statuses.map(status=><option key={status}>{status}</option>)}
+     </Select>
+    </label>
+    <Button type="submit" className="min-h-11 w-full self-end sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
+   </div>
+   <details className="min-w-0" open={Boolean(data.query.offeringId || data.query.lessonId || data.query.deliveryId || data.query.scope !== "ALL")}>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-4">
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / offering
+      <Select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 md:min-h-9">
+       <option value="">All courses</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
+      </Select>
+     </label>
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
+      <Select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 md:min-h-9">
+       <option value="">All lessons</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
+      </Select>
+     </label>
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+      <Select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 md:min-h-9">
+       <option value="">All sections</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
+      </Select>
+     </label>
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
+      <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
+       <option value="ALL">All audiences</option><option value="SHARED">All currently eligible sections</option><option value="SECTION">One specific section</option>
+      </Select>
+     </label>
+    </div>
+   </details>
+   <Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
   </form>
   <p className="text-sm text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · up to 25 per page</p>
-  {data.items.length?<div className="divide-y divide-border border-y border-border">
-   {data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 py-4">
+  {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
+   {data.items.map(item=><article key={item.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
     <div className="flex flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
      <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="DRAFT"?"warning":"neutral"}>{item.status}</StatusBadge>
@@ -144,10 +151,15 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     {item.endsAt?<p className="text-sm text-body">Ends: {ist(item.endsAt)}</p>:null}
     {item.contentType==="RESOURCE"&&item.notes?<p className="whitespace-pre-wrap text-sm text-body">{item.notes}</p>:null}
     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
-     <SuperAdminContentActions item={item}/>:
+     <details className="min-w-0">
+      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
+      <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
+       <SuperAdminContentActions item={item}/>
+       <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Edit, publish or archive →</Link>
+      </div>
+     </details>:
      <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
-    {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Edit, publish or archive →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."/>}
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages}

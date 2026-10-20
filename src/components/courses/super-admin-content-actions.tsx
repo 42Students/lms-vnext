@@ -118,38 +118,38 @@ export function SuperAdminContentActions({item}:{item:Content}){
  }
  if(item.status==="ARCHIVED")return <p className="text-xs text-muted-foreground">Archived content is read-only.</p>;
  return <div className="space-y-2">
-  <div className="flex flex-wrap gap-2">
+  <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row">
    <Button variant="secondary" type="button" disabled={busy} onClick={toggleEditor}
-    className="min-h-11 md:min-h-9">Edit</Button>
+    className="min-h-11 w-full sm:w-auto md:min-h-9">Edit</Button>
    {item.status==="DRAFT"?<Button variant="primary" type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
-    className="min-h-11 md:min-h-9">Publish</Button>:null}
+    className="min-h-11 w-full sm:w-auto md:min-h-9">Publish</Button>:null}
    <Button variant="danger" type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
-    className="min-h-11 md:min-h-9">Delete</Button>
+    className="min-h-11 w-full sm:w-auto md:min-h-9">Delete</Button>
   </div>
-  {editing?<fieldset disabled={busy} className="grid gap-2 border-t border-border pt-3">
+  {editing?<fieldset disabled={busy} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] sm:grid-cols-2">
    <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
     Private files and existing published URLs are not exposed in this form.</p>
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
     <Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
+     className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
     <Input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>
+     className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
    {["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)?
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Resource HTTPS link"}
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Resource HTTPS link"}
      <Input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
-      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-11 md:min-h-9"/>
+      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-11 w-full sm:w-auto md:min-h-9"/>
     </label>:null}
-   {item.contentType==="RESOURCE"?<label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Notes
+   {item.contentType==="RESOURCE"?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Notes
     <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
      className="w-full"/>
    </label>:null}
-   {item.contentType==="YOUTUBE"?<label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Video length (seconds)
+   {item.contentType==="YOUTUBE"?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Video length (seconds)
     <Input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>:null}
+     className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>:null}
    {item.contentType==="LIVE_CLASS"?<>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Time Zone
-     <Select className="min-h-11 md:min-h-9" value={timeZone}
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Time Zone
+     <Select className="min-h-11 w-full sm:w-auto md:min-h-9" value={timeZone}
       onChange={e=>{
        const zone=e.target.value as MeetingZone;
        if((startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone))&&
@@ -159,14 +159,14 @@ export function SuperAdminContentActions({item}:{item:Content}){
       <option value="Asia/Kolkata">India Standard Time (IST)</option><option value="UTC">UTC</option>
      </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date and Time
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date and Time
      <Input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-      className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date and Time
+      className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date and Time
      <Input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-      className="min-h-11 md:min-h-9"/></label>
+      className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
    </>:null}
-   <Button type="button" loading={busy} disabled={busy} onClick={()=>void save()} className="min-h-11 md:min-h-9">
+   <Button type="button" loading={busy} disabled={busy} onClick={()=>void save()} className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Saving…":"Save"}</Button>
   </fieldset>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
