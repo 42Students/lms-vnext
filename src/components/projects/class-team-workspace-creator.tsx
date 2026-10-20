@@ -308,7 +308,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     </section>:null}
     <div className="sticky bottom-0 z-10 flex min-w-0 flex-col-reverse gap-3 border-t border-border bg-surface py-3 md:flex-row md:flex-wrap md:justify-end">
       <Button variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
-      <Button className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
+      <Button className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading||(mode==="INDIVIDUAL"&&!currentPreflight)} onClick={()=>void create()}>
         {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":mode==="INDIVIDUAL"?"Create "+(currentPreflight?.toCreate??0)+" workspaces":"Create whole-class workspace"}
       </Button>
     </div>
