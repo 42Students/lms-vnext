@@ -34,7 +34,7 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
  if(status!=="ACTIVE"&&status!=="SUSPENDED")return null;
  if(hasMentorRole&&action==="SUSPEND")return <Alert tone="warning">Also assigned to mentoring. Review active project assignments before changing access.</Alert>;
  return <div className="min-w-44 space-y-2 print:hidden">
-  {action==="SUSPEND"?<label className="grid gap-1 text-[13px] font-semibold text-body">Suspension reason
+  {action==="SUSPEND"?<label className="grid gap-1 text-sm font-semibold text-body">Suspension reason
    <Input value={reason} maxLength={1000} disabled={busy} onChange={event=>setReason(event.target.value)}
     className="min-h-11 md:min-h-9" placeholder="Reason for suspension"/>
   </label>:null}
