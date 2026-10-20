@@ -247,3 +247,35 @@
 **Problems fixed (10):** always-expanded create form; conversations expanded for every request; two competing oversized headings; custom inconsistent status chip; cramped phone request headings; multi-action rows wrapped irregularly; no empty discussion explanation; non-accept confirmations falsely described acceptance; send action undersized; long threads pushed next request offscreen. Used native disclosures for create and per-request discussion, shared status badge, 44px phone buttons, accurate conditional modal semantics and empty reply state. All IDs, mode logic, 409 optimistic tokens, routes and API contracts retained.
 
 **Files:** `src/components/placements/tpo-drive-change-requests.tsx`, queue, proof. No CI.
+
+## Surface 42 — TPO saved drive views
+
+**Reviewed:** local browser storage load/save, no views, at-most-eight, duplicate-name replacement, blocked storage, list apply/copy/delete, clipboard error/success, clear-all confirm, collapsed/expanded toolbar, 375/768 mobile. Shared Input/Button/EmptyState/Notice/Dialog; no runtime/CI.
+
+**Problems fixed (8):** pill list nested three ghost buttons horizontally and overflowed; long view names compressed action buttons; save action undersized at 375; clear-all danger text floated above saved views; success link notice remained after editing name; list lacked continuous legacy row dividers; summary focus cue inconsistent; every row used isolated bordered cards. Converted to compact 2/3-column hairline list, touch-sized save and row actions, bounded text, moved Clear all after entries, cleared stale clipboard success on edits, enhanced summary focus. Names, labels/ARIA, limit eight, localStorage and URLs preserved.
+
+**Files:** `src/components/placements/tpo-drive-saved-views.tsx`, queue, proof. No CI.
+
+## Surface 43 — Joining outcome update form
+
+**Reviewed:** accepted offer PENDING vs recorded correction flows, Joined/Deferred/Did not join, conditional date/reason/correction reason, form validity, guarded PUT, explicit confirmation, busy/success/error with refresh, 375/768 and shared Disclosure/Dialog/form primitives. No execution or CI.
+
+**Problems fixed (8):** finalized offers exposed correction form at all times; dense two-column form felt unfinished when no change intended; note textareas too short; conditional fields didn't indicate required status; confirmation lacked date and outcome summary; every choice inherited destructive red styling; phone form hierarchy lacked a clear disclosure task; long correction controls increased list height. Kept pending offer edit visible by default, collapsed correction behind native disclosure, enlarged note areas, added required attributes, made modal show selected outcome/date while styling Did not join as destructive and positive states primary. All guards, endpoint, payload, IDs and wording retained.
+
+**Files:** `src/components/placements/tpo-joining-update-form.tsx`, queue, proof. No CI.
+
+## Surface 44 — TPO round check-in controls
+
+**Reviewed:** WAITING/PRESENT/ABSENT transitions, CANCELLED/COMPLETED removal, optimistic expectedAttendance, explicit audited no-show/check-in modal, pending/409/failure and refresh, shared Button/ConfirmDialog/InlineNotice. 375/768 source mobile styles; no runtime/CI.
+
+**Problems fixed (5):** action buttons compressed/uneven at 375px; 12px labels too small for key attendance action; errors shared the same line as action controls; modal did not disclose existing attendance; flex controls could become clipped in row containers. Stacked 44px full-width phone actions, adjusted font to legacy 14px, gave errors their own width and added explicit current status to confirmation. Existing two-step intentional change, result semantics and all API payload fields unchanged.
+
+**Files:** `src/components/placements/tpo-round-check-in.tsx`, queue and proof. No CI.
+
+## Surface 45 — TPO selection CSV import
+
+**Reviewed:** FileUpload validation/2 MB CSV restriction, file text parsing, unmatched/duplicate candidates, success/unmatched-only/error states, preview, 100-row chunked RECORD and partial-failure persistence, confirmation and release-vs-recording semantics, busy state, DataTable and Disclosure 375/768 source. No tests/CI.
+
+**Problems fixed (8):** no visible reading state while parsing file; upload allowed interaction during reading; matched preview viewport showed too few rows; preview lacked hairline table boundary; unmatched list expanded even when matched records needed decision; unmatched viewport was too short; record confirmation inherited destructive danger styling despite staging-only semantics; heading was underspecified. Added explicit read progress/disable guard, 320px preview and 256px unmatched panels, progressive disclosure focused on valid rows, positive primary confirmation, compact heading. Existing CSV mapping/limits, applicant IDs, 100-row transactions, no-release guarantee and failure statements unchanged.
+
+**Files:** `src/components/placements/tpo-selection-import.tsx`, queue, proof. No runtime/CI.
