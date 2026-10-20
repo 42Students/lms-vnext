@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Pagination } from "@/components/ui/pagination";
@@ -31,6 +32,7 @@ export default async function MentorBoardReviewPage({
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
+  const filtered=Boolean(data.query.search)||data.query.status!=="ALL"||data.query.priority!=="ALL"||Boolean(data.query.sprintId&&data.query.sprintId!=="ALL");
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no tasks were loaded."}
@@ -42,14 +44,6 @@ export default async function MentorBoardReviewPage({
       <section role="status" className="border-b border-border pb-4">
         Projects access is disabled; no tasks were loaded.
       </section>:<>
-      <section aria-label="Registered task counts" className="grid gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
-         {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
-           <StatTile key={status} label={status.replaceAll("_"," ")} value={data.totals[status]} className="min-h-[104px]" />)}
-       </section>
-      <p className="text-sm text-body leading-[22px]">{data.count} registered tasks ·
-        {data.completedPercent===null?" Completion unknown (no tasks)":
-          " "+data.completedPercent+"% recorded DONE tasks"}
-      </p>
       <FilterBar title="Filters"><form method="get" action={base+"/board-review"} role="search" aria-label="Task board review filters"
         className="grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search tasks or sprints
@@ -80,7 +74,7 @@ export default async function MentorBoardReviewPage({
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter
         </Button>
-        <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
+        {filtered?<Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form></FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
@@ -97,7 +91,7 @@ export default async function MentorBoardReviewPage({
         title={data.count===0?"No registered project tasks":"No tasks match these filters"}
         description={data.count===0?
           "This project has no stored tasks. No workload or assignment is inferred.":
-          "The stored tasks do not match your filters. Clear filters to view the whole board."} action={<Link href={base+"?tab=board"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Full task workspace</Link>} />:
+          "The stored tasks do not match your filters. Clear filters to view the whole board."} action={filtered?<Link href={base+"/board-review"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>:<Link href={base+"?tab=board"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Full task workspace</Link>} />:
         <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=><li key={row.id}
           className="py-[var(--lms-space-3)]">
           <h2 className="m-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.title}</h2>
@@ -105,9 +99,19 @@ export default async function MentorBoardReviewPage({
             {row.priority} priority · {row.sprintTitle}</p>
         </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Board status pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorBoardReviewHref({...data.query,page})}/>:null}
+      <Disclosure title="Registered task counts" className="min-w-0 border-t border-border py-3" contentClassName="pt-3">
+      <section aria-label="Registered task counts" className="grid gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
+         {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
+           <StatTile key={status} label={status.replaceAll("_"," ")} value={data.totals[status]} className="min-h-[104px]" />)}
+       </section>
+      <p className="text-sm text-body leading-[22px]">{data.count} registered tasks ·
+        {data.completedPercent===null?" Completion unknown (no tasks)":
+          " "+data.completedPercent+"% recorded DONE tasks"}
+      </p>
+      </Disclosure>
       <section aria-label="Sprint status summaries" className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Sprint summaries</h2>
+          <h2 className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">Sprint summaries</h2>
           <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
