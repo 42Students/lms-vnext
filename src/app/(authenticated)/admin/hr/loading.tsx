@@ -6,10 +6,10 @@ export default function SuperAdminHrLoading() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin"
-        title="HR Accounts"
+        title="Recruiter accounts"
         description="Loading employer recruiter accounts…"
       />
-      <GracefulPageLoading label="Loading recruiter accounts and college access…" />
+      <GracefulPageLoading label="Loading recruiter accounts and college access…" shape="directory" />
     </div>
   );
 }
