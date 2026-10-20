@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef,useState } from "react";
+import { useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,7 +11,6 @@ export function TpoTrustToggle({
   relationshipId, companyName, isTrusted,
 }: { relationshipId: string; companyName: string; isTrusted: boolean; }) {
   const router=useRouter();
-  const { showToast }=useToast();
   const reasonHelpId=useId();
   const [pending,setPending]=useState(false);
   const lock=useRef(false);
@@ -56,9 +55,9 @@ export function TpoTrustToggle({
         {"Reason for "+(nextTrusted?"trusting ":"removing trust from ")+companyName+" (at least 8 characters):"}
         <Textarea autoFocus value={reason} onChange={event=>{setReason(event.target.value);setError(null);}}
           maxLength={500} rows={3} className="min-h-24 w-full" disabled={pending} aria-invalid={reason.length>0&&!valid}
-          aria-describedby="tpo-company-trust-reason-help"/>
+          aria-describedby={reasonHelpId}/>
       </label>
-      <p id="tpo-company-trust-reason-help" className="mt-2 flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-body"><span>Enter a reason between 8 and 500 characters.</span><span className="tabular-nums">{reason.trim().length}/500</span></p>
+      <p id={reasonHelpId} className="mt-2 flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-body"><span>Enter a reason between 8 and 500 characters.</span><span className="tabular-nums">{reason.trim().length}/500</span></p>
       {error?<InlineNotice tone="error" message={error}/>:null}
     </ConfirmDialog>
     {error&&!review?<InlineNotice tone="error" message={error}/>:null}
