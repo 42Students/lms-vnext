@@ -140,7 +140,7 @@ export default async function LearnerProjectsPage({
   const rows = filtered.slice((page - 1) * size, page * size);
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader title="Projects" description="Choose a project to open its workspace." />
 
       <LearnerProjectMobileFilters query={{ ...query, page }} />

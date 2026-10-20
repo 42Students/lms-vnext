@@ -69,7 +69,7 @@ export function ProjectParticipantListControls({
       onChange={mentor?liveRefresh:undefined}
       method="get"
       action={basePath}
-      className={mentor?"grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-4 [&_label]:min-w-0":"flex flex-wrap items-end gap-3 border-b border-border pb-4"}
+      className={mentor?"grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-4 [&_label]:min-w-0":"grid min-w-0 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 lg:grid-cols-4 [&_label]:min-w-0"}
     >
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Search
@@ -203,15 +203,12 @@ export function ProjectParticipantListControls({
         </Select>
       </label>
 
-      <Button
-        type="submit"
-
-      >
+      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
         Apply
       </Button>
       {!mentor || hasFilters ? <Link
         href={basePath}
-        className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle"
       >
         Clear filters
       </Link> : null}
