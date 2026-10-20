@@ -109,7 +109,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
       accept=".csv,text/csv" disabled={busy} onFiles={files=>void chooseFile(files?.[0]??null)}/>
    {chosenName?<p className="text-xs text-muted-foreground">Selected: {chosenName}</p>:null}
    <p className="text-xs text-muted-foreground">For Excel files, use Save As → CSV (UTF-8) before import.</p>
-   <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Download a template</a>
+   <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 print:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Download a template</a>
   </div>
   <label className="block text-sm print:hidden">CSV contents
    <Textarea className="mt-1 min-h-32 w-full min-w-0 font-mono text-xs"
@@ -147,17 +147,17 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
         onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])}/>Include
       </label>},
     ]}/>
-   <nav aria-label="Import preview pages" className="flex min-w-0 flex-wrap items-center gap-3 text-xs">
-    <Button variant="secondary" type="button" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} >Previous</Button>
+   <nav aria-label="Import preview pages" className="flex min-w-0 flex-wrap items-center gap-3 text-xs print:hidden">
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} >Previous</Button>
     <span>Page {previewPage} of {Math.max(1,Math.ceil(preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length/8))}</span>
-    <Button variant="secondary" type="button" disabled={busy||previewPage*8>=preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length} onClick={()=>setPreviewPage(p=>p+1)} >Next</Button>
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy||previewPage*8>=preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length} onClick={()=>setPreviewPage(p=>p+1)} >Next</Button>
    </nav>
    <div className="flex flex-wrap gap-2 print:hidden">
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>fileInput.current?.click()} >Choose another file</Button>
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>setDiscardPending(true)} >Discard review</Button>
    </div>
-   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
-   <label className="flex min-h-11 items-start gap-2 text-sm text-body">
+   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
+   <label className="flex min-h-11 items-start gap-2 text-sm text-body print:hidden">
      <Checkbox className="mt-1"
        checked={acknowledged} disabled={busy}
        onChange={event=>setAcknowledged(event.target.checked)}/>

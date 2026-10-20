@@ -52,6 +52,13 @@ const rules = [
     paths: ["src/components/shell"],
   },
   {
+    // The running old LMS has no 3px route strip. This strict negative
+    // ledger keeps a future shell edit from bringing that decoration back.
+    label: "nonlegacy-top-strip-regressions",
+    regex: 'lms-route-progress-segment|className="lms-route-progress"|role="progressbar"',
+    paths: ["src/components/shell"],
+  },
+  {
     label: "duplicate-sidebar-and-mobile-footer",
     regex: "lms-desktop-sidebar|lms-legacy-mobile-footer|lms-tpo-mobile-footer|ln-footer",
     paths: ["src"],

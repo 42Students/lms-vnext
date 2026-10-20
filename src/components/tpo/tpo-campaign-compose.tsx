@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -84,15 +86,15 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
    {selectedLeadIds.length?<section aria-label="Selected recruiter audience review" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
     <h3 className="font-semibold">Selected recruiter audience</h3>
     {audienceStatus==="loading"?<p role="status">Checking selected contacts and suppression rules…</p>:null}
-    {audienceStatus==="error"?<div role="alert"><p>Could not check selected contacts. No emails have been sent.</p>
+    {audienceStatus==="error"?<Alert tone="error"><p>Could not check selected contacts. No emails have been sent.</p>
       <Button variant="ghost" type="button" className="mt-2 min-h-11 min-[768px]:min-h-9 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</Button>
-    </div>:null}
+    </Alert>:null}
     {audienceStatus==="ready"&&audience?<div role="status" className="mt-2 space-y-1">
       <p><strong>{audience.eligible} potential recipients</strong> out of {audience.selected} selected · {audience.leftOut} left out.</p>
       <p>No email: {audience.suppressed.NO_EMAIL} · Opted out: {audience.suppressed.UNSUBSCRIBED} · Bounced: {audience.suppressed.BOUNCED}</p>
       <p>Not now: {audience.suppressed.NOT_NOW} · Duplicate email: {audience.suppressed.DUPLICATE} · No longer available: {audience.unavailable}</p>
-      {audience.unavailable>0?<p role="alert" className="text-warning">Some selected recruiters changed or are no longer in this college. Return to Engage to select again.</p>:null}
-      {audience.eligible===0?<p role="alert" className="text-warning">None of the selected recruiters are eligible for this draft.</p>:null}
+      {audience.unavailable>0?<Alert tone="warning">Some selected recruiters changed or are no longer in this college. Return to Engage to select again.</Alert>:null}
+      {audience.eligible===0?<Alert tone="warning">None of the selected recruiters are eligible for this draft.</Alert>:null}
     </div>:null}
     <p className="mt-2 text-xs text-muted-foreground">This is a preview, not a send. Recipient eligibility is checked again when saving the draft.</p>
    </section>:null}
@@ -135,12 +137,12 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
     Change selected recruiters in Engage
    </Link>}
-   {!deliveryReady?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
+   {!deliveryReady?<Alert tone="warning"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</Alert>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
    <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 md:min-h-9 print:hidden">
     {busy?"Saving…":"Save draft"}
    </Button>
   </form>
-  {done?<p role="status" className="text-sm text-body">{done}</p>:null}
-  {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
+  {done?<InlineNotice tone="success" message={done}/>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
