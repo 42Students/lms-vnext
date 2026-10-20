@@ -239,3 +239,13 @@
 - Regressions fixed: 0. Read five-destination footer, live shell alias, BottomSheet, Button, legacy footer CSS and both lane-1/lane-20 proof entries. Destinations, icons, labels, safe-area footer, path/resize dismissal, Escape and ARIA/current-page behavior remain wired; no invalid TSX or missing props.
 - Extra fixes: 0. Five shrink-safe cells and a single-column More sheet already balance at 375; footer hidden at 768.
 - Files changed: verified, no change. Source review only, no CI.
+
+## Verify2 — 7. `src/components/public/public-page-loading.tsx`
+- Regressions fixed: 0. Read entire public loader, public-screen CSS, shared GracefulPageLoading and PageHeader, legacy public footer/logo links and lane-18 proof. No invalid JSX, duplicated attributes, missing import or moved branding; polite labelled status wraps only the loading region. Responsive canvas/brand/footer retain focus and width contracts at 375/768.
+- Extra fixes: 0; no additional nested white canvas or crowded phone controls.
+- Files changed: verified, no change. Static only, no browser/CI.
+
+## Verify2 — 8. `src/app/(authenticated)/teach/error.tsx`
+- Regressions fixed: 0. Read the error boundary, Faculty route guard/skip-target layout, loading/not-found, shared GracefulErrorBoundary/PageHeader/Button and lane-18/lane-19 proof. `insideShell` correctly removes duplicate public chrome; reset, safe messages, request id, chunk-reload and `/teach` recovery route remain intact. No missing exports or TSX mismatch.
+- Extra fixes: 0. One canvas, bounded header and 44px phone retry/home row at the documented breakpoints.
+- Files changed: verified, no change; source only, no CI.
