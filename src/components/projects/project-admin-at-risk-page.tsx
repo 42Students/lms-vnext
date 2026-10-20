@@ -108,11 +108,11 @@ export async function ProjectAdminAtRiskPage({
       {!result.items.length ? (
         <EmptyState title="No at-risk projects" description="No at-risk project workspaces match these filters."/>
       ) : (
-        <div className="divide-y divide-border">
+        <div className="min-w-0 divide-y divide-border border-y border-border">
           {result.items.map((project) => (
             <article
               key={project.id}
-              className="py-5"
+              className="min-w-0 py-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
