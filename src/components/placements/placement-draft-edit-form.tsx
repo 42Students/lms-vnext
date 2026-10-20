@@ -361,7 +361,7 @@ export function PlacementDraftEditForm({
       <form
         onSubmit={submit}
       onChange={markDirty}
-        className="grid min-w-0 gap-4 border-t border-[var(--lms-canvas-border)] py-4"
+        className="grid min-w-0 gap-4 py-4"
       >
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
           <label className="sm:col-span-2">
@@ -533,9 +533,6 @@ export function PlacementDraftEditForm({
         <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
           <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Eligibility rules</summary>
           <div className="min-w-0 pb-4">
-          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
-            Eligibility rules
-          </h3>
           <p className="mt-1 text-xs leading-5 text-body">
             Leave programs and cohorts unselected to keep the opportunity college-wide.
           </p>
