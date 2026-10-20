@@ -71,7 +71,7 @@ function createdRecordId(result:unknown,kind:"course"|"offering"|"delivery"){
  return typeof id==="string"&&/^[a-f0-9-]{36}$/i.test(id)?id:null;
 }
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
-  return <label htmlFor={htmlFor} className="mb-1.5 block text-xs font-semibold text-body">{children}</label>;
+  return <label htmlFor={htmlFor} className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{children}</label>;
 }
 
 export function AdminCourseCreatePanel({

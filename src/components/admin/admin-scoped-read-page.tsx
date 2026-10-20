@@ -104,7 +104,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   {headingMode==="section"?refreshAction:null}
-  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 md:grid-cols-2 min-[992px]:grid-cols-4 print:hidden">
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] py-4 md:grid-cols-2 min-[992px]:grid-cols-4 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
@@ -202,7 +202,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    </article>)}
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear search</Link>
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>superAdminReadHref(path,{...data.query,page})}/>
  </div>;
 }

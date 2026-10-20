@@ -477,18 +477,18 @@ export function AdminCourseOverview({
         </div>
         {catalogue&&catalogueQuery?<form method="get" action={courseBasePath}
          className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-         <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-xs font-semibold text-body">Search courses
+         <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search courses
           <Input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
            placeholder="Name, code or department" className="min-h-11 min-w-0 md:min-h-9"/>
          </label>
-         <label className="grid gap-1 text-xs font-semibold text-body">Sort
+         <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
           <Select name="sort" defaultValue={catalogueQuery.sort}
            className="min-h-11 md:min-h-9">
            <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
            <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
           </Select>
          </label>
-         {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-xs font-semibold text-body">Per page
+         {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Per page
           <Select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
            className="min-h-11 md:min-h-9">
            <option value="25">25</option><option value="50">50</option><option value="100">100</option>
@@ -496,12 +496,12 @@ export function AdminCourseOverview({
          </label>:null}
          <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Export CSV
          </a>
-         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle md:min-h-9"
+         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses",courseBasePath)}>Refresh</Link>:null}
-         <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle md:min-h-9" href={courseBasePath}>Clear</Link>
+         <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={courseBasePath}>Clear</Link>
         </form>:null}
         {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
          Export CSV includes up to the first 1,000 matching courses. Narrow filters to export a smaller set.
