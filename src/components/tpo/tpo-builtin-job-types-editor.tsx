@@ -2,6 +2,7 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {DataTable} from "@/components/ui/data-table";
+import {EmptyState} from "@/components/ui/empty-state";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -34,7 +35,7 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
   <h3 className="font-semibold">Built-in job types</h3>
   <p className="text-sm text-muted-foreground">Their names and counts-as-placed answers are fixed. Switching off a type hides it from the college&apos;s available choices; existing drives keep their type.</p>
   <DataTable rows={rows} getRowKey={row=>row.label} caption="Built-in job types"
-   empty={<p>No built-in job types available.</p>}
+   empty={<EmptyState title="No built-in job types available."/>}
    columns={[
     {key:"jobType",header:"Job type",mobilePriority:"primary",cell:row=><span className="font-medium">{row.label} <span className="text-xs text-muted-foreground">Built-in</span></span>},
     {key:"placed",header:"Counts as placed",mobilePriority:"secondary",cell:row=>row.countsAsPlaced?"Yes":"No"},

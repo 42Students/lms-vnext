@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
+import { Disclosure } from "@/components/ui/disclosure";
 import {TpoBuiltinJobTypesEditor} from "@/components/tpo/tpo-builtin-job-types-editor";
 import { TpoJobTypesEditor } from "@/components/tpo/tpo-job-types-editor";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -8,10 +9,16 @@ import { getTpoJobTypes } from "@/modules/placements/tpo-configuration-read-serv
 export const dynamic="force-dynamic";
 export default async function JobTypesSettings(){
  const {ready,rows}=await getTpoJobTypes(await getCurrentRequestContext());
- return <div className="min-w-0 space-y-[var(--lms-space-5)]"><TpoSettingsNav active="job-types"/><PageHeader title="Job types" description="Manage the college's custom job-type choices. Inactive types are kept for historical records." />
- {ready?<TpoBuiltinJobTypesEditor stored={rows.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}
-  customActive={rows.filter(row=>!row.isBuiltin&&row.active).length}/>:null}
+ return <div className="min-w-0 space-y-[var(--lms-space-5)]">
+ <PageHeader title="Job types" description="Manage the college's custom job-type choices. Inactive types are kept for historical records." />
+ <TpoSettingsNav active="job-types" compact />
  {!ready?<Alert tone="warning">Job types storage is awaiting migration registration.</Alert>:
- <TpoJobTypesEditor types={rows.filter(row=>!row.isBuiltin).map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}/>}
+  <>
+   <TpoJobTypesEditor types={rows.filter(row=>!row.isBuiltin).map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}/>
+   <Disclosure title="Built-in job types" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]">
+    <TpoBuiltinJobTypesEditor stored={rows.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}
+     customActive={rows.filter(row=>!row.isBuiltin&&row.active).length}/>
+   </Disclosure>
+  </>}
  </div>;
 }

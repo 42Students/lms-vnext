@@ -1,1 +1,3 @@
-export default function Loading(){return <p role="status">Loading job types…</p>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading(){return <GracefulPageLoading label="Loading job types…" shape="form" />;}

@@ -2,6 +2,7 @@
 
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function TpoPlacementBrandingError({
   reset,
@@ -16,19 +17,9 @@ export default function TpoPlacementBrandingError({
     >
       <PageHeader title={"Couldn't load placement branding"} />
 
-      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-        The college&apos;s branding records could
-        not be retrieved. No logo, colour, or
-        fallback value has been inferred from
-        this error.
-      </p>
-
-      <Button
-        className="mt-5"
-        onClick={reset}
-      >
-        Retry
-      </Button>
+      <ErrorState title="Couldn't load placement branding"
+        description="The college's branding records could not be retrieved. No logo, colour, or fallback value has been inferred from this error."
+        action={<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Retry</Button>}/>
     </section>
   );
 }
