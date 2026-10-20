@@ -44,7 +44,7 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
     <p className="text-sm text-body">{publicRecruitThanks(collegeName)}</p>
    </div>:!enabled||unavailable?<p role="alert" className="mt-3 text-sm text-body">
      {PUBLIC_RECRUIT_COPY.unavailable}
-   </p>:<form className="mt-4 space-y-4" onSubmit={e=>{
+   </p>:<form className="mt-4 max-w-2xl space-y-4" onSubmit={e=>{
     e.preventDefault();void submit(sent?"recruit":"send-code");
    }}>
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.workEmail}
@@ -52,35 +52,37 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
       disabled={Boolean(sent)} value={email} onChange={e=>setEmail(e.target.value)}/>
      <span className="block mt-1 text-xs font-normal">Your company email. We send a code to it.</span>
     </label>
+    {sent ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.name}
-     <Input className={control+" mt-1"} required maxLength={120} disabled={Boolean(sent)}
+     <Input className={control+" mt-1"} required maxLength={120}
       value={name} onChange={e=>setName(e.target.value)}/>
     </label>
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.company}
-     <Input className={control+" mt-1"} required maxLength={150} disabled={Boolean(sent)}
+     <Input className={control+" mt-1"} required maxLength={150}
       value={company} onChange={e=>setCompany(e.target.value)}/>
     </label>
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.mobile}
-     <Input className={control+" mt-1"} type="tel" maxLength={30} disabled={Boolean(sent)}
+     <Input className={control+" mt-1"} type="tel" maxLength={30}
       value={mobile} onChange={e=>setMobile(e.target.value)}/>
     </label>
-    <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.hiringFor}
-     <Textarea className={control+" mt-1 py-2"} maxLength={1500} disabled={Boolean(sent)}
+    <label className="block min-w-0 text-sm font-semibold text-body sm:col-span-2">{PUBLIC_RECRUIT_COPY.hiringFor}
+     <Textarea className={control+" mt-1 py-2"} maxLength={1500}
       value={hiringFor} onChange={e=>setHiringFor(e.target.value)}/>
     </label>
+    </div> : null}
     {sent?<label className="block text-sm font-semibold text-body">Code sent to {sent}
       <Input className={control+" mt-1"} inputMode="numeric" pattern="[0-9]{6}"
        required maxLength={6} value={code} onChange={e=>setCode(e.target.value)}/>
       <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code}</span>
      </label>:null}
     {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
-    {sent?<Button variant="secondary" type="button" disabled={busy}
-      
-      onClick={()=>void submit("send-code")}>Send a new code</Button>:null}
-    <Button type="submit" disabled={busy}
-     >
-      {sent?PUBLIC_RECRUIT_COPY.submit:PUBLIC_RECRUIT_COPY.send}
-    </Button>
+    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+      <Button type="submit" disabled={busy} className="min-h-11 w-full sm:w-auto sm:min-h-9">
+        {sent?PUBLIC_RECRUIT_COPY.submit:PUBLIC_RECRUIT_COPY.send}
+      </Button>
+      {sent?<Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full sm:w-auto sm:min-h-9"
+        onClick={()=>void submit("send-code")}>Send a new code</Button>:null}
+    </div>
    </form>}
  </section>;
 }
