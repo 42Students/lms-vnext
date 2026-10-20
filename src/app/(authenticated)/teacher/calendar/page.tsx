@@ -29,7 +29,7 @@ export default async function FacultyCalendarPage({
   }:{invalid:true});
   if(!input.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid month or Section filter"} />
-    <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       Clear filters
     </Link>
   </section>;
@@ -49,7 +49,7 @@ export default async function FacultyCalendarPage({
     <PageHeader title="Class Schedule" />
     <div className="flex justify-end">
       <Link href="/teacher/live-classes"
-        className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         View live classes
       </Link>
     </div>
@@ -110,7 +110,7 @@ export default async function FacultyCalendarPage({
                 </p>
                 {event.deliveryId?<Link
                   href={"/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/home"}
-                  className="text-xs font-semibold text-primary-text hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Course Section</Link>
+                  className="text-xs font-semibold text-primary-text hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Course Section</Link>
                 :<span className="text-xs text-muted-foreground">Section-wide session</span>}
               </article>)}
             </div>

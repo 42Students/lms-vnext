@@ -23,7 +23,7 @@ export default async function FacultyCourseDiscussionsPage({
         eyebrow="Faculty · Course"
         title="Discussions"
         description={`${workspace.course.courseName} · ${workspace.course.sectionName}`}
-        actions={<Link href={`/teacher/courses/${deliveryId}/home`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Course workspace</Link>}
+        actions={<Link href={`/teacher/courses/${deliveryId}/home`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Course workspace</Link>}
       />
       <LearnerCourseDiscussion
         key={deliveryId}
