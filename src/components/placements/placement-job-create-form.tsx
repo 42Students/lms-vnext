@@ -1442,7 +1442,7 @@ export function PlacementJobCreateForm({
       </section>
       <details className="min-w-0 border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Who this reaches</summary>
-      <section aria-label="Who this reaches" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+      <section aria-label="Who this reaches" className="min-w-0 pb-[var(--lms-space-4)]">
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
         <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>

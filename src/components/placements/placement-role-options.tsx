@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 
 type PlacementRoleOptionItem = {
@@ -102,6 +103,9 @@ export function PlacementRoleOptions({
     useState<RoleDraft>(emptyDraft);
   const [pending, setPending] =
     useState(false);
+  const [archiveTarget, setArchiveTarget] =
+    useState<PlacementRoleOptionItem | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
 
   const activeRoles = useMemo(
     () =>
@@ -115,6 +119,7 @@ export function PlacementRoleOptions({
   function reset() {
     setEditingId(null);
     setDraft(emptyDraft);
+    setEditorOpen(false);
   }
 
   function startEdit(
@@ -123,6 +128,7 @@ export function PlacementRoleOptions({
     if (role.isPrimary) return;
     setEditingId(role.id);
     setDraft(toDraft(role));
+    setEditorOpen(true);
   }
 
   async function mutation(
@@ -313,10 +319,11 @@ export function PlacementRoleOptions({
               </div>
               {editable &&
               !role.isPrimary ? (
-                <div className="flex gap-2">
+                <div className="flex w-full flex-wrap gap-2 sm:w-auto">
                   <Button
                     size="sm"
                     variant="secondary"
+                    className="min-h-11 flex-1 sm:flex-none md:min-h-9"
                     disabled={pending}
                     onClick={() =>
                       startEdit(role)
@@ -327,9 +334,10 @@ export function PlacementRoleOptions({
                   <Button
                     size="sm"
                     variant="secondary"
+                    className="min-h-11 flex-1 sm:flex-none md:min-h-9"
                     disabled={pending}
                     onClick={() =>
-                      archive(role)
+                      setArchiveTarget(role)
                     }
                   >
                     Archive
@@ -370,17 +378,15 @@ export function PlacementRoleOptions({
       </div>
 
       {editable ? (
-        <div className="border-t border-border py-5">
-          <div className="mb-4">
-            <h3 className="m-0 text-sm font-semibold text-foreground">
-              {editingId
-                ? "Edit additional role"
-                : "Add another role"}
-            </h3>
-            <p className="mt-1 text-xs text-muted-foreground">
+        <details className="min-w-0 border-t border-border py-4" open={editorOpen}
+          onToggle={event => setEditorOpen(event.currentTarget.open)}>
+          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">
+            {editingId ? "Edit additional role" : "Add another role"}
+          </summary>
+          <div className="min-w-0 pb-3 pt-2">
+            <p className="mb-3 text-xs text-muted-foreground">
               Eligibility and drive rounds remain shared; the application itself is bound to this exact role.
             </p>
-          </div>
           <div className="grid gap-3 lg:grid-cols-3">
             <label>
               <span className="mb-1 block text-xs font-semibold text-body">
@@ -533,6 +539,7 @@ export function PlacementRoleOptions({
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               size="sm"
+              className="min-h-11 w-full sm:w-auto md:min-h-9"
               disabled={pending}
               onClick={save}
             >
@@ -546,6 +553,7 @@ export function PlacementRoleOptions({
               <Button
                 size="sm"
                 variant="secondary"
+                className="min-h-11 w-full sm:w-auto md:min-h-9"
                 disabled={pending}
                 onClick={reset}
               >
@@ -553,8 +561,24 @@ export function PlacementRoleOptions({
               </Button>
             ) : null}
           </div>
-        </div>
+          </div>
+        </details>
       ) : null}
+      <ConfirmDialog
+        open={archiveTarget !== null}
+        onOpenChange={open => { if (!open && !pending) setArchiveTarget(null); }}
+        title={archiveTarget ? "Archive " + archiveTarget.title + "?" : "Archive role?"}
+        description="The role will no longer be available in this draft drive. The primary role cannot be archived."
+        confirmLabel="Archive role"
+        confirmVariant="danger"
+        pending={pending}
+        onConfirm={() => {
+          const role = archiveTarget;
+          if (role && !pending) {
+            void archive(role).finally(() => setArchiveTarget(null));
+          }
+        }}
+      />
     </section>
   );
 }
