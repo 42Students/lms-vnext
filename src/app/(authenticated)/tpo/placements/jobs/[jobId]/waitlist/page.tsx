@@ -13,10 +13,11 @@ export default async function TpoWaitlistPage({params}:{params:Promise<{jobId:st
  const {jobId}=await params;let data:Awaited<ReturnType<typeof getTpoWaitlistPreview>>;
  try{data=await getTpoWaitlistPreview(context,jobId);}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e;}
- return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Waitlist"} description="Review ranked applied waitlist results and release the next available offer seat exactly once."/>
-  <nav aria-label="Waitlist related pages" className="flex min-w-0 flex-wrap items-center gap-3 text-[13px]"><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/offers"}
-   className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Offer register</Link>
+ return <div className="min-w-0 space-y-4">
+  <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Waitlist"} description="Review ranked applied waitlist results and release the next available offer seat exactly once."
+    actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/offers"}
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Offer register</Link>}/>
+  <nav aria-label="Waitlist related pages" className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"}
     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Round results</Link></nav>
   <TpoWaitlistPromotionControl jobId={jobId} preview={data}/>
