@@ -2,9 +2,9 @@
 
 26 page routes. For each: open the page and every component it renders, compare property by property with the legacy values in docs/design (old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) at 1280, 768 and 375 widths, fix every discrepancy you find, and record at least 6 spec-versus-code value pairs plus the number of fixes as ONE proof line per page in docs/audit/ux/review-lane-19.md. Tick [x] here in the same push.
 
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx`
 - [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
