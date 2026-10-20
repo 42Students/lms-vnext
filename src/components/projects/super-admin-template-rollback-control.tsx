@@ -1,6 +1,7 @@
 "use client";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -36,7 +37,7 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
    className="">
    {busy?"Rolling back…":"Roll back"}
   </Button>
-  {status==="ARCHIVED"?<p className="text-xs text-warning-text">Archived templates cannot be rolled back.</p>:null}
+  {status==="ARCHIVED"?<Banner tone="warning">Archived templates cannot be rolled back.</Banner>:null}
   {selectedVersion.version===currentVersion?<p className="text-xs text-muted-foreground">This is already the current version.</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
