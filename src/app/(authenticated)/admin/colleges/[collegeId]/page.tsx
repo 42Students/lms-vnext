@@ -34,7 +34,7 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export activity CSV</Link>
   </div>
   <dl className="grid gap-4 border-t border-border pt-4 md:grid-cols-2">
-   {fields.map(([label,value])=><div key={label}><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
+   {fields.map(([label,value])=><div key={label}><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}
   </dl>
   {item.status==="ARCHIVED"&&item.organizationStatus==="ACTIVE"?

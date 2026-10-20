@@ -77,7 +77,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
       </section>
 
       <section aria-label="Manage batches" className="space-y-3 pt-2">
-        <h2 className="text-lg font-semibold text-foreground">Manage batches</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Manage batches</h2>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage batches" rows={data.items} getRowKey={row=>row.id}
           empty={<p role="status">No matching batches on this page.</p>}
