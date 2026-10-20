@@ -59,3 +59,13 @@
 - Regressions found/fixed: 0. Read route page and error/loading, HR/authenticated layouts, full HrDriveDraftForm (draft restore, validation, preview, sending, edit/copy/resubmit, all confirmation states), its input/select/textarea/notice/confirm primitives, related hrDriveDraftQuerySchema/hrDriveDraftSchema and lane-14 polish proof. Props, grant guard, query selection, field names and copy retained.
 - Extra clutter/alignment: 1 — grouped all four round reorder/duplicate/remove controls in the third desktop grid column; previously Duplicate/Remove wrapped to an unrelated second row at 992px. Tablet action group spans both columns and phone actions wrap safely; controls/handlers/aria unchanged.
 - Files changed: `src/components/hr/hr-drive-draft-form.tsx`. Source-only, no CI.
+
+## 13. `src/app/(authenticated)/hr/drives/page.tsx`
+- Regressions found/fixed: 0. Read full page and route error/loading, HR parent layout, lane-14 proof, recruiter portfolio/AG grid, draft reminder, request cancel/feedback, summary/count and filter models, NeedsDoingChips, Tabs, Pagination, inputs and query URLs. Authorization, request stages, export, date filters and mobile status/navigation preserved.
+- Extra clutter/alignment: 1 — hide single-page/zero-drive pagination while retaining the exact showing-count text.
+- Files changed: `src/app/(authenticated)/hr/drives/page.tsx`. Static review only; no CI.
+
+## 14. `src/app/(authenticated)/hr/drives/proposals/page.tsx`
+- Regressions found/fixed: 0. Read page and error/loading, HR layout, lane-14 proof, HrProposalHistoryGrid/TpoGrid, proposal query/links model, title/date formatting, grants, search/sort, and CSV export; verified current filter and pagination URLs, mobile/desktop projection and access.
+- Extra clutter/alignment: 1 — suppress empty proposal pager at 0 or 1 pages rather than rendering an empty navigation landmark.
+- Files changed: `src/app/(authenticated)/hr/drives/proposals/page.tsx`. Static only; no CI.
