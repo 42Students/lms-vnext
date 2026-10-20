@@ -42,9 +42,9 @@ export default async function CollegeCompaniesPage({
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives."
-      actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</a>} />
+      actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>} />
     <CollegeCompanyCreate collegeId={collegeId}/>
-    <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
+    <form method="get" role="search" aria-label="Search companies" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
       <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
         <Input name="q" type="search" maxLength={100} defaultValue={query.q} className="min-h-11 w-full min-w-0 md:min-h-9" />
       </label>

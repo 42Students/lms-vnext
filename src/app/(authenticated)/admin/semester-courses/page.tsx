@@ -18,7 +18,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
   <PageHeader title="Semester–Course Mapping"/>
   <ErrorState title="Semester mapping access denied"
    description="Your account cannot access Super Admin semester mappings."
-   action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to dashboard</Link>}/>
+   action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to dashboard</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
   <PageHeader title="Semester–Course Mapping" />
