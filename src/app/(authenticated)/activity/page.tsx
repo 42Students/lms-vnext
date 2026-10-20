@@ -205,7 +205,7 @@ export default async function ActivityPage({
   }
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="Activity Log"
         description="Meaningful college changes, grouped to reduce noise. Low-value request logs stay out of this workspace."
@@ -213,11 +213,11 @@ export default async function ActivityPage({
           <div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
           <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
             (exportParams.size ? "?" + exportParams.toString() : "")}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)]">
+            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 hover:bg-[rgba(38,186,199,0.07)] md:w-auto hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)]">
             Export
           </a>
           {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
+            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
             Open audit findings board →
           </Link> : null}
           </div>
@@ -231,11 +231,14 @@ export default async function ActivityPage({
          :context.adminScope?.organizationId?"Organization-wide activity."
          :"Platform-wide activity."}
       </p>:null}
-      {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="space-y-2">
-       <div className="flex flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
+      {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="min-w-0 space-y-3">
+       <details className="min-w-0 border-b border-border pb-3" open={Boolean(moduleValue||importanceValue)||undefined}>
+       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Activity Log category presets</summary>
+       <div className="mt-2 flex min-w-0 flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] md:min-h-9">{link.name}</Link>)}</div>
-       <p className="text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important activity shows high-priority events.</p>
-       <div className="flex flex-wrap gap-2">{[
+       <p className="mt-2 text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important activity shows high-priority events.</p>
+       </details>
+       <div className="flex min-w-0 flex-wrap gap-2">{[
         {label:"Today",href:quick(today,today)},
         {label:"7 days",href:quick(ago(6),today)},
         {label:"30 days",href:quick(ago(29),today)},
@@ -243,10 +246,10 @@ export default async function ActivityPage({
        ].map(link=><Link key={link.label} href={link.href}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] font-[650] hover:border-[var(--lms-primary)] md:min-h-9">{link.label}</Link>)}</div>
       </nav>:null}
-      <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
+      <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-4 border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
           <label>
-            <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College</span>
+            <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">College</span>
             <Select name="collegeId" defaultValue={one(params.collegeId) ?? ""} className={inputClass}>
               <option value="">Current admin safety scope</option>
               {collegeOptions.map(college => <option key={college.id} value={college.id}>
@@ -256,7 +259,7 @@ export default async function ActivityPage({
           </label>
         ) : null}
         <label>
-          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Module
           </span>
           <Select
@@ -282,7 +285,7 @@ export default async function ActivityPage({
           </Select>
         </label>
         <label>
-          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Importance
           </span>
           <Select
@@ -308,7 +311,7 @@ export default async function ActivityPage({
           </Select>
         </label>
         <label>
-          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             From (IST)
           </span>
           <DateInput mode="date"
@@ -318,7 +321,7 @@ export default async function ActivityPage({
           />
         </label>
         <label>
-          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             To (IST)
           </span>
           <DateInput mode="date"
@@ -332,7 +335,7 @@ export default async function ActivityPage({
           <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">More filters<span aria-hidden="true">⌄</span></summary>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
         <label>
-          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Event type
           </span>
           <Input
@@ -345,7 +348,7 @@ export default async function ActivityPage({
           />
         </label>
         <label>
-          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Subject type
           </span>
           <Input
@@ -358,20 +361,20 @@ export default async function ActivityPage({
           />
         </label>
         <label>
-          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Subject / entity ID</span>
+          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Subject / entity ID</span>
           <Input className={inputClass} name="subjectId" maxLength={500}
             defaultValue={one(params.subjectId)} placeholder="Exact entity ID" />
         </label>
         {isSuperAdmin(context) ? <>
-          <label><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor name</span>
+          <label><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Actor name</span>
             <Input type="search" className={inputClass} name="actorName" maxLength={100}
               defaultValue={one(params.actorName)} placeholder="Name contains…" /></label>
-          <label><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event / entity search</span>
+          <label><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Event / entity search</span>
             <Input type="search" className={inputClass} name="q" maxLength={100}
               defaultValue={one(params.q)} placeholder="Summary, event or entity contains…" /></label>
         </> : null}
         <label>
-          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Actor user ID
           </span>
           <Input
@@ -389,7 +392,7 @@ export default async function ActivityPage({
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
           <Link
             href="/activity"
-            className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white md:min-h-9"
           >
             Reset
           </Link>
