@@ -400,7 +400,7 @@ export function TenantDomainManager({
           }
         }}
       >
-        {deleteTarget?.isPrimary ? <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type the full primary hostname
+        {deleteTarget?.isPrimary ? <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type the full primary hostname
           <Input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
             onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />

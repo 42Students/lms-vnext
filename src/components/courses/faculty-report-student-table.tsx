@@ -34,11 +34,11 @@ export function FacultyReportStudentTable({
           </p>
         </div>
         {rows.length > 8 ? (
-          <label className="w-full max-w-sm text-[length:var(--lms-font-sm)] font-semibold leading-4 text-body">
+          <label className="w-full max-w-sm text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search students
             <Input
               aria-label="Search report students"
-              className="mt-1 min-h-11 md:min-h-9"
+              className="mt-[6px] min-h-11 md:min-h-9"
               value={search}
               onChange={(event) => { setSearch(event.target.value); setRequestedPage(1); }}
               placeholder="Name"

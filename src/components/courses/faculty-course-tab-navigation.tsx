@@ -51,7 +51,7 @@ export function FacultyCourseTabNavigation({
           </p>
         </div>
         {teachingSections.length > 1 ? (
-          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-body-text)] md:w-auto">
+          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-body-text)] md:w-auto text-[var(--lms-neutral-400)] leading-4">
             {activeTab==="attendanceDetail"?"Select class to view attendance":"Teaching Section"}
             <Select
               id="faculty-course-section"

@@ -72,7 +72,7 @@ export function CollegeFacultyCsvImport(){
             if(facultyCsvResponseBelongsToDraft(version,csvRevision.current))setError("Unable to read CSV. Choose the file again.");
           }
         }}/>
-      <label className="grid gap-2 text-sm font-semibold print:hidden">CSV contents
+      <label className="grid gap-[6px] text-[13px] font-semibold print:hidden text-[var(--lms-neutral-400)] leading-4">CSV contents
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);

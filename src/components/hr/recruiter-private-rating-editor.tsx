@@ -71,7 +71,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   className="mt-5 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
   <h4 className="font-semibold text-foreground">Your private rating</h4>
   <p className="text-xs text-body">Only you can read or change this rating and note.</p>
-  <label className="grid gap-1 text-sm text-body">Your rating
+  <label className="grid gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Your rating
    <Select value={rating===null?"":String(rating)} disabled={!ready||pending}
     onChange={event=>setRating(event.target.value===""?null:Number(event.target.value))}
     className="w-full">
@@ -79,7 +79,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
     {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
    </Select>
   </label>
-  <label className="grid gap-1 text-sm text-body">Your note
+  <label className="grid gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Your note
    <Textarea value={note} maxLength={1000} rows={3} disabled={!ready||pending}
     onChange={event=>setNote(event.target.value)}
     className="w-full"/>

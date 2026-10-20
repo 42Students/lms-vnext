@@ -108,9 +108,9 @@ export function CollegeAttendancePolicyForm({
         <div>
           <label
             htmlFor="attendance-eligibility-threshold"
-            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
           >
-            Eligibility threshold (%)
+            Eligibility threshold (%)<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
           </label>
           <Input
             id="attendance-eligibility-threshold"
@@ -138,9 +138,9 @@ export function CollegeAttendancePolicyForm({
         <div>
           <label
             htmlFor="attendance-correction-window"
-            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
           >
-            Correction window (hours)
+            Correction window (hours)<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
           </label>
           <Input
             id="attendance-correction-window"
