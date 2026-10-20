@@ -32,9 +32,9 @@ import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learner
 import {TpoNoticeAcknowledge} from "@/components/tpo/tpo-notice-acknowledge";
 
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
-const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[14px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-5 text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
 // Legacy mobile (<768px): single-line horizontal strip; desktop wraps (SCSS:56-74).
-const placementFilterNavClass = "min-w-0 max-w-[calc(100vw-48px)] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
+const placementFilterNavClass = "min-w-0 max-w-full flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
   searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[]; focus?:string | string[]; source?:string | string[] }>;
@@ -163,7 +163,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </div>
       ) : null}
       {!ready ? (
-        <div role="status" className="flex min-h-[180px] min-w-0 flex-col items-center justify-center border-b border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
+        <div role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-b border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
           College announcements are not available until the announcements database is enabled.
         </div>
       ) : !collegeNoticesRead.available ? (
@@ -175,7 +175,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           </Link>
         </div>
       ) : notices.length === 0 ? (
-        <p role="status" className="flex min-h-[180px] min-w-0 flex-col items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
+        <p role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
           {learnerNoticeEmptyLabel(allNotices.length,pinnedOnly,source,{
              search:queryText,recent:recentOnly,matchingTotal:notices.length,
            })}
@@ -183,7 +183,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       ) : (
         <ul className="min-w-0 space-y-3">
           {pages.items.map((notice) => (
-            <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none md:p-6">
+            <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-none focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none md:p-6">
               <div className="flex flex-wrap items-center gap-2">
                 {notice.isPinned ? <Badge  tone="info">Pinned</Badge> : null}
                 {notice.updatedAt ? <Badge  tone="info">Updated</Badge> : null}

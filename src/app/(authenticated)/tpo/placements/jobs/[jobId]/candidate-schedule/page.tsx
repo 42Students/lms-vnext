@@ -41,7 +41,7 @@ export default async function TpoCandidateSchedulePage({
   const displayed = roundId ? readiness.displayed.filter(row => row.roundId === roundId) : readiness.displayed;
   return <div className="min-w-0 space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
-      className="text-sm font-semibold text-link">← Back to drive</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Back to drive</Link>
     <PageHeader title={drive.job.title+" · Candidate round schedule"}
       description="Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes." />
     <Banner tone={slotsReady ? "info" : "warning"} action={<Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-current px-3 text-sm font-semibold md:min-h-9">Edit existing shared round schedules →</Link>}>
@@ -51,7 +51,7 @@ export default async function TpoCandidateSchedulePage({
     <section className="border-b border-border pb-6">
       <h2 className="font-semibold text-foreground">Persisted venue collision assessment</h2>
       {warning.state === "UNAVAILABLE" ?
-        <p className="mt-2 text-sm text-body">Assessment unavailable; no conflict-free claim is made.</p>
+        <Alert tone="warning">Assessment unavailable; no conflict-free claim is made.</Alert>
         : <p className="mt-2 text-sm text-body">
           {warning.collisions} overlap warning(s) and {warning.unknown} unassessable
           round(s). {warning.state === "LIMITED" ?
@@ -76,7 +76,7 @@ export default async function TpoCandidateSchedulePage({
         {selectedRound ? <p className="font-semibold text-foreground">Round: {selectedRound.name}</p>
           : <Alert tone="error">That round is not part of this drive.</Alert>}
         <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/candidate-schedule"}
-          className="font-semibold text-link underline">Show all rounds</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Show all rounds</Link>
       </div>
     ) : null}
     {drive.rounds.length === 0 ?

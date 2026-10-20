@@ -1,0 +1,3 @@
+/* Exact legacy recruiter inbox compact search: 220px on desktop, full phone width. */
+.searchField {width:100%;}
+@media (min-width:768px) {.searchField {width:220px;}}

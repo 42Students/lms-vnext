@@ -464,3 +464,14 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   --lms-micro-focus: var(--lms-primary-text);
   --lms-micro-selected: var(--lms-primary-subtle);
 }
+
+/* CHAT-20: POINTER/KEYBOARD FOCUS SYMMETRY */
+/* Old LMS components___accessibility.scss:13-23 applies :focus but not
+   :focus-visible to EVERY focusable control. The existing fallback above
+   paints keyboard focus on tab-indexed ScrollCue regions and semantic options;
+   this complementary rule clears their mouse-click UA outline only.
+   Avoid setting box-shadow: none (that would remove deliberate control state). */
+:where([tabindex]:not([tabindex="-1"]), [contenteditable="true"],
+  [role="checkbox"], [role="radio"], [role="option"]):not(:where([data-unskin], [data-unskin] *)):focus:not(:focus-visible) {
+  outline: none;
+}

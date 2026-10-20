@@ -319,3 +319,6 @@
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-mark { display:none; }
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-wordmark { display:block; }
 }
+
+/* AppShell content canvas remains within the measured 16px right gutter. */
+.lms-shell-page-main {max-width:1600px;}

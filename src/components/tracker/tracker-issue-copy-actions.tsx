@@ -8,9 +8,9 @@ export function TrackerIssueCopyActions({publicId,description,page}:{publicId:st
   try{await navigator.clipboard.writeText(value);setNotice("Copied to clipboard.");}
   catch{setNotice("Could not copy automatically. Select the text and copy it manually.");}
  }
- return <div className="flex flex-wrap items-center gap-3" aria-label="Issue sharing">
-   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={()=>void copy(window.location.href)}>Copy link</Button>
-   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={()=>void copy(
+ return <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center md:gap-3" aria-label="Issue sharing">
+   <Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>void copy(window.location.href)}>Copy link</Button>
+   <Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>void copy(
      ["# "+publicId,"","Page: "+page,"",description].join("\n")
    )}>Copy as markdown</Button>
    {notice?<InlineNotice tone={notice.startsWith("Copied")?"success":"error"} message={notice}/>:null}

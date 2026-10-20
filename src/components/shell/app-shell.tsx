@@ -52,7 +52,7 @@ export async function AppShell({
   const tpoVerificationEnabled=hasMembershipRole(context,"TPO")
     ?await getTpoShellVerificationAccess(context):false;
   const navigation=getShellNavigation(context,learnerAccess,tpoVerificationEnabled);
-   const homeHref=navigation[0]?.href??"/dashboard";
+  const homeHref=navigation[0]?.href??"/dashboard";
   const currentMembership = context.membership
     ? memberships.find(
         (membership) => membership.id === context.membership?.id,
@@ -86,7 +86,7 @@ export async function AppShell({
         <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4">
           <ShellWidgetBoundary name="Sidebar navigation" fallbackHref={homeHref}><SidebarNav items={navigation} /></ShellWidgetBoundary>
         </div>
-        <div className="lms-sidebar-role-details border-t border-[var(--lms-sidebar-border)] px-4 py-[25px]">
+        <div className="lms-sidebar-role-details border-t border-[var(--lms-sidebar-border)]">
           <p className="m-0 text-xs font-semibold text-muted-foreground">
             {getShellRoleLabel(context)}
           </p>
@@ -121,7 +121,7 @@ export async function AppShell({
         <RouteProgress />
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
-        <main id="lms-main-content" tabIndex={-1} style={{ paddingRight: "16px" }} className={"mx-auto min-w-0 w-full max-w-[1600px] px-4 py-6 sm:pl-6 sm:pr-4 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
+        <main id="lms-main-content" tabIndex={-1} className={"lms-shell-page-main mx-auto min-w-0 w-full px-4 py-6 sm:pl-6 sm:pr-4 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           <RouteTransition>{children}</RouteTransition>
         </main>
         <LearnerFacultyMobileFooter items={navigation} />

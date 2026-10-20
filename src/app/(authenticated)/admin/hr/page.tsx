@@ -43,7 +43,6 @@ export default async function SuperAdminHrPage({
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          eyebrow="Super Admin"
           title="Recruiter accounts"
           description="Employer recruiter administration."
         />
@@ -53,7 +52,7 @@ export default async function SuperAdminHrPage({
           action={
             <a
               href="/admin/recruiters"
-              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
             >
               Reset filters
             </a>

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
 import { tpoScheduleConflictsQuerySchema } from "@/modules/placements/tpo-schedule-conflicts-model";
@@ -71,17 +73,14 @@ export default async function TpoScheduleConflictsPage({
           Apply
         </Button>
       </form>
-      <section aria-label="Schedule assessment" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Schedule assessment" className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-4">
         {[
           ["Recorded rounds", data.totalScheduled],
           ["Venue overlaps", data.conflicts.length],
           ["Assessable rounds", data.assessedCount],
           ["Incomplete scheduling", data.unassessable.length],
         ].map(([name, value]) => (
-          <div key={name} className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 lg:border-b-0">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
-          </div>
+          <StatTile key={name} label={String(name)} value={value} className={tpoTileStyles.tile} />
         ))}
       </section>
       {data.limited ? (

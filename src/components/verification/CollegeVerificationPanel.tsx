@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
 import {ActionPagination} from "@/components/ui/action-pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -118,16 +119,14 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  exportQuery.set("tab",activeTab);
  return <div className="min-w-0 space-y-4">
   <TpoVerificationSwitch key={String(tpoCanVerify)} initialEnabled={tpoCanVerify}/>
-  {truncated?<p role="status" className="rounded-lg border border-warning bg-surface p-3 text-sm text-body">
+  {truncated?<Banner tone="warning">
    Showing the first 1,000 students in this view. Totals reflect this working set; narrow the filters to review other students.
-  </p>:null}
+  </Banner>:null}
   <div className="flex flex-wrap items-center justify-end gap-2">
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}} >Refresh</Button>
   </div>
-  {reviewFeedback&&<p role="status" className="rounded-md border p-3 text-sm">
-    {reviewFeedback}
-  </p>}
+  {reviewFeedback&&<Banner tone="info">{reviewFeedback}</Banner>}
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Review one by one" className="space-y-2 rounded-md border p-3">
     <h2 className="font-semibold">Review one by one</h2>
     <p className="text-sm">Each student&apos;s values next to their documents, with Verify and Send back. The next one opens by itself.</p>
@@ -212,7 +211,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    </li>)}</ul>
    <Button variant="secondary" type="button"  onClick={()=>router.refresh()}>Refresh queue</Button>
   </section>}
-  {bulkError&&<p role="alert" className="rounded-md border p-3 text-sm">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</p>}
+  {bulkError&&<Banner tone="error">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</Banner>}
   <section aria-label="Verification queue controls" className="flex min-w-0 flex-wrap items-center gap-4 text-sm">
    <label>Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 w-auto">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>

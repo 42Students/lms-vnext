@@ -147,6 +147,7 @@ export function SearchableSelect({
 
   return <div ref={rootRef} data-slot="searchable-select" className="relative min-w-0">
     <Input {...props} id={inputId} ref={bindInput} type="text"
+      aria-label={props["aria-label"] ?? props.placeholder ?? "Search and select"}
       value={value} defaultValue={defaultValue} disabled={disabled} readOnly={readOnly}
       error={error || Boolean(selectionError)} aria-invalid={error || Boolean(selectionError) || props["aria-invalid"]}
       aria-describedby={describedBy} aria-errormessage={selectionError ? validationId : props["aria-errormessage"]}

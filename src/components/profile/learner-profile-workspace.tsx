@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { learnerProfileDocumentSchema, type LearnerProfileDocument } from "@/modules/people/profile-validation";
@@ -531,27 +532,27 @@ export function LearnerProfileWorkspace(props: {
 
   return (
     <div className="min-w-0 space-y-5">
-      <nav aria-label="Quick access to unfinished profile sections" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 min-[768px]:hidden">
+      <nav aria-label="Quick access to unfinished profile sections" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 md:hidden">
         <h2 className="text-sm font-semibold text-foreground">Quick profile steps</h2>
         <p className="mt-1 text-xs text-body">Jump to an unfinished saved-profile section. These are suggestions, not verification requirements.</p>
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
           {mobileQuickLinks.map(item=><Link key={item.section}
             href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
+            className="flex min-h-11 md:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
             {item.label}
           </Link>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
       </nav>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
-        <Button className="min-h-11 min-[768px]:min-h-9" size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
+        <Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
           onClick={()=>{lastRefreshAt.current=Date.now();router.refresh();}}>
           Refresh saved profile
         </Button>
       </div>
       <section id="profile-introduction" className="scroll-mt-24 border-b border-border pb-5">
-        <div className="flex flex-col gap-5 min-[768px]:flex-row min-[768px]:items-center">
-          <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
+        <div className="flex flex-col gap-5 md:flex-row md:items-center">
+          <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[50%] bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
             <PageHeader
               
@@ -564,9 +565,9 @@ export function LearnerProfileWorkspace(props: {
               <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>{percent}% complete</StatusBadge>
             </div>
           </div>
-          <Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" onClick={openDetails}>Edit profile</Button>
+          <Button className="min-h-11 md:min-h-9" variant="secondary" onClick={openDetails}>Edit profile</Button>
         </div>
-        <div className="mt-5 grid gap-3 min-[768px]:grid-cols-2">
+        <div className="mt-5 grid gap-3 md:grid-cols-2">
           <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/replace remains blocked until the shared Cloud Storage profile-asset workflow is live.</p>
@@ -578,12 +579,12 @@ export function LearnerProfileWorkspace(props: {
         </div>
       </section>
 
-      <section className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 min-[768px]:p-5" aria-labelledby="learner-profile-checklist-title">
+      <section className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 md:p-5" aria-labelledby="learner-profile-checklist-title">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
           </h2>
-          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             Review full checklist
           </Link>
           <div className="flex items-center gap-3" aria-label={percent+" percent complete"}>
@@ -621,12 +622,12 @@ export function LearnerProfileWorkspace(props: {
             This is not a verification or placement eligibility decision.
           </p>
         )}
-        <ul className="mt-4 grid gap-2 min-[768px]:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-4 grid gap-2 md:grid-cols-2 lg:grid-cols-4">
           {checklist.items.map(item => (
             <li key={item.section}>
               <Link
                 href={"/learn/profile?section=" + encodeURIComponent(item.section)}
-                className="flex min-h-11 min-[768px]:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                className="flex min-h-11 md:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 onClick={() => {
                   if (props.initialSection === item.section) {
                     window.document.getElementById(item.section)?.scrollIntoView({
@@ -640,7 +641,7 @@ export function LearnerProfileWorkspace(props: {
                 </span>
                 <span className="min-w-0 break-words">{item.label}</span>
                 {(["personal-details","contacts","education","skills"].includes(item.section))?
-                  <span className="ml-auto shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">Required</span>:null}
+                  <Badge tone="warning" className="ml-auto shrink-0">Required</Badge>:null}
                 <span className="sr-only">{item.completed ? "Completed" : "Not filled"}</span>
               </Link>
             </li>
@@ -650,9 +651,9 @@ export function LearnerProfileWorkspace(props: {
 
       <div className="grid gap-5 xl:grid-cols-2">
         <Card id="contacts" title="Contacts"
-          action={<Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" onClick={openContacts}>Edit contact details</Button>}
+          action={<Button className="min-h-11 md:min-h-9" variant="secondary" onClick={openContacts}>Edit contact details</Button>}
         >
-          <div className="grid gap-4 min-[768px]:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <Value label="Primary mobile" value={props.primaryPhone} />
             <Value label="Alternate phone" value={document.contacts.alternatePhone} />
             <Value label="Account email" value={props.primaryEmail} />
@@ -660,11 +661,11 @@ export function LearnerProfileWorkspace(props: {
           </div>
         </Card>
         <Card id="job-preferences" title="Job Preferences"
-          action={<Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" disabled={pending}
+          action={<Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
             onClick={()=>{setJobPrefsDraft(document.jobPreferences);setJobPrefsEditing(true);}}>
             Edit preferences
           </Button>}>
-          <div className="grid gap-3 min-[768px]:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             <Value label="Role Preference" value={document.jobPreferences.rolePreferences.join(", ")}/>
             <Value label="Specific Role Preference" value={document.jobPreferences.specificRolePreference}/>
             <Value label="Work Shift Preference" value={document.jobPreferences.workShiftPreference}/>
@@ -672,8 +673,8 @@ export function LearnerProfileWorkspace(props: {
           </div>
         </Card>
         <Card id="social-profiles" title="Social profiles"
-          action={<Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" onClick={openDetails}>Connect or edit accounts</Button>}>
-          <div className="grid gap-4 min-[768px]:grid-cols-2">
+          action={<Button className="min-h-11 md:min-h-9" variant="secondary" onClick={openDetails}>Connect or edit accounts</Button>}>
+          <div className="grid gap-4 md:grid-cols-2">
             <Value label="LinkedIn" value={document.socialProfiles.linkedinUrl} />
             <Value label="GitHub" value={document.socialProfiles.githubUrl} />
             <Value label="Portfolio" value={document.socialProfiles.portfolioUrl} />
@@ -683,7 +684,7 @@ export function LearnerProfileWorkspace(props: {
           </div>
         </Card>
         <Card id="address" title="Address">
-          <div className="grid gap-4 min-[768px]:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <Value label="Current address" value={document.address.currentAddress} />
             <Value label="City" value={document.address.city} />
             <Value label="State" value={document.address.state} />
@@ -692,14 +693,14 @@ export function LearnerProfileWorkspace(props: {
           </div>
         </Card>
         <Card id="personal-details" title="Personal Details">
-          <div className="grid gap-4 min-[768px]:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3">
             <Value label="Gender" value={document.personalDetails.gender} />
             <Value label="Date of birth" value={document.personalDetails.dateOfBirth} />
             <Value label="Blood group" value={document.personalDetails.bloodGroup} />
           </div>
         </Card>
         <Card id="identity" title="Identity Documents">
-          <div className="grid gap-4 min-[768px]:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <Value label="Aadhaar number" value={document.identity.aadhaarNumber ? "•••• •••• " + document.identity.aadhaarNumber.slice(-4) : ""} />
             <Value label="PAN number" value={document.identity.panNumber ? document.identity.panNumber.slice(0, 2) + "••••••" + document.identity.panNumber.slice(-2) : ""} />
           </div>
@@ -712,7 +713,7 @@ export function LearnerProfileWorkspace(props: {
           const entries=kind==="award"?authoredPublicationsAwards.awards:authoredPublicationsAwards.publications;
           return <Card key={kind} id={kind==="award"?"awards":"publications"}
             title={kind==="award"?"Awards & Recognitions":"Publications & Research"}
-            action={<Button className="min-h-11 min-[768px]:min-h-9" size="sm" disabled={pending||contactPending}
+            action={<Button className="min-h-11 md:min-h-9" size="sm" disabled={pending||contactPending}
               onClick={()=>openShowcase(kind)}>Add {kind}</Button>}>
             <p className="mb-3 text-xs leading-5 text-muted-foreground">
               Learner-entered information, not independently verified by the college.
@@ -726,9 +727,9 @@ export function LearnerProfileWorkspace(props: {
                 {entry.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{entry.description}</p>:null}
                 {entry.url?<div className="mt-2"><ThirdPartyLink href={entry.url} label="View link" /></div>:null}
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <Button className="min-h-11 min-[768px]:min-h-9" size="sm" variant="secondary" disabled={pending||contactPending}
+                  <Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={pending||contactPending}
                     onClick={()=>openShowcase(kind,entry)}>Edit</Button>
-                  <Button className="min-h-11 min-[768px]:min-h-9" size="sm" variant="danger" disabled={pending||contactPending}
+                  <Button className="min-h-11 md:min-h-9" size="sm" variant="danger" disabled={pending||contactPending}
                     onClick={()=>deleteShowcase(kind,entry.id)}>Delete</Button>
                 </div>
               </li>)}
@@ -744,7 +745,7 @@ export function LearnerProfileWorkspace(props: {
           ? document.metadata.filter(item=>!isLearnerShowcaseKey(item.key))
           : document[section]) as Array<Record<string, unknown>>;
         return (
-          <Card key={section} id={section} title={collectionLabels[section]} action={<Button className="min-h-11 min-[768px]:min-h-9" size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+          <Card key={section} id={section} title={collectionLabels[section]} action={<Button className="min-h-11 md:min-h-9" size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
             onClick={() => openCollection(section)}>Add</Button>}>
             {items.length ? (
               <div className="space-y-2">
@@ -756,11 +757,11 @@ export function LearnerProfileWorkspace(props: {
                         <p className="m-0 break-words text-sm font-semibold text-foreground">{summary.primary}</p>
                         {summary.secondary ? <p className="mt-1 text-xs text-muted-foreground">{summary.secondary}</p> : null}
                       </div>
-                      <div className="flex w-full flex-wrap gap-2 min-[768px]:w-auto">
+                      <div className="flex w-full flex-wrap gap-2 md:w-auto">
                         <Button size="sm" variant="secondary" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                          className="min-h-11 flex-1 min-[768px]:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
+                          className="min-h-11 flex-1 md:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
                         <Button size="sm" variant="danger" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                          className="min-h-11 flex-1 min-[768px]:flex-none" onClick={() => removeItem(section, String(item.id))}>Delete</Button>
+                          className="min-h-11 flex-1 md:flex-none" onClick={() => removeItem(section, String(item.id))}>Delete</Button>
                       </div>
                     </div>
                   );
@@ -780,11 +781,11 @@ export function LearnerProfileWorkspace(props: {
         description="Only the alternate phone and contact email in your profile will change. Your login phone and account email will not change."
         footer={
           <>
-            <Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" disabled={contactPending}
+            <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={contactPending}
               onClick={closeContacts}>
               Keep current details
             </Button>
-            <Button className="min-h-11 min-[768px]:min-h-9" disabled={contactPending || !learnerContactEditSchema.safeParse({
+            <Button className="min-h-11 md:min-h-9" disabled={contactPending || !learnerContactEditSchema.safeParse({
               confirmed: true, contacts: contactDraft,
             }).success}
               onClick={() => { void saveContacts(); }}>
@@ -793,10 +794,10 @@ export function LearnerProfileWorkspace(props: {
           </>
         }
       >
-        <div className="grid gap-4 min-[768px]:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <label className="text-sm font-semibold text-foreground">
             Alternate phone
-            <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" inputMode="tel" autoComplete="tel-national"
+            <Input className="mt-1.5 min-h-11 md:min-h-9" inputMode="tel" autoComplete="tel-national"
               value={contactDraft.alternatePhone} maxLength={32}
               disabled={contactPending}
               onChange={(event) => setContactDraft(current => ({
@@ -805,19 +806,19 @@ export function LearnerProfileWorkspace(props: {
           </label>
           <label className="text-sm font-semibold text-foreground">
             Contact email
-            <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" type="email" autoComplete="email"
+            <Input className="mt-1.5 min-h-11 md:min-h-9" type="email" autoComplete="email"
               value={contactDraft.contactEmail} maxLength={320}
               disabled={contactPending}
               onChange={(event) => setContactDraft(current => ({
                 ...current, contactEmail: event.target.value,
               }))} />
           </label>
-          <p className="text-xs text-body min-[768px]:col-span-2">
+          <p className="text-xs text-body md:col-span-2">
             Both fields are optional and may be cleared. These are contact
             preferences, not verified credentials and not a login recovery method.
           </p>
           {contactError ? (
-            <p role="alert" className="text-sm font-semibold text-error min-[768px]:col-span-2">
+            <p role="alert" className="text-sm font-semibold text-error md:col-span-2">
               {contactError}
             </p>
           ) : null}
@@ -829,24 +830,24 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={open=>{if(!open)closeDetails();}}
         title="Edit learner profile"
         description="Account phone/email stay authoritative. These are your self-service profile fields."
-        footer={<><Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button className="min-h-11 min-[768px]:min-h-9" disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
+        footer={<><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button className="min-h-11 md:min-h-9" disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
       >
         <div className="max-h-[65vh] space-y-6 overflow-y-auto pr-1">
           <fieldset className="grid gap-4">
             <legend className="text-sm font-semibold text-foreground">About</legend>
-            <label className="text-xs font-semibold text-body">Headline<Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" value={detailsDraft.headline} onChange={(event) => setDetailsDraft({ ...detailsDraft, headline: event.target.value })} /></label>
+            <label className="text-xs font-semibold text-body">Headline<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.headline} onChange={(event) => setDetailsDraft({ ...detailsDraft, headline: event.target.value })} /></label>
             <label className="text-xs font-semibold text-body">About<Textarea className="mt-1.5" value={detailsDraft.bio} onChange={(event) => setDetailsDraft({ ...detailsDraft, bio: event.target.value })} /></label>
           </fieldset>
 
-          <fieldset className="grid gap-4 min-[768px]:grid-cols-2">
+          <fieldset className="grid gap-4 md:grid-cols-2">
             <legend className="text-sm font-semibold text-foreground">Contacts</legend>
-            <p className="text-sm text-body min-[768px]:col-span-2">
+            <p className="text-sm text-body md:col-span-2">
               Alternate phone and contact email are edited separately from the Contacts card,
               with their own confirmation and audit. Primary login contacts remain unchanged.
             </p>
           </fieldset>
 
-          <fieldset className="grid gap-4 min-[768px]:grid-cols-2">
+          <fieldset className="grid gap-4 md:grid-cols-2">
             <legend className="text-sm font-semibold text-foreground">Social profiles</legend>
             {([
               ["linkedinUrl", "LinkedIn"],
@@ -855,29 +856,29 @@ export function LearnerProfileWorkspace(props: {
               ["twitterUrl", "Twitter"],
               ["googleScholarUrl", "Google Scholar"],
               ["researchGateUrl", "ResearchGate"],
-            ] as const).map(([key, label]) => <label key={key} className="text-xs font-semibold text-body">{label}<Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" data-learner-social-link={key} type="url" value={detailsDraft.socialProfiles[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, socialProfiles: { ...detailsDraft.socialProfiles, [key]: event.target.value } })} /></label>)}
+            ] as const).map(([key, label]) => <label key={key} className="text-xs font-semibold text-body">{label}<Input className="mt-1.5 min-h-11 md:min-h-9" data-learner-social-link={key} type="url" value={detailsDraft.socialProfiles[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, socialProfiles: { ...detailsDraft.socialProfiles, [key]: event.target.value } })} /></label>)}
           </fieldset>
 
           <fieldset className="grid gap-4">
             <legend className="text-sm font-semibold text-foreground">Address</legend>
             <label className="text-xs font-semibold text-body">Current address<Textarea className="mt-1.5" value={detailsDraft.address.currentAddress} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, currentAddress: event.target.value } })} /></label>
-            <div className="grid gap-4 min-[768px]:grid-cols-3">
-              {(["city", "state", "pincode"] as const).map((key) => <label key={key} className="text-xs font-semibold capitalize text-body">{key}<Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" value={detailsDraft.address[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, [key]: event.target.value } })} /></label>)}
+            <div className="grid gap-4 md:grid-cols-3">
+              {(["city", "state", "pincode"] as const).map((key) => <label key={key} className="text-xs font-semibold capitalize text-body">{key}<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.address[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, [key]: event.target.value } })} /></label>)}
             </div>
             <label className="text-xs font-semibold text-body">Permanent address<Textarea className="mt-1.5" value={detailsDraft.address.permanentAddress} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, permanentAddress: event.target.value } })} /></label>
           </fieldset>
 
-          <fieldset className="grid gap-4 min-[768px]:grid-cols-3">
+          <fieldset className="grid gap-4 md:grid-cols-3">
             <legend className="text-sm font-semibold text-foreground">Personal details</legend>
-            <label className="text-xs font-semibold text-body">Gender<Select className="mt-1.5 min-h-11 min-[768px]:min-h-9" value={detailsDraft.personalDetails.gender} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, gender: event.target.value as LearnerProfileDocument["personalDetails"]["gender"] } })}>{["", "Male", "Female", "Other", "Prefer not to say"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
-            <label className="text-xs font-semibold text-body">Date of birth<Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" type="date" value={detailsDraft.personalDetails.dateOfBirth} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, dateOfBirth: event.target.value } })} /></label>
-            <label className="text-xs font-semibold text-body">Blood group<Select className="mt-1.5 min-h-11 min-[768px]:min-h-9" value={detailsDraft.personalDetails.bloodGroup} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, bloodGroup: event.target.value as LearnerProfileDocument["personalDetails"]["bloodGroup"] } })}>{["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
+            <label className="text-xs font-semibold text-body">Gender<Select className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.personalDetails.gender} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, gender: event.target.value as LearnerProfileDocument["personalDetails"]["gender"] } })}>{["", "Male", "Female", "Other", "Prefer not to say"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
+            <label className="text-xs font-semibold text-body">Date of birth<Input className="mt-1.5 min-h-11 md:min-h-9" type="date" value={detailsDraft.personalDetails.dateOfBirth} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, dateOfBirth: event.target.value } })} /></label>
+            <label className="text-xs font-semibold text-body">Blood group<Select className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.personalDetails.bloodGroup} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, bloodGroup: event.target.value as LearnerProfileDocument["personalDetails"]["bloodGroup"] } })}>{["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
           </fieldset>
 
-          <fieldset className="grid gap-4 min-[768px]:grid-cols-2">
+          <fieldset className="grid gap-4 md:grid-cols-2">
             <legend className="text-sm font-semibold text-foreground">Identity</legend>
-            <label className="text-xs font-semibold text-body">Aadhaar number<Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" value={detailsDraft.identity.aadhaarNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, aadhaarNumber: event.target.value } })} /></label>
-            <label className="text-xs font-semibold text-body">PAN number<Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" value={detailsDraft.identity.panNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, panNumber: event.target.value } })} /></label>
+            <label className="text-xs font-semibold text-body">Aadhaar number<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.identity.aadhaarNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, aadhaarNumber: event.target.value } })} /></label>
+            <label className="text-xs font-semibold text-body">PAN number<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.identity.panNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, panNumber: event.target.value } })} /></label>
           </fieldset>
 
           <label className="block text-xs font-semibold text-body">Hobbies · comma-separated<Textarea className="mt-1.5" value={detailsDraft.hobbies.join(", ")} onChange={(event) => setDetailsDraft({ ...detailsDraft, hobbies: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></label>
@@ -889,26 +890,26 @@ export function LearnerProfileWorkspace(props: {
         title={showcaseDraft?.kind==="award"?"Awards & Recognitions":"Publications & Research"}
         description="Save a learner-entered record. This does not verify the award or publication."
         footer={<>
-          <Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" disabled={pending}
+          <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
             onClick={closeShowcase}>Cancel</Button>
-          <Button className="min-h-11 min-[768px]:min-h-9" disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
+          <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
         </>}>
         {showcaseDraft?<div className="grid gap-4">
           <label className="text-sm font-semibold text-body">Title
-            <Input className="mt-1 min-h-11 min-[768px]:min-h-9" maxLength={240} value={showcaseDraft.title}
+            <Input className="mt-1 min-h-11 md:min-h-9" maxLength={240} value={showcaseDraft.title}
               onChange={event=>setShowcaseDraft({...showcaseDraft,title:event.target.value})}/>
           </label>
           <label className="text-sm font-semibold text-body">
             {showcaseDraft.kind==="award"?"Issuing organization":"Journal or publisher"}
-            <Input className="mt-1 min-h-11 min-[768px]:min-h-9" maxLength={240} value={showcaseDraft.organization}
+            <Input className="mt-1 min-h-11 md:min-h-9" maxLength={240} value={showcaseDraft.organization}
               onChange={event=>setShowcaseDraft({...showcaseDraft,organization:event.target.value})}/>
           </label>
           <label className="text-sm font-semibold text-body">Date
-            <Input className="mt-1 min-h-11 min-[768px]:min-h-9" type="date" value={showcaseDraft.date}
+            <Input className="mt-1 min-h-11 md:min-h-9" type="date" value={showcaseDraft.date}
               onChange={event=>setShowcaseDraft({...showcaseDraft,date:event.target.value})}/>
           </label>
           <label className="text-sm font-semibold text-body">Reference link
-            <Input className="mt-1 min-h-11 min-[768px]:min-h-9" type="url" maxLength={1500} value={showcaseDraft.url}
+            <Input className="mt-1 min-h-11 md:min-h-9" type="url" maxLength={1500} value={showcaseDraft.url}
               onChange={event=>setShowcaseDraft({...showcaseDraft,url:event.target.value})}/>
           </label>
           <label className="text-sm font-semibold text-body">Description
@@ -923,8 +924,8 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={open=>{if(!open)closeJobPreferences();}}
         title="Edit Job Preferences"
         footer={<>
-          <Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
-          <Button className="min-h-11 min-[768px]:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
+          <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
+          <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
             {pending?"Saving…":"Save"}
           </Button>
         </>}>
@@ -934,14 +935,14 @@ export function LearnerProfileWorkspace(props: {
               placeholder="e.g. Software Engineer, Data Analyst"
               onChange={event=>setJobPrefsDraft(current=>({...current,
                 rolePreferences:event.target.value.split(",").map(x=>x.trim()).filter(Boolean)}))}
-              className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
+              className="mt-1 min-h-11 md:min-h-9 w-full"/>
           </label>
           <label className="text-sm font-semibold text-body">Specific Role Preference
-            <Input className="mt-1 min-h-11 min-[768px]:min-h-9" value={jobPrefsDraft.specificRolePreference} maxLength={200}
+            <Input className="mt-1 min-h-11 md:min-h-9" value={jobPrefsDraft.specificRolePreference} maxLength={200}
               onChange={event=>setJobPrefsDraft(current=>({...current,specificRolePreference:event.target.value}))}/>
           </label>
           <label className="text-sm font-semibold text-body">Work Shift Preference
-            <Select className="mt-1 min-h-11 min-[768px]:min-h-9" value={jobPrefsDraft.workShiftPreference}
+            <Select className="mt-1 min-h-11 md:min-h-9" value={jobPrefsDraft.workShiftPreference}
               onChange={event=>setJobPrefsDraft(current=>({...current,
                 workShiftPreference:event.target.value as LearnerProfileDocument["jobPreferences"]["workShiftPreference"]}))}>
               <option value="">No preference</option>
@@ -952,7 +953,7 @@ export function LearnerProfileWorkspace(props: {
             </Select>
           </label>
           <label className="text-sm font-semibold text-body">Preferred Employment City
-            <Input className="mt-1 min-h-11 min-[768px]:min-h-9" value={jobPrefsDraft.preferredEmploymentCity} maxLength={120}
+            <Input className="mt-1 min-h-11 md:min-h-9" value={jobPrefsDraft.preferredEmploymentCity} maxLength={120}
               onChange={event=>setJobPrefsDraft(current=>({...current,preferredEmploymentCity:event.target.value}))}/>
           </label>
           <p className="text-xs text-muted-foreground">These preferences are learner-authored and do not change placement eligibility.</p>
@@ -963,10 +964,10 @@ export function LearnerProfileWorkspace(props: {
         open={collection !== null}
         onOpenChange={(open) => {if(!open)closeCollection();}}
         title={collection ? (editingId ? "Edit " : "Add ") + collectionLabels[collection] : "Edit profile entry"}
-        footer={<><Button className="min-h-11 min-[768px]:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 min-[768px]:min-h-9" disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
+        footer={<><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 md:min-h-9" disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
       >
         {collection ? (
-          <div className="grid gap-4 min-[768px]:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             {fields[collection].map((field) => {
               if(collection==="education"&&field.key==="endYear"&&itemDraft.isCurrentlyPursuing)return null;
               const raw = itemDraft[field.key];
@@ -976,7 +977,7 @@ export function LearnerProfileWorkspace(props: {
                   onChange={name=>setItemDraft(current=>({...current,name}))}/>;
               if(collection==="education"&&field.key==="educationType")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
-                  <Select className="mt-1.5 min-h-11 min-[768px]:min-h-9" value={value}
+                  <Select className="mt-1.5 min-h-11 md:min-h-9" value={value}
                     onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}>
                     <option value="">Choose education type</option>
                     {LEARNER_EDUCATION_TYPES.map(option=><option key={option} value={option}>{option}</option>)}
@@ -984,18 +985,18 @@ export function LearnerProfileWorkspace(props: {
                 </label>;
               if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
-                  <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full"
+                  <Input className="mt-1.5 min-h-11 md:min-h-9 w-full"
                     list="learner-qualifying-exams" value={value} maxLength={120}
                     onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
                   <datalist id="learner-qualifying-exams">
                     {learnerQualifyingExamSuggestions(String(itemDraft.educationType??"")).map(option=><option key={option} value={option}/>)}
                   </datalist>
                 </label>;
-              if (field.type === "textarea") return <label key={field.key} className="text-xs font-semibold text-body min-[768px]:col-span-2">{field.label}<Textarea className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
-              if (field.type === "select") return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Select className="mt-1.5 min-h-11 min-[768px]:min-h-9" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
-              return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5 min-h-11 min-[768px]:min-h-9" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
+              if (field.type === "textarea") return <label key={field.key} className="text-xs font-semibold text-body md:col-span-2">{field.label}<Textarea className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
+              if (field.type === "select") return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Select className="mt-1.5 min-h-11 md:min-h-9" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
+              return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5 min-h-11 md:min-h-9" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
-            {collection==="education"?<label className="flex items-center gap-2 text-sm text-body min-[768px]:col-span-2">
+            {collection==="education"?<label className="flex items-center gap-2 text-sm text-body md:col-span-2">
               <Checkbox checked={Boolean(itemDraft.isCurrentlyPursuing)}
                 onChange={event=>setItemDraft(current=>({
                   ...current,isCurrentlyPursuing:event.target.checked,
@@ -1004,9 +1005,9 @@ export function LearnerProfileWorkspace(props: {
               Currently Pursuing
             </label>:null}
             {collection==="education"&&String(itemDraft.qualifyingExam??"").trim()?
-              <fieldset className="grid gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3 min-[768px]:col-span-2 min-[768px]:grid-cols-2">
+              <fieldset className="grid gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3 md:col-span-2 md:grid-cols-2">
                 <legend className="text-sm font-semibold text-foreground">Qualifying exam details (optional)</legend>
-                <p className="text-xs text-body min-[768px]:col-span-2">
+                <p className="text-xs text-body md:col-span-2">
                   Record details from your exam result. These fields are learner-entered and are not an official verification.
                 </p>
                 {LEARNER_QUALIFYING_EXAM_DETAILS.map(field=>{
@@ -1016,7 +1017,7 @@ export function LearnerProfileWorkspace(props: {
                   const value=String(details[field.key]??"");
                   return <label key={field.key} className="text-xs font-semibold text-body">
                     {field.label}
-                    <Input type="text" className="mt-1 min-h-11 min-[768px]:min-h-9" maxLength={field.maxLength}
+                    <Input type="text" className="mt-1 min-h-11 md:min-h-9" maxLength={field.maxLength}
                       inputMode={field.key==="passingYear"?"numeric":undefined}
                       placeholder={field.key==="passingYear"?"YYYY":undefined}
                       value={value}
@@ -1030,8 +1031,8 @@ export function LearnerProfileWorkspace(props: {
                   </label>;
                 })}
               </fieldset>:null}
-            {collection==="education"&&educationError?<p role="alert" className="min-[768px]:col-span-2 text-sm text-error">{educationError}</p>:null}
-            {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body min-[768px]:col-span-2"><Checkbox checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
+            {collection==="education"&&educationError?<p role="alert" className="md:col-span-2 text-sm text-error">{educationError}</p>:null}
+            {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body md:col-span-2"><Checkbox checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
           </div>
         ) : null}
       </Dialog>

@@ -29,7 +29,7 @@ export function FilterChip({
  return <Button {...props} type={type} variant="secondary" size="sm"
    data-slot="filter-chip" data-selected={selected}
    className={cx(
-    "min-h-11 rounded-[6px] border px-[12px] py-[2px] text-[12px] font-bold leading-[18px] md:min-h-8 md:px-[15px]",
+    "min-h-11 rounded-[6px] border px-[12px] py-0 text-[12px] font-bold leading-[18px] md:min-h-8 md:px-[15px] md:py-[2px]",
     "hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2",
     "disabled:opacity-50",
     tones[tone],
@@ -56,7 +56,7 @@ export function FilterChipLink({
  "aria-label":ariaLabel,
 }:FilterChipLinkProps){
  const classes=cx(
-  "inline-flex min-h-11 max-w-full items-center justify-center rounded-[6px] border px-[12px] py-[2px] text-[12px] font-bold leading-[18px] md:min-h-8 md:px-[15px]",
+  "inline-flex min-h-11 max-w-full items-center justify-center rounded-[6px] border px-[12px] py-0 text-[12px] font-bold leading-[18px] md:min-h-8 md:px-[15px] md:py-[2px]",
   "transition-colors hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none",
   tones[tone],
   selected&&"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",

@@ -20,13 +20,13 @@ import type { listCollegeContentAggregate } from "@/modules/courses/college-cont
 
 type Data = Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 
-export function CollegeContentAggregate({ data }: { data: Data }) {
+export function CollegeContentAggregate({ data, showHeader = true }: { data: Data; showHeader?: boolean }) {
   const videos = data.kind === "VIDEO";
   const title = videos ? COLLEGE_COURSE_TAB_COPY.videosTitle : "Resources";
   const path = videos ? "/college/videos" : "/college/resources";
   return (
     <div className="space-y-6">
-      <PageHeader
+      {showHeader ? <PageHeader
         eyebrow="College Admin · Courses & Content"
         title={title}
         actions={
@@ -35,7 +35,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             Lessons
           </Link>
         }
-      />
+      /> : null}
       <section aria-label={title + " filters"} className="border-b border-border pb-5 print:hidden">
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-56 flex-1 gap-1 text-xs font-semibold text-body">

@@ -17,7 +17,7 @@ export default async function SuperAdminProgramsPage() {
     <PageHeader title="Programs"/>
     <ErrorState title="Program access denied"
       description="Your account cannot access Super Admin programs."
-      action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to dashboard</Link>}/>
   </div>;
   const collegeId = context.adminScope?.collegeId ?? null;
 
@@ -47,7 +47,7 @@ export default async function SuperAdminProgramsPage() {
     <PageHeader title="Programs"/>
     <ErrorState title="Programs unavailable"
       description="The selected college's program directory could not be verified. No changes were made."
-      action={<Link href="/admin/programs" className="font-semibold text-primary-text underline">Retry loading programs</Link>}/>
+      action={<Link href="/admin/programs" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry loading programs</Link>}/>
   </div>;
   const {programs,departments,contents}=outcome.value;
 

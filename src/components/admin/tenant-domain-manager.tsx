@@ -184,7 +184,7 @@ export function TenantDomainManager({
           <div>
             <label
               htmlFor="tenant-domain-host"
-              className="mb-1.5 block text-[13px] font-semibold text-body"
+              className="mb-1.5 block text-sm font-semibold text-body"
             >
               College hostname
             </label>

@@ -42,9 +42,9 @@ export function LearnerInterviewWithdrawalRequest({target}:{target:LearnerInterv
       </label>
       {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
       <div className="flex flex-wrap gap-2">
-        <Button className="min-h-11 sm:min-h-9 w-full sm:w-auto" disabled={pending||reason.trim().length<3} onClick={()=>void submit()}>{pending?"Submitting…":"Confirm withdrawal request"}</Button>
-        <Button className="min-h-11 sm:min-h-9 w-full sm:w-auto" variant="secondary" disabled={pending} onClick={()=>{setReview(false);setError(null);}}>Keep application active</Button>
+        <Button className="min-h-11 md:min-h-9 w-full md:w-auto" disabled={pending||reason.trim().length<3} onClick={()=>void submit()}>{pending?"Submitting…":"Confirm withdrawal request"}</Button>
+        <Button className="min-h-11 md:min-h-9 w-full md:w-auto" variant="secondary" disabled={pending} onClick={()=>{setReview(false);setError(null);}}>Keep application active</Button>
       </div>
-    </div> : <Button className="min-h-11 sm:min-h-9 w-full sm:w-auto" variant="secondary" onClick={()=>setReview(true)}>Review withdrawal request</Button>}
+    </div> : <Button className="min-h-11 md:min-h-9 w-full md:w-auto" variant="secondary" onClick={()=>setReview(true)}>Review withdrawal request</Button>}
   </section>;
 }

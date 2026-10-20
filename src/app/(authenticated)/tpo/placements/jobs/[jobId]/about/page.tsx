@@ -33,13 +33,13 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   ["Missing evidence",data.policy.missingEvidencePolicy.replaceAll("_"," ")],
   ["Verified marks only",data.policy.requireVerifiedEvidence?"Yes":"No"],
  ] as const;
- return <div className="space-y-6">
+ return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · About this drive"}
    description="Eligibility, reach, packages, employer details, closed summary and the most recent audit activity."/>
-  <nav className="flex flex-wrap gap-4 text-sm font-semibold">
-   <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/applicants-pipeline"}>Applicants</Link>
-   <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/selections"}>Selections</Link>
-   <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/change-requests"}>Company change requests</Link>
+  <nav aria-label="Drive details sections" className="flex min-w-0 flex-wrap gap-[var(--lms-space-4)] text-sm font-semibold">
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={root+"/applicants-pipeline"}>Applicants</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={root+"/selections"}>Selections</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={root+"/change-requests"}>Company change requests</Link>
   </nav>
   <section className="border-b border-border pb-6">
    <h2 className="text-lg font-semibold">Eligibility and reach</h2>
@@ -64,11 +64,11 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
      <strong>{row.name}</strong> · {row.reason}</li>)}</ul>
    {data.totalExcludedDetail>data.excluded.length?<p className="mt-2 text-sm text-body">
     {data.totalExcludedDetail-data.excluded.length} additional excluded learners not shown.</p>:null}
-   {!data.excluded.length?<p className="mt-2 text-sm text-body">No excluded registered learner details were found.</p>:null}
+   {!data.excluded.length?<EmptyState title="No excluded registered learner details were found."/>:null}
   </section>
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold">Eligibility rules</h2>
-   <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+   <dl className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
     {rules.map(([label,value])=><div key={label} className="border-b border-border pb-3 text-sm">
      <dt className="text-body">{label}</dt><dd className="font-semibold">{value===null?"Not restricted":value}</dd></div>)}
    </dl>
@@ -76,7 +76,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   </section>
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold">Drive details and employer</h2>
-   <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
+   <dl className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 lg:grid-cols-3 text-sm">
     {[
      ["Company",data.job.company],["Status",data.job.status],["Placement season",data.job.season],
      ["Job type",data.job.employmentType],["Work mode",data.job.workMode],
@@ -92,7 +92,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    <p className="mt-4 whitespace-pre-wrap text-sm text-body">{data.job.description}</p>
    <h3 className="mt-4 font-semibold">Recruiter contacts</h3>
    {data.recruiterContacts.length?<ul className="mt-2 list-disc pl-5 text-sm">{data.recruiterContacts.map(email=><li key={email}>{email}</li>)}</ul>:
-    <p className="mt-2 text-sm text-body">No current recruiter email is recorded for this company relationship.</p>}
+    <EmptyState title="No current recruiter email is recorded for this company relationship."/>}
    <div className="mt-4">
     <h3 className="font-semibold">Related company requests</h3>
     {data.previousRequests.length?<ul className="mt-2 divide-y divide-border text-sm">
@@ -103,7 +103,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
        <span className="ml-2 text-body">{request.status} · {when(request.createdAt)}</span>
        {request.decisionNote?<p className="text-body">Decision: {request.decisionNote}</p>:null}
       </li>)}
-    </ul>:<p className="mt-2 text-sm text-body">No recruiter request is linked to this drive.</p>}
+    </ul>:<EmptyState title="No recruiter request is linked to this drive."/>}
    </div>
   </section>
   <section className="border-b border-border pb-6">

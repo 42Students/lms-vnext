@@ -24,7 +24,7 @@ export default async function CollegeAcademicsPage() {
         title="Academics"
         description="Programs, academic periods, Cohorts and period-specific Sections for your college."
       />
-      <div>
+      <div className="border-b border-border pb-4">
         <Link
           href="/college/programs"
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
@@ -32,11 +32,13 @@ export default async function CollegeAcademicsPage() {
           Open Programs directory
         </Link>
       </div>
+      <section aria-label="College academic structure" className="min-w-0">
       <AcademicsOverview
         collegeId={membership.collegeId}
         workspace={workspace}
         sectionBasePath="/college/academics/sections"
       />
+      </section>
     </div>
   );
 }

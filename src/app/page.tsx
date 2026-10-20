@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { safeReturnTo } from "@/lib/return-to";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LoginForm } from "@/components/auth/login-form";
+import { PageHeader } from "@/components/ui/page-header";
 import styles from "./login-shell.module.css";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { brandStyleVariables, deriveBrandTokens } from "@/modules/colleges/branding";
@@ -107,7 +108,7 @@ export default async function HomePage({
   const themeStyle = brandStyleVariables(
     branding?.primaryColor,
   ) as React.CSSProperties;
-  const authPrimary = branding?.primaryColor ? deriveBrandTokens(branding.primaryColor).text : "#0a7c88";
+  const authPrimary = branding?.primaryColor ? deriveBrandTokens(branding.primaryColor).text : "var(--lms-primary)";
   const desktopBackground = branding?.loginBackgroundUrl ?? null;
   const mobileBackground =
     branding?.loginBackgroundUrlMobile ?? desktopBackground;
@@ -153,7 +154,7 @@ export default async function HomePage({
           ) : null}
           {tenant.kind === "unavailable" ? (
             <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
-              <h1 className={styles.statusTitle}>We couldn&apos;t confirm this college right now</h1>
+              <PageHeader title="We couldn’t confirm this college right now" />
               <p className={styles.statusMessage}>
                 This address may be correct, but its settings didn&apos;t load. Try again in a moment, or use the main sign-in page.
               </p>
@@ -161,7 +162,7 @@ export default async function HomePage({
             </div>
           ) : tenant.kind === "unknown" ? (
             <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
-              <h1 className={styles.statusTitle}>This address isn&apos;t set up yet</h1>
+              <PageHeader title="This address isn’t set up yet" />
               <p className={styles.statusMessage}>
                 Ask your administrator to add this college&apos;s address in 42LMS, or use the main sign-in page.
               </p>

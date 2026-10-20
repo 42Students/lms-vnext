@@ -14,11 +14,11 @@ export default async function CollegeStudentsImportPage() {
     !can(context, "people.manage", { collegeId: membership.collegeId,
       organizationId: membership.organizationId })) redirect("/dashboard");
   const choices = await listCollegeStudentImportOptions(context);
-  return <main className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader
       title="Import students"
       description="Dry-run validation followed by explicit per-row learner onboarding and enrollment."
       actions={<PageBackLink href="/college/students" label="Student directory"/>} />
     <CollegeStudentCsvImport choices={choices} />
-  </main>;
+  </div>;
 }

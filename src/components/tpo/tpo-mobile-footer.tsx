@@ -47,13 +47,13 @@ export function TpoMobileFooter() {
         if(link.label==="More")return <Button key="more" variant="ghost" type="button"
           aria-label="More TPO workspaces" aria-expanded={moreOpen} aria-pressed={moreOpen}
           aria-current={moreActive?"page":undefined} onClick={()=>setMoreOpen(open=>!open)}
-          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 w-full flex-col items-center justify-center gap-[3px] rounded-none px-1 py-1 "+(moreOpen||moreActive?"active":"")}>
+          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 w-full flex-col items-center justify-center rounded-none px-1 py-1 "+(moreOpen||moreActive?"active":"")}>
           <Image src={link.icon} alt="" width={24} height={24} className="lms-tpo-mobile-footer-icon"/>
           <span className="lms-tpo-mobile-footer-label">More</span>
         </Button>;
         return <Link key={link.label} href={link.href}
           aria-current={active?"page":undefined}
-          className={"lms-tpo-mobile-footer-item flex min-h-16 flex-col items-center justify-center gap-[3px] px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"active":"")}>
+          className={"lms-tpo-mobile-footer-item flex min-h-16 flex-col items-center justify-center px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"active":"")}>
           <Image src={link.icon} alt="" width={24} height={24} className="lms-tpo-mobile-footer-icon"/>
           <span className="lms-tpo-mobile-footer-label">{link.label}</span>
         </Link>;

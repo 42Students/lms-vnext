@@ -72,5 +72,5 @@ export function ShellLogoMark(){
 
 /** The original 151×37 old LMS wordmark; distinct from the exact 38×36 rail mark. */
 export function ShellLogoWordmark(){
-  return <Image alt="" aria-hidden="true" src="/assets/images/legacy-42lms-logo.svg" width={151} height={37} className="block h-[37px] w-[151px] max-w-none" />;
+  return <Image alt="" aria-hidden="true" src="/assets/images/legacy-42lms-logo.svg" width={151} height={37} className="block max-w-none" />;
 }

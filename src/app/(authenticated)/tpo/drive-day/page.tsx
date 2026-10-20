@@ -56,17 +56,17 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
     const liveTotals=summarizeTpoLiveTriage(snapshot.rows);
     const liveRows=sortTpoDriveDayRows(filterTpoDriveDayIssues(filterTpoLiveRoundSearch(snapshot.rows,search.data),issue.data),sort.data);
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-[var(--lms-space-6)]">
         <PageHeader eyebrow="TPO · Drive Day" title="Live rounds"
           description="Rounds happening now, using recorded schedule and duration plus persisted attendance." />
         <form action="/tpo/drive-day" method="get" className="flex flex-wrap gap-3">
-          <label className="text-sm">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/></label>
-          <label className="text-sm">Attendance focus<Select name="issue" defaultValue={issue.data} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></label>
-          <label className="text-sm">Prioritize<Select name="sort" defaultValue={sort.data} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
+          <label className="text-sm">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="mt-1 block min-h-11 max-[767px]:min-h-11"/></label>
+          <label className="text-sm">Attendance focus<Select name="issue" defaultValue={issue.data} className="mt-1 block min-h-11 max-[767px]:min-h-11"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></label>
+          <label className="text-sm">Prioritize<Select name="sort" defaultValue={sort.data} className="mt-1 block min-h-11 max-[767px]:min-h-11"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
           <Button type="submit" className="self-end min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Apply</Button>
         </form>
         <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Reset focus</Link></div>
-        <dl aria-label="Current authorized live-round snapshot" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">{[
+        <dl aria-label="Current authorized live-round snapshot" className="grid min-w-0 grid-cols-2 gap-3 min-[768px]:grid-cols-3 lg:grid-cols-6">{[
           ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
           ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
         ].map(([name,count])=><div key={name} className="border-b border-border px-1 py-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
@@ -80,7 +80,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <div className="grid gap-4">
             {liveRows.map((round) => (
               <article key={round.id} className="border-b border-border py-5">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-foreground">{round.companyName} · {round.name}</h2>
                     <p className="text-sm text-body">{round.jobTitle} · Started {
@@ -98,13 +98,13 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                   </Link></div>
                 </div>
                 <p role="status" className="mt-3 text-sm text-body">{tpoLiveAttendanceAttention(round.counts)}</p>
-                <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+                <dl className="mt-4 grid grid-cols-2 gap-3 min-[768px]:grid-cols-5">
                   {([
                     ["Roster", round.counts.total], ["Checked in", round.counts.checkedIn],
                     ["Explicit no-shows", round.counts.noShow], ["Pending", round.counts.pending],
                     ["Unknown", round.counts.unknown],
                   ] as const).map(([label, count]) => (
-                    <div key={label} className="rounded-[var(--lms-control-radius)] bg-muted p-3">
+                    <div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] p-[var(--lms-space-3)]">
                       <dt className="text-xs text-body">{label}</dt>
                       <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{count}</dd>
                     </div>
@@ -122,7 +122,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
     await listMyDriveDayRounds(context);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-6)]">
       <PageHeader
         eyebrow="Student coordinator"
         title="Drive day"
@@ -130,14 +130,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
       />
 
       {rounds.length === 0 ? (
-        <section className="border-b border-border py-6">
-          <h2 className="m-0 text-base font-semibold text-foreground">
-            There is no drive day for you today.
-          </h2>
-          <p className="mt-2 text-sm text-body">
-            This workspace appears only for dates when the placement cell assigns you as a student coordinator.
-          </p>
-        </section>
+        <EmptyState title="There is no drive day for you today." description="This workspace appears only for dates when the placement cell assigns you as a student coordinator."/>
       ) : (
         <div className="grid gap-4">
           {rounds.map((round) => (
@@ -145,7 +138,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
               key={round.roundId}
               className="border-b border-border py-5"
             >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex min-w-0 flex-col gap-4 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div>
                   <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link">
                     Assigned round

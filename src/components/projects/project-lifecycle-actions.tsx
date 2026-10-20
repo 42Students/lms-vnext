@@ -140,7 +140,7 @@ export function TaskLifecycleActions({
   return (
     <div className="mt-3 flex flex-wrap items-end gap-2">
       <label className="min-w-40">
-        <span className="mb-1 block text-[13px] font-semibold text-body">
+        <span className="mb-1 block text-xs font-semibold text-body">
           Task state
         </span>
         <Select
@@ -295,7 +295,7 @@ export function TaskReviewActions({
       >
         <div className="grid gap-4">
           <label>
-            <span className="mb-1.5 block text-[13px] font-semibold text-body">
+            <span className="mb-1.5 block text-xs font-semibold text-body">
               Decision
             </span>
             <Select
@@ -317,7 +317,7 @@ export function TaskReviewActions({
             </Select>
           </label>
           <label>
-            <span className="mb-1.5 block text-[13px] font-semibold text-body">
+            <span className="mb-1.5 block text-xs font-semibold text-body">
               Feedback
             </span>
             <Textarea

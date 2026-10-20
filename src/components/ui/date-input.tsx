@@ -346,7 +346,7 @@ export function DateInput({
                       </Button>;
                     })}
                   </div>
-                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} className="overflow-x-auto overscroll-x-contain text-center max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
+                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End" className="overflow-x-auto overscroll-x-contain text-center max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
               {weekdayLabels.map(day => <span key={day} aria-hidden="true"
                 className={cx("py-1 text-[12px] font-semibold",
                   day === "Su" ? "text-[var(--lms-calendar-sunday)]" : "text-[var(--lms-muted-text)]")}>

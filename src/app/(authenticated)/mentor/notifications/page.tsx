@@ -110,7 +110,7 @@ export default async function MentorNotificationsPage({
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
       <form method="get" action={MENTOR_INBOX}
-        className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-[var(--lms-space-4)]">
         <label className="grid gap-1 text-sm font-semibold">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
             className="min-h-11 max-w-full min-[768px]:min-h-9">
@@ -149,7 +149,7 @@ export default async function MentorNotificationsPage({
             </p>
           : <div className="grid">{visibleAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
-                className="min-h-11 block border-b border-border py-4 transition hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="min-h-11 block border-b border-border py-4 transition hover:border-primary focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="font-semibold text-foreground">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
@@ -170,7 +170,7 @@ export default async function MentorNotificationsPage({
         baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
         confirmMarkAll /> : null}
       {inbox?.cursor.invalid
-        ? <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm text-foreground">
+        ? <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface-subtle px-6 py-12 text-center text-sm text-foreground">
             The notification page link is invalid.{" "}
             <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -182,7 +182,7 @@ export default async function MentorNotificationsPage({
               emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
             {nextHref ? <div className="flex justify-center">
               <Link href={nextHref}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Older notifications
               </Link>
             </div> : null}

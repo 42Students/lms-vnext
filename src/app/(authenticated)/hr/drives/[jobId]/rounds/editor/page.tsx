@@ -30,11 +30,11 @@ export default async function HrRoundsEditorPage({params}:{
  const endpoint="/api/placements/recruiter/drives/"+jobId+"/rounds";
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title="Edit hiring rounds"
-   description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."/>
-  <nav className="flex flex-wrap gap-4 text-sm">
-   <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Back to drive rounds"/>
-   <Link href="/hr/drives" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to Drives</Link>
-  </nav>
+   description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."
+   actions={<nav className="flex flex-wrap items-center gap-4 text-sm">
+    <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Back to drive rounds"/>
+    <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Back to Drives</Link>
+   </nav>} />
   <section className="space-y-4 border-b border-border pb-4">
    <h2 className="font-semibold text-foreground">Add a round</h2>
    <form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
@@ -98,7 +98,7 @@ export default async function HrRoundsEditorPage({params}:{
      </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:hidden">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:hidden">
       Review round removal
     </Link>:null}
    </article>)}

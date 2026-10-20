@@ -26,7 +26,6 @@ export default async function AdminPlacementDrivePage({
     <PlacementDriveWorkspace
       context={context}
       jobId={jobId}
-      eyebrow="Super Admin"
     />
     <SuperAdminDrivePipeline rows={pipeline} />
    </div>

@@ -31,8 +31,12 @@ export default async function CollegeWebAddress({ params }: {
    <PageHeader title={college.name}
      description="Manage this college's verified web addresses, including its subdomain. Only a verified address can become primary."
      actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>
-   <ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>
-   <TenantDomainManager collegeId={college.id} domains={domains}/>
+   <section aria-label="Managed college address" className="min-w-0">
+     <ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>
+   </section>
+   <section aria-label="Verified custom addresses" className="min-w-0">
+     <TenantDomainManager collegeId={college.id} domains={domains}/>
+   </section>
    <p className="text-xs text-muted-foreground">Moving an address between colleges is not supported by this manager. Remove it from the previous college after confirming the migration plan; do not bypass host ownership checks.</p>
  </div>;
 }

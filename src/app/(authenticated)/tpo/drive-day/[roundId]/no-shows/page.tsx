@@ -52,8 +52,8 @@ export default async function TpoNoShowReportPage({
   });
 
   return (
-    <div className="space-y-6">
-      <Link href={roundHref} className="text-sm font-semibold text-link hover:underline">
+    <div className="min-w-0 space-y-[var(--lms-space-6)]">
+      <Link href={roundHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
         ← Back to round overview
       </Link>
       <PageHeader
@@ -78,7 +78,7 @@ export default async function TpoNoShowReportPage({
           </div>
         }
       />
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Attendance reconciliation">
+      <section className="grid min-w-0 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 xl:grid-cols-4" aria-label="Attendance reconciliation">
         {[
           ["Current round roster", report.totalRoster],
           ["Explicit no-shows", report.explicitlyAbsentCount],
@@ -100,8 +100,8 @@ export default async function TpoNoShowReportPage({
           attendance entries are excluded from no-show totals. No absence is inferred.
         </Alert>
       ) : null}
-      <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+      <section className="min-w-0">
+        <div className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
           <h2 className="text-lg font-semibold text-foreground">Explicitly absent learners</h2>
           <p className="mt-1 text-sm text-body">
             Based on persisted ABSENT marks among current, progression-eligible round applicants.
