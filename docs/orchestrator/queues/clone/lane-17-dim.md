@@ -53,16 +53,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-17.md: file, number of 
 - [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/activity/page.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/new/page.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/activity/page.tsx`
+- [x] `src/app/(authenticated)/hr/calendar/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/reports/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/new/page.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/page.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
