@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 "use client";
 
 import { Select } from "@/components/ui/select";
@@ -176,7 +177,7 @@ export function CollegeRecurringPreview({
             <legend className="text-sm font-semibold text-body">Repeat on weekdays</legend>
             <div className="flex flex-wrap gap-3">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
-                <label key={day} className="flex items-center gap-2 text-sm text-body">
+                <label key={day} className="flex min-h-11 items-center gap-2 text-sm text-body md:min-h-9">
                   <Checkbox checked={weekdays.includes(index)}
                     onChange={(e) => setWeekdays((current) => e.target.checked
                       ? [...current, index].sort()
@@ -205,7 +206,7 @@ export function CollegeRecurringPreview({
           <Button type="submit" loading={pending} className="min-h-11 md:min-h-9" disabled={pending || !sectionId || !from || !to || weekdays.length === 0}>
             {pending ? "Checking conflicts…" : "Preview sessions"}
           </Button>
-          {error ? <Alert tone="error">{error}</Alert> : null}
+          {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
         </form>
       )}
       {created !== null ? <Alert tone="success" className="space-y-2">

@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import Link from "next/link";
 import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
 import { redirect } from "next/navigation";
@@ -61,8 +62,8 @@ export default async function CollegeBatchPromotionPage({
       actions={<Link href="/college/batches"
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Batches</Link>} />
     <section className="border-t border-border pt-4">
-      <form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">
+      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 gap-3 max-[767px]:[&_label]:w-full md:grid-cols-2 lg:grid-cols-4">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Program
           <Select name="programId" defaultValue={parsed.data.programId ?? ""}
             >
@@ -72,7 +73,7 @@ export default async function CollegeBatchPromotionPage({
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Batch
           <Select name="cohortId" defaultValue={parsed.data.cohortId ?? ""}
             >
@@ -82,7 +83,7 @@ export default async function CollegeBatchPromotionPage({
             </option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic year override (optional)
           <Input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
@@ -92,7 +93,7 @@ export default async function CollegeBatchPromotionPage({
         <div className="flex items-end">
           <Button type="submit" className="min-h-11 md:min-h-9">Preview</Button>
         </div>
-      </form>
+      </form></FilterBar>
     </section>
     {!preview ? (
       <section className="border-t border-border pt-6">
