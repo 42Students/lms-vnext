@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { Pagination } from "@/components/ui/pagination";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -96,7 +97,7 @@ export default async function TpoActorAuditPage({
       {(["from", "to"] as const).map((name) => <label key={name}
         className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {name === "from" ? "From (IST)" : "Through (IST)"}
-        <Input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
+        <DateInput mode="date" name={name} defaultValue={parsed.data[name] ?? ""}
           className="min-h-11 md:min-h-9 w-full"/>
       </label>)}
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
