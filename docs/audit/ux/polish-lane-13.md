@@ -12,6 +12,10 @@
 
 **Validation:** Source-level JSX/import/tag inspection, including empty, filtered and full result paths plus 375/768/1280 CSS semantics. No browser screenshots or CI were run.
 
+## 2. Mentor · All Quizzes legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/allQuizzes/page.tsx`. Read entire route and Mentor role layout, checked absent route-local loading/error/not-found/template files. Immediate server `redirect("/mentor/projects")` renders no JSX or controls at 375/768/1280. **Problems found: 0, code fixes: none**—preserved the exact bookmark and destination, avoiding an interim redirect flash or duplicate UI. Files changed: checklist and this proof only. No browser or CI.
+
 ## 3. Mentor · Meetings calendar
 
 **Surface:** `src/app/(authenticated)/mentor/calendar/page.tsx`; inspected all rendered `FilterBar`/`ResponsiveFilterDrawer`, `MentorMeetingsCalendar` and scoped stylesheet, `MentorProjectsUnavailable`, `MentorCalendarLoadFailure`, shared PageHeader/Input/Select/Button; route-local loading/error, absent not-found/template, nearest Mentor and authenticated layouts.
@@ -37,3 +41,21 @@
 ## 7. Mentor · File Explorer legacy bookmark
 
 **Surface:** `src/app/(authenticated)/mentor/fileExplorer/page.tsx`. Fully inspected: immediate server `redirect("/mentor/projects")`, nearest Mentor role/layout and authenticated shell; route-local loading, error, not-found and template files are absent. All 375/768/1280 and interactive states are inapplicable because no page is rendered before redirect. **Problems: 0; fixes: none.** Did not invent an interim file manager UI or modify redirect/authorization behavior. Files changed: checklist and this proof only; no browser/CI.
+
+## 8. Mentor · Notifications
+
+**Surface:** `src/app/(authenticated)/mentor/notifications/page.tsx` + route-local `loading.tsx` / `error.tsx`; no not-found/template exists. Inspected `NotificationToolbar` and its confirmation, pending/error toast, `NotificationList` (empty/read/mark read/open), `AnnouncementFeed` (disabled/empty/filled), Alert and StatusBadge, nearest Mentor/authenticated layouts.
+
+**Problems found (9):** page opened with announcements before its personal inbox; three section blocks had excessive uniform space; partial-source warning heading competed with the page h1; attention filters wrapped unpredictably at 768px and overloaded 375px; each attention item added a border competing with the list divider; long notification bodies/titles could shrink poorly in two-column rows; route loading gutters differed; error Retry was detached from its explanation; attention filtering/status messages were lower priority than primary notifications.
+
+**Changes:** moved **Personal notifications** and its existing view/read-all controls to the top, with Project attention next and College announcements last, preserving each original section id, heading, text, route and permissions. All query parsers, source failures, announcement policy, inbox cursor and mark-read behavior remain unchanged. Reduced outer blank spacing to legacy 16/24px rhythm; turned attention filters into a 375px single-column / 768px two-column / wider multi-column grid with unchanged inputs/labels and Filter attention. Consolidated attention row divider use, demoted the partial-source notice heading, ensured long list item content has `min-w-0`, and aligned loading and error Retry spacing/44px phone target. No shared visual token changes or new packages. **Files changed:** notifications page, loading and error route files, `src/components/activity/notification-list.tsx`, this proof/queue. Source-level state and responsive check only; no screenshot or CI.
+
+
+## 9. Mentor · Landing (enabled and unavailable states)
+
+**Surface:** `src/app/(authenticated)/mentor/page.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, inherited `mentor/layout.tsx`; inspected `PageHeader`, shared `Alert`, and `GracefulErrorBoundary` with loading/retry/active/inactive role and project module states. No route-local template exists.
+
+**Problems found (6):** failure message and two actions sat in a loosely spaced vertical block; View notifications—the only available next action—was pushed below the retry link; Retry had stray `mb-3` unrelated to its sibling `mt-4`; the primary link did not fill the 375px viewport; root/loading/not-found gutters were inconsistent; route `error.tsx` rendered the full public `GracefulScreen` **inside** the already-authenticated shell instead of an inline retry state.
+
+**Changed:** preserved the exact membership and optional-module permission checks and redirects (`/dashboard`, `/mentor/projects`), existing copy/links, and original legacy control tokens. Grouped availability actions directly under the alert in a shared flex region: full-width **View notifications** first on 375px, content-width from 768px; **Retry access check** stays a demoted secondary text link only for policy resolution failures. Removed competing margins and normalized 16/24px page/content gutters. Passed `insideShell` with `homeHref="/mentor"` to the existing error boundary, retaining diagnostic reporting, safe reload and Retry behavior without nesting a second standalone app layout. Kept not-found wording/destination and loader label, aligned their max width. **Files changed:** mentor landing page, error, loading, not-found, lane queue and this proof. Source-only review; no browser or CI.
+
