@@ -57,7 +57,9 @@ export function RecruiterNotificationBell(){
       className="pointer-events-none absolute -right-1 -top-1 !min-h-4 !min-w-4 !rounded-full !border-0 !bg-[var(--lms-error)] !px-1 !py-0 !text-xs !leading-3 !text-white">
       {data.unread>99?"99+":data.unread}</Badge>:null}
   </Button>
-  <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications">
+  <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications"
+   footer={<Link href={href} onClick={()=>setIsOpen(false)}
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">See all notifications</Link>}>
    {!data&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:null}
    {error?<ErrorState title="Notifications unavailable" description={error} action={<Button type="button" onClick={()=>void load()} variant="secondary" className="min-h-11 md:min-h-9">Retry</Button>}/>:null}
    {data?.status==="CHOOSE_COLLEGE"?
@@ -70,16 +72,14 @@ export function RecruiterNotificationBell(){
    {data?.status==="READY"&&data.rows?.length===0?
      <EmptyState title="No notifications yet" description="New placement notifications will appear here."/>:null}
    {data?.status==="READY"&&data.rows?.length?
-    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="space-y-[6px] px-3">
+    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3 min-w-0" viewportClassName="max-h-[50vh]"><ul className="min-w-0 divide-y divide-border">
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 rounded-lg border border-border bg-surface px-4 py-3 text-sm font-semibold leading-[1.4] text-foreground transition-[background-color,border-color,box-shadow] duration-200 hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-muted focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-neutral-500)] motion-reduce:transition-none">
+       className="block min-h-11 min-w-0 break-words border-b border-transparent px-2 py-3 text-sm font-semibold leading-[1.4] text-foreground transition-colors duration-200 hover:bg-[var(--lms-neutral-50)] active:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
-   <Link href={href} onClick={()=>setIsOpen(false)}
-    className="mt-4 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
   </Drawer>
  </div>;
 }
