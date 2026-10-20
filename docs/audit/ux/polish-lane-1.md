@@ -223,3 +223,27 @@
 **Problems fixed (8):** native blocking window.confirm broke shared legacy modal skin/focus; active close action had inconsistent touch height; new season form squeezed to four columns at desktop; create action broke alignment at 768; historic status badges permanently occupied primary flow; close confirm showed no coherent description hierarchy; active summary row gutters were loose; empty state form felt too cramped. Used shared destructive confirmation retaining precondition and two-step intent, 1/2-column form with 44px actions, compact active row and historical seasons disclosure with total; kept all API URLs, form names, status, state transitions and error/toast text.
 
 **Files:** `src/components/placements/placement-season-manager.tsx`, queue, proof. No tests or CI.
+
+## Surface 39 — Interactive placement report table
+
+**Reviewed:** normal/compact toolbar, search/sort mobile/desktop, limits, column filters/visibility dropdowns, copy/export TSV/CSV success/error, download, zero and filtered-empty, print, DataTable and mobile sheet. 375/768/1280 source review only; no visual execution/CI.
+
+**Problems fixed (8):** every advanced tool populated main canvas; eight equal actions competed with search; fixed search min-width could spill 375px; inconsistent zero-row states; standard filtered empty had no reset; mobile sort wrapped irregularly; title competed with page H1; feedback copy lacked status contrast. Grouped tools in accessible disclosure with responsive 1/2/4 controls, used max-width search, consistent resettable EmptyState, and toned InlineNotice for success/errors. Report sorting/filtering, visible/export row scope, clipboard and buttons preserved.
+
+**Files:** `src/components/placements/report-interactive-table.tsx`, queue, proof. Shared primitives reviewed, unchanged. No CI.
+
+## Surface 40 — Bulk drive reminders
+
+**Reviewed:** no selection, over-10 limit, Select all/Clear, 1-10 selected confirmation, sequential preview+token send, skip/already-sent, partial failures, pending state and InlineNotice/ConfirmDialog. Source 375/768 layout and parent form checkbox context; no visual/CI execution.
+
+**Problems fixed (7):** user could not see 1–10 constraint until error; two selection controls squeezed phones; primary reminder action lacked full phone width; success notice inaccurately painted partial-failure batches green; controls floated without group boundary; pending status felt detached; incomplete preview consequences weren't obvious. Kept all buttons and copy, added limits hint, separate hairline toolbar, 44px stacked phone controls and warning-toned outcome when failures are present. Existing explicit preview/confirm token flow, selected-form IDs, skip logic, limit, and API behavior unchanged.
+
+**Files:** `src/components/placements/tpo-bulk-drive-reminder.tsx`, queue, proof. No tests/CI.
+
+## Surface 41 — Drive change requests
+
+**Reviewed:** TPO/company party modes, request/ask form validation, OPEN and resolved statuses, messages and decisions, accept/answer/decline/withdraw confirmation and failures, shared Alert, Notice, StatusBadge, Disclosure, at 375/768 source breakpoints. No runtime/CI.
+
+**Problems fixed (10):** always-expanded create form; conversations expanded for every request; two competing oversized headings; custom inconsistent status chip; cramped phone request headings; multi-action rows wrapped irregularly; no empty discussion explanation; non-accept confirmations falsely described acceptance; send action undersized; long threads pushed next request offscreen. Used native disclosures for create and per-request discussion, shared status badge, 44px phone buttons, accurate conditional modal semantics and empty reply state. All IDs, mode logic, 409 optimistic tokens, routes and API contracts retained.
+
+**Files:** `src/components/placements/tpo-drive-change-requests.tsx`, queue, proof. No CI.
