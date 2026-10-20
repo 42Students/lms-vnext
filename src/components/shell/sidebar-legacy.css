@@ -20,6 +20,9 @@
   overflow:hidden;
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) {width:256px;}
+ /* old-lms-shell.css:24-25 + learn-layout.scss:516-521: the learner
+  * rail has a 16px desktop right inset within its 96/256px border box. */
+ .lms-desktop-sidebar:has(.lms-sidebar-nav[data-sidebar-skin="learner"]) {padding-right:16px;}
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row {justify-content:flex-start;padding-left:20px;}
  .lms-shell-page {min-width:0;flex:1 1 0%;}
  .lms-desktop-sidebar .lms-sidebar-nav .lms-sidebar-item {
@@ -113,6 +116,12 @@
  font-weight:600;
  text-decoration:none;
  transition:color .15s cubic-bezier(.2,0,0,1),background-color .15s cubic-bezier(.2,0,0,1);
+}
+/* old-lms-shell.css:27-28: admin links use 12px top/bottom padding,
+ * while TPO/recruiter links retain their 10px block padding. */
+.lms-desktop-sidebar .lms-sidebar-nav[data-sidebar-skin="admin"] .lms-sidebar-item {
+ padding-top:12px;
+ padding-bottom:12px;
 }
 .lms-sidebar-nav .lms-sidebar-item:hover {
  color:#1a95a1;

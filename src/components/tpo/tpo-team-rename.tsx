@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Input } from "@/components/ui/input";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -32,7 +33,7 @@ export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTo
     <Input required maxLength={200} value={topic} onChange={event=>setTopic(event.target.value)}
      disabled={busy} className="min-h-11 md:min-h-9"/>
    </label>
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   {error?<InlineNotice tone="error" message={error}/>:null}
    <div className="flex gap-2">
     <Button type="submit" disabled={busy||!topic.trim()}
      className="min-h-11 md:min-h-9">

@@ -63,19 +63,19 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   <h2 className="text-lg font-semibold text-foreground">Verify profiles / Send back for correction</h2>
   <p className="text-sm text-muted-foreground">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
   <p role="status" aria-live="polite" className="text-sm tabular-nums">{checked.length} selected of {waiting.length} visible waiting sections.</p>
-  <label className="flex min-h-11 items-center gap-2 text-sm">
+  <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
    <Checkbox  disabled={busy} checked={waiting.length>0&&waiting.slice(0,20).every(row=>selected.includes(verificationSelectionKey(row)))}
     onChange={event=>{setSelected(event.target.checked?waiting.slice(0,20).map(verificationSelectionKey):[]);invalidate();}}/>
    Select first {Math.min(20,waiting.length)} waiting section(s)
   </label>
-  <div className="grid max-h-64 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain pr-1 md:grid-cols-2">
-   {waiting.map(row=>{const key=verificationSelectionKey(row);return <label key={key} className="flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+  <div className="grid max-h-64 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain pr-1 md:grid-cols-2 print:hidden">
+   {waiting.map(row=>{const key=verificationSelectionKey(row);return <label key={key} className="flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)]">
     <Checkbox  disabled={busy||selected.length>=20&&!selected.includes(key)}
      checked={selected.includes(key)} onChange={()=>toggle(key)}/>
     <span className="min-w-0 break-words">{row.learnerName} · {row.section==="EDUCATION"?"Education":"Identity"}{row.missingMarksheet||row.missingIdentityProof?" · Missing document":""}</span>
    </label>;})}
   </div>
-  <label className="grid gap-1 text-sm">Action
+  <label className="grid gap-1 text-sm print:hidden">Action
    <Select  disabled={busy} value={action}
     onChange={event=>{setAction(event.target.value as Action);invalidate();}}>
     <option value="VERIFY">Verify selected</option><option value="SEND_BACK">Send back for correction</option>
@@ -91,7 +91,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
       <Button variant="secondary" type="button" key={item} disabled={busy} onClick={()=>{setReason(item);invalidate();}}
        >{item}</Button>)}
    </div>
-   <label className="grid gap-1 text-sm">Correction reason (shown to students)
+   <label className="grid gap-1 text-sm print:hidden">Correction reason (shown to students)
     <Textarea  rows={3} minLength={3} maxLength={500}
      value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);invalidate();}}/>
    </label>

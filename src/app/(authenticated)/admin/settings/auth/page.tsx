@@ -27,11 +27,11 @@ export default async function SuperAdminAuthSettings(){
   <Banner tone="info">
    Configuration runtime status is not attested by this page. Privileged second-factor readiness must be verified separately before production.
   </Banner>
-  <ul className="grid min-w-0 gap-3 md:grid-cols-2">
-   {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 border-b border-border py-4">
+  <ul className="min-w-0 divide-y divide-border border-y border-border">
+   {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 py-4">
     <h2 className="break-words font-semibold text-foreground">{item.title}</h2>
     <p className="mt-2 text-sm text-body">{item.description}</p>
-    <p className="mt-3 text-xs font-semibold text-muted-foreground">{item.state}</p>
+    <div className="mt-3"><StatusBadge tone="neutral" className="max-w-full">{item.state}</StatusBadge></div>
    </li>)}
   </ul>
   <section aria-label="Legacy platform and auth setting keys" className="space-y-3 border-b border-border pb-5">

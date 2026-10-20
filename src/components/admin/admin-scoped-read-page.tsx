@@ -9,12 +9,13 @@ import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page"}:{
- title:string;path:string;description:string;headingMode?:"page"|"section";
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page",backHref}:{
+ title:string;path:string;description:string;headingMode?:"page"|"section";backHref?:string;
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
@@ -26,10 +27,11 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
 }) {
  // Student registration owns the page h1; the directory then has a section
  // heading. Other callers retain the original PageHeader by default.
- const heading=(eyebrow:string,detail?:string)=>headingMode==="section"
+ const heading=(eyebrow:string,detail?:string,exportAction?:ReactNode)=>headingMode==="section"
   ? <div><h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
      {detail?<p className="mt-1 text-sm text-body">{detail}</p>:null}</div>
-  : <PageHeader eyebrow={eyebrow} title={title} description={detail}/>;
+  : <PageHeader eyebrow={eyebrow} title={title} description={detail}
+     actions={backHref||exportAction?<>{backHref?<PageBackLink href={backHref} label="Placement overview" />:null}{exportAction}</>:undefined}/>;
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
  return <div className="space-y-5">{heading("Super Admin")}
@@ -66,7 +68,8 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   summaries[1].status==="fulfilled"&&summaries[2].status==="fulfilled"
   ?[summaries[0].value,summaries[1].value,summaries[2].value]:null;
  return <div className="min-w-0 space-y-5">
-  {heading(peopleFilters?"People":"Super Admin · Read-only",description)}
+  {heading(peopleFilters?"People":"Super Admin · Read-only",description,
+    exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:undefined)}
   {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
@@ -83,8 +86,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </section>:null}
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
-  {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
-  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 min-[768px]:grid-cols-2 lg:grid-cols-4 print:hidden">
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-body">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
