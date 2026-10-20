@@ -1,6 +1,4 @@
 "use client";
-import {CourseChoiceControl} from "./course-choice-control";
-
 import { Radio } from "@/components/ui/radio";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
@@ -414,6 +412,7 @@ export function FacultyQuizQuestionEditor({
         size="md"
         
         variant="secondary"
+        className="min-h-11 md:min-h-[var(--lms-control-height)]"
         onClick={() => void load()}
       >
         Edit questions
@@ -427,6 +426,7 @@ export function FacultyQuizQuestionEditor({
         footer={
           <Button
             loading={saving}
+            className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={
               saving || loading
             }
@@ -441,7 +441,7 @@ export function FacultyQuizQuestionEditor({
         {loading ? (
           <LoadingState label="Loading questions…" />
         ) : (
-          <div className="space-y-4">
+          <div className="min-w-0 space-y-4">
             {questions.map(
               (
                 question,
@@ -449,9 +449,9 @@ export function FacultyQuizQuestionEditor({
               ) => (
                 <section
                   key={question.key}
-                  className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
+                  className="min-w-0 border-b border-border py-4"
                 >
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
                     <h3 className="m-0 text-sm font-semibold text-foreground">
                       Question{" "}
                       {questionIndex + 1}
@@ -477,7 +477,7 @@ export function FacultyQuizQuestionEditor({
                     ) : null}
                   </div>
 
-                  <label className="mt-3 block text-[13px] font-semibold leading-4 text-body">
+                  <label className="mt-3 block min-w-0 text-[13px] font-semibold leading-4 text-body">
                     Prompt
                     <Textarea
                       className="mt-1.5"
@@ -496,7 +496,7 @@ export function FacultyQuizQuestionEditor({
                     />
                   </label>
 
-                  <div className="mt-3 grid gap-3 md:grid-cols-[1fr_8rem]">
+                  <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_8rem]">
                     <label className="text-[13px] font-semibold leading-4 text-body">
                       Question type
                       <Select
@@ -552,7 +552,7 @@ export function FacultyQuizQuestionEditor({
                       ) => (
                         <div
                           key={option.key}
-                          className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
+                          className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-border pb-2 sm:grid-cols-[auto_minmax(0,1fr)_auto]"
                         >
                           {question.type === "SINGLE_CHOICE" ? <Radio
                             
@@ -617,6 +617,7 @@ export function FacultyQuizQuestionEditor({
                           <Button
                             size="md"
                             variant="ghost"
+                            className="col-span-2 min-h-11 justify-self-end sm:col-span-1 md:min-h-9"
                             disabled={
                               question
                                 .options
@@ -654,6 +655,7 @@ export function FacultyQuizQuestionEditor({
 
             <Button
               variant="secondary"
+              className="min-h-11 w-full sm:w-auto md:min-h-9"
               disabled={
                 questions.length >= 100
               }
@@ -669,7 +671,9 @@ export function FacultyQuizQuestionEditor({
               + Question
             </Button>
 
-            {error ? <Alert tone="error">{error}</Alert> : null}
+            {error ? <div className="space-y-2"><Alert tone="error">{error}</Alert>
+              <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => void load()}>Edit questions</Button>
+            </div> : null}
           </div>
         )}
       </Drawer>
