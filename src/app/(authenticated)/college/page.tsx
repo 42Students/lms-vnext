@@ -134,7 +134,7 @@ export default async function CollegeOverviewPage() {
       {closingQuizzes?<CollegeClosingQuizzesCard data={closingQuizzes}/>:<CollegeDashboardSectionFailure title="Closing quizzes"/>}
       {attendance?<>
       <section aria-label="Today" className="space-y-3">
-        <h2 className="text-xl font-semibold text-foreground">Today</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Today</h2>
         <div className="grid gap-[8px] md:grid-cols-3">
           {[
             { label: "Classes scheduled today", value: attendance.today.scheduled },
@@ -154,7 +154,7 @@ export default async function CollegeOverviewPage() {
       <section aria-label="Attendance not taken" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Attendance not taken</h2>
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Attendance not taken</h2>
             <p className="text-sm text-muted-foreground">
               {attendance.unattendedCount} held session(s) in the last 7 days without marked attendance.
             </p>
@@ -184,7 +184,7 @@ export default async function CollegeOverviewPage() {
       {lowAttendance?<>
       <section aria-label="Low attendance" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             Under {lowAttendance.threshold}% attendance
           </h2>
           <Link href="/college/attendance"
@@ -210,7 +210,7 @@ export default async function CollegeOverviewPage() {
       {unstaffed?<>
       <section aria-label="Courses with no teacher" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold text-foreground">Courses with no teacher</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Courses with no teacher</h2>
           <Link href="/college/faculty-assignment" className="font-semibold text-primary-text hover:underline">
             Manage faculty
           </Link>
@@ -236,7 +236,7 @@ export default async function CollegeOverviewPage() {
       {pendingGrades?<>
       <section aria-label="Waiting to be graded" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold text-foreground">Waiting to be graded</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Waiting to be graded</h2>
           <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">
             Review assignments
           </Link>
@@ -258,7 +258,7 @@ export default async function CollegeOverviewPage() {
       </>:<CollegeDashboardSectionFailure title="Waiting to be graded"/>}
       {setupGaps?<>
       <section aria-label="Setup gaps" className="space-y-3 border-t border-border pt-[16px]">
-        <h2 className="text-lg font-semibold text-foreground">Setup gaps</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Setup gaps</h2>
         <p className="text-sm text-muted-foreground">Records still missing a critical academic relationship.</p>
         <div className="grid gap-[8px] md:grid-cols-2 lg:grid-cols-4">
           {setupGaps.map(item => <Link key={item.label} href={item.href}
