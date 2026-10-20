@@ -9,6 +9,7 @@ import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Pagination } from "@/components/ui/pagination";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -202,12 +203,6 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear search</Link>
-  <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm print:hidden">
-   <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
-   <div className="flex flex-wrap gap-3">
-    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Previous</Link>:null}
-    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Next</Link>:null}
-   </div>
-  </nav>
+  <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>superAdminReadHref(path,{...data.query,page})}/>
  </div>;
 }
