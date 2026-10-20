@@ -514,9 +514,9 @@ export function LearnerCourseDiscussion({
                     onClick={() => void loadOlder()}>
                     {loadingOlder ? "Loading earlier messages…" : "Load earlier messages"}
                   </Button>
-                  {olderError ? <p role="alert" className="text-xs font-semibold text-error">
+                  {olderError ? <Alert tone="error" className="w-full">
                     Earlier messages could not be loaded. Retry to continue.
-                  </p> : null}
+                  </Alert> : null}
                 </div>
               ) : null}
               {feed.map((row) =>
