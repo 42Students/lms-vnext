@@ -92,7 +92,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
         {programs.length === 0 ? "Create a program before adding batches." : <>
           Create a usable academic period before adding batches.{" "}
-          <Link href="/college/academics" className="font-semibold text-[var(--lms-link-text)] underline">Set up academic periods</Link>
+          <Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
         </>}
       </p>
       : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
