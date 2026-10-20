@@ -204,7 +204,11 @@ export function TpoGrid<Row>({
    colId:col.key,headerName:col.label,field:undefined,
    minWidth, maxWidth, width:160,resizable:true,sortable:Boolean(col.sortKind),
    valueGetter:p=>p.data?col.read(p.data):null,
-   comparator:col.sortKind?(a,b)=>compareNumberDate(col.sortKind!,a,b):undefined,
+   comparator:col.sortKind?(a,b,nodeA,nodeB)=>compareNumberDate(
+    col.sortKind!,
+    col.sortValue&&nodeA.data?col.sortValue(nodeA.data):a,
+    col.sortValue&&nodeB.data?col.sortValue(nodeB.data):b,
+   ):undefined,
    tooltipValueGetter:p=>p.data?col.tooltip?.(p.data):undefined,
    cellRenderer:openPrimary?.columnKey===col.key
     ?(p:{data?:Row})=>p.data?<Button variant="ghost" className="px-0 text-left underline"
