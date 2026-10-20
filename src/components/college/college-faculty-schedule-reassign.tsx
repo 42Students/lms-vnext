@@ -49,7 +49,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
    className="min-h-11 w-full md:min-h-9 md:w-auto">
    Reassign class schedules</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}}
-   title="Reassign class schedules" dismissible={!busy}
+   title="Reassign class schedules" dismissible={!busy} className="max-[767px]:w-full"
    footer={<div className="flex w-full min-w-0 flex-col-reverse gap-2 md:flex-row md:items-center md:justify-end">
      <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
       className="min-h-11 w-full md:min-h-9 md:w-auto">Close</Button>
@@ -77,7 +77,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
       {receipt?<Alert tone="success" className="space-y-2">
         <p className="font-semibold">Reassigned {receipt.reassigned} of {receipt.total} upcoming session(s).</p>
         {receipt.skipped?<details className="min-w-0">
-          <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{receipt.skipped} skipped.</summary>
+          <summary className="min-h-11 cursor-pointer py-2.5 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:py-2">{receipt.skipped} skipped.</summary>
           <ul className="space-y-1 pl-4 text-sm">
             {receipt.results.filter(row=>row.status==="SKIPPED").map(row=><li key={row.id}>
               {row.title}: {row.reason}</li>)}
