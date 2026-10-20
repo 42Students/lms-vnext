@@ -120,12 +120,12 @@ export default async function LearnerOffersPage({
       {invalidQuery ? <Banner tone="warning">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</Banner> : null}
       <Tabs ariaLabel="Offer status" renderPanel={false} value={view} items={tabs.map(tab=>({value:tab.id,label:tab.label,count:offers.counts[tab.id],href:learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}))}/>
       {view==="pending"&&expiredIssuedCount>0 ? (
-        <p role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
+        <Banner tone="warning">>
           {expiredIssuedCount} issued {expiredIssuedCount===1?"offer has":"offers have"} passed the recorded response deadline. They remain in issued history but cannot be accepted or declined after expiry.
           <Link href="/learn/my-placements/offers?status=pending&expiry=expired" className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
             View expired issued offers
           </Link>
-        </p>
+        </Banner>
       ) : null}
       <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer search" className="flex min-w-0 flex-wrap items-end gap-3">
         {view !== "all" ? <Input type="hidden" name="status" value={view} /> : null}
@@ -202,16 +202,16 @@ export default async function LearnerOffersPage({
         ))}
       </nav>
       {pageClamped ? (
-        <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
+        <Banner tone="info">>
           The requested offer page no longer exists in your filtered results. Showing page {paginated.page} of {paginated.pages}.
           <Link href={pageUrl(paginated.page)} className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">Use this page link</Link>
-        </p>
+        </Banner>
       ) : null}
       {learnerOfferFocusMissing(query.focus,focused.found) ? (
-        <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
+        <Banner tone="info">>
           The linked offer is not displayed in these results. It may be outside the selected filters or no longer accessible.
           <Link href={learnerOfferRecoveryHref(query.focus)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Find this offer in all my offers</Link>
-        </p>
+        </Banner>
       ) : null}
       {expiringSoon > 0 && view !== "pending" ? (
         <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
@@ -220,11 +220,11 @@ export default async function LearnerOffersPage({
         </Link>
       ) : null}
       {expiringSoon > 0 ? (
-        <div role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
+        <Banner tone="warning">>
           <strong>{expiringSoon} {expiringSoon === 1 ? "offer" : "offers"} awaiting response</strong> in this view have a recorded expiry within 24 hours. Check the official offer deadline before acting.
-        </div>
+        </Banner>
       ) : null}
-      {!requestRead.available ? <p role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
+      {!requestRead.available ? <Banner tone="warning" role="alert">>Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</Banner> : null}
       {visibleOffers.length === 0 ? (
         <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>

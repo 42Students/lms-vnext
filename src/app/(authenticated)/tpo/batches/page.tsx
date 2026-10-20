@@ -179,7 +179,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
               part.key==="ineligible"?"error" as const:
               part.key==="review"?"warning" as const:"muted" as const,
           }))} />
-        {summary.needsReview>0?<p className="text-xs text-warning">Ambiguous class membership requires review.</p>:null}
+        {summary.needsReview>0?<p className="text-[13px] font-semibold leading-5 text-[var(--lms-warning-text)]">Ambiguous class membership requires review.</p>:null}
       </div>;
     })()}
     {recent?.get(b.id)?<section className="rounded-[var(--radius)] border border-border p-3 text-xs">

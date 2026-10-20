@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {Banner} from "@/components/ui/banner";
 import Link from "next/link";
 import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
 import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
@@ -44,9 +45,9 @@ export default async function LearnerVerificationPage() {
           "Ready to send":label[row.status]}</StatusBadge></div>
         {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
           decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,
-          heading:item.heading})?<p role="status" className="mt-2 whitespace-pre-wrap text-sm text-body">
+          heading:item.heading})?<Banner tone={row.status==="SENT_BACK"?"warning":"info"} className="mt-2 whitespace-pre-wrap">
           {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
-          decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,heading:item.heading})}</p>:null}
+          decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,heading:item.heading})}</Banner>:null}
         <dl className="mt-3 space-y-1 text-xs text-muted-foreground">
           <div className="flex flex-wrap gap-x-2">
             <dt>Last submitted:</dt>

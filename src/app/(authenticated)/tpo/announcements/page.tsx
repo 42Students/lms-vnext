@@ -172,7 +172,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       {row.expiresAt?" · Shows until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.expiresAt):""}
     </p>
     {tab.data==="yours" && row.scheduledAt && new Date(row.scheduledAt)>new Date()?
-      <p role="status" className="mt-2 text-sm font-semibold text-amber-700">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</p>:
+      <p role="status" className="mt-2 text-[13px] font-semibold leading-5 text-[var(--lms-warning-text)]">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</p>:
       tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
       <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground">Ended</p>:null}
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
