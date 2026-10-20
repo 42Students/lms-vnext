@@ -23,16 +23,16 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-17.md: surface | regre
 - [x] `src/app/(authenticated)/admin/projects/submissions/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/sprints/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/sprints/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/quizzes/page.tsx`
 - [ ] `src/app/(authenticated)/admin/recruiters/page.tsx`
 - [ ] `src/app/(authenticated)/admin/resources/page.tsx`
 - [ ] `src/app/(authenticated)/admin/semester-courses/page.tsx`

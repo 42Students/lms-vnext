@@ -87,3 +87,55 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 14. Redirect-only Overview alias read with loading/error boundaries, permission helper, template UUID schema and canonical subview resolver. Inspected absence of any independent rendered page controls.
 - Regressions found/fixed: 0. Authorizes before validation and canonical redirect, invalid UUID notFound; template-specific directory loader with unchanged error retry. No content/layout invented.
 - Extra clutter/alignment fixes: 0. Files changed: queue and this proof; source-only, no CI.
+
+## Surface 15 — `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
+- Prior evidence: `docs/audit/ux/polish-lane-7.md`, Surface 15. Reviewed route/loading/error and complete `ProjectTemplateView`, `TemplateMetadataEditControl`, `ProjectTemplateActions`, version/history labels, draft/published lifecycle, dialog submit/cancel and buttons, parent admin layout.
+- Regressions found/fixed: 0. No broken tags/imports, missing labels, dropped ID/aria, unauthorized interactive controls or mismatched props observed on source inspection; existing back destination precedes header, actions adapt in flex at phone widths and long version notes wrap.
+- Extra clutter/alignment fixes: 0. No files changed for this route; queue and proof only. No execution/CI.
+
+## Surface 16 — `src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx`
+- Prior evidence: `docs/audit/ux/polish-lane-7.md`, Surface 16. Reviewed route/loading/error, shared `SuperAdminTemplateSubviewPage`, `SuperAdminTemplateResourceEditor`, permission checks, version schema, all editor fields/buttons and layout wrappers.
+- Regression fixed (1): while resource mutation was pending, edited row controls and Close editor remained interactive. Lock editable fieldsets and editor toggle for the pending interval, preserving version confirmation, Save/Add disabled and errors.
+- Extra clutter/alignment fix (1): resource titles wrap and keys break safely in 375px rows, with shared 16px hairline rhythm, matching other template sections; affects only resources branch of shared subview.
+- Files changed: `src/components/projects/super-admin-template-resource-editor.tsx`, `src/components/projects/super-admin-template-subview-page.tsx`, queue and proof. Legacy wording, tokens, routes and aria unchanged; no runtime test.
+
+## Surface 17 — `src/app/(authenticated)/admin/projects/templates/[templateId]/sprints/page.tsx`
+- Prior proof: `docs/audit/ux/polish-lane-7.md`, Surface 17. Read route/loading/error, shared `SuperAdminTemplateSubviewPage` and `SuperAdminTemplatePlanEditor`, sprint/release validators, save/confirm, reorder, missing version/empty, archived read-only, permissions and responsive list/controls.
+- Regressions found/fixed: 0. Expanded editor trigger and all row/add/reset/save controls guard pending; shared labels and subtabs match typed routes. No broken JSX, duplicate props, dropped ids/aria or changed wording.
+- Extra clutter/alignment fixes: 0. Existing 16px hairline section and mobile full-width controls retained. Files changed: proof/queue only; source inspection, no CI.
+
+## Surface 18 — `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx`
+- Prior proof: `docs/audit/ux/polish-lane-7.md`, Surface 18. Read route/loading/error, shared subview and full `SuperAdminTemplatePlanEditor` task path, sprint prereq/link, validation, movement/removal, statuses, wide/phone layouts and error recovery.
+- Regressions found/fixed: 0. Required task fields, status badges, accessibility and routes still match their models. Focusable 44px phone buttons and wrapped texts are preserved.
+- Extra clutter/alignment fixes: 0. No task-specific edits; proof/queue only, no runtime tests.
+
+## Surface 19 — `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 19. Inspected complete comparison route, loading/error, rollback client control, two-column/current-selected diff, ProjectTemplateView, parameter validation, access/not-found, version comparison result and its href.
+- Regressions found/fixed: 0. Prior title/back-link separation and 1024px comparison grid remain, preformatted version content is wrapped, scrollable and keyboard-focusable with region aria; rollback is scoped, disabled for archived/current and has 44px mobile target.
+- Extra clutter/alignment fixes: 0. No additional code edits. Files changed: queue and this proof; no runtime/CI.
+
+## Surface 20 — `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 20. Inspected route and typed historyQuery, parent template subview rendering, separate loading/error, version pagination schema/service, comparison link model, statuses and 25-per-page hint.
+- Regressions found/fixed: 0. Invalid/multi-value page is rejected by strict schema, history page and compare links retain their destinations; mobile count and paging wrap, titles and notes break safely and template version labels remain unchanged.
+- Extra clutter/alignment fixes: 0. Files changed: queue and proof. No browser/CI.
+
+## Surface 21 — `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 21. Inspected route/loading/error, complete `SuperAdminTemplateCreateForm` with baseline and all three native optional disclosures, inputs, validation, typed payload builder, pending/error, keyboard/phone/desktop controls, and parent layout.
+- Regressions found/fixed: 0. Required baseline and optional state values remain independently bound, disclosures keep fields mounted and editable, route permission check precedes global action and confirmation/responses retain their targets. No broken JSX, duplicate attrs or missing labels found.
+- Extra clutter/alignment fixes: 0; back link remains before heading, mobile action width and directory loader aligned. Files changed: queue and proof. No CI/runtime.
+
+## Surface 22 — `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 22. Inspected route/loading/error, template directory query/filter model, `SuperAdminTemplateArchiveControl`, `SuperAdminTemplatePageExport`, table columns/statuses/version counts, CSV, pagination, permissions and parent shell.
+- Regressions found/fixed: 0. Filter and New template actions maintain 44px mobile width, ListToolbar is sole results-count source, row actions wrap and no-result recovers with Clear filters. CSV uses existing page-only rows.
+- Extra clutter/alignment fixes: 0; no source change needed. Files changed: queue and proof. Source-only verification.
+
+## Surface 23 — `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
+- Original polish evidence: `docs/audit/ux/polish-lane-7.md`, Surface 23. Inspected complete route/loading/error and `ClassTeamWorkspaceCreator`, class/roster fetch states, template selection, team split/dragless move and swap, preflight, confirmation, status, partial result/CSV and sticky 375px footer, supporting model contracts and parent shell.
+- Regression fixed (1): in INDIVIDUAL mode, Create button remained enabled while preflight had not loaded (or failed), then silently returned with no action. Disable primary CTA until the current scoped preflight is available, matching the existing create() guard and avoiding misleading click.
+- Extra clutter/alignment fixes: 0; retain 44px full-width mobile controls, existing back link and empty template catalogue link. Files changed: `src/components/projects/class-team-workspace-creator.tsx`, queue and proof.
+
+## Surface 24 — `src/app/(authenticated)/admin/quizzes/page.tsx`
+- Original polish evidence: `docs/audit/ux/polish-lane-7.md`, Surface 24. Read route/loading/error, `CollegeQuizCreate` (question types/points/options, scheduling, validation/confirm) and `AdminAssessmentDirectory` (filter/aggregate, statuses, action and paging controls), data query and 375/768/1280 layout wrappers.
+- Regression fixed (1): suppressing duplicate widget PageHeader using `showHeader={false}` also silently removed its explanatory description. Restore the exact existing widget description on the sole route-level PageHeader; no text changed and title stays unduplicated.
+- Extra clutter/alignment fixes: 0; quiz creation remains primary; outlined export, editor control sizes, error/empty/pagination unchanged.
+- Files changed: `src/app/(authenticated)/admin/quizzes/page.tsx`, queue and proof. Source-only verification, no CI.

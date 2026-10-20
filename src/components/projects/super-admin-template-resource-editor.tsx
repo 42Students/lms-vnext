@@ -44,12 +44,12 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
  }
  return <section className="min-w-0 space-y-3 border-b border-border pb-4">
   <div className="flex min-w-0 justify-end">
-   <Button type="button" variant="secondary" className="min-h-11 w-full sm:min-h-9 sm:w-auto" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
+   <Button type="button" variant="secondary" className="min-h-11 w-full sm:min-h-9 sm:w-auto" aria-expanded={open} disabled={pending} onClick={()=>setOpen(v=>!v)}
     >
     {open?"Close editor":"Edit resources"}</Button>
   </div>
   {open?<div className="min-w-0 space-y-4">
-   {rows.map((row,i)=><fieldset key={row.key} className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2">
+   {rows.map((row,i)=><fieldset key={row.key} disabled={pending} className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2">
     <legend className="px-2 text-[var(--lms-font-sm)] font-semibold text-foreground">Resource {i+1}</legend>
     <label className="text-[var(--lms-font-sm)] font-semibold text-body">Key<Input value={row.key} maxLength={64}
       onChange={e=>change(i,{key:e.target.value})} className={cls}/></label>
