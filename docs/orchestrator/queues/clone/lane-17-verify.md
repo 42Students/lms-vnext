@@ -29,8 +29,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-17.md: surface | regre
 - [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
 - [ ] `src/app/(authenticated)/admin/quizzes/page.tsx`
 - [ ] `src/app/(authenticated)/admin/recruiters/page.tsx`
