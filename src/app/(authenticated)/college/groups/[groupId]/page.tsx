@@ -155,7 +155,7 @@ export default async function CollegeGroupDetailPage({
       ) : null}
 
       <section className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Members</h2>
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Members</h2>
         {members.length === 0 ? (
           <EmptyState title="No members yet" description="Nobody has joined this group." />
         ) : (
@@ -186,7 +186,7 @@ export default async function CollegeGroupDetailPage({
       </section>
 
       {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Manage members</h2>
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Manage members</h2>
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
           Validate member CSV (dry run)
@@ -210,7 +210,7 @@ export default async function CollegeGroupDetailPage({
       /> : null}
 
       <section className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Recent activity</h2>
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recent activity</h2>
         {events.length === 0 ? (
           <EmptyState title="No activity yet" description="Membership changes appear here." />
         ) : (
