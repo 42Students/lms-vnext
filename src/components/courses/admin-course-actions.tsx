@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Dropdown } from "@/components/ui/dropdown";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -121,7 +123,8 @@ export function CourseActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 md:justify-end">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]>
+        {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Duplicate</Link>:null}
         <Button
           size="sm"
           className="min-h-11 md:min-h-9"
@@ -130,16 +133,8 @@ export function CourseActions({
         >
           Edit
         </Button>
-        <Dropdown trigger="More" label="Course actions" align="end" mobileSheet
-          className="relative" triggerClassName="min-h-11 md:min-h-9">
-          <div className="flex flex-col gap-2">
-            {duplicateHref ? <Link href={duplicateHref}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              Duplicate
-            </Link> : null}
-            <Button size="sm" className="min-h-11 w-full justify-start" variant="danger"
-              onClick={() => setArchiveOpen(true)}>Archive</Button>
-          </div>
+        <Dropdown trigger="More" label="Course actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+          <Menu className="w-full min-w-0"><MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem></Menu>
         </Dropdown>
       </div>
 
@@ -149,7 +144,7 @@ export function CourseActions({
         title="Edit Course"
         description="Department ownership is immutable after Course creation."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={pending}
@@ -189,12 +184,12 @@ export function CourseActions({
                 ? "Saving…"
                 : "Save"}
             </Button>
-          </>
+          </div>
         }
       >
-        <div className="grid gap-4">
+        <div className="grid min-w-0 items-start gap-[var(--lms-space-4)]">
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               {COLLEGE_COURSES_COPY.nameLabel}
             </span>
             <Input
@@ -205,23 +200,23 @@ export function CourseActions({
               maxLength={255}
             />
           </label>
-          {allowMetadata?<div className="grid gap-3">
-            <label className="grid gap-1 text-xs font-semibold text-body">Short display name
+          {allowMetadata?<div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+            <label className="grid min-w-0 gap-[6px] text-xs font-semibold text-body">Short display name
               <Input value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={120}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">Official course code (optional)
+            <label className="grid min-w-0 gap-[6px] text-xs font-semibold text-body">Official course code (optional)
               <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">Course takeaways (optional)
+            <label className="grid min-w-0 gap-[6px] text-xs font-semibold text-body">Course takeaways (optional)
               <Textarea value={takeaways} onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">Card colour
+            <label className="grid min-w-0 gap-[6px] text-xs font-semibold text-body">Card colour
               <Input value={cardColor} onChange={event=>setCardColor(event.target.value)}
                 maxLength={7} pattern="#[0-9A-Fa-f]{6}"/>
             </label>
           </div>:null}
           {!allowMetadata?<label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Code
             </span>
             <Input
@@ -233,7 +228,7 @@ export function CourseActions({
             />
           </label>:null}
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Description
             </span>
             <Textarea
@@ -324,7 +319,7 @@ export function OfferingActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]>
         <Button
           size="sm"
           className="min-h-11 md:min-h-9"
@@ -333,14 +328,9 @@ export function OfferingActions({
         >
           Edit
         </Button>
-        {!hideArchive ? <Button
-          size="sm"
-          className="min-h-11 md:min-h-9"
-          variant="danger"
-          onClick={() => setArchiveOpen(true)}
-        >
-          Archive
-        </Button> : null}
+        {!hideArchive ? <Dropdown trigger="More" label="Course offering actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+          <Menu className="w-full min-w-0"><MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem></Menu>
+        </Dropdown> : null}
       </div>
 
       <Dialog
@@ -349,7 +339,7 @@ export function OfferingActions({
         title="Edit Course Offering"
         description="Course, Cohort and Academic Period ownership are immutable."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={pending}
@@ -388,12 +378,12 @@ export function OfferingActions({
                 ? "Saving…"
                 : "Save"}
             </Button>
-          </>
+          </div>
         }
       >
         <div className="grid gap-4">
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Type
             </span>
             <Select
@@ -415,7 +405,7 @@ export function OfferingActions({
             </Select>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Credits
             </span>
             <Input
@@ -432,7 +422,7 @@ export function OfferingActions({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Display order
             </span>
             <Input

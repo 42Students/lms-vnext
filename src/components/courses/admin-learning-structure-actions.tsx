@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
@@ -127,7 +129,7 @@ export function CreateLearningPathPanel({
       </p>
       <div className="mt-4 grid gap-4">
         <label>
-          <span className="mb-1.5 block text-xs font-semibold text-body">
+          <span className="mb-[6px] block text-xs font-semibold text-body">
             Title
           </span>
           <Input
@@ -140,7 +142,7 @@ export function CreateLearningPathPanel({
           />
         </label>
         <label>
-          <span className="mb-1.5 block text-xs font-semibold text-body">
+          <span className="mb-[6px] block text-xs font-semibold text-body">
             Description
           </span>
           <Textarea
@@ -155,7 +157,7 @@ export function CreateLearningPathPanel({
           />
         </label>
       </div>
-      <div className="mt-4">
+      <div className="mt-[var(--lms-space-4)] flex justify-stretch md:justify-end [&>button]:w-full md:[&>button]:w-auto">
         <Button
           type="submit"
           loading={pending}
@@ -209,7 +211,7 @@ export function LearningPathActions({
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="sm"
           variant="secondary"
@@ -248,15 +250,7 @@ export function LearningPathActions({
             Unpublish
           </Button>
         ) : null}
-        <Button
-          size="sm"
-          variant="danger"
-          onClick={() =>
-            setArchiveOpen(true)
-          }
-        >
-          Archive
-        </Button>
+        <Dropdown trigger="More" label="Learning structure actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu className="w-full min-w-0"><MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown>
       </div>
 
       <Dialog
@@ -265,7 +259,7 @@ export function LearningPathActions({
         title="Edit Learning Path"
         description="The Offering relationship is immutable."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={pending}
@@ -302,12 +296,12 @@ export function LearningPathActions({
                 ? "Saving…"
                 : "Save"}
             </Button>
-          </>
+          </div>
         }
       >
-        <div className="grid gap-4">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)]">
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Title
             </span>
             <Input
@@ -319,7 +313,7 @@ export function LearningPathActions({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Description
             </span>
             <Textarea
@@ -423,14 +417,14 @@ export function CreateLessonForm({
   return (
     <form
       onSubmit={submit}
-      className="rounded-xl border border-dashed border-border bg-surface p-4"
+      className="min-w-0 border-t border-border pt-[var(--lms-space-4)]"
     >
       <p className="m-0 text-sm font-semibold text-foreground">
         Add Lesson
       </p>
-      <div className="mt-3 grid gap-3 md:grid-cols-[1fr_2fr_auto] md:items-end">
+      <div className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto]">
         <label>
-          <span className="mb-1.5 block text-xs font-semibold text-body">
+          <span className="mb-[6px] block text-xs font-semibold text-body">
             Name
           </span>
           <Input
@@ -443,7 +437,7 @@ export function CreateLessonForm({
           />
         </label>
         <label>
-          <span className="mb-1.5 block text-xs font-semibold text-body">
+          <span className="mb-[6px] block text-xs font-semibold text-body">
             Description
           </span>
           <Input
@@ -499,7 +493,7 @@ export function LessonActions({
 
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="sm"
           variant="secondary"
@@ -516,15 +510,7 @@ export function LessonActions({
         >
           Edit
         </Button>
-        <Button
-          size="sm"
-          variant="danger"
-          onClick={() =>
-            setArchiveOpen(true)
-          }
-        >
-          Archive
-        </Button>
+        <Dropdown trigger="More" label="Lesson actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu className="w-full min-w-0"><MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown>
       </div>
 
       <Dialog
@@ -532,7 +518,7 @@ export function LessonActions({
         onOpenChange={setEditOpen}
         title="Edit Lesson"
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={pending}
@@ -575,12 +561,12 @@ export function LessonActions({
                 ? "Saving…"
                 : "Save"}
             </Button>
-          </>
+          </div>
         }
       >
-        <div className="grid gap-4">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)]">
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Name
             </span>
             <Input
@@ -592,7 +578,7 @@ export function LessonActions({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Description
             </span>
             <Textarea
@@ -606,7 +592,7 @@ export function LessonActions({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-xs font-semibold text-body">
               Order
             </span>
             <Input
