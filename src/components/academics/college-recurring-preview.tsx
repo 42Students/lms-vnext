@@ -9,7 +9,7 @@ import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
-import {apiFetch} from "@/lib/api-fetch";
+import { apiFetch } from "@/lib/api-fetch";
 
 type Option = { id: string; name: string };
 type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string; updatedAt: string };
@@ -124,19 +124,20 @@ export function CollegeRecurringPreview({
     });
   }
   return (
-    <section className="space-y-5">
-      <p className="text-sm text-body">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p>
+    <section className="min-w-0 space-y-[var(--lms-space-4)]">
+      <p className="max-w-[75ch] text-sm leading-5 text-body">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p>
       {classes.length === 0 ? (
         <Alert tone="info">
           No active classes are registered for this college. Create a class before previewing a schedule.
         </Alert>
       ) : (
-        <form onSubmit={preview} className="space-y-4 border-t border-border pt-4">
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session title
+        <form onSubmit={preview} className="min-w-0 space-y-[var(--lms-space-4)]">
+          <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session title
             <Input required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
               className="min-h-11 min-w-0 md:min-h-9"/>
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
             <Select required value={sectionId} onChange={(e) => onClass(e.target.value)}
               className="min-h-11 min-w-0 md:min-h-9">
               <option value="">Select a class</option>
@@ -144,7 +145,7 @@ export function CollegeRecurringPreview({
             </Select>
           </label>
           {selected ? <p className="text-xs text-muted-foreground">Academic period: {selected.periodStart} to {selected.periodEnd}</p> : null}
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course (optional)
+          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course (optional)
             <Select value={deliveryId} onChange={e => setDeliveryId(e.target.value)}
               disabled={!sectionId} className="min-h-11 min-w-0 md:min-h-9">
               <option value="">No course linked</option>
@@ -152,31 +153,32 @@ export function CollegeRecurringPreview({
                 <option key={item.id} value={item.id}>{item.name} ({item.code})</option>)}
             </Select>
           </label>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From
+          </div>
+          <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From
               <Input type="date" required value={from} min={selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setFrom(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 93 days)
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 93 days)
               <Input type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setTo(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
               <Input type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
               <Input type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
           </div>
-          <fieldset className="space-y-2">
+          <fieldset className="min-w-0 space-y-[var(--lms-space-3)]">
             <legend className="text-sm font-semibold text-body">Repeat on weekdays</legend>
-            <div className="flex flex-wrap gap-3">
+            <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] sm:grid-cols-4 lg:grid-cols-7">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
-                <label key={day} className="flex min-h-11 items-center gap-2 text-sm text-body md:min-h-9">
+                <label key={day} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-3)] text-sm text-body">
                   <Checkbox checked={weekdays.includes(index)}
                     onChange={(e) => setWeekdays((current) => e.target.checked
                       ? [...current, index].sort()
@@ -186,15 +188,15 @@ export function CollegeRecurringPreview({
               ))}
             </div>
           </fieldset>
-          <div className="grid gap-3 md:grid-cols-2">
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
+          <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
               <Select value={facultyId} onChange={(e) => setFacultyId(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No faculty selected</option>
                 {faculty.map((f) => <option key={f.id} value={f.id}>{f.displayName || "Unnamed faculty"}</option>)}
               </Select>
             </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lecture hall (optional)
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lecture hall (optional)
               <Select value={hallId} onChange={(e) => setHallId(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No lecture hall selected</option>
@@ -202,7 +204,7 @@ export function CollegeRecurringPreview({
               </Select>
             </label>
           </div>
-          <Button type="submit" loading={pending} className="min-h-11 md:min-h-9" disabled={pending || !sectionId || !from || !to || weekdays.length === 0}>
+          <Button type="submit" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || !sectionId || !from || !to || weekdays.length === 0}>
             {pending ? "Checking conflicts…" : "Preview sessions"}
           </Button>
           {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
@@ -216,14 +218,14 @@ export function CollegeRecurringPreview({
             <li key={item.localDate}>{item.localDate}: {item.reasons.map(reason => reason.replaceAll("_", " ")).join(", ")}</li>)}</ul>
         </>}
       </Alert> : null}
-      {result ? <section aria-label="Schedule preview results" className="space-y-3">
-        <h2 className="text-lg font-semibold text-foreground">Preview · {result.ready} clear, {result.blocked} blocked</h2>
+      {result ? <section aria-label="Schedule preview results" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+        <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Preview · {result.ready} clear, {result.blocked} blocked</h2>
         <p className="text-sm text-muted-foreground">{result.notice}</p>
-        <Button type="button" loading={pending} className="min-h-11 md:min-h-9" disabled={pending || !title.trim() || result.ready===0}
+        <Button type="button" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || !title.trim() || result.ready===0}
           onClick={execute}>{pending?"Creating…":"Confirm and create "+result.ready+" sessions"}</Button>
         {result.blocked>0 ? <Alert tone="warning">Conflicting dates will be skipped; clear dates may still be created.</Alert> : null}
         {result.slots.length === 0 ? <EmptyState title="No matching dates" description="No selected weekdays match this date range."/> : (
-          <div className="max-h-[32rem] min-w-0 overflow-auto border-y border-border">
+          <div className="max-h-[32rem] min-w-0 overflow-y-auto border-y border-[var(--lms-canvas-border)]">
             <DataTable<Result["slots"][number]>
               caption="Recurring sessions preview"
               rows={result.slots}

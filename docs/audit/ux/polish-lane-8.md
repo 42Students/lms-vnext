@@ -89,3 +89,11 @@
 **Source states reviewed:** bad query/clear, inaccessible data, no matching rows, 25-item pages, advanced filters, no available batches/periods, create validation/pending/success/failure, edit/cancel/unsaved discard/blocked status, lifecycle actions, schedule route, 375/768 layout; route loading/error and inherited college layout/not-found; shared DataTable/FilterBar/Disclosure/Dialog inspected. No execution, CI or browser render.
 
 **Files changed:** `src/app/(authenticated)/college/classes/page.tsx`, `src/components/academics/college-structure-directory.tsx`, `src/components/academics/college-section-management.tsx`; proof and queue tick in same commit.
+
+## Surface 16 — src/app/(authenticated)/college/classes/recurring-preview/page.tsx
+
+**8 problems/fixes:** PageHeader divider repeated at form entry; three identity inputs stacked into a tall wizard; date/time fields crowded at tablet widths; 6px label gaps deviated from legacy; weekday checkboxes made unstable wrapping and small targets; optional faculty/hall inputs competed with time controls; Preview/Confirm buttons could be narrow at 375px; preview results lacked a distinct section edge. Removed duplicate border, aligned first fields into 2-column tablet grid (order/meaning unchanged), dates/times adaptive 2/4 columns, normalized 8/12/16px gaps, 2/4/7-column weekday selector with 44px targets, equal responsive selector gutters, full-width phone actions and single result table divider. IST calculation, preview stale-data checks, API payload, default weekdays, constraints, conflict notices, success/skips, ConfirmDialog unchanged.
+
+**Source states:** no classes, invalid/missing selection, selected period, preview pending/error/empty/ready/blocked, stale form, zero weekdays, final confirm/pending/skipped/success, server error, 375/768 layout. Examined route loading.tsx/error.tsx, college layout/inherited not-found, shared DataTable and ConfirmDialog. Static source review only; no CI/screenshots.
+
+**Files changed:** src/app/(authenticated)/college/classes/recurring-preview/page.tsx; src/components/academics/college-recurring-preview.tsx; proof/queue tick.
