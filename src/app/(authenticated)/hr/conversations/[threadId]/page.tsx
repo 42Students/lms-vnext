@@ -130,7 +130,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{message.body}</p>
    </li>)}
   </ol>
-  {!result.messages.length?<EmptyState title="No messages on this page" description="No messages on this page."/>:null}
+  {!result.messages.length?<EmptyState title="No messages on this page" action={<Link href={"/hr/conversations?collegeId="+encodeURIComponent(result.thread.collegeId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Back to conversations</Link>}/>:null}
   <nav aria-label="Conversation history" className="flex min-w-0 flex-wrap items-center gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-primary-text min-[768px]:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newest messages</Link>:null}
