@@ -88,7 +88,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
    title={"Move "+(pendingRow?.name??"this student")+" to "+
     (classes.find(item=>item.id===destinations[pendingRow?.learnerEnrollmentId??""])?.name??"selected class")+"?"}
    description="The active cohort roster and assignment will be updated; this action is audited."
-   confirmLabel="Move" pending={Boolean(moving)}
+   confirmLabel="Move" confirmVariant="primary" pending={Boolean(moving)}
    confirmDisabled={!pendingRow||!destinations[pendingRow.learnerEnrollmentId]}
    onConfirm={()=>{if(pendingRow)void assign(pendingRow);}}/>
 
