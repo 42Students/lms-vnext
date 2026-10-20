@@ -183,7 +183,7 @@ function AssignmentItem({
 }) {
 
   return (
-    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <article className="min-w-0 border-b border-border bg-transparent py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -271,7 +271,7 @@ function QuizItem({
 }) {
 
   return (
-    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <article className="min-w-0 border-b border-border bg-transparent py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">

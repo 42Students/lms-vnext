@@ -12,7 +12,7 @@ import monthStyles from "@/components/academics/legacy-class-month-grid.module.c
 import { LearnerClassSchedule,type LearnerScheduleEvent }
   from "@/components/academics/learner-class-schedule";
 import {
-  currentIstMonth,facultyMonthHref,facultyMonthQuerySchema,shiftMonth,
+  currentIstMonth,facultyMonthHref,facultyMonthQuerySchema,istDateKey,shiftMonth,
 } from "@/modules/courses/faculty-ist-month-model";
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 
@@ -45,7 +45,7 @@ export default async function FacultyCalendarPage({
     courseName:event.courseName,courseCode:event.courseCode,
   }));
   const names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  const todayIst = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+  const todayIst = istDateKey(new Date());
   const selected=grid.query.deliveryId;
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"
