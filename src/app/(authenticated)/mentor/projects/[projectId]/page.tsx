@@ -118,7 +118,7 @@ export default async function MentorProjectPage({
           Recorded project activity →
         </Link>
       </div></Disclosure></section> : null}
-      {selectedTab==="board"?<div className="space-y-5">
+      {selectedTab==="board"?<div className="space-y-6">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}
           readOnly={access.access==="OBSERVER"||workspace.project.status==="ARCHIVED"||workspace.project.status==="COMPLETED"}/>

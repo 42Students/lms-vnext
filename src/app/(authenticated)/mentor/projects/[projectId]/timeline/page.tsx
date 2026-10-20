@@ -39,7 +39,7 @@ export default async function MentorProjectTimelinePage({
         Sprint workspace
       </Link>} />
     {!data.enabled?<section role="status"
-      className="border-b border-border pb-5">
+      className="border-b border-border pb-6">
       Projects access is disabled; no timeline was loaded.
     </section>:<>
       <NeedsDoingChips className={styles.filters} label="Release status filters:" selectedKey={data.query.releaseStatus}

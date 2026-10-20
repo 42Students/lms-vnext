@@ -54,12 +54,12 @@ export default async function LearnerNotificationHistoryPage({
       <nav aria-label="Notification history filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
         <Link href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
-          className={!page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-medium text-body hover:border-primary hover:bg-[rgba(38,186,199,0.07)] min-[768px]:min-h-9"}>
+          className={!page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-medium text-body hover:border-primary hover:bg-[rgba(38,186,199,0.07)] min-[768px]:min-h-9"}>
           All personal
         </Link>
         <Link href="/learn/notifications/history?unread=1"
           aria-current={page.unreadOnly ? "page" : undefined}
-          className={page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-medium text-body hover:border-primary hover:bg-[rgba(38,186,199,0.07)] min-[768px]:min-h-9"}>
+          className={page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-medium text-body hover:border-primary hover:bg-[rgba(38,186,199,0.07)] min-[768px]:min-h-9"}>
           Unread only
         </Link>
       </nav>
@@ -68,7 +68,7 @@ export default async function LearnerNotificationHistoryPage({
         Counts are page-local; this is not a complete-inbox count.
       </p>
       {emptyMessage ? (
-        <section role="status" className="border-y border-[var(--lms-canvas-border)] px-6 py-12 text-center">
+        <section role="status" className="border-y border-[var(--lms-canvas-border)] px-4 py-6 text-center">
           <p className="text-sm text-body">{emptyMessage}</p>
         </section>
       ) : (

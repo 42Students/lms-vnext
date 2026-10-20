@@ -56,7 +56,7 @@ export default async function ProfileCompleteness({searchParams}:{
         {option.label}
       </Link>)}
     </nav>
-    <section className="border-t border-border pt-5">
+    <section className="border-t border-border pt-6">
       <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your sections</h2>
       {readiness.items.length===0 ? <p className="mt-3 text-sm text-body">
         No sections match this filter. Choose All sections to review the full checklist.

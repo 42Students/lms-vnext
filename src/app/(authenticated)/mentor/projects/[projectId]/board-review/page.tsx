@@ -31,7 +31,7 @@ export default async function MentorBoardReviewPage({
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no tasks were loaded."}
       actions={<Link data-unskin="" href={base+"?tab=board"}
