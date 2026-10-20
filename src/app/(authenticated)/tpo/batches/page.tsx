@@ -124,7 +124,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {!data.ready&&deadlineParsed.data!=="ALL"?<InlineNotice tone="info" message="Deadline details are temporarily unavailable. All matching batches are still shown."/>:null}
   {!data.ready&&parsed.data.state!=="ALL"?<InlineNotice tone="info" message="Batch state details are temporarily unavailable. All matching batches are still shown."/>:null}
   {!data.ready?<Alert tone="warning">Some batch details are temporarily unavailable. Academic batches remain visible; try again later.</Alert>:null}
-  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:grid-cols-4">{[
+  <dl className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:grid-cols-4">{[
   ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
   ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-border p-3 last:border-r-0"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready&&value!==null?value:"—"}</dd></div>)}</dl>
   {workingSet.hidden>0?<Alert tone="info" className="flex-row flex-wrap items-center gap-2">
@@ -159,13 +159,13 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
       ] as const;
       return <div className="space-y-2">
         <p className="text-xs text-muted-foreground leading-5">{summary.assessed} {summary.assessed===1?"student":"students"} in batch</p>
-        <dl className="grid grid-cols-2 gap-1 text-xs">
+        <dl className="grid grid-cols-1 gap-1 text-xs md:grid-cols-2">
          <div><dt className="text-muted-foreground">Invited</dt><dd className="font-semibold">{b.invitedAt?"Yes":"Not yet"}</dd></div>
          <div><dt className="text-muted-foreground">Registered</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.registered??0}</dd></div>
          <div><dt className="text-muted-foreground">Verified profiles</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.verified??0}</dd></div>
          <div><dt className="text-muted-foreground">Placed (offer evidence)</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.placed??0}</dd></div>
         </dl>
-        <dl className="grid grid-cols-2 gap-1 text-xs">
+        <dl className="grid grid-cols-1 gap-1 text-xs md:grid-cols-2">
           {split.map(part=><div key={part.key}>
             <dt className="text-muted-foreground">{part.label}</dt>
             <dd className="font-semibold tabular-nums">{part.count}</dd>

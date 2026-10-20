@@ -35,14 +35,14 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
     </Select></label>
    <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
   </form>
-  <section aria-label="Interview readiness counts" className="grid grid-cols-2 gap-3 min-[768px]:grid-cols-3">
+  <section aria-label="Interview readiness counts" className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-3">
    {Object.entries(data.counts).map(([key,n])=><StatTile key={key} className={tpoTileStyles.tile}
     label={key.replaceAll(/([A-Z])/g," $1")} value={n} />)}
   </section>
   <p role="status" className="text-sm text-body">Interview rounds page {data.page}: {data.rows.length} actionable results. Pages are drawn from the persisted round book.</p>
   <nav aria-label="Interview round pages" className="flex flex-wrap gap-3">
-   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link">Previous 200</Link>:null}
-   {data.limited?<Link href={href(data.page+1)} className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link">Next 200</Link>:null}
+   {data.page>1?<Link href={href(data.page-1)} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link">Previous 200</Link>:null}
+   {data.limited?<Link href={href(data.page+1)} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link">Next 200</Link>:null}
   </nav>
   {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found."/>:
    <section aria-label="Interview rounds" className="divide-y divide-border border-y border-border">
