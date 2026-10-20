@@ -57,7 +57,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
   const csvDownload = report ? "data:text/csv;charset=utf-8," +
     encodeURIComponent("\uFEFF" + studentImportReportCsv(report.results)) : null;
 
-  return <div className="min-w-0 space-y-[16px]">
+  return <div className="min-w-0 max-w-4xl space-y-6">
     <section className="border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">Upload or paste CSV</h2>
       <p className="mt-2 text-sm text-body">
@@ -72,7 +72,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download CSV template
       </a>
-      <div className="mt-3 grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 min-[992px]:grid-cols-3 print:hidden">
+      <div className="mt-4 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 print:hidden">
         <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
@@ -107,7 +107,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
             if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
             setCsv(await file.text()); setReport(null); setConfirm(false); setError(null);
           }} />
-      <label className="mt-4 grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">
+      <label className="mt-4 grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">
         CSV contents
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
@@ -118,14 +118,14 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
-      })} className="mt-4 min-h-11 md:min-h-9 print:hidden">
+      })} className="mt-4 min-h-11 w-full md:min-h-9 md:w-auto print:hidden">
         {pending ? "Validating..." : "Preview validation"}
       </Button>
       {error ? <Alert tone="error" className="mt-3">{error}</Alert> : null}
     </section>
 
     {report ? <section aria-label="CSV validation and result report"
-      className="space-y-4 border-t border-border pt-4">
+      className="min-w-0 space-y-4 border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">
         {report.preview ? "Dry-run report" : "Import result"}
       </h2>
@@ -160,7 +160,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               setError(reason instanceof Error ? reason.message : "Import failed");
             }
           })}
-          className="min-h-11 md:min-h-9 print:hidden">
+          className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden">
           {pending ? "Importing..." : "Confirm import of validated rows"}
         </Button>
       </div> : null}
