@@ -38,7 +38,9 @@ export default async function CollegeBatchesPage({
   const periodChoices = periods.filter(period => period.status !== "CLOSED").map(period => ({
     id: period.id, name: period.name, code: period.code,
   }));
-  return <div className="min-w-0 overflow-x-clip space-y-6">
+  return <div className="min-w-0 overflow-x-clip">
+    <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices}
+      leading={<div className="min-w-0 space-y-4">
     <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
@@ -47,6 +49,7 @@ export default async function CollegeBatchesPage({
     </Link>
     <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching batches; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
     </div>
-    <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices} />
+
+      </div>}/>
   </div>;
 }
