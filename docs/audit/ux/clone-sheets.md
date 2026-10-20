@@ -819,3 +819,27 @@ grep -nE '<(button|table|details)([[:space:]>])|<Button|</Button>|<Checkbox|<Sel
 Phone <=767px: 44px choice labels, one-column note list, fallback card grid. Tablet >=768px: two-column note list and Quartz grid; wide >=1280px: three-column note choices. Checked/indeterminate, keyboard focus, loading and error remain source-backed. Exact legacy per-cell colors/row heights and rendered hover/selected state are not certified. No CI, compiler, app or browser executed; E8 remains [ ] because AG Grid packages are undeclared and legacy TpoGrid source is unavailable.
 
 **Next exact file:** `src/components/tpo/tpo-applications-spreadsheet.tsx` for applicants' E8 role-safe selection, 48px column, footer/action link semantics and 768px card fallback.
+
+
+### 2026-10-20 chat-14 — applicant sheet timestamp sort and responsive row actions
+
+| Property/state | Old-LMS source / requirement | Applicant sheet current source | Source result |
+|---|---|---|---|
+| Numeric/date sortable only | `ui-clone-checklist.md:57` numeric/date sort only; formatted display values stay unchanged | `tpo-applications-spreadsheet.tsx:30-44` 5 numeric sort columns + Submitted IST date. Date sort uses Date.parse(submittedAt) through `sortValue`, not the displayed IST string | Correct source comparator with blank-last behavior from shared TpoGrid |
+| Role-safe review actions | TPO applicant sheet actions must follow existing access-controlled workflow | `tpo-applications-spreadsheet.tsx:64-70` original review drawer, previous/next scoped row IDs and encoded 'Open applicant' URL retained | No server data/permissions or action flow changed |
+| Mobile tap geometry | `components___antddesign.scss:1081-1100` 44px phone action floor | Applicant detail Link line 69: `min-h-11 md:min-h-9` (44/36), shared TpoGrid fallback uses md:hidden cards | Phone and breakpoint values match |
+| Grid desktop/phone | `old-lms-shell.css:23,73` phone <=767px and desktop >=768px | Caller lines 17-19 uses `next/dynamic` ssr:false; native TpoGrid wraps Quartz as hidden md:block and cards md:hidden | Exact source cutoff; no viewport screenshot |
+| Selection column | E8 48px pinned column applies to views with supported selection actions | This applicant detail view intentionally supplies no `selection` prop; its drawer and detail links are the authorized actions | No invented bulk selector/unauthorized mutation |
+| Loading and empty | Need loading status while client-only sheet resolves | Loader line 19 retains 'Loading applicant spreadsheet…', GridWorkspace and shared TpoGrid maintain no-rows state | Existing output preserved |
+
+Complete fetched-file source grep equivalent: `tpo-applications-spreadsheet.tsx` has **1 TpoGrid self-closing caller**, **1 GridWorkspace wrapper**, **1 ssr:false dynamic boundary**, **6 sortKind columns (5 number, 1 date)**, **1 explicit sortValue**, **0 raw button/input/select/textarea/table/details tags**. Column labels, filters and authorized row fields are unchanged except added sort metadata. Source inspection only; no TypeScript execution, CI or browser proof.
+
+Reproduce in checkout (not executed):
+```sh
+grep -nE 'ssr:false|sortKind|sortValue|<TpoGrid|<GridWorkspace|mobileActionsCollapsible|rowActions|md:min-h-9' src/components/tpo/tpo-applications-spreadsheet.tsx
+grep -nE '<(button|input|select|textarea|table|details)([[:space:]>])' src/components/tpo/tpo-applications-spreadsheet.tsx
+```
+
+E8 remains [ ] pending native AG Grid dependency resolution, legacy renderer source, all-grid coverage, computed state matrices and phone/tablet/desktop screenshots.
+
+**Next exact file:** `src/components/tpo/tpo-companies-spreadsheet.tsx` — reconcile Companies grid columns, selection, saved layout and compact mobile display with the same legacy E8 value table.
