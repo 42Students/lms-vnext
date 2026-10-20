@@ -85,7 +85,7 @@ export default async function CollegeGroupsPage({
         method="get"
         className="flex flex-wrap items-end gap-3 border-t border-border pt-4"
       >
-        <label className="block min-w-[180px]">
+        <label className="block min-w-0 md:min-w-44">
           <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Type
           </span>
@@ -98,7 +98,7 @@ export default async function CollegeGroupsPage({
             ))}
           </Select>
         </label>
-        <label className="block min-w-[160px]">
+        <label className="block min-w-0 md:min-w-40">
           <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Status
           </span>
