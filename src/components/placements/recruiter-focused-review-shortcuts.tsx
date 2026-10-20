@@ -33,7 +33,7 @@ export function RecruiterFocusedReviewShortcuts({
 
       const target = e.target;
       if (target instanceof Element &&
-          target.closest('input,textarea,select,[contenteditable="true"]')) return;
+          target.closest('input,textarea,select,button,a,[role="button"],[role="combobox"],[contenteditable="true"]')) return;
 
       if (e.key.toLowerCase() === "n" && nextHref) {
         e.preventDefault();
@@ -49,6 +49,11 @@ export function RecruiterFocusedReviewShortcuts({
   }, [router, nextHref, previousHref]);
 
   return previousHref || nextHref
-    ? <p className="mt-2 text-[13px] leading-5 text-muted-foreground">Keyboard: N next, P previous, Esc close. S pass · W/H waitlist · R not selected · A absent · Z undo draft while results editor is focused. The placement cell applies official results.</p>
-    : <p className="mt-2 text-[13px] leading-5 text-muted-foreground">Press Esc to close this applicant review.</p>;
+    ? <details className="group mt-3 min-w-0 border-t border-border pt-2">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">
+          Keyboard shortcuts <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
+        </summary>
+        <p className="pb-2 text-[13px] leading-5 text-muted-foreground">Keyboard: N next, P previous, Esc close. S pass · W/H waitlist · R not selected · A absent · Z undo draft while results editor is focused. The placement cell applies official results.</p>
+      </details>
+    : <p className="mt-2 break-words text-[13px] leading-5 text-muted-foreground">Press Esc to close this applicant review.</p>;
 }
