@@ -158,7 +158,7 @@ export default async function CollegeElectiveAllocatePage({
       (reason ? "&reason=" + encodeURIComponent(reason) : ""));
   }
 
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
     <PageHeader title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
       actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to Electives</Link>} />
@@ -166,21 +166,21 @@ export default async function CollegeElectiveAllocatePage({
       Processed {input.added} learner(s); {input.failed ?? "0"} failed.
       {input.reason ? " " + input.reason : ""}
     </Alert>}
-    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
         <Select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
           <option value="">All sections</option>
           {allSections.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll number or learner ID
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll number or learner ID
         <Input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
     </form>
-    <form action={allocate} className="space-y-4 border-b border-border pb-4">
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Allocate selected to…
+    <form action={allocate} className="space-y-4 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Allocate selected to…
         <Select name="offeringGroup" required className={fieldStyle}>
           <option value="">Choose elective offering</option>
           {offerings.map(o => <option key={o.id} value={o.groupId}>
@@ -190,7 +190,7 @@ export default async function CollegeElectiveAllocatePage({
       </label>
       {offerings.length === 0 && <EmptyState title="No elective offerings" description="Add a course offering to this slot before allocating learners."/>}
       <ScrollCue axis="y" label="Eligible students for allocation"
-        className="min-w-0" viewportClassName="max-h-80">
+        className="min-w-0" viewportClassName="max-h-[26rem]">
         <DataTable
           caption="Eligible students for allocation"
           rows={students}
@@ -211,7 +211,7 @@ export default async function CollegeElectiveAllocatePage({
       </ScrollCue>
       <p className="text-xs text-muted-foreground">
         Showing up to 500 matching active learners. Filter by section or search for a smaller list.</p>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Or paste roll numbers / learner membership IDs
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Or paste roll numbers / learner membership IDs
         <Textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
