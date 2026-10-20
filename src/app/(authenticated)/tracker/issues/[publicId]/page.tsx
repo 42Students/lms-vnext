@@ -51,7 +51,7 @@ export default async function TrackerIssueDetailPage({
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-4">
         <PageHeader title={publicId} description="The tracker is temporarily unavailable." />
         <TrackerAdminNav />
         <ErrorState title="Issue details unavailable"
@@ -90,9 +90,7 @@ export default async function TrackerIssueDetailPage({
         title={issue.publicId}
         description={`${issue.issueType} · ${issue.page}`}
         actions={
-          <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-foreground">
-            Back to issues
-          </Link>
+          <PageBackLink href="/tracker/issues" label="Back to issues"/>
         }
       />
       <TrackerAdminNav />
