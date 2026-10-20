@@ -143,7 +143,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
     applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
-  <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title="Application status update" dismissible={!busy}>
+  <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title="Application status update" dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
+    <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}>Close</Button>
+    <Button type="button" disabled={busy||email||reason.trim().length<3||!selectedCount}
+      onClick={()=>void save()}>{busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
+   </div>}>
     <p className="text-base font-semibold">{action==="REINSTATE"?"Reinstate this application?":
       target==="REJECTED"?"Reject selected applications":"Move applications to "+target}</p>
     <p className="text-sm text-body">{selectedCount} application(s) chosen. Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change.
@@ -168,13 +172,6 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <p className="font-semibold">{outcome.moved} updated, {outcome.skipped} skipped.</p>
      {outcome.results.filter(r=>r.status==="skipped").map(r=><p key={r.applicationId}>{rowMap.get(r.applicationId)?.name??r.applicationId}: {r.reason}</p>)}
     </div>:null}
-    <div className="flex min-w-0 flex-col-reverse gap-3 sm:flex-row sm:justify-end [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
-     <Button type="button" disabled={busy||email||reason.trim().length<3||!selectedCount}
-      onClick={()=>void save()} >
-      {busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
-     <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}
-      >Close</Button>
-    </div>
   </Dialog>
  </section>;
 }

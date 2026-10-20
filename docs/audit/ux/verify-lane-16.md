@@ -12,49 +12,62 @@ Regression fixed (2 linked defects): Advanced Filters disclosed by default becau
 ## 4. src/app/(authenticated)/admin/lessons/page.tsx
 Other-lane proof read from polish-lane-6.md. Verified page and components SuperAdminLearningFilterFields, SuperAdminLessonCreate, SuperAdminLessonBulkVisibility, LessonActions and its Dialog/ConfirmDialog, visibility/reorder controls, Pagination, PageHeader, Alert, EmptyState, StatusBadge and route loading/error (no local template or not-found). Exports/props and JSX/attributes match; permissions, filters, links, labels, 44px targets and defaults preserved. No confirmed regression or remaining alignment fix after source review of empty, filled, loading, retry, pending, bulk failure and 375/768 breakpoints. Files: verification queue/proof. No CI.
 
-
 ## 5. src/app/(authenticated)/admin/live-classes/page.tsx
 Verified source route wrapper, shared SuperAdminContentDirectoryPage, SuperAdminContentAuthoring (including FacultyLessonAuthoring and video manager path), SuperAdminContentActions, pagination, status/banner/empty/error, and route-specific directory-shaped loading and retry error boundary; no local template/not-found. Polished-by-other-lane proof (polish-lane-6.md) checked. Kind LIVE_CLASSES matches accepted kind union, props and imports valid, forms contain labels and retained status/section/audience filters. Error, missing scope, missing authoring picker, empty, authoring/edit/transition dialogs and 375/768 layouts inspected at source level. No confirmed regression or extra fix; no CI. Files: verification queue/proof.
-
 
 ## 6. src/app/(authenticated)/admin/module-access/page.tsx
 Read other lane's polish-lane-6.md proof, module access query strict parser, scope metrics and service contracts, SuperAdmin group tab shell, Input/Button/Pagination/EmptyState/ErrorState, and route loading/error (not-found/template absent). No broken tags/props, duplicate attributes, missing exports, reworded labels or scope changes found. Overview three-metric strip, filtering, no-college, invalid-search, empty, filled, pagination and 375/768 classes checked by source. Current density and action hierarchy acceptable; no change. Files: queue and proof, no CI.
 
-
 ## 7. src/app/(authenticated)/admin/organizations/page.tsx
 Read prior polish-lane-6.md entry and page, OrganizationActions/CreateForm/TenantRestoreAction, FilterBar and responsive drawer, DataTable/Pagination/Disclosure, route loading/error plus admin layout (route not-found/template absent). Checked valid nested JSX, existing props, hrefs/permissions, original organization labels and archived restoration safeguards. Create flow, filtering, no matches, invalid query, rename/archive/restore, pending/error, 375/768 menu and mobile drawer states retain legacy hierarchy. No confirmed regression or extra fix. Files: queue/proof, source-only no CI.
-
 
 ## 8. src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx
 Read complete page, membership audit service, PageBackLink/StatusBadge/EmptyState/PageHeader/ErrorState, local loading/error/not-found and parent admin layout. Reviewed other lane's polish-lane-6.md evidence. Status/result union, null=>notFound, scope and confidentiality preserved; no JSX/tag/prop/import/copy regression found. Audit events, long summaries, IST timestamps, empty/not-found/unavailable, phone/tablet and keyboard back nav retain clean left alignment. No code fix required. Files: verification queue and proof. Source-only, no CI.
 
-
 ## 9. src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx
 Second-pass checked complete page and other lane's polish-lane-6.md evidence, exact membership scope and masked contact service fields, PageBackLink, Badge/StatusBadge, SuperAdminPlatformBlockAction with audit-reason form/ConfirmDialog, and route loading/error/not-found/parent layout. JSX balanced and exported props/ids, role safeguards, error, empty and audit destinations intact. 375/768 status group, details grid, single audit CTA and rare high-risk platform action behind disclosure remain aligned. No regression/further fix confirmed. Source only, no CI. Files: verification queue/proof.
-
 
 ## 10. src/app/(authenticated)/admin/people/directory/page.tsx
 Verified page/other-lane polish-lane-6.md proof, CsvControl export (no private contact fields), Tabs, DataTable, Pagination, status badges, adminUserDirectory query parsing/role handling, route loading/error and parent admin layout; route-local not-found/template absent. No duplicate JSX attributes, missing components, broken links or role/filter defaults identified. All/faculty/student tabs, masked/unmasked contacts, invalid search, permission denial, CSV failure, empty/filled, 375/768 layout stay coherent; no source fix required. Files: queue/proof; no CI.
 
-
 ## 11. src/app/(authenticated)/admin/people/page.tsx
 Read entire page, other lane's polish-lane-6.md proof, PersonMembershipActions plus its PersonProfileDialog/roles/suspend/end/ConfirmDialog, PersonOnboardDialog, PageSizeSelect, CsvControl, DataTable, Pagination, loading/error boundaries and super-admin layout. JSX/imported props, export query shape, membership scope, role options, endpoints, copy, redaction and ids retained. At 375/768 primary onboarding, advanced status/rows disclosure, action menu, failure feedback, empty/no-scope and pagination stay cohesive. No confirmed regressions or further fixes. Files: queue/proof; no CI.
-
 
 ## 12. src/app/(authenticated)/admin/people/unassigned/page.tsx
 Reviewed source, adminUnassignedUsersQuerySchema/permission scope, Pagination and PageHeader/ErrorState/EmptyState, other-lane polish-lane-6.md entry, local loading/error and parent layout. Fixed 2 layout/semantic issues: invalid-filter page had only ErrorState h2 and no page h1; added same title via PageHeader without rewording. Route loading had duplicate identical announced status paragraph plus GracefulPageLoading; removed redundant paragraph and kept named directory loading/recovery. Other state/role/query/CTA/375-768 layout preserved; JSX and export props remain valid. Files: page.tsx, loading.tsx, queue/proof. No CI.
 
-
 ## 13. src/app/(authenticated)/admin/placements/analytics/page.tsx
 Verified other lane's polish-lane-6.md entry and full report, MetricBar props, funnel CSS, DateInput, responsive filters, DataTable/CSV and route loading/error (no local template/not-found). Confirmed JSX/attributes/exports, status labels/metric keys and scoped read paths; 10 KPI strip 2/3/5 layout, guarded 5,000-drive truncation notice, empty report, dates and mobile/tablet controls reviewed. No demonstrated regression requiring an edit; legacy funnel styling retained. Source only, no CI. Files: verification queue/proof.
-
 
 ## 14. src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx
 Read entire page and other lane polish-lane-6.md proof, shared SuperAdminPlacementDetailView, PageHeader/BackLink, status badges, contextual links, exact membership application audit service behavior, local loading/error/not-found and parent admin. Related actions disclosure retains both route destinations and direct drive navigation; stage history uses unique ids, safe dates and 375/768 breakpoints. No JSX/import/prop/copy/permission regression confirmed, and no further clutter issue. Source only, no CI. Files: queue/proof.
 
+## 15. src/app/(authenticated)/admin/placements/applications/page.tsx
+Verified transferred polish in polish-lane-6.md; read page, AdminScopedReadPage/LiveSearch/CsvControl, scoped query/service, PageHeader/Select/Pagination/status controls, local directory loading/error, inherited admin layout; not-found/template absent. Found 1 functional regression in shared compact read page: Refresh omitted active jobId specifically when applicationFilters were loaded, silently clearing a chosen job. Restored hidden jobId in Refresh only; kept jobId hidden out of the main filter form to avoid duplicate name alongside its advanced dropdown. The selected job remains valid across refresh while GET submission, status, source/channel and pagination behavior remain intact. Source checked invalid, no college, empty, populated, CSV/retry, 375/768 action layouts; no CI. Changed shared AdminScopedReadPage, queue and proof.
+
+## 16. src/app/(authenticated)/admin/placements/calendar/page.tsx
+Inspected page, 44k-source PlacementCalendarWorkspace, CalendarGrid, TpoWeekHourCalendar branch, SuperAdminInterviewOperations/PlacementPanelErrorBoundary, scoped bookings and date normalization, Banner/filters/chips and local loading/error and parent admin layout. Cross-checked polish-lane-6.md. Props/copy and route branches intact; month/week/agenda, active filters, no-scope, missing bookings, empty, long event and responsive 375/768 agenda fallback reviewed. No confirmed TSX/import/aria/behavior regression or additional clutter issue. Files: verification queue/proof; source-only, no CI.
+
+## 17. src/app/(authenticated)/admin/placements/drives/page.tsx
+Verified other-lane polish-lane-6.md and all page source, getPlacementTpoOperations and filterAdminDriveDirectory schema, SuperAdminBulkDriveActions (selector/preview/confirmed bulk result/error), native ConfirmDialog, DataTable/Pagination/StatusBadge and loading/error route boundaries (no local template/not-found). No missing imports, duplicate props, changed status/copy, unsafe scope IDs or disabled-state regressions detected. Create drive remains primary, bulk operations disclosed, search/status/page-size 375/768 layouts and read denied/invalid/empty/pending states retain alignment. No additional fixes. Files: queue/proof; source-only, no CI.
+
+## 18. src/app/(authenticated)/admin/placements/hiring/page.tsx
+Read wrapper and shared AdminScopedReadPage implementation already audited in #15, AdminScopedLiveSearch, CsvControl, typed job-level hiring loader, inherited admin layout and route directory loading/error (not-found/template absent), plus polish-lane-6.md evidence. Valid action/copy/props and five statuses; reviewed 375/768 search/status/rows disclosure, view/empty/error, scoped dashboard and page actions. No additional source regression after shared Refresh correction in #15; no layout change. Files: queue/proof; source only, no CI.
+
+## 19. src/app/(authenticated)/admin/placements/interviews/[roundId]/page.tsx
+Read complete route, scoped getSuperAdminInterviewDetail/read-id model, SuperAdminPlacementDetailView already audited in #14, PageHeader/StatusBadge/PageBackLink and route loading/error/not-found plus inherited admin layout. Cross-checked polish-lane-6.md. Scope, identifiers, date/empty fields and link targets remain unchanged; no TSX/prop/copy regression. Fact rows/heading/disclaimer stay aligned and overflow-safe at 375/768; no additional change. Source only, no CI. Files: verification queue/proof.
+
+## 20. src/app/(authenticated)/admin/placements/interviews/page.tsx
+Compared polish-lane-6.md and full route+listSuperAdminInterviews service/typed query, compact AdminScopedReadPage shared component (#15-18), input/CSV/pagination/directory loading and route error. No route-local template/not-found. Exact scoped id detail href, statuses, IST dates, empty/access error and 375/768 responsive directory structure intact; no TSX/aria/import/prop or visual regression evident after shared refresh correction. No code fix. Files: queue/proof, no CI.
 
 ## 21. src/app/(authenticated)/admin/placements/job-settings/[jobId]/page.tsx
 Verified full route, super-admin job settings detail service/policy flags, shared SuperAdminPlacementDetailView and its PageHeader, status, PageBackLink, route loading/error/not-found and parent admin layout. Compared polish-lane-6.md. No malformed JSX/export/prop, changed policy copy or unauthorized links found; scoped missing record and empty/no-restriction read-only rows, long identifiers, 375/768 fact grid and status group remain legible. No extra fixes, source only, no CI. Files: queue/proof.
 
 ## 22. src/app/(authenticated)/admin/placements/job-settings/page.tsx
 Compared polish-lane-6.md evidence to page, typed job policy read service, compact AdminScopedReadPage including shared search/CSV and pagination, scoped read guards, route loading/error (not-found/template absent) and parent layout. Five statuses, missing-policy display, form GET filters and detail links use valid props/route and preserve labels. No broken JSX, missing import, duplicate attr or alignment regression at 375/768/empty/error. No edits; source only, no CI. Files: queue/proof.
+
+## 23. src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx
+Compared polish-lane-6.md with full page, CollegeApplicationPipelineControls and its detail drawer, DriveApplication query/service/filters, DataTable/Tabs/StatusBadge/ConfirmDialog/Drawer, route loading/error/not-found and parent admin layout. Verified formerly duplicate caption now unique, labels/links/permissions/query safe, separate empty/storageUnavailable/filled/pending/bulk/outcome/failed and 375/768. One actual polish regression fixed in shared pipeline controls: action buttons were inside scrollable dialog body, becoming unreachable below long selected/results list; mobile flex-col-reverse rendered Close before primary Confirm, contrary to expected hierarchy. Moved action pair to Dialog's fixed footer, preserving disabled/busy/notify guards and copy, with Confirm above Close on phone and right-aligned desktop. No new deps or CI. Files: shared controls, queue/proof.
+
+## 24. src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx
+Inspected prior polish-lane-6.md proof; page, PlacementDriveWorkspace and all of its rendered control/role branches, shared AdminPlacementJobTabs and drive [jobId] layout, SuperAdminDrivePipeline/read-service, route loading/error/not-found, and status/breadcrumb/disclosure/fact components. One navigation regression fixed: shared workspace's primary non-TPO Applications CTA always linked to /college/placements/jobs/…/applications even for Super Admin. Added optional applicationsHref with original college default for all existing callers and supplied explicit /admin/placements/jobs/…/applications from Super Admin page. Exact label, role checks, default routing and permissions retained. Pipeline remains after status, responsive 2/3/6 metrics, no-scope/missing/busy/overlays reviewed in source at 375/768. Files: page, shared workspace, queue/proof. No CI.
