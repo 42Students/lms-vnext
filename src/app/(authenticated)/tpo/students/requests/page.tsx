@@ -248,12 +248,12 @@ export default async function TpoStudentRequestsPage({
         method="get"
         className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-3"
       >
-        <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Status
           <Select
             name="status"
             defaultValue={query.status ?? ""}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+            className="min-h-11 md:min-h-9"
           >
             <option value="">All statuses</option>
             {STATUSES.map((status) => (
@@ -264,7 +264,7 @@ export default async function TpoStudentRequestsPage({
           </Select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search
           <Input
             name="search"
@@ -276,12 +276,12 @@ export default async function TpoStudentRequestsPage({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Page size
           <Select
             name="pageSize"
             defaultValue={String(query.pageSize)}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+            className="min-h-11 md:min-h-9"
           >
             <option value="25">25 requests</option>
             <option value="50">50 requests</option>

@@ -55,7 +55,7 @@ function FieldLabel({
   return (
     <label
       htmlFor={htmlFor}
-      className="mb-1.5 block text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]"
+      className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
     >
       {children}
     </label>
