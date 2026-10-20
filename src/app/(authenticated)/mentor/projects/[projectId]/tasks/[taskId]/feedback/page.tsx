@@ -14,7 +14,7 @@ export default async function Page({params}:{
   <PageHeader eyebrow="Mentor · Task Board" title="Recorded task review feedback"
    description={data.task.title}/>
   <section role="status" className="border-b border-border pb-4">
-   <h2 className="font-semibold">Conversation thread unavailable</h2>
+   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Conversation thread unavailable</h2>
    <p className="mt-2 text-sm text-body">
     The promoted Project schema stores one reviewer-feedback value per submission version.
     It has no task-comments or reply table. Do not enter new comments here; threaded
@@ -26,7 +26,7 @@ export default async function Page({params}:{
    :<ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.feedback.map(entry=><li key={entry.id}
     className="py-[var(--lms-space-4)]">
     <div className="flex flex-wrap items-center justify-between gap-2">
-     <h2 className="text-sm font-semibold">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></h2>
+     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></h2>
      <span className="text-xs text-muted-foreground">
       {entry.reviewedAt?new Intl.DateTimeFormat("en-IN",{
        dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",

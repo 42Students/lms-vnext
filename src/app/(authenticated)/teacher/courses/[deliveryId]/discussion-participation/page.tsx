@@ -25,7 +25,7 @@ export default async function FacultyDiscussionParticipationPage({
         </div>)}
     </section>
     <section aria-label="Recent discussion activity" aria-live="polite" className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">12 most recent recorded messages</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">12 most recent recorded messages</h2>
       {data.recent.length===0?<EmptyState title="No recorded discussions"
         description="This Section has no stored messages. Replies and deleted text cannot be reconstructed."/>:
         <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.recent.map(row=><li key={row.id}

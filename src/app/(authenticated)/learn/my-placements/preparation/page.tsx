@@ -58,17 +58,17 @@ export default async function LearnerPlacementPreparationPage({
         {data.items.map(item=>
           <li key={item.id} className="border-b border-border pb-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-semibold text-foreground">{item.title}</h2>
+              <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{item.title}</h2>
               <StatusBadge tone={item.recorded?"success":"neutral"}>{item.recorded?"Recorded":"Not recorded"}</StatusBadge>
             </div>
-            <p className="mt-2 text-sm leading-6 text-body">{item.description}</p>
+            <p className="mt-2 text-sm text-body leading-[1.6]">{item.description}</p>
             <Link href={item.href}
               className="mt-4 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
               {item.recorded?"Review recorded information":"Review this section"} →
             </Link>
           </li>)}
         </ol>}
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-[1.6]">
       This view uses registered current college enrollment, Learner profile
       and application history. It does not show private identification values,
       infer eligibility, submit applications, or send notifications.
