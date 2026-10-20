@@ -89,7 +89,7 @@ export function ResourceProgressControl({
       <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
         title={contentType === "LIVE_CLASS" ? "Attended this session?" : "Finished with these materials?"}
         description="Mark this learning item as complete?"
-        confirmLabel="Mark as complete" pending={saving} onConfirm={markComplete} />
+        confirmLabel="Mark as complete" confirmVariant="primary" pending={saving} onConfirm={markComplete} />
       {error ? <Alert tone="error" className="mt-2">{error}</Alert> : null}
     </div>
   );

@@ -103,26 +103,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-8.md: file, number of i
 - [x] `src/components/courses/faculty-item-actions.tsx`
 - [x] `src/components/courses/faculty-lesson-authoring.tsx`
 - [x] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-live-class-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/faculty-report-download.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
-- [ ] `src/components/courses/learner-course-workspace.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/courses/learner-roadmap-item-dialog.tsx`
-- [ ] `src/components/courses/resource-progress-control.tsx`
-- [ ] `src/components/groups/college-group-actions.tsx`
-- [ ] `src/components/groups/college-group-detail-writes.tsx`
-- [ ] `src/components/groups/college-study-member-actions.tsx`
-- [ ] `src/components/hr/hr-company-reports-grid.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/hr/hr-job-applicants-grid.tsx`
-- [ ] `src/components/hr/hr-job-offers-grid.tsx`
-- [ ] `src/components/hr/hr-job-selection-grid.tsx`
-- [ ] `src/components/hr/hr-proposal-history-grid.tsx`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/courses/faculty-live-class-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/faculty-report-download.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/courses/learner-course-workspace.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx`
+- [x] `src/components/courses/resource-progress-control.tsx`
+- [x] `src/components/groups/college-group-actions.tsx`
+- [x] `src/components/groups/college-group-detail-writes.tsx`
+- [x] `src/components/groups/college-study-member-actions.tsx`
+- [x] `src/components/hr/hr-company-reports-grid.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/hr/hr-job-applicants-grid.tsx`
+- [x] `src/components/hr/hr-job-offers-grid.tsx`
+- [x] `src/components/hr/hr-job-selection-grid.tsx`
+- [x] `src/components/hr/hr-proposal-history-grid.tsx`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
 - [ ] `src/components/hr/hr-round-editor-grid.tsx`
 - [ ] `src/components/hr/hr-round-results-grid.tsx`
 - [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
