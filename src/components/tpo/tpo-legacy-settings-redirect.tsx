@@ -20,5 +20,5 @@ export function TpoLegacySettingsRedirect({tab}:{tab?:string}){
   const key=(tab||hash.replace(/^tab=/i,"")||"rules").trim().toLowerCase().replace(/^\//,"");
   router.replace("/tpo/settings/"+(LEGACY_TABS[key]??"rules"));
  },[tab,router]);
- return <p role="status" className="text-sm text-muted-foreground">Opening settings…</p>;
+ return <span role="status" aria-live="polite" className="sr-only">Opening settings…</span>;
 }

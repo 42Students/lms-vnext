@@ -24,8 +24,8 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/interview-slots/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/drives/page.tsx`
 - [x] `src/app/(authenticated)/superadmin/departments/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/results/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
