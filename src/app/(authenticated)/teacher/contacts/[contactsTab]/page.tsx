@@ -11,6 +11,7 @@ import {
 } from "@/components/courses/faculty-contacts-table";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { listFacultyContacts } from "@/modules/courses/faculty-contacts-service";
 
 const tabs = {
@@ -76,32 +77,10 @@ export default async function FacultyContactsPage({
         title={selected.label}
       />
 
-      <nav
-        aria-label="Contact types"
-        className="flex flex-wrap gap-2"
-      >
-        {Object.entries(tabs).map(
-          ([key, tab]) => {
-            const active = key === contactsTab;
-            return (
-              <Link
-                key={key}
-                href={`/teacher/contacts/${key}`}
-                aria-current={
-                  active ? "page" : undefined
-                }
-                className={
-                  active
-                    ? "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary border border-primary bg-primary px-4 text-sm font-semibold text-foreground"
-                    : "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text"
-                }
-              >
-                {tab.label}
-              </Link>
-            );
-          },
-        )}
-      </nav>
+      <Tabs ariaLabel="Contact types" value={contactsTab} renderPanel={false}
+        items={Object.entries(tabs).map(([key,tab])=>({
+          value:key,label:tab.label,href:`/teacher/contacts/${key}`,
+        }))} />
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -121,7 +100,7 @@ export default async function FacultyContactsPage({
             action={baseHref}
             className="flex w-full max-w-2xl flex-wrap items-end gap-2"
           >
-            <label className="min-w-0 flex-1 text-xs font-semibold text-body">
+            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-body">
               Search contacts
               <Input
                 className="mt-1.5"
@@ -131,11 +110,11 @@ export default async function FacultyContactsPage({
                 placeholder="Name or department"
               />
             </label>
-            <label className="text-xs font-semibold text-body">
+            <label className="text-[13px] font-semibold leading-4 text-body">
               Contacts per page
               <Select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
-                className="mt-1.5 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="mt-1.5 block min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>

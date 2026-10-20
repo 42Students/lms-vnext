@@ -12,7 +12,7 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
   const defaultKeys=available.map(column=>column.key);
   const visibleCount=countVisibleTpoColumns(defaultKeys,selected);
   const atDefaults=selected.length===defaultKeys.length&&selected.every((key,index)=>key===defaultKeys[index]);
-  return <fieldset className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+  return <fieldset className="min-w-0 space-y-2 border-y border-border py-3">
     <legend className="px-1 text-sm font-semibold">Visible columns</legend>
     <p role="status" className="text-xs text-muted-foreground">{visibleCount} of {available.length} display columns visible. Export-only fields remain hidden.</p>
     <div className="flex flex-wrap gap-3">
@@ -34,8 +34,8 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
           if(target<0||target>=next.length)return;
           [next[index],next[target]]=[next[target]!,next[index]!];onChange(next);
         };
-        return <div key={key} className="flex flex-wrap items-center gap-2">
-          <span className="min-w-24 text-sm">{column.label}</span>
+        return <div key={key} className="flex min-w-0 flex-wrap items-center gap-2">
+          <span className="min-w-24 break-words text-sm">{column.label}</span>
           <Button variant="secondary" type="button" disabled={index===0} onClick={()=>move(-1)} className="min-h-11 md:min-h-9"
             
             aria-label={"Move "+column.label+" earlier"}>Earlier</Button>

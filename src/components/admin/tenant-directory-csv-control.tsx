@@ -14,11 +14,12 @@ export function TenantDirectoryCsvControl({ href }: { href: string }) {
       const url = URL.createObjectURL(await response.blob());
       const anchor = document.createElement("a");
       anchor.href = url; anchor.download = "tenant-directory-ist.csv"; document.body.appendChild(anchor);
-      anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+      try { anchor.click(); } finally { anchor.remove(); }
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not export tenants."); }
     finally { setPending(false); }
   }
-  return <div className="space-y-2"><Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending} onClick={() => void download()}>
+  return <div className="space-y-2 print:hidden"><Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending} onClick={() => void download()}>
     {pending ? "Preparing CSV…" : "Export filtered CSV (max 1,000)"}</Button>
     {error ? <Alert tone="error" className="max-w-sm">{error}</Alert> : null}
   </div>;

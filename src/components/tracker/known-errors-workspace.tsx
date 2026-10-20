@@ -1,5 +1,6 @@
 "use client";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Dialog } from "@/components/ui/dialog";
 
 import { useRouter } from "next/navigation";
@@ -65,8 +66,9 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           <p className="m-0 break-all font-mono text-xs text-muted-foreground">
             Signature {item.signatureHash.slice(0, 12)}…
           </p>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
-            {item.fixStatus} · {item.muted ? "Muted" : "Unmuted"}
+          <h3 className="mt-2 flex flex-wrap items-center gap-2 text-base font-semibold text-foreground">
+            <StatusBadge tone={item.fixStatus==="FIXED"?"success":item.fixStatus==="OPEN"?"warning":"info"}>{item.fixStatus}</StatusBadge>
+            <StatusBadge tone={item.muted?"warning":"neutral"}>{item.muted ? "Muted" : "Unmuted"}</StatusBadge>
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">
             {item.occurrenceCount} occurrences · {item.affectedAccounts} distinct affected accounts
@@ -80,8 +82,8 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         <p role="status" className="text-xs text-muted-foreground">Acknowledged {formatInstant(item.acknowledgedAt)}</p>
       ) : null}
       {item.regressedAt ? (
-        <p role="status" className="text-sm font-semibold text-error">
-          Regression observed {formatInstant(item.regressedAt)}
+        <p role="status" className="flex flex-wrap items-center gap-2 text-sm font-semibold text-error">
+          <StatusBadge tone="error">Regressed</StatusBadge> Regression observed {formatInstant(item.regressedAt)}
         </p>
       ) : null}
       <div className="grid gap-3 md:grid-cols-3">
@@ -255,7 +257,7 @@ export function KnownErrorsWorkspace({
     <div id="known-errors" className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <p className="m-0 text-sm text-body">Last reviewed: {formatInstant(lastViewedAt)}</p>
-        <Button variant="secondary" size="sm" disabled={pending} onClick={markViewed}>
+        <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending} loading={pending} onClick={markViewed}>
           {pending ? "Saving…" : "Mark logs reviewed"}
         </Button>
       </div>

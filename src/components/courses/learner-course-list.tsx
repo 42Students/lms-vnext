@@ -188,7 +188,7 @@ export function LearnerCourseList({
                   setSortMode("NAME");
                   setVisibleLimit(reset.visibleLimit);
                 }}
-                className="mt-1.5 min-h-11"
+                className="mt-1.5 min-h-11 md:min-h-9"
                 aria-label="Select semester"
               >
                 {periods.map((period) => (
@@ -209,7 +209,7 @@ export function LearnerCourseList({
                   setVisibleLimit(PAGE_SIZE);
                 }}
                 placeholder="Search courses…"
-                className="mt-1.5 min-h-11"
+                className="mt-1.5 min-h-11 md:min-h-9"
               />
             </label>
           </div>
@@ -236,7 +236,7 @@ export function LearnerCourseList({
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Term access
             <Select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All term courses</option>
               <option value="CURRENT">Currently active</option>
               <option value="HISTORY">Past semester (read-only)</option>
@@ -245,7 +245,7 @@ export function LearnerCourseList({
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Learning progress
             <Select value={progressFilter} onChange={event=>{setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">Any progress</option>
               <option value="NOT_STARTED">Not started</option>
               <option value="IN_PROGRESS">In progress</option>
@@ -256,7 +256,7 @@ export function LearnerCourseList({
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Sort Courses
             <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="NAME">Course name</option><option value="PROGRESS">Least progress first</option>
               <option value="DUE">Next assessment due</option>
                <option value="RECENT">Most recently active</option>
@@ -264,13 +264,13 @@ export function LearnerCourseList({
           </label>
           <FilterChip type="button" aria-pressed={continueOnly}
             onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}
-            className="min-h-11">
+            className="min-h-11 md:min-h-9">
             Continue learning only
           </FilterChip>
         </div>
         {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
           <Button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
-            variant="secondary" className="mt-3 min-h-11">
+            variant="secondary" className="mt-3 min-h-11 md:min-h-9">
             Clear Course filters
           </Button>
         ) : null}
@@ -491,7 +491,7 @@ export function LearnerCourseList({
               <Button
                 type="button"
                 onClick={() => setVisibleLimit((value) => value + PAGE_SIZE)}
-                variant="secondary" className="min-h-11"
+                variant="secondary" className="min-h-11 md:min-h-9"
               >
                 Show more courses ({visibleRows.length - visibleLimit} remaining)
               </Button>

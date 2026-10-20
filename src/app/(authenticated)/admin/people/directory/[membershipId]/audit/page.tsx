@@ -3,6 +3,7 @@ import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listSuperAdminPersonAudit} from "@/modules/people/super-admin-person-audit-service";
 import {PageHeader} from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 export default async function MembershipAuditPage({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
  const data=await listSuperAdminPersonAudit(await getCurrentRequestContext(),membershipId);
@@ -20,6 +21,6 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
     </div>
     <p className="mt-2 text-xs text-muted-foreground">{event.module} · {event.eventType} · {event.importance}</p>
    </li>)}</ol>
-  {!data.events.length?<p role="status" className="border-b border-border py-4 text-sm text-muted-foreground">No matching membership activity events have been recorded.</p>:null}
+  {!data.events.length?<EmptyState title="No matching membership activity events have been recorded." />:null}
  </div>;
 }

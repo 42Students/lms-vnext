@@ -34,16 +34,16 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
  },[refresh]);
  return <section aria-label="At a glance" className="space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
-   <h2 className="font-semibold">At a glance</h2>
+   <h2 className="font-semibold text-foreground">At a glance</h2>
    <Button type="button" variant="secondary" disabled={refreshing} onClick={()=>void refresh()}
      className="min-h-11 md:min-h-9 print:hidden">
      {refreshing?"Refreshing…":"Retry"}</Button>
   </div>
   {error?<Alert tone="error">{error}</Alert>:null}
-  {!counts&&refreshing?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+  {!counts&&refreshing?<div className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
    {ITEMS.map(item=><Skeleton key={item.key} variant="kpi" label={item.label+" loading"}/>)}
   </div>:null}
-  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+  <div className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
    {ITEMS.map(item=><StatTile key={item.key} href={item.href} label={item.label}
     value={displayedGlanceNumber(counts?.[item.key]??null)}
     detail="Recorded in the selected college"/>)}

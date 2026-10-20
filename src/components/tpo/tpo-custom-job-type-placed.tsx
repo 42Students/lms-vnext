@@ -1,5 +1,6 @@
 "use client";
 import {FilterChip} from "@/components/ui/filter-chip";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -32,7 +33,7 @@ export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label
     className="min-h-11 md:min-h-8">No</FilterChip>
   </div>
   {value===null?<p className="text-xs text-muted-foreground">Not decided</p>:null}
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
   {dialog}
  </div>;
 }
