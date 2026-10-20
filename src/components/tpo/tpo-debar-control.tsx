@@ -147,7 +147,7 @@ export function TpoDebarControl({
           <Button variant="primary"
             type="submit"
             disabled={pending || !confirmed || (!debarred && !reason.trim())}
-            className="min-h-11 px-5 md:min-h-9"
+            className="min-h-11 w-full px-5 sm:w-auto md:min-h-9"
           >
             {pending
               ? "Saving…"
