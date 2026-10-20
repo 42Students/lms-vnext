@@ -27,7 +27,7 @@ export default async function RecruiterDriveProposalHistory({
  });
  if(!input.success)notFound();
  const data=await listHrDriveProposals(context,input.data);
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Sent drive proposals"
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
   <nav className="flex flex-wrap gap-2">
@@ -47,7 +47,7 @@ export default async function RecruiterDriveProposalHistory({
      <Input name="q" maxLength={100} defaultValue={input.data.q}
        className="mt-1 w-full" placeholder="Role title" />
     </label>
-    <label className="min-w-0 text-sm text-body">Order
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
       <Select name="sort" defaultValue={input.data.sort} className="mt-1">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
