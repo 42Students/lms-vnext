@@ -54,7 +54,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-19.md: surface | probl
 - [x] `src/components/tpo/tpo-academic-import-preview.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [x] `src/components/ui/date-range-picker.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [x] `src/components/ui/long-text.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
-- [ ] `src/components/ui/permission-action.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [x] `src/components/ui/permission-action.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [ ] `src/app/(authenticated)/teacher/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
 - [ ] `src/app/(authenticated)/admin/layout.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
 - [ ] `src/app/(authenticated)/hr/error.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)

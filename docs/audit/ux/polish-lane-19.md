@@ -339,3 +339,13 @@
 **Fixed:** No source mutation necessary. Retained `data-slot`, title, fallback, responsive wrapping, aria-independent semantics and legacy inherited tokens; source-level audit only (no browser/CI).
 
 **Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit only).
+
+## Surface 41 — `src/components/ui/permission-action.tsx`
+
+**Reachability:** Code search for `PermissionAction` identified the exported implementation, UX-PLAYBOOK and authorization/overlay unit test but no live production page import. This is a policy-sensitive reusable primitive, not a live overlay.
+
+**Problems found (0):** Source review found no safely correctable UI defect. Authorized children render without extra wrapper or chrome. Denied states follow the audited A2-05 rule: caller fallback if provided, privacy-scoped hide-sensitive as opt-in, otherwise a readable persistent reason with `role=note` in one modest legacy-token-bordered strip. Its min-width, long-message wrapping and typography remain usable at 375px and 768px. No duplicate button, modal, incorrect density or unguarded API mutation.
+
+**Fixed:** No source mutation; retained `can(context, permission, resource)` as the central permission decision, denial wording and cross-tenant safety, `data-slot` and fallback precedence. Inspected UX-PLAYBOOK §19.4 and the matching authorization test by source; no runtime or CI.
+
+**Files changed:** `docs/orchestrator/queues/clone/lane-19-polish.md`; `docs/audit/ux/polish-lane-19.md` (audit-only).
