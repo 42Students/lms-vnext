@@ -208,7 +208,7 @@ export function TenantDomainManager({
             </label>
             <Input
               id="tenant-domain-host"
-              className="min-h-11 w-full sm:w-auto md:min-h-9"
+              className="min-h-11 w-full md:min-h-9"
               value={host}
               onChange={(event) => setHost(event.target.value)}
               placeholder="lms.college.edu"
@@ -225,8 +225,7 @@ export function TenantDomainManager({
             type="submit"
             className="min-h-11 w-full justify-center md:min-h-9 md:w-auto"
             loading={creating}
-             disabled={creating || !host.trim()}
-            onClick={createDomain}
+            disabled={creating || !host.trim()}
           >
             {creating ? "Adding…" : "Add domain"}
           </Button>
@@ -383,7 +382,7 @@ export function TenantDomainManager({
 
       <ConfirmDialog
         open={Boolean(primaryTarget)}
-        onOpenChange={(open) => { if (!open) setPrimaryTarget(null); }}
+        onOpenChange={(open) => { if (!open && !pendingAction) setPrimaryTarget(null); }}
         title={primaryTarget ? `Make ${primaryTarget.host} the primary address?` : "Change primary address?"}
         description={primaryTarget ? describePrimaryDomainSwitch(
           domains.find(domain => domain.isPrimary)?.host ?? null,
@@ -398,7 +397,7 @@ export function TenantDomainManager({
       <ConfirmDialog
         open={Boolean(deleteTarget)}
         onOpenChange={(open) => {
-          if (!open) { setDeleteTarget(null); setDeleteHostConfirmation(""); }
+          if (!open && !pendingAction) { setDeleteTarget(null); setDeleteHostConfirmation(""); }
         }}
         title={
           deleteTarget
@@ -422,7 +421,7 @@ export function TenantDomainManager({
       >
         {deleteTarget?.isPrimary ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type the full primary hostname
           <Input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
-            onChange={event => setDeleteHostConfirmation(event.target.value)}
+            disabled={Boolean(pendingAction)} onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label> : null}
       </ConfirmDialog>
