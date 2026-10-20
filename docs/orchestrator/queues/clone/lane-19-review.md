@@ -5,10 +5,10 @@
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx`
-- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx`
+- [x] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
+- [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx`
 - [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`

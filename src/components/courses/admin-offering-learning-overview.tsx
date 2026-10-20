@@ -51,6 +51,7 @@ function formatDateTime(
   }
 
   return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
@@ -71,7 +72,7 @@ function ContentCard({
   ];
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-4">
+    <article className="border-b border-[var(--lms-canvas-border)] py-4 last:border-b-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
@@ -150,7 +151,7 @@ function AssignmentCard({
   ];
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-4">
+    <article className="border-b border-[var(--lms-canvas-border)] py-4 last:border-b-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
@@ -218,7 +219,7 @@ function QuizCard({
   ];
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-4">
+    <article className="border-b border-[var(--lms-canvas-border)] py-4 last:border-b-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
