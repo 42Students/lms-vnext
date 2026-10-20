@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 
 export default function SuperAdminModuleTraceLoading() {
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
         eyebrow="Super Admin · Module Access"
         title="Learner access trace"

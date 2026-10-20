@@ -101,7 +101,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
   if (!parsed.success) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
         <PageHeader
           title="Learner access trace"
           description="Read-only, college-scoped explanation of optional module access."
@@ -159,7 +159,7 @@ export default async function SuperAdminLearnerAccessTracePage({
   );
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
         title={`${college.name} · Learner access trace`}
         description={`Explain why an active learner's Projects, Placements and Electives module settings resolve to On or Off. The selected college is fixed to ${college.code}.`}

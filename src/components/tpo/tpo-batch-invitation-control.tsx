@@ -152,7 +152,7 @@ export function TpoBatchInvitationControl(props: Props) {
       </p> : null}
       {message ? <InlineNotice tone="success" message={message} onDismiss={() => setMessage("")} /> : null}
       {error ? <InlineNotice tone="error" message={error} onDismiss={() => setError("")} /> : null}
-      <ConfirmDialog open={confirmClear} onOpenChange={setConfirmClear}
+      <ConfirmDialog open={confirmClear} onOpenChange={next=>{if(!busy)setConfirmClear(next);}}
        title="Remove the registration deadline?" description="Registration stays open without a deadline until another is set." confirmLabel="Remove" pending={busy} confirmVariant="danger"
        onConfirm={()=>{void saveDeadline(true).then(saved=>{if(saved)setConfirmClear(false);});}}/>
     </section>;

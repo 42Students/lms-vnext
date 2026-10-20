@@ -26,7 +26,8 @@ export function TpoJoiningUpdateForm({
 }) {
   const router = useRouter();
   const {run}=useGuardedAction({timeoutMs:40000});
-  const [status, setStatus] = useState<JoiningChoice>("JOINED");
+  const [status, setStatus] = useState<JoiningChoice>(
+    initialStatus === "DEFERRED" || initialStatus === "DID_NOT_JOIN" ? initialStatus : "JOINED");
   const [joiningDate, setJoiningDate] = useState(initialJoiningDate ?? "");
   const [reason, setReason] = useState("");
   const [correctionReason, setCorrectionReason] = useState("");
@@ -134,7 +135,7 @@ export function TpoJoiningUpdateForm({
         </Button>
         {error ? <div className="mt-3"><InlineNotice tone="error" message={error}/></div> : null}
       </div>
-      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
+      <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}} pending={busy}
         title={"Record "+status.replaceAll("_"," ")+" for this accepted offer?"}
         description={"Changes are kept in joining history. "+status.replaceAll("_"," ")+
           (needsDate&&joiningDate?" · "+joiningDate:"")+(corrected?" · Correcting a recorded outcome.":"")}
