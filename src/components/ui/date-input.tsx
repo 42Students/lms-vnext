@@ -279,7 +279,7 @@ export function DateInput({
         aria-label={mode === "time" ? "Open time picker" : mode === "datetime-local" ? "Open date and time picker" : mode === "month" ? "Open month picker" : mode === "week" ? "Open week picker" : "Open date calendar"}
         aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? popupId : undefined}
         disabled={!enabled} onClick={toggle}
-        className="absolute right-1 top-0 !h-9 !w-9 !min-w-9 !rounded-[9px] !border-0 !p-0 max-[767px]:!h-11 max-[767px]:!w-11">
+        className="absolute right-1 top-0 !h-9 !w-9 !min-w-9 !rounded-[var(--lms-control-radius)] !border-0 !p-0 max-[767px]:!h-11 max-[767px]:!w-11">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
           <rect x="3" y="5" width="18" height="16" rx="2" />
@@ -311,7 +311,7 @@ export function DateInput({
                       const available = Array.from({ length: 60 }, (_, minute) => timeAllowed(hour, minute)).some(Boolean);
                       return <Button key={hour} data-picker-hour={hour} variant="ghost" type="button" size="sm" disabled={!available}
                         aria-pressed={draftHour === hour} onClick={() => setDraftHour(hour)}
-                        className={cx("mb-1 !w-full !justify-center !rounded-[6px] !border-0 max-[767px]:!min-h-11",
+                        className={cx("mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-[767px]:!min-h-11",
                           draftHour === hour ? "!bg-[var(--lms-primary)] !text-white" : "hover:!bg-[var(--lms-primary-subtle)]")}>
                         {pad2(hour)}
                       </Button>;
@@ -323,7 +323,7 @@ export function DateInput({
                         disabled={!timeAllowed(draftHour, minute)}
                         aria-pressed={selected === `${pad2(draftHour)}:${pad2(minute)}`}
                         onClick={() => choose(`${pad2(draftHour)}:${pad2(minute)}`)}
-                        className={cx("mb-1 !w-full !justify-center !rounded-[6px] !border-0 max-[767px]:!min-h-11",
+                        className={cx("mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-[767px]:!min-h-11",
                           selected === `${pad2(draftHour)}:${pad2(minute)}`
                             ? "!bg-[var(--lms-primary)] !text-white" : "hover:!bg-[var(--lms-primary-subtle)]")}>
                         {pad2(minute)}
@@ -340,7 +340,7 @@ export function DateInput({
                         !calendarStepAllowed(monthValue);
                       return <Button key={month} data-picker-month={index} type="button" variant="ghost" size="sm" disabled={Boolean(limited)}
                         aria-pressed={selected === monthValue} onClick={() => choose(monthValue)}
-                        className={cx("!rounded-[6px] !border-0 !px-1 max-[767px]:!min-h-11",
+                        className={cx("!rounded-[6px] !border-0 !px-1 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-[767px]:!min-h-11",
                           selected === monthValue ? "!bg-[var(--lms-primary)] !text-white" : "hover:!bg-[var(--lms-primary-subtle)]")}>
                         {month.slice(0, 3)}
                       </Button>;
@@ -364,7 +364,7 @@ export function DateInput({
                   aria-current={iso === today ? "date" : undefined} aria-pressed={mode === "datetime-local" ? draftDate === candidate : selected === candidate}
                   disabled={Boolean(limited)}
                   onClick={() => { if (mode === "datetime-local") setDraftDate(candidate); else choose(candidate); }}
-                  className={cx("!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px] max-[767px]:!min-h-11 max-[767px]:!h-11",
+                  className={cx("!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px] focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-[767px]:!min-h-11 max-[767px]:!h-11",
                     outsideMonth ? "!text-[var(--lms-neutral-400)]" : "",
                     (mode === "datetime-local" ? draftDate === candidate : selected === candidate) ? "!bg-[var(--lms-primary)] !text-white" :
                     iso === today ? "!text-[var(--lms-primary-text)] !underline" :
