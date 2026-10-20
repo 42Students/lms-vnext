@@ -1,5 +1,6 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -65,7 +66,7 @@ type EditValues = {
   source: string;
 };
 // Anchor and Link destinations retain native navigation while adopting the shared secondary-button skin.
-const button = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-3 text-[13px] font-[650] leading-5 text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+const button = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] leading-5 text-body transition-colors duration-200 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9 md:w-auto";
 const SOURCES = [
   ["", "Added by hand / Imported"], ["ALUMNI", "Alumni"],
   ["REFERRAL", "Referral"], ["LINKEDIN", "LinkedIn"],
@@ -393,9 +394,7 @@ export function RecruiterLeadDetailWorkspace({
 
   return (
     <section className="space-y-6">
-      <Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-        ← Recruiter leads
-      </Link>
+      {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Recruiter leads</Link>:null}
       {phase === "loading" ? (
         <p role="status" className="border-y border-border py-6">Loading recruiter details…</p>
       ) : phase === "error" || !lead ? (
@@ -414,18 +413,19 @@ export function RecruiterLeadDetailWorkspace({
             description={(lead.companyName || "Company not provided") +
               (lead.designation ? " · " + lead.designation : "")}
             actions={
-            <div className="flex flex-wrap gap-2">
+            <div className="flex min-w-0 flex-wrap gap-2">
+              <Link href="/tpo/recruiters" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}>← Recruiter leads</Link>
               {!lead.recruiterUserId&&!lead.unsubscribedAt?<a className={button}
                  href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
                <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
                {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
-               <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={openEdit}>Edit details</Button>
+               <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={openEdit}>Edit details</Button>
               {lead.manualStage === "NEW" ? (
-                <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={saving} onClick={() => void mutate(
+                <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={saving} onClick={() => void mutate(
                   base + "/contacted", "POST", { collegeId },
                 )}>Mark contacted</Button>
               ) : null}
-              <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => setNotNowOpen(true)}>Not now</Button>
+              <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={() => setNotNowOpen(true)}>Not now</Button>
             </div>
             }
           />
@@ -438,10 +438,7 @@ export function RecruiterLeadDetailWorkspace({
                 formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
 
           </div>
-          {lead.unsubscribedAt?<div role="alert"
-             className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
-             Asked not to be contacted. Invitations and outreach are unavailable.
-           </div>:null}
+          {lead.unsubscribedAt?<Banner tone="warning">Asked not to be contacted. Invitations and outreach are unavailable.</Banner>:null}
            {lead.manualStage === "NOT_NOW" ? (
             <div role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">
               Not now: {lead.notNowReason || "No reason recorded"}.
@@ -595,14 +592,14 @@ export function RecruiterLeadDetailWorkspace({
               </form>
               <h3 className="font-semibold">Timeline</h3>
               {activities.length ? (
-                <ol className="space-y-3">
+                <ol className="divide-y divide-border border-y border-border">
                   {activities.map((a,index) => (
-                    <li key={a.id} className="text-sm">
+                    <li key={a.id} className="py-3 text-sm">
                       {(!index||activityDayIst(activities[index-1].createdAt)!==activityDayIst(a.createdAt))?
                         <h4 className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           {activityDayIst(a.createdAt)}
                         </h4>:null}
-                      <div className={a.isSystem?"rounded-md border border-border bg-surface-secondary px-3 py-2 text-muted-foreground":"border-l-2 border-border pl-3"}>
+                      <div className={a.isSystem?"text-muted-foreground":"text-body"}>
                       <span className="font-semibold">{a.type==="CALL"?"Call":a.type==="EMAIL"?"Email":a.type==="MEETING"?"Meeting":a.type==="NOTE"?"Note":a.type==="SYSTEM"?"System":a.type.replaceAll("_"," ")}</span>
                       {a.outcome ? " · " + a.outcome : ""}
                       <time className="ml-2 text-muted-foreground" dateTime={a.createdAt}>
