@@ -18,7 +18,7 @@ export function IndependentFindingCopyAction({finding}:{finding:IndependentFindi
    setMessage("Clipboard unavailable. Copy the finding details manually.");
   }
  }
- return <div className="space-y-1">
+ return <div className="space-y-2">
   <Button variant="secondary" type="button" onClick={()=>void copy()}
   >
    Copy for Claude
