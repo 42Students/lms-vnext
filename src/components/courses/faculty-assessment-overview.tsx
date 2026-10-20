@@ -221,7 +221,7 @@ export function FacultyAssessmentOverview({
                       <Link
                         href={"/teacher/courses/" + encodeURIComponent(item.deliveryId) +
                           (item.kind === "QUIZ" ? "/quizzes/manage" : "/assignments/manage")}
-                        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+                        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                       >
                         Manage {item.kind === "QUIZ" ? "quiz" : "assignment"}
                       </Link>
@@ -238,18 +238,18 @@ export function FacultyAssessmentOverview({
                   ) : null}
                   <Link
                     href={`/teacher/report/${item.kind === "QUIZ" ? "quiz" : "assignment"}/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                   >
                     View Report
                   </Link>
                   {item.kind==="ASSIGNMENT"?<Link
                     href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}#submissions`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                     View submissions
                   </Link>:null}
                   <Link
                     href={facultyCourseTabHref(item.deliveryId, "blueprint")}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
                   >
                     Open Course
                   </Link>
@@ -297,7 +297,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="min-h-11 text-body hover:bg-primary-subtle md:min-h-[var(--lms-control-height)]" >
+            className="min-h-11 text-body hover:bg-primary-subtle md:min-h-9" >
             Previous
           </Button>
           <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
@@ -305,7 +305,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="min-h-11 text-body hover:bg-primary-subtle md:min-h-[var(--lms-control-height)]" >
+            className="min-h-11 text-body hover:bg-primary-subtle md:min-h-9" >
             Next
           </Button>
         </nav>
