@@ -89,3 +89,13 @@
 - **Regressions found/fixed:** 2 unused imports (`Alert`, `StatTile`) remained despite SummaryStrip/Disclosure-based polish; removed to avoid strict TypeScript warnings/errors. Read chat-9 proof, page/loading/error, college shell, appointment service/schema, CollegeInterviewStatusActions with reason-confirm modal and versioned POST, shared Date/Select/Table/Disclosure/EmptyState/SummaryStrip/StatusBadge. Reviewed ready/unavailable/limited/empty/error, ICS/CSV, status changes and mobile.
 - **Extra clutter/alignment fixes:** Existing collapsed advanced fields and single Exports disclosure already match hierarchy; no additional rearrangement needed.
 - **Files changed:** `src/app/(authenticated)/college/placements/interviews/page.tsx`; queue/proof. No CI.
+
+## Surface 19 — `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- **Regressions found/fixed:** 0. Compared chat-9 polish proof; reviewed page loading/error, college/placements/job parent layouts and 404 behavior, filter/query/schema, export href, page/row links and protected pipeline service. Read CollegeApplicationPipelineControls and detail drawer for role-safe selection, stage options, optimistic version, confirmed POST, feedback, email-disabled state and mobile controls; checked shared Tabs/Disclosure/DataTable/EmptyState. Existing status constraints, stage counts, export cap, empty clearing and legacy copy remain intact.
+- **Extra clutter/alignment fixes:** None necessary: expert filters are disclosed, stage tabs expose counts, one bulk action and row Manage controls avoid competing buttons, and responsive paging stacks.
+- **Files changed:** Queue and verification proof only. Source checks 375/768; no CI.
+
+## Surface 20 — `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- **Regressions found/fixed:** 0. Checked chat-9 proof, page/loading/error/parent job layout, interview query and list, candidate-slot schedule, CollegeInterviewAppointments with add/edit/cancel/complete/no-show confirmations, ICS download, IST conversion, required reason, optimistic version and API pending/errors; checked shared Date/Select/DataTable/Disclosure/Dialog/ConfirmDialog. All routes, IDs and wording preserved.
+- **Extra clutter/alignment fixes:** Existing candidate table exposes one Schedule CTA, per-row Actions disclosure, compact round filter form and route-safe empty/pager recovery; no source change needed.
+- **Files changed:** Queue and verification proof only. Source checked at 375/768; no CI.
