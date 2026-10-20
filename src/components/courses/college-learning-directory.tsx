@@ -8,6 +8,7 @@ import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./coll
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { collegeLearningHref, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
 import type {
   listCollegeCourseProgress,
@@ -565,7 +566,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
               {item.courseName} ({item.courseCode})
              </Link>
              <p className="text-xs text-body">{item.cohortName} · {item.periodName} · Lesson #{item.sequence+1}</p>
-             <p className="text-xs">{collegeLessonVisibilityLabel(item)}</p>
+             <StatusBadge tone={item.status==="ARCHIVED"?"neutral":item.visibleToStudents?"success":"warning"}>{collegeLessonVisibilityLabel(item)}</StatusBadge>
              {item.status==="ARCHIVED"?
               <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
               <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
@@ -581,7 +582,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
               {item.courseName} ({item.courseCode})
              </Link>
              <p className="text-xs text-body">{item.cohortName} · {item.periodName}</p>
-             <p className="text-xs text-body">Offering state: {item.offeringStatus}</p>
+             <p className="flex flex-wrap items-center gap-2 text-xs text-body">Offering state: <StatusBadge tone={item.offeringStatus==="ACTIVE"?"success":"neutral"}>{item.offeringStatus}</StatusBadge></p>
              <p className="text-xs text-body">{collegeProgressDescription(item)}</p>
              <Link href={collegeOfferingLessonsHref(item.offeringId)}
               className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View authored lessons</Link>
@@ -610,7 +611,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                   cell:item=>item.sequence+1},
                 {key:"students",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.studentsSeeIt,mobilePriority:"action" as const,
                   cell:item=><div className="min-w-0 space-y-2">
-                    <p className="text-body">{collegeLessonVisibilityLabel(item)}</p>
+                    <StatusBadge tone={item.status==="ARCHIVED"?"neutral":item.visibleToStudents?"success":"warning"}>{collegeLessonVisibilityLabel(item)}</StatusBadge>
                     {item.status==="ARCHIVED"?
                       <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
                       <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
@@ -640,7 +641,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                     </Link>
                   </div>},
                 {key:"state",header:"Offering state",mobilePriority:"secondary" as const,
-                  cell:item=>item.offeringStatus},
+                  cell:item=><StatusBadge tone={item.offeringStatus==="ACTIVE"?"success":"neutral"}>{item.offeringStatus}</StatusBadge>},
                 {key:"activity",header:"Recorded learner activity",mobilePriority:"secondary" as const,
                   cell:item=>collegeProgressDescription(item)},
               ]}
