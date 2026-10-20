@@ -18,7 +18,7 @@ function ProfileField({
   value: string | null;
 }) {
   return (
-    <div>
+    <div className="min-w-0">
       <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {label}
       </dt>
@@ -42,14 +42,14 @@ export default async function TpoProfilePage() {
   const profile = await getOwnTpoProfile(context);
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader
         title="Profile"
         description="Your signed-in college membership and available faculty-backed profile information."
         actions={
           <Link
             href="/tpo/more"
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Back to More
           </Link>
@@ -58,13 +58,13 @@ export default async function TpoProfilePage() {
 
       <section
         aria-label="Your TPO profile"
-        className="border-t border-border pt-5 min-[768px]:pt-6"
+        className="min-w-0 border-t border-border pt-5 md:pt-6"
       >
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Account details
         </h2>
 
-        <dl className="mt-5 grid gap-5 min-[768px]:grid-cols-2">
+        <dl className="mt-5 grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
           <ProfileField
             label="Display name"
             value={profile.displayName}
@@ -82,7 +82,7 @@ export default async function TpoProfilePage() {
             value={profile.departmentName}
           />
 
-          <div>
+          <div className="min-w-0">
             <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Membership status
             </dt>
@@ -114,7 +114,7 @@ export default async function TpoProfilePage() {
         </dl>
       </section>
 
-      <p className="text-sm text-muted-foreground leading-[1.6]">
+      <p className="max-w-2xl border-t border-border pt-4 text-sm leading-[1.6] text-muted-foreground">
         This page is read-only. Department information
         appears only when your own membership has a
         faculty profile linked to a department in your
