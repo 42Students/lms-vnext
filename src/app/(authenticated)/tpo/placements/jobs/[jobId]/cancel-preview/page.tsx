@@ -24,14 +24,12 @@ export default async function TpoDriveCancelPreviewPage({
     throw error;
   }
   return (
-    <div className="min-w-0 space-y-5">
-      <Link href={"/tpo/placements/jobs/" + preview.id} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-        ← Drive workspace
-      </Link>
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="TPO · Drive lifecycle"
         title={preview.title + " · Cancel drive"}
         description="Review what cancelling will change before an audited, reason-required cancellation."
+        actions={<Link href={"/tpo/placements/jobs/" + preview.id} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 min-[768px]:w-auto">← Drive workspace</Link>}
       />
       {preview.cancellable ? (
         <TpoDriveCancelForm preview={preview} />
