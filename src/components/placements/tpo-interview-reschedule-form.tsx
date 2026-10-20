@@ -58,7 +58,7 @@ export function TpoInterviewRescheduleForm({round}:{
   {error?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50 sm:col-span-2 sm:w-auto">
     {pending?"Rescheduling…":"Confirm interview reschedule"}</Button>
- </form></Disclosure><ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
+ </form></Disclosure><ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!pending)setConfirmOpen(next);}} pending={pending}
   title="Reschedule this interview?"
   description="Venue occupancy and version will be checked before saving, and the change is audited."
   confirmLabel="Confirm interview reschedule"
