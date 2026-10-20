@@ -40,7 +40,7 @@ export function RecruiterRequestCancelButton({
     setBusy(true);
     setFeedback(null);
     try {
-      await apiFetch("/api/placements/recruiter/drives/requests", {
+      const receipt: unknown = await apiFetch("/api/placements/recruiter/drives/requests", {
         method: "PATCH",
         credentials: "same-origin",
         headers: { "content-type": "application/json" },
@@ -51,6 +51,15 @@ export function RecruiterRequestCancelButton({
           expectedUpdatedAt: updatedAt,
         }),
       });
+      // An HTTP success is not enough: verify the persisted cancellation row.
+      const row = receipt && typeof receipt === "object" && !Array.isArray(receipt)
+        ? (receipt as { request?: unknown }).request : null;
+      if (!row || typeof row !== "object" || Array.isArray(row) ||
+          (row as Record<string, unknown>).id !== requestId ||
+          (row as Record<string, unknown>).collegeId !== collegeId ||
+          (row as Record<string, unknown>).status !== "CANCELLED") {
+        throw new Error("CANCELLATION_UNCONFIRMED");
+      }
       setCancelled(true);
       setConfirmOpen(false);
       setFeedback({ tone: "success", message: "Request cancelled." });
@@ -70,7 +79,7 @@ export function RecruiterRequestCancelButton({
     <div className="mt-2 min-w-0">
       {cancelled ? null : (
         <details className="min-w-0">
-          <summary className="flex min-h-11 w-fit max-w-full cursor-pointer items-center break-words text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">
+          <summary className="flex min-h-11 w-full max-w-full cursor-pointer items-center break-words min-[768px]:w-fit text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">
             Manage request
           </summary>
           <div className="mt-1 min-w-0">
