@@ -32,7 +32,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}
    actions={<Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Drive workspace</Link>} />
-  <section className="grid grid-cols-2 overflow-hidden border-y border-border bg-surface md:grid-cols-4" aria-label="Result counts">
+  <section className="grid grid-cols-1 overflow-hidden border-y border-border bg-surface md:grid-cols-4" aria-label="Result counts">
    {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border p-3 md:border-r md:border-b-0 md:last:border-r-0">
     <p className="text-xs capitalize text-[var(--lms-muted-text)]">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
