@@ -24,7 +24,7 @@ export default async function Page({params}:{
   {data.feedback.length===0?<EmptyState title="No recorded reviewer feedback"
    description="No persisted submission-version feedback exists for this authorized task. Missing messages are not reconstructed."/>
    :<ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.feedback.map(entry=><li key={entry.id}
-    className="py-[var(--lms-space-3)]">
+    className="py-[var(--lms-space-4)]">
     <div className="flex flex-wrap items-center justify-between gap-2">
      <h2 className="text-sm font-semibold">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></h2>
      <span className="text-xs text-muted-foreground">

@@ -94,7 +94,7 @@ export default async function TpoTeamPage({searchParams}:{
       {([["WORK","Most assigned duties"],["OVERDUE","Overdue first"],["NAME","Name"]] as const).map(([value,label])=>
        <Link key={value} href={"/tpo/team?tab=people&sort="+value}
         aria-current={peopleSort===value?"page":undefined}
-        className={(peopleSort===value?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary min-[768px]:min-h-9":"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-body hover:border-primary min-[768px]:min-h-9")+" focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
+        className={(peopleSort===value?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary min-[768px]:min-h-9":"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 py-2 text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text min-[768px]:min-h-9")+" focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
         {label}
        </Link>)}
       {!workload?.ready?<span className="text-xs text-muted-foreground">Ask workload is not available yet.</span>:null}
