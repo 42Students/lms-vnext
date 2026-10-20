@@ -16,7 +16,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-14.md: surface | probl
 
 - [x] `src/app/(authenticated)/hr/activity/page.tsx` (HR page)
 - [x] `src/app/(authenticated)/hr/calendar/page.tsx` (HR page)
-- [ ] `src/app/(authenticated)/hr/colleges/page.tsx` (HR page)
+- [x] `src/app/(authenticated)/hr/colleges/page.tsx` (HR page)
 - [ ] `src/app/(authenticated)/hr/company/page.tsx` (HR page)
 - [ ] `src/app/(authenticated)/hr/company/reports/page.tsx` (HR page)
 - [ ] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx` (HR page)
