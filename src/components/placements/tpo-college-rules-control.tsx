@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -23,18 +24,25 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
     minResponseHours: String(rules.minResponseHours),
   });
   const [saved, setSaved] = useState(form);
+  const [confirmSave, setConfirmSave] = useState(false);
+  const [leaveHref, setLeaveHref] = useState<string | null>(null);
+  const allowUnload = useRef(false);
   const held = Number(form.maxHeldOffers);
   const upliftValue = Number(form.upliftPct);
   const nextLpa = Number.isFinite(upliftValue) ? (5 * (1 + upliftValue / 100)).toFixed(2) : "—";
   const dirty = (Object.keys(form) as (keyof typeof form)[]).some(key=>form[key]!==saved[key]);
   useEffect(()=>{
     if(!dirty)return;
-    const onUnload=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    const onUnload=(event:BeforeUnloadEvent)=>{
+      if(allowUnload.current)return;
+      event.preventDefault();event.returnValue="";
+    };
     const onLink=(event:MouseEvent)=>{
       const target=event.target;
-      if(target instanceof Element && target.closest("a[href]") && !window.confirm("You have unsaved placement settings. Leave without saving them?")){
-        event.preventDefault();event.stopPropagation();
-      }
+      const link=target instanceof Element ? target.closest<HTMLAnchorElement>("a[href]") : null;
+      if(!link||link.hasAttribute("download")||allowUnload.current)return;
+      event.preventDefault();event.stopPropagation();
+      setLeaveHref(link.href);
     };
     window.addEventListener("beforeunload",onUnload);
     document.addEventListener("click",onLink,true);
@@ -56,9 +64,8 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       setError("Held offers: 1–5; uplift: 0–200%; response hours: 12–168.");
       return;
     }
-    if (!window.confirm(
-      "Save college-wide placement rules? These settings may affect future offer eligibility. Continue?",
-    )) return;
+    if (!confirmSave) { setConfirmSave(true); return; }
+    setConfirmSave(false);
     inFlight.current = true;
     setBusy(true);
     setError(null);
@@ -112,6 +119,24 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         {busy ? "Saving..." : "Review and confirm rules"}
       </Button>
       {error ? <InlineNotice tone="error" message={error}/> : null}
+      <ConfirmDialog open={confirmSave} onOpenChange={setConfirmSave}
+        title="Save college-wide placement rules?"
+        description="Save college-wide placement rules? These settings may affect future offer eligibility. Continue?"
+        confirmLabel="Save rules" confirmVariant="primary" pending={busy}
+        onConfirm={() => void save()}/>
+      <ConfirmDialog open={leaveHref !== null}
+        onOpenChange={next => { if (!next) setLeaveHref(null); }}
+        title="Discard unsaved placement settings?"
+        description="You have unsaved placement settings. Leave without saving them?"
+        confirmLabel="Leave without saving" confirmVariant="danger"
+        onConfirm={()=>{
+          if(!leaveHref)return;
+          const href=new URL(leaveHref,window.location.href);
+          setLeaveHref(null);
+          allowUnload.current=true;
+          if(href.origin===window.location.origin)router.push(href.pathname+href.search+href.hash);
+          else window.location.assign(href.href);
+        }}/>
     </section>
   );
 }
