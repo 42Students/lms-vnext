@@ -46,4 +46,3 @@ export default async function CollegeClassesPage({
     <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
     </div>} />;
 }
-}
