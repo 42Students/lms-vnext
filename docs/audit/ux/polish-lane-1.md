@@ -143,3 +143,27 @@
 **Problems fixed (10):** operational navigation split across three disconnected rows; export competed with core review; progress strip borders misaligned across phone/tablet/desktop; empty TPO roster had no next step; individual result editors filled every row with nested mini-forms; bulk result staging displaced the actual roster above the fold; bulk staging controls remained expanded when rarely used; lengthy lifecycle explanation crowded the canvas; coordinator empty search had no recovery; coordinator Present/Absent controls broke unevenly at 375px. Consolidated links into one responsive action toolbar, promoted Review results, rebuilt strip borders, gave empty state Candidate schedule action, put editable row results behind shared Disclosure, placed bulk staging after applicants behind disclosure, collapsed advanced explanation, gave coordinators Clear search, and aligned paired 44px phone actions. Contextualized loading/error states. All GET/POST contracts, IDs, roll numbers, attendance rules, two-step stage/apply guards, and role-based path choices preserved.
 
 **Files:** `src/components/placements/tpo-round-drive-day-read-only.tsx`, `src/components/placements/drive-day-roster.tsx`, `src/components/placements/tpo-round-result-recorder.tsx`, `src/app/(authenticated)/tpo/drive-day/[roundId]/loading.tsx`, `src/app/(authenticated)/tpo/drive-day/[roundId]/error.tsx`, queue and proof log. Route `page.tsx` reviewed, unchanged.
+
+## Surface 29 — Drive Day live and coordinator index
+
+**Reviewed:** `src/app/(authenticated)/tpo/drive-day/page.tsx`, TPO live triage and learner-coordinator branches, query schema/empty/invalid/truncated states, live timing and venue helpers, CSV scope, linked rounds and actions, loading/error boundaries, shared forms, badges and TPO layout. 375/768/1280 reviewed via responsive classes only; no run/CI/screenshot.
+
+**Problems fixed (11):** invalid filters had no page header; filter controls wrapped arbitrarily at tablet; Apply button lacked a full phone target; detached duplicate export row competed with filters; six metric cards stacked vertically on phone; separator spacing fragmented; empty filtered results had no reset; per-round actions cramped on phones; Open round lacked primary emphasis; five per-round counts formed a five-row phone column; loading/error lacked page context. Moved CSV to header, kept Reset focus, aligned 1/2/4-column search/filter form, made a 2/3/6-column stats strip, added recovery action, prioritized Open round, and contextualized error/loading routes. All model logic, role routing and deep links unchanged.
+
+**Files:** `src/app/(authenticated)/tpo/drive-day/page.tsx`, `src/app/(authenticated)/tpo/drive-day/loading.tsx`, `src/app/(authenticated)/tpo/drive-day/error.tsx`, queue, proof.
+
+## Surface 30 — TPO Find records
+
+**Reviewed:** find route, zero-query/no-fetch path, repeated/invalid query, populated/empty result groups, result navigation, shared header/form/empty/alert primitives, route loading/error and nearest TPO layout. Source-only 375/768 review; no runtime/visual/CI.
+
+**Problems fixed (9):** search button squeezed or detached on phone; input had no 44px minimum; inconsistent invalid length feedback; five empty sections competed with actual matches; oversized subheadings looked like page titles; long result names could spill; empty search had no reset; loading/error lost page heading; failed search had no exit route. 1/2-column mobile-safe search, 44px action, matching minLength, only populated results sections, compact headings, breakable rows and empty recovery. Routes, ID/ARIA, result caps, authorized search gates and API semantics retained.
+
+**Files:** `src/app/(authenticated)/tpo/find/page.tsx`, `src/app/(authenticated)/tpo/find/loading.tsx`, `src/app/(authenticated)/tpo/find/error.tsx`, queue and proof. No CI.
+
+## Surface 31 — TPO Follow-ups due
+
+**Reviewed:** `src/app/(authenticated)/tpo/follow-ups/page.tsx`, persisted scope/date/search/pagination and DB09-unavailable state, `TpoDueFollowupWorkspace` with create/complete flows, confirmation dialogs, validation, no-leads/empty, inline success/error, contact links, pending state; loading/error and TPO layout. 375/768/1280 source breakpoint review only, no UI execution/CI.
+
+**Problems fixed (10):** detached back action competed with heading; CSV export was styled primary next to task creation; ownership and date tabs consumed two disconnected rows; search controls broke unpredictably on phones; Search button not full-width at 375; pagination looked unnecessary on one page; row outcomes were poorly aligned on tablet; due/status badges cramped; edit form action floated among fields; route loading/error lost heading and recovery. Moved secondary actions into PageHeader, aligned two tab groups and search, kept schedule/complete controls as clear primary tasks, standardized row editor and mobile touch rhythm, suppressed single-page pagination, contextualized fallbacks. Existing scopes, export URL, queue pagers, mutation confirmation/guards, IDs and wording preserved.
+
+**Files:** `src/app/(authenticated)/tpo/follow-ups/page.tsx`, `src/app/(authenticated)/tpo/follow-ups/loading.tsx`, `src/app/(authenticated)/tpo/follow-ups/error.tsx`, `src/components/tpo/tpo-due-followup-workspace.tsx`, queue, proof. No code execution/CI.
