@@ -157,7 +157,8 @@ export function TpoAuditSavedViews({filters}:{filters:{
     className="min-h-11 w-full md:min-h-9">Rename</Button>
    <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>setConfirmDelete(true)}
     className="min-h-11 w-full md:min-h-9">Delete</Button>
-  </div>:null}
+  </div>:ready&&!loading?<p className="mt-3 text-sm text-muted-foreground">No saved audit views yet. Name the current filters to save your first view.</p>:null}
+  {selectedView?<p className="mt-2 text-xs text-muted-foreground">To rename the selected view, enter the new name in View name above.</p>:null}
   <ConfirmDialog open={confirmDelete} onOpenChange={next=>{if(!busy)setConfirmDelete(next);}}
    title="Delete saved audit view?" description="Delete this saved audit view?"
    confirmLabel="Delete view" confirmVariant="danger" pending={busy}
