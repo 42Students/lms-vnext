@@ -26,11 +26,11 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  const base="/mentor/projects/"+encodeURIComponent(projectId);
  const current=mentorResourceDirectoryHref({...data.query,page:1});
  const filters=current.includes("?")?"?"+current.split("?")[1]:"";
- return <div className="min-w-0 max-w-full space-y-6">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader eyebrow="Mentor · Project resources" title="Registered resource links"
    description={data.projectTitle}
    actions={<Link data-unskin="" href={base+"?tab=resources"}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
      Project resources
    </Link>}/>
   {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
@@ -41,7 +41,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {" "}{data.linkableCount} with HTTPS links.
    </p>
    <FilterBar title="Filters"><form method="get" action={base+"/resources-directory"} role="search" aria-label="Project resources filters"
-    className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
+    className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full [&_button]:max-[767px]:w-full"}>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-11 md:min-h-9"/>
@@ -83,7 +83,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    <div className="flex flex-wrap items-center gap-3">
     <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
       "/mentor-resources-export"+filters}
-      download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+      download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
      Export resource metadata CSV (max 200)
     </Link>
     {data.exportOmitted>0?<p role="status" className="text-xs text-body leading-5">
@@ -94,12 +94,12 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    {data.items.length===0?<EmptyState title="No matching resources"
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":
-     "Clear the filters to see other registered resource metadata."}/>:
-   <ol className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
+     "Clear the filters to see other registered resource metadata."} action={<Link href={base+"/resources-directory"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>} />:
+   <ol className="min-w-0 divide-y divide-border border-y border-border">
     {data.items.map(resource=><li key={resource.id}
-     className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+     className="min-w-0 py-4">
      <div className="flex flex-wrap items-start justify-between gap-2">
-      <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{resource.title}</h2>
+      <h2 className="m-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{resource.title}</h2>
       <span className="text-xs font-semibold text-body">
        {resource.required?"Required":"Optional"}
       </span>
@@ -114,7 +114,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      </p>}
     </li>)}
    </ol>}
-   <Pagination label="Resource directory pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorResourceDirectoryHref({...data.query,page})}/>
+   {data.totalPages>1?<Pagination label="Resource directory pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorResourceDirectoryHref({...data.query,page})}/>:null}
   </>}
   <p className="text-xs text-muted-foreground leading-5">
    Only registered resource metadata and explicitly safe HTTPS links are shown.
