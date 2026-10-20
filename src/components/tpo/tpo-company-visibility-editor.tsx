@@ -40,13 +40,13 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
   <p className="text-xs text-muted-foreground">Your choices are saved in the college&apos;s sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
   <Disclosure title="How sharing works" className="min-w-0 border-t border-border pt-3" contentClassName="pt-2 text-sm"><ul className="list-disc space-y-1 pl-5"><li>The college sets the fields recruiters may see.</li><li>Learner consent and verification still apply.</li><li>Some values appear only as a band when exact sharing is off.</li><li>These settings do not grant access to a learner or drive.</li><li>Changes to sharing settings affect future views and exports.</li></ul></Disclosure>
   {Object.entries(labels).slice(0,3).map(([key,label])=><label key={key} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border-b border-border py-2 text-sm">
-   <span>{label}</span>
+   <span className="min-w-0 flex-1 break-words">{label}</span>
    <Checkbox disabled={busy} checked={values[key as keyof Choice]}
     onChange={e=>setValues(current=>({...current,[key]:e.target.checked}))}/>
   </label>)}
   <Disclosure title="Additional sharing options" className="border-t border-border pt-3">
     {Object.entries(labels).slice(3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
-      <span>{label}</span>
+      <span className="min-w-0 flex-1 break-words">{label}</span>
       <Checkbox disabled={busy} checked={values[key as keyof Choice]}
         onChange={event=>setValues(current=>({...current,[key]:event.target.checked}))}/>
     </label>)}
