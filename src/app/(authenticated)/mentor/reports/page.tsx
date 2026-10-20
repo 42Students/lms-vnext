@@ -50,7 +50,7 @@ export default async function MentorReportsPage({searchParams}:{
     </section>:<>
       <section aria-label="Project status totals" className="space-y-3">
         <h2 className="font-semibold">Registered project status</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {statusMetrics.map(([label,count])=>
             <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
@@ -64,7 +64,7 @@ export default async function MentorReportsPage({searchParams}:{
       </section>
       <section aria-label="Recorded attention totals" className="space-y-3">
         <h2 className="font-semibold">Recorded project attention</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {attentionMetrics.map(([label,count])=>
             <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
@@ -148,7 +148,7 @@ export default async function MentorReportsPage({searchParams}:{
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
           "Clear filters to see the other currently assigned project records."}/>:
-        <ol className="grid gap-3 sm:grid-cols-2">{data.items.map(project=>
+        <ol className="grid gap-3 md:grid-cols-2">{data.items.map(project=>
           <li key={project.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="break-words font-semibold text-foreground">{project.title}</h3>

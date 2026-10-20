@@ -95,7 +95,7 @@ export default async function MentorTeamHistoryPage({
                   {item.roleLabel || item.role}
                   {item.isPrimary ? " · Primary mentor" : ""}
                 </p>
-                <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+                <dl className="mt-3 grid gap-2 text-sm md:grid-cols-2">
                   <div><dt className="text-muted-foreground">Joined</dt><dd>{formatDate(item.startedAt)} IST</dd></div>
                   <div><dt className="text-muted-foreground">Ended</dt>
                     <dd>{item.endedAt ? formatDate(item.endedAt) + " IST" : "No end date recorded"}</dd>

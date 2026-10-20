@@ -94,7 +94,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":
      "Clear the filters to see other registered resource metadata."}/>:
-   <ol className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+   <ol className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
     {data.items.map(resource=><li key={resource.id}
      className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
      <div className="flex flex-wrap items-start justify-between gap-2">
