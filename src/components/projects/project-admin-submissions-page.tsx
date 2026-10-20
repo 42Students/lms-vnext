@@ -162,7 +162,7 @@ export async function ProjectAdminSubmissionsPage({
           label="Unsubmitted workspace pages"/>
       </section>:null}
       {view==="ALL" && result ? <>
-      {summary?<div className="grid min-w-0 grid-cols-2 divide-x divide-border border-y border-border min-[1366px]:grid-cols-4">
+      {summary?<div className="grid min-w-0 grid-cols-2 divide-x divide-border border-y border-border md:grid-cols-4">
         {([
           ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
           ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
@@ -170,7 +170,7 @@ export async function ProjectAdminSubmissionsPage({
           ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
         ] as const).map(([name, value, href]) => {
           return <Link key={name} href={href}
-            className="block min-w-0 bg-surface px-3 py-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="block min-w-0 bg-surface px-3 py-4 transition-colors duration-200 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             <p className="text-xs font-semibold text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;

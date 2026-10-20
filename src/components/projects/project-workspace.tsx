@@ -172,9 +172,11 @@ function formatDateTime(value: Date | null) {
 }
 
 /** The same project title, mentor subtitle and status badge above every mentor detail tab. */
-export function ProjectWorkspaceHeader({workspace,mode}: {
+export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
   workspace: Workspace;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
+  backHref?: string;
+  backLabel?: string;
 }) {
   return (
     <PageHeader
@@ -186,6 +188,7 @@ export function ProjectWorkspaceHeader({workspace,mode}: {
               : (workspace.project.summary ?? undefined)}
             actions={
               <div className="flex flex-wrap items-center gap-2">
+                {mode==="ADMIN"&&backHref?<PageBackLink href={backHref} label={backLabel??"Back to projects"}/>:null}
                 <StatusBadge
                   tone={tone(workspace.project.status)}
                 >
@@ -306,8 +309,9 @@ export function ProjectWorkspace({
 
   return (
     <div className="space-y-6">
-      <PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />
+      {mode!=="ADMIN"?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
 
+      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} backHref={mode==="ADMIN"?backHref:undefined} backLabel={backLabel} /> : null}
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
@@ -322,10 +326,8 @@ export function ProjectWorkspace({
           }))} />
       ) : null}
 
-      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} /> : null}
-
       {mode === "ADMIN" && riskReason ? (
-        <section role="status" className="rounded-xl border border-warning-border bg-surface p-4 text-sm">
+        <section role="status" className="border-y border-warning-border bg-warning-subtle px-4 py-3 text-sm">
           Opened from At-risk projects · {riskReason === "STALLED" ? "Stalled" : riskReason === "BLOCKER" ? "Active blocker" : "Pending review"}
         </section>
       ) : null}
@@ -340,7 +342,7 @@ export function ProjectWorkspace({
       {readOnly ? (
         <section
           role="status"
-          className="rounded-xl border border-border bg-muted p-4"
+          className="border-y border-border bg-[var(--lms-neutral-50)] px-4 py-3"
         >
           <p className="m-0 text-sm font-semibold text-foreground">
             {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace · read only":workspace.project.status==="COMPLETED"?"Completed project · read only":"Read-only project access"}
