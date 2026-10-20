@@ -19,7 +19,7 @@ export default function PlatformMarketingPage() {
    {title:"Placements",description:"From candidate eligibility through offers and joining."},
    {title:"Integrations",description:"Reduce handoffs between academic and hiring workflows."}
   ]}/>
-  <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6"><h2 className="text-2xl font-semibold">A complete talent lifecycle</h2>
+  <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)]"><h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">A complete talent lifecycle</h2>
    <p className="break-words text-base leading-7 text-body">Discover needs → Learn → Build → Demonstrate → Interview → Grow.</p></section>
   <MarketingCta title="Explore the platform with our team" />
  </MarketingLayout>;
