@@ -42,7 +42,7 @@ export function CollegeStudentVisibilityControl({contentId,initialVisible,initia
   return <div className="mt-2 min-w-0 space-y-1">
     <Button type="button" variant="secondary" disabled={pending} onClick={toggle}
       aria-label={action.label} aria-pressed={visible}
-      className="min-h-11 max-w-full text-xs md:min-h-9">
+      className="min-h-11 max-w-full md:min-h-9">
       {pending?"Saving…":action.label}
     </Button>
     {notice?<Alert tone="error">{notice}</Alert>:null}

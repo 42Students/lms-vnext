@@ -1,33 +1,6 @@
-/* Modern route-intent indicator. There is no measured legacy thin bar:
- * legacy .ln-page-loader was a white fullscreen overlay
- * (docs/design/legacy-styles/components___common.scss:1008-1019).
- * Use the exact shell's #26bac7 active-rail accent as the only colour source.
+/* Original LMS has no top route-progress bar. Keep only
+ * .ln-page-loader / AntD large Spin from the production reference.
  */
-.lms-route-progress {
- position:fixed;
- inset:0 0 auto;
- z-index:998;
- height:3px;
- overflow:hidden;
- background:rgba(38,186,199,.13);
- pointer-events:none;
-}
-.lms-route-progress-segment {
- position:absolute;
- inset:0 auto 0 0;
- width:40%;
- background:#26bac7;
- transform:translateX(-100%);
- animation:lms-route-progress-sweep 1.1s cubic-bezier(.2,0,0,1) infinite;
-}
-@keyframes lms-route-progress-sweep {
- 0% {transform:translateX(-100%);}
- 100% {transform:translateX(350%);}
-}
-@media (prefers-reduced-motion:reduce) {
- .lms-route-progress-segment {animation:none;transform:none;width:100%;}
-}
-
 /* Exact overlay box: lms2-fe/prod-2026
  * src/styles/components/_common.scss:1008-1019.
  * AntD large Spin in src/components/Loader/loader.js:18-30.

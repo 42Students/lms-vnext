@@ -820,3 +820,205 @@ Source uses `md:` at 768px where a breakpoint is required (zero `sm:` from these
 **STRICT GLOBAL STATUS:** A5 icons, A6 avatars/brand/browser title, A7 complete link family, and E8 global AG Grid parity are **still unticked**. Shared topbar/avatar ownership and actual responsive/raster proof are outside this scoped source pass. No application execution, CI, tests, browser focus testing or 360/767/768/1024px screenshots were performed. These 15 file ticks describe source comparison only, not pixel-certified visual acceptance.
 
 Next unreviewed TPO area: `src/components/tpo/tpo-bell-panel.tsx` (check topbar ownership first); otherwise `src/components/tpo/tpo-company-memory-workspace.tsx` company activity states and the related TPO pages.
+
+## 2026-10-20 [chat-14] fifteen-file E1/E4/E8 visual-source closure
+
+**Scope and proof level.** Every item below is an actual source-file change on `chatgpt/chat-14-b`, with unchanged business authorization and navigation. Counts come from complete GitHub-fetched source text after the commits. They are `grep`-equivalent scans, **not shell grep executed locally**. No TypeScript compiler, test suite, CI, browser, pixel snapshot, or runtime AG Grid verification was performed. Pixel-level acceptance remains open under STRICT TICK RULE.
+
+### 1. `src/components/placements/hr-recruiter-drives-grid.tsx` — HR drive sheet inline actions
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | legacy-styles/components___variables.scss:10 ($clrThird #26bac7); antddesign.scss:1081-1100 (>=44px phone hitbox) |
+| New vNext | 6 protected row links now text-link (#26bac7), min-h-11 (44px) on <=767, md:min-h-9 (36px) from 768; authorized server row hrefs remain supplied unchanged |
+| Responsive <=767px | six existing inline actions wrap and meet 44px tap area; TpoGrid uses mobile cards below md |
+| Responsive >=768px | six actions return to compact 36px in Quartz from 768px |
+| States / permission invariants | Open/applicants/offers/requests/hire-again/messages destinations and conditional unanswered request link preserved |
+
+**Source grep proof:** blob `aa3a147112f0`, 76 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **6**; Button opens/closes **0/0**; explicit `sortKind` **2**, `sortValue` **2**; `md:` tokens **6**, `sm:` **0**; relevant source lines **37,39,53,55,58,61**.
+
+### 2. `src/components/hr/hr-round-editor-grid.tsx` — HR round metadata actions
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | legacy-styles/components___variables.scss:10; components___antddesign.scss:1081-1100 |
+| New vNext | 2 links (Edit round, Review round removal) text-link #26bac7; 44px phone/36px desktop; original editable-only guard intact |
+| Responsive <=767px | only authorized editable rows present 2 tappable links in phone row cards |
+| Responsive >=768px | 36px action lines from md; numeric sequence/duration sortable |
+| States / permission invariants | readonly state still renders no edit/remove actions; unchanged workflow routes |
+
+**Source grep proof:** blob `e2af1c3f0e1f`, 52 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **2**; Button opens/closes **0/0**; explicit `sortKind` **2**, `sortValue` **2**; `md:` tokens **2**, `sm:` **0**; relevant source lines **22,23,28,41,43,46**.
+
+### 3. `src/components/hr/hr-job-applicants-grid.tsx` — Recruiter shared-applicant review action
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | legacy-styles/components___variables.scss:10 teal ink; components___antddesign.scss:1081-1100 phone 44px |
+| New vNext | Review applicant link is min-h-11 md:min-h-9 and text-link, replacing compact 36px/darker-teal always |
+| Responsive <=767px | 44px link inside applicant card; columns still applicant/role/application/screening |
+| Responsive >=768px | 36px link, same 4 sortKind source columns, no widened data scope |
+| States / permission invariants | reviewHref server authorization unchanged; no unauthorised action |
+
+**Source grep proof:** blob `d0d693855b90`, 55 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **1**; Button opens/closes **0/0**; explicit `sortKind` **4**, `sortValue` **3**; `md:` tokens **1**, `sm:` **0**; relevant source lines **29,31,33,37,48,50**.
+
+### 4. `src/components/hr/hr-company-reports-grid.tsx` — Company hiring report row action
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | old-lms-pages.md:6 status pill + link; legacy teal #26bac7; phone 44px |
+| New vNext | Open drive action now canonical text-link #26bac7 and 44/36px; original StatusBadge and seven numeric sortable columns retained |
+| Responsive <=767px | 44px link and status badge in TpoGrid cards |
+| Responsive >=768px | compact 36px link in Quartz from 768px |
+| States / permission invariants | PUBLISHED success vs neutral status tone preserved; encoded drive route untouched |
+
+**Source grep proof:** blob `466e77341f41`, 50 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **1**; Button opens/closes **0/0**; explicit `sortKind` **7**, `sortValue` **7**; `md:` tokens **1**, `sm:` **0**; relevant source lines **16,20,22,24,26,28**.
+
+### 5. `src/components/tpo/tpo-grid-column-chooser.tsx` — Visible-column checkbox row and reorder controls
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | legacy-styles/components___antddesign.scss:1081-1100 phone >=44px; shell max 767 cutoff |
+| New vNext | checkbox label now min-h-11 md:min-h-9 (44px/36px), matching 4 pre-existing reorder/reset Button controls |
+| Responsive <=767px | 44px checkbox row and reorder buttons wrap without squeezing |
+| Responsive >=768px | 36px compact chooser controls from md |
+| States / permission invariants | cannot hide last visible column, disabled boundaries, reset/show-all callbacks unchanged |
+
+**Source grep proof:** blob `7cfa66d36cf3`, 57 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **0**; Button opens/closes **4/4**; explicit `sortKind` **0**, `sortValue` **0**; `md:` tokens **5**, `sm:` **0**; relevant source lines **19,39,42,49,52**.
+
+### 6. `src/components/placements/recruiter-result-review-grid.tsx` — Recruiter result mobile summary card metric
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | old-lms-pages.md:6-7 compact cards/important statuses; E8 mobile fallback at 768 |
+| New vNext | mobilePrimaryKeys includes score beside applicant, outcome and status; number/date sort remains explicit only on score/waitlist; Review row retains 44px phone/36px md |
+| Responsive <=767px | authorized percentage score visible in summary, not buried in overflow |
+| Responsive >=768px | Quartz columns unchanged; local storage key still employer/drive scoped |
+| States / permission invariants | read-only summary; no release or edit action created |
+
+**Source grep proof:** blob `5da0d0dfeca4`, 46 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **1**; Button opens/closes **0/0**; explicit `sortKind` **2**, `sortValue` **2**; `md:` tokens **1**, `sm:` **0**; relevant source lines **26,28,38**.
+
+### 7. `src/components/hr/hr-job-offers-grid.tsx` — Recruiter offer phone summary
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | old-lms-pages.md:6 compact card details, E8 768px breakpoint; offer value appears in source column model |
+| New vNext | mobilePrimaryKeys now exposes CTC (LPA) with candidate/type/status/reply-by; CTC numeric sortValue unchanged |
+| Responsive <=767px | CTC remains in primary card projection under 768px |
+| Responsive >=768px | Quartz seven-column original display unmodified |
+| States / permission invariants | read-only company-shared offer rows; no extra fetch or mutable actions |
+
+**Source grep proof:** blob `760d89e79f1e`, 39 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **0**; Button opens/closes **0/0**; explicit `sortKind` **1**, `sortValue` **1**; `md:` tokens **0**, `sm:` **0**; relevant source lines **24,36**.
+
+### 8. `src/components/hr/hr-round-results-grid.tsx` — Recruiter round outcomes summary
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | old-lms-pages.md:6 compact row/card; E8 mobile primary fields and numeric/date sort contract |
+| New vNext | mobilePrimaryKeys includes numeric score and waitlist rank with candidate/outcome/status; both numeric sorts unchanged |
+| Responsive <=767px | score and waitlist no longer hidden from concise result card |
+| Responsive >=768px | full columns and rows are unchanged from 768px |
+| States / permission invariants | null/not-recorded numbers still handled by common grid; no extra permissions |
+
+**Source grep proof:** blob `8f773c10b973`, 35 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **0**; Button opens/closes **0/0**; explicit `sortKind` **2**, `sortValue` **2**; `md:` tokens **0**, `sm:` **0**; relevant source lines **21,23,32**.
+
+### 9. `src/components/hr/hr-job-selection-grid.tsx` — Pre-issue selection summary
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | old-lms-pages.md:6 row data with key value; E8 mobile card switch at 768 |
+| New vNext | mobilePrimaryKeys includes CTC alongside candidate, role and status; CTC numeric sortValue unchanged |
+| Responsive <=767px | CTC visible in first-card summary without expanding |
+| Responsive >=768px | existing sortable Quartz CTC and status columns untouched |
+| States / permission invariants | read-only, no HR approval or release controls created |
+
+**Source grep proof:** blob `66b3f3d28425`, 33 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **0**; Button opens/closes **0/0**; explicit `sortKind` **1**, `sortValue` **1**; `md:` tokens **0**, `sm:` **0**; relevant source lines **20,30**.
+
+### 10. `src/components/tpo/tpo-company-memory-drive-grid.tsx` — TPO company historical drives and chronological labels
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | E8 only number/date sort; old-lms-pages.md:6 white compact rows; owner IST for timestamp display |
+| New vNext | year/date display guards invalid timestamps as 'Not recorded', 2 date sortValue callbacks return timestamp or null, 1 applied numeric sortValue retains count |
+| Responsive <=767px | company drilldown card still uses TpoGrid fallback and safe date labels |
+| Responsive >=768px | Quartz sorts dates by instants rather than formatted IST year/date |
+| States / permission invariants | invalid date cannot crash page or leak broadened data; column/local export scope preserved |
+
+**Source grep proof:** blob `bb1d689a6cb7`, 78 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **0**; Button opens/closes **0/0**; explicit `sortKind` **3**, `sortValue` **3**; `md:` tokens **0**, `sm:` **0**; relevant source lines **19,25,32,33,35**.
+
+### 11. `src/components/tpo/tpo-audit-grid.tsx` — TPO audit filters, event time and TSV clipboard
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | components___form.scss:117-143 input 10px radius, 14px/20px; old-lms-pages.md:5 search/filter toolbar; E8 numeric/date sorting |
+| New vNext | removed custom rounded/padding overrides on 2 Inputs + 1 Select to use shared field chrome; guarded IST event date sortValue; common formula-safe grid clipboard sanitizer |
+| Responsive <=767px | fields retain min 44px from shared Input/Select; audit cards from TpoGrid before 768px |
+| Responsive >=768px | legacy border/field focus and 36px default from shared controls at md; chronological column sortable |
+| States / permission invariants | invalid date displays 'Not recorded'; selection/filters/reset and copy failure notice intact |
+
+**Source grep proof:** blob `a090f847d53e`, 95 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **2**; Button opens/closes **2/2**; explicit `sortKind` **1**, `sortValue` **1**; `md:` tokens **3**, `sm:` **0**; relevant source lines **10,21,38,43,44,54**.
+
+### 12. `src/components/tpo/tpo-spreadsheet-grid.tsx` — TPO mobile fallback header and column-width controls
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | legacy-styles/components___common.scss:831-837,858-860 headers white with neutral-400 text; antddesign.scss:1081-1100 phone 44px controls |
+| New vNext | fallback header uses --lms-white, --lms-neutral-400; sortable label and narrow/widen buttons explicit min-h-11 md:min-h-9; width controls min-w-11 md:min-w-9 |
+| Responsive <=767px | header hidden by md-only table while cards retain 44px action controls, 48px selection checkbox and details disclosure |
+| Responsive >=768px | table header white/neutral-400, 36px sort/narrow/widen tools; 48px pinned selection preserved |
+| States / permission invariants | numeric/date-only sorts, width bounds 100..500, pin toggles, indeterminate selection remain |
+
+**Source grep proof:** blob `f881a6122aab`, 237 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **0**; Button opens/closes **8/8**; explicit `sortKind` **0**, `sortValue` **0**; `md:` tokens **9**, `sm:` **0**; relevant source lines **187,190,210,212,215**.
+
+### 13. `src/modules/placements/tpo-grid-model.ts` — Legacy CSV safe table data
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | old-lms-pages.md:5-6 Export on existing authorized page; E8 server-safe clipboard/export restriction |
+| New vNext | csvSafeGridCell normalizes ASCII C0, DEL, Unicode line/paragraph separators U+2028/U+2029 to spaces then guards =,+,-,@ formulas and quotes RFC CSV cells |
+| Responsive <=767px | pure serializer, no viewport-dependent DOM; identical output in phone fallback and desktop GridWorkspace |
+| Responsive >=768px | same server-authorized column/row boundaries; no CSS changes |
+| States / permission invariants | preserves quoting and header/data order; prevents multiline injection and formula leaders |
+
+**Source grep proof:** blob `3ddc7e04be35`, 80 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **0**; Button opens/closes **0/0**; explicit `sortKind` **0**, `sortValue` **0**; `md:` tokens **0**, `sm:` **0**; relevant source lines **67,69**.
+
+### 14. `src/components/tpo/grid/grid-export.ts` — Legacy TSV clipboard safe output
+
+| Comparison | Exact/reference value and evidence |
+|---|---|
+| Old LMS | E8 TSV clipboard requirement, no unauthorized row broadened; old-lms-pages.md:5 Export/Columns |
+| New vNext | safeGridClipboardCell now removes ASCII controls + U+2028/U+2029 paragraph separators before formula neutralization; common gridClipboardTsv keeps tab separator and CRLF line endings |
+| Responsive <=767px | pure serializer used by fallback clipboard actions |
+| Responsive >=768px | same normalizer used by native Quartz and GridWorkspace clipboard; no layout difference |
+| States / permission invariants | number 0 retained, null -> empty, dangerous formula prefix escaped, selected row projection unchanged |
+
+**Source grep proof:** blob `09894128e4e4`, 19 lines; raw `<button>/<input>/<select>/<textarea>/<details>/<table>` tags **0**; inline 6-digit hex literals **0**; Link opens **0**; Button opens/closes **0/0**; explicit `sortKind` **0**, `sortValue` **0**; `md:` tokens **0**, `sm:` **0**; relevant source lines **4,5,14,16**.
+
+### Full-file grep reproduction commands (not executed)
+
+```sh
+grep -nE '<(button|input|select|textarea|details|table)([[:space:]>])|#[[:xdigit:]]{6}|<Button|</Button>|<Link|sortKind:|sortValue:|min-h-11|md:' src/components/{hr,placements,tpo}/**/*grid*.tsx
+grep -nE 'mobilePrimaryKeys|safeGridClipboardCell|Number.isFinite|<thead|text-link|sm:min-h-8|md:min-h-8' src/components/ui/needs-doing-chips.tsx src/components/tpo/tpo-spreadsheet-grid.tsx src/components/tpo/tpo-audit-grid.tsx src/modules/placements/tpo-grid-model.ts src/components/tpo/grid/grid-export.ts
+```
+
+**STRICT TICK RULE:** E1 table category, E4 chips/status and E8 native/HR spreadsheets remain [ ] globally. These fifteen source files have source-backed value comparisons and responsive contracts, **not browser-proven pixel parity**. Exact legacy TpoGrid source/AG Grid dependency and per-state measured screenshots remain unresolved.
+
+**Next exact source file:** `src/components/tpo/grid/grid-sort.ts` — reconcile null ordering, float parsing and fallback/native comparator direction against legacy numerical/date grid sorting.
+
+
+### 2026-10-20 [chat-14] native/fallback whitespace-null comparator parity
+
+Two additional completed files (bringing this batch to **16 E8 source files**, plus the shared E4 needs-doing chip):
+
+| File | Legacy state/value | Current authored comparison | Source grep / responsive proof |
+|---|---|---|---|
+| `src/components/tpo/grid/grid-sort.ts` | E8 old sheet numeric/date-only sorting, missing/empty stays last, stable row order | `:18` now considers whitespace-only strings absent, like `""`, null and undefined; sortValue still used and number/date only sorts | GitHub full-file read: 34 lines, 1 trimmed-empty guard, 0 raw JSX/inline hex. Pure fallback comparator: same phone and desktop where fallback applies; no browser proof |
+| `src/components/tpo/grid/tpo-grid.tsx` | E8 native Quartz should sort identically to fallback, including whitespace/invalid numbers and no blank-first regression in descending order | `:49-64` comparator now treats whitespace-only string as null; prior `descending` compensates AG Grid reverse so null remains last in both directions; sortValue still read for formatted date/number | GitHub full-file read: 279 lines; 1 trimmed-empty guard, 2 Button open/close, 0 raw button/inline six-digit hex, `md:` twice. Native grid hidden below 768px; fallback above already guards whitespace. No compilation/viewport comparison |
+
+Reproducible source grep (NOT executed):
+```sh
+grep -nE 'value\.trim\(\)|sortKind|sortValue|descending|av===null|bv===null' src/components/tpo/grid/grid-sort.ts src/components/tpo/grid/tpo-grid.tsx
+```
+
+Legacy context: `docs/design/ui-clone-checklist.md:57` specifies only numeric/date sorts and E8 Quartz parity; `docs/design/old-lms-shell.css:23,73` gives mobile/desktop 767/768 boundary. No source claim of exact old grid comparator when the legacy TpoGrid JSX is unavailable. **E8 stays unticked**; runtime empty/ascending/descending screenshots and AG Grid dependency remain open.
+
+**Next exact file:** `src/components/tpo/grid/grid-selection.ts` — static review of Shift/Ctrl authorization and phone-checkbox consistency, then browser test handoff.

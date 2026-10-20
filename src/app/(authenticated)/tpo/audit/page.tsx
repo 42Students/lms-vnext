@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import { Tabs } from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -210,7 +211,7 @@ export default async function TpoAuditPage({
             count: summary.canonicalEvents,
           },
         ].map((metric) => (
-          <StatTile key={metric.label} label={metric.label} value={metric.count} />
+          <StatTile className={tpoTileStyles.tile} key={metric.label} label={metric.label} value={metric.count} />
         ))}
       </section>
 
