@@ -6,6 +6,7 @@ import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {PageHeader} from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
+import {SummaryStrip} from "@/components/ui/summary-strip";
 import {ErrorState} from "@/components/ui/error-state";
 import {batchDecisionLabel,batchSourceLabel,batchRegistrationLabel} from "@/modules/placements/tpo-batch-labels-model";
 import {studentJourneyForBatch} from "@/modules/placements/tpo-batch-student-journey-model";
@@ -102,7 +103,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
   Every change is confirmed and audited. Review skipped learners before retrying.</p>
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
- {!result.registrationAvailable?<p role="status" className="text-sm">Registration records unavailable.</p>:null}
+ {!result.registrationAvailable?<Alert tone="warning">Registration records unavailable.</Alert>:null}
  <form action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
   className="grid min-w-0 grid-cols-1 items-end gap-2 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-sm">Class (on this page)
@@ -152,7 +153,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   </label>
   <Button type="submit" variant="primary" className="min-h-11 md:min-h-9 w-full md:w-auto">Filter</Button>
  </form>
- {!result.registrationAvailable&&view.data.registration!=="ALL"?<p role="status">Registration filtering unavailable; no learners are classified without records.</p>:null}
+ {!result.registrationAvailable&&view.data.registration!=="ALL"?<Alert tone="warning">Registration filtering unavailable; no learners are classified without records.</Alert>:null}
  <Disclosure title="Export" ariaLabel="Batch student exports"
    className="border-b border-border py-3 [&>summary]:min-h-11 md:[&>summary]:min-h-9 [&>summary]:text-link">
   <div className="flex flex-wrap items-center gap-2 py-2">
@@ -163,7 +164,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   </div>
  </Disclosure>
  <p className="text-xs text-muted-foreground">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>
- <dl aria-label="Loaded-page eligibility evidence" className="grid min-w-0 grid-cols-2 gap-2 md:grid-cols-3">{[["Loaded",pageSummary.assessed],["Eligible",pageSummary.eligible],["Ineligible",pageSummary.ineligible],["Not decided",pageSummary.undecided],["Needs review",pageSummary.needsReview],["Direct overrides",pageSummary.directOverrides]].map(([name,count])=><div key={name} className="min-w-0 border-l-2 border-border px-3 py-2 [overflow-wrap:anywhere]"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
+ <SummaryStrip label="Loaded-page eligibility evidence" steps={[{label:"Loaded",value:pageSummary.assessed},{label:"Eligible",value:pageSummary.eligible},{label:"Ineligible",value:pageSummary.ineligible},{label:"Not decided",value:pageSummary.undecided},{label:"Needs review",value:pageSummary.needsReview},{label:"Direct overrides",value:pageSummary.directOverrides}]} />
  <p className="text-xs text-muted-foreground">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
  <div id="batch-student-decisions" className="min-w-0">

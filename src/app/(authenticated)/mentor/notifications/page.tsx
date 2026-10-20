@@ -9,6 +9,7 @@ import {
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
 import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
@@ -91,14 +92,14 @@ export default async function MentorNotificationsPage({
   return <div className="min-w-0 max-w-full space-y-8">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
-    {failedSources.length ? <div role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
+    {failedSources.length ? <Alert tone="warning" role="alert">
       <h2 className="font-semibold text-foreground">Some notification sources are unavailable</h2>
       <p className="mt-1 text-sm text-body">
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
       </p>
       <Link href={MENTOR_INBOX}
         className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry sources</Link>
-    </div> : null}
+    </Alert> : null}
     <AnnouncementFeed enabled={announcementsEnabled}
       items={announcements.map(item=>({
         id:item.id,title:item.title,message:item.message,
@@ -170,13 +171,13 @@ export default async function MentorNotificationsPage({
         baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
         confirmMarkAll /> : null}
       {inbox?.cursor.invalid
-        ? <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface-subtle px-6 py-12 text-center text-sm text-foreground">
+        ? <Alert tone="error" role="alert">
             The notification page link is invalid.{" "}
             <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Return to newest notifications
             </Link>
-          </div>
+          </Alert>
         : <>
             <NotificationList items={items} readEndpoint="/api/mentor/notifications"
               emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
