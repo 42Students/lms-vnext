@@ -109,7 +109,7 @@ export default async function MentorBoardReviewPage({
           Every Sprint also shows its total registered task count.
         </p>
         {data.sprintSummaries.length===0?
-          <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
+          <p className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body">
             No registered Sprint matches the selected Sprint filter.
           </p>:
           <div className="grid gap-3 md:grid-cols-2">
