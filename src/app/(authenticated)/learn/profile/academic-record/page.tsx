@@ -11,15 +11,15 @@ export default async function LearnerAcademicRecordPage(){
  return <div className="min-w-0 space-y-6">
   <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>
-  <section className="border-t border-border pt-5">
-   <h2 className="text-base font-semibold text-foreground">Current academic enrollment</h2>
-   {record.enrollment?<dl className="mt-4 grid gap-4 text-sm md:grid-cols-2">
+  <section className="min-w-0 pt-2">
+   <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Current academic enrollment</h2>
+   {record.enrollment?<dl className="mt-4 grid min-w-0 grid-cols-1 gap-4 text-[14px] min-[768px]:grid-cols-2">
     {([
       ["Learner",record.title],["Program",record.enrollment.program],
       ["Program code",record.enrollment.programCode],["Batch / cohort",record.enrollment.cohort],
       ["Department",record.enrollment.department],
     ] as const).map(([label,value])=><div key={label}>
-      <dt className="font-semibold text-muted-foreground">{label}</dt>
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
       <dd className="mt-1 break-words text-foreground">{value||"Not recorded"}</dd>
     </div>)}
    </dl>:<p role="status" className="mt-3 text-sm text-body">
