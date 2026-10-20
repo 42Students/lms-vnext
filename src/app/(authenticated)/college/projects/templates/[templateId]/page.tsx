@@ -38,7 +38,7 @@ export default async function CollegeProjectTemplateDetailPage({
         }
         actions={<div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
           <PageBackLink href="/college/projects/templates" label="Template catalogue" />
-          <Badge tone="success">Version {detail.version.version}</Badge>
+          <Badge tone="neutral">Version {detail.version.version}</Badge>
         </div>}
       />
       <section aria-label="Template sections" className="min-w-0">
