@@ -9,7 +9,7 @@ export default async function CollegeStudentRegisterPage() {
   const context=await getCurrentRequestContext();
   if(!context.membership)redirect("/dashboard");
   const choices=await listCollegeStudentImportOptions(context);
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 max-w-full space-y-[16px]">
     <PageHeader title="Register students"
       description="Register a learner with a program and class, personal details and roll number."
       actions={<PageBackLink href="/college/students" label="Back to students"/>}/>

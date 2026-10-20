@@ -116,13 +116,13 @@ export default async function ElectiveRoster({
     }
     redirect(back + (error ? "?error=" + encodeURIComponent(error) : "?updated=faculty"));
   }
-  return <div className="min-w-0 max-w-full space-y-5">
-    <PageHeader eyebrow="College Admin · Electives"
+  return <div className="min-w-0 max-w-full space-y-[16px]">
+    <PageHeader 
       title={"Offering roster · " + slot.name}
       description="Student state, source, joining date and confirmed movement between offerings."
       actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Back to Electives</Link>} />
-    <div className="flex min-w-0 flex-wrap gap-4 border-y border-border py-3 text-sm">
+    <div className="flex min-w-0 flex-wrap gap-[8px] border-y border-border py-[12px] text-sm">
       <span>Seats: {offering.capacity ?? "Unlimited"}</span>
       <span>Enrolled: {detail.counts.active}</span>
       <span>Waitlisted: {detail.counts.waitlisted}</span>
@@ -143,7 +143,7 @@ export default async function ElectiveRoster({
           <Button type="submit" variant="danger" className="min-h-11 md:min-h-9">Remove faculty</Button>
         </form>}
       </div>)}
-      {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-3">
+      {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-[8px]">
         <Input type="hidden" name="action" value="ASSIGN" />
         <label className="grid gap-1 text-sm">Faculty
           <Select name="membershipId" required defaultValue="" >

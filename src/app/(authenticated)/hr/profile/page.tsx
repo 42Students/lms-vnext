@@ -17,16 +17,16 @@ export default async function HrProfilePage() {
   const overview = await getRecruiterSelfGrantOverview(context);
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-[16px]">
       <PageHeader
         title="Profile"
         description="Manage your recruiter details."
       />
 
-      <section className="border-b border-border pb-5">
+      <section className="border-b border-border pb-[16px]">
         <h2 className="text-base font-semibold text-foreground">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
-        <dl className="mt-4 grid gap-4 md:grid-cols-2">
+        <dl className="mt-[16px] grid gap-[16px] md:grid-cols-2">
           <RecruiterProfileDetailsEditor key={context.user.id} initialName={profile.displayName}
             initialTitle={profile.title} initialPhone={profile.contactPhoneDigits}
             contactReady={profile.contactReady} userUpdatedAt={profile.userUpdatedAt.toISOString()}
@@ -44,9 +44,9 @@ export default async function HrProfilePage() {
         </p>
       </section>
 
-      <section className="border-b border-border pb-5">
+      <section className="border-b border-border pb-[16px]">
         <h2 className="text-base font-semibold text-foreground">Account</h2>
-        <dl className="mt-4 grid gap-4 md:grid-cols-2">
+        <dl className="mt-[16px] grid gap-[16px] md:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
             <dd className="mt-1 text-sm text-foreground">{profile.companyName}</dd>
@@ -61,7 +61,7 @@ export default async function HrProfilePage() {
 
       <section
         aria-labelledby="recruiter-account-status"
-        className="border-b border-border pb-5"
+        className="border-b border-border pb-[16px]"
       >
         <h2
           id="recruiter-account-status"
@@ -69,7 +69,7 @@ export default async function HrProfilePage() {
         >
           Recruiter account status
         </h2>
-        <dl className="mt-4 grid gap-4 md:grid-cols-2">
+        <dl className="mt-[16px] grid gap-[16px] md:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Profile status
@@ -94,7 +94,7 @@ export default async function HrProfilePage() {
 
       <section
         aria-labelledby="recruiter-current-grants"
-        className="border-b border-border pb-5"
+        className="border-b border-border pb-[16px]"
       >
         <div className="pb-4">
           <h2
