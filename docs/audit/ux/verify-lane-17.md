@@ -41,3 +41,15 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Extra clutter/alignment fixes: 0; retained single readiness state summary and hairline groupings, no duplicate override heading under compactLayout.
 - Read route/loading/error, complete `ProjectWorkspaceReadiness`, `ProjectReadinessOverrideForm`, `MetricBar`, `Disclosure`, `ProjectAdminNav`, and parent layouts. Source-only; no runtime tests.
 - Files changed: queue, this proof; verified, no change.
+
+## Surface 7 — `src/app/(authenticated)/admin/projects/at-risk/page.tsx`
+- Prior polish evidence: `docs/audit/ux/polish-lane-7.md`, Surface 7. Reviewed route, loading/error, `ProjectAdminAtRiskPage` and its collection controls, nav, list toolbar, statuses, chips, service risk signal model, and parent layouts. Checked responsive rows, labels, form fields, destinations, permissions and state handling.
+- Regressions found/fixed (2): Open and Review submission links supplied free-form/lowercase `reason` values rejected by the workspace reason parser. Kept existing destinations and `from=at-risk`, passing valid `STALLED`/`BLOCKER`/`REVIEW` tokens for contextual risk banner and review flow.
+- Extra clutter/alignment fixes (1): removed second identical page-scoped CSV note after results; kept the note immediately next to Export in ListToolbar.
+- Files changed: `src/components/projects/project-admin-at-risk-page.tsx`, this proof, queue.
+
+## Surface 8 — `src/app/(authenticated)/admin/projects/audit/page.tsx`
+- Prior polish evidence: `docs/audit/ux/polish-lane-7.md`, Surface 8. Reviewed route/loading/error, `ProjectAdminAuditPage`, DateInput, ActivityCenter, date/parser model, inherited layouts, refresh/export and grouped empty state.
+- Regressions found/fixed (2): Refresh previously reset saved audit filters despite its label; now retains validated action, importance, subject and IST from/to filters (pagination restarts). Audit-specific empty state previously linked Reset to unrelated `/activity`; introduced optional `emptyHref` in shared ActivityCenter with unchanged default for existing consumers, supplying `/admin/projects/audit` (or college equivalent) only from this audit page.
+- Extra clutter/alignment fixes: 0; existing disclosure, date fields, result actions and grouping match legacy layout; no changed labels, aria, or tokens.
+- Files changed: `src/components/projects/project-admin-audit-page.tsx`, `src/components/activity/activity-center.tsx`, this proof, queue.
