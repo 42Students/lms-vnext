@@ -29,20 +29,20 @@ export default async function TpoApplicantDetailPage({params}:Params){
      ["Screening decided",data.application.screeningDecidedAt?
       new Date(data.application.screeningDecidedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})+" IST":"Not recorded"]];
  return <div className="min-w-0 space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Applicant pipeline</Link>
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
-   description={data.job.title+" · "+data.application.roleTitle}/>
+   description={data.job.title+" · "+data.application.roleTitle}
+   actions={<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">← Applicant pipeline</Link>}/>
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Application and screening</h2>
-   <dl className="mt-3 grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2">
-    {applicationFields.map(([label,value])=><div key={label} className="min-w-0">
+   <dl className="mt-3 grid min-w-0 grid-cols-1 gap-x-6 min-[768px]:grid-cols-2">
+    {applicationFields.map(([label,value])=><div key={label} className="min-w-0 border-b border-border py-3">
        <dt className="text-xs font-semibold text-body">{label}</dt>
        <dd className="mt-1 break-words text-sm text-foreground">{value}</dd>
       </div>)}
    </dl>
    <Link href={"/tpo/students/"+data.application.membershipId+"/history"}
-    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9">
+    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
     View student placement history →</Link>
   </section>
   {data.application.screeningUpdatedAt && canReviewApplicant(data.applicantStatus, data.screening) ?
@@ -50,8 +50,8 @@ export default async function TpoApplicantDetailPage({params}:Params){
      expectedUpdatedAt={data.application.screeningUpdatedAt}/> : null}
   <ApplicantNotesPanel endpoint={"/api/placements/tpo/jobs/"+jobId+"/applicants/"+applicationId+"/notes"}
    snapshot={notes} audience="the college placement cell (TPO)"/>
-  <section className="border-b border-border pb-6">
-   <h2 className="font-semibold text-foreground">Applied round outcomes</h2>
+  <details className="border-b border-border pb-6">
+   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Applied round outcomes <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
    {data.resultsTruncated?<Alert tone="warning">Only 100 applied result versions examined.</Alert>:null}
    {data.appliedRoundResults.length===0?<EmptyState title="No applied round outcomes recorded for this application."/>:
     <div className="mt-3 grid gap-3">{data.appliedRoundResults.map(r=>
@@ -60,9 +60,9 @@ export default async function TpoApplicantDetailPage({params}:Params){
       <p className="mt-1 text-sm text-body">{r.kind} · {r.outcome} · Applied: {r.appliedAt?
        new Date(r.appliedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}):"Time not recorded"}</p>
      </article>)}</div>}
-  </section>
-  <section className="border-b border-border pb-6">
-   <h2 className="font-semibold text-foreground">Offer and joining evidence</h2>
+  </details>
+  <details className="border-b border-border pb-6">
+   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Offer and joining evidence <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
    {data.offersTruncated?<Alert tone="warning">Only the latest 100 offer versions examined.</Alert>:null}
    {data.offers.length===0?<EmptyState title="No persisted offer versions for this application."/>:
     <div className="mt-3 grid gap-3">{data.offers.map(offer=>
@@ -72,7 +72,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
        {" · "}Annual CTC: {offer.annualCtcInr===null?"Not recorded":"₹"+offer.annualCtcInr.toLocaleString("en-IN")}</p>
       <p className="mt-1 text-xs text-body">Issued: {new Date(offer.issuedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})} IST</p>
      </article>)}</div>}
-  </section>
+  </details>
   <p className="text-xs text-body">This view uses only recorded application, screening, APPLIED results and offer/joining states. Internal screening comments and staged round outcomes are not disclosed. Employer-final selection is not independently recorded.</p>
  </div>;
 }
