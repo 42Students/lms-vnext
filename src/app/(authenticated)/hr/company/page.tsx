@@ -189,7 +189,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <p role="status" className="mt-3 text-sm text-muted-foreground">
               {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)}
             </p>:null}
-          {teamPageResult.rows.length===0 ? <EmptyState title="No matching teammates" description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}/> : (
+          {teamPageResult.rows.length===0 ? <EmptyState title="No matching teammates" description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}
+            action={teamQuery.data ? <Link href={base+"&tab=team"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear search</Link> : undefined}/> : (
             <div className="mt-4 min-w-0 divide-y divide-border border-y border-border">
               {teamPageResult.rows.map((member) => (
                 <div key={member.userId} className="flex min-w-0 flex-col gap-2 py-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
@@ -211,7 +212,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               ))}
             </div>
           )}
-          <Pagination label="Team roster pages" page={teamPageResult.page} pageCount={teamPageResult.pages} hrefForPage={page=>base+"&tab=team&q="+encodeURIComponent(teamQuery.data)+"&teamPage="+page}/>
+          {teamPageResult.pages>1 ? <Pagination label="Team roster pages" page={teamPageResult.page} pageCount={teamPageResult.pages} hrefForPage={page=>base+"&tab=team&q="+encodeURIComponent(teamQuery.data)+"&teamPage="+page}/> : null}
         </section>
       )}
     </div>
