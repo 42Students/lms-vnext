@@ -32,7 +32,7 @@ These 34 items were moved to chat-17 from the END of other lanes' queues because
 - [x] `src/app/page.tsx`
 - [x] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
 - [x] `src/app/(authenticated)/tpo/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
-- [ ] `src/app/forbidden/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [x] `src/app/forbidden/page.tsx`
