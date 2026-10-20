@@ -119,7 +119,7 @@ export default async function FacultyQuizAttemptPage({
                 {result.pointsAwarded}/{result.pointsPossible} points</span>
             </li>)}</ul></Disclosure>}
       </li>)}</ol>}
-    <Pagination label="Quiz attempt pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyQuizAttemptsHref(quizId,data.query.deliveryId,page,data.query.order,data.query.q,data.query.view)} />
+    {data.totalPages > 1 ? <Pagination label="Quiz attempt pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyQuizAttemptsHref(quizId,data.query.deliveryId,page,data.query.order,data.query.q,data.query.view)} /> : null}
     <p className="max-w-prose text-xs leading-5 text-muted-foreground">
       This report is Faculty-only. Question selections and private learner-facing result links
       are not exposed, and no grade-visibility action is performed.

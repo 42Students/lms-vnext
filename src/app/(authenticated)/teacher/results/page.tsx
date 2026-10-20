@@ -144,7 +144,7 @@ export default async function FacultyAssessmentResultsPage({
             </Link>
           </article>)}
       </div>}
-    <Pagination label="Assessment result pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResultsHref({...data.query,page})} />
+    {data.totalPages > 1 ? <Pagination label="Assessment result pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResultsHref({...data.query,page})} /> : null}
     <p className="max-w-prose text-xs leading-5 text-muted-foreground">
       At most ten assessments are summarized per page to bound database work.
       Results use existing authorized Section report readers. Missing responses

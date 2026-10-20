@@ -34,20 +34,20 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regres
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/page.tsx`
 - [x] `src/app/(authenticated)/teacher/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/details/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/teaching/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/page.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/academics/college-promotion-confirmation.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/app/(authenticated)/teacher/notifications/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/details/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/teaching/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/page.tsx`
+- [x] `src/app/(authenticated)/teacher/results/page.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/academics/college-promotion-confirmation.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
 - [ ] `src/components/academics/college-section-lifecycle-action.tsx`
 - [ ] `src/components/academics/section-operations.tsx`
 - [ ] `src/components/attendance/college-attendance-policy-form.tsx`

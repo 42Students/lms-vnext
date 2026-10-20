@@ -29,7 +29,7 @@ export function CollegeSectionLifecycleAction({row}:{
   }
   return <div className="space-y-1">
     <Button variant="secondary" type="button" disabled={pending} onClick={()=>setConfirming(true)}
-      className="text-primary-text">
+      className="min-h-11 w-full sm:w-auto md:min-h-9 text-primary-text">
       {pending?"Saving…":action==="ARCHIVE"?"Archive":"Restore"}
     </Button>
     <ConfirmDialog open={confirming} onOpenChange={setConfirming}
