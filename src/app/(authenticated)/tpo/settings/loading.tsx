@@ -1,7 +1,5 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function TpoSettingsLoading() {
-  return (
-    <LoadingState label="Loading college placement settings…" />
-  );
+  return <GracefulPageLoading label="Loading college placement settings…" />;
 }
