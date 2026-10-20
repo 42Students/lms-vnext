@@ -7,5 +7,5 @@ export default function CollegeBatchPromotionError({ reset }: {
 }) {
   return <ErrorState title="Batch promotion preview unavailable"
     description="The persisted progression or learner data could not be loaded; no readiness conclusion is assumed."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>} />;
 }
