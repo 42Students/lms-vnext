@@ -16,8 +16,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-18.md: surface | regre
 - [x] `src/components/placements/tpo-joining-update-form.tsx`
 - [x] `src/components/tpo/tpo-batch-invitation-control.tsx`
 - [x] `src/components/placements/college-drive-legacy-nav.tsx`
-- [ ] `src/components/ui/input-group.tsx`
-- [ ] `src/app/(authenticated)/error.tsx`
+- [x] `src/components/ui/input-group.tsx`
+- [x] `src/app/(authenticated)/error.tsx`
 - [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
 - [ ] `src/components/placements/tpo-mark-own-notification-read.tsx`
 - [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
