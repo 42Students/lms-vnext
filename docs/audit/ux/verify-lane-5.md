@@ -41,3 +41,17 @@
 - Extra clutter/alignment fixes: 0, verified no page change. Optional open form and direct empty-state action remain clear at 375px and 768px.
 - Read: HR page, service and recruiterDriveThreads model, both recruiter/HR loading/error, PageHeader/Input/Button/EmptyState and parent layouts, prior `polish-lane-15.md` entry. No local not-found/template/layout.
 - Files changed: queue and evidence only. Source-only, no CI.
+
+## Surface 7 — Recruiter hiring drive workspace
+- Surface: `src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx` aliases `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`.
+- Regressions fixed (1): on Requests/Discussion, the route correctly rendered request/discussion content but passed server-normalized `overview` to the shared Tabs value. Active underline falsely highlighted Overview. Tabs now use `requests`/`discussion` for these two legacy deep-links without changing fetch permissions, tab hrefs, filtering or labels.
+- Extra clutter/alignment fixes: 0. Reviewed condensed identity, stage/funnel/status, read-only offer and result tables, applicant drawer, forms and optional details; existing single-canvas hierarchy retained.
+- Full read: 68kB HR route, service/read and query guard references, HR/recruiter route loading/error/not-found, Tab/Nav, Metrics/StatusBadge/Grid/TpoGrid/Drawer, RecruiterResultControls, HrJobSelection/Offers/Applicants/RoundResults grids, InlineRoundEditor, notes, resume download, FocusShortcuts and reply/live-refresh components, recruiter/authenticated layouts and `polish-lane-15.md` proof. No local route not-found/template/layout.
+- Files changed: HR hiring drive page, verification queue and proof. No runtime execution, screenshots or CI.
+
+## Surface 8 — Recruiter hiring round editor
+- Surface: `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx` alias of HR round editor.
+- Regressions fixed (1): the desktop HrRoundEditorGrid's `Edit round` hash link pointed to an article containing a collapsed `details` form. Hash navigation scrolled but failed to expose the editable controls. Clicking the unchanged link now opens only its corresponding details before navigation; keyboard activation uses the same native link click.
+- Extra clutter/alignment fixes: 0. One optional Add round disclosure, table-first desktop and compact mobile forms preserved with unchanged `round-edit-...` ids, POST field names, optimistic tokens, permission guards, labels and removal links.
+- Full read: HR round editor page, HrRoundEditorGrid/TpoGrid, shared Button/Input/Select/StatusBadge/EmptyState/PageHeader, both HR/recruiter loading/error, parent layouts, prior `polish-lane-15.md` entry. Local not-found/template/layout absent.
+- Files changed: `src/components/hr/hr-round-editor-grid.tsx`, verification queue and proof. No project code execution or CI.
