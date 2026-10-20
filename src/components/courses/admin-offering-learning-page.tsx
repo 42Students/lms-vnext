@@ -4,10 +4,11 @@ import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
-import { AdminOfferingSectionTabs } from "./admin-offering-section-tabs";
+import { Disclosure } from "@/components/ui/disclosure";
+import {AdminOfferingSectionTabs} from "./admin-offering-section-tabs";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
-import { AdminOfferingTeachersPanel } from "./admin-offering-teachers-panel";
-import { AdminOfferingSectionPreview } from "./admin-offering-section-preview";
+import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
+import {AdminOfferingSectionPreview} from "./admin-offering-section-preview";
 import {listOfferingSectionPreview} from "@/modules/courses/college-offering-section-preview-service";
 import {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
@@ -60,7 +61,7 @@ export async function AdminOfferingLearningPage({
     : null;
 
   return (
-    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title={
           workspace.offering.courseName
@@ -78,22 +79,18 @@ export async function AdminOfferingLearningPage({
         }
       />
       <AdminOfferingSectionTabs/>
-      <section id="course-home" aria-label="Course Home" className="min-w-0 scroll-mt-24 space-y-[var(--lms-space-3)]">
-      <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Home</h2>
-      <AdminCourseDisplayEditor
-        courseId={workspace.offering.courseId}
-        enabled={displayEnabled}
-        initial={
-          display
-            ? {
-                introductionText:
-                  display.introductionText,
-                bodyHtml:
-                  display.bodyHtml,
-                takeaways:
-                  display.takeaways,
-                thumbnailUrl:
-                  display.thumbnailUrl,
+      <section id="course-home" aria-label="Course Home" className="min-w-0 scroll-mt-24 space-y-3">
+        <h2 className="text-lg font-semibold text-foreground">Home</h2>
+        {displayEnabled ? (
+          <Disclosure title="Edit Course Home content" className="border-b border-[var(--lms-canvas-border)] pb-3" contentClassName="pt-3">
+            <AdminCourseDisplayEditor
+              courseId={workspace.offering.courseId}
+              enabled={displayEnabled}
+              initial={display ? {
+                introductionText: display.introductionText,
+                bodyHtml: display.bodyHtml,
+                takeaways: display.takeaways,
+                thumbnailUrl: display.thumbnailUrl,
                 version: display.version,
               } : null}
             />
@@ -108,10 +105,6 @@ export async function AdminOfferingLearningPage({
       </section>
       <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
       <AdminOfferingSectionPreview data={sectionPreview}/>
-      <section id="course-syllabus" aria-label="Course Syllabus" className="min-w-0 scroll-mt-24 space-y-[var(--lms-space-3)]">
-       <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Syllabus</h2>
-       <AdminOfferingLearningOverview workspace={workspace}/>
-      </section>
     </div>
   );
 }
