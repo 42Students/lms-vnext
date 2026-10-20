@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import { Disclosure } from "@/components/ui/disclosure";
 import collegeStyles from "@/components/admin/legacy-college-stat.module.css";
 import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
@@ -93,15 +94,13 @@ export function AdminCourseOverview({
           <p className="m-0 font-semibold text-foreground">
             {course.name}
           </p>
-          {courseBasePath.startsWith("/admin/")&&course.shortTitle?<p className="text-sm text-body">Short display name: {course.shortTitle}</p>:null}
-          <p className="mt-1 text-xs font-semibold text-primary-text">
-            {course.code}
-          </p>
-          {courseBasePath.startsWith("/admin/")&&course.takeaways?<p className="mt-1 text-xs text-body">Takeaways: {course.takeaways}</p>:null}
-          {course.description ? (
-            <p className="mt-1 max-w-xl text-xs text-muted-foreground">
-              {course.description}
-            </p>
+          <p className="mt-1 text-xs font-semibold text-primary-text">{course.code}</p>
+          {(course.description || (courseBasePath.startsWith("/admin/") && (course.shortTitle || course.takeaways))) ? (
+            <Disclosure title="Course details" className="mt-2" contentClassName="space-y-2 px-2 pb-2 text-xs leading-5 text-muted-foreground">
+              {courseBasePath.startsWith("/admin/") && course.shortTitle ? <p>Short display name: {course.shortTitle}</p> : null}
+              {courseBasePath.startsWith("/admin/") && course.takeaways ? <p className="break-words">Takeaways: {course.takeaways}</p> : null}
+              {course.description ? <p className="max-w-xl break-words">{course.description}</p> : null}
+            </Disclosure>
           ) : null}
         </div>
       ),
@@ -232,7 +231,7 @@ export function AdminCourseOverview({
       ),
       className: "text-right",
       cell: (offering) => (
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="flex min-w-0 flex-wrap justify-start gap-2 md:justify-end">
           {offering.status === "ACTIVE" ? <Link
             href={
               offeringBasePath +
@@ -423,8 +422,8 @@ export function AdminCourseOverview({
   ];
 
   return (
-    <div className="min-w-0 space-y-8">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="min-w-0 space-y-6">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <StatTile
           className={collegeStyles.tile}
           label="Courses"
@@ -454,6 +453,9 @@ export function AdminCourseOverview({
         />
       </div>
 
+      <Disclosure title="Create Course and offering" defaultOpen={Boolean(duplicateCourseId)}
+        className="border-y border-[var(--lms-canvas-border)]"
+        contentClassName="min-w-0 pb-4 pt-3">
       <AdminCourseCreatePanel
         key={duplicateCourseId??"new-course"}
         duplicateCourseId={duplicateCourseId}
@@ -468,15 +470,16 @@ export function AdminCourseOverview({
         faculty={workspace.faculty}
         facultyTruncated={workspace.facultyTruncated}
       />
+      </Disclosure>
 
-      <section className="space-y-3">
+      <section className="min-w-0 space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             {COLLEGE_COURSES_COPY.existingTitle}
           </h2>
         </div>
         {catalogue&&catalogueQuery?<form method="get" action={courseBasePath}
-         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+         className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
          <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search courses
           <Input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
            placeholder="Name, code or department" className="min-h-11 min-w-0 md:min-h-9"/>
@@ -494,7 +497,7 @@ export function AdminCourseOverview({
            <option value="25">25</option><option value="50">50</option><option value="100">100</option>
           </Select>
          </label>:null}
-         <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
+         <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">Filter</Button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Export CSV
@@ -512,7 +515,7 @@ export function AdminCourseOverview({
         {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
           key={workspace.collegeId+":"+(catalogue?catalogue.items:workspace.courses).map(course=>course.id).join(":")}
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show. Create Course and offering above to add the first record.</p>}
           columns={courseColumns}
           rows={catalogue?catalogue.items:workspace.courses}
           getRowKey={(course) => course.id}

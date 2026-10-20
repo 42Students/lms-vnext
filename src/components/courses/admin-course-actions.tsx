@@ -6,6 +6,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Dropdown } from "@/components/ui/dropdown";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -120,8 +121,7 @@ export function CourseActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
-        {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Duplicate</Link>:null}
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 md:justify-end">
         <Button
           size="sm"
           className="min-h-11 md:min-h-9"
@@ -130,16 +130,17 @@ export function CourseActions({
         >
           Edit
         </Button>
-        <Button
-          size="sm"
-          className="min-h-11 md:min-h-9"
-          variant="danger"
-          onClick={() =>
-            setArchiveOpen(true)
-          }
-        >
-          Archive
-        </Button>
+        <Dropdown trigger="More" label="Course actions" align="end" mobileSheet
+          className="relative" triggerClassName="min-h-11 md:min-h-9">
+          <div className="flex flex-col gap-2">
+            {duplicateHref ? <Link href={duplicateHref}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              Duplicate
+            </Link> : null}
+            <Button size="sm" className="min-h-11 w-full justify-start" variant="danger"
+              onClick={() => setArchiveOpen(true)}>Archive</Button>
+          </div>
+        </Dropdown>
       </div>
 
       <Dialog
