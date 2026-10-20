@@ -5,26 +5,36 @@ import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {Alert} from "@/components/ui/alert";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
-import {useState,useTransition} from "react";
+import {useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 export function CollegeOfferingMetadataAction({offering}:{
   offering:{id:string;courseName:string;type:"CORE"|"ELECTIVE";credits:number|null;
     displayOrder:number;updatedAt:string};
 }) {
   const router=useRouter();
+  const saving=useRef(false);
   const {ask,confirmation}=useCollegeConfirmation();
   const [open,setOpen]=useState(false),[pending,start]=useTransition(),[error,setError]=useState("");
   const [type,setType]=useState<"CORE"|"ELECTIVE">(offering.type);
   const [credits,setCredits]=useState(offering.credits===null?"":String(offering.credits));
   const [displayOrder,setDisplayOrder]=useState(String(offering.displayOrder));
   async function save(){
+    if(pending||saving.current)return;
+    const creditValue=credits.trim()===""?null:Number(credits);
+    const orderValue=Number(displayOrder);
+    if((creditValue!==null&&(!Number.isInteger(creditValue)||creditValue<1||creditValue>30))||
+      !displayOrder.trim()||!Number.isInteger(orderValue)||orderValue<0||orderValue>10000){
+      setError("Enter valid credits (1–30) and display order (0–10000).");
+      return;
+    }
+    saving.current=true;
     if(!(await ask("Save course offering metadata for "+offering.courseName+
-      "? Type and credit edits are blocked when active deliveries depend on this offering.")))return;
+      "? Type and credit edits are blocked when active deliveries depend on this offering."))){saving.current=false;return;}
     setError("");
     start(async()=>{
       try{
-        const body={type,credits:credits.trim()?Number(credits):null,
-          displayOrder:Number(displayOrder),expectedUpdatedAt:offering.updatedAt,confirm:true};
+        const body={type,credits:creditValue,
+          displayOrder:orderValue,expectedUpdatedAt:offering.updatedAt,confirm:true};
         const response=await fetch("/api/college/offerings/"+encodeURIComponent(offering.id)+"/metadata",{
           method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify(body),
         });
@@ -34,6 +44,7 @@ export function CollegeOfferingMetadataAction({offering}:{
         }
         setOpen(false);router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Offering edit failed");}
+      finally{saving.current=false;}
     });
   }
   return <div className="min-w-0 space-y-[var(--lms-space-2)]">{confirmation}
@@ -47,15 +58,15 @@ export function CollegeOfferingMetadataAction({offering}:{
             {pending?"Saving…":"Confirm edit"}</Button>
         </div>}>
         <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-        <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body md:col-span-2">Offering type
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body md:col-span-2">Offering type
           <Select value={type} disabled={pending} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}>
             <option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
           </Select></label>
-        <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body">Credits (optional)
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">Credits (optional)
           <Input type="number" min={1} max={30} value={credits} disabled={pending}
             onChange={e=>setCredits(e.target.value)}/>
         </label>
-        <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body">Display order
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">Display order
           <Input type="number" min={0} max={10000} required value={displayOrder} disabled={pending}
             onChange={e=>setDisplayOrder(e.target.value)}/>
         </label>
