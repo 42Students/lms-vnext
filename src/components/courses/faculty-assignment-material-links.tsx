@@ -4,7 +4,6 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { LoadingState } from "@/components/ui/loading-state";
-import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -55,18 +54,18 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
   finally{lock.current=false;setPending(false);}
  }
  const parsed=facultyAssignmentMaterialLinkSchema.safeParse({title,externalUrl});
- return <section aria-label="Instructor assignment resources" className="space-y-2 max-[767px]:[&_button]:min-h-11">
+ return <section aria-label="Instructor assignment resources" className="min-w-0 space-y-3 border-t border-border pt-4 max-[767px]:[&_button]:min-h-11">
   <h3 className="text-base font-semibold">Instructions &amp; resources</h3>
   {loading?<LoadingState label="Loading instructor links…" />:null}
   {error?<Alert tone="error">{error}</Alert>:null}
-  {!loading&&!error&&links.length===0?<EmptyState title="No instructor resources yet." />:null}
-  <ul className="space-y-2">
-   {links.map(link=><li key={link.id} className="flex flex-wrap items-center gap-3 text-sm">
-    <a href={link.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">{link.title}</a>
+  {!loading&&!error&&links.length===0?<p role="status" className="text-sm text-muted-foreground">No instructor resources yet.</p>:null}
+  <ul className="divide-y divide-border">
+   {links.map(link=><li key={link.id} className="flex min-w-0 flex-col items-start gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+    <a href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-all font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{link.title}</a>
     <Button variant="secondary" type="button" disabled={disabled||pending} onClick={()=>setRemoveId(link.id)} size="md">Remove</Button>
    </li>)}
   </ul>
-  {!disabled?<div className="grid gap-2 md:grid-cols-2">
+  {!disabled?<div className="grid min-w-0 gap-3 md:grid-cols-2">
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title
     <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
      className="mt-1 min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
@@ -77,7 +76,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
    </label>
    <Button variant="secondary" type="button" disabled={pending||loading||links.length>=20||!parsed.success}
     onClick={()=>{if(parsed.success)void act({action:"ADD",link:parsed.data});}}
-    size="md">Add link</Button>
+    className="w-full md:w-auto md:justify-self-start" size="md">Add link</Button>
   </div>:null}
   <p className="text-xs text-muted-foreground">Only HTTPS links can be added here. File handouts require verified private storage.</p>
   <ConfirmDialog
