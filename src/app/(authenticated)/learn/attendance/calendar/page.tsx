@@ -78,7 +78,7 @@ export default async function LearnerAttendanceCalendarPage({
       className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
       <label className="grid gap-1 text-xs font-semibold text-body">Month
         <Input name="month" type="month" defaultValue={data.query.month}
-          className="min-h-11" />
+          className="min-h-11 md:min-h-9" />
       </label>
       <label className="grid gap-1 text-xs font-semibold text-body">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
@@ -145,7 +145,7 @@ export default async function LearnerAttendanceCalendarPage({
             <div className="mt-1 hidden flex-wrap gap-1 md:flex">
               {entries.slice(0,3).map(row=>
                 <span key={row.id} title={row.courseCode+" · "+statusNames[row.status]}
-                  className={"h-1.5 w-1.5 rounded-full "+(row.status==="PRESENT"?"bg-success":row.status==="ABSENT"?"bg-error":"bg-primary")}/>)}
+                  className={"h-1.5 w-1.5 rounded-[50%] "+(row.status==="PRESENT"?"bg-success":row.status==="ABSENT"?"bg-error":"bg-primary")}/>)}
             </div>
           </div>;
         })}
