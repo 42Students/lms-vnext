@@ -28,7 +28,7 @@ export default async function CollegeCompaniesPage({
   const parsed=parseCollegeCompaniesQuery(await searchParams);
   if(!parsed.success) return <div className="min-w-0 space-y-4"><PageHeader title="Companies"/>
     <ErrorState title="Invalid company search" description="Check search text or page."
-      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear company filters</Link>}/>
+      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear company filters</Link>}/>
   </div>;
   const query=parsed.data;
   const collegeId=context.membership.collegeId;
@@ -43,7 +43,7 @@ export default async function CollegeCompaniesPage({
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives."
-      actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>} />
+      actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export CSV</a>} />
     <CollegeCompanyCreate collegeId={collegeId}/>
     <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
       <label className="grid min-w-0 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company

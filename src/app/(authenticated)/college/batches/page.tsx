@@ -28,7 +28,7 @@ export default async function CollegeBatchesPage({
       <PageHeader title="Batches" />
       <ErrorState title="Invalid batch filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
-        action={<Link href="/college/batches" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>} />
+        action={<Link href="/college/batches" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
     </div>;
   }
   const [directory, periods] = await Promise.all([
@@ -40,7 +40,7 @@ export default async function CollegeBatchesPage({
   }));
   return <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices}
     actions={<Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Export CSV
     </Link>}
     prepend={<div className="min-w-0 space-y-4">
