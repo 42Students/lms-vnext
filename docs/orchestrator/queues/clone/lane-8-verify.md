@@ -53,7 +53,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-8.md: surface | regres
 - [x] `src/components/ui/button-group.tsx`
 - [x] `src/components/ui/input-group.tsx`
 - [x] `src/components/ui/password-input.tsx`
-- [ ] `src/app/(authenticated)/teach/error.tsx`
+- [x] `src/app/(authenticated)/teach/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/loading.tsx`
 - [ ] `src/app/(authenticated)/error.tsx`
 - [ ] `src/app/(authenticated)/loading.tsx`
