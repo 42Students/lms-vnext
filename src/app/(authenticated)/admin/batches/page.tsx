@@ -5,6 +5,8 @@ import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable} from "@/components/ui/data-table";
+import {Tabs} from "@/components/ui/tabs";
+import {StatusBadge} from "@/components/ui/status-badge";
 import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeCohortCreateForm, CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
@@ -38,6 +40,9 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
     {data ? <>
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
+      <Tabs ariaLabel="Batch lifecycle views" value={data.query.status} renderPanel={false} items={([
+        ["ALL","All batches"],["ACTIVE","Active batches"],["INACTIVE","Show inactive"],["COMPLETED","Show completed"],
+      ] as const).map(([value,label])=>({value,label,href:pageUrl({...data.query,status:value,page:1})}))}/>
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
         <form action="/admin/batches" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 w-full md:min-w-48 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -70,11 +75,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
         </form>
       </section>
-      <nav aria-label="Batch lifecycle views" className="flex flex-wrap gap-3 text-sm">
-        <Link href="/admin/batches?status=ACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Active batches</Link>
-        <Link href="/admin/batches?status=INACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show inactive</Link>
-        <Link href="/admin/batches?status=COMPLETED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show completed</Link>
-      </nav>
+
       <section aria-label="Manage batches" className="space-y-3 pt-2">
         <h2 className="text-lg font-semibold text-foreground">Manage batches</h2>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
@@ -92,7 +93,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             {key:"semester",header:"Semester",mobilePriority:"secondary",cell:row=>row.currentTermNumber??"—"},
             {key:"students",header:"Students",mobilePriority:"secondary",cell:row=>row.activeEnrolledLearners},
             {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><>
-              {legacyAcademicStatus(row.status,true)}
+              <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="PLANNED"?"info":"neutral"}>{legacyAcademicStatus(row.status,true)}</StatusBadge>
               {row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Date(row.inactiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>:null}
             </>},
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeCohortRowActions row={row} periods={periods}/>},
