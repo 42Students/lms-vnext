@@ -49,17 +49,17 @@ export function MentorMeetingNotesEditor(props:{
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Meeting outcome notes"
       description="Record the outcome for this completed meeting. Changes replace the current text; an audit event records the edit, not the old text.">
       <form onSubmit={event=>{event.preventDefault();if(valid){setOpen(false);setConfirm(true);}}}
-        className="grid gap-3">
-        <label className="grid gap-1 text-sm font-semibold text-body">Notes
+        className="grid gap-[var(--lms-space-3)]">
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Notes
           <Textarea value={notes} rows={7} maxLength={4000} required
             onChange={event=>setNotes(event.target.value)}
-            className="min-h-32 w-full min-w-0 max-w-full"/>
+            className="w-full min-w-0 max-w-full"/>
         </label>
-        <p className="text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
+        <p className="text-right text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-        <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={guard.requestClose}>Cancel</Button>
-          <Button type="submit" className="min-h-11 md:min-h-9" disabled={!valid||pending}>Review notes</Button>
+        <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={guard.requestClose}>Cancel</Button>
+          <Button type="submit" className="w-full sm:w-auto" disabled={!valid||pending}>Review notes</Button>
         </div>
       </form>
     </Dialog>
@@ -67,7 +67,7 @@ export function MentorMeetingNotesEditor(props:{
       title="Save meeting outcome notes?" confirmLabel="Save notes"
       description="The current outcome will be replaced for this meeting. The change is audited without exposing note contents in activity history."
       pending={pending} onConfirm={submit}>
-      <p className="max-h-44 overflow-auto whitespace-pre-wrap break-words text-sm text-body">
+      <p tabIndex={0} className="max-h-44 overflow-auto whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
         {notes.trim()}</p>
       {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     </ConfirmDialog>
