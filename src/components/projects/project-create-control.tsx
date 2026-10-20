@@ -3,6 +3,7 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -220,7 +221,7 @@ export function CreateProjectControl({
   const form = (
         <form onSubmit={submit} className="grid gap-4">
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Assigned template
             </span>
             <Select
@@ -241,7 +242,7 @@ export function CreateProjectControl({
             </Select>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Project title
             </span>
             <Input
@@ -253,7 +254,7 @@ export function CreateProjectControl({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Slug
             </span>
             <Input
@@ -271,7 +272,7 @@ export function CreateProjectControl({
             </span>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Summary
             </span>
             <Textarea
@@ -284,7 +285,7 @@ export function CreateProjectControl({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Primary mentor
             </span>
             <Select
@@ -312,7 +313,7 @@ export function CreateProjectControl({
               If selected, the Mentor assignment is validated and committed atomically with workspace creation.
             </span>
           </label>
-          <label className="grid gap-1 text-sm font-semibold">Class
+          <label className="grid gap-1 text-[13px] font-semibold text-body">Class
             <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="w-full">
               <option value="">No class</option>
@@ -320,7 +321,7 @@ export function CreateProjectControl({
             </Select>
           </label>
           {classesError?<p role="alert" className="text-sm text-error">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</Button></p>:null}
-          <label className="grid gap-1 text-sm font-semibold">Status
+          <label className="grid gap-1 text-[13px] font-semibold text-body">Status
             <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="w-full">
               <option value="PLANNED">Planned</option>
@@ -329,7 +330,7 @@ export function CreateProjectControl({
           </label>
           {!mentorMembershipId?<p className="text-xs text-warning">This workspace has no mentor.</p>:null}
           {sectionId?<section className="min-w-0 border-b border-border pb-4">
-            <p className="mb-2 text-sm font-semibold">Students · {learnerMembershipIds.length} selected</p>
+            <p className="mb-2 text-sm font-semibold text-foreground">Students · {learnerMembershipIds.length} selected</p>
             {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try again</Button></p>:null}
             {!rosterError&&loadedRosterSectionId!==sectionId?<p role="status" className="text-sm text-body">Loading class roster…</p>:null}
             <div className="flex gap-3 text-xs">
@@ -339,8 +340,8 @@ export function CreateProjectControl({
                 onClick={()=>setLearnerMembershipIds([])}>Clear</Button>
             </div>
             <div className="mt-3 max-h-40 min-w-0 space-y-2 overflow-y-auto overscroll-contain">
-              {roster.map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm">
-                <input type="checkbox" checked={learnerMembershipIds.includes(student.membershipId)}
+              {roster.map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm text-body focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+                <Checkbox checked={learnerMembershipIds.includes(student.membershipId)}
                   onChange={e=>setLearnerMembershipIds(old=>e.target.checked?
                     [...old,student.membershipId]:old.filter(id=>id!==student.membershipId))}/>
                 {student.displayName} · {student.rollNumber}
