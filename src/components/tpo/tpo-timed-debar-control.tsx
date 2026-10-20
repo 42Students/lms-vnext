@@ -42,8 +42,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
   }catch(e){setError(e instanceof Error?e.message:"Could not save this change. Please try again.");}
   finally{locked.current=false;setPending(false);}
  }
- return <section aria-label="Timed debarment" className="min-w-0 space-y-4 border-y border-border py-5">
-  <h2 className="text-lg font-semibold">Debar until a date or for N drives</h2>
+ return <section aria-label="Timed debarment" className="min-w-0 space-y-4 py-2">
   <p className="text-sm text-body">A debarment blocks new placement applications until it expires or is lifted. Existing applications stay recorded.</p>
   {active.length>0?<p role="status" className="text-sm font-semibold">Debarred · {active.length} active restriction(s)</p>:null}
   <Disclosure title="Create debarment" defaultOpen={active.length===0} className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
