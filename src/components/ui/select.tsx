@@ -37,6 +37,8 @@ export function Select({ className, children, error = false, ...props }: SelectP
         "aria-invalid:focus-visible:shadow-[0_0_0_2px_rgba(239,68,68,0.2)]",
         "aria-invalid:focus-visible:outline-[var(--lms-error)]",
         "aria-invalid:disabled:border-[var(--lms-canvas-border)] aria-invalid:disabled:bg-[var(--lms-neutral-50)]",
+        "[&_option:checked]:bg-[var(--lms-primary)] [&_option:checked]:text-white",
+        "[&_option[value='']]:text-[var(--lms-placeholder)]",
         "motion-reduce:transition-none",
         className,
       )}

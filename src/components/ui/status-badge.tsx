@@ -14,5 +14,7 @@ const toneClasses = {
 } as const;
 
 export function StatusBadge({ children, tone = "neutral", className, ...props }: StatusBadgeProps) {
-  return <span {...props} data-slot="status-badge" data-tone={tone} data-variant="legacy-pill" className={cx("inline-flex min-h-[22px] min-w-[90px] max-w-full items-center justify-center gap-[var(--lms-space-1)] align-middle tabular-nums rounded-[6px] px-[15px] py-[2px] text-[12px] font-bold leading-[18px] text-center break-words shadow-none [overflow-wrap:anywhere]", toneClasses[tone], className)}>{children}</span>;
+  const interactive = props.role === "button" || props.tabIndex !== undefined;
+  const inactive = props["aria-disabled"] === true || props["aria-disabled"] === "true";
+  return <span {...props} data-slot="status-badge" data-tone={tone} data-variant="legacy-pill" className={cx("inline-flex min-h-[22px] min-w-[90px] max-w-full items-center justify-center gap-[var(--lms-space-1)] align-middle tabular-nums rounded-[6px]! px-[15px]! py-[2px]! text-[12px] font-bold! leading-[18px] text-center break-words shadow-none [overflow-wrap:anywhere]", interactive && "cursor-pointer hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:shadow-[0_0_0_4px_rgba(26,149,161,0.12)] max-[767px]:min-h-11", inactive && "cursor-not-allowed opacity-50 hover:brightness-100", toneClasses[tone], className)}>{children}</span>;
 }

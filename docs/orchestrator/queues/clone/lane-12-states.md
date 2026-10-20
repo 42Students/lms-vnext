@@ -9,9 +9,9 @@ Shared UI components that every page inherits. For each file: compare EVERY stat
 - [x] `src/components/ui/file-upload.tsx`
 - [x] `src/components/ui/graceful-page-loading.tsx`
 - [x] `src/components/ui/loading-state.tsx`
-- [ ] `src/components/ui/needs-doing-chips.tsx`
-- [ ] `src/components/ui/page-loading.tsx`
-- [ ] `src/components/ui/radio.tsx`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/components/ui/status-badge.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
+- [x] `src/components/ui/needs-doing-chips.tsx`
+- [x] `src/components/ui/page-loading.tsx`
+- [x] `src/components/ui/radio.tsx`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/components/ui/status-badge.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
