@@ -105,3 +105,27 @@
 **States/source review:** role guard, profile loaded, invalid required/email/url, reset of unsaved values, confirm cancel/proceed, pending/error/stale 409/success, at 375px and 768px. Reviewed route loading.tsx/error.tsx, nearest college layout and inherited not-found, shared Button/ConfirmDialog/Input. Static source inspection, not rendered/browser verified. No CI.
 
 **Files changed:** src/app/(authenticated)/college/college-profile/page.tsx, src/components/colleges/college-contact-profile-form.tsx, proof and queue.
+
+## Surface 18 — src/app/(authenticated)/college/companies/page.tsx
+
+**9 problems/fixes:** Main company search disappeared into long mobile GET filter row; search/status/sort/page size controls flex-wrapped inconsistently at 375px; 6px labels diverged from legacy spacing; result count competed with heading; Add company CTA was narrow on phones; create form had awkward 1px gutters and an oversized panel width; a second visual Companies heading duplicated page h1; company relationship cards had inconsistent border and row spacing; row actions occupied awkward wrap positions on phones. Exposed existing q search through shared FilterBar's always-visible search slot and retained status/sort/page-size/deleted within its single mobile drawer form, added 44px Filter action both toolbar and drawer, aligned form fields on adaptive tablet grid, made Add company full width at 375px, constrained create editor to 920px with stacked phone Save/Cancel, kept duplicate listing heading screen-reader-only, normalized row borders and full-width phone row actions. Preserved query defaults, CSV, pagination, GET semantics, company identity/owner/trust save and archive/restore confirmations.
+
+**Source states:** invalid query/clear, pagination redirect, empty list, create open/validation/pending/failure/success, trust/owner unsaved changes, archived/restorable/platform-archived, confirm abort/proceed, busy toast/error, 375/768 layouts. Reviewed companies loading/error.tsx, inherited college layout/not-found, shared FilterBar, DataTable-style list, Checkbox, ConfirmDialog. Static source only; no CI or browser rendering.
+
+**Files changed:** src/app/(authenticated)/college/companies/page.tsx, src/components/placements/college-company-create.tsx, src/components/placements/placement-employer-relationships.tsx, proof/queue.
+
+## Surface 19 — src/app/(authenticated)/college/contacts/[membershipId]/page.tsx
+
+**6 problems/fixes:** Unstructured strong/text paragraphs made five contact attributes hard to scan; column label starts wandered as values wrapped; break-all on email split at arbitrary letters; header and detail spacing overexpanded; details spanned wide desktop reading lines; related role links appeared as low-affordance inline copy squeezed across phones. Replaced prose paragraphs with semantic key/value definition list (same labels, masking and values), responsive 180px label rail at 768px and stacked 375px, limited detail width to 920px, used overflow-wrap:anywhere only on email, consolidated 8/12/16px rhythm, and placed related role links as 44px bordered actions below a single hairline, omitting empty nav when no role links exist. Membership role, masked privacy service output, date IST, route actions and links unchanged.
+
+**States/source reviewed:** invalid UUID and not-found, unauthorized/foreign college masked as not-found, learner masked email/phone, faculty, dual-role, suspended/ended badge, no related roles, narrow values at 375/768, route loading/error, inherited not-found and college layout. No runtime/CI.
+
+**Files changed:** src/app/(authenticated)/college/contacts/[membershipId]/page.tsx; proof and queue.
+
+## Surface 20 — src/app/(authenticated)/college/contacts/page.tsx
+
+**9 problems/fixes:** Header secondary account links wrapped without common baseline; two filter explanation rows consumed unnecessary vertical space; filter form had a second bottom border and padded nested Advanced filters card in the FilterBar drawer; the primary Search contacts action was hidden on desktop while duplicated inside nested filter controls; 6px label gaps broke legacy 8px pattern; advanced grid gutters varied unpredictably on narrow tablets; export-cap notice took the whole row; long emails used break-all inside mobile cards; row-level related-record actions wrapped into cramped multi-link clusters. Established one 16px page rhythm, aligned header actions, consolidated status/help copy into a flexible two-note row, kept exact q in visible search slot and added associated prominent FilterBar action, retained mobile submit inside one advanced-filter form subtree, removed nested card chrome/border, used consistent 8/12px labels and four/two responsive advanced columns, limited export note reading width, used overflow-wrap:anywhere for privacy-masked emails and stacked 44px row actions on 375px. Every filter field, tab, CSV scope/cap, privacy mask, pagination, date range/validation and routes unchanged.
+
+**States/source checked:** invalid query/clear, role tabs, saved member-filter banner, active filters, empty and paginated rows, faculty/learner/dual count, masked email/phone, 200-result select truncation options, advanced disclosure, sort, CSV, row links at 375/768, loading/error/retry, inherited not-found/layout. Shared Tabs, FilterBar, DataTable, DateInput, Disclosure and EmptyState inspected. Static source review only; no CI/browser.
+
+**Files changed:** src/app/(authenticated)/college/contacts/page.tsx, proof and queue tick.
