@@ -92,12 +92,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
      </Banner>:null}
    {decisionNotices.length>0?<details className="min-w-0 border-b border-border pb-4">
-    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Drive request decisions</summary>
+    <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7">Drive request decisions</summary>
     <p className="mt-1 text-xs text-muted-foreground">Approval, changes requested and declined decisions for your own requests.</p>
     <ul className="mt-3 space-y-3">{decisionNotices.map(item=><li key={item.id}
       className="border-b border-border py-3 last:border-b-0">
       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
-      <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
+      <p className="mt-1 max-w-prose whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body">{item.body}</p>
       <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
       <Link href={item.href} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        View your drive request
@@ -111,9 +111,31 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         key:grant.collegeId,label:grant.collegeName,
         href:"/hr/conversations?collegeId="+encodeURIComponent(grant.collegeId),
       }))}/>:null}
+   <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+    <Input type="hidden" name="collegeId" value={result.collegeId}/>
+    <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
+    <Input type="hidden" name="scope" value={parsed.data.scope}/>
+    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">Order
+     <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
+      <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
+     </Select>
+    </label>
+    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles.searchField}>Search by drive or message
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
+    <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
+   </form>
+   <Tabs renderPanel={false} ariaLabel="Conversation kind" value={parsed.data.scope}
+    items={HR_CONVERSATION_KINDS.map(item => ({value:item.value,label:item.label,
+      href:hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,
+        unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:item.value,page:1})}))}/>
+   <Tabs renderPanel={false} ariaLabel="Conversation status" value={parsed.data.unreadOnly}
+    items={[{value:"false",label:"All",href:hrConversationsHref({collegeId:result.collegeId,
+      q:parsed.data.q,unreadOnly:"false",sort:parsed.data.sort,scope:parsed.data.scope,page:1})},
+      {value:"true",label:"Unread",href:hrConversationsHref({collegeId:result.collegeId,
+      q:parsed.data.q,unreadOnly:"true",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}]}/>
    <section className="border-b border-border pb-4">
-    <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Talk to the placement cell</h2>
-    <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
+    <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Talk to the placement cell</h2>
+    <p className="mt-1 max-w-2xl text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
     {generalThread?<Disclosure title="Message the placement cell · General"
       className="mt-3 border-b border-border py-3 [&>summary]:min-h-11 md:[&>summary]:min-h-9">
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
@@ -146,29 +168,6 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open general conversation</Button>
     </form>:null}
    </section>
-   <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
-   <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
-    <Input type="hidden" name="collegeId" value={result.collegeId}/>
-    <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
-    <Input type="hidden" name="scope" value={parsed.data.scope}/>
-    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">Order
-     <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
-      <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
-     </Select>
-    </label>
-    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:basis-auto md:flex-none "+inboxStyles.searchField}>Search by drive or message
-     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
-    <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
-   </form>
-   <Tabs renderPanel={false} ariaLabel="Conversation kind" value={parsed.data.scope}
-    items={HR_CONVERSATION_KINDS.map(item => ({value:item.value,label:item.label,
-      href:hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,
-        unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:item.value,page:1})}))}/>
-   <Tabs renderPanel={false} ariaLabel="Conversation status" value={parsed.data.unreadOnly}
-    items={[{value:"false",label:"All",href:hrConversationsHref({collegeId:result.collegeId,
-      q:parsed.data.q,unreadOnly:"false",sort:parsed.data.sort,scope:parsed.data.scope,page:1})},
-      {value:"true",label:"Unread",href:hrConversationsHref({collegeId:result.collegeId,
-      q:parsed.data.q,unreadOnly:"true",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}]}/>
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations
    </p>
@@ -184,19 +183,19 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Mark visible unread conversations as read</Button>
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
     </form>:null}
-   <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
+   <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
    {result.items.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
-    {visibleRows.map(row=><li key={row.id} className="min-w-0 py-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
-     <Link href={"/hr/conversations/"+row.id}
-      className="block min-h-11 min-w-0 break-words font-semibold md:min-h-9 text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
-     {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}
-     {row.preview?<p className="mt-2 line-clamp-2 break-words text-sm leading-6 text-body">
+    {visibleRows.map(row=><li key={row.id} className="min-w-0 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
+     <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><Link href={"/hr/conversations/"+row.id}
+      className="inline-flex min-h-11 min-w-0 flex-1 items-center break-words font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
+     {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}</div>
+     {row.preview?<p className="mt-1 line-clamp-2 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">
       {row.preview.senderType==="RECRUITER"?"You: ":"Placement cell: "}{row.preview.text}
      </p>:null}
-     <p className="mt-1 text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
+     <p className="mt-1 break-words text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
-   </ol>:<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college."/>}
-   <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
+   </ol>:<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college." action={<Link href={hrConversationsHref({collegeId:result.collegeId,q:"",unreadOnly:"false",sort:"LATEST",scope:"ALL",page:1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Reset</Link>}/>}
+   <nav aria-label="Conversation pages" className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&>a]:w-full max-[767px]:[&>a]:justify-center">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
     {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
