@@ -32,14 +32,14 @@ export default async function MentorCalendarPage({searchParams}:{
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
   if(access?.projects.enabled!==true)return <MentorProjectsUnavailable loadFailed={access===null}/>;
   const meetings=await listMyMentorCalendarMeetings(context).catch(()=>null);
-  if(meetings===null)return <div className="min-w-0 max-w-full space-y-5">
+  if(meetings===null)return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Meetings" description="Every scheduled meeting across your assigned projects, in one place."/>
     <MentorCalendarLoadFailure/>
   </div>;
   // eslint-disable-next-line react-hooks/purity -- Server snapshot drives IST period filters and initial client clock.
   const now=new Date();
   const displayed=filterMentorCalendar(meetings,parsed.data,now);
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Meetings"
       description="Every scheduled meeting across your assigned projects, in one place."/>
     <FilterBar title="Meeting filters"
