@@ -27,7 +27,7 @@ export default async function CollegeOfferingLearningPage({
       context={context}
       offeringId={offeringId}
       deliveryId={deliveryId}
-      eyebrow=""
+      eyebrow="College Admin · Courses"
       backHref="/college/courses"
     />
   );
