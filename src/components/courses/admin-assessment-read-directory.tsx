@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -60,14 +61,14 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
     </form></FilterBar>
     <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-      {data.items.map(item => <article key={item.id} className="min-w-0 py-4">
+      {data.items.map(item => <article key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
           <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>{item.status}</StatusBadge>
         </div>
         <p className="mt-1 text-sm text-body">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>
         <p className="mt-2 text-xs text-muted-foreground">{item.deliverySpecific ? "Section-specific" : "Shared offering"} · {item.points} maximum points</p>
-        <dl className="mt-3 grid grid-cols-2 gap-3 text-sm text-body">
+        <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] text-sm text-body">
           <div><dt className="text-xs text-muted-foreground">Due</dt><dd>{formatDue(item.dueAt)}</dd></div>
           <div><dt className="text-xs text-muted-foreground">{assignment ? "Submissions" : "Attempts"}</dt>
             <dd className="text-lg font-semibold tabular-nums">{item.activityCount}</dd></div>
@@ -75,9 +76,12 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         {assignment?<div className="mt-3 space-y-2">
           <CollegeAssignmentActions assignment={{id:item.id,title:item.title,
             points:item.points,dueAt:item.dueAt,status:item.status}}/>
-          <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
-            specificDeliveryId={item.deliveryId} maxPoints={item.points}
-            status={item.status} deliveries={data.reviewDeliveries} filesEnabled={false}/>
+          <Disclosure title="Submissions" className="mt-[var(--lms-space-3)]"
+            contentClassName="pb-[var(--lms-space-3)]">
+            <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
+              specificDeliveryId={item.deliveryId} maxPoints={item.points}
+              status={item.status} deliveries={data.reviewDeliveries} filesEnabled={false}/>
+          </Disclosure>
         </div>:<div className="mt-3 space-y-2">
           <CollegeQuizActions quiz={{id:item.id,title:item.title,status:item.status,dueAt:item.dueAt}}/>
           <CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId}
