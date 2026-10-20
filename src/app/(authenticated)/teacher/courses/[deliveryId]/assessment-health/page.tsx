@@ -28,7 +28,7 @@ export default async function FacultyCourseAssessmentHealthPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid Section report filters"} />
-    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to courses</Link>
+    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to courses</Link>
   </section>;
   const context = await getCurrentRequestContext();
   const data = await getFacultyCourseAssessmentHealth(context,parsed.data);
@@ -60,7 +60,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       </label>
       <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>
     </form>
     <p className="text-sm text-body">
       {data.total} published assessment{data.total === 1 ? "" : "s"} in this Section
@@ -93,7 +93,7 @@ export default async function FacultyCourseAssessmentHealthPage({
             ? "Unknown" : item.averagePercent + "%"}.
         </p>
         <Link href={item.href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Open exact Section report →
         </Link>
       </article>)}</div>}
@@ -102,9 +102,9 @@ export default async function FacultyCourseAssessmentHealthPage({
       <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyCourseHealthHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Previous</Link>}
         {data.page < data.totalPages && <Link href={facultyCourseHealthHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">
