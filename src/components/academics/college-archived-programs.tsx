@@ -1,5 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
+import { EmptyState } from "@/components/ui/empty-state";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -7,6 +10,7 @@ import { useRouter } from "next/navigation";
 export function CollegeArchivedPrograms({ programs }: {
   programs: readonly { id: string; name: string; code: string; departmentName: string }[];
 }) {
+  const {askConfirm,dialog}=useConfirmFlow();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [busy, start] = useTransition();
@@ -17,15 +21,13 @@ export function CollegeArchivedPrograms({ programs }: {
       {open ? "Hide archived programs" : "Show archived programs"} ({programs.length}{programs.length === 100 ? "+" : ""})
     </Button>
     {open ? <div className="mt-3 space-y-3">
-      {programs.length === 0 ? <p className="text-sm text-body">
-        No archived programs are available for restoration in active departments.
-      </p> : programs.map(program => <div key={program.id}
+      {programs.length === 0 ? <EmptyState title="No archived programs" description="No archived programs are available for restoration in active departments."/> : programs.map(program => <div key={program.id}
         className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
         <p className="text-sm text-body">{program.name} ({program.code}) · {program.departmentName}</p>
         <Button variant="secondary" type="button" disabled={busy}
           className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text"
-          onClick={() => {
-            if (!window.confirm(`Restore ${program.name}? Its active name and code must remain unique.`)) return;
+          onClick={async () => {
+            if (!(await askConfirm(`Restore ${program.name}? Its active name and code must remain unique.`))) return;
             setError("");
             start(async () => {
               try {
@@ -45,7 +47,8 @@ export function CollegeArchivedPrograms({ programs }: {
       {programs.length === 100 ? <p className="text-xs text-muted-foreground">
         Showing the first 100 archived programs. More may exist.
       </p> : null}
-      {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}
+      {error ? <Banner tone="error">{error}</Banner> : null}
     </div> : null}
+    {dialog}
   </section>;
 }
