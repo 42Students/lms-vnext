@@ -153,16 +153,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-1.md: file, number of i
 - [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
 - [x] `src/app/(authenticated)/college/profile/page.tsx`
 - [x] `src/app/(authenticated)/college/programs/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/create/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
-- [ ] `src/app/(authenticated)/college/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/college/resources/page.tsx`
-- [ ] `src/app/(authenticated)/college/semester-courses/page.tsx`
-- [ ] `src/app/(authenticated)/college/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/create/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/college/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/college/resources/page.tsx`
+- [x] `src/app/(authenticated)/college/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/college/semesters/page.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/students/import/page.tsx`
 - [ ] `src/app/(authenticated)/college/students/register/page.tsx`
 - [ ] `src/app/(authenticated)/college/verification/loading.tsx`
