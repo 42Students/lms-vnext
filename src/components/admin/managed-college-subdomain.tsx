@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useId,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -7,11 +7,18 @@ import {Alert} from "@/components/ui/alert";
 import {useRouter} from "next/navigation";
 type Managed={ready:boolean;baseDomain:string|null;currentHost:string|null};
 export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;initial:Managed}){
- const router=useRouter(),[state,setState]=useState(initial),[label,setLabel]=useState(
+ const router=useRouter(),hintId=useId(),[state,setState]=useState(initial),[label,setLabel]=useState(
   initial.currentHost&&initial.baseDomain?initial.currentHost.slice(0,-initial.baseDomain.length-1):"");
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [pendingAction,setPendingAction]=useState<"ALLOT"|"CHANGE"|"REMOVE"|null>(null);
+ const normalizedLabel=label.trim().toLowerCase();
+ const labelInvalid=normalizedLabel.length>0&&!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(normalizedLabel);
+ useEffect(()=>{
+  setState(initial);
+  setLabel(initial.currentHost&&initial.baseDomain?initial.currentHost.slice(0,-initial.baseDomain.length-1):"");
+  setPendingAction(null);setMessage("");
+ },[collegeId,initial.currentHost,initial.baseDomain,initial.ready]);
  async function send(action:"ALLOT"|"CHANGE"|"REMOVE"){
   if(!state.ready||busy)return;
   const host=label.trim().toLowerCase();
@@ -32,42 +39,54 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     throw Error(messages[problem.error??""]??problem.error??"Request failed");
    }
    const data=await res.json() as {host:string|null};
-   setState({...state,currentHost:data.host});setPendingAction(null);
+   setState(current=>({...current,currentHost:data.host}));setPendingAction(null);
+   if(action==="REMOVE")setLabel("");
    setMessageTone("success");
    setMessage(data.host?data.host+" is live":"Managed web address removed.");
    router.refresh();
   }catch(err){setMessageTone("error");setMessage(err instanceof Error?err.message:"Unable to update address");}
   finally{setBusy(false);}
  }
- return <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-5)]" aria-label="Managed college web address">
-  <h2 className="font-semibold">Web address · Managed subdomain</h2>
+ return <section className="min-w-0 space-y-3 border-t border-border pt-4" aria-busy={busy} aria-label="Managed college web address">
+  <h2 className="m-0 text-lg font-semibold leading-7 text-[var(--lms-heading)]">Web address · Managed subdomain</h2>
   {!state.ready?<Alert tone="warning">
    One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</Alert>:
    <>
-    <p className="text-sm">Platform domain: {state.baseDomain}</p>
-    <p className="text-sm">Current: {state.currentHost??"Not allotted"}</p>
-    <label className="grid max-w-md gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Subdomain
+    <dl className="grid min-w-0 gap-2 border-y border-border py-3 text-sm sm:grid-cols-2">
+     <div className="min-w-0"><dt className="text-xs font-semibold text-muted-foreground">Platform domain</dt><dd className="mt-1 break-all text-body">{state.baseDomain}</dd></div>
+     <div className="min-w-0"><dt className="text-xs font-semibold text-muted-foreground">Current</dt><dd className="mt-1 break-all text-body">{state.currentHost??"Not allotted"}</dd></div>
+    </dl>
+    <label className="grid min-w-0 max-w-xl gap-1.5 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Subdomain
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
-       <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false}
-        onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
+       <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false} disabled={busy}
+        aria-invalid={labelInvalid} aria-describedby={hintId}
+        onChange={e=>{setLabel(e.target.value);if(message)setMessage("");}}
+        className="min-h-11 w-full min-w-0 flex-1 md:min-h-9"/>
        <span className="min-w-0 break-all text-sm text-body">.{state.baseDomain}</span>
       </div>
+      <span id={hintId} className={labelInvalid?"break-words text-xs font-normal leading-5 text-[var(--lms-error)]":"break-words text-xs font-normal leading-5 text-muted-foreground"}>{labelInvalid?"Use letters, numbers or internal hyphens without leading/trailing hyphens.":"Use a DNS label up to 63 characters."}</span>
     </label>
-    <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:flex-row md:items-center">
-     <Button type="button" disabled={busy||!label.trim()} onClick={()=>setPendingAction(state.currentHost?"CHANGE":"ALLOT")}
-      className="min-h-11 w-full md:min-h-9 md:w-auto">
+    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+     <Button type="button" disabled={busy||!normalizedLabel||labelInvalid} onClick={()=>{setMessage("");setPendingAction(state.currentHost?"CHANGE":"ALLOT");}}
+      className="min-h-11 w-full sm:min-h-9 sm:w-auto">
       {state.currentHost?"Change":"Allot"}</Button>
-     {state.currentHost&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>setPendingAction("REMOVE")}
-      className="min-h-11 w-full md:min-h-9 md:w-auto">Remove</Button>}
+     {state.currentHost&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>{setMessage("");setPendingAction("REMOVE");}}
+      className="min-h-11 w-full sm:min-h-9 sm:w-auto">Remove</Button>}
     </div>
     <p className="text-xs text-muted-foreground">A managed address is routed only when the configured wildcard DNS and TLS infrastructure is operational.</p>
    </>}
-  <ConfirmDialog open={pendingAction!==null} onOpenChange={open=>{if(!open)setPendingAction(null);}}
+  <ConfirmDialog open={pendingAction!==null} onOpenChange={open=>{if(!open&&!busy)setPendingAction(null);}}
    title={pendingAction==="REMOVE"?"Remove this managed web address?":pendingAction==="CHANGE"?"Change this college's live web address?":"Allot this platform subdomain?"}
-   description="Confirm the managed web address change for this college." confirmLabel={pendingAction==="REMOVE"?"Remove":pendingAction==="CHANGE"?"Change":"Allot"} confirmVariant={pendingAction==="REMOVE"?"danger":"primary"}
-   pending={busy} onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>
-   {message?<Alert tone={messageTone}>{message}</Alert>:null}
+   description="Confirm the managed web address change for this college."
+   confirmLabel={pendingAction==="REMOVE"?"Remove":pendingAction==="CHANGE"?"Change":"Allot"} confirmVariant={pendingAction==="REMOVE"?"danger":"primary"}
+   pending={busy} confirmDisabled={!state.ready||(pendingAction!=="REMOVE"&&(!normalizedLabel||labelInvalid))}
+   onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>
+   <div className="min-w-0 space-y-3 px-4 py-4 md:px-6">
+    <p className="m-0 break-words text-sm leading-5 text-body">Current: {state.currentHost??"Not allotted"}</p>
+    {pendingAction!=="REMOVE"?<p className="m-0 break-all text-sm font-semibold leading-5 text-foreground">New: {normalizedLabel}.{state.baseDomain}</p>:null}
+    {message&&messageTone==="error"?<Alert tone="error">{message}</Alert>:null}
+   </div>
   </ConfirmDialog>
-  {message&&<Alert tone={messageTone}>{message}</Alert>}
+  {message&&pendingAction===null?<Alert tone={messageTone}>{message}</Alert>:null}
  </section>;
 }
