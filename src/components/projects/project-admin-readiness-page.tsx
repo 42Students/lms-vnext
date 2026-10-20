@@ -58,7 +58,7 @@ export async function ProjectAdminReadinessPage({
 }: {
   collegeId: string;
   basePath: string;
-  eyebrow: string;
+  eyebrow?: string;
   searchParams: Record<
     string,
     string | string[] | undefined

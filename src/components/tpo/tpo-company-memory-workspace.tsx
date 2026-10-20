@@ -12,6 +12,7 @@ import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {Dropdown} from "@/components/ui/dropdown";
+import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */

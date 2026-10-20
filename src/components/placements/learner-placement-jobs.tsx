@@ -447,7 +447,7 @@ function JobActions({
             <div><dt className="font-semibold text-muted-foreground">Resume</dt>
               <dd className="mt-1 text-foreground">Not attached</dd></div>
           </dl>
-          <Button className="max-md:min-h-11" type="button" variant="link" aria-expanded={showSharedDetails}
+          <Button type="button" variant="link" aria-expanded={showSharedDetails}
             onClick={()=>setShowSharedDetails(open=>!open)}
             className="max-md:min-h-11 font-semibold text-primary-text underline">
             {showSharedDetails?"Hide what gets shared":"What exactly gets shared?"}

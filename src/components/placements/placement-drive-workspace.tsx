@@ -56,7 +56,7 @@ export async function PlacementDriveWorkspace({
 }: {
   context: RequestContext;
   jobId: string;
-  eyebrow: string;
+  eyebrow?: string;
   openPublish?: boolean;
 }) {
   const [

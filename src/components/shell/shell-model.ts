@@ -42,7 +42,7 @@ export const TPO_SECTION_LABELS = {
 /** Icon keys live with route/group data, not with visual layout. The old
  * application ships image icons for some learner rows; remaining rows use
  * inline SVG because this repository does not depend on lucide-react. */
-export const SHELL_NAV_ICON_KEYS:ReadOnly<Record<string,ShellNavIconName>>={
+export const SHELL_NAV_ICON_KEYS:Readonly<Record<string,ShellNavIconName>>={
  "/dashboard":"dashboard",
  "/admin/tenants":"bank", "/admin/features":"appstore",
  "/admin/module-access":"partition", "/admin/settings":"settings",
@@ -78,7 +78,7 @@ export const SHELL_NAV_ICON_KEYS:ReadOnly<Record<string,ShellNavIconName>>={
 export function shellNavIconKey(item:ShellNavItem):ShellNavIconName{
  return SHELL_NAV_ICON_KEYS[item.href]??"layers";
 }
-export const SHELL_SECTION_LABELS:ReadOnly<Record<NonNullable<ShellNavItem["group"]>,string>>={
+export const SHELL_SECTION_LABELS:Readonly<Record<NonNullable<ShellNavItem["group"]>,string>>={
  learning:"Learning",tracking:"Tracking",career:"Career",account:"Account",
  operate:"Operate",coordinate:"Coordinate",insights:"Insights",
  administration:"Administration",
