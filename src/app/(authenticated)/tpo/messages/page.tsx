@@ -275,12 +275,12 @@ export default async function TpoMessagesPage({
           method="get"
           className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5"
         >
-          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select
               name="status"
               defaultValue={query.status}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11"
             >
               {TPO_MESSAGE_STATUSES.filter(
                 (status) =>
@@ -299,41 +299,41 @@ export default async function TpoMessagesPage({
             </Select>
           </label>
 
-          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
             <Input
               type="date"
               name="from"
               defaultValue={query.from ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11"
             />
           </label>
 
-          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
             <Input
               type="date"
               name="to"
               defaultValue={query.to ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11"
             />
           </label>
 
-          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search
             {isRecruiterInbox?<TpoInboxSearch
               value={query.q} placeholder="Recruiter, subject or message"/>:
               <Input type="search" name="q" maxLength={120} defaultValue={query.q}
                 placeholder="TPO name or event type"
-                className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"/>}
+                className="min-h-11"/>}
           </label>
 
-          <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11"
             >
               <option value="25">25</option>
               <option value="50">50</option>

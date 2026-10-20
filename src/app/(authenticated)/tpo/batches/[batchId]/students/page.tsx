@@ -105,21 +105,21 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  {!result.registrationAvailable?<p role="status" className="text-sm">Registration records unavailable.</p>:null}
  <form action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
   className="grid min-w-0 grid-cols-1 items-end gap-2 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-3">
-  <label className="min-w-0 text-sm">Class (on this page)
+  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class (on this page)
    <Select name="classId" defaultValue={view.data.classId??""}
-    className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+    className="block min-h-11 md:min-h-9 w-full mt-[6px]">
     <option value="">All classes</option>
     {[...new Map(result.students.filter(student=>student.classId)
       .map(student=>[student.classId!,student.className??"Unnamed class"])).entries()]
      .map(([id,name])=><option key={id} value={id}>{name}</option>)}
    </Select>
   </label>
-  <label className="min-w-0 text-sm">Search names or roll numbers across the batch
+  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search names or roll numbers across the batch
    <Input type="search" name="q" defaultValue={view.data.q} maxLength={100}
-    className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+    className="min-h-11 md:min-h-9 w-full mt-[6px] block"/>
   </label>
-  <label className="min-w-0 text-sm">Eligibility decision
-   <Select name="decision" defaultValue={view.data.decision} className="mt-1 min-h-11 md:min-h-9 w-full">
+  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility decision
+   <Select name="decision" defaultValue={view.data.decision} className="min-h-11 md:min-h-9 w-full mt-[6px] block">
     <option value="ALL">All decisions</option>
     <option value="ELIGIBLE">Eligible</option>
     <option value="INELIGIBLE">Ineligible</option>
@@ -127,8 +127,8 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="NEEDS_REVIEW">Ambiguous / needs review</option>
    </Select>
   </label>
-  <label className="min-w-0 text-sm">Decision source
-   <Select name="source" defaultValue={view.data.source} className="mt-1 min-h-11 md:min-h-9 w-full">
+  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision source
+   <Select name="source" defaultValue={view.data.source} className="min-h-11 md:min-h-9 w-full mt-[6px] block">
     <option value="ALL">Any source</option>
     <option value="LEARNER">Learner override</option>
     <option value="CLASS">Class</option>
@@ -136,15 +136,15 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="NONE">No recorded decision</option>
    </Select>
   </label>
-  <label className="min-w-0 text-sm">Registration choice
-   <Select name="registration" defaultValue={view.data.registration} className="mt-1 min-h-11 md:min-h-9 w-full">
+  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registration choice
+   <Select name="registration" defaultValue={view.data.registration} className="min-h-11 md:min-h-9 w-full mt-[6px] block">
     <option value="ALL">Any evidence</option>
     <option value="RECORDED">Choice recorded</option>
     <option value="UNRECORDED">No choice recorded</option>
    </Select>
   </label>
-  <label className="min-w-0 text-sm">Sort this page
-   <Select name="order" defaultValue={view.data.order} className="mt-1 min-h-11 md:min-h-9 w-full">
+  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort this page
+   <Select name="order" defaultValue={view.data.order} className="min-h-11 md:min-h-9 w-full mt-[6px] block">
     <option value="NAME_ASC">Name A–Z</option>
     <option value="NAME_DESC">Name Z–A</option>
     <option value="REVIEW_FIRST">Needs review first</option>
