@@ -24,8 +24,8 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
   <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 print:hidden" href={base+"/offers"}>← Offer register</Link>
   <PageHeader eyebrow="TPO · Offer evidence" title={data.candidate.name+" · "+data.offer.role}
    description="Persisted offer and joining events. Recorded internal reasons are disclosed only within authorized college scope."/>
-  <section aria-label="Current offer facts" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface sm:grid-cols-2 xl:grid-cols-5 print:overflow-visible">
-   {facts.map(([name,value])=><div key={name} className="min-w-0 border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
+  <section aria-label="Current offer facts" className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5 print:overflow-visible">
+   {facts.map(([name,value])=><div key={name} className="min-w-0 border-b border-border px-1 py-4">
     <p className="text-xs text-muted-foreground">{name}</p><p className="mt-2 break-words font-semibold">{value}</p>
    </div>)}
   </section>
