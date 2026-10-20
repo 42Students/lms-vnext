@@ -3,46 +3,46 @@
 300 files (705 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: landmarks, heading order (one h1), labels for every control, alt text, button vs link semantics, aria-expanded/selected, focus return after dialogs, colour-only meaning.
 Record ONE proof line per file in docs/audit/ux/dim-lane-16.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/activity/page.tsx`
-- [ ] `src/app/(authenticated)/admin/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/admin/attendance/error.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/page.tsx`
-- [ ] `src/app/(authenticated)/admin/electives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/inbound-mail/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lessons/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/live-classes/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/module-access/page.tsx`
-- [ ] `src/app/(authenticated)/admin/organizations/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/hiring/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/retention/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/workspaces/new/error.tsx`
-- [ ] `src/app/(authenticated)/admin/semester-courses/page.tsx`
-- [ ] `src/app/(authenticated)/admin/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/error.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/page.tsx`
-- [ ] `src/app/(authenticated)/authenticated-print.css`
-- [ ] `src/app/(authenticated)/college/companies/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/activity/page.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/page.tsx`
+- [x] `src/app/(authenticated)/admin/attendance/error.tsx`
+- [x] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/page.tsx`
+- [x] `src/app/(authenticated)/admin/electives/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/inbound-mail/loading.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/admin/lessons/loading.tsx`
+- [x] `src/app/(authenticated)/admin/live-classes/loading.tsx`
+- [x] `src/app/(authenticated)/admin/module-access/page.tsx`
+- [x] `src/app/(authenticated)/admin/organizations/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/loading.tsx`
+- [x] `src/app/(authenticated)/admin/people/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/unassigned/loading.tsx`
+- [x] `src/app/(authenticated)/admin/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/hiring/loading.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/loading.tsx`
+- [x] `src/app/(authenticated)/admin/placements/retention/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/workspaces/new/error.tsx`
+- [x] `src/app/(authenticated)/admin/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/semesters/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/error.tsx`
+- [x] `src/app/(authenticated)/admin/settings/page.tsx`
+- [x] `src/app/(authenticated)/authenticated-print.css`
+- [x] `src/app/(authenticated)/college/companies/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/college/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/calendar/error.tsx`
 - [ ] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/retention/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`

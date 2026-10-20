@@ -38,7 +38,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <PageHeader title="Semesters" />
       <ErrorState title="Semester access denied"
         description="Your account cannot access Super Admin semesters."
-        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to dashboard</Link>}/>
+        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to dashboard</Link>}/>
     </div>;
   }
   if (!context.adminScope?.collegeId) {
@@ -56,7 +56,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <PageHeader  title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description="Check the selected program, term, status or page."
-        action={<Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>} />
+        action={<Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>} />
     </div>;
   }
 
@@ -76,11 +76,11 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
-      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Semester–Course Mapping</Link>} />
+      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Semester–Course Mapping</Link>} />
     <AcademicSetupSteps step={3} />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="border-b border-border pb-4" aria-label="Semester filters">
-      <form method="get" action="/admin/semesters" className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
+      <form method="get" action="/admin/semesters" aria-label="Filter semesters" className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
         <label className="grid min-w-44 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester or program
           <Input name="q" type="search" defaultValue={data.query.q} maxLength={100}
             className="min-h-11 w-full min-w-0 md:min-h-9" />
@@ -106,7 +106,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           </Select>
         </label>
         <Button type="submit">Filter</Button>
-        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
     </section>
     <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">
@@ -121,7 +121,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       ...(data.query.q?{q:data.query.q}:{}),
       ...(data.query.programId?{programId:data.query.programId}:{}),
       ...(data.query.status!=="ALL"?{status:data.query.status}:{})
-    }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       Export semesters.csv
     </a>
     <section aria-label="Semesters" className="min-w-0 space-y-3">
