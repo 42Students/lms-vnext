@@ -1079,7 +1079,7 @@ export function FacultyAttendanceWorkspace({
         title="Reload saved attendance?"
         description="This reloads marks recorded on the server and discards any unsaved selections in this page."
         confirmLabel="Reload roster"
-        confirmVariant="primary"
+        confirmVariant="danger"
         onConfirm={() => window.location.reload()}
       />
       {selectedLearner ? (

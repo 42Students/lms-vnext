@@ -58,10 +58,9 @@ export function CollegeStudentImportHistory(){
   <Button variant="secondary" type="button" onClick={()=>{setOpen(true);void load(1);}}
    className="min-h-11 md:min-h-9">
    Bulk import history</Button>
-  <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else close();}} title="Bulk import history">
-    <div className="flex justify-end">
-     <Button variant="secondary" type="button" onClick={close}
-      className="min-h-11 md:min-h-9">Close</Button></div>
+  <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else close();}} title="Bulk import history" footer={<Button variant="secondary" type="button" onClick={close}
+      className="min-h-11 md:min-h-9">Close</Button>}>
+    
     {error?<Alert tone="error">{error}</Alert>:null}
     {busy?<Skeleton variant="row" label="Loading import history"/>:null}
     <DataTable<Receipt> caption="Bulk import history" rows={rows} getRowKey={row=>row.id}

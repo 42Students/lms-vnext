@@ -63,26 +63,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-8.md: file, number of i
 - [x] `src/components/admin/tenant-settings-editor.tsx`
 - [x] `src/components/admin/tenant-settings-other-keys.tsx`
 - [x] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/auth/device-list.tsx`
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/college-faculty-lifecycle-action.tsx`
-- [ ] `src/components/college/college-faculty-reassign-action.tsx`
-- [ ] `src/components/college/college-faculty-schedule-reassign.tsx`
-- [ ] `src/components/college/college-offering-metadata-action.tsx`
-- [ ] `src/components/college/college-person-audit-modal.tsx`
-- [ ] `src/components/college/college-person-edit-action.tsx`
-- [ ] `src/components/college/college-person-profile-overview-modal.tsx`
-- [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/college/college-student-lifecycle-action.tsx`
-- [ ] `src/components/college/student-class-move-action.tsx`
-- [ ] `src/components/college/use-college-confirmation.tsx`
-- [ ] `src/components/colleges/college-contact-profile-form.tsx`
+- [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/auth/device-list.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/college-faculty-lifecycle-action.tsx`
+- [x] `src/components/college/college-faculty-reassign-action.tsx`
+- [x] `src/components/college/college-faculty-schedule-reassign.tsx`
+- [x] `src/components/college/college-offering-metadata-action.tsx`
+- [x] `src/components/college/college-person-audit-modal.tsx`
+- [x] `src/components/college/college-person-edit-action.tsx`
+- [x] `src/components/college/college-person-profile-overview-modal.tsx`
+- [x] `src/components/college/college-role-directory-workspace.tsx`
+- [x] `src/components/college/college-student-import-history.tsx`
+- [x] `src/components/college/college-student-lifecycle-action.tsx`
+- [x] `src/components/college/student-class-move-action.tsx`
+- [x] `src/components/college/use-college-confirmation.tsx`
+- [x] `src/components/colleges/college-contact-profile-form.tsx`
 - [ ] `src/components/courses/admin-course-actions.tsx`
 - [ ] `src/components/courses/admin-course-create-panel.tsx`
 - [ ] `src/components/courses/admin-learning-structure-actions.tsx`

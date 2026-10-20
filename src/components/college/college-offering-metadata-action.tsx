@@ -39,7 +39,13 @@ export function CollegeOfferingMetadataAction({offering}:{
   return <div className="space-y-1">{confirmation}
     <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(true)}
       className="min-h-11 md:min-h-9">Edit</Button>
-    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Edit offering "+offering.courseName} dismissible={!pending}>
+    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Edit offering "+offering.courseName} dismissible={!pending} footer={<>
+<Button variant="secondary" type="button" onClick={()=>setOpen(false)} disabled={pending}
+            className="min-h-11 md:min-h-9">Cancel</Button>
+          <Button variant="primary" type="button" onClick={save} disabled={pending}
+            className="min-h-11 md:min-h-9" loading={pending}>
+            {pending?"Saving…":"Confirm edit"}</Button>
+</>}>
         <label className="grid gap-1 text-sm font-semibold text-body">Offering type
           <Select value={type} disabled={pending} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}>
             <option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
@@ -53,13 +59,7 @@ export function CollegeOfferingMetadataAction({offering}:{
             onChange={e=>setDisplayOrder(e.target.value)}/>
         </label>
         {error?<Alert tone="error">{error}</Alert>:null}
-        <div className="flex flex-wrap justify-end gap-2">
-          <Button variant="secondary" type="button" onClick={()=>setOpen(false)} disabled={pending}
-            className="min-h-11 md:min-h-9">Cancel</Button>
-          <Button variant="primary" type="button" onClick={save} disabled={pending}
-            className="min-h-11 md:min-h-9" loading={pending}>
-            {pending?"Saving…":"Confirm edit"}</Button>
-        </div>
+        
     </Dialog>
     {!open&&error?<Alert tone="error">{error}</Alert>:null}
   </div>;
