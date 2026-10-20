@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import { PageHeader } from "@/components/ui/page-header";
 import { redirect } from "next/navigation";
 
@@ -56,7 +57,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
             value: summary.closed,
           },
         ].map((metric) => (
-          <StatTile key={metric.label} label={metric.label} value={metric.value} />
+          <StatTile className={tpoTileStyles.tile} key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </div>
 

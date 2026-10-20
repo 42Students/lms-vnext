@@ -6,7 +6,7 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
- return <AdminScopedReadPage title="Placement Interviews / Rounds" path="/admin/placements/interviews"
+ return <AdminScopedReadPage backHref="/admin/placements" title="Placement Interviews / Rounds" path="/admin/placements/interviews"
   description="Selected-college persisted rounds; scheduled times shown in IST. Private meeting links, venue and candidate comments are not projected."
   statuses={statuses} searchParams={searchParams} loader={q=>listSuperAdminInterviews(context,q)}/>;
 }

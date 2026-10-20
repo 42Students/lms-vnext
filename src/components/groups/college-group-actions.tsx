@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { studyGroupConflictMessage } from "@/modules/groups/college-group-management-model";
 
@@ -108,31 +109,31 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
     });
   }
 
-  const inputClass = "min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground";
+  const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
   return <>
     {group ? <span className="flex flex-wrap gap-2">
       {group.status !== "ARCHIVED" ? (
-        <Button size="sm" variant="secondary" onClick={() => {
+        <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => {
           setDraft(draftOf(group)); setError(null); setOpen(true);
         }}>Edit</Button>
       ) : null}
       {(group.status === "DRAFT" || group.status === "CLOSED") ? (
-        <Button size="sm" variant="secondary" onClick={() => {
+        <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => {
           setError(null); setConfirm("ACTIVATE");
         }}>Activate</Button>
       ) : null}
       {group.status === "ACTIVE" ? (
-        <Button size="sm" variant="secondary" onClick={() => {
+        <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => {
           setError(null); setConfirm("CLOSE");
         }}>Close</Button>
       ) : null}
       {(group.status === "DRAFT" || group.status === "CLOSED") ? (
-        <Button size="sm" variant="danger" onClick={() => {
+        <Button size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => {
           setError(null); setConfirm("ARCHIVE");
         }}>Archive</Button>
       ) : null}
     </span> : (
-      <Button onClick={() => { setDraft(EMPTY); setError(null); setOpen(true); }}>
+      <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={() => { setDraft(EMPTY); setError(null); setOpen(true); }}>
         New study group
       </Button>
     )}
@@ -153,10 +154,10 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
           <Input inputMode="numeric" type="number" min={1} max={10000} value={draft.capacity}
             onChange={(event) => update("capacity", event.target.value)} className={inputClass} />
         </label>
-        {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
+        {error ? <Alert tone="error">{error}</Alert> : null}
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="secondary" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
-          <Button type="submit" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
+          <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
+          <Button type="submit" loading={pending} className="min-h-11 md:min-h-9" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
         </div>
       </form>
     </Dialog>
@@ -168,6 +169,6 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
       confirmLabel={confirm === "ARCHIVE" ? "Archive group" : "Confirm status"}
       confirmVariant={confirm === "ARCHIVE" ? "danger" : "primary"}
       pending={pending} onConfirm={changeStatus} />
-    {!open && !confirm && error ? <p role="alert" className="text-xs text-[var(--lms-error)]">{error}</p> : null}
+    {!open && !confirm && error ? <Alert tone="error">{error}</Alert> : null}
   </>;
 }

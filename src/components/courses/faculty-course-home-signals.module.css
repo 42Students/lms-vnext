@@ -16,28 +16,37 @@
 }
 .distribution {
   display: grid;
-  grid-template-columns: 6rem minmax(0, 1fr) 2rem;
+  grid-template-columns: 80px minmax(0, 1fr) 32px;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   min-width: 0;
+  font-size: 12px;
 }
 .distributionLabel {
-  color: var(--lms-neutral-700);
+  color: #6b7280;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
+  white-space: nowrap;
 }
 .distributionCount {
-  color: var(--lms-neutral-900);
+  color: #1a1d21;
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
 @media (max-width: 767px) {
-  .distribution {
-    grid-template-columns: minmax(70px, 6rem) minmax(0,1fr) 2rem;
-    gap: 8px;
-  }
+  .distribution { grid-template-columns: 80px minmax(0,1fr) 32px; gap: 8px; }
+}
+.gradeTrack {
+  min-width: 0;
+  height: 8px !important;
+  border-radius: 4px !important;
+  background: #e5e9f0 !important;
+}
+.gradeTrack > div {
+  border-radius: 4px;
+  background: #26bac7 !important;
 }
 @media (prefers-reduced-motion: reduce) {
   .track > div { transition: none; }

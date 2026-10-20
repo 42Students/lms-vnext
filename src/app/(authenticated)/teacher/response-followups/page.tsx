@@ -11,7 +11,6 @@ import {
 } from "@/modules/courses/faculty-response-followup-model";
 import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-followup-service";
 import {facultyFollowUpCsvHref} from "@/modules/courses/faculty-followup-export";
-import {Input} from "@/components/ui/input";
 
 type Params = Record<string,string|string[]|undefined>;
 

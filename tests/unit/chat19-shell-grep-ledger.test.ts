@@ -32,6 +32,9 @@ describe("chat-19 B3/B4 complete-tree grep ledger", () => {
       "shell-hardcoded-visuals", "duplicate-sidebar-and-mobile-footer"]) {
       expect(text).toContain(name);
     }
+    expect(text).toContain("nonlegacy-top-strip-regressions");
+    expect(text).toContain("lms-route-progress-segment");
+    expect(text).toContain('role="progressbar"');
     expect(text).toContain('paths: ["src"]');
     expect(text).toContain('paths: ["src/components/shell", "src/components/tpo"]');
   });
