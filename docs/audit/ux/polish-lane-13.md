@@ -25,3 +25,7 @@
 ## 4. Mentor · Contacts legacy bookmark
 
 **Surface:** `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx` — read entire optional-catchall page and parent Mentor role-guard layout; checked all route-local loading/error/not-found/template candidates (none exist). This route calls `redirect("/mentor/projects")` before any DOM is rendered. **Problems: 0; visual/structural fixes: none.** There is no page surface, overlay, interactive state, focus target, or responsive layout here to clutter or realign. Preserved the exact legacy bookmark route and destination rather than introducing a duplicate screen or redirect flash. **Files changed:** queue and proof only. Source-only inspection; no browser or CI.
+
+## 5. Mentor · Course detail legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`. Inspected the whole source, optional catchall route candidates (`loading`, `error`, `not-found`, `template`: absent), nearest course layout (absent), and the inherited Mentor role guard. The only operation is a server `redirect("/mentor/projects")`; no on-screen page, loading state, overlay, control, headings, tables or actions are rendered at 375/768/1280. **Problems found: 0; fixes: none.** Maintained exact URL capture and redirect behavior rather than adding an intermediate UI. Files changed: this proof and lane checklist only; no browser/CI.
