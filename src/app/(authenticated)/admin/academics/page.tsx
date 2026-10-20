@@ -17,12 +17,12 @@ export default async function SuperAdminAcademicsPage() {
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          eyebrow="Super Admin"
+          
           title="Academics"
           description="Academic administration requires a college safety scope."
-          actions={<div className="flex flex-wrap items-center gap-[var(--lms-space-2)]">
-            <Link href="/admin/electives" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Elective slots →</Link>
-                    <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Batch Promotion Preview →</Link>
+          actions={<div className="flex w-full flex-wrap items-center gap-[var(--lms-space-2)] md:w-auto">
+            <Link href="/admin/electives" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">Elective slots →</Link>
+                    <Link href="/admin/batch-promotion" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">Batch Promotion Preview →</Link>
           </div>}
         />
         <EmptyState
@@ -41,20 +41,20 @@ export default async function SuperAdminAcademicsPage() {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
+        
         title="Academics"
         description="Academic structure inside the selected college safety scope."
-        actions={<div className="flex flex-wrap items-center gap-[var(--lms-space-2)]">
+        actions={<div className="flex w-full flex-wrap items-center gap-[var(--lms-space-2)] md:w-auto">
           <Link href="/admin/electives"
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">
                     Elective slots
                   </Link>
                   <Link
                     href="/admin/programs"
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto"
                   >
                     Open Programs directory
-                  </Link><Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Batch Promotion Preview →</Link>
+                  </Link><Link href="/admin/batch-promotion" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-[background-color,border-color] duration-[150ms] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">Batch Promotion Preview →</Link>
         </div>}
       />
       <AcademicsOverview

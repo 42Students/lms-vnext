@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
@@ -28,12 +29,15 @@ export function CollegeContactProfileForm({ initial }: {
   const [privacy, setPrivacy] = useState(initial.privacyUrl ?? "");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!window.confirm("Confirm updating your college display name and public support contacts? These details may appear on the public college sign-in page.")) {
-      return;
-    }
+    setConfirmOpen(true);
+  }
+
+  function confirmSave() {
+    setConfirmOpen(false);
     setError(null);
     setSuccess(null);
     transition(async () => {
@@ -61,7 +65,7 @@ export function CollegeContactProfileForm({ initial }: {
     });
   }
 
-  return <form onSubmit={submit}
+  return <><form onSubmit={submit}
     className="grid max-w-3xl gap-4 border-t border-border pt-5 md:grid-cols-2">
     <label className="grid gap-2 text-sm font-semibold text-body md:col-span-2">
       Public college display name
@@ -110,6 +114,7 @@ export function CollegeContactProfileForm({ initial }: {
         setTerms(initial.termsUrl ?? "");
         setPrivacy(initial.privacyUrl ?? "");
         setError(null);
+        setSuccess(null);
       }} variant="secondary" className="min-h-11 md:min-h-9">
         Reset
       </Button>
@@ -119,5 +124,16 @@ export function CollegeContactProfileForm({ initial }: {
       College code, private addresses, account contacts, sign-in images and branding colours are unchanged.
       A stale version is rejected rather than overwriting a concurrent update.
     </p>
-  </form>;
+  </form>
+  <ConfirmDialog
+    open={confirmOpen}
+    onOpenChange={setConfirmOpen}
+    title="Update college contact profile?"
+    description="The display name and public support details may appear on the college sign-in page."
+    confirmLabel="Save changes"
+    confirmVariant="primary"
+    pending={pending}
+    onConfirm={confirmSave}
+  />
+  </>;
 }
