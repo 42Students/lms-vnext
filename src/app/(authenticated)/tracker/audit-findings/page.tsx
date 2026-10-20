@@ -30,12 +30,12 @@ export default async function IndependentFindingsPage({searchParams}:{
  const parsed=parseIndependentFindingFilters(await searchParams);
  const header=<><AuditFindingFilterMemory/><PageHeader title="Audit findings"
   description="Independent findings imported from the audit repository, not user bug reports."/><TrackerAdminNav/></>;
- if(!parsed)return <div className="space-y-5">{header}
+ if(!parsed)return <div className="min-w-0 space-y-4">{header}
   <ErrorState title="Invalid audit findings filters." description="Independent findings imported from the audit repository, not user bug reports."
    action={<Link href="/tracker/audit-findings?view=OPEN"
     className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-primary-text underline">Reset filters</Link>}/>
  </div>;
- if(!independentAuditFindingsReady())return <div className="space-y-5">{header}
+ if(!independentAuditFindingsReady())return <div className="min-w-0 space-y-4">{header}
   <Banner tone="warning">
    Audit findings are temporarily unavailable. Please contact your platform administrator to complete setup.
    Bug reports are not substituted for independent audit findings.
@@ -95,8 +95,8 @@ export default async function IndependentFindingsPage({searchParams}:{
     count:data.statusCounts[status]??0,
     href:independentFindingHref({...parsed,statuses:[status],page:1}),
    }))}/>
-  <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 lg:grid-cols-3">
-   <input type="hidden" name="view" value={parsed.view}/>
+  <form method="get" className="grid min-w-0 gap-2 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
+   <Input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
    <label className="text-sm font-semibold">Area

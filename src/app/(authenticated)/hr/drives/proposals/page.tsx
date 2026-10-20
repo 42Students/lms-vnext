@@ -30,7 +30,7 @@ export default async function RecruiterDriveProposalHistory({
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader title="Sent drive proposals"
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
-  <nav className="flex flex-wrap gap-3">
+  <nav className="flex flex-wrap gap-2">
    <PageBackLink href="/hr/drives" label="Back to drives"/>
    <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Draft another proposal</Link>
   </nav>
@@ -41,13 +41,13 @@ export default async function RecruiterDriveProposalHistory({
     href:"/hr/drives/proposals?collegeId="+encodeURIComponent(grant.collegeId),
    }))}/>
   </section>:data.status==="NO_ACCESS"?<EmptyState title="No active college access" description="No active recruiter college access."/>:<>
-   <form action="/hr/drives/proposals" method="get" className="flex flex-wrap items-end gap-3">
+   <form action="/hr/drives/proposals" method="get" className="flex flex-wrap items-end gap-2">
     <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-0 flex-[1_1_12rem] text-sm text-body">Search by role title
      <Input name="q" maxLength={100} defaultValue={input.data.q}
        className="mt-1 w-full" placeholder="Role title" />
     </label>
-    <label className="text-sm text-body">Order
+    <label className="min-w-0 text-sm text-body">Order
       <Select name="sort" defaultValue={input.data.sort} className="mt-1">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
@@ -94,7 +94,7 @@ export default async function RecruiterDriveProposalHistory({
      <p className="mt-2 text-xs text-body">No approval or drive publication is implied.</p>
     </li>)}
    </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."/>}
-   <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-3">
+   <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-2">
     {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
     {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}

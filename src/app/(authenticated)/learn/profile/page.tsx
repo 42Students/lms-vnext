@@ -38,12 +38,12 @@ export default async function LearnerProfilePage({
   const missing=verification?learnerProfileMissingItems(verification):[];
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-4">
       <PageHeader
         title="Profile"
       />
       <LearnerVerificationLiveRefresh/>
-      <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
+      <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4 md:pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Profile verification</h2>
           <Badge  tone="neutral">
@@ -109,7 +109,7 @@ export default async function LearnerProfilePage({
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Who has my data →
       </Link>
-      <section aria-label="Verification status" className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
+      <section aria-label="Verification status" className="min-w-0 border-b border-border pb-4 md:pb-5">
         <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
         {verification?<div className="mt-4 space-y-3">

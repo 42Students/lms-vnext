@@ -65,9 +65,8 @@ export default async function TpoCtcReportPage({
   ];
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-4">
       <PageHeader
-        eyebrow="TPO · Reports"
         title="Packages"
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/ctc"].description}
         actions={<ReportCsvLink workspace={workspace} kind="ctc" />}
@@ -80,12 +79,12 @@ export default async function TpoCtcReportPage({
 
       <section
         aria-label="Compensation metrics"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+        className="grid gap-2 md:grid-cols-2 xl:grid-cols-3"
       >
         {metrics.map(([label, value]) => (
           <div
             key={label}
-            className="border-b border-border py-4"
+            className="min-w-0 border-b border-border py-4"
           >
             <p className="text-xs font-semibold uppercase text-body">
               {label}

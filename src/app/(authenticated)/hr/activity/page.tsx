@@ -53,7 +53,7 @@ export default async function HrJobActivityPage({searchParams}:{
      <Input type="hidden" name="kind" value={input.data.kind}/>
      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
      <Input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
-       placeholder="Search hiring drive titles" className="min-h-11 min-w-0 w-full basis-full md:w-[220px] md:basis-auto md:flex-none"/>
+       placeholder="Search hiring drive titles" className="min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"/>
      <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
    <Tabs ariaLabel="Hiring activity event type" renderPanel={false} value={input.data.kind}
@@ -66,7 +66,7 @@ export default async function HrJobActivityPage({searchParams}:{
     <li key={item.id} className="py-4">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
       className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{item.title}</Link>
-     <p className="mt-1 text-sm text-body">{item.status} · {fmt(item.occurredAt)} IST</p>
+     <p className="mt-1 text-sm text-body"><StatusBadge tone={item.status==="PUBLISHED"?"success":"neutral"}>{item.status}</StatusBadge> · {fmt(item.occurredAt)} IST</p>
     </li>)}</ol>:<EmptyState title="No hiring activity" description="No visible publication or closure activity at this college."/>}
 
    <nav aria-label="Activity history pages" className="flex flex-wrap items-center gap-3">
