@@ -50,7 +50,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
           </Button>
 </>}>
         <p className="text-sm text-body">Replace {facultyName}; existing teaching history will be retained.</p>
-        <label className="grid gap-2 text-sm font-semibold text-body">Replacement Faculty
+        <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Replacement Faculty
           <Select value={replacementMembershipId} disabled={pending} onChange={e=>setReplacementMembershipId(e.target.value)}>
             <option value="">Choose Faculty</option>
             {candidates.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
