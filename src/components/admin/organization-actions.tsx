@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 
@@ -89,15 +91,12 @@ export function OrganizationActions({
 
   return (
     <>
-      <details className="group min-w-0 text-left print:hidden">
-        <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Actions</summary>
-        <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col gap-[var(--lms-space-2)]">
-          <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9"
-            onClick={() => { setNextName(name); setRenameOpen(true); }}>Rename</Button>
-          <Button type="button" variant="ghost" size="sm" className="min-h-11 md:min-h-9"
-            onClick={() => setArchiveOpen(true)}>Archive</Button>
-        </div>
-      </details>
+      <Dropdown trigger="Actions" label="Organization actions" mobileSheet align="end" className="print:hidden" triggerClassName="md:!min-h-9">
+        <Menu className="w-full min-w-0">
+          <MenuItem onClick={() => { setNextName(name); setRenameOpen(true); }}>Rename</MenuItem>
+          <MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
+        </Menu>
+      </Dropdown>
 
       <Dialog
         open={renameOpen}
@@ -105,7 +104,7 @@ export function OrganizationActions({
         title="Rename organization"
         description="The active-name uniqueness rule is enforced by the server."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               className="min-h-11 w-full md:min-h-9 md:w-auto"
@@ -125,12 +124,12 @@ export function OrganizationActions({
             >
               {pending ? "Saving…" : "Save name"}
             </Button>
-          </>
+          </div>
         }
       >
         <label
           htmlFor={`organization-name-${organizationId}`}
-          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           Organization name
         </label>
