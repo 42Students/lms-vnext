@@ -39,3 +39,7 @@
 ## Surface 6 — Batch invitation-preparation redirect
 
 **Review:** This route has no rendered page or page-local controls: it performs a server redirect to the existing `#batch-invite` anchor. Preserve redirect behavior and encoded batch identifier, not an invented intermediate screen. **Problems fixed (2):** during slow navigation, generic loading lacked context; route error fallback navigated away from the TPO workspace. Added a contextual heading and loading/recovery state plus in-shell error with TPO batches destination. Shared graceful components reviewed. No runtime/CI. **Files:** `src/app/(authenticated)/tpo/batches/[batchId]/invitation-prep/loading.tsx`, `src/app/(authenticated)/tpo/batches/[batchId]/invitation-prep/error.tsx` (redirect page examined, unchanged).
+
+## Surface 7 — Batch nudge-preparation redirect
+
+**Reviewed:** redirect-only page, absence of layout/not-found files, route loading/error and shared graceful boundary. Redirect to `/registrations?choice=UNRECORDED` is its only user-facing behavior and is unchanged. **Problems fixed (2):** loading lacks destination context; generic error fallback leaves the batch-workspace shell. Added contextual title/skeleton and in-shell retry/navigation. No fabricated duplicate form or controls; no UI exists in the page itself. 375/768 classes derive from existing responsive header and loading components; no rendering/CI. **Files:** `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/loading.tsx`, `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/error.tsx`.
