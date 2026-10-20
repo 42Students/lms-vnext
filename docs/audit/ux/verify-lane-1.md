@@ -232,3 +232,45 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** read cursor/unread query fallback and history service mapping, local loading/error/not-found, grouped NotificationList, read/open/Toast/StatusBadge interactions and nearest learner layout; no broken JSX, missing imports, role/aria, URL, or component props discovered.
 - **Extra clutter/alignment fixes (0):** two compact filter pills, hairline grouped history and mobile stacked pagination/read actions conform to the legacy density; verified with no source change.
 - **Files changed:** proof and queue only.
+
+## Surface 34 — Learner notifications inbox
+- **Surface:** `src/app/(authenticated)/learn/notifications/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 34.
+- **Regressions found/fixed (0):** read authenticated inbox page, query validation, personal and optional announcement service mapping, LearnerNotificationsInbox client filters/search, mark-all confirmation and source-error recovery, NotificationList grouped actions, FilterChip/Dialog/Toast/third-party links, local loading/error/not-found and learner layout. Source retains IDs, labels, guarded request pending state and approved copy; no missing import/export/JSX or prop mismatch detected.
+- **Extra clutter/alignment fixes (0):** mobile one-line filter scroller, two-column phone toolbar, hairline notification rows and 44px detail/Retry actions preserve legacy spacing without more changes.
+- **Files changed:** verification proof and queue only (source verified, no change).
+
+## Surface 35 — Learner entry redirect
+- **Surface:** `src/app/(authenticated)/learn/page.tsx`.
+- **Originating proof:** no matching Surface 35 entry in `docs/audit/ux/polish-lane-11.md` (proof jumps 34 to 37).
+- **Regressions found/fixed (0):** route is a one-line Next.js redirect to `/learn/courses`; checked imported `next/navigation`, role gate in nearest learner layout, route-level GracefulPageLoading and GracefulErrorBoundary with course recovery, and target course route exists. No broken tags, markup or accessible controls in a redirect-only route.
+- **Extra clutter/alignment fixes (0):** no visible content from this redirect; no source change.
+- **Files changed:** verification proof and queue only.
+
+## Surface 36 — Learner placements alias
+- **Surface:** `src/app/(authenticated)/learn/placements/page.tsx`.
+- **Originating proof:** no Surface 36 entry in `docs/audit/ux/polish-lane-11.md`.
+- **Regressions found/fixed (0):** read pure Next.js redirect `/learn/my-placements`, current learner access layout, alias loading/error fallback and target placement module gate. No markup, dropped text, broken imports, or missing props; the alias preserves the destination without duplicating dashboard UI.
+- **Extra clutter/alignment fixes (0):** redirect has no on-screen surface to polish.
+- **Files changed:** verification proof and queue only.
+
+## Surface 37 — Learner academic record
+- **Surface:** `src/app/(authenticated)/learn/profile/academic-record/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 37.
+- **Regressions found/fixed (0):** inspected membership-owned summary, optional enrollment handling, read-only definition list, PageHeader and Link props, route-specific GracefulPageLoading and GracefulErrorBoundary with Profile recovery, and learner layout; source preserves all labels/fallbacks, no JSX, import, aria, or type regressions found.
+- **Extra clutter/alignment fixes (0):** short hairline-border facts, 1/2-column mobile/tablet grid, readable overflow and limited source disclaimer fit legacy rhythm; no source change.
+- **Files changed:** proof and queue only.
+
+## Surface 38 — Profile completeness checklist
+- **Surface:** `src/app/(authenticated)/learn/profile/completeness/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 38.
+- **Regressions found/fixed (0):** read membership-owned academic and profile loading, checklist/readiness data, query-validation not-found, mobile filter links, field-level completion indicator, identity-data disclosure, PageHeader and error/loading recovery with nearest learner layout. Checked IDs, title and status semantics, preserved profile section deep links, valid TSX imports and link props.
+- **Extra clutter/alignment fixes (0):** short summary and native disclosure precede a flat, stacked-on-phone checklist; retained 44px filter/action targets with no additional edits.
+- **Files changed:** proof and queue only.
+
+## Surface 39 — Learner data access
+- **Surface:** `src/app/(authenticated)/learn/profile/data-access/page.tsx`.
+- **Originating proof:** no Surface 39 entry in `docs/audit/ux/polish-lane-11.md`.
+- **Regressions found/fixed (0):** independently read data-access source and current-membership academic service, permitted-reader disclosure, scoped change history, date-only records and IST formatting, non-audit disclaimer, PageHeader and local loading/error/learner layout. No missing markup, props, aria labels, import/export mismatches or lost navigation.
+- **Extra clutter/alignment fixes (0):** existing 16px section headings, thin separators, wrapped read-only facts and bounded warning copy follow the old LMS rhythm at phone/tablet.
+- **Files changed:** proof and queue only.
