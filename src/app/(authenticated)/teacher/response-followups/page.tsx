@@ -122,7 +122,7 @@ export default async function FacultyResponseFollowUpsPage({
           Open authorized Section report →
         </Link>
       </article>)}</div>}
-    <Pagination label="Assessment follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResponseFollowUpHref({...data.query,page})} />
+    {data.totalPages > 1 ? <Pagination label="Assessment follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResponseFollowUpHref({...data.query,page})} /> : null}
     <p className="max-w-prose text-xs leading-5 text-muted-foreground">
       Missing means no persisted submission or quiz attempt for a currently enrolled learner.
       It does not establish misconduct, failure or a notification being sent. No messages are sent
