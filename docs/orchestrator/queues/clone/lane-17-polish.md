@@ -39,7 +39,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-17.md: surface | probl
 - [x] `src/components/placements/learner-career-calendar.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/placements/learner-career-rounds-workspace.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/placements/learner-placement-jobs.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/placements/learner-placement-notification-settings.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/placements/learner-placement-offers.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/placements/learner-support-cancel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/placements/placement-offer-controls.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
