@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -33,11 +34,13 @@ export default async function MentorProjectActivityHistoryPage({
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorProjectActivityHistory(context,parsed.data);
+  const advancedActive=data.query.window!=="ALL"||data.query.order!=="NEWEST"||data.query.pageSize!==20;
+  const filtered=advancedActive||data.query.importance!=="ALL"||data.query.view!=="ALL";
   return <div className={mentorProjectActivityMobileLayout}>
     <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
       description={data.enabled?data.title+" · Events linked to this assigned project.":"Projects access is disabled. No private project activity was loaded."}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         Project activity workspace
       </Link>} />
     {!data.enabled ?
@@ -47,6 +50,7 @@ export default async function MentorProjectActivityHistoryPage({
       <FilterBar title="Filters"><form method="get" role="search" aria-label="Recorded project activity filters"
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
         className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
+        <div className="grid min-w-0 w-full items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event importance
           <Select name="importance" defaultValue={data.query.importance}
             className="min-h-11 md:min-h-9">
@@ -66,6 +70,12 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </Select>
         </label>
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
+          Filter
+        </Button>
+        </div>
+        <Disclosure title="More filters" defaultOpen={advancedActive} className="min-w-0 w-full border-y border-border py-2" contentClassName="pt-3">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded within
           <Select name="window" defaultValue={data.query.window}
             className="min-h-11 md:min-h-9">
@@ -90,11 +100,10 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="50">50 events</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
-          Filter
-        </Button>
-        <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
-          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>
+          </div>
+        </Disclosure>
+        {filtered?<Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
+          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form></FilterBar>
       <p className="text-sm text-body leading-[22px]">
         {data.total} matching persisted event{data.total===1?"":"s"}
@@ -103,7 +112,7 @@ export default async function MentorProjectActivityHistoryPage({
         <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
           "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
             new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window,order:data.query.order}).toString())}
-          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none md:py-0">
+          download className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Export recorded events CSV (max 200)
         </Link>
         {data.total>200?<span role="status">
@@ -111,7 +120,8 @@ export default async function MentorProjectActivityHistoryPage({
         </span>:null}
       </div>
       {data.items.length===0 ? <EmptyState title="No recorded project activity"
-        description="No registered activity events match this project and importance filter. Missing audit producers or pre-migration records cannot be inferred." />
+        description="No registered activity events match this project and importance filter. Missing audit producers or pre-migration records cannot be inferred."
+        action={filtered?<Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})} className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear</Link>:undefined} />
         : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(event=>
           <li key={event.id} className="min-w-0 break-words py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -124,7 +134,7 @@ export default async function MentorProjectActivityHistoryPage({
               }).format(event.occurredAt)} IST
             </time>
           </li>)}</ol>}
-      <Pagination label="Project activity history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorProjectActivityHref({...data.query,page})}/>
+      {data.totalPages>1?<Pagination label="Project activity history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorProjectActivityHref({...data.query,page})}/>:null}
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
       This safe timeline shows only registered event types and timestamps;
