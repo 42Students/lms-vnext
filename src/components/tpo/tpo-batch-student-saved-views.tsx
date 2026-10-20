@@ -73,7 +73,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
       >{view.name}</Button>)}
    </div>:null}
    <label className="block min-w-0 text-sm">View name
-    <Input value={name} onChange={e=>setName(e.target.value)} maxLength={100}
+    <Input value={name} onChange={e=>{setName(e.target.value);setError("");setNotice("");}} maxLength={100}
      className="mt-1 min-h-11 w-full md:min-h-9"/></label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <Checkbox  checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
@@ -108,7 +108,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    onOpenChange={open=>{if(!open&&!busy&&!guarded)setDeleteTarget(null);}}
    title="Delete this saved batch view?"
    description={deleteTarget?.name}
-   confirmLabel="Delete" pending={busy||guarded}
+   confirmLabel="Delete" confirmVariant="danger" pending={busy||guarded}
    onConfirm={()=>{if(!deleteTarget||busy||guarded)return;
     const id=deleteTarget.id;
     void run(async()=>{const result=await action({action:"DELETE",id});if(result)setDeleteTarget(null);});
