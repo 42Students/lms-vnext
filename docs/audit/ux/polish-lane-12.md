@@ -115,3 +115,12 @@
 
 **Files changed:** discussion-history `page.tsx`, `error.tsx`, queue and proof.
 **Verification:** static inspection only; no runtime/CI.
+
+## 13 · Teacher / Discussion participation summary
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+**Problems found (7):** decorative dividers under every metric, unnecessarily tall desktop counts, pinned text competing with sender identity, long methodology disclaimer overexposed, back navigation lacking button affordance, weak metric grouping on 375px screens, and error retry without a safe exit.
+
+**Fix:** align the four counts as one 2-up mobile/4-up desktop summary strip, keep hairlines only between major sections, mark pinned activity with a compact neutral Badge, provide a compact single-canvas Recent activity list and put counting rules in an accessible Disclosure. Preserve IST timestamps, privacy boundaries, empty-list representation, and authorized Section scope. Reviewed shared component/inherited loading/not-found/parent layout.
+
+**Files changed:** discussion-participation `page.tsx`, `error.tsx`, queue and proof.
+**Verification:** source-only, no runtime/CI.
