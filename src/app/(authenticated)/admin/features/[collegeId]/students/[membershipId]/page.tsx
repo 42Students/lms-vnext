@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {z} from "zod";
@@ -22,11 +23,11 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
     View module override and lock history →
   </Link>
-  <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 text-sm text-body">
+  <Alert tone="info">
    These values are persisted at the learner membership scope. Inherit is not Off, and broader locked rules can override stored values. Placements ignores membership-level rules.
-  </p>
-  <div className="grid min-w-0 gap-3 sm:grid-cols-3">
-   {studentRuleCards(student.modules).map(rule=><article key={rule.module} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   </Alert>
+  <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
+   {studentRuleCards(student.modules).map(rule=><article key={rule.module} className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
     <h2 className="font-semibold text-foreground">{rule.label}</h2>
     <p className="mt-2 text-sm text-body">Stored: {rule.state}{rule.locked?" · Locked":""}</p>
     <p className="mt-2 text-xs text-muted-foreground">{rule.consequence}</p>
