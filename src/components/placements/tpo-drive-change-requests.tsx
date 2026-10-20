@@ -8,6 +8,8 @@ import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Disclosure} from "@/components/ui/disclosure";
+import {StatusBadge} from "@/components/ui/status-badge";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdAt:string;updatedAt:string;
@@ -39,9 +41,8 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    router.refresh();
   }catch{setError("Could not save change request.");}finally{setBusy(false);}
  }
- return <div className="space-y-6">
-  <section className="space-y-3 border-b border-border pb-6">
-   <h2 className="text-lg font-semibold">Suggest a change or ask the {party==="TPO"?"company":"placement cell"}</h2>
+ return <div className="min-w-0 space-y-5">
+  <Disclosure title={"Suggest a change or ask the "+(party==="TPO"?"company":"placement cell")} defaultOpen={requests.length===0} className="min-w-0 border-b border-border pb-3" contentClassName="min-w-0 space-y-3 pt-3">
    <p className="text-sm text-body">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 min-[768px]:grid-cols-2">
     <label className="grid gap-1 text-sm">Request type
@@ -60,45 +61,45 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      className="min-h-11 min-[768px]:min-h-9"/></label>
    <Button type="button" disabled={busy||value.trim().length<2||reason.trim().length<3}
     onClick={()=>void send({action:"CREATE",field,mode,proposedValue:value.trim(),reason:reason.trim()})}
-    variant="primary">
+    variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</Button>
-  </section>
+  </Disclosure>
   <section className="space-y-3">
-   <h2 className="text-lg font-semibold">Change requests · {requests.length}</h2>
+   <h2 className="text-base font-semibold leading-6">Change requests · {requests.length}</h2>
    {!requests.length?<EmptyState title="No change requests for this drive."/>:requests.map(item=>
     <article key={item.id} className="space-y-3 border-b border-border py-5">
-     <div className="flex flex-wrap items-center justify-between gap-3">
+     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <h3 className="font-semibold">{item.field.replaceAll("_"," ")} · {item.mode.toLowerCase()}</h3>
-      <strong className="inline-flex min-h-[22px] items-center rounded-[6px] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-2 text-xs font-semibold">{item.status.replaceAll("_"," ")}</strong>
+      <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
      <p className="whitespace-pre-wrap text-sm">{item.proposedValue}</p>
      <p className="text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
      {item.decisionNote?<Alert tone="info">Decision: {item.decisionNote}</Alert>:null}
-     <div className="space-y-2 border-t border-border pt-3">
-      <h4 className="text-sm font-semibold">Discussion</h4>
+     <Disclosure title={"Discussion ("+item.messages.length+")"} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
+      {item.messages.length===0?<p className="text-sm text-body">No discussion yet.</p>:null}
       {item.messages.map(message=><p key={message.id} className="border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
       <label className="grid gap-1 text-sm">Reply or decision explanation
        <Textarea maxLength={2000} value={notes[item.id]??""} onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
         rows={2} className="min-h-11 min-[768px]:min-h-9"/></label>
-      <div className="flex flex-wrap gap-2">
-       <Button type="button" disabled={busy||!(notes[item.id]??"").trim()}
+      <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||!(notes[item.id]??"").trim()}
         onClick={()=>void send({action:"COMMENT",requestId:item.id,body:(notes[item.id]??"").trim()})}
         variant="secondary">Reply</Button>
        {item.status==="OPEN"&&item.targetParty===party?(
         ["ACCEPT","ANSWER","DECLINE"] as const).map(action=>
-         <Button key={action} type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
+         <Button key={action} type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||(notes[item.id]??"").trim().length<3}
           onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()}):
            setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
           variant={action==="DECLINE"?"danger":"secondary"}>
           {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</Button>):null}
        {item.status==="OPEN"&&item.proposerParty===party&&item.createdByUserId===userId?
-        <Button type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
          onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
          variant="danger">Withdraw</Button>:null}
       </div>
-     </div>
+     </Disclosure>
     </article>)}
   </section>
   {error?<InlineNotice tone="error" message={error}/>:null}
@@ -109,7 +110,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    confirmVariant={confirmation?.action==="ACCEPT"?"primary":"danger"} pending={busy}
    onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
      expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
-   <p className="text-sm text-body">Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
+   <p className="text-sm text-body">{confirmation?.action==="ACCEPT"?"Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.":"This decision is recorded in the drive discussion. It does not apply a proposed drive change."}</p>
    {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
  </div>;
