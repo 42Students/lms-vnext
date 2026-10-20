@@ -83,7 +83,7 @@ export async function ProjectAdminReassignMentorPage({
             const filter = row.mentorMembershipId ?? "UNASSIGNED";
             return <Link key={filter}
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="block min-h-11 border-b border-border py-[12px] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="block min-h-11 rounded-[8px] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
