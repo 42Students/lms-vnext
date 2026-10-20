@@ -50,4 +50,4 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-4.md: surface | regres
 - [x] `src/components/hr/recruiter-conversation-reply-form.tsx`
 - [x] `src/components/hr/recruiter-profile-access.tsx`
 - [x] `src/components/hr/recruiter-profile-details-editor.tsx`
-- [ ] `src/components/hr/recruiter-request-cancel-button.tsx`
+- [x] `src/components/hr/recruiter-request-cancel-button.tsx`
