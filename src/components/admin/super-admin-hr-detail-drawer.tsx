@@ -264,7 +264,7 @@ export function SuperAdminHrDetailDrawer({
 
                 <label
                   htmlFor={`${id}-grant`}
-                  className="mb-1.5 mt-3 block text-[var(--lms-font-sm)] font-semibold text-body"
+                  className="mb-1.5 mt-3 block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"
                 >
                   College
                 </label>
@@ -297,12 +297,12 @@ export function SuperAdminHrDetailDrawer({
                   )}
                 </Select>
 
-                <label className="mb-1.5 mt-3 block text-[var(--lms-font-sm)] font-semibold text-body">
+                <label className="mb-1.5 mt-3 block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
                  Until (optional)
                  <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
                   className="mt-1 min-h-11 w-full md:min-h-9"/>
-                 {expiryError?<span role="alert" className="mt-1 block text-error">{expiryError}</span>:null}
-                 <span className="mt-1 block font-normal text-muted-foreground">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
+                 {expiryError?<span role="alert" className="mt-[6px] block text-[12px] leading-5 text-[var(--lms-error)]">{expiryError}</span>:null}
+                 <span className="mt-[6px] block text-[13px] font-normal leading-5 text-[var(--lms-muted-text)]">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
                 </label>
                 {optionsLoading ? (
                   <p
