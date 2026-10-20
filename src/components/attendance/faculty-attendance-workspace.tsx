@@ -489,7 +489,7 @@ export function FacultyAttendanceWorkspace({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       {savedNotice?<Alert tone="success">{savedNotice}</Alert>:null}
       <section className="border-b border-border pb-5">
         <PageHeader
@@ -535,7 +535,7 @@ export function FacultyAttendanceWorkspace({
                   {monthSummary.markedSessions} marked
                 </StatusBadge>
               </div>
-              <div className="flex items-end gap-2">
+              <div className="flex min-w-0 items-end gap-[var(--lms-space-2)]">
                 <Button
                   size="md"
                   variant="secondary"
@@ -548,10 +548,10 @@ export function FacultyAttendanceWorkspace({
                 >
                   ←
                 </Button>
-                <label className="text-[13px] font-semibold leading-4 text-body">
+                <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-body">
                   Jump to month
                   <Input
-                    className="mt-1.5"
+                    className="w-full"
                     type="month"
                     value={month}
                     onChange={(event) =>
@@ -637,7 +637,7 @@ export function FacultyAttendanceWorkspace({
               {label:"Active days",value:monthDays.filter(day=>day.sessions.length>0).length},
               {label:"Upcoming",value:monthSummary.upcomingSessions},
             ]}/>
-            <section aria-label="Attendance threshold guidance" className="mt-5 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+            <section aria-label="Attendance threshold guidance" className="mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
               <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
                 College attendance guidance: {attendanceRisk.threshold}%
               </h3>
@@ -654,7 +654,7 @@ export function FacultyAttendanceWorkspace({
                     const learner = workspace.roster.find((row) => row.membershipId === membershipId);
                     const summary = monthSummary.learners.find((row) => row.membershipId === membershipId);
                     return (
-                      <li key={membershipId} className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+                      <li key={membershipId} className="min-w-0 border-b border-border py-[var(--lms-space-2)]">
                         <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(membershipId)}
@@ -802,7 +802,7 @@ export function FacultyAttendanceWorkspace({
             />
           ) : (
             <section className="border-b border-border pb-5">
-              <div className="grid gap-4 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
+              <div className="grid min-w-0 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(16rem,24rem)_1fr]">
                 <div>
                   <label className="block text-[13px] font-semibold leading-4 text-body">
                     Date
@@ -814,7 +814,7 @@ export function FacultyAttendanceWorkspace({
                   </label>
                   <Select
                     id={sessionSelectId}
-                    className="mt-1.5"
+                    className="w-full"
                     value={selectedSessionId}
                     onChange={(event) =>
                       chooseSession(event.target.value)
@@ -839,7 +839,7 @@ export function FacultyAttendanceWorkspace({
                   </p>:null}
                 </div>
                 {selectedSession ? (
-                  <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-sm text-body">
+                  <div className="border-l-2 border-border pl-[var(--lms-space-3)] text-sm text-body">
                     <p className="m-0 font-semibold text-foreground">
                       {selectedSession.title}
                     </p>
@@ -866,9 +866,9 @@ export function FacultyAttendanceWorkspace({
                 ) : null}
               </div>
 
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
                 <Input
-                  className="max-w-sm"
+                  className="min-w-0 w-full md:max-w-sm"
                   aria-label="Find a student by name"
                   placeholder="Find a student by name"
                   value={search}
@@ -876,7 +876,7 @@ export function FacultyAttendanceWorkspace({
                     setSearch(event.target.value)
                   }
                 />
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-2 gap-[var(--lms-space-2)] [&>button]:w-full md:flex md:flex-wrap md:[&>button]:w-auto">
                   <Button
                     size="md"
                     variant="secondary"
@@ -912,7 +912,7 @@ export function FacultyAttendanceWorkspace({
               </div>
 
               <div
-                className="mt-4 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border"
+                className="mt-[var(--lms-space-4)] min-w-0 border-y border-border"
                 aria-label="Attendance roster"
               >
                 {visibleRoster.length === 0 ? (
@@ -929,7 +929,7 @@ export function FacultyAttendanceWorkspace({
                         return (
                           <li
                             key={learner.membershipId}
-                            className="flex flex-wrap items-center justify-between gap-3 p-4"
+                            className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] py-[var(--lms-space-4)] md:flex-row md:items-center md:justify-between"
                           >
                             <div>
                               <p className="m-0 text-sm font-semibold text-foreground">
@@ -948,7 +948,7 @@ export function FacultyAttendanceWorkspace({
                                   "Contact details unavailable"}
                               </p>
                             </div>
-                            <div className="flex flex-wrap gap-2" role="group" aria-label={"Attendance for "+learnerName(learner)}>
+                            <div className="grid grid-cols-2 gap-[var(--lms-space-2)] [&>button]:w-full md:flex md:flex-wrap md:[&>button]:w-auto" role="group" aria-label={"Attendance for "+learnerName(learner)}>
                               <Button
                                 size="md"
                                 className="min-h-11 md:min-h-9"
@@ -1017,7 +1017,7 @@ export function FacultyAttendanceWorkspace({
                   {attendanceConfirmation ?? "No recorded marks have changed. Choose a changed mark to correct attendance."}
                 </p>
               ) : null}
-              <div className="sticky bottom-0 z-20 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:static md:border-0 md:bg-surface-subtle">
+              <div className="sticky bottom-0 z-20 mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-t border-border bg-surface px-0 py-[var(--lms-space-3)] md:static md:flex-row md:items-center md:justify-between">
                 <span className="text-sm font-semibold text-body">
                   {absent.size} absent ·{" "}
                   {Math.max(
@@ -1037,6 +1037,7 @@ export function FacultyAttendanceWorkspace({
                     (selectedSession?.attendanceStatus==="MARKED"&&!facultyCorrectionReasonValid(correctionReason))
                   }
                   onClick={requestAttendanceConfirmation}
+                  className="min-h-11 w-full md:min-h-9 md:w-auto"
                 >
                   {submitting
                     ? "Submitting…"
@@ -1044,7 +1045,7 @@ export function FacultyAttendanceWorkspace({
                 </Button>
               </div>
               {error ? (
-                <p
+                <div
                   role="alert"
                   className="mt-3 text-sm font-semibold text-error"
                 >
@@ -1056,7 +1057,7 @@ export function FacultyAttendanceWorkspace({
                   <Button size="md" variant="secondary" onClick={() => setConfirmingRosterReload(true)}>
                     Reload saved roster
                   </Button>
-                </p>
+                </div>
               ) : null}
             </section>
           )}
@@ -1092,7 +1093,7 @@ export function FacultyAttendanceWorkspace({
         description={`Recorded class sessions for ${month}. Unmarked and upcoming sessions are not included in the attendance percentage.`}
       >
         {selectedLearner && learnerDetail ? (
-          <div className="space-y-5">
+          <div className="min-w-0 space-y-[var(--lms-space-4)]">
             <p className="text-sm text-body">
               {[selectedLearner.rollNumber ? "Roll " + selectedLearner.rollNumber : null,
                 selectedLearner.email, selectedLearner.phoneE164].filter(Boolean).join(" · ") ||
@@ -1107,7 +1108,7 @@ export function FacultyAttendanceWorkspace({
                 ["Marked", learnerDetail.marked],
                 ["Attendance", learnerDetail.attendedPercent === null ? "—" : learnerDetail.attendedPercent + "%"],
               ].map(([label, value]) => (
-                <div key={label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+                <div key={label} className="border-b border-border py-[var(--lms-space-3)]">
                   <p className="text-xs text-muted-foreground">{label}</p>
                   <p className="mt-1 text-xl font-semibold text-foreground">{value}</p>
                 </div>
@@ -1127,7 +1128,7 @@ export function FacultyAttendanceWorkspace({
                       now: clock,
                     }) === "OPEN";
                   return (
-                    <li key={session.id} className="rounded-[var(--lms-control-radius)] border border-border p-4">
+                    <li key={session.id} className="border-b border-border py-[var(--lms-space-4)]">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <strong className="text-sm text-foreground">{session.title}</strong>
                         <StatusBadge tone={session.code === "P" ? "success" : session.code === "A" ? "error" : session.code === "—" ? "warning" : "neutral"}>
@@ -1174,7 +1175,7 @@ export function FacultyAttendanceWorkspace({
         title="Schedule Class"
         description="Create a class session for this exact Course and Section. It will appear in learner and Faculty calendars."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={scheduling}
@@ -1193,18 +1194,18 @@ export function FacultyAttendanceWorkspace({
                 ? "Scheduling…"
                 : "Schedule Class"}
             </Button>
-          </>
+          </div>
         }
       >
         <form
           id="faculty-schedule-class-form"
           onSubmit={createSession}
-          className="space-y-4"
+          className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2"
         >
-          <label className="block text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body md:col-span-2">
             Class title
             <Input
-              className="mt-1.5"
+              className="w-full"
               value={scheduleTitle}
               onChange={(event) =>
                 setScheduleTitle(
@@ -1216,10 +1217,10 @@ export function FacultyAttendanceWorkspace({
               placeholder="Lecture, Lab, Tutorial…"
             />
           </label>
-          <label className="block text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body">
             Starts at (IST)
             <Input
-              className="mt-1.5"
+              className="w-full"
               type="datetime-local"
               value={startsAt}
               onChange={(event) =>
@@ -1228,10 +1229,10 @@ export function FacultyAttendanceWorkspace({
               required
             />
           </label>
-          <label className="block text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body">
             Ends at (IST)
             <Input
-              className="mt-1.5"
+              className="w-full"
               type="datetime-local"
               value={endsAt}
               onChange={(event) =>
@@ -1240,10 +1241,10 @@ export function FacultyAttendanceWorkspace({
               required
             />
           </label>
-          <label className="block text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] text-sm font-semibold text-body md:col-span-2">
             Location
             <Input
-              className="mt-1.5"
+              className="w-full"
               value={location}
               onChange={(event) =>
                 setLocation(event.target.value)
@@ -1255,7 +1256,7 @@ export function FacultyAttendanceWorkspace({
           {scheduleError ? (
             <p
               role="alert"
-              className="text-sm font-semibold text-error"
+              className="text-sm font-semibold text-error md:col-span-2"
             >
               {scheduleError}
             </p>
