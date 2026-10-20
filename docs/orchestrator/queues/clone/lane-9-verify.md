@@ -46,8 +46,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/courses/course-detail-anchor-tabs.tsx`
 - [x] `src/components/placements/learner-placements-tabs.tsx`
 - [x] `src/components/public/error-page-view.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-preview.tsx`
-- [ ] `src/components/ui/date-range-picker.tsx`
+- [x] `src/components/tpo/tpo-academic-import-preview.tsx`
+- [x] `src/components/ui/date-range-picker.tsx`
 - [ ] `src/components/ui/long-text.tsx`
 - [ ] `src/components/ui/permission-action.tsx`
 - [ ] `src/app/(authenticated)/teacher/error.tsx`
