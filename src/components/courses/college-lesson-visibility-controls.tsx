@@ -126,11 +126,11 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    </label>)}
   </div></ScrollCue>
   <div className="mt-3 flex flex-wrap gap-2">
-   <Button type="button" variant="primary" className="min-h-11 md:min-h-9" disabled={pending||!selected.length}
+   <Button type="button" variant="primary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending||!selected.length}
     onClick={()=>apply(true)}>
     Show to students
    </Button>
-   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending||!selected.length}
+   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending||!selected.length}
     onClick={()=>apply(false)}>
     Hide from students
    </Button>
