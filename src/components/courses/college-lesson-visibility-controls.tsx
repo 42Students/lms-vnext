@@ -119,10 +119,10 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    {items.map(item=><label key={item.id} className="flex min-h-11 min-w-0 items-center gap-2">
     <Checkbox checked={selected.includes(item.id)} disabled={pending}
      onChange={()=>toggle(item.id)}/>
-    <span className="min-w-0 flex-1 truncate" title={item.name}>{item.name}</span>
-    <span className="shrink-0"><StatusBadge tone={(latestVisible[item.id]??item.visibleToStudents)?"success":"neutral"}>
+    <span className="truncate" title={item.name}>{item.name}</span>
+    <StatusBadge tone={(latestVisible[item.id]??item.visibleToStudents)?"success":"neutral"}>
      {(latestVisible[item.id]??item.visibleToStudents)?"Visible":"Hidden"}
-    </StatusBadge></span>
+    </StatusBadge>
    </label>)}
   </div></ScrollCue>
   <div className="mt-3 flex flex-wrap gap-2">
