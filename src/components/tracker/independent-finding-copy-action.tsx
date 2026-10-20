@@ -19,7 +19,7 @@ export function IndependentFindingCopyAction({finding}:{finding:IndependentFindi
   }
  }
  return <div className="space-y-1">
-  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={()=>void copy()
+  <Button variant="secondary" type="button" onClick={()=>void copy()}
   >
    Copy for Claude
   </Button>
