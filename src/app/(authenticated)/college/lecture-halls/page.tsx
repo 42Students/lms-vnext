@@ -99,7 +99,7 @@ export default async function CollegeLectureHallsPage({
       />
 
       <Link prefetch={false} download href={lectureHallsCsvHref(query)}
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         Export CSV
       </Link>
       <section aria-label="Lecture hall filters" className="border-t border-border pt-4">
@@ -158,9 +158,9 @@ export default async function CollegeLectureHallsPage({
               defaultValue={query.maximumCapacity ?? ""} placeholder="Any capacity"
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <div className="flex items-end gap-2">
-            <Button variant="secondary" type="submit"
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+          <div className="flex min-w-0 flex-wrap items-end gap-2">
+            <Button variant="primary" type="submit"
+              className="min-h-11 px-4 md:min-h-9">
               Filter
             </Button>
             <Link href="/college/lecture-halls"
