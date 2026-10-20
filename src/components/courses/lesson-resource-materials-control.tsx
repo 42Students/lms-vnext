@@ -87,7 +87,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      {material.notes?<p className="whitespace-pre-wrap text-xs text-body">{material.notes}</p>:null}
      {material.kind==="LINK"&&facultyContentExternalHref("RESOURCE",material.externalUrl)?
       <a href={facultyContentExternalHref("RESOURCE",material.externalUrl)!} target="_blank" rel="noopener noreferrer"
-       className="inline-flex min-h-11 md:min-h-9 items-center text-xs font-semibold text-primary-text underline">Open link</a>:
+       className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open link</a>:
       material.kind==="FILE"?<span className="text-xs text-muted-foreground">
        {material.uploadStatus==="READY"?"File ready; secure download requires a grant":"Checking file"}
       </span>:null}
