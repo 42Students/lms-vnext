@@ -36,7 +36,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div className="min-w-0 space-y-2">
-  <div className="flex min-w-0 flex-wrap items-end gap-2">
+  <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end">
    <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold">Who is in
     <Select value={choice} onChange={e=>{setChoice(e.target.value as Decision);setError("");}} disabled={busy||finished}
      className="min-h-11 w-full md:min-h-9">
@@ -46,7 +46,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
     </Select>
    </label>
    <Button type="button" onClick={review} disabled={busy||finished||!changed}
-    className="min-h-11 md:min-h-9">
+    className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Saving…":"Save"}
    </Button>
   </div>
