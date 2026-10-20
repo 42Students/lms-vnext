@@ -41,11 +41,11 @@ export function TpoPrepPercentageEditor({initial,version}:{initial:number;versio
   <label className="block text-sm">Average progress required (%)
    <Input type="number" min={0} max={100} step={1} value={percent} disabled={busy}
     onChange={e=>setPercent(e.target.value===""?-1:Number(e.target.value))}
-    className="mt-1 min-h-11 w-28 min-[768px]:min-h-9"/>
+    className="mt-1 min-h-11 w-full sm:w-28 min-[768px]:min-h-9"/>
   </label>
   <p className="text-xs text-muted-foreground">This threshold is applied to learner course-progress records when the selected preparation courses have published content. Unavailable records are not treated as a failed learner.</p>
   <Button type="button" disabled={busy||percent===saved||!Number.isInteger(percent)||percent<0||percent>100}
-   onClick={()=>void save()} className="min-h-11 min-[768px]:min-h-9">Save changes</Button>
+   onClick={()=>void save()} className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9">Save changes</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;
