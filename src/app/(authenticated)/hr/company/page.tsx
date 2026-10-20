@@ -44,7 +44,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   // value. Keep the existing recoverable invalid-college state on ambiguity.
   const repeated=Object.values(query).some(Array.isArray);
   const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
-  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-6"><PageHeader title="Company & Team" />
+  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
@@ -69,7 +69,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
   if (result.status !== "READY") {
     return (
-      <div className="min-w-0 max-w-full space-y-6">
+      <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
         <PageHeader
           title="Company & Team"
           description="Choose the college whose recruiter relationship you want to view. We never guess a college when more than one access grant is active."
@@ -95,12 +95,12 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const teamPageResult = hrTeamPage(matchingTeam,teamPage.data);
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
       <PageHeader
         title="Company & Team"
         description={"Your work with "+result.grant.collegeName}
         actions={<Link href="/hr/profile"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
           Your profile
         </Link>}/>
 
@@ -118,19 +118,16 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
       {tab === "company" ? (
         <section className="border-b border-border pb-6">
-          <div className="flex min-w-0 flex-wrap items-start justify-between gap-4">
+          <div className="flex min-w-0 flex-col items-start gap-3 min-[768px]:flex-row min-[768px]:justify-between">
             <div>
-              <div className="flex items-center gap-3">
-                <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted font-bold text-foreground">
-                  {result.company.name.trim().charAt(0).toUpperCase()}
-                </span>
-                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{result.company.name}</h2>
+              <div className="min-w-0">
+                <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{result.company.name}</h2>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{result.grant.collegeName}</p>
             </div>
             <Badge  tone="neutral">Linked by the placement cell</Badge>
           </div>
-          <dl className="mt-6 grid gap-4 md:grid-cols-2">
+          <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
@@ -144,7 +141,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           </dl>
           <p className="mt-3 text-sm text-body">Industry not set</p>
           <p className="mt-2 text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
-          <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-6">
+          <section aria-label="Hiring footprint" className="mt-5 border-t border-border pt-5">
             <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
             <SummaryStrip label="Hiring footprint with this college" className="mt-4" steps={[
@@ -156,8 +153,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
               <div className="divide-y divide-border border-y border-border">
               {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
-                className="flex min-h-11 flex-wrap items-center justify-between gap-2 px-1 py-3 text-sm transition-colors hover:bg-[var(--lms-table-hover)] md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-                <span className="font-medium text-primary-text">{job.title}</span>
+                className="flex min-h-11 min-w-0 flex-wrap items-center justify-between gap-2 py-3 text-sm transition-colors hover:bg-[var(--lms-table-hover)] md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                <span className="min-w-0 flex-1 break-words font-medium text-primary-text">{job.title}</span>
                 <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":job.status==="CANCELLED"?"error":"neutral"}>{job.status}</StatusBadge>
               </Link>)}
               </div>
@@ -169,20 +166,20 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recruiter team</h2>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
               Export authorized team CSV
             </Link>
           </div>
           <p className="mt-2 text-sm text-body">
             Colleagues from your company who work with this college. To add one, ask the placement cell to invite them with their work email; the placement cell decides who gets access.
           </p>
-          <form action="/hr/company" method="get" role="search" aria-label="Recruiter team search" className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
+          <form action="/hr/company" method="get" role="search" aria-label="Recruiter team search" className="mt-3 flex min-w-0 flex-col items-stretch gap-2 min-[768px]:flex-row min-[768px]:items-center">
             <Input type="hidden" name="collegeId" value={result.grant.collegeId}/>
             <Input type="hidden" name="tab" value="team"/>
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" type="search" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
-              className="min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"/>
+              className="min-h-11 min-w-0 w-full min-[768px]:min-h-9 min-[768px]:max-w-sm min-[768px]:flex-1"/>
             <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
@@ -193,15 +190,15 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)}
             </p>:null}
           {teamPageResult.rows.length===0 ? <EmptyState title="No matching teammates" description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}/> : (
-            <div className="mt-4 divide-y divide-border">
+            <div className="mt-4 min-w-0 divide-y divide-border border-y border-border">
               {teamPageResult.rows.map((member) => (
-                <div key={member.userId} className="flex min-w-0 flex-wrap items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
+                <div key={member.userId} className="flex min-w-0 flex-col gap-2 py-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                   <div className="flex min-w-0 items-start gap-3">
                     <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted text-sm font-semibold text-foreground">
                       {(member.displayName||member.email||"R").trim().charAt(0).toUpperCase()}
                     </span>
-                    <div>
-                      <div className="font-medium text-foreground">
+                    <div className="min-w-0">
+                      <div className="break-words font-medium text-foreground">
                       {member.displayName || member.email || "Recruiter"}
                       {member.isYou ? <Badge tone="info" className="ml-2">You</Badge> : null}
                     </div>
@@ -209,7 +206,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                       <p className="mt-1 text-xs text-muted-foreground">{attributedDriveCounts[member.userId]??0} drive(s) here</p>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">{member.title ?? "Recruiter"}</div>
+                  <div className="min-w-0 break-words text-sm text-muted-foreground">{member.title ?? "Recruiter"}</div>
                 </div>
               ))}
             </div>

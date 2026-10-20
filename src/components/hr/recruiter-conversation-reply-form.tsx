@@ -90,7 +90,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   }else setNotice("Could not send. "+feedback);
   }finally{submitPendingRef.current=false;setSending(false);}
  }
- return <form ref={formRef} onSubmit={submit} className="space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
+ return <form ref={formRef} onSubmit={submit} className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
   <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply to placement cell</h2>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea value={body} onChange={event=>setBody(event.target.value)}
@@ -103,8 +103,8 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
-  <div className="flex flex-wrap items-center gap-3">
-  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 min-[768px]:min-h-9">
+  <div className="flex min-w-0 flex-wrap items-center gap-3">
+  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
    {sending?"Sending…":"Send reply"}
   </Button>
   <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
