@@ -24,7 +24,7 @@ type Options = {
   periods: { id: string; name: string }[];
 };
 
-const fieldClass = "min-h-10 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground";
+const fieldClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground";
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}{children}</label>;
 }
@@ -123,7 +123,7 @@ export function CollegeSlotManager({ options, row }: {
       <Field label="Maximum choices"><Input type="number" required min={1} max={100}
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
       {error ? <p role="alert" className="md:col-span-2 text-sm text-error">{error}</p> : null}
-      <div className="flex gap-3 md:col-span-2">
+      <div className="flex flex-col gap-3 sm:flex-row md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
         <Button variant="primary" type="submit" disabled={pending}
           >
           {pending ? "Saving…" : editing ? "Confirm update" : "Confirm create"}
