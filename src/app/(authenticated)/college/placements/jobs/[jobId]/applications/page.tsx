@@ -48,22 +48,22 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} />
       </label>
-      <label className="grid gap-1 text-sm">Application
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application
         <Select name="status" defaultValue={query.status} >
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Screening
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Screening
         <Select name="screening" defaultValue={query.screening} >
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Source
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
         <Select name="source" defaultValue={query.source} >
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Department
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
         <Select name="departmentId" defaultValue={query.departmentId??""} >
           <option value="">All departments</option>
           {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
@@ -71,7 +71,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
           {filters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Program
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select name="programId" defaultValue={query.programId??""} >
           <option value="">All programs</option>
           {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
@@ -79,7 +79,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
           {filters.programs.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm">Batch
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
         <Select name="cohortId" defaultValue={query.cohortId??""} >
           <option value="">All batches</option>
           {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
@@ -99,10 +99,10 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[13px] text-[var(--lms-body-text)]">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+        className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
-      <p role="status" className="border-b border-border pb-5 text-sm">
+      <p role="status" className="border-b border-[var(--lms-canvas-border)] pb-5 text-[14px]">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
       </p>
       <DataTable caption="College drive applicant register" columns={columns}
