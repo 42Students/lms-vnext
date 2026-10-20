@@ -316,3 +316,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (3):** root grid still used `xl:grid-cols-2`, splitting the four dependent steps side by side against proof; restored single-column step order. Step navigator still flex-wrapped instead of accessible horizontal phone scroller; added nowrap overflow scroll and shrink-0 links. Status message still rendered as card with radius/border rather than hairline/accent; flattened to subtle primary rail. Reviewed Course/Offering/Delivery/Faculty IDs, field labels, prefill, role restrictions, API requests, guarded actions and confirm dialog; none changed.
 - **Extra clutter/alignment fixes (1):** applied `scroll-mt-24` to all four existing section form anchors under sticky shell, without changing their IDs or labels.
 - **Files changed:** `src/components/courses/admin-course-create-panel.tsx`; proof and queue.
+
+## Surface 46 — Archived lesson restore confirmation
+- **Surface:** `src/components/courses/college-archived-lesson-restore.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 46.
+- **Regressions found/fixed (3):** failed restore Alert remained outside modal despite proof, invisible while dialog owned focus; moved it into ConfirmDialog children. Confirmation open/close left stale error and permitted state dismissal during pending; clear errors on reopen/close and guard pending dismissal. Restore launch was not full-width at phone breakpoint; fixed its source classes without changing button label. Retained endpoint, refresh-on-success, busy lock, shared ConfirmDialog warning semantics, labels and API error copy.
+- **Extra clutter/alignment fixes (0):** warning now appears in restrained dialog body without duplicate surrounding alert/height; no other UI added.
+- **Files changed:** `src/components/courses/college-archived-lesson-restore.tsx`; queue and proof.
+
+## Surface 47 — College lesson drag reorder
+- **Surface:** `src/components/courses/college-lesson-drag-order.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 47.
+- **Regressions found/fixed (0):** inspected lesson order state, drag/drop and keyboard Move actions, sequence/index map, CAS payload and optimistic rollback, pending/Toast/Alert and router-refresh reconcile guard with shared Button props. No missing imports, broken JSX or removed labels/IDs.
+- **Extra clutter/alignment fixes (0):** 375px two-action row stays beneath wrapped lesson name; hairline separator, 44px targets, busy announcement and desktop inline layout remain sound.
+- **Files changed:** proof and queue only.
