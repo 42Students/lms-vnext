@@ -9,27 +9,27 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 
 ## Work queue
 ### Super Admin last third (57 route pages)
-- [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx` — source-level UX migration and scans documented below; strict pixel/state comparison pending
+- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx` — source-level UX migration and scans documented below; strict pixel/state comparison pending
 - [ ] `src/app/(authenticated)/admin/placements/applications/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx` — source-level patch applied; Missing computed width and 375px/768px proof (still unticked)
-- [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx` — source-level patch applied; Missing statuses and full row rendering proof (still unticked)
+- [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx` — source-level value, grep and responsive rules documented; rendered acceptance outstanding
+- [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx` — source-level value, grep and responsive rules documented; rendered acceptance outstanding
 - [ ] `src/app/(authenticated)/admin/placements/hiring/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/interviews/[roundId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/interviews/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/job-settings/[jobId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/job-settings/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx` — source-level UX migration and scans documented below; strict pixel/state comparison pending
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx` — source-level value, grep and responsive rules documented; rendered acceptance outstanding
+- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx` — source-level value, grep and responsive rules documented; rendered acceptance outstanding
 - [ ] `src/app/(authenticated)/admin/placements/joining/[offerId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/joining/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/placements/new/page.tsx` — source-level value, grep and responsive rules documented; rendered acceptance outstanding
 - [ ] `src/app/(authenticated)/admin/placements/offers/[offerId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/offers/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/page.tsx` — source-level patch applied; Missing phone/tablet overflow proof (still unticked)
-- [ ] `src/app/(authenticated)/admin/placements/retention/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/placements/page.tsx` — source-level value, grep and responsive rules documented; rendered acceptance outstanding
+- [ ] `src/app/(authenticated)/admin/placements/retention/page.tsx` — source-level UX migration and scans documented below; strict pixel/state comparison pending
 - [ ] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/screenings/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -42,7 +42,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/projects/[projectId]/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/at-risk/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/audit/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/projects/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/projects/page.tsx` — source-level UX migration and scans documented below; strict pixel/state comparison pending
 - [ ] `src/app/(authenticated)/admin/projects/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/submissions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -54,11 +54,11 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx` — source-level clone edit re-read; awaiting computed/responsive/runtime proof
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx` — source-level UX migration and scans documented below; strict pixel/state comparison pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
-- [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx` — source-level UX migration and scans documented below; strict pixel/state comparison pending
 - [ ] `src/app/(authenticated)/admin/recruiters/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx` — source-level UX migration and scans documented below; strict pixel/state comparison pending
 - [ ] `src/app/(authenticated)/admin/settings/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/students/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
@@ -74,7 +74,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/college/projects/at-risk/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/audit/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/create/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
-- [ ] `src/app/(authenticated)/college/projects/page.tsx` — source-level patch applied; Missing banner state snapshots and scoped grep (still unticked)
+- [ ] `src/app/(authenticated)/college/projects/page.tsx` — source-level value, grep and responsive rules documented; rendered acceptance outstanding
 - [ ] `src/app/(authenticated)/college/projects/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/reassign-mentor/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/submissions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -82,7 +82,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/college/projects/templates/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
+- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx` — source-level value, grep and responsive rules documented; rendered acceptance outstanding
 - [ ] `src/app/(authenticated)/college/projects/workspaces/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 
 ### Admin/college-owned Projects UI (30 components)
@@ -528,3 +528,182 @@ These are in-memory source scans, not shell greps. No assertion about files outs
 
 ### Next exact file
 `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` — verify the thin route-to-shared-subview contract, then remaining `/admin/projects*` pages and the additional college Projects audit queue.
+
+
+## chat-10 2026-10-20 — 16 additional route pages, source-proof audit
+
+These pages were changed directly on `chatgpt/chat-10-b` after syncing to `main`. The legacy reference is `docs/design/old-lms-pages.md:1-10` and `docs/design/legacy-styles/components___listing-page-header.scss:46-59,130-149`. The common table tabs are `components___common.scss:359-415`. Source rules: `src/components/ui/page-header.tsx:28-49`, `data-table.tsx:95-110`, `status-badge.tsx:9-17`, `banner.tsx:10-21`, `page-back-link.tsx:16-29`.
+
+**Current shared table correction:** Unlike an earlier audit note made against an older commit, `data-table.tsx:95-110` now uses the `md` breakpoint (768px) for table/card transition, not `sm` (640px). `old-lms-shell.css:73` defines legacy mobile up to 767px. The source rules agree on that threshold; visual layout still needs measurement.
+
+Source scan method (full fetched TSX body per page, not a local-shell `grep` or an executed test):
+```text
+/<button(?=[\\s>])/g, /<select(?=[\\s>])/g, /<input(?=[\\s>])/g,
+/<textarea(?=[\\s>])/g, /window\\.confirm\\(/g,
+/fixed inset-0|role="dialog"/g, /(?:bg|text|border)-\\[#[0-9a-fA-f]{3,8}\\]/g,
+/role="tab(?:list)?"/g
+```
+
+Source-inherited value anchors:
+| Property | Old LMS source / expected | New shared source / observed | Status |
+| --- | --- | --- | --- |
+| Desktop page title | `listing-page-header.scss:52-59`: 28px, 600, -0.02em, 1.3 line-height | `page-header.tsx:28-34`: 30px, 600, -0.02em, 1.35 line-height | **Mismatch (shared PageHeader owner)**; do not tick |
+| Phone page title | `listing-page-header.scss:130-143`: 20px, vertically stacked up to 767px | `page-header.tsx:28-34`: 20px, stacked until 768px | Source-aligned; computed still unverified |
+| Hairline table | `old-lms-pages.md:6`: 1px border, row separators, compact cells | `data-table.tsx:95-110`: border var canvas-border, 13px text, 11px header/12px body vertical padding | Structure aligned; colour and height still need computed values |
+| Status pills | `old-lms-pages.md:6`: small coloured statuses | `status-badge.tsx:9-17`: 22px min-height, 6px radius, 12px bold text | Legacy exact values not measured, pending |
+| Feedback strip | `old-lms-pages.md:7`: slim pale warning strip with info dot, 1 sentence | `banner.tsx:18-21`: 6px dot, 10px Y padding, border, flex-wrap | Source anatomy aligned; tone comparison pending |
+| Page back action | `listing-page-header.scss:80-85`: action on right; phone wraps below head | `page-header.tsx:48-51` and `page-back-link.tsx:16-29`: action slot and 44px phone target | Source aligned; focus and positioning pending |
+
+### Part A: eight pages
+
+#### `src/app/(authenticated)/admin/placements/retention/page.tsx`
+| Property | Legacy expected | vNext source verification | Remaining |
+| --- | --- | --- | --- |
+| Page layout and action placement | One 12px-radius, 24px padded canvas; head actions top-right (`old-lms-pages.md:1-2`, `listing-page-header.scss:80-85`) | Updated status pills for Withdrawn/Rejected; back link now inside PageHeader; fetched 39 lines, source markers 13, 14, 21, 26, 27, 31, 34, 35 | Resolved canvas token and 375px/768px screenshot |
+| Interactive states | Old LMS hover/active/focus/disabled and slim status/empty/loading states (`old-lms-pages.md:4-7`) | Preserved header actions and row statuses through existing shared components and route controls | Check link focus and empty/report states; actual interaction unavailable |
+| Responsive | Mobile <=767px; header stacks, 44px touch action (`old-lms-shell.css:73`, `listing-page-header.scss:130-149`) | No page-local breakpoint; inherited PageHeader/Buttons/Table carry 767/768 and 44px rules | Static CSS comparison only, no overflow/keyboard screenshot |
+| Scoped grep, tag pairing | No raw controls, native confirm, custom dialog, hardcoded hex or hand tabs (`ui-clone-checklist.md:STRICT TICK RULE`) | rawButton=0; rawSelect=0; rawInput=0; rawTextarea=0; nativeConfirm=0; handDialog=0; hardHex=0; handTabs=0; Banner 1/1, div 2/2, section 0/0 | Source string scan, not TypeScript parse or global grep |
+
+
+#### `src/app/(authenticated)/admin/settings/auth/page.tsx`
+| Property | Legacy expected | vNext source verification | Remaining |
+| --- | --- | --- | --- |
+| Page layout and action placement | One 12px-radius, 24px padded canvas; head actions top-right (`old-lms-pages.md:1-2`, `listing-page-header.scss:80-85`) | Updated replace two-column tiles with hairline-separated rows; policy state pills; fetched 50 lines, source markers 17, 18, 19, 23, 24, 27, 30, 31, 34, 43 | Resolved canvas token and 375px/768px screenshot |
+| Interactive states | Old LMS hover/active/focus/disabled and slim status/empty/loading states (`old-lms-pages.md:4-7`) | Preserved one-column section lists and status labels through existing shared components and route controls | Check unknown policy state strings and narrow pill wrapping; actual interaction unavailable |
+| Responsive | Mobile <=767px; header stacks, 44px touch action (`old-lms-shell.css:73`, `listing-page-header.scss:130-149`) | No page-local breakpoint; inherited PageHeader/Buttons/Table carry 767/768 and 44px rules | Static CSS comparison only, no overflow/keyboard screenshot |
+| Scoped grep, tag pairing | No raw controls, native confirm, custom dialog, hardcoded hex or hand tabs (`ui-clone-checklist.md:STRICT TICK RULE`) | rawButton=0; rawSelect=0; rawInput=0; rawTextarea=0; nativeConfirm=0; handDialog=0; hardHex=0; handTabs=0; Banner 1/1, div 3/3, section 1/1 | Source string scan, not TypeScript parse or global grep |
+
+
+#### `src/app/(authenticated)/admin/placements/analytics/page.tsx`
+| Property | Legacy expected | vNext source verification | Remaining |
+| --- | --- | --- | --- |
+| Page layout and action placement | One 12px-radius, 24px padded canvas; head actions top-right (`old-lms-pages.md:1-2`, `listing-page-header.scss:80-85`) | Updated one grouped summary strip, not many bordered KPI cards; fetched 141 lines, source markers 27, 28, 29, 34, 35, 37, 73, 76, 77, 80, 82, 84, 90, 92, 98, 101, 102, 109, 120, 122, 123, 127 | Resolved canvas token and 375px/768px screenshot |
+| Interactive states | Old LMS hover/active/focus/disabled and slim status/empty/loading states (`old-lms-pages.md:4-7`) | Preserved one/two/five column metric strip and funnel/table through existing shared components and route controls | Check 10 metric divider geometry at 768px; actual interaction unavailable |
+| Responsive | Mobile <=767px; header stacks, 44px touch action (`old-lms-shell.css:73`, `listing-page-header.scss:130-149`) | 80:className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px; 82:<form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:g; 101:<dl className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min; 109:<ol className="mt-4 grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">{funnel.map(step=> | Static CSS comparison only, no overflow/keyboard screenshot |
+| Scoped grep, tag pairing | No raw controls, native confirm, custom dialog, hardcoded hex or hand tabs (`ui-clone-checklist.md:STRICT TICK RULE`) | rawButton=0; rawSelect=0; rawInput=0; rawTextarea=0; nativeConfirm=0; handDialog=0; hardHex=0; handTabs=0; Banner 1/1, div 8/8, section 3/3 | Source string scan, not TypeScript parse or global grep |
+
+
+#### `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
+| Property | Legacy expected | vNext source verification | Remaining |
+| --- | --- | --- | --- |
+| Page layout and action placement | One 12px-radius, 24px padded canvas; head actions top-right (`old-lms-pages.md:1-2`, `listing-page-header.scss:80-85`) | Updated 768px filter split, storage-unavailable warning, application pills; fetched 128 lines, source markers 28, 29, 30, 35, 36, 37, 46, 48, 51, 96, 108, 109, 114, 116 | Resolved canvas token and 375px/768px screenshot |
+| Interactive states | Old LMS hover/active/focus/disabled and slim status/empty/loading states (`old-lms-pages.md:4-7`) | Preserved seven fields, stage tabs and table statuses through existing shared components and route controls | Check 10-stage overflow and disabled migration state; actual interaction unavailable |
+| Responsive | Mobile <=767px; header stacks, 44px touch action (`old-lms-shell.css:73`, `listing-page-header.scss:130-149`) | 51:<form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-4"> | Static CSS comparison only, no overflow/keyboard screenshot |
+| Scoped grep, tag pairing | No raw controls, native confirm, custom dialog, hardcoded hex or hand tabs (`ui-clone-checklist.md:STRICT TICK RULE`) | rawButton=0; rawSelect=0; rawInput=0; rawTextarea=0; nativeConfirm=0; handDialog=0; hardHex=0; handTabs=0; Banner 1/1, div 4/4, section 1/1 | Source string scan, not TypeScript parse or global grep |
+
+
+#### `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
+| Property | Legacy expected | vNext source verification | Remaining |
+| --- | --- | --- | --- |
+| Page layout and action placement | One 12px-radius, 24px padded canvas; head actions top-right (`old-lms-pages.md:1-2`, `listing-page-header.scss:80-85`) | Updated status history pills and old LMS touch breakpoints; fetched 32 lines, source markers 15, 18, 19, 24, 28 | Resolved canvas token and 375px/768px screenshot |
+| Interactive states | Old LMS hover/active/focus/disabled and slim status/empty/loading states (`old-lms-pages.md:4-7`) | Preserved related actions/hairline timeline through existing shared components and route controls | Check link focus and very long status text; actual interaction unavailable |
+| Responsive | Mobile <=767px; header stacks, 44px touch action (`old-lms-shell.css:73`, `listing-page-header.scss:130-149`) | 18:<Link href={detail.related.href+"/applications"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] ; 19:<Link href={detail.related.href+"/schedule?applicationId="+encodeURIComponent(applicationId)} className="inline-flex min-h-11 item | Static CSS comparison only, no overflow/keyboard screenshot |
+| Scoped grep, tag pairing | No raw controls, native confirm, custom dialog, hardcoded hex or hand tabs (`ui-clone-checklist.md:STRICT TICK RULE`) | rawButton=0; rawSelect=0; rawInput=0; rawTextarea=0; nativeConfirm=0; handDialog=0; hardHex=0; handTabs=0; Banner 0/0, div 2/2, section 1/1 | Source string scan, not TypeScript parse or global grep |
+
+
+#### `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
+| Property | Legacy expected | vNext source verification | Remaining |
+| --- | --- | --- | --- |
+| Page layout and action placement | One 12px-radius, 24px padded canvas; head actions top-right (`old-lms-pages.md:1-2`, `listing-page-header.scss:80-85`) | Updated recovery link in PageHeader for missing scope and setup error; fetched 46 lines, source markers 17, 18, 27, 28, 30, 39, 40, 43 | Resolved canvas token and 375px/768px screenshot |
+| Interactive states | Old LMS hover/active/focus/disabled and slim status/empty/loading states (`old-lms-pages.md:4-7`) | Preserved no-college, denied, unavailable, assigned/empty templates through existing shared components and route controls | Check long retry text and creator form layout; actual interaction unavailable |
+| Responsive | Mobile <=767px; header stacks, 44px touch action (`old-lms-shell.css:73`, `listing-page-header.scss:130-149`) | No page-local breakpoint; inherited PageHeader/Buttons/Table carry 767/768 and 44px rules | Static CSS comparison only, no overflow/keyboard screenshot |
+| Scoped grep, tag pairing | No raw controls, native confirm, custom dialog, hardcoded hex or hand tabs (`ui-clone-checklist.md:STRICT TICK RULE`) | rawButton=0; rawSelect=0; rawInput=0; rawTextarea=0; nativeConfirm=0; handDialog=0; hardHex=0; handTabs=0; Banner 0/0, div 3/3, section 0/0 | Source string scan, not TypeScript parse or global grep |
+
+
+#### `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
+| Property | Legacy expected | vNext source verification | Remaining |
+| --- | --- | --- | --- |
+| Page layout and action placement | One 12px-radius, 24px padded canvas; head actions top-right (`old-lms-pages.md:1-2`, `listing-page-header.scss:80-85`) | Updated PageHeader back action consistently in denied and create states; fetched 21 lines, source markers 9, 10, 12, 14, 15 | Resolved canvas token and 375px/768px screenshot |
+| Interactive states | Old LMS hover/active/focus/disabled and slim status/empty/loading states (`old-lms-pages.md:4-7`) | Preserved denied vs normal template authoring through existing shared components and route controls | Check template form error/pending state; actual interaction unavailable |
+| Responsive | Mobile <=767px; header stacks, 44px touch action (`old-lms-shell.css:73`, `listing-page-header.scss:130-149`) | No page-local breakpoint; inherited PageHeader/Buttons/Table carry 767/768 and 44px rules | Static CSS comparison only, no overflow/keyboard screenshot |
+| Scoped grep, tag pairing | No raw controls, native confirm, custom dialog, hardcoded hex or hand tabs (`ui-clone-checklist.md:STRICT TICK RULE`) | rawButton=0; rawSelect=0; rawInput=0; rawTextarea=0; nativeConfirm=0; handDialog=0; hardHex=0; handTabs=0; Banner 0/0, div 2/2, section 0/0 | Source string scan, not TypeScript parse or global grep |
+
+
+#### `src/app/(authenticated)/admin/projects/page.tsx`
+| Property | Legacy expected | vNext source verification | Remaining |
+| --- | --- | --- | --- |
+| Page layout and action placement | One 12px-radius, 24px padded canvas; head actions top-right (`old-lms-pages.md:1-2`, `listing-page-header.scss:80-85`) | Updated responsive action wrap and old LMS border/hover/focus for header buttons; fetched 196 lines, source markers 39, 40, 41, 51, 52, 60, 70, 71, 73, 115, 116, 119, 130, 131, 135, 136, 137, 153, 156 | Resolved canvas token and 375px/768px screenshot |
+| Interactive states | Old LMS hover/active/focus/disabled and slim status/empty/loading states (`old-lms-pages.md:4-7`) | Preserved workspace cards/table switch, export/filters, empty warnings through existing shared components and route controls | Check header action row overflow, table and cards; actual interaction unavailable |
+| Responsive | Mobile <=767px; header stacks, 44px touch action (`old-lms-shell.css:73`, `listing-page-header.scss:130-149`) | 136:<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text; 137:<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text | Static CSS comparison only, no overflow/keyboard screenshot |
+| Scoped grep, tag pairing | No raw controls, native confirm, custom dialog, hardcoded hex or hand tabs (`ui-clone-checklist.md:STRICT TICK RULE`) | rawButton=0; rawSelect=0; rawInput=0; rawTextarea=0; nativeConfirm=0; handDialog=0; hardHex=0; handTabs=0; Banner 1/1, div 6/6, section 0/0 | Source string scan, not TypeScript parse or global grep |
+
+
+### Part B: eight additional pages
+
+#### `src/app/(authenticated)/admin/placements/drives/page.tsx`
+| Property | Old LMS reference / value | New vNext source evidence | Status / missing |
+| --- | --- | --- | --- |
+| Header / structure | One white canvas, 12px radius, 24px padding; title and right actions, no eyebrow (`old-lms-pages.md:1-2`, `listing-page-header.scss:46-59,80-85`) | right-aligned action cluster; fluid filter widths; 44px mobile controls; changed file 115 lines, element markers 23,24,25,31,32,33,41,42,43,62,76,77,79,81,83,86,109,110 | Shared title remains 30px vs SCSS 28px; exact pixel proof outstanding |
+| States | Small lifecycle pills and slim notices, empty/loading/error treatment (`old-lms-pages.md:5-7`) | search, filtered data, status pills, loading/error/empty and pagination; source continues to use shared components, no custom overlays | long company names and 3 actions at 375px and focus/disabled interaction not run |
+| Responsive | Legacy phone <=767px and tablet >=768px (`old-lms-shell.css:73`); mobile 20px header, 44px touch target (`listing-page-header.scss:130-149`) | 81:<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[; 83:className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-prima | Source-level rules only; actual 375px and 768px render not measured |
+| Complete-file forbidden-pattern counts | No raw controls, custom overlays, hardcoded utility hex or manual tab roles (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawInputs=0; rawTextareas=0; nativeConfirm=0; customOverlay=0; hardHex=0; handTabs=0; Banner=0/0; div=6/6; section=0/0 | Remote full-source scan, not executed shell grep, TypeScript typecheck or browser state verification |
+
+
+#### `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
+| Property | Old LMS reference / value | New vNext source evidence | Status / missing |
+| --- | --- | --- | --- |
+| Header / structure | One white canvas, 12px radius, 24px padding; title and right actions, no eyebrow (`old-lms-pages.md:1-2`, `listing-page-header.scss:46-59,80-85`) | candidate-round StatusBadge and fluid filter controls, safe overview URL; changed file 92 lines, element markers 25,26,27,33,34,35,50,53,55,58,60,65,75,77,79 | Shared title remains 30px vs SCSS 28px; exact pixel proof outstanding |
+| States | Small lifecycle pills and slim notices, empty/loading/error treatment (`old-lms-pages.md:5-7`) | pending/scheduled/completed/cancelled pills, interview slots; source continues to use shared components, no custom overlays | long round labels and status changes and focus/disabled interaction not run |
+| Responsive | Legacy phone <=767px and tablet >=768px (`old-lms-shell.css:73`); mobile 20px header, 44px touch target (`listing-page-header.scss:130-149`) | Inherited PageHeader/PageBackLink and shared 44px controls without page-local breakpoint | Source-level rules only; actual 375px and 768px render not measured |
+| Complete-file forbidden-pattern counts | No raw controls, custom overlays, hardcoded utility hex or manual tab roles (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawInputs=0; rawTextareas=0; nativeConfirm=0; customOverlay=0; hardHex=0; handTabs=0; Banner=0/0; div=4/4; section=1/1 | Remote full-source scan, not executed shell grep, TypeScript typecheck or browser state verification |
+
+
+#### `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
+| Property | Old LMS reference / value | New vNext source evidence | Status / missing |
+| --- | --- | --- | --- |
+| Header / structure | One white canvas, 12px radius, 24px padding; title and right actions, no eyebrow (`old-lms-pages.md:1-2`, `listing-page-header.scss:46-59,80-85`) | move Drive overview from body into PageHeader action; status pill; changed file 67 lines, element markers 20,22,26 | Shared title remains 30px vs SCSS 28px; exact pixel proof outstanding |
+| States | Small lifecycle pills and slim notices, empty/loading/error treatment (`old-lms-pages.md:5-7`) | published/draft/archived, deadline editor and actions; source continues to use shared components, no custom overlays | many actions when narrow and focus/disabled interaction not run |
+| Responsive | Legacy phone <=767px and tablet >=768px (`old-lms-shell.css:73`); mobile 20px header, 44px touch target (`listing-page-header.scss:130-149`) | Inherited PageHeader/PageBackLink and shared 44px controls without page-local breakpoint | Source-level rules only; actual 375px and 768px render not measured |
+| Complete-file forbidden-pattern counts | No raw controls, custom overlays, hardcoded utility hex or manual tab roles (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawInputs=0; rawTextareas=0; nativeConfirm=0; customOverlay=0; hardHex=0; handTabs=0; Banner=0/0; div=4/4; section=2/2 | Remote full-source scan, not executed shell grep, TypeScript typecheck or browser state verification |
+
+
+#### `src/app/(authenticated)/admin/placements/page.tsx`
+| Property | Old LMS reference / value | New vNext source evidence | Status / missing |
+| --- | --- | --- | --- |
+| Header / structure | One white canvas, 12px radius, 24px padding; title and right actions, no eyebrow (`old-lms-pages.md:1-2`, `listing-page-header.scss:46-59,80-85`) | remove eyebrow from both header branches for inline-only legacy subtitle; changed file 82 lines, element markers 11,35,36,48,57,58,65 | Shared title remains 30px vs SCSS 28px; exact pixel proof outstanding |
+| States | Small lifecycle pills and slim notices, empty/loading/error treatment (`old-lms-pages.md:5-7`) | scope/no-scope action row, oversights and dashboards; source continues to use shared components, no custom overlays | long directory actions on a phone and focus/disabled interaction not run |
+| Responsive | Legacy phone <=767px and tablet >=768px (`old-lms-shell.css:73`); mobile 20px header, 44px touch target (`listing-page-header.scss:130-149`) | 11:"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surfa; 65:className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-prima | Source-level rules only; actual 375px and 768px render not measured |
+| Complete-file forbidden-pattern counts | No raw controls, custom overlays, hardcoded utility hex or manual tab roles (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawInputs=0; rawTextareas=0; nativeConfirm=0; customOverlay=0; hardHex=0; handTabs=0; Banner=0/0; div=2/2; section=0/0 | Remote full-source scan, not executed shell grep, TypeScript typecheck or browser state verification |
+
+
+#### `src/app/(authenticated)/college/projects/page.tsx`
+| Property | Old LMS reference / value | New vNext source evidence | Status / missing |
+| --- | --- | --- | --- |
+| Header / structure | One white canvas, 12px radius, 24px padding; title and right actions, no eyebrow (`old-lms-pages.md:1-2`, `listing-page-header.scss:46-59,80-85`) | phone buttons 44px until 767px; root min-w-0 and tabular result count; changed file 154 lines, element markers 36,37,38,46,47,48,78,79,81,103,108,112,117,118,119,121,122,130 | Shared title remains 30px vs SCSS 28px; exact pixel proof outstanding |
+| States | Small lifecycle pills and slim notices, empty/loading/error treatment (`old-lms-pages.md:5-7`) | three toolbar links, card/list/archive tabs, missing templates and pagination; source continues to use shared components, no custom overlays | tabs/card overflow and action grouping at 375px and focus/disabled interaction not run |
+| Responsive | Legacy phone <=767px and tablet >=768px (`old-lms-shell.css:73`); mobile 20px header, 44px touch target (`listing-page-header.scss:130-149`) | 112:className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm; 118:<Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-bor; 119:<Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-bor | Source-level rules only; actual 375px and 768px render not measured |
+| Complete-file forbidden-pattern counts | No raw controls, custom overlays, hardcoded utility hex or manual tab roles (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawInputs=0; rawTextareas=0; nativeConfirm=0; customOverlay=0; hardHex=0; handTabs=0; Banner=1/1; div=5/5; section=0/0 | Remote full-source scan, not executed shell grep, TypeScript typecheck or browser state verification |
+
+
+#### `src/app/(authenticated)/admin/placements/new/page.tsx`
+| Property | Old LMS reference / value | New vNext source evidence | Status / missing |
+| --- | --- | --- | --- |
+| Header / structure | One white canvas, 12px radius, 24px padding; title and right actions, no eyebrow (`old-lms-pages.md:1-2`, `listing-page-header.scss:46-59,80-85`) | PageHeader recovery back link for missing college; changed file 31 lines, element markers 13,14,16 | Shared title remains 30px vs SCSS 28px; exact pixel proof outstanding |
+| States | Small lifecycle pills and slim notices, empty/loading/error treatment (`old-lms-pages.md:5-7`) | selected-college create vs missing-college empty; source continues to use shared components, no custom overlays | narrow back action and creator component and focus/disabled interaction not run |
+| Responsive | Legacy phone <=767px and tablet >=768px (`old-lms-shell.css:73`); mobile 20px header, 44px touch target (`listing-page-header.scss:130-149`) | Inherited PageHeader/PageBackLink and shared 44px controls without page-local breakpoint | Source-level rules only; actual 375px and 768px render not measured |
+| Complete-file forbidden-pattern counts | No raw controls, custom overlays, hardcoded utility hex or manual tab roles (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawInputs=0; rawTextareas=0; nativeConfirm=0; customOverlay=0; hardHex=0; handTabs=0; Banner=0/0; div=1/1; section=0/0 | Remote full-source scan, not executed shell grep, TypeScript typecheck or browser state verification |
+
+
+#### `src/app/(authenticated)/admin/placements/calendar/page.tsx`
+| Property | Old LMS reference / value | New vNext source evidence | Status / missing |
+| --- | --- | --- | --- |
+| Header / structure | One white canvas, 12px radius, 24px padding; title and right actions, no eyebrow (`old-lms-pages.md:1-2`, `listing-page-header.scss:46-59,80-85`) | PageHeader recovery back link for missing scope; changed file 51 lines, element markers 26,27,32 | Shared title remains 30px vs SCSS 28px; exact pixel proof outstanding |
+| States | Small lifecycle pills and slim notices, empty/loading/error treatment (`old-lms-pages.md:5-7`) | selected-college calendar and missing-scope empty; source continues to use shared components, no custom overlays | calendar's week/day grid overflow and focus/disabled interaction not run |
+| Responsive | Legacy phone <=767px and tablet >=768px (`old-lms-shell.css:73`); mobile 20px header, 44px touch target (`listing-page-header.scss:130-149`) | Inherited PageHeader/PageBackLink and shared 44px controls without page-local breakpoint | Source-level rules only; actual 375px and 768px render not measured |
+| Complete-file forbidden-pattern counts | No raw controls, custom overlays, hardcoded utility hex or manual tab roles (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawInputs=0; rawTextareas=0; nativeConfirm=0; customOverlay=0; hardHex=0; handTabs=0; Banner=0/0; div=1/1; section=0/0 | Remote full-source scan, not executed shell grep, TypeScript typecheck or browser state verification |
+
+
+#### `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+| Property | Old LMS reference / value | New vNext source evidence | Status / missing |
+| --- | --- | --- | --- |
+| Header / structure | One white canvas, 12px radius, 24px padding; title and right actions, no eyebrow (`old-lms-pages.md:1-2`, `listing-page-header.scss:46-59,80-85`) | recoverable template-load ErrorState instead of blank/unhandled failure; changed file 37 lines, element markers 20,21,22,28,29,30 | Shared title remains 30px vs SCSS 28px; exact pixel proof outstanding |
+| States | Small lifecycle pills and slim notices, empty/loading/error treatment (`old-lms-pages.md:5-7`) | college selection, templates-empty warning, template failure, creator; source continues to use shared components, no custom overlays | error retry and creator on 375/768px and focus/disabled interaction not run |
+| Responsive | Legacy phone <=767px and tablet >=768px (`old-lms-shell.css:73`); mobile 20px header, 44px touch target (`listing-page-header.scss:130-149`) | Inherited PageHeader/PageBackLink and shared 44px controls without page-local breakpoint | Source-level rules only; actual 375px and 768px render not measured |
+| Complete-file forbidden-pattern counts | No raw controls, custom overlays, hardcoded utility hex or manual tab roles (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawInputs=0; rawTextareas=0; nativeConfirm=0; customOverlay=0; hardHex=0; handTabs=0; Banner=1/1; div=2/2; section=0/0 | Remote full-source scan, not executed shell grep, TypeScript typecheck or browser state verification |
+
+
+### Batch conclusion and next file
+- **16 distinct route files** had source edits committed to `chatgpt/chat-10-b`, and each was re-read and regex-scanned from that branch. All eight forbidden-pattern categories scanned to zero for each file and the simple `div/section/Banner` pairing counts matched. These scans do NOT guarantee fully balanced TSX outside counted tags, exhaustive repository-wide grep, or runtime correctness.
+- Current shared DataTable `md` threshold matches 767px legacy mobile split. Current shared PageHeader desktop title 30px/1.35 differs from the more precise old `listing-page-header.scss:52-59` 28px/1.3: notify chat-9 (shared owner), do not override globally here. Pixel comparison remains open.
+- **Strict ticks: 0**. No live browser or computed CSS, exact 375px/768px screenshot, full hover/focus/disabled state pass, typecheck or CI was run. Treat this as a source-migration batch, not 16 certified pixel-level clones.
+- **Next exact file:** `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` (delegates to shared Projects subview), followed by `src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx` and remaining unticked last-third pages.
