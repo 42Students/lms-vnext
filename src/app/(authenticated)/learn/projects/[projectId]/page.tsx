@@ -155,7 +155,7 @@ export default async function LearnerProjectPage({
             className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-primary-text">
             Submit final work
           </Link>:
-          <p className="text-xs text-body">Submission available after completion.</p>}
+          <p className="text-xs text-[var(--lms-muted-text)]">Submission available after completion.</p>}
       </section>:null}
       {activeSection === "tasks" ? (
         <LearnerBoardInteractive projectId={projectId} initialTasks={boardTasks}

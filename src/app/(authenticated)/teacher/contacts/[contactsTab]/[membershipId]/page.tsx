@@ -35,20 +35,20 @@ export default async function FacultyContactDetailPage({
         Back to Contacts
       </Link>} />
     <section className="border-b border-border pb-5">
-      <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Public department</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Public department</h2>
       <p className="mt-3 text-sm text-body">
         {contact.departmentName ?? "No department recorded"}
       </p>
     </section>
     <section className="border-b border-border pb-5">
-      <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Current college roles</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Current college roles</h2>
       {contact.roles.length === 0
         ? <EmptyState title="No active roles recorded"
             description="This membership currently has no registered college role." />
         : <ul className="mt-4 flex flex-wrap gap-2">{contact.roles.map(role =>
           <li key={role} className="list-none"><Badge tone="neutral">{facultyContactRoleLabel(role)}</Badge></li>)}</ul>}
     </section>
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-[1.6]">
       Only the public name, role and department are shown. Private contact details, profile sections,
       documents, identity verification and role-specific academic records are not exposed here.
       Inactive or outside-college contacts are not visible.

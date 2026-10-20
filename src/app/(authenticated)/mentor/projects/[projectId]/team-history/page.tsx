@@ -90,7 +90,7 @@ export default async function MentorTeamHistoryPage({
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
               <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="font-semibold text-foreground">{item.displayName}</h2>
+                  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{item.displayName}</h2>
                   <StatusBadge tone="neutral">{item.state}</StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body">
@@ -106,7 +106,7 @@ export default async function MentorTeamHistoryPage({
               </article>)}</div>}
         <Pagination label="Team history pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page})}/>
       </>}
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-[1.6]">
       Open membership rows can contain deactivated accounts; those are labeled Inactive.
       Former or inactive names are hidden. This view does not reconstruct missing historical audit events,
       grant team-edit rights, or infer membership decisions.
