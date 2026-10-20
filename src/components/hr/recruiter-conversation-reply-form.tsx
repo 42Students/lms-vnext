@@ -90,9 +90,9 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   }else setNotice("Could not send. "+feedback);
   }finally{submitPendingRef.current=false;setSending(false);}
  }
- return <form ref={formRef} onSubmit={submit} className="space-y-3 border-t border-border pt-4">
-  <h2 className="font-semibold text-foreground">Reply to placement cell</h2>
-  <label className="grid gap-2 text-sm text-body">Message
+ return <form ref={formRef} onSubmit={submit} className="space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
+  <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply to placement cell</h2>
+  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
     rows={4} disabled={sending} aria-invalid={body.trim().length>4000}
@@ -104,7 +104,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   </p>
   {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
   <div className="flex flex-wrap items-center gap-3">
-  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 md:min-h-9">
+  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 min-[768px]:min-h-9">
    {sending?"Sending…":"Send reply"}
   </Button>
   <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
