@@ -7,7 +7,6 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {FilterBar} from "@/components/ui/filter-bar";
-import {Disclosure} from "@/components/ui/disclosure";
 import {MentorMeetingsCalendar} from "@/components/projects/mentor-meetings-calendar";
 import {MentorCalendarLoadFailure} from "@/components/projects/mentor-calendar-load-failure";
 import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
@@ -40,106 +39,92 @@ export default async function MentorCalendarPage({searchParams}:{
   // eslint-disable-next-line react-hooks/purity -- Server snapshot drives IST period filters and initial client clock.
   const now=new Date();
   const displayed=filterMentorCalendar(meetings,parsed.data,now);
-  const advancedActive=Boolean(parsed.data.projectId)||parsed.data.sprint!=="ALL"||
-    parsed.data.join!=="ALL"||parsed.data.status!=="ALL"||
-    parsed.data.type!=="ALL"||parsed.data.projectState!=="ALL";
-  const activeCount=Object.entries(parsed.data).filter(([key,value])=>
-    key!=="search"&&key!=="projectId"?value!=="ALL":Boolean(value)).length;
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Meetings"
-      description="Every sch    <form id="mentor-calendar-filters" method="get" role="search" aria-label="Mentor meeting filters" action="/mentor/calendar"
-      className="min-w-0 space-y-3 border-b border-border pb-4">
-      <div className="grid min-w-0 items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-            <label className="grid min-w-0 max-w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action needed
-              <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 md:min-h-9 w-full max-w-full">
-                <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
-                <option value="SOON_SCHEDULED">Scheduled within 48 hours</option>
-                <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
-              </Select>
-            </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">IST dates
-              <Select name="period" defaultValue={parsed.data.period}
-                className="min-h-11 md:min-h-9">
-                <option value="ALL">All dates</option><option value="TODAY">Today</option>
-                <option value="NEXT_7_DAYS">Next 7 IST days</option>
-                <option value="PAST_7_DAYS">Previous 7 IST days</option>
-              </Select>
-            </label>
-        <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-      </div>
-      <Disclosure title="More filters" defaultOpen={advancedActive} className="min-w-0"
-        contentClassName="min-w-0 pt-3 pb-2">
-        <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
-              <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
-                <Select name="projectId" defaultValue={parsed.data.projectId??""}
-                  className="min-h-11 md:min-h-9 max-w-full">
-                  <option value="">All projects with meetings</option>
-                  {[...new Map(meetings.map(row=>[row.projectId,row.projectTitle])).entries()]
-                    .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]))
-                    .map(([id,title])=><option key={id} value={id}>{title}</option>)}
-                </Select>
-              </label>
-              <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint association
-                <Select name="sprint" defaultValue={parsed.data.sprint} className="min-h-11 md:min-h-9">
-                  <option value="ALL">All meetings</option><option value="LINKED">Linked to a recorded Sprint</option>
-                  <option value="UNLINKED">No linked Sprint</option>
-                </Select>
-              </label>
-              <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Join link
-                <Select name="join" defaultValue={parsed.data.join}
-                  className="min-h-11 md:min-h-9">
-                  <option value="ALL">All meetings</option><option value="HAS_SAFE_LINK">Valid join link</option>
-                  <option value="NO_SAFE_LINK">No safe join link</option>
-                </Select>
-              </label>
-              <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
-                <Select name="status" defaultValue={parsed.data.status}
-                  className="min-h-11 md:min-h-9">
-                  {(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"] as const).map(status=>
-                    <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
-                </Select>
-              </label>
-              <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting type
-                <Select name="type" defaultValue={parsed.data.type}
-                  className="min-h-11 md:min-h-9">
-                  <option value="ALL">All types</option>
-                  <option value="GENERAL">General</option><option value="PLANNING">Planning</option>
-                  <option value="STANDUP">Standup</option><option value="REVIEW">Review</option>
-                  <option value="RETRO">Retrospective</option>
-                </Select>
-              </label>
-              <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project state
-                <Select name="projectState" defaultValue={parsed.data.projectState}
-                  className="min-h-11 md:min-h-9">
-                  <option value="ALL">All project states</option>
-                  <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
-                  <option value="COMPLETED">Completed</option><option value="ARCHIVED">Archived</option>
-                </Select>
-              </label>
-        </div>
-      </Disclosure>
-      <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>
-    </form>on value="PAST_7_DAYS">Previous 7 IST days</option>
+      description="Every scheduled meeting across your assigned projects, in one place."/>
+    <FilterBar title="Meeting filters"
+      search={<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+        <Input type="search" name="search" form="mentor-calendar-filters" maxLength={100}
+          defaultValue={parsed.data.search} placeholder="Meeting or project"/>
+      </label>}>
+    <form id="mentor-calendar-filters" method="get" role="search" aria-label="Mentor meeting filters" action="/mentor/calendar"
+       className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
+      <label className="grid min-w-0 max-w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action needed
+        <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 md:min-h-9 w-full max-w-full">
+          <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
+          <option value="SOON_SCHEDULED">Scheduled within 48 hours</option>
+          <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
+        </Select>
+      </label>
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+        <Select name="projectId" defaultValue={parsed.data.projectId??""}
+          className="min-h-11 md:min-h-9 max-w-full">
+          <option value="">All projects with meetings</option>
+          {[...new Map(meetings.map(row=>[row.projectId,row.projectTitle])).entries()]
+            .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]))
+            .map(([id,title])=><option key={id} value={id}>{title}</option>)}
+        </Select>
+      </label>
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint association
+        <Select name="sprint" defaultValue={parsed.data.sprint} className="min-h-11 md:min-h-9">
+          <option value="ALL">All meetings</option><option value="LINKED">Linked to a recorded Sprint</option>
+          <option value="UNLINKED">No linked Sprint</option>
+        </Select>
+      </label>
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Join link
+        <Select name="join" defaultValue={parsed.data.join}
+          className="min-h-11 md:min-h-9">
+          <option value="ALL">All meetings</option><option value="HAS_SAFE_LINK">Valid join link</option>
+          <option value="NO_SAFE_LINK">No safe join link</option>
+        </Select>
+      </label>
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        <Select name="status" defaultValue={parsed.data.status}
+          className="min-h-11 md:min-h-9">
+          {(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"] as const).map(status=>
+            <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
+        </Select>
+      </label>
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting type
+        <Select name="type" defaultValue={parsed.data.type}
+          className="min-h-11 md:min-h-9">
+          <option value="ALL">All types</option>
+          <option value="GENERAL">General</option><option value="PLANNING">Planning</option>
+          <option value="STANDUP">Standup</option><option value="REVIEW">Review</option>
+          <option value="RETRO">Retrospective</option>
+        </Select>
+      </label>
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project state
+        <Select name="projectState" defaultValue={parsed.data.projectState}
+          className="min-h-11 md:min-h-9">
+          <option value="ALL">All project states</option>
+          <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
+          <option value="COMPLETED">Completed</option><option value="ARCHIVED">Archived</option>
+        </Select>
+      </label>
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">IST dates
+        <Select name="period" defaultValue={parsed.data.period}
+          className="min-h-11 md:min-h-9">
+          <option value="ALL">All dates</option><option value="TODAY">Today</option>
+          <option value="NEXT_7_DAYS">Next 7 IST days</option>
+          <option value="PAST_7_DAYS">Previous 7 IST days</option>
         </Select>
       </label>
       <Button type="submit" variant="primary">Filter</Button>
       <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>
     </form>
     </FilterBar>
-    <div className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 md:flex-row md:items-center md:justify-between">
-      <p className="m-0 text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
-      <div className="flex min-w-0 flex-col items-start gap-1 md:items-end">
-        <Link data-unskin="" href={"/api/mentor/calendar/export?"+new URLSearchParams({
-          sprint:parsed.data.sprint,join:parsed.data.join,projectId:parsed.data.projectId??"",attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
-          projectState:parsed.data.projectState,
-          search:parsed.data.search,period:parsed.data.period,
-        }).toString()} download className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          Export filtered meeting metadata CSV (max 200)
-        </Link>
-        {displayed.length>200?<span role="status" className="text-xs text-body">Export omits {displayed.length-200} meetings.</span>:null}
-      </div>
+     <div className="flex flex-wrap items-center gap-3 text-sm">
+      <Link data-unskin="" href={"/api/mentor/calendar/export?"+new URLSearchParams({
+        sprint:parsed.data.sprint,join:parsed.data.join,projectId:parsed.data.projectId??"",attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
+        projectState:parsed.data.projectState,
+        search:parsed.data.search,period:parsed.data.period,
+      }).toString()} download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">
+        Export filtered meeting metadata CSV (max 200)
+      </Link>
+      {displayed.length>200?<span role="status">Export omits {displayed.length-200} meetings.</span>:null}
     </div>
-    {displayed.length===0&&activeCount>0?<Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Clear</Link>:null}
+    <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
     <MentorMeetingsCalendar meetings={displayed}
       // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
       initialNow={now.toISOString()}/>
