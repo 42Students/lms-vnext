@@ -3,6 +3,7 @@
 import { type FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -158,13 +159,13 @@ export function AddProjectMemberControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(!pending)setOpen(next);}}
         title="Add Project teammate"
         description="Only active memberships from this college with the selected Learner or Mentor role are eligible."
       >
-        <form onSubmit={submit} className="grid gap-4">
+        <form onSubmit={submit} className="grid min-w-0 gap-[var(--lms-space-4)]">
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Project role
             </span>
             <Select
@@ -183,11 +184,11 @@ export function AddProjectMemberControl({
               <option value="MENTOR">Mentor</option>
             </Select>
           </label>
-          <div>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+          <div className="min-w-0">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Find eligible member
             </span>
-            <div className="flex gap-2">
+            <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
               <Input
                 value={query}
                 maxLength={120}
@@ -201,6 +202,8 @@ export function AddProjectMemberControl({
                 type="button"
                 size="sm"
                 variant="secondary"
+                className="w-full sm:w-auto"
+                loading={searching}
                 disabled={searching}
                 onClick={() => void search()}
               >
@@ -209,7 +212,7 @@ export function AddProjectMemberControl({
             </div>
           </div>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Member
             </span>
             <Select
@@ -241,8 +244,8 @@ export function AddProjectMemberControl({
               )}
             </Select>
           </label>
-          <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+          <label className="min-w-0">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Responsibility label
             </span>
             <Input
@@ -259,9 +262,8 @@ export function AddProjectMemberControl({
             />
           </label>
           {role === "MENTOR" ? (
-            <label className="flex items-center gap-2 text-sm font-semibold text-body">
-              <input className="size-4 accent-[var(--lms-button-primary)]"
-                type="checkbox"
+            <label className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)]">
+              <Checkbox
                 checked={isPrimary}
                 onChange={(event) =>
                   setIsPrimary(event.target.checked)
@@ -275,10 +277,11 @@ export function AddProjectMemberControl({
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
@@ -286,6 +289,8 @@ export function AddProjectMemberControl({
             </Button>
             <Button
               type="submit"
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={pending || !membershipId}
             >
               {pending ? "Adding…" : "Add teammate"}
@@ -374,11 +379,12 @@ export function ProjectMemberActions({
 
   return (
     <>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         {member.role === "MENTOR" ? (
           <Button
             size="sm"
             variant="secondary"
+            loading={pending}
             disabled={pending}
             onClick={() =>
               void setPrimary(!member.isPrimary)
