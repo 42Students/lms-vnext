@@ -112,7 +112,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
           </Select>
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply</Button>
-        <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
+        <Link href="/college/people/manage" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
       </form>
     </section>
     <section className="space-y-2" aria-label="Filtered people">
