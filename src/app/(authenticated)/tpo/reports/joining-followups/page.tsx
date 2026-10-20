@@ -3,6 +3,7 @@ import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -66,7 +67,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
     Due means a persisted joining date on or before {report.todayIst} IST. Upcoming means a recorded calendar date strictly after today and within seven IST calendar days. No date is unknown, never late.
     Only ACCEPTED offers count; JOINED requires an explicit recorded outcome.
    </p>
-   {report.truncated?<p role="status" className="text-sm text-body">First 500 accepted offers examined; counts may be incomplete.</p>:null}
+   {report.truncated?<Alert tone="warning">First 500 accepted offers examined; counts may be incomplete.</Alert>:null}
    {!report.rows.length?<EmptyState title="No matching joining follow-ups"
     description="No accepted offers remain in the selected open state."/>:
     <section className="grid gap-3" aria-label="Pending and deferred joining offers">

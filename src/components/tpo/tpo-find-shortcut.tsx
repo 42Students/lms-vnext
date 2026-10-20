@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState,type KeyboardEvent} from "react";
@@ -101,7 +102,7 @@ export function TpoFindShortcut(){
     {!showing.length&&!loading?<p role="status" className="p-3 text-sm text-muted-foreground">
       {query.trim().length<2?"Open a record to see it here.":"No matching records."}</p>:null}
     {loading?<p role="status" className="p-3 text-sm text-muted-foreground">Searching…</p>:null}
-    {error?<p role="alert" className="p-3 text-sm text-error">{error}</p>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
    </PopoverListbox>
    <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
     <span>↑ ↓ Navigate · Enter Open · Esc Close</span>
