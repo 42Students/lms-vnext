@@ -212,8 +212,8 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     </section>:null}
     {query.data.view==="WAITING" && requestView.length===0
       ? <div className="space-y-2">
-          <EmptyState title="No Sent for review drives" description="Choose another drive stage to see more."/>
-          <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View all drives</Link>
+          <EmptyState title="No drives sent for review" description="Choose another drive stage to see more."/>
+          <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">View all drives</Link>
         </div>
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
         ? <div className="space-y-2">

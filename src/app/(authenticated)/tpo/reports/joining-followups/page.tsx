@@ -32,7 +32,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
  return <div data-tpo-presentation-report className="space-y-6">
       <TpoReportPresentation />
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-followups" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-  <PageHeader eyebrow="TPO · Joining" title="Joining follow-ups"
+  <PageHeader title="Joining follow-ups"
    description="Accepted-offer joining evidence, pending confirmations and deferred dates."
    actions={report.season?<a href={"/api/placements/reports/joining-followups?"+params.toString()}
     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">

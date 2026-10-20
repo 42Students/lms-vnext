@@ -26,9 +26,9 @@ export default async function HrMessagesPage({searchParams}:{
  if(!query.success)return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Notifications"
    actions={<Link href="/hr/conversations"
-     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter conversations</Link>}/>
-  <ErrorState title="Invalid inbox filter." description="Review the college, search and unread options."
-   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/>
+     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9 md:w-auto">Recruiter conversations</Link>}/>
+  <ErrorState title="Invalid inbox filter" description="Review the college, search and unread options."
+   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9">Reset</Link>}/>
  </div>;
  const result=await listHrNotifications(context,query.data);
  const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{

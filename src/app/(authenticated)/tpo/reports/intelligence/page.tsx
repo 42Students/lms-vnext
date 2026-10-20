@@ -45,7 +45,7 @@ export default async function TpoPerformanceIntelligencePage({
   if (!parsed.success) {
     return (
       <div className="space-y-4">
-        <PageHeader eyebrow="TPO · Reports" title="Company funnel and compensation"
+        <PageHeader title="Company funnel and compensation"
           description="The selected reporting filters were invalid." />
         <Alert tone="error">
           No reports were loaded. <Link href="/tpo/reports/intelligence"

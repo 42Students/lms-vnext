@@ -47,7 +47,7 @@ export default async function FacultyGradebookPage({
        error.code==="FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS") {
       return <section role="alert" className="min-w-0 space-y-3">
         <PageHeader title="Published gradebook" description="Gradebook report limit" />
-        <p className="text-sm text-body">
+        <p className="text-sm text-body leading-[22px]">
           This section has more than 100 published assessments. Contact your college
           administrator to request a gradebook report. No grades have been changed.
         </p>
@@ -65,7 +65,7 @@ export default async function FacultyGradebookPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Published gradebook"
       actions={<Link href={csv}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Download full section CSV
       </Link>} />
     <p className="text-sm text-body leading-[22px]">

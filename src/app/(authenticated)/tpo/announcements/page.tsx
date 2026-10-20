@@ -160,7 +160,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   {result.status==="NOT_REGISTERED"?<Alert tone="warning">
    <h2 className="font-semibold text-foreground">Announcements are temporarily unavailable</h2>
    <p className="mt-2 text-sm text-body">College-wide announcements are currently unavailable. Personal notifications are still available separately.</p>
-  </Alert>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
+  </Alert>:result.items.length?<ol aria-label="tpo announcements entries" className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
     <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{row.title}{row.isPinned?" · Pinned":""}
      {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs text-primary-text">New</span>:null}
