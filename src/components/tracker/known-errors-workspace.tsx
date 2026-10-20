@@ -90,7 +90,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         <label className="block text-xs font-semibold text-body">
           Triage note
           <Input
-            className="mt-1" value={note} maxLength={500}
+            className="mt-1 min-h-11 md:min-h-9" value={note} maxLength={500}
             onChange={(event) => setNote(event.target.value)}
             placeholder="Reason / owner update"
           />
@@ -98,7 +98,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         <label className="block text-xs font-semibold text-body">
           Fix commit (optional)
           <Input
-            className="mt-1" value={commit} maxLength={64}
+            className="mt-1 min-h-11 md:min-h-9" value={commit} maxLength={64}
             onChange={(event) => setCommit(event.target.value)}
             placeholder="Git commit SHA"
           />
@@ -106,7 +106,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         <label className="block text-xs font-semibold text-body">
           Tracker issue ID
           <Input
-            className="mt-1" value={issuePublicId} maxLength={32}
+            className="mt-1 min-h-11 md:min-h-9" value={issuePublicId} maxLength={32}
             onChange={(event) => setIssuePublicId(event.target.value)}
             placeholder="e.g. BT-123"
           />
@@ -190,7 +190,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         <div className="space-y-3">
           <label className="block text-sm text-body">
             Reason (optional)
-            <Input className="mt-1" value={muteReason} maxLength={255}
+            <Input className="mt-1 min-h-11 md:min-h-9" value={muteReason} maxLength={255}
               onChange={(event) => setMuteReason(event.target.value)}
               placeholder="Why this error is expected"
             />
