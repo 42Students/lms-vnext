@@ -79,6 +79,7 @@ export function ProjectMentorReassignment({
     const q = search.trim().toLowerCase();
     if (!q) return mentors;
     return mentors.filter((mentor) =>
+      mentor.membershipId === mentorMembershipId ||
       (
         (mentor.displayName ?? "") +
         " " +
@@ -87,7 +88,7 @@ export function ProjectMentorReassignment({
         .toLowerCase()
         .includes(q),
     );
-  }, [mentors, search]);
+  }, [mentors, search, mentorMembershipId]);
 
   function toggle(projectId: string) {
     setSelected((current) =>
@@ -217,6 +218,7 @@ export function ProjectMentorReassignment({
                 className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-[var(--lms-space-3)] px-[var(--lms-space-2)] py-[var(--lms-space-3)] motion-safe:transition-colors motion-reduce:transition-none hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
               >
                 <Checkbox
+                  disabled={pending}
                   checked={selected.includes(
                     workspace.id,
                   )}
@@ -254,6 +256,7 @@ export function ProjectMentorReassignment({
             Search mentors
             <Input
               type="search"
+              disabled={pending}
               value={search}
               onChange={(event) =>
                 setSearch(event.target.value)
@@ -265,6 +268,7 @@ export function ProjectMentorReassignment({
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             New primary mentor
             <Select
+              disabled={pending}
               value={mentorMembershipId}
               onChange={(event) =>
                 setMentor(event.target.value)
@@ -288,6 +292,7 @@ export function ProjectMentorReassignment({
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Role label
             <Input
+              disabled={pending}
               value={roleLabel}
               maxLength={120}
               onChange={(event) =>

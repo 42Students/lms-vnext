@@ -273,7 +273,7 @@ export function CreateProjectResourceControl({
         {isLearner ? "Share a resource" : "Add resource"}
       </Button>
       <Dialog
-        open={open}
+        open={open && !discardOpen}
         onOpenChange={next=>{if(next)setOpen(true);else requestClose();}}
         title={isLearner ? "Share a resource" : "Add resource"}
         description="Share a safe HTTP(S) link or an internal text resource with the Project team."
@@ -502,7 +502,7 @@ export function ProjectResourceActions({
       </div>
 
       <Dialog
-        open={editOpen}
+        open={editOpen && !editDiscardOpen}
         onOpenChange={next=>{if(next)setEditOpen(true);else requestEditClose();}}
         title="Edit resource"
       >
