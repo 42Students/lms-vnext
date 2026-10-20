@@ -71,11 +71,9 @@ export async function ProjectAdminReassignMentorPage({
   const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
     <div className="min-w-0 space-y-[16px]">
-      <div className="min-w-0">
-        <PageBackLink href={basePath} label="Back to workspaces" />
-        <PageHeader title="Bulk mentor reassignment"
-          description="Move selected non-archived project workspaces to a new primary mentor." />
-      </div>
+      <PageHeader title="Bulk mentor reassignment"
+        description="Move selected non-archived project workspaces to a new primary mentor."
+        actions={<PageBackLink href={basePath} label="Back to workspaces" />} />
       <ProjectAdminNav basePath={basePath} active="workspaces" />
       <Disclosure title="Mentor workload" className="border-b border-border pb-4" contentClassName="pt-2">
         <div className="mt-2 grid min-w-0 gap-x-4 gap-y-0 md:grid-cols-2">
@@ -94,7 +92,7 @@ export async function ProjectAdminReassignMentorPage({
           })}
         </div>
       </Disclosure>
-      <Disclosure title="Filters" className="border-b border-border pb-4" contentClassName="pt-3">
+      <Disclosure title="Filters" className="border-b border-border pb-4" contentClassName="space-y-4 pt-3" defaultOpen={Boolean(mentorSearch || fromMentorId || query.q || query.status)}>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]"
         aria-label="Search all eligible mentors">
         {query.q?<Input type="hidden" name="q" value={query.q}/>:null}
@@ -107,10 +105,10 @@ export async function ProjectAdminReassignMentorPage({
             placeholder="Enter mentor name or email" className="w-full"/>
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Find mentor</Button>
-        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear mentor search</Link>:null}
+        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear mentor search</Link>:null}
         <p className="min-w-0 text-xs text-muted-foreground md:col-span-full">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
-      <FilterBar title="Workspace filters"><ProjectAdminFilters query={query} /></FilterBar>
+      <div className="min-w-0"><ProjectAdminFilters query={query} /></div>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
         {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
