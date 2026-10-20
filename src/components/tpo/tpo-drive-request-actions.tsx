@@ -6,6 +6,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {TPO_DRIVE_REQUEST_DECISION_COPY} from "@/modules/placements/tpo-drive-request-decision-model";
 import {Button} from "@/components/ui/button";
+import {Dropdown} from "@/components/ui/dropdown";
 type Action="APPROVE_LATER"|"SEND_BACK"|"DECLINE";
 export function TpoDriveRequestActions({requestId,status}:{
   requestId:string;status:"REQUEST"|"SENT_BACK";
@@ -44,14 +45,25 @@ export function TpoDriveRequestActions({requestId,status}:{
     }finally{setBusy(false);}
   }
   return <div className="space-y-2">
-    <div className="flex flex-wrap gap-2">
-      {actions.map(option=><Button variant="secondary" key={option.value} type="button" disabled={busy||guardedPending}
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <Button variant="primary" type="button" disabled={busy||guardedPending}
         onClick={()=>{
-          setAction(option.value);setError("");setMessage("");
-          setReason(option.value==="APPROVE_LATER"?"Approved for later":"");
-        }}
-        >
-        {option.label}</Button>)}
+          setAction("APPROVE_LATER");setError("");setMessage("");
+          setReason("Approved for later");
+        }}>
+        {actions[0].label}
+      </Button>
+      <Dropdown mobileSheet align="end" label="Other request decisions" trigger="More ···">
+        <div className="flex min-w-48 flex-col gap-1">
+          {actions.slice(1).map(option=><Button variant="ghost" key={option.value} type="button" disabled={busy||guardedPending}
+            className="w-full justify-start text-left"
+            onClick={()=>{
+              setAction(option.value);setError("");setMessage("");setReason("");
+            }}>
+            {option.label}
+          </Button>)}
+        </div>
+      </Dropdown>
     </div>
     {action?<div role="group" aria-label={actions.find(x=>x.value===action)?.label}
       className="space-y-2 border-t border-border pt-4">
@@ -66,7 +78,7 @@ export function TpoDriveRequestActions({requestId,status}:{
           className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
       </label>
       <p className="text-xs text-body">The recruiter is notified in the app. Email delivery is not enabled.</p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button type="button" onClick={()=>void runGuarded(submit)} disabled={busy||guardedPending||reason.trim().length<3}
           >
           {busy?"Saving…":"Confirm"}</Button>
