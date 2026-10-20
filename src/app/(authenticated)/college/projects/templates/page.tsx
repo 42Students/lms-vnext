@@ -93,7 +93,6 @@ export default async function CollegeProjectTemplatesPage({
       </form>
       <ListToolbar label="Assigned project templates" viewCount={visible.length}
         exportAction={<ProjectTemplateCatalogueExport rows={rows} />} />
-      {q ? <p role="status" className="text-sm text-body">{visible.length} of {templates.length} templates</p> : null}
       <DataTable caption="Assigned project templates" columns={columns} rows={visible}
         getRowKey={template=>template.assignmentId}
         empty={<EmptyState
