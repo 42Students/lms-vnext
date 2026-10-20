@@ -20,6 +20,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
  const [pendingRemoval,setPendingRemoval]=useState<Entry|null>(null);
  const others=entries.filter(entry=>LEGACY_TENANT_SETTING_MAP.get(entry.key)?.scope!==scopeType);
  const target={scopeType,...(collegeId?{collegeId}:{})};
+ const documentedKey=LEGACY_TENANT_SETTING_MAP.has(key.trim());
  async function apply(method:"POST"|"DELETE",entry?:Entry){
   if(busy||inFlightRef.current||!ready)return;
   inFlightRef.current=true;
@@ -79,7 +80,8 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
    </label>
    <p id="other-keys-syntax" className="max-w-prose text-xs leading-5 text-body">Use letters, digits, dots, dashes and underscores. Typos create unused keys. Documented settings must be edited in their section above.</p>
    {key&&!validKey.test(key)?<p role="alert" className="text-xs text-error">Enter a valid setting key.</p>:null}
-   <Button variant="primary" type="button" loading={busy} disabled={!ready||busy||!validKey.test(key)||!value.trim()}
+   {documentedKey?<p role="status" className="text-xs text-muted-foreground">This is a documented setting. Use its dedicated section above.</p>:null}
+   <Button variant="primary" type="button" loading={busy} disabled={!ready||busy||!validKey.test(key)||documentedKey||!value.trim()}
     onClick={()=>void apply("POST")} className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Saving…":"Add setting"}</Button>
   </fieldset>
