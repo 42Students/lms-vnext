@@ -41,7 +41,7 @@ export default async function SuperAdminTenantSetup({
   <ErrorState title="Invalid tenant setup step"
    description="Select a valid Tenant structure or Launch setup step."
    action={<Link href="/admin/tenants/setup"
-    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Clear filters</Link>}/>
+    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
  </div>;
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
@@ -69,7 +69,7 @@ export default async function SuperAdminTenantSetup({
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
-    action={<Link href={tabLink(tab)} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text">Retry tenant setup</Link>}/>
+    action={<Link href={tabLink(tab)} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry tenant setup</Link>}/>
   </div>;
  }
  // No creation controls are shown before the complete authorized read.
@@ -116,7 +116,7 @@ export default async function SuperAdminTenantSetup({
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Organizations</h2>
-      <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage all</Link>
+      <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {organizations.slice(0,20).map(o=><li key={o.id} className="border-b border-border py-2">{o.name}</li>)}
@@ -126,11 +126,11 @@ export default async function SuperAdminTenantSetup({
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Colleges</h2>
-      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage all</Link>
+      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {list?.items.map(item=><li key={item.id} className="border-b border-border py-2">
-       <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">{item.name}</Link>
+       <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.name}</Link>
        {" · "}{item.code} · {item.status}
       </li>)}
      </ul>
@@ -138,7 +138,7 @@ export default async function SuperAdminTenantSetup({
      <p className="mt-2 text-xs text-muted-foreground">First page only. Archived colleges remain marked; no implicit restoration.</p>
     </div>
    </section>
-   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 md:min-h-9  items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
+   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{college.name} · Launch setup</h2>
    <Banner tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
@@ -151,7 +151,7 @@ export default async function SuperAdminTenantSetup({
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
     ].map(card=><Card key={card.label} as="article" className="min-w-0 hover:border-[var(--lms-primary)]">
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
-      className="block min-h-11 rounded-[var(--lms-control-radius)] font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="block min-h-11 rounded-[var(--lms-control-radius)] font-semibold text-primary-text underline-offset-4 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{card.label}</h3>
       <p className="mt-2 text-sm font-normal text-body">{card.description}</p>
      </Link>
@@ -160,20 +160,20 @@ export default async function SuperAdminTenantSetup({
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Launch checklist</h2>
-     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Inspect persisted readiness →</Link>
+     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>
-      <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9  items-center text-sm font-semibold text-primary-text underline">Open workspace →</Link>
+      <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open workspace →</Link>
      </li>)}
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
   </>:<EmptyState title="No college selected"
    description="No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant."
-   action={<Link href={tabLink("STRUCTURE")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Create or select a college →</Link>}/>}
+   action={<Link href={tabLink("STRUCTURE")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Create or select a college →</Link>}/>}
  </div>;
 }

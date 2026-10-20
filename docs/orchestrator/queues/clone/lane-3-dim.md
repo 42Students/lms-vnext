@@ -73,16 +73,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-3.md: file, number of i
 - [x] `src/app/(authenticated)/admin/settings/page.tsx`
 - [x] `src/app/(authenticated)/admin/students/page.tsx`
 - [x] `src/app/(authenticated)/admin/tenants/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
-- [ ] `src/app/(authenticated)/admin/verification/page.tsx`
-- [ ] `src/app/(authenticated)/college-admin/not-found.tsx`
-- [ ] `src/app/(authenticated)/college/academics/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/page.tsx`
-- [ ] `src/app/(authenticated)/college/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/college/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/admin/verification/page.tsx`
+- [x] `src/app/(authenticated)/college-admin/not-found.tsx`
+- [x] `src/app/(authenticated)/college/academics/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/page.tsx`
+- [x] `src/app/(authenticated)/college/announcements/page.tsx`
+- [x] `src/app/(authenticated)/college/assignments/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/departments/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/page.tsx`
 - [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
 - [ ] `src/app/(authenticated)/college/batches/page.tsx`
 - [ ] `src/app/(authenticated)/college/classes/page.tsx`

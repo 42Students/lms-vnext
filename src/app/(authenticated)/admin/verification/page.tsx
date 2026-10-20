@@ -32,7 +32,7 @@ export default async function AdminVerificationEntry() {
       <PageHeader
         title="Profile verification"
         description="Students' education and identity, checked against their documents."
-        actions={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Browse colleges</Link>}
+        actions={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Browse colleges</Link>}
       />
       <EmptyState title="Choose a college first"
         description="Choose a college at the top to see its students waiting for verification. A global or organization-only scope cannot authorize a college review." />
