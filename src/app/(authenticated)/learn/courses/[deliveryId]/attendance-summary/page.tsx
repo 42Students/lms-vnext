@@ -39,7 +39,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />

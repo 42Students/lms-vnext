@@ -26,7 +26,7 @@ export default async function CollegeVerificationPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title="Profile verification"/>
   <ErrorState title="Profile verification" description={collegeVerificationFilterError(raw)}
-    action={<Link href="/college/verification" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>}/>
+    action={<Link href="/college/verification" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>|undefined;
  let loadFailure:"UNAVAILABLE"|"LIMIT"|null=null;
@@ -44,7 +44,7 @@ export default async function CollegeVerificationPage({searchParams}:{
   return <div className="min-w-0 max-w-full space-y-6">
    <PageHeader title="Profile verification"/>
    <ErrorState title="Profile verification" description={description}
-     action={<Link href="/college/verification" prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry</Link>}/>
+     action={<Link href="/college/verification" prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>}/>
   </div>;
  }
  if(!data)throw new Error("VERIFICATION_QUEUE_UNAVAILABLE");
