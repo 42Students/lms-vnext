@@ -21,7 +21,10 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   if (!context.membership) redirect("/dashboard");
   const {jobId} = await params;
   const query = driveApplicationsParams(await searchParams);
-  if (!query) return <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid." />;
+  if (!query) return <div className="min-w-0 space-y-5">
+    <PageHeader title="Applications" />
+    <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid." />
+  </div>;
   const [data,filters] = await Promise.all([
     getCollegeApplicationPipeline(context,jobId,query),
     listCollegeDriveApplicationFilters(context),
