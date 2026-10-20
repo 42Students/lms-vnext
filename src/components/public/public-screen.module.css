@@ -19,7 +19,7 @@
 .message { margin: 12px auto 0; max-width: 390px; font-size: 14px; line-height: 24px; color: var(--lms-body-text, #54505d); }
 .reference { margin: 18px 0 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; font-size: 12px; color: var(--lms-muted-text, #6b7280); }
 .copy { border: 1px solid var(--lms-border, #d6dbe3); border-radius: 9px; background: var(--lms-surface, #fff); padding: 7px 11px; font-size: 12px; color: var(--lms-link-text, #0a7c88); cursor: pointer; }
-.actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
 .primary, .secondary {
   display: inline-flex; min-height: 36px; align-items: center; justify-content: center; padding: 7px 16px; border: 1px solid var(--lms-button-primary, #0a7c88);
   border-radius: 9px; background: var(--lms-button-primary, #0a7c88); color: var(--lms-on-primary, #fff); font-size: 14px; line-height: 20px; font-weight: 650; text-decoration: none; cursor: pointer;
