@@ -56,7 +56,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   <ul aria-label="Current optional email preferences" className="hidden space-y-2 text-sm print:block">{fields.map(([key,label,help])=><li key={key} className="break-words border-b border-border pb-2"><strong>{label}:</strong> {value[key]?"On":"Off"} · {help}</li>)}</ul>
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
   <Button type="button" disabled={busy||!dirty} onClick={()=>void save()}
-   className="min-h-11 min-[768px]:min-h-9 print:hidden">Save changes</Button>
+   className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9 print:hidden">Save changes</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {status?<InlineNotice tone="success" message={status}/>:null}
  </section>;
