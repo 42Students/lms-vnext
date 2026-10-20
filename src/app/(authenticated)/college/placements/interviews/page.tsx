@@ -9,7 +9,6 @@ import {DataTable, type DataTableColumn} from "@/components/ui/data-table";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {collegeInterviewFilters,listCollegeInterviewDirectory} from "@/modules/placements/college-interview-directory-service";
 import {CollegeInterviewStatusActions} from "@/components/placements/college-interview-status-actions";
-import {Select} from "@/components/ui/select";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import {StatTile} from "@/components/ui/stat-tile";
