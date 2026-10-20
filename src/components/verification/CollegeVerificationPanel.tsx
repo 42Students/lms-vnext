@@ -117,12 +117,12 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  }
  const exportQuery=new URLSearchParams(query);
  exportQuery.set("tab",activeTab);
- return <div className="min-w-0 space-y-4">
-  <TpoVerificationSwitch key={String(tpoCanVerify)} initialEnabled={tpoCanVerify}/>
+ return <div className="min-w-0 space-y-5 md:space-y-6">
+  <details className="min-w-0 border-b border-border pb-3"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">The placement cell can verify profiles</summary><TpoVerificationSwitch key={String(tpoCanVerify)} initialEnabled={tpoCanVerify}/></details>
   {truncated?<Banner tone="warning">
    Showing the first 1,000 students in this view. Totals reflect this working set; narrow the filters to review other students.
   </Banner>:null}
-  <div className="flex flex-wrap items-center justify-end gap-2">
+  <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}} >Refresh</Button>
   </div>
@@ -153,7 +153,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":"",ageBand:tab==="WAITING"?query.ageBand??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query.attention)?"ALL":query.attention??"ALL"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1",...(kind==="IDENTITY"?{marksheets:"ANY",attention:query.attention==="MISSING_MARKSHEET"?"ALL":query.attention}:{})})}
    onReview={row=>setSelected(row)}/>
-  {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 border-y border-[var(--lms-canvas-border)] py-3">
+  {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="min-w-0 space-y-3 border-y border-[var(--lms-canvas-border)] py-3">
    <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));resetBulkFeedback();}} >Select first 20 waiting</Button>
@@ -212,7 +212,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <Button variant="secondary" type="button"  onClick={()=>router.refresh()}>Refresh queue</Button>
   </section>}
   {bulkError&&<Banner tone="error">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</Banner>}
-  <section aria-label="Verification queue controls" className="flex min-w-0 flex-wrap items-center gap-4 text-sm">
+  <section aria-label="Verification queue controls" className="flex min-w-0 flex-col gap-3 text-sm md:flex-row md:flex-wrap md:items-center">
    <label>Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 w-auto">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>
    </Select></label>
