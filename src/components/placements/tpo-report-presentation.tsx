@@ -22,13 +22,13 @@ export function TpoReportPresentation(){
   }catch(cause){setError(cause instanceof Error?cause.message:"Presentation mode unavailable.");}
  }
  return <div className="inline-flex flex-wrap items-center gap-2">
-  <FilterChip type="button" className="min-h-11 md:min-h-8 print:hidden" onClick={()=>void toggle()}
+  <FilterChip type="button" className="min-h-11 min-[768px]:min-h-8 print:hidden" onClick={()=>void toggle()}
    aria-pressed={active}>
    {active?"Exit presentation view":"Presentation view"}
   </FilterChip>
   {error?<InlineNotice tone="error" message={error}/>:null}
   <style>{`
-   [data-tpo-presentation-report]:fullscreen { background: var(--surface); color: var(--foreground); min-height: 100vh; overflow-y: auto; padding: 1.25rem; }
+   [data-tpo-presentation-report]:fullscreen { background: #ffffff; color: var(--lms-body-text); min-height: 100vh; overflow-y: auto; padding: var(--lms-canvas-padding, 24px); }
   `}</style>
  </div>;
 }
