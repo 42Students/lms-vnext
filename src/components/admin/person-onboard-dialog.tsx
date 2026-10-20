@@ -110,7 +110,7 @@ export function PersonOnboardDialog({
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>
+      <Button className="min-h-11 md:min-h-9" onClick={() => setOpen(true)}>
         {forcedRole === "FACULTY" ? "Register New Faculty" : "Onboard person"}
       </Button>
       <Dialog
@@ -120,14 +120,14 @@ export function PersonOnboardDialog({
         description="Create or reuse a canonical identity and an active college membership. No external invitation is sent."
         footer={
           <>
-            <Button
+            <Button className="min-h-11 md:min-h-9"
               variant="secondary"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
-            <Button
+            <Button className="min-h-11 md:min-h-9"
               disabled={
                 pending ||
                 !(forcedRole?firstName.trim()&&lastName.trim():displayName.trim()) ||
@@ -144,10 +144,10 @@ export function PersonOnboardDialog({
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {forcedRole?<div className="grid min-w-0 gap-[var(--lms-space-3)] md:col-span-2 md:grid-cols-2">
             <label className="grid gap-1 text-[13px] font-semibold text-body">First Name
-              <Input value={firstName} maxLength={120} required onChange={e=>setFirstName(e.target.value)} placeholder="First name"/>
+              <Input className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required onChange={e=>setFirstName(e.target.value)} placeholder="First name"/>
             </label>
             <label className="grid gap-1 text-[13px] font-semibold text-body">Last Name
-              <Input value={lastName} maxLength={120} required onChange={e=>setLastName(e.target.value)} placeholder="Last name"/>
+              <Input className="min-h-11 md:min-h-9" value={lastName} maxLength={120} required onChange={e=>setLastName(e.target.value)} placeholder="Last name"/>
             </label>
           </div>:<div className="md:col-span-2">
             <label
@@ -156,7 +156,7 @@ export function PersonOnboardDialog({
             >
               Display name
             </label>
-            <Input
+            <Input className="min-h-11 md:min-h-9"
               id={`onboard-name-${collegeId}`}
               value={displayName}
               onChange={(event) =>
@@ -174,7 +174,7 @@ export function PersonOnboardDialog({
             >
               Phone
             </label>
-            <Input
+            <Input className="min-h-11 md:min-h-9"
               id={`onboard-phone-${collegeId}`}
               value={phoneE164}
               onChange={(event) =>
@@ -192,7 +192,7 @@ export function PersonOnboardDialog({
             >
               Email · optional
             </label>
-            <Input
+            <Input className="min-h-11 md:min-h-9"
               id={`onboard-email-${collegeId}`}
               type="email"
               value={email}
@@ -222,7 +222,7 @@ export function PersonOnboardDialog({
               {MEMBERSHIP_ROLES.map((role) => (
                 <label
                   key={role}
-                  className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)]"
+                  className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] hover:bg-[var(--lms-primary-subtle)] md:min-h-9"
                 >
                   <span className="text-sm font-semibold text-body">
                     {roleLabel(role)}
