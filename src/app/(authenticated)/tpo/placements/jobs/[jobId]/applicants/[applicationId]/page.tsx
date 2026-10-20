@@ -29,7 +29,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
      ["Screening decided",data.application.screeningDecidedAt?
       new Date(data.application.screeningDecidedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not recorded"]];
  return <div className="min-w-0 space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Applicant pipeline</Link>
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Applicant pipeline</Link>
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
    description={data.job.title+" · "+data.application.roleTitle}/>
@@ -55,7 +55,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
    {data.resultsTruncated?<Alert tone="warning">Only 100 applied result versions examined.</Alert>:null}
    {data.appliedRoundResults.length===0?<EmptyState title="No applied round outcomes recorded for this application."/>:
     <div className="mt-3 grid gap-3">{data.appliedRoundResults.map(r=>
-     <article key={r.roundId} className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
+     <article key={r.roundId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <h3 className="font-semibold text-foreground">{r.roundName}</h3>
       <p className="mt-1 text-sm text-body">{r.kind} · {r.outcome} · Applied: {r.appliedAt?
        new Date(r.appliedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Time not recorded"}</p>
@@ -66,7 +66,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
    {data.offersTruncated?<Alert tone="warning">Only the latest 100 offer versions examined.</Alert>:null}
    {data.offers.length===0?<EmptyState title="No persisted offer versions for this application."/>:
     <div className="mt-3 grid gap-3">{data.offers.map(offer=>
-     <article key={offer.offerId} className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
+     <article key={offer.offerId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <h3 className="font-semibold text-foreground">{offer.roleTitle} · Version {offer.version}</h3>
       <p className="mt-1 text-sm text-body">{offer.status} · Joining: {offer.joiningStatus??"Not confirmed"}
        {" · "}Annual CTC: {offer.annualCtcInr===null?"Not recorded":"₹"+offer.annualCtcInr.toLocaleString("en-IN")}</p>

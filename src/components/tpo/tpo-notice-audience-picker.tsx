@@ -48,7 +48,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
      {filtered.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>
    </label>
-   {targets.map(id=><input key={id} type="hidden" name="targetIds" value={id}/>)}
+   {targets.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>)}
    <span role="status" className="text-xs text-muted-foreground">
     {available.length===0?emptyText:targets.length+" chosen. Use Ctrl or Cmd to choose more."}
    </span>
