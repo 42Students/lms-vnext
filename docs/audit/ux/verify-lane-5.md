@@ -69,3 +69,17 @@
 - Extra clutter/alignment fixes (1): parent page still presented two secondary reference destinations at full prominence above the drafting form despite other lane's disclosure proof. Moved only existing `View previously sent discussion proposals` and `Record an outside-platform drive` links under a native keyboard-operable `More drive destinations` disclosure. Back to Drives remains immediate. At 375px links use full-width targets; 768px they flow as compact links. Original hrefs and labels unchanged.
 - Inspected HR and recruiter new page/loading/error, complete `HrDriveDraftForm` including dialogs, shared Input/Select/Textarea/Button/InlineNotice/Alert/ConfirmDialog, draft/services and parent recruiter/authenticated layouts; no route-local template/layout/not-found; compared `polish-lane-15.md` evidence.
 - Files changed: `src/app/(authenticated)/hr/drives/new/page.tsx`, queue, proof. Source-only, no tests/CI.
+
+## Surface 11 — Recruiter Drives directory
+- Surface: `src/app/(authenticated)/recruiter/drives/page.tsx` alias of HR drives listing.
+- Regressions fixed (3): earlier polish proof claimed secondary proposals, deadline attention and optional employment filters were in keyboard-operable disclosures but page still rendered all of them expanded. Corrected the three UI hierarchy regressions with native details. Active employment/mode/deadline/sort filters expand automatically on navigations so selected values stay visible. All original form names and submitted GET values remain.
+- Extra clutter/alignment fixes (1): employer request records now use one hairline-divided list instead of per-request cards; all edit, cancel, copy and published drive actions retained. Filter fields use responsive 375px stack / 768px two-column / wide four-column layout; desktop and mobile button heights keep legacy scale.
+- Inspected 21kB HR listing, RecruiterPlacementPortfolio and HrRecruiterDrivesGrid/TpoGrid, RecruiterRequestCancelButton, HrUnsentDriveAlert, feedback, Tabs, Pagination, StatusBadge, Select, Button, EmptyState, Alert, recruiter+HR loading/error, recruiter/authenticated layouts and original `polish-lane-15.md` proof. No route-local template/not-found/layout.
+- Files changed: `src/app/(authenticated)/hr/drives/page.tsx`, queue, evidence. Source-only; no browser/test/CI.
+
+## Surface 12 — Recruiter Sent Drive Proposals
+- Surface: `src/app/(authenticated)/recruiter/drives/proposals/page.tsx` aliases HR sent proposal history.
+- Regressions fixed: 0. Full read confirmed authorized college selection, Zod query parsing, GET q/sort, CSV export, pagination, correct status copy, mobile rows, desktop HrProposalHistoryGrid, scoped conversation destinations, empty-state draft path, and stable test/aria fields.
+- Extra clutter/alignment fixes: 0. Correctly bounded 375px stacked filter buttons, 768px aligned controls, one readable history table and quiet export; no speculative redesign applied.
+- Inspected HR page, HrProposalHistoryGrid/TpoGrid, recruiter+HR loading/error, PageHeader/PageBackLink, NeedsDoingChips, Input/Select/Button/EmptyState and parent layouts against `polish-lane-15.md`; no local not-found/template/layout. Source-only, no execution/CI.
+- Files changed: queue and evidence only.
