@@ -20,7 +20,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-1.md: surface | proble
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/invitation-prep/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx` (TPO page)
