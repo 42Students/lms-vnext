@@ -21,5 +21,5 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-18.md: surface | probl
 - [x] `src/components/placements/tpo-mark-own-notification-read.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/tpo/tpo-notice-undo-toast.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [x] `src/components/courses/faculty-report-download.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
-- [ ] `src/app/(authenticated)/admin/not-found.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
-- [ ] `src/components/projects/project-workspace.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/app/(authenticated)/admin/not-found.tsx` (Route boundary file (layout, loading, error or not-found) shared by several pages)
+- [x] `src/components/projects/project-workspace.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
