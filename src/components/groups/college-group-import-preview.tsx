@@ -56,25 +56,28 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       }
     });
   }
-  return <div className="space-y-5">
-    <form onSubmit={preview} className="space-y-4 border-b border-border pb-4">
+  return <div className="min-w-0 space-y-4">
+    <form onSubmit={preview} className="min-w-0 space-y-3 border-b border-border pb-4">
       <p className="text-sm text-body">
         Upload a CSV with one column named <code>email</code>. Maximum 500 rows and 128 KiB.
         Only currently active learners in this college are eligible.
       </p>
       <FileUpload label="Select CSV file" accept=".csv,text/csv" maxBytes={131072}
         disabled={pending||reading} onFiles={files=>void load(files?.[0]??null)}/>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CSV contents
-        <Textarea rows={8} maxLength={131072} value={csv}
-          onChange={(event) => { setCsv(event.target.value); setResult(null); }}
-          className="font-mono text-sm" />
-      </label>
-      <Button type="submit" loading={pending || reading} className="min-h-11 md:min-h-9" disabled={reading || pending || !csv.trim()}>
+      <Button type="submit" loading={pending || reading} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={reading || pending || !csv.trim()}>
         {pending ? "Validating…" : "Preview only (no import)"}
       </Button>
+      <details className="min-w-0 border-t border-border pt-3">
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">CSV contents</summary>
+        <label className="mt-3 grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CSV contents
+          <Textarea rows={8} maxLength={131072} value={csv}
+            onChange={(event) => { setCsv(event.target.value); setResult(null); }}
+            className="font-mono text-sm" />
+        </label>
+      </details>
       {error ? <Alert tone="error">{error}</Alert> : null}
     </form>
-    {result ? <section aria-label="Student group CSV validation report" className="space-y-4">
+    {result ? <section aria-label="Student group CSV validation report" className="min-w-0 space-y-3">
       <h2 className="text-lg font-semibold text-foreground">
         Dry run: {result.ready} ready, {result.blocked} blocked, {result.total} examined
       </h2>
@@ -85,7 +88,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         Download safe error CSV
       </a>
       {result.rows.length === 0 ? <EmptyState title="No learner rows" description="No learner rows were supplied."/> : (
-        <div className="max-h-[35rem] min-w-0 overflow-auto">
+        <div className="max-h-[35rem] min-w-0 overflow-auto border-y border-border">
           <DataTable<Result["rows"][number]>
             caption="Group import preview validation"
             rows={result.rows} getRowKey={row=>String(row.rowNumber)}
