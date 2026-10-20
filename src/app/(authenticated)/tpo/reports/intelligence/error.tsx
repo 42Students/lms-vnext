@@ -7,6 +7,6 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   return <ErrorState
     title="Couldn't load performance intelligence"
     description="Report facts could not be retrieved. Missing data is not interpreted as zero."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    action={<Button type="button" className="w-full sm:w-auto" onClick={reset}>Retry</Button>}
   />;
 }
