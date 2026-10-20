@@ -133,7 +133,7 @@ export function DepartmentActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
+      <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] print:hidden sm:flex-row sm:items-center md:justify-end">
       <Button
         variant="secondary"
         size="sm"
@@ -160,7 +160,7 @@ export function DepartmentActions({
         title={DEPARTMENT_COPY.editTitle}
         description="Department names stay unique within the active college."
         footer={
-          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={pending}
@@ -183,7 +183,7 @@ export function DepartmentActions({
       >
         <label
           htmlFor={`department-name-${departmentId}`}
-          className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           {DEPARTMENT_COPY.nameLabel}
         </label>
@@ -206,7 +206,7 @@ export function DepartmentActions({
         title="Archive department"
         description={`Archive ${name}? This is allowed only when it has no active programs, faculty assignments, or courses.`}
         footer={
-          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <Button
               variant="secondary"
               disabled={pending}

@@ -66,11 +66,11 @@ export function DepartmentDirectory({
     encodeURIComponent("\ufeff" + departmentRowsCsv(filtered));
 
   return (
-    <section className="space-y-4" aria-label={DEPARTMENT_COPY.existingTitle}>
+    <section className="min-w-0 space-y-[var(--lms-space-3)]" aria-label={DEPARTMENT_COPY.existingTitle}>
       <h2 className="m-0 text-base font-semibold text-foreground">{DEPARTMENT_COPY.existingTitle}</h2>
-      <div className="flex min-w-0 flex-col gap-3 print:hidden sm:flex-row sm:items-end">
+      <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] print:hidden sm:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0 flex-1">
-          <label htmlFor="department-directory-search" className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label htmlFor="department-directory-search" className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search departments
           </label>
           <Input id="department-directory-search" placeholder="Search departments"
@@ -79,10 +79,10 @@ export function DepartmentDirectory({
         </div>
         {search.trim() ? <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
           onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
-        <Disclosure title="View options" className="min-w-0 sm:self-end"
+        <Disclosure title="View options" className="min-w-0 sm:self-end sm:col-start-2"
           contentClassName="flex min-w-0 flex-col gap-3 pb-3 pt-2 sm:min-w-48">
           <label htmlFor="department-directory-page-size"
-            className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
@@ -99,7 +99,7 @@ export function DepartmentDirectory({
         </Disclosure>
       </div>
 
-      <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
+      <p role="status" aria-live="polite" className="text-sm leading-5 text-muted-foreground">
         {result.total} of {rows.length} {rows.length === 1 ? "result" : "results"}
       </p>
       <DataTable
@@ -132,7 +132,7 @@ export function DepartmentDirectory({
           <span>
             Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}
           </span>
-          <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
+          <div className="flex w-full flex-wrap items-center justify-between gap-[var(--lms-space-2)] sm:w-auto sm:justify-end">
             <Button
               size="sm" variant="secondary"
               disabled={result.page === 1}
