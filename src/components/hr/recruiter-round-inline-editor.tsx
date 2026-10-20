@@ -85,20 +85,20 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
  const canEdit=(row:Row)=>row.createdByYou&&row.status==="PENDING";
  return <div className="space-y-3">
   {!readOnly?<Button type="button" onClick={()=>edit(null)}
-   variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9">
+   variant="primary" className="min-h-11 w-full md:w-auto md:min-h-9">
    Add a round</Button>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
   {error&&!open?<InlineNotice tone="error" message={error}/>:null}
-  {!readOnly&&rows.some(canEdit)?<details className="min-w-0 border-t border-border pt-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Change / Remove</summary><div className="mt-2 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap">{rows.filter(canEdit).map(row=>
+  {!readOnly&&rows.some(canEdit)?<details className="min-w-0 border-t border-border pt-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Change / Remove</summary><div className="mt-2 flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap">{rows.filter(canEdit).map(row=>
    <Button key={row.id} type="button" onClick={()=>edit(row)}
-    variant="secondary" className="min-h-11 w-full min-w-0 break-words sm:w-auto md:min-h-9">
+    variant="secondary" className="min-h-11 w-full min-w-0 break-words md:w-auto md:min-h-9">
     Change / Remove: {row.name}
    </Button>)}</div></details>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
     dismissible={!pending} title={active?"Change round":"Add a round"}>
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
-     className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
-     <label className="grid min-w-0 gap-1 text-sm text-body sm:col-span-2">Name
+     className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
+     <label className="grid min-w-0 gap-1 text-sm text-body md:col-span-2">Name
       <Input required maxLength={100} value={name} onChange={e=>setName(e.target.value)} className="w-full"/>
      </label>
      <label className="grid gap-1 text-sm text-body">Type
@@ -111,10 +111,10 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
        <option value="ON_CAMPUS">On campus</option>
        <option value="VIRTUAL">Online</option>
       </Select></label>
-     {error?<div className="sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
-     {active?<details className="min-w-0 border-t border-border pt-3 sm:col-span-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Remove</summary><Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
-       variant="secondary" className="mt-2 min-h-11 w-full border-error text-error sm:w-auto md:min-h-9">Remove</Button></details>:null}
-     <div className="flex min-w-0 flex-wrap justify-end gap-2 sm:col-span-2 [&_button]:flex-1 sm:[&_button]:flex-none">
+     {error?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
+     {active?<details className="min-w-0 border-t border-border pt-3 md:col-span-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Remove</summary><Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
+       variant="secondary" className="mt-2 min-h-11 w-full border-error text-error md:w-auto md:min-h-9">Remove</Button></details>:null}
+     <div className="flex min-w-0 flex-wrap justify-end gap-2 md:col-span-2 [&_button]:flex-1 sm:[&_button]:flex-none">
       <Button type="button" disabled={pending} onClick={requestClose}
        variant="secondary">Cancel</Button>
       <Button type="submit" loading={pending} disabled={pending}
