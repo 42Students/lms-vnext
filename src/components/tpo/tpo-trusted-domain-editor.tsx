@@ -44,7 +44,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
    onClick={()=>setReview({action:"TRUST",value:domain})}
    className="min-h-11 w-full min-w-0 truncate md:min-h-9">Trust @{domain.replace(/^@/,"")||"domain"}</Button>
   </div>
-  {status?<div role={statusTone==="error"?"alert":"status"}><Alert tone={statusTone}>{status}</Alert></div>:null}
+  {status&&!review?<div role={statusTone==="error"?"alert":"status"}><Alert tone={statusTone}>{status}</Alert></div>:null}
   <ul className="divide-y divide-border">{domains.map(item=><li key={item} className="flex min-h-12 min-w-0 flex-col items-stretch gap-2 py-2 sm:flex-row sm:items-center sm:justify-between">
    <span className="break-all text-sm">@{item}</span>
    <Button type="button" disabled={busy} onClick={()=>setReview({action:"REMOVE",value:item})}
