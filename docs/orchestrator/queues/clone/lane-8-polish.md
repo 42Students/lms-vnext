@@ -44,5 +44,5 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-8.md: surface | proble
 - [x] `src/app/(authenticated)/college/electives/page.tsx` (College admin page)
 - [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx` (College admin page)
 - [x] `src/components/college/college-faculty-assignment-actions.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
-- [ ] `src/components/college/college-student-lifecycle-action.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/components/college/college-student-lifecycle-action.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/people/faculty-profile-editor.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)

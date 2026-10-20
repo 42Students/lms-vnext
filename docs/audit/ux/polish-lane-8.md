@@ -191,3 +191,9 @@ Files: faculty-assignment page and reassign component; queue/proof.
 Eight polish fixes: duplicate nested title, unwanted border, cramped seven-field grid, 4px label gutters, hard-to-tap course choices, short overflow list, narrow submit CTA and uneven row-end control. Removed duplicate visual title within its page disclosure, normalized legacy spacing, added adaptive 375/768/desktop fields, improved scrollable choices with 44px row targets and mobile-first action sizing. Reviewed empty program/course lists, truncation notices, partial bulk results, validation, confirmation, pending, failure/success, End assignment and cancellation states. Original IDs, roles, endpoints, audit behaviour and wording retained. Static source review only; no CI.
 
 File: college-faculty-assignment-actions.tsx; proof/queue.
+
+## Surface 31 — Student lifecycle confirmation
+
+Six UI issues: margin misalignment with neighboring record actions, variable action width at 375px, inconsistent label gutters, input sizing below touch target, overly long description line, and crowded error/confirmation content. Normalized 8/12px gaps, 44px phone controls, full-width narrow trigger, and readable confirmation content. Examined ended/active/suspended branches, modal open/cancel, invalid reason, in-flight request, stale version/error and success refresh; read consumer in college-role-directory-workspace and shared ConfirmDialog at 375/768. No change to API, aria/role, state logic, or labels. Static inspection only; no runtime.
+
+Files: college-student-lifecycle-action.tsx, proof and queue.
