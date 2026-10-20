@@ -49,7 +49,7 @@ export default async function SuperAdminModuleAccessPage({
         <div><dt>Student overrides</dt><dd className="font-semibold">{scopeMetrics.studentOverrides} stored membership rules in the visible colleges</dd></div>
       </dl>
     </section>
-    <form method="get" aria-label="Filter module access" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
+    <form method="get" aria-label="Filter module access" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto]">
       <label className="grid min-w-0 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         College
         <Input type="search" name="q" maxLength={100} defaultValue={result.q} placeholder="Search colleges"

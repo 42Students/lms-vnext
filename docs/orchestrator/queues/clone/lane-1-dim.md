@@ -43,26 +43,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-1.md: file, number of i
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/features/page.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/page.tsx`
-- [ ] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/admin/module-access/page.tsx`
-- [ ] `src/app/(authenticated)/admin/not-found.tsx`
-- [ ] `src/app/(authenticated)/admin/organizations/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/loading.tsx`
+- [x] `src/app/(authenticated)/admin/features/page.tsx`
+- [x] `src/app/(authenticated)/admin/hr/loading.tsx`
+- [x] `src/app/(authenticated)/admin/hr/page.tsx`
+- [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/admin/lessons/page.tsx`
+- [x] `src/app/(authenticated)/admin/module-access/page.tsx`
+- [x] `src/app/(authenticated)/admin/not-found.tsx`
+- [x] `src/app/(authenticated)/admin/organizations/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
