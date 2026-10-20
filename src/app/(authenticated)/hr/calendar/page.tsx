@@ -164,15 +164,16 @@ function RecruiterCalendarEventCard({
     <article className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
-            {event.title}
-          </h3>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-primary-text">
+          <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
             {event.companyName}
           </p>
           {event.collegeName ? (
             <p className="mt-1 text-xs text-muted-foreground">College: {event.collegeName}</p>
           ) : null}
+
+          <h3 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
+            {event.title}
+          </h3>
 
           {event.jobTitle ? (
             <p className="mt-1 text-sm text-body">
@@ -193,7 +194,7 @@ function RecruiterCalendarEventCard({
           ) : null}
         </div>
 
-        <div className="flex min-w-0 flex-wrap items-center gap-2 min-[768px]:justify-end">
+        <div className="flex flex-wrap gap-2">
           <StatusBadge
             tone={
               event.kind === "APPLICATION_DEADLINE"
@@ -308,7 +309,7 @@ export default async function HrCalendarPage({
       : monthLabel(anchor);
 
   return (
-    <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
@@ -341,12 +342,12 @@ export default async function HrCalendarPage({
         <>
           <section className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
             <h2 className="sr-only">Calendar controls</h2>
-            <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
+            <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-end min-[768px]:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground">{heading}</p>
-                {view !== "week" ? <p className="mt-1 text-sm text-body">
+                <p className="mt-1 text-sm text-body">
                   {dateLabel(window.from)} – {dateLabel(window.to)} · IST
-                </p> : null}
+                </p>
               </div>
               <Tabs renderPanel={false} ariaLabel="Calendar views" value={view}
                 className="w-full min-[768px]:w-auto"
@@ -360,7 +361,7 @@ export default async function HrCalendarPage({
                   option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
                 href:calendarHref(anchor,view,option)}))}/>
 
-            <div className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-4 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-start min-[768px]:justify-between">
+            <div className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-4 min-[1100px]:flex-row min-[1100px]:items-start min-[1100px]:justify-between">
               <nav aria-label="Calendar period navigation" className={styles.nav}>
                 <Link href={calendarHref(previous,view,category)}
                   aria-label={view==="week"?"Previous week":"Previous month"}
@@ -377,7 +378,7 @@ export default async function HrCalendarPage({
                   Next →
                 </Link>
               </nav>
-              <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:items-start">
+              <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start">
                 <details className="min-w-0">
                   <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
                     Jump to date
@@ -396,7 +397,7 @@ export default async function HrCalendarPage({
                 </details>
                 {!noCollegeAccess ? <Link
                   href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
-                  className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 min-[768px]:w-auto">
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 min-[768px]:w-auto">
                   Export calendar CSV
                 </Link> : null}
               </div>
@@ -405,7 +406,7 @@ export default async function HrCalendarPage({
 
           {nextVisible ? (
             <section aria-label="Next event in this period"
-              className="grid min-w-0 gap-2 border-b border-[var(--lms-canvas-border)] py-3 min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] min-[768px]:items-center min-[768px]:gap-4">
+              className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] py-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Next event in this period
               </p>
@@ -425,7 +426,7 @@ export default async function HrCalendarPage({
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text min-[768px]:min-h-9">Today</Link>} />
           ) : null}
 
-          {view !== "agenda" && eventCount > 0 ? (
+          {view !== "agenda" ? (
             <section
               aria-label={`${view} recruiter calendar`}
               className={styles.boardFrame}
@@ -557,7 +558,7 @@ export default async function HrCalendarPage({
             </section>
           ) : null}
 
-          {view === "agenda" && eventCount > 0 ? (
+          {view === "agenda" ? (
             <section
               aria-label="Recruiter calendar agenda"
               className="space-y-6"
@@ -592,7 +593,7 @@ export default async function HrCalendarPage({
                       : ""}
                   </h3>
 
-                  <div className="grid min-w-0 gap-y-2">
+                  <div className="grid min-w-0 gap-x-6 gap-y-2 lg:grid-cols-2">
                     {day.events.map((event) => (
                       <RecruiterCalendarEventCard key={event.id} event={event} />
                     ))}
@@ -601,7 +602,7 @@ export default async function HrCalendarPage({
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
                         <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
                         <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
-                        <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                        <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                           Open hiring rounds →
                         </Link>
                       </article>
@@ -612,11 +613,12 @@ export default async function HrCalendarPage({
             </section>
           ) : null}
           {view !== "agenda" && (category === "ALL" || category === "RESULTS_DUE") ? (
-            <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
-              <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
-                Results due in this period
-              </summary>
-              <div className="mt-3 min-w-0 space-y-3">
+            <section aria-label="Results due in this period"
+              className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
+              <div>
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+                  Results due in this period
+                </h2>
                 <p className="mt-1 text-sm text-body">
                   Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.
                 </p>
@@ -640,8 +642,7 @@ export default async function HrCalendarPage({
                 </ul>
               ) : <EmptyState title="No results due"
                 description="No results deadlines are recorded in this calendar period." />}
-              </div>
-            </details>
+            </section>
           ) : null}
 
           <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
