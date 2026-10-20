@@ -187,7 +187,7 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
                    ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
               : (workspace.project.summary ?? undefined)}
             actions={
-              <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
                 {mode==="ADMIN"&&backHref?<PageBackLink href={backHref} label={backLabel??"Back to projects"}/>:null}
                 <StatusBadge
                   tone={tone(workspace.project.status)}
@@ -337,7 +337,7 @@ export function ProjectWorkspace({
 
       {mode === "ADMIN" && show("readiness") ? (
         <Link href={"/admin/projects/readiness?projectId=" + encodeURIComponent(workspace.project.id)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
           Manage override
         </Link>
       ) : null}
@@ -459,7 +459,7 @@ export function ProjectWorkspace({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</h2>
             {mentorReviewHref ? <Link href={mentorReviewHref}
-              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link hover:bg-primary-subtle sm:w-auto md:min-h-9">
               Review submission
             </Link> : null}
           </div>
@@ -500,7 +500,7 @@ export function ProjectWorkspace({
             <h3 className="font-semibold text-foreground">Final submission</h3>
             <p className="mt-1">Status: {readiness.finalSubmission.latest?label(readiness.finalSubmission.latest.status):"Not submitted"}</p>
             <Link href={mentorReviewHref??("/mentor/projects/"+workspace.project.id+"?tab=delivery")}
-              className="mt-2 inline-flex min-h-10 items-center font-semibold text-link underline">Review submission</Link>
+              className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Review submission</Link>
           </section>:null}
           {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 border-b border-border pb-4">
             <h3 className="font-semibold">Task progress</h3>
@@ -588,7 +588,7 @@ export function ProjectWorkspace({
                   <p className="font-semibold">Requires attention</p>
                   <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker}</p>
                   <Link href={"/learn/projects/"+workspace.project.id+"?tab=board&taskStatus=BLOCKED"}
-                    className="inline-flex min-h-10 items-center text-link underline">
+                    className="inline-flex min-h-11 md:min-h-9 items-center text-link underline">
                     Open blocked work
                   </Link>
                 </div> : null}
@@ -614,7 +614,7 @@ export function ProjectWorkspace({
                 }</p>
               ) : null}
               <Link href={"/learn/projects/" + workspace.project.id + "?tab=delivery"}
-                className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-link underline">
+                className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
                 {readiness.finalSubmission.latest?.status === "CHANGES_REQUESTED"
                   ? "Update your submission" : "Open final submission"}
               </Link>
@@ -623,17 +623,17 @@ export function ProjectWorkspace({
           {mode === "LEARNER" ? (
             <div className="mt-4 space-y-3">
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-[var(--lms-control-radius)] bg-muted p-3 text-sm">
+                <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
                   <p className="font-semibold text-foreground">Mentor</p>
                   <p className="mt-1 text-body">{workspace.members.find(member =>
                     member.role === "MENTOR" && member.isPrimary)?.displayName ??
                     workspace.members.find(member => member.role === "MENTOR")?.displayName ??
                     "Not assigned"}</p>
                 </div>
-                <div className="rounded-[var(--lms-control-radius)] bg-muted p-3 text-sm">
+                <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
                   <p className="font-semibold text-foreground">Next step</p>
                   <Link href={"/learn/projects/" + workspace.project.id + "?tab=board"}
-                    className="mt-1 inline-flex min-h-10 items-center font-semibold text-link hover:underline">
+                    className="mt-1 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link hover:underline">
                     Open the Board →
                   </Link>
                 </div>
@@ -643,7 +643,7 @@ export function ProjectWorkspace({
                   <h3 className="text-sm font-semibold">Requires attention</h3>
                   <p className="mt-1 text-sm text-body">One or more tasks are blocked.</p>
                   <Link href={"/learn/projects/" + workspace.project.id + "?tab=board&taskStatus=BLOCKED"}
-                    className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-link underline">
+                    className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
                     Open blocked work
                   </Link>
                 </div>
@@ -657,7 +657,7 @@ export function ProjectWorkspace({
             {workspace.project.phase?<p>Phase: {workspace.project.phase}</p>:null}
             <div className="flex flex-wrap gap-3">
               <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board"}
-                className="min-h-10 font-semibold text-link underline">
+                className="min-h-11 md:min-h-9 font-semibold text-link underline">
                 {workspace.project.nextAction??"Next step · Open the Board"} →
               </Link>
             </div>
@@ -667,7 +667,7 @@ export function ProjectWorkspace({
                 <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker||
                   workspace.tasks.filter(t=>t.status==="BLOCKED").length+" blocked tasks"}</p>
                 <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board&lane=BLOCKED"}
-                  className="inline-flex min-h-10 items-center font-semibold text-link underline">Open blocked work</Link>
+                  className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Open blocked work</Link>
               </div>:null}
           </section>:null}
           {workspace.project.summary ? (
@@ -691,7 +691,7 @@ export function ProjectWorkspace({
             <>
               <Link href={(backHref.startsWith("/college/") ? "/college/projects" : "/admin/projects") +
                 "/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
-                className="inline-flex min-h-10 items-center text-sm font-semibold text-link underline">
+                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
                 Reassign mentor
               </Link>
               <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
@@ -720,18 +720,18 @@ export function ProjectWorkspace({
           </p>;
         })() : null}
         {workspace.project.teamGroupId ? (
-          <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
+          <p className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3 text-sm text-body">
             Learner assignments in this workspace come from its managed class team.
             Only College Admin or Super Admin may change team membership in the class team workspace;
             mentors can review Project work but cannot edit team membership.
           </p>
         ) : null}
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2 xl:grid-cols-3">
           {mode==="MENTOR"?workspace.mentorRoster.map(member=>{
             const active=member.endedAt===null && member.memberStatus==="ACTIVE" &&
               member.accountStatus==="ACTIVE";
             const linkedIn=member.role==="MENTOR"?safeProjectExternalHref(member.linkedIn):null;
-            return <article key={member.id} className="rounded-xl border border-border bg-surface p-4">
+            return <article key={member.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <p className="font-semibold text-foreground">{member.displayName??"Unnamed member"}</p>
@@ -747,14 +747,14 @@ export function ProjectWorkspace({
                 {member.bio?<p className="whitespace-pre-wrap break-words">{member.bio}</p>:
                   <p className="text-xs">No mentor bio yet. Update your faculty profile to introduce your role.</p>}
                 {linkedIn?<a href={linkedIn} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex min-h-10 items-center text-link underline">LinkedIn profile ↗</a>:null}
+                  className="inline-flex min-h-11 md:min-h-9 items-center text-link underline">LinkedIn profile ↗</a>:null}
               </div>:null}
             </article>;
           }):null}
           {mode!=="MENTOR"?workspace.members.map((member) => (
             <article
               key={member.id}
-              className="rounded-xl border border-border bg-surface p-4"
+              className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -801,8 +801,8 @@ export function ProjectWorkspace({
           <h2 className="m-0 text-lg font-semibold text-foreground">
             {mode==="ADMIN"?"Execution":"Releases and Sprints"}
           </h2>
-          {mentorReviewHref ? <Link href={mentorReviewHref}
-            className="mt-2 inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
+          {mentorReviewHref && !show("overview") ? <Link href={mentorReviewHref}
+            className="mt-2 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
             Review submission
           </Link> : null}
           {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
@@ -819,6 +819,9 @@ export function ProjectWorkspace({
                   className="font-semibold text-link underline">add a release</a>,
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
             />:null}
+          {mode!=="MENTOR"&&workspace.releases.length===0?
+            <EmptyState title="No sprints yet"
+              description="Add the sprints this project should be measured against."/>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
@@ -846,14 +849,14 @@ export function ProjectWorkspace({
             <article
               key={release.id}
               id={"project-release-"+release.id}
-              className={polishAdminSection && mode==="ADMIN" ? "min-w-0 border-y border-border py-4" : "rounded-xl border border-border bg-surface p-5"}
+              className="min-w-0 scroll-mt-24 border-b border-[var(--lms-canvas-border)] py-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-link">
                     Release {release.sequence + 1}
                   </p>
-                  <h3 className="mt-1 text-base font-semibold text-foreground">
+                  <h3 className="mt-1 min-w-0 break-words text-base font-semibold text-foreground">
                     {release.title}
                   </h3>
                   {mode==="MENTOR"?<p className="mt-2 text-xs font-semibold text-body">
@@ -871,7 +874,7 @@ export function ProjectWorkspace({
                     </p>
                   ) : null}
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
                   <StatusBadge tone={tone(release.status)}>
                     {label(release.status)}
                   </StatusBadge>
@@ -901,11 +904,11 @@ export function ProjectWorkspace({
                   []).map((sprint) => (
                   <section
                     key={sprint.id}
-                    className={polishAdminSection && mode==="ADMIN" ? "min-w-0 border-t border-border py-4" : "rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-neutral-50)] p-4"}
+                    className="min-w-0 border-t border-[var(--lms-canvas-border)] py-4"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <p className="m-0 text-sm font-semibold text-foreground">
+                        <p className="m-0 min-w-0 break-words text-sm font-semibold text-foreground">
                           Sprint {sprint.sequence + 1} ·{" "}
                           {sprint.title}
                         </p>
@@ -930,7 +933,7 @@ export function ProjectWorkspace({
                           </p>;
                         })() : null}
                       </div>
-                      <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
                         <StatusBadge
                           tone={tone(sprint.status)}
                         >
@@ -997,7 +1000,7 @@ export function ProjectWorkspace({
 
                     <div className="mt-3 grid gap-2">
                       {mode==="MENTOR" && mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[]) ? (
-                        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-xs text-body">
+                        <p role="status" className="border-l-2 border-[var(--lms-canvas-border)] pl-3 py-2 text-xs text-body">
                           {mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[])}
                         </p>
                       ) : null}
@@ -1016,11 +1019,11 @@ export function ProjectWorkspace({
                           <div
                             key={task.id}
                             id={"mentor-task-"+task.id}
-                            className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-3"
+                            className="min-w-0 scroll-mt-24 border-t border-[var(--lms-canvas-border)] py-4"
                           >
                             <div className="flex flex-wrap items-start justify-between gap-3">
                               <div className="min-w-0">
-                                <p className="m-0 text-sm font-semibold text-foreground">
+                                <p className="m-0 min-w-0 break-words text-sm font-semibold text-foreground">
                                   {task.title}
                                 </p>
                                 {task.description ? (
@@ -1028,12 +1031,12 @@ export function ProjectWorkspace({
                                     {task.description}
                                   </p>
                                 ) : null}
-                                {task.approach ? <section className="mt-2 text-xs text-body">
-                                  <h4 className="font-semibold">Approach</h4>
-                                  <p className="whitespace-pre-wrap break-words">{task.approach}</p>
-                                </section>:null}
+                                {task.approach ? <Disclosure title="Approach"
+                                  className="mt-2 border-t border-[var(--lms-canvas-border)] pt-2 text-xs text-body">
+                                  <p className="mt-2 whitespace-pre-wrap break-words">{task.approach}</p>
+                                </Disclosure>:null}
                                 {showMentorTaskCriteria(mode,task.acceptanceCriteria) ? (
-                                  <Disclosure title="Acceptance criteria" className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2">
+                                  <Disclosure title="Acceptance criteria" className="mt-2 border-t border-[var(--lms-canvas-border)] py-2">
                                     <p className="mt-2 whitespace-pre-wrap break-words text-xs leading-5 text-body">
                                       {learnerTaskCriteriaPreview(task.acceptanceCriteria)}
                                     </p>
@@ -1046,7 +1049,7 @@ export function ProjectWorkspace({
                                 ) : null}
                                 {mode==="MENTOR" && latestAttempt ? (
                                   <Link href={mentorTaskFeedbackHref(workspace.project.id,task.id)}
-                                    className="mt-2 inline-flex min-h-10 items-center text-xs font-semibold text-link underline">
+                                    className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-xs font-semibold text-link underline">
                                     Review recorded task feedback →
                                   </Link>
                                 ) : null}
@@ -1127,7 +1130,7 @@ export function ProjectWorkspace({
                               taskId={task.id} updatedAt={task.updatedAt.toISOString()}
                               canPost={!readOnly}/>
                             {mode !== "LEARNER" && !readOnly ? (
-                              <div className="mt-3 flex flex-wrap items-end gap-2">
+                              <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2 border-t border-[var(--lms-canvas-border)] pt-3">
                                 {["PLANNED","ACTIVE"].includes(sprint.status) &&
                                   release.status !== "SHIPPED" &&
                                   task.status !== "DONE" &&
@@ -1217,7 +1220,7 @@ export function ProjectWorkspace({
 
         </div>
         {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
-          <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
+          <p role="status" className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3 text-sm text-body">
             Latest recorded delivery: version {workspace.mentorEvidence.latestDelivery?.version}
             {" · "}{workspace.mentorEvidence.latestDelivery?.status}.
             Historic versions remain available below.
@@ -1249,7 +1252,7 @@ export function ProjectWorkspace({
                 return (
                   <article
                     key={submission.id}
-                    className={polishAdminSection && mode==="ADMIN" ? "min-w-0 border-y border-border py-4" : "rounded-xl border border-border bg-surface p-5"}
+                    className="min-w-0 scroll-mt-24 border-b border-[var(--lms-canvas-border)] py-4"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
@@ -1337,7 +1340,7 @@ export function ProjectWorkspace({
                     ) : null}
 
                     {review ? (
-                      <div className="mt-4 rounded-[var(--lms-control-radius)] bg-muted p-3">
+                      <div className="mt-4 border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-3 py-2">
                         <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                           Review · {label(review.decision)}
                         </p>
@@ -1349,7 +1352,7 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
-                    {mode!=="LEARNER"?<Disclosure title="Submission history" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+                    {mode!=="LEARNER"?<Disclosure title="Submission history" className="mt-3 border-t border-[var(--lms-canvas-border)] pt-3">
                       <ul className="mt-2 space-y-2 text-xs text-body">
                         {workspace.activity.filter(event=>event.subjectId===submission.id&&
                           event.eventType.includes("delivery")).map(event=>
@@ -1406,7 +1409,7 @@ export function ProjectWorkspace({
                     ) : null}
 
                     {evaluation ? (
-                      <div className="mt-3 rounded-[var(--lms-control-radius)] bg-[var(--lms-success-subtle)] p-3">
+                      <div className="mt-3 border-l-[3px] border-success bg-[var(--lms-success-subtle)] px-3 py-2">
                         <p className="m-0 text-sm font-semibold text-success">
                           Evaluation ·{" "}
                           {evaluation.totalScore}/
@@ -1494,7 +1497,7 @@ export function ProjectWorkspace({
           {mode==="MENTOR" && workspace.meetings.length ? (() => {
             const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
-            return <section aria-label="Upcoming project meetings" className="rounded-xl border border-border bg-surface p-4">
+            return <section aria-label="Upcoming project meetings" className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
               <h3 className="text-sm font-semibold">Next meeting</h3>
               {upcoming[0]?<p className="mt-1 text-sm">
                 {upcoming[0].title} · {formatDateTime(upcoming[0].startsAt)}
@@ -1530,7 +1533,7 @@ export function ProjectWorkspace({
                 return (
                   <article
                     key={meeting.id}
-                    className="rounded-xl border border-border bg-surface p-4"
+                    className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
@@ -1567,7 +1570,7 @@ export function ProjectWorkspace({
                       </p>
                     ) : null}
                     {meeting.outcome ? (
-                      <p className="mt-2 rounded-[var(--lms-control-radius)] bg-muted p-3 text-sm leading-6 text-body">
+                      <p className="mt-2 border-l-2 border-[var(--lms-canvas-border)] pl-3 text-sm leading-6 text-body">
                         Outcome: {meeting.outcome}
                       </p>
                     ) : null}
@@ -1575,7 +1578,7 @@ export function ProjectWorkspace({
                       const detail=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
                       const hasDetail=Boolean(detail.notes||detail.actionItems||detail.wentWell||
                         detail.improve||detail.nextTime||detail.followUpAt||detail.followUpNotes);
-                      return hasDetail?<Disclosure title="Meeting notes and follow-up" className="mt-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+                      return hasDetail?<Disclosure title="Meeting notes and follow-up" className="mt-2 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
                         {([
                           ["Notes",detail.notes],["Action items",detail.actionItems],
                           ["What went well?",detail.wentWell],["What could improve?",detail.improve],
@@ -1592,7 +1595,7 @@ export function ProjectWorkspace({
                       <Link
                         href={"/mentor/projects/"+encodeURIComponent(workspace.project.id)+
                           "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-                        className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-link underline">
+                        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
                         {meeting.outcome?"View notes":"Add notes"}
                       </Link>
                     ) : null}
@@ -1661,7 +1664,7 @@ export function ProjectWorkspace({
           </div>
 
           {mode === "ADMIN" ? <Link href={"/admin/projects/audit?projectId=" + encodeURIComponent(workspace.project.id)}
-            className="inline-flex min-h-10 items-center text-sm font-semibold text-link underline">View full project audit</Link> : null}
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View full project audit</Link> : null}
           <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} resourceAudit={mode==="ADMIN"}/>
 
 
