@@ -25,7 +25,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
     await getTpoPlacementSeasonSettings(context);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <TpoSettingsNav active="season" />
 
       <section className="space-y-2">
