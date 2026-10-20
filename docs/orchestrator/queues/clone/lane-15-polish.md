@@ -27,7 +27,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-15.md: surface | probl
 - [x] `src/app/(authenticated)/recruiter/drives/page.tsx` (Recruiter/tracker page)
 - [x] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx` (Recruiter/tracker page)
 - [x] `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx` (Recruiter/tracker page)
-- [ ] `src/app/(authenticated)/recruiter/home/page.tsx` (Recruiter/tracker page)
+- [x] `src/app/(authenticated)/recruiter/home/page.tsx` (Recruiter/tracker page)
 - [ ] `src/app/(authenticated)/recruiter/messages/page.tsx` (Recruiter/tracker page)
 - [ ] `src/app/(authenticated)/recruiter/page.tsx` (Recruiter/tracker page)
 - [ ] `src/app/(authenticated)/recruiter/profile/page.tsx` (Recruiter/tracker page)
