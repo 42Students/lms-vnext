@@ -64,24 +64,29 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
   <fieldset className="space-y-3">
    <legend className="font-semibold">Numbers to show</legend>
    <p className="text-xs text-muted-foreground">Choose the public numbers and their order. Small or unavailable values stay hidden.</p>
+   <div className="grid min-w-0 gap-x-6 gap-y-1 sm:grid-cols-2">
    {ALL.map(key=><label key={key} className="flex min-h-11 md:min-h-9 items-center gap-2 text-sm">
     <Checkbox checked={metricKeys.includes(key)} disabled={!initial.ready||busy}
      onChange={()=>toggle(key)}/>{PUBLIC_METRIC_LABELS[key]}
    </label>)}
+   </div>
   </fieldset>
+  <details className="min-w-0 border-t border-border pt-3">
+   <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2">Public number order</summary>
   <ol aria-label="Public number order" className="space-y-2">
-   {metricKeys.map((key,index)=><li key={key} className="flex items-center justify-between gap-3 border-b border-border py-2 text-sm">
+   {metricKeys.map((key,index)=><li key={key} className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
     <span>{index+1}. {PUBLIC_METRIC_LABELS[key]}</span>
-    <span className="flex gap-2"><Button type="button" variant="secondary" disabled={busy||index===0}
+    <span className="flex flex-wrap justify-end gap-2"><Button type="button" variant="secondary" disabled={busy||index===0}
      onClick={()=>move(index,-1)} className="min-h-11 md:min-h-9 text-xs">Move up</Button>
      <Button type="button" variant="secondary" disabled={busy||index===metricKeys.length-1}
       onClick={()=>move(index,1)} className="min-h-11 md:min-h-9 text-xs">Move down</Button></span>
    </li>)}
   </ol>
+  </details>
   {dirty?<InlineNotice tone="info" message="Unsaved changes"/>:null}
   {!initial.ready?<Alert tone="warning">Page content editing is temporarily unavailable until storage is ready.</Alert>:null}
   <Button variant="primary" type="button" disabled={busy||!initial.ready||!dirty}
-   className="min-h-11 md:min-h-9"
+   className="min-h-11 w-full sm:w-auto md:min-h-9"
    onClick={()=>void save()}>{busy?"Saving…":"Save"}</Button>
   {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message}/>:null}
  </section>;
