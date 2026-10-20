@@ -297,7 +297,7 @@ export default async function TpoCompanyDetailPage({
                       tone={
                         contact.stage === "NOT_NOW"
                           ? "warning"
-                          : "neutral"
+                          : contact.stage === "JOINED" || contact.stage === "RECRUITED" ? "success" : contact.stage === "DRIVE_PLANNED" ? "info" : "neutral"
                       }
                     >
                       {({NOT_NOW:"Not now",DRIVE_PLANNED:"Drive planned",RECRUITED:"Recruited",JOINED:"Joined",INVITED:"Invited",CONTACTED:"Contacted",NEW:"New"} as Record<string,string>)[contact.stage]??"Recorded"}
