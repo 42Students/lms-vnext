@@ -49,7 +49,7 @@ export default async function SuperAdminQuizzesPage({
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 max-w-full space-y-4">
-    <PageHeader title="Quizzes" actions={<a href={adminAssessmentExportHref("QUIZ",query.data)}
+    <PageHeader title="Quizzes" description="Quizzes across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates." actions={<a href={adminAssessmentExportHref("QUIZ",query.data)}
      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto print:hidden hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export quizzes.csv</a>} />
     {lessonsResult.status==="fulfilled"?
       <CollegeQuizCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:

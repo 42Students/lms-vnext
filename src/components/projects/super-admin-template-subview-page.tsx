@@ -454,14 +454,14 @@ export async function SuperAdminTemplateSubviewPage({
               .map((resource) => (
                 <article
                   key={resource.key}
-                  className="border-b border-border py-5 last:border-b-0"
+                  className="min-w-0 border-b border-border py-4 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <h3 className="m-0 text-base font-semibold text-foreground">
+                      <h3 className="m-0 break-words text-base font-semibold text-foreground">
                         {resource.title}
                       </h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="mt-1 break-all text-xs text-muted-foreground">
                         Key: {resource.key}
                       </p>
                     </div>
