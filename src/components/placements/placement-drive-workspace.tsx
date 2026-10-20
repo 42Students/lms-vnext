@@ -379,10 +379,7 @@ export async function PlacementDriveWorkspace({
       {isTpo&&job.status==="DRAFT"?
        <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
       {isTpo&&!lifecycleReadiness?
-       <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
-        Could not load: Publication readiness. Publishing is unavailable until these checks recover.
-        Refresh the drive to try again.
-       </p>:null}
+       <Banner tone="warning">Could not load: Publication readiness. Publishing is unavailable until these checks recover. Refresh the drive to try again.</Banner>:null}
       <section aria-label="Drive status and details" className="border-b border-border pb-6">
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{headerFacts.status}</StatusBadge>
@@ -680,10 +677,7 @@ export async function PlacementDriveWorkspace({
         }))}
       />
       {isTpo&&job.status==="PUBLISHED"&&!bulkCandidates?
-       <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
-        Could not load: Bulk applicants. Other drive sections are still available.
-        Refresh the drive to retry this section.
-       </p>:null}
+       <Banner tone="warning">Could not load: Bulk applicants. Other drive sections are still available. Refresh the drive to retry this section.</Banner>:null}
       {bulkCandidates ? (
         <PlacementBulkAddApplicants
           jobId={jobId}
