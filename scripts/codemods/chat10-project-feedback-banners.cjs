@@ -44,7 +44,8 @@ for (const relativePath of files) {
   });
 
   if (replacements === 0) {
-    throw new Error(relativePath + ": expected feedback pattern missing; inspect before rerunning");
+    process.stdout.write(relativePath + ": already migrated or no matching inline notice; unchanged\n");
+    continue;
   }
   if (!updated.includes(bannerImport)) {
     const afterDirective = updated.indexOf("\n") + 1;
