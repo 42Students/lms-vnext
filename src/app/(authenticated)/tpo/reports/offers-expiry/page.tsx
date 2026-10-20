@@ -53,7 +53,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
           Apply window
         </Button>
       </form>
-      <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
+      <p className="border-b border-[var(--lms-canvas-border)] bg-transparent py-4 text-sm text-body">
         {data.scopeNote} Window: {data.asOfIst} through {data.throughIst} (IST, inclusive).
       </p>
       {data.truncated ? (
