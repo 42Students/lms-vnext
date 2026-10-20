@@ -155,8 +155,8 @@ type ResultDraft = {
   internalComment: string;
 };
 
-const inputClass = "w-full";
-const textareaClass = "min-h-20 w-full";
+const inputClass = "min-h-11 w-full md:min-h-9";
+const textareaClass = "min-h-28 w-full";
 
 function humanize(value: string) {
   return value
@@ -855,7 +855,7 @@ export function PlacementDriveControls({
               return (
                 <div
                   key={item.applicationId}
-                  className="grid gap-4 px-5 py-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,1fr)]"
+                  className="grid min-w-0 grid-cols-1 gap-3 py-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,1fr)]"
                 >
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -887,7 +887,7 @@ export function PlacementDriveControls({
                         "No contact on profile"}
                     </p>
 
-                    <div className="mt-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3">
+                    <Disclosure title="Review eligibility" className="mt-3 min-w-0" contentClassName="space-y-3 pt-3">
                       {eligibilityReviews[
                         item.membershipId
                       ] ? (
@@ -1080,14 +1080,14 @@ export function PlacementDriveControls({
                           )
                         }
                       />
-                    </div>
+                    </Disclosure>
                   </div>
                   {terminal ? (
                     <p className="m-0 text-sm text-muted-foreground">
                       Decision is final in the current screening state machine.
                     </p>
                   ) : (
-                    <div className="grid gap-3">
+                    <Disclosure title="Screening decision" className="min-w-0" contentClassName="grid gap-3 pt-3">
                       <label>
                         <FieldLabel>
                           Candidate message
@@ -1192,7 +1192,7 @@ export function PlacementDriveControls({
                           Reject
                         </Button>
                       </div>
-                    </div>
+                    </Disclosure>
                   )}
                 </div>
               );
@@ -1230,7 +1230,7 @@ export function PlacementDriveControls({
             (round, index) => (
               <div
                 key={round.id}
-                className="grid gap-3 border-b border-border py-4 lg:grid-cols-[5rem_10rem_minmax(12rem,1fr)_8rem_auto]"
+                className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-3 sm:grid-cols-2 lg:grid-cols-[5rem_10rem_minmax(12rem,1fr)_8rem_auto] lg:items-center"
               >
                 <div className="flex min-h-10 items-center text-sm font-semibold text-muted-foreground">
                   Round {index + 1}
@@ -1494,7 +1494,7 @@ export function PlacementDriveControls({
                 </StatusBadge>
               </div>
 
-              <dl aria-label={round.name+" round facts"} className="mt-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+              <dl aria-label={round.name+" round facts"} className="mt-4 grid min-w-0 grid-cols-2 gap-3 text-sm md:grid-cols-3 xl:grid-cols-4 [&_dd]:break-words">
                 <div><dt className="text-xs text-body">Status</dt><dd className="font-semibold">{facts.status}</dd></div>
                 <div><dt className="text-xs text-body">Mode</dt><dd>{facts.mode}</dd></div>
                 <div><dt className="text-xs text-body">When</dt><dd>{facts.when}</dd></div>
@@ -1527,8 +1527,8 @@ export function PlacementDriveControls({
                 round.status ===
                   "SCHEDULED") &&
               schedule ? (
-                <Disclosure title={round.status==="SCHEDULED"?"Reschedule / manage round":"Schedule round"} className="mt-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
-                  <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                <Disclosure title={round.status==="SCHEDULED"?"Reschedule / manage round":"Schedule round"} className="mt-4 min-w-0" contentClassName="pt-3">
+                  <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
                     <label>
                       <FieldLabel>
                         Date & time
@@ -1695,7 +1695,7 @@ export function PlacementDriveControls({
                       />
                     </label>
                   </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  <div className="mt-4 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
                     <Button
                       size="sm"
                       disabled={
@@ -1752,7 +1752,7 @@ export function PlacementDriveControls({
               {round.kind !== "TALK" &&
               round.participants.length >
                 0 ? (
-                <div className="mt-5 grid gap-4">
+                <div className="mt-5 min-w-0 divide-y divide-border border-y border-border">
                   {round.participants.map(
                     (participant) => {
                       const key =
@@ -1773,7 +1773,7 @@ export function PlacementDriveControls({
                           key={
                             participant.applicationId
                           }
-                          className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
+                          className="min-w-0 py-4"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <div>
@@ -1827,8 +1827,8 @@ export function PlacementDriveControls({
                               Applied results are immutable in this workflow.
                             </p>
                           ) : (
-                            <>
-                              <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                            <Disclosure title="Stage / apply result" className="mt-2 min-w-0" contentClassName="pt-3">
+                              <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
                                 <label>
                                   <FieldLabel>
                                     Outcome
@@ -2057,7 +2057,7 @@ export function PlacementDriveControls({
                                   />
                                 </label>
                               </div>
-                              <div className="mt-3 flex flex-wrap gap-2">
+                              <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
                                 <Button
                                   size="sm"
                                   variant="secondary"
@@ -2101,7 +2101,7 @@ export function PlacementDriveControls({
                                   </Button>
                                 ) : null}
                               </div>
-                            </>
+                            </Disclosure>
                           )}
                         </div>
                       );

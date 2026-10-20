@@ -199,3 +199,27 @@
 **Problems fixed (8):** two dense forms competed side-by-side; unused form controls overloaded canvas; deep-linked round not prioritized; primary choice unclear; phone actions cramped; nested history cards crowded; long history text and statuses awkwardly aligned; 375px cancel target not guaranteed. Introduced two native keyboard disclosures (round opens when linked), bounded form reading width, full-width phone buttons, and hairline-divided history with responsive rows. All IDs, request payloads/guards/statuses, copy and navigation preserved.
 
 **Files:** `src/components/placements/learner-placement-requests.tsx`, queue and proof. No runtime/tests/CI.
+
+## Surface 36 — Placement drive controls
+
+**Reviewed:** complete 2,100+ lines of component flows in order: screening queue/candidate eligibility/evidence, initial evaluation-plan editors/presets/confirm, round facts and venue warnings, schedule/reschedule/cancel, result stage/apply/immutability, zero/terminal, disabled/pending/error/success states. Shared Disclosure, ConfirmDialog, status/input/editors; 375/768/1280 responsive source review; no execution/CI.
+
+**Problems fixed (11):** each screening candidate exposed full eligibility and decision editors; nested eligibility cards clashed with shell; row padding squeezed phone; evaluation fields became tiny; round details made long mobile column; schedule forms nested canvas cards; round participants nested cards; every participant exposed an entire result form; phone schedule/result actions wrapped unpredictably; textareas too short; input controls not consistently 44px. Kept summarized list content on top, moved advanced edits behind accessible shared disclosures, flattened row dividers, improved 2-column phone facts and 1/2/5-column form rhythm, widened controls. All authorization, endpoints, draft values, status/mutation checks, confirmation and ID semantics unchanged.
+
+**Files:** `src/components/placements/placement-drive-controls.tsx`, queue, proof. No runtime/CI.
+
+## Surface 37 — Placement job lifecycle controls
+
+**Reviewed:** DRAFT/PUBLISHED/CLOSED/ARCHIVED statuses, publish/close/archive mutations, pending button strings, toast success/failure, existing two-stage inline close/archive confirmation, shared Button, Badge and ConfirmDialog, 375/768 layout; parent surfaces retain role. No execution/CI.
+
+**Problems fixed (8):** destructive inline second-click replaced first control in place and shifted action layout; Confirm/Cancel states generated extra competing buttons; phone button cluster wrapped unevenly; lifecycle title was a paragraph rather than section heading; status/description not bounded for narrow screens; archived reserved an empty action slot; the irreversible affordance lacked a consistent dialog hierarchy; safe primary Publish visually competed with archive. Converted same explicit confirmations into shared keyboard/focus-aware modal with original Confirm close/Confirm archive and Keep live/Cancel labels; kept Publish primary, displayed secondary destructive entry with danger modal, simplified 375px full-width controls, and tightened heading and copy. All POST/DELETE URLs, guards, statuses, success/error copy and route refresh preserved.
+
+**Files:** `src/components/placements/placement-job-lifecycle-controls.tsx`, queue and proof. No tests/CI.
+
+## Surface 38 — Placement season manager
+
+**Reviewed:** active/closed/no-season views; four-field create form, disabled/busy, success/error toasts, close validation and result, history badges, 375/768 form layouts, shared Button/Input/Badge/ConfirmDialog/Disclosure. No execution/CI.
+
+**Problems fixed (8):** native blocking window.confirm broke shared legacy modal skin/focus; active close action had inconsistent touch height; new season form squeezed to four columns at desktop; create action broke alignment at 768; historic status badges permanently occupied primary flow; close confirm showed no coherent description hierarchy; active summary row gutters were loose; empty state form felt too cramped. Used shared destructive confirmation retaining precondition and two-step intent, 1/2-column form with 44px actions, compact active row and historical seasons disclosure with total; kept all API URLs, form names, status, state transitions and error/toast text.
+
+**Files:** `src/components/placements/placement-season-manager.tsx`, queue, proof. No tests or CI.
