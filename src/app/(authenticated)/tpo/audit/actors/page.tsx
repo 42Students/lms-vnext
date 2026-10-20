@@ -66,14 +66,14 @@ export default async function TpoActorAuditPage({
   const dateTime = new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
   });
-  return <div className="space-y-6">
-    <Link href="/tpo/audit" className="text-sm font-semibold text-link hover:underline">
+  return <div className="min-w-0 space-y-6">
+    <Link href="/tpo/audit" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       ← All audit sources
     </Link>
     <PageHeader title="Actor and entity audit"
       description="Canonical placement activity events with exact persisted actor, entity and IST date filters."
       actions={<a href={exportHref}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Export matching CSV (first 2,000)
       </a>} />
     <p className="text-sm leading-6 text-body">
@@ -88,28 +88,28 @@ export default async function TpoActorAuditPage({
         ["entityType", "Entity type", "placement_offer"],
         ["entityId", "Entity ID", "Stored subject ID"],
       ] as const).map(([name, label, placeholder]) => <label key={name}
-        className="grid gap-1 text-sm font-semibold text-foreground">
+        className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {label}
         <Input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
+          className="min-h-11 md:min-h-9 w-full"/>
       </label>)}
       {(["from", "to"] as const).map((name) => <label key={name}
-        className="grid gap-1 text-sm font-semibold text-foreground">
+        className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {name === "from" ? "From (IST)" : "Through (IST)"}
         <Input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
+          className="min-h-11 md:min-h-9 w-full"/>
       </label>)}
-      <label className="grid gap-1 text-sm font-semibold text-foreground">
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
        Sort date
        <Select name="sort" defaultValue={parsed.data.sort}
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+        className="min-h-11 md:min-h-9 w-full">
         <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
        </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-foreground">
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Page size
         <Select name="pageSize" defaultValue={String(parsed.data.pageSize)}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal text-foreground">
+          className="min-h-11 md:min-h-9 w-full">
           {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
         </Select>
       </label>
