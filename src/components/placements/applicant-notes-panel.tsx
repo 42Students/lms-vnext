@@ -71,9 +71,9 @@ export function ApplicantNotesPanel({
       {snapshot.notes.length === 0 ? (
         <p className="text-sm text-body">No notes yet.</p>
       ) : (
-        <ul className="grid gap-3">
+        <ul className="divide-y divide-border border-y border-border">
           {snapshot.notes.map((note) => (
-            <li key={note.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+            <li key={note.id} className="min-w-0 py-4">
               <p className="whitespace-pre-wrap break-words text-sm text-foreground">{note.body}</p>
               <p className="mt-2 text-xs text-body">
                 {note.mine ? "You" : note.authorName} · {formatIst(note.createdAt)} IST
@@ -87,7 +87,7 @@ export function ApplicantNotesPanel({
           Showing the newest {snapshot.notes.length} of {snapshot.total} notes.
         </p>
       ) : null}
-      <form onSubmit={(e) => void submit(e)} className="space-y-2">
+      <form onSubmit={(e) => void submit(e)} className="space-y-3">
         <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Add a note
           <Textarea
@@ -104,7 +104,7 @@ export function ApplicantNotesPanel({
         <Button
           type="submit"
           disabled={pending}
-          
+          className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
         >
           {pending ? "Saving…" : "Save note"}
         </Button>
