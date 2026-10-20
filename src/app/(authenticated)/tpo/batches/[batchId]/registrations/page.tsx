@@ -33,7 +33,7 @@ export default async function BatchRegistrations({params,searchParams}:{
   <PageHeader title={data.batch.name+" — Registration choices"} description="Recorded student choices and consent evidence."/>
   <TpoBatchWorkspaceTabs batchId={batchId} active="registrations" />
   {!data.ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">Registration storage is unavailable. No learner choices were loaded.</p>:<>
-   <form action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-3">
+   <form role="search" aria-label="registrations filters" action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-3">
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find learner
      <Input type="search" name="q" maxLength={100} defaultValue={data.filters.q}
       className="min-h-11 w-full md:min-h-9 mt-[6px] block"/>
@@ -57,7 +57,7 @@ export default async function BatchRegistrations({params,searchParams}:{
     <p className="text-sm text-muted-foreground">{data.total} matching students in {data.sampleSize} sampled records. Page {data.filters.page}.</p>
     <a href={"/api/placements/tpo/batches/"+batchId+"/registrations/export?"+new URLSearchParams({
      q:data.filters.q,choice:data.filters.choice,source:data.filters.source,recency:data.filters.recency,order:data.filters.order,pageSize:String(data.filters.pageSize),page:String(data.filters.page),
-    }).toString()} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    }).toString()} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
      Export current page CSV
     </a>
    </div>
@@ -78,14 +78,14 @@ export default async function BatchRegistrations({params,searchParams}:{
      {key:"actions",header:"Actions",mobileLabel:"Actions",mobilePriority:"action" as const,
       cell:row=><div className="flex min-w-0 flex-wrap gap-x-4 gap-y-1">
        <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations/"+encodeURIComponent(row.membershipId)+"/history"}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Registration change history</Link>
+        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Registration change history</Link>
        <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Review participation</Link>
+        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review participation</Link>
       </div>},
     ]}/>
    <nav aria-label="Registration pages" className="flex flex-wrap gap-2">
-    {data.filters.page>1?<Link href={url(data.filters.page-1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-    {data.hasMore?<Link href={url(data.filters.page+1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
+    {data.filters.page>1?<Link href={url(data.filters.page-1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
+    {data.hasMore?<Link href={url(data.filters.page+1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
    </nav>
   </>}
  </div>;
