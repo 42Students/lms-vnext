@@ -52,10 +52,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regres
 - [x] `src/components/projects/college-project-summary-editor.tsx`
 - [x] `src/components/public/graceful-error-boundary.tsx`
 - [x] `src/components/tpo/tpo-header-indicators.tsx`
-- [ ] `src/components/ui/form-grid.tsx`
-- [ ] `src/components/ui/otp-input.tsx`
-- [ ] `src/components/ui/search-field.tsx`
-- [ ] `src/app/(authenticated)/hr/loading.tsx`
+- [x] `src/components/ui/form-grid.tsx`
+- [x] `src/components/ui/otp-input.tsx`
+- [x] `src/components/ui/search-field.tsx`
+- [x] `src/app/(authenticated)/hr/loading.tsx`
 - [ ] `src/app/(authenticated)/college-admin/layout.tsx`
 - [ ] `src/app/(authenticated)/hr/not-found.tsx`
 - [ ] `src/app/(authenticated)/teacher/layout.tsx`
