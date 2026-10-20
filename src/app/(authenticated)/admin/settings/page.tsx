@@ -43,7 +43,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   if(!parsed) return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Tenant Settings"/>
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
-      action={<Link href="/admin/settings" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+      action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Clear filters</Link>}/>
   </div>;
   const retryParams=new URLSearchParams();
   if(parsed.q)retryParams.set("q",parsed.q);
@@ -57,7 +57,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings unavailable"
         description="The settings inventory could not be loaded. Your filters have not changed."
-        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="font-semibold text-primary-text underline">Retry loading settings</Link>}/>
+        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Retry loading settings</Link>}/>
     </div>;
   const {selectedCollegeName,sections:allSections}=platform.value;
   const sections=filterPlatformInventory(allSections,parsed);
