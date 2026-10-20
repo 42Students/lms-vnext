@@ -53,3 +53,15 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Regressions found/fixed (2): Refresh previously reset saved audit filters despite its label; now retains validated action, importance, subject and IST from/to filters (pagination restarts). Audit-specific empty state previously linked Reset to unrelated `/activity`; introduced optional `emptyHref` in shared ActivityCenter with unchanged default for existing consumers, supplying `/admin/projects/audit` (or college equivalent) only from this audit page.
 - Extra clutter/alignment fixes: 0; existing disclosure, date fields, result actions and grouping match legacy layout; no changed labels, aria, or tokens.
 - Files changed: `src/components/projects/project-admin-audit-page.tsx`, `src/components/activity/activity-center.tsx`, this proof, queue.
+
+## Surface 9 — `src/app/(authenticated)/admin/projects/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 9. Inspected route/loading/error, `ProjectAdminWorkspaceList`, `CreateProjectControl`, `Dropdown`, query/service model, statuses, shared table, filter and tabs, and parent layouts. Existing creation flow, view switch, permissions, query params, modal/pagination actions retained.
+- Regression fixed (1): route omitted `riskReasons` and the assigned `templateTitle` on the compact list mapping, so status and template rows lost persisted context despite prior polish. Pass typed `riskReasons` and resolve the matching assigned template title from the already-loaded choices, without adding reads.
+- Extra clutter/alignment fixes: 0; compact single-canvas row layout remains opted-in only here. Page copy/labels, legacy tokens, IDs and aria preserved.
+- Files changed: `src/app/(authenticated)/admin/projects/page.tsx`, proof and queue.
+
+## Surface 10 — `src/app/(authenticated)/admin/projects/readiness/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 10. Inspected route/loading/error, `ProjectAdminReadinessPage` and picker/table/disclosure/filter/overrides and corresponding service model, page/nav/scoped layouts. Retained statuses, filtering, exports, no-match and error controls, keyboard disclosures.
+- Regression fixed (1): the Select workspace disclosure was collapsed by default when nothing had been selected, hiding the task's primary starting control. It now starts open, while remaining collapsible and preserving selected workspace releases/Manage override.
+- Extra alignment fix (1): moved original Project workspaces back link above single PageHeader instead of retaining it in its action slot, as required by prior polish; no text or destination changed.
+- Files changed: `src/components/projects/project-admin-readiness-page.tsx`, proof and queue.
