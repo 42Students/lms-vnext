@@ -44,9 +44,9 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/[...legacy]/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/page.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/[...legacy]/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/page.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`

@@ -75,7 +75,7 @@ export default async function SuperAdminFeaturesPage({
 
   if (!parsed) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-5">
         <PageHeader
           eyebrow="Super Admin · Tenant Controls"
           title="Feature Controls"
@@ -119,7 +119,7 @@ export default async function SuperAdminFeaturesPage({
   );
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader
         eyebrow="Super Admin · Tenant Controls"
         title="Feature Controls"
@@ -127,9 +127,9 @@ export default async function SuperAdminFeaturesPage({
       />
 
       <section aria-label="Feature Controls overview" className="border-t border-border pt-5">
-        <p className="text-sm font-semibold text-body">Module availability · {scopeLabel}</p>
+        <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
         <h2 className="mt-1 text-base font-semibold text-foreground">Optional modules by college</h2>
-        <dl className="mt-3 grid gap-3 text-sm md:grid-cols-3">
+        <dl className="mt-3 grid gap-0 divide-y divide-border border-y border-border text-sm md:grid-cols-3 md:divide-y-0">
           <div><dt>Colleges in scope</dt><dd className="font-semibold">{result.total} matching current filters</dd></div>
           <div><dt>Projects on</dt><dd className="font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
           <div><dt>Placements on</dt><dd className="font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
@@ -264,7 +264,7 @@ export default async function SuperAdminFeaturesPage({
           <p className="m-0 text-sm text-muted-foreground">
             Page {result.page} of {result.totalPages}
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {result.page > 1 ? (
               <Link
                 href={adminFeaturesHref({
