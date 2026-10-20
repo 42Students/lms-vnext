@@ -142,6 +142,6 @@ export function TpoDriveActOnPanel(){
     title={"Apply "+action.toLowerCase()+" to "+rows.filter(item=>item.allowed&&item.expectedUpdatedAt&&(confirmRetry!==true||results.some(v=>v.id===item.id&&v.status==="failed"))).length+" eligible drives?"}
     description="Each change is audited. Changes to applicants and offers are not silently reversible."
     confirmLabel="Confirm selected action"
-    onConfirm={()=>{if(confirmRetry!==null){const retry=confirmRetry;setConfirmRetry(null);void apply(retry,true);}}}/>
+    onConfirm={()=>{if(confirmRetry===null||pending)return;const retry=confirmRetry;void (async()=>{try{await apply(retry,true);}catch{setNotice("Could not complete the bulk action. Refresh the preview and try again.");}finally{setConfirmRetry(null);}})();}}/>
  </section>;
 }
