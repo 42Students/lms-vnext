@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offering-delivery-model";
 import { getMyQuizAttempts } from "@/modules/courses/quiz-attempt-service";
@@ -23,7 +26,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const resolution=resolveLearnerOfferingDelivery(overview.quizzes,path.quizId,query.deliveryId);
   if(resolution.kind==="none") notFound();
   if(resolution.kind==="choose") return <div className="min-w-0 space-y-6">
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
+    <PageBackLink href="/learn/allQuizzes" label="All Quizzes" />
     <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." />
     <ul className="divide-y divide-border border-y border-border">
       {resolution.options.map(option=><li key={option.deliveryId} className="p-4">
@@ -44,20 +47,18 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   if(attemptId && !selected) notFound();
   const historyUrl="/learn/allQuizzes/"+encodeURIComponent(quiz.id)+"?deliveryId="+encodeURIComponent(quiz.deliveryId);
   return <div className="space-y-6">
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
+    <PageBackLink href="/learn/allQuizzes" label="All Quizzes" />
     <PageHeader title={quiz.title} />
     <section className="border-b border-border py-4 md:py-6">
       <h2 className="text-base font-semibold text-foreground">Attempt history</h2>
       <p className="mt-2 text-sm text-body">
         Attempts are recorded against your current college membership. Results appear only after Faculty publishes them.
       </p>
-      {attempts.length===0 ? <p className="mt-4 rounded-lg bg-surface-subtle p-4 text-sm text-body">
-        Not attempted · No quiz attempt is recorded for you in this course.
-      </p> : <ol className="mt-4 grid gap-3 md:grid-cols-2">
-        {attempts.map(attempt=><li key={attempt.id} className="min-w-0 rounded-xl border border-border p-4">
+      {attempts.length===0 ? <EmptyState title="Not attempted" description="No quiz attempt is recorded for you in this course." /> : <ol className="mt-4 divide-y divide-border border-y border-border">
+        {attempts.map(attempt=><li key={attempt.id} className="min-w-0 py-4">
           <h3 className="text-sm font-semibold text-foreground">Attempt {attempt.attemptNumber}</h3>
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
-          <p className="mt-2 text-sm text-body">{learnerAttemptResultLabel(attempt)}</p>
+          <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={attempt.resultsVisible?"success":"neutral"}>{attempt.resultsVisible?"Results published":"Results pending"}</StatusBadge>{learnerAttemptResultLabel(attempt)}</p>
           <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
             className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             {attempt.resultsVisible ? "View result" : "View attempt"}
@@ -70,12 +71,12 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
         <h2 className="text-base font-semibold text-foreground">Attempt {selected.attemptNumber} result</h2>
         <Link href={historyUrl} className="inline-flex min-h-11 items-center text-sm text-primary-text underline hover:text-primary-hover md:min-h-9">Close detail</Link>
       </div>
-      <p role="status" className="mt-3 text-sm font-semibold text-body">{learnerAttemptResultLabel(selected)}</p>
+      <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
       {selected.resultsVisible ? selected.answers.length===0 ? (
         <p className="mt-4 text-sm text-body">No question-level review was recorded for this attempt.</p>
-      ) : <div className="mt-4 space-y-3">
+      ) : <div className="mt-4 divide-y divide-border border-y border-border">
         {selected.answers.map((answer,index)=><article key={answer.id}
-          className="rounded-xl border border-border p-4">
+          className="py-4">
           <h3 className="text-sm font-semibold text-foreground">
             Question {index+1}: {answer.prompt}
           </h3>
