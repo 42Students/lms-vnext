@@ -224,7 +224,7 @@ export default async function ActivityPage({
       />
 
       {isSuperAdmin(context)?<p role="status" aria-label="Activity scope"
-        className="border-y border-border py-3 text-sm text-body">
+        className="border-b border-border py-3 text-sm text-body">
         {one(params.collegeId)? "College: "+(collegeOptions.find(college=>college.id===one(params.collegeId))?.name??"Selected college")
          :context.adminScope?.collegeId?"Activity restricted to the selected college."
          :context.adminScope?.organizationId?"Organization-wide activity."
@@ -232,7 +232,7 @@ export default async function ActivityPage({
       </p>:null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="space-y-2">
        <div className="flex flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{link.name}</Link>)}</div>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{link.name}</Link>)}</div>
        <p className="text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important activity shows high-priority events.</p>
        <div className="flex flex-wrap gap-2">{[
         {label:"Today",href:quick(today,today)},
@@ -240,7 +240,7 @@ export default async function ActivityPage({
         {label:"30 days",href:quick(ago(29),today)},
         {label:"All time",href:quick()},
        ].map(link=><Link key={link.label} href={link.href}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{link.label}</Link>)}</div>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{link.label}</Link>)}</div>
       </nav>:null}
       <form className="grid min-w-0 grid-cols-1 gap-4 border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
@@ -384,7 +384,7 @@ export default async function ActivityPage({
           <Button type="submit" className="min-h-11 md:min-h-9">Apply filters</Button>
           <Link
             href="/activity"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Reset
           </Link>

@@ -31,7 +31,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
         description={denied
           ? "Your selected college cannot be used to create workspaces. Select an authorized college and try again."
           : "The college and template catalogue could not be loaded. No workspace was created."}
-        action={<Link href="/admin/projects/workspaces/new" className="font-semibold text-primary-text">Retry opening workspace creator</Link>}/>
+        action={<Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">Retry opening workspace creator</Link>}/>
     </div>;
   }
   const requested=(await searchParams).templateId;
