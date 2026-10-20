@@ -174,3 +174,13 @@
 - Regressions found/fixed: 0. Read route/loading/error, Faculty access layout, FacultyCourseList, auto-submit filter, list schema, Pagination, Disclosure, ScrollCue, Badge, Image, StatusBadge, Input and Select, lane-14 proof. Search/form names, authorized deliveries, pagination links, test ids and canonical route aliases unchanged; no invalid TSX found.
 - Extra clutter/alignment: 0. Compact course list and grouped filters adapt to 375/768, with assignment-empty and filtered-empty recovery.
 - Files changed: verified, no change. Static only; no CI.
+
+## 36. `src/components/hr/hr-drive-draft-form.tsx`
+- Regressions found/fixed: 0. Read entire drive draft form, round editor, off-campus URL and compensation fields, Zod schema and exact input/textarea/select contracts, ConfirmActionDialog/ConfirmDialog, InlineNotice, draft persistence, preview, guards and pending/receipt actions. Compared lane-14 polish evidence and routes from recruiter drive creation; handlers, draft fields, aria labels, validation, submission and copy remain intact.
+- Extra clutter/alignment: 1 — after successful request, align Go to Drives and Request another with Open the request as full-width phone actions; they return to compact auto-width at 768 without changing links or words.
+- Files changed: `src/components/hr/hr-drive-draft-form.tsx`. Static only; no runtime/CI.
+
+## 37. `src/components/hr/hr-unsent-drive-alert.tsx`
+- Regressions found/fixed: 0. Read saved-draft warning, cross-tab/focus storage refresh, scoped local and session lookup, discard action/confirmation, InlineNotice, Button, Alert and Link; checked lane-14 proof, preserved 44px controls, exact wording and draft persistence contract. No broken TSX, props or state transitions found.
+- Extra clutter/alignment: 0. Primary Continue and tertiary discard already form a touch-safe grouped row.
+- Files changed: verified, no change. Static only; no runtime/CI.
