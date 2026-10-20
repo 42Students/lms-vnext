@@ -95,7 +95,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
       }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load assignment settings.");}
     })()}>Edit</Button>:null}
    {assignment.status==="DRAFT"?<Button type="button" disabled={busy}
-    variant="secondary" className="min-h-11 md:min-h-9"
+    variant="primary" className="min-h-11 md:min-h-9"
     onClick={()=>void command("PUBLISH")}>Publish</Button>:null}
    {assignment.status!=="ARCHIVED"?<Button type="button" disabled={busy}
     variant="danger" className="min-h-11 md:min-h-9"
@@ -115,7 +115,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     <Textarea value={description} disabled={busy} maxLength={10000} rows={3}
      onChange={e=>setDescription(e.target.value)} className="min-h-24"/></label>
    <FacultyAssignmentMethodPicker methods={methods} onChange={next=>{setMethods(next);setMethodsDirty(true);}} disabled={busy}/>
-   <Button disabled={busy} className="min-h-11 md:min-h-9"
+   <Button disabled={busy} loading={busy} className="min-h-11 md:min-h-9"
     type="button" onClick={()=>void command("SAVE")}>{busy?"Saving…":"Save changes"}</Button>
   </div>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
