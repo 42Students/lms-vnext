@@ -117,8 +117,8 @@ export function LearnerNotificationsInbox({
   }
 
   return (
-    <section className="min-w-0 space-y-4" aria-label="Learner notifications inbox">
-      <p role="status" className="text-sm text-body min-[768px]:hidden">{mobileSummary}</p>
+    <section className="min-w-0 space-y-[var(--lms-space-4)]" aria-label="Learner notifications inbox">
+      <p role="status" className="break-words text-sm text-body min-[768px]:hidden">{mobileSummary}</p>
       <nav aria-label="Filter notifications by type" className="min-w-0">
         <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
           {learnerNotificationCategories.map(({ key, label }) => (
@@ -137,14 +137,14 @@ export function LearnerNotificationsInbox({
           ))}
         </div>
       </nav>
-      <div className="grid min-w-0 grid-cols-2 items-end gap-2 border-b border-border pb-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
+      <div className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-3)] min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
         <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:col-span-1">
           Search notifications
           <Input type="search" value={search} maxLength={100}
             onChange={event=>setSearch(event.target.value)}
             onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applySearch();}}}
             placeholder="Search title or message"
-            className="mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11 w-full"/>
+            className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
         </label>
         <FilterChip type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
@@ -171,7 +171,7 @@ export function LearnerNotificationsInbox({
           </Button>
         </div>
       ):null}
-      <div className="flex min-w-0 flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+      <div className="flex min-w-0 flex-col items-start justify-between gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
         <p role="status" className="text-sm text-body">Showing {visible.length} of {combined.length} loaded notifications in this filtered view.</p>
         <Link href="/learn/notifications/history" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 hover:text-primary-hover md:min-h-9">Browse personal history</Link>
       </div>
@@ -192,7 +192,7 @@ export function LearnerNotificationsInbox({
           database rollout is being verified. Personal notifications remain available.
         </div>
       ) : null}
-      <div className="min-w-0 [&_article]:min-w-0 [&_article]:break-words [&_article_a]:max-w-full">
+      <div className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] [&_article]:min-w-0 [&_article]:break-words [&_article_a]:max-w-full">
       {visible.length === 0 ? (
         <div className="space-y-3">
           <NotificationList items={[]} readEndpoint="/api/learn/notifications" emptyText={
@@ -217,13 +217,14 @@ export function LearnerNotificationsInbox({
       <Dialog open={confirmReadAll} onOpenChange={value=>{if(!markingAll)setConfirmReadAll(value);}}
         title="Mark all personal notifications as read?"
         description="This acknowledges all unread notifications in your current college, including older pages. College announcements have no personal read status."
+        dismissible={!markingAll}
         footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] min-[768px]:flex-row min-[768px]:justify-end [&>button]:w-full min-[768px]:[&>button]:w-auto">
           <Button variant="secondary" disabled={markingAll} onClick={()=>setConfirmReadAll(false)}>Keep unread</Button>
           <Button disabled={markingAll} onClick={()=>void markAllRead()}>
             {markingAll?"Updating…":"Confirm mark all read"}
           </Button>
         </div>}>
-        {markAllError?<p role="alert" className="text-sm text-error">{markAllError}</p>:null}
+        {markAllError?<p role="alert" className="max-w-prose break-words text-sm text-error">{markAllError}</p>:null}
       </Dialog>
       <Dialog
         open={selected !== null}
