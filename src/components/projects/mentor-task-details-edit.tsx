@@ -97,37 +97,40 @@ export function MentorTaskDetailsEdit(props:Props) {
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit task details"
       description="Change registered task details. Status, assignee and sprint remain unchanged.">
       <form onSubmit={review} className="grid gap-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">Title
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
           <Input required maxLength={200} value={title}
             onChange={event=>setTitle(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Description
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Approach (optional)
-          <Textarea maxLength={4000} value={approach}
-            onChange={event=>setApproach(event.target.value)}/>
-        </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Done when (optional)
-          <Textarea maxLength={4000} value={criteria}
-            onChange={event=>setCriteria(event.target.value)} />
-        </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Priority
+        <details defaultOpen={Boolean(props.approach||props.acceptanceCriteria)} className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Approach and done criteria</summary>
+          <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Approach (optional)
+              <Textarea maxLength={4000} value={approach} onChange={event=>setApproach(event.target.value)}/>
+            </label>
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Done when (optional)
+              <Textarea maxLength={4000} value={criteria} onChange={event=>setCriteria(event.target.value)}/>
+            </label>
+          </div>
+        </details>
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
           <Select value={priority} onChange={event=>setPriority(event.target.value)}
             className="min-h-11 w-full min-[768px]:min-h-9">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Estimate
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Estimate
           <Input type="number" min={0} max={1000} value={estimate}
             onChange={e=>setEstimate(e.target.value)}/>
         </label>
         {!estimateValid?<p role="alert" className="text-xs text-error">
           Estimate must be a whole number from 0 to 1000.
         </p>:null}
-        <label className="grid gap-1 text-sm font-semibold text-body">Type
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
           <Select className="min-h-11 w-full min-[768px]:min-h-9" value={taskType}
             onChange={e=>setTaskType(e.target.value)}>
             <option value="">Not specified</option><option value="STORY">Story</option>
@@ -135,17 +138,17 @@ export function MentorTaskDetailsEdit(props:Props) {
             <option value="SPIKE">Spike</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Due
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Blocker note
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Blocker note
           <Textarea maxLength={4000} value={blockerReason}
             onChange={e=>setBlockerReason(e.target.value)}/>
         </label>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={guard.requestClose}>Cancel</Button>
-          <Button type="submit" disabled={!changed||!title.trim()||!estimateValid}>
+        <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={guard.requestClose}>Cancel</Button>
+          <Button type="submit" className="w-full sm:w-auto" disabled={!changed||!title.trim()||!estimateValid}>
             Review changes
           </Button>
         </div>
@@ -156,15 +159,21 @@ export function MentorTaskDetailsEdit(props:Props) {
       description="Updated details will be visible to the assigned project team."
       confirmLabel="Save changes" confirmVariant="primary"
       pending={pending} onConfirm={save}>
-      <dl className="grid gap-2 text-sm text-body">
+      <dl className="grid min-w-0 gap-[var(--lms-space-2)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm leading-5 text-body">
         <dt className="font-semibold text-foreground">Title</dt>
         <dd className="break-words">{title.trim()}</dd>
         <dt className="font-semibold text-foreground">Priority</dt>
         <dd>{priority}</dd>
         <dt className="font-semibold text-foreground">Description</dt>
         <dd className="break-words">{description.trim()||"Not provided"}</dd>
+        <dt className="font-semibold text-foreground">Approach</dt>
+        <dd className="break-words">{approach.trim()||"Not provided"}</dd>
         <dt className="font-semibold text-foreground">Acceptance criteria</dt>
         <dd className="break-words">{criteria.trim()||"Not provided"}</dd>
+        <dt className="font-semibold text-foreground">Estimate · Type · Due</dt>
+        <dd className="break-words">{estimate||"Not set"} · {taskType||"Not specified"} · {dueDate||"Not set"}</dd>
+        <dt className="font-semibold text-foreground">Blocker note</dt>
+        <dd className="break-words">{blockerReason.trim()||"Not provided"}</dd>
       </dl>
       {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
     </ConfirmDialog>

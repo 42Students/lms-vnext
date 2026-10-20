@@ -45,8 +45,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  if(!(["SUBMITTED","APPROVED"].includes(status))||locked||projectStatus==="ARCHIVED"||
    (status==="APPROVED"&&!allowLock))return null;
  return <section aria-label="Review final submission" className="mt-[var(--lms-space-3)] min-w-0">
-  <Button type="button" variant="secondary" onClick={()=>setOpen(true)}
-   className="">
+  <Button type="button" variant="secondary" onClick={()=>setOpen(true)}>
    Review
   </Button>
   {message?<Banner tone="success">{message}</Banner>:null}
