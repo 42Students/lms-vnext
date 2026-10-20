@@ -798,7 +798,7 @@ export function SuperAdminHrAccounts({
                     </dl>
                     <div className="mt-4 flex flex-wrap justify-end gap-2 print:hidden">
                       <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" onClick={() => openDetail(account)}>View</Button>
-                      <Button variant="ghost" size="sm" className="min-h-11 md:min-h-9" disabled={!account.accountManageable>
+                      <Button variant="ghost" size="sm" className="min-h-11 md:min-h-9" disabled={!account.accountManageable}
            title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
            onClick={() => openEdit(account)}>Edit</Button>
                       {account.status!=="DISABLED"?<Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending||!account.accountManageable}
