@@ -7,6 +7,6 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   return <ErrorState
     title="Couldn't load placement reports"
     description="The report could not be retrieved. No placement total, rate or empty-data conclusion is inferred from this failure."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    action={<Button type="button" className="min-h-11 w-full sm:w-auto sm:min-h-9" onClick={reset}>Retry</Button>}
   />;
 }
