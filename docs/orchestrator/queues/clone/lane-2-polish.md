@@ -47,7 +47,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-2.md: surface | proble
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx` (TPO page)
-- [ ] `src/components/placements/drive-day-roster.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/components/placements/drive-day-roster.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/placements/placement-calendar-workspace.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/placements/placement-drive-workspace.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/placements/placement-recruiter-access.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
