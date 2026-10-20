@@ -153,3 +153,31 @@
 - Extra clutter/alignment fixes: 0. Durable known errors remain first, optional live logs and Telegram tools in separate disclosures, live query opens its relevant section; 375px stacked and 768px compact actions match prior proof.
 - Read full route, KnownErrorsWorkspace, TrackerLiveLogsExplorer, TrackerTelegramManualPanel, Tabs/PageHeader/Alert/ErrorState, loading/error/authenticated parent layout and previous `polish-lane-15.md`; no local template/not-found/layout. No runtime/CI.
 - Files changed: queue and proof only.
+
+## Surface 23 — My tracker report detail
+- Surface: `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`.
+- Regressions fixed: 0. Checked required imports/exports and props, status/severity badges, report ownership, public ID validation, not-found and retry handling, timestamps in IST, and preserved visible copy/data.
+- Extra clutter/alignment fixes: 0. The single dividing rule and compact definition rows wrap on narrow widths; constrained and breakable descriptions avoid overflow.
+- Inspected the detail route, adjacent loading/error boundaries, inherited tracker/authenticated layout, PageHeader, PageBackLink, Banner, StatusBadge and the matching entry in `polish-lane-15.md`. No route-local template/layout/not-found file.
+- Files changed: queue and verification proof only; verified, no page change. Static source review; no runtime or CI.
+
+## Surface 24 — My tracker reports list
+- Surface: `src/app/(authenticated)/tracker/mine/page.tsx`.
+- Regressions fixed: 0. Verified platform status and own-report scope, list fetch and recovery, status badges, report links, primary new report link and unchanged copy.
+- Extra clutter/alignment fixes: 0. Hairline rows keep long identifiers and descriptions breakable, while the empty result retains its direct reporting action.
+- Inspected page and loading, parent tracker error and authenticated layout; EmptyState, ErrorState, Banner, PageHeader, StatusBadge and Link/Button styling; compared `polish-lane-15.md` evidence. No route-local error/not-found/template/layout.
+- Files changed: queue and verification proof only; verified, no page change. Static source review; no runtime or CI.
+
+## Surface 25 — Tracker issue reporting
+- Surface: `src/app/(authenticated)/tracker/page.tsx`.
+- Regressions fixed (2): prior polish proof claimed optional Evidence link and superadmin-only Similar issues were in native disclosures; both remained permanently expanded in the form. Wrapped the original field and similar search (including results and errors) in semantic keyboard-operable details/summary, with existing names, event handlers, permissions, API routes and copy unchanged.
+- Extra clutter/alignment fixes: 0 beyond restoring those planned disclosures. Primary required fields and submit remain immediate; optional controls collapse at 375/768.
+- Inspected route page/loading/error and authenticated shell; TrackerReportForm including draft, validation, link-known-error, success, similarity search and keyboard handling; Banner, InlineNotice, Button, Select, Input, Textarea, StatusBadge and `polish-lane-15.md`.
+- Files changed: `src/components/tracker/tracker-report-form.tsx`, queue and proof. Source-only verification; no tests/CI.
+
+## Surface 26 — Retired auth handoff
+- Surface: `src/app/auth/handoff/page.tsx`.
+- Regressions fixed: 0. The route still immediately redirects without inspecting or forwarding old tokens. Loading and error use existing shared public fallbacks; recovery destination remains `/?auth=handoff-retired`.
+- Extra clutter/alignment fixes: 0. Redirect has no rendered page; public fallback retains 375/768 single-column accessibility.
+- Inspected handoff page/loading/error, root layout, PublicPageLoading and GracefulErrorBoundary; compared `polish-lane-15.md`. No local not-found/template/layout.
+- Files changed: queue and proof only; verified, no page change. Static source review, no CI.
