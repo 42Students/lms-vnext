@@ -31,7 +31,7 @@ export default async function SuperAdminCollegeBrandingPage({
   const [persisted,tenant]=await Promise.all([getCollegeBranding(context,collegeId),getSuperAdminTenantLifecycleDetail(context,collegeId)]);
   const canEdit=can(context,"college.manage",{collegeId,organizationId:tenant.organizationId});
 
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
     <PageHeader title="Look and feel" actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
       <PageBackLink href={`/admin/colleges/${encodeURIComponent(collegeId)}`} label="College overview"/>
       {context.adminScope?.collegeId===collegeId ? <Link href={`/admin/colleges/${encodeURIComponent(collegeId)}/subdomain`}
