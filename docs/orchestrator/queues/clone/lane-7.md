@@ -39,10 +39,10 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/page.tsx`
 - [x] `src/app/(authenticated)/hr/home/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/learn/attendance/page.tsx`
 - [ ] `src/app/(authenticated)/learn/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`
