@@ -250,7 +250,7 @@ export function LearningPathActions({
         ) : null}
         <Button
           size="sm"
-          variant="ghost"
+          variant="danger"
           onClick={() =>
             setArchiveOpen(true)
           }
@@ -518,7 +518,7 @@ export function LessonActions({
         </Button>
         <Button
           size="sm"
-          variant="ghost"
+          variant="danger"
           onClick={() =>
             setArchiveOpen(true)
           }
