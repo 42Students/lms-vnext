@@ -24,7 +24,7 @@ export default async function MentorProjectCloseoutPage({
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-primary md:min-h-9 md:py-0 bg-surface hover:bg-primary-subtle hover:border-primary hover:text-primary-text transition-colors duration-150 motion-reduce:transition-none">
         Delivery workspace
       </Link>} />
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-border pb-6">
       <h2 className="font-semibold text-foreground">Persisted completion checklist</h2>
       <ul className="mt-3 grid gap-2">{items.map(([label,passed])=>
         <li key={label} className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
@@ -36,7 +36,7 @@ export default async function MentorProjectCloseoutPage({
           tasks and Sprints are complete, Releases are shipped, and the project is Active.
           No separate REVIEWED/CLOSED project state is registered.
         </p>
-        : <div className="mt-5">
+        : <div className="mt-6">
           <MentorProjectCloseoutControl projectId={projectId}
             expectedUpdatedAt={data.expectedUpdatedAt}/>
         </div>}

@@ -70,7 +70,7 @@ export default async function MentorReviewOverviewPage({
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
  </div>
- <section className="border-b border-border pb-5">
+ <section className="border-b border-border pb-6">
  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recorded review coverage on this page</h2>
  <p className="mt-2 text-sm text-body leading-[22px]">{data.counts.reviewed} reviewed version{data.counts.reviewed===1?"":"s"};
  {" "}{data.counts.withFeedback} with written feedback.</p>

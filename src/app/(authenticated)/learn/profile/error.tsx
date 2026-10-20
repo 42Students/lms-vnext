@@ -16,7 +16,7 @@ export default function LearnerProfileError({
       <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
         Your saved profile could not be retrieved. No empty profile or successful save has been assumed. Retry to reload your profile.
       </p>
-      <div className="mt-5 flex flex-wrap items-center gap-3">
+      <div className="mt-6 flex flex-wrap items-center gap-3">
         <Button type="button" className="min-h-11" onClick={reset}>Retry</Button>
         <Link href="/learn/courses" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Courses</Link>
       </div>
