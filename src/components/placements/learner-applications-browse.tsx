@@ -344,7 +344,7 @@ export function LearnerApplicationsBrowse({
           </div>
         </div>
       ) : emptyKind==="FILTERED_OUT" ? (
-        <div className="flex min-h-[180px] flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
+        <div className="flex min-h-44 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
           <p className="font-semibold text-foreground">No applications match these filters.</p>
           <Button variant="ghost" type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
             className="mt-3 min-h-11 md:min-h-9">
