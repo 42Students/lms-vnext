@@ -15,6 +15,6 @@ These 16 page routes were moved to chat-17 from the end of other lanes' review q
 - [x] `src/app/(authenticated)/college/placements/new/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/page.tsx`
-- [ ] `src/app/(authenticated)/hr/home/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx`
+- [x] `src/app/(authenticated)/hr/home/page.tsx`
