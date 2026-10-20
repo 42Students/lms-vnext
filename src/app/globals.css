@@ -1132,6 +1132,19 @@ body {
     min-height: var(--lms-touch-target);
   }
 }
+/* Legacy components___variables.scss:139,148-156: every unskinned native
+ * text/select/action control has a 44px mobile tap target through 767px.
+ * Checkbox/radio/range/file control geometry is managed by each wrapper.
+ * Never expand hidden controls or explicitly opt-out surfaces. */
+@media (max-width: 767px) {
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+    :where(button:not([data-slot="button"]),
+      input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]):not([type="image"]),
+      select):not(:where([data-unskin], [data-unskin] *)) {
+    min-height: var(--lms-touch-target);
+  }
+}
+
 /* Keep browser selection affordances with native inputs and range slider. */
 [data-slot="range-slider"] input[type="range"] { accent-color: var(--lms-primary); }
 [data-slot="file-dropzone"]:focus-within { border-color: var(--lms-primary); }
