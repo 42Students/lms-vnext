@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoJoiningUpdateForm } from "@/components/placements/tpo-joining-update-form";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -41,7 +42,7 @@ export default async function TpoDriveJoiningPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         ← Back to drive workspace
       </Link>
       <PageHeader
@@ -49,19 +50,16 @@ export default async function TpoDriveJoiningPage({
         title={tracker.job.title + " · Joining outcomes"}
         description="Record joining outcomes only for persisted accepted offers. All edits reuse the audited joining-history API."
       />
-      <section aria-label="Joining summary" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-5">
+      <section aria-label="Joining summary" className="grid min-w-0 grid-cols-1 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 xl:grid-cols-5">
         {labels.map(([name, value]) => (
-          <div key={name} className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
+          <div key={name} className="min-w-0 border-b border-[var(--lms-canvas-border)] p-[var(--lms-space-4)] last:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0 xl:border-b-0">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
         ))}
       </section>
       {tracker.items.length === 0 ? (
-        <Alert tone="info">
-          No currently accepted offers are recorded for this drive. Issued,
-          declined and withdrawn offers cannot be assigned a joining outcome.
-        </Alert>
+        <EmptyState title="No currently accepted offers are recorded for this drive." description="Issued, declined and withdrawn offers cannot be assigned a joining outcome."/>
       ) : (
         <div className="space-y-4">
           {tracker.items.map((item) => (
@@ -73,13 +71,13 @@ export default async function TpoDriveJoiningPage({
                   <p className="mt-1 text-sm text-body">{item.roleTitle}</p>
                   <Link
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}
-                    className="mt-1 inline-block text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                    className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
                     Learner placement history →
                   </Link>
                 </div>
-                <span className="rounded-[var(--lms-control-radius)] border border-border px-3 py-1 text-sm font-semibold text-foreground">
+                <StatusBadge tone={item.joiningStatus==="JOINED"?"success":item.joiningStatus==="DID_NOT_JOIN"?"error":item.joiningStatus==="DEFERRED"?"warning":"info"}>
                   {item.joiningStatus.replaceAll("_", " ")}
-                </span>
+                </StatusBadge>
               </div>
               <p className="mt-3 text-sm text-body">
                 Current joining date: {item.joiningDate ?? "Not recorded"}
