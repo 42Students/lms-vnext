@@ -64,7 +64,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       </p>
       <FileUpload label="Select CSV file" accept=".csv,text/csv" maxBytes={131072}
         disabled={pending||reading} onFiles={files=>void load(files?.[0]??null)}/>
-      <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CSV contents
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CSV contents
         <Textarea rows={8} maxLength={131072} value={csv}
           onChange={(event) => { setCsv(event.target.value); setResult(null); }}
           className="font-mono text-sm" />

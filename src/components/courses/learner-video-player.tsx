@@ -211,7 +211,7 @@ export function LearnerVideoPlayer({
       className="aspect-video w-full rounded-[var(--lms-control-radius)] border border-border bg-foreground">
       Your browser does not support HTML video.
     </video>
-    <label className="flex flex-wrap items-center gap-2 text-xs font-medium text-body">
+    <label className="flex flex-wrap items-center gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
       Playback speed
       <Select aria-label="Playback speed" defaultValue="1"
         className="min-h-11 w-auto md:min-h-9"
