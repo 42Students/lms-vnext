@@ -32,7 +32,7 @@ export default async function TpoDriveCloseoutPage({
     ["Confirmed joined learners", counts.joined],
   ] as const;
   return <div className="min-w-0 space-y-5">
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]"
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}>← Back to drive</Link>
     <PageHeader title={data.job.title+" · Close-out summary"}
       description={"Current persisted facts for a "+data.job.status.toLowerCase()+" drive. These numbers are not a finalized, immutable historical snapshot."} />

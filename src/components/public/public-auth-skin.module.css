@@ -16,8 +16,8 @@
   border-radius: var(--lms-canvas-radius, 12px);
 }
 .page :global(a:focus-visible), .page :global(button:focus-visible) {
-  outline: 2px solid var(--lms-link-text, #0a7c88);
-  outline-offset: 2px;
+  outline: 2px solid var(--lms-primary-text, #1a95a1);
+  outline-offset: 3px;
 }
 
 /* The main element is max-width on invite links; grid must span the entire viewport. */
