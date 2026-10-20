@@ -10,6 +10,7 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Tabs } from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
 import { ListToolbar } from "@/components/ui/list-toolbar";
@@ -61,9 +62,11 @@ export async function ProjectAdminSubmissionsPage({
     context.adminScope?.organizationId ?? context.membership?.organizationId ?? "");
   const parsed = parseProjectAdminSubmissionsQuery(searchParams);
   if (!parsed.success) {
-    return <div className="space-y-6">
+    return <div className="min-w-0 space-y-6">
       <PageHeader title="Submissions dashboard"
-        description="Final project deliverables across all workspaces." />
+        description="Final project deliverables across all workspaces."
+        actions={<PageBackLink href={basePath} label="Project workspaces" />} />
+      <ProjectAdminNav basePath={basePath} active="submissions" />
       <ErrorState title="Invalid submission filters"
         description="Check the submission view, status, page and rows filters, or clear them to continue."
         action={<Link href={basePath + "/submissions"}
@@ -98,9 +101,10 @@ export async function ProjectAdminSubmissionsPage({
     if(query.page&&query.page>1)params.set("page",String(query.page));
     if(query.pageSize)params.set("pageSize",String(query.pageSize));
     const suffix=params.toString();
-    return <div className="space-y-6">
+    return <div className="min-w-0 space-y-6">
       <PageHeader title="Submissions dashboard"
-        description="Final project deliverables across all workspaces."/>
+        description="Final project deliverables across all workspaces."
+        actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
       <ProjectAdminNav basePath={basePath} active="submissions"/>
       <ErrorState title="Submissions unavailable"
         description="The submissions list could not be loaded. Your filters have not changed."
@@ -110,10 +114,11 @@ export async function ProjectAdminSubmissionsPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
+        actions={<PageBackLink href={basePath} label="Project workspaces" />}
         needsDoingLabel="Review status:"
         selectedNeedKey={query.submissionStatus}
         needsDoingItems={[
@@ -162,7 +167,7 @@ export async function ProjectAdminSubmissionsPage({
           label="Unsubmitted workspace pages"/>
       </section>:null}
       {view==="ALL" && result ? <>
-      {summary?<div className="grid min-w-0 grid-cols-2 divide-x divide-border border-y border-border md:grid-cols-4">
+      {summary?<div className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[992px]:grid-cols-4">
         {([
           ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
           ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
