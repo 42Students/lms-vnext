@@ -56,6 +56,14 @@
   --lms-info: #26bac7;
   --lms-info-subtle: #eff8fa;
 
+  /* Exact old calendar-specific accents: components___variables.scss:270-275. */
+  --lms-calendar-selected-ink: #000000;
+  --lms-calendar-legend-light: #a8e3e9;
+  --lms-calendar-active-day: #26bac7;
+  --lms-calendar-sunday: #ff7576;
+  --lms-calendar-title-muted: #a9a7ae;
+  --lms-calendar-table-border: #dddddd52;
+
   --lms-icon-amber: #ed9c2c;
   --lms-icon-purple: #9c6bcc;
   --lms-icon-green: #059669;
