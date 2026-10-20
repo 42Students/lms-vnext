@@ -586,3 +586,52 @@ All results above were obtained by retrieving and searching the 13 changed sourc
 
 Next exact file: src/components/tpo/tpo-audit-saved-views.tsx (personal saved views) or, if audit view ownership belongs elsewhere, src/components/activity/notification-toolbar.tsx for source review and strict-tick evidence.
 
+
+## 2026-10-20 replacement lane: 15 completed source edits (G2/G3, static proof only)
+
+**Ownership and main synchronization:** The lane was fast-forwarded to `main` SHA `96efdcc5dcf3b3f7bc54a85ff033923e6ca06c84` before editing. Only `chatgpt/chat-11-b` was changed. Previous lane history was examined and the next untouched source classes were selected, without changing any shared `src/components/ui/**` file. These are **15 whole-file source sweeps** of the old-LMS mobile boundary, controls, focus style and status/view routing. Changes are class-token substitutions only, with no JSX tag changes or restructured content. No executable application code, compiler, CI or browser was run.
+
+### Work queue — additional source-complete files (not category-acceptance checkboxes)
+- Source review complete: `src/app/(authenticated)/tpo/settings/team/loading.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/app/(authenticated)/tpo/settings/branding/loading.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/hr/recruiter-designation-editor.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/profile/learner-skill-catalog-input.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/profile/learner-profile-workspace.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/activity/activity-center.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/activity/notification-list.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/admin/super-admin-placement-detail-view.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/app/(authenticated)/learn/profile/completeness/error.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/app/(authenticated)/learn/notifications/history/error.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/app/(authenticated)/tpo/team/everyone/page.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/app/(authenticated)/tpo/messages/page.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/profile/learner-profile-academic-retry.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/hr/recruiter-profile-details-editor.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+- Source review complete: `src/components/hr/recruiter-notification-bell.tsx` (source readback and scoped grep proof below; **runtime/visual proof outstanding**).
+
+### Exact legacy → authored vNext property table
+
+Legacy `components___learn-notifications.scss:9` and `components___notification-drawer.scss:24` define mobile max `767px`, switching to desktop from `768px`. `components___learn-notifications.scss:11` and `components___notification-drawer.scss:22,31-32` define touch minimum **44px**; `old-lms-shell-spec.md:23-24` defines **36px**, radius **9px** at desktop. The source assertions below check **the touched properties** at 320/360/390/767 and 768/1280 viewport width via class breakpoint semantics, **not** by rendering those screens. For desktop shadows, visual typography, all UI component states, and real message bubble parity, comparison remains OPEN.
+
+| File | Legacy property / exact source line | vNext source value / exact line | Source-level phone / tablet contract | Grep equivalent (raw / hex / overlay / 640px sm) |
+| --- | --- | --- | --- | --- |
+| `src/app/(authenticated)/tpo/settings/team/loading.tsx` | `notification-drawer.scss:24,105; learn-notifications.scss:9,44` | 7: `min-[768px]:grid-cols-2` | Skeleton columns remain one until 767px, two at 768px | 0 / 0 / 0 / 0 |
+| `src/app/(authenticated)/tpo/settings/branding/loading.tsx` | `learn-notifications.scss:9,44` | 9: `min-[768px]:grid-cols-2` | Branding skeleton does not split at 640px | 0 / 0 / 0 / 0 |
+| `src/components/hr/recruiter-designation-editor.tsx` | `learn-notifications.scss:9,11; old-lms-shell-spec.md:23-24` | 31: `min-[768px]:col-span-2`; 37: `min-h-11 min-[768px]:min-h-9` | Designation editor spans desktop grid only from 768px; mobile submit 44px | 0 / 0 / 0 / 0 |
+| `src/components/profile/learner-skill-catalog-input.tsx` | `learn-notifications.scss:9,11,103-111; old-lms-shell-spec.md:23-24` | 44: `min-[768px]:col-span-2`; 70: `min-h-11 min-[768px]:min-h-9`; 82: `hover:!bg-[var(--lms-primary-subtle)]` | Skill picker stays single-column to 767px; hover color uses token | 0 / 0 / 0 / 0 |
+| `src/components/profile/learner-profile-workspace.tsx` | `learn-notifications.scss:9,44,67; notification-drawer.scss:22` | 534: `min-[768px]:hidden`; 553: `min-[768px]:flex-row`; 581: `min-[768px]:p-5`; 759: `min-[768px]:w-auto` | Quick navigation and stacked editing layout survive phone 320–767px | 0 / 0 / 0 / 0 |
+| `src/components/activity/activity-center.tsx` | `learn-notifications.scss:9,44; old-lms-shell-spec.md:23-24` | 123: `min-[768px]:flex-row`; 179: `min-[768px]:items-end`; 192: `min-[768px]:grid-cols-2`; 108: `rounded-[var(--lms-control-radius)]` | Activity rows stack on phone; linked actions use shared control radius | 0 / 0 / 0 / 0 |
+| `src/components/activity/notification-list.tsx` | `learn-notifications.scss:9,11,151-152,218-220` | 122: `min-[768px]:flex-row`; 122: `min-[768px]:items-start`; 122: `min-[768px]:justify-between`; 136: `min-h-11 min-[768px]:min-h-9` | Notification actions stay stacked through 767px; mobile actions 44px | 0 / 0 / 0 / 0 |
+| `src/components/admin/super-admin-placement-detail-view.tsx` | `learn-notifications.scss:9,11; old-lms-shell-spec.md:23-24` | 13: `min-[768px]:grid-cols-2`; 10: `min-h-11 min-[768px]:min-h-9` | Single-column phone details and 44px links, 36px at 768px | 0 / 0 / 0 / 0 |
+| `src/app/(authenticated)/learn/profile/completeness/error.tsx` | `notification-drawer.scss:22,24; old-lms-shell-spec.md:24` | 13: `min-[768px]:min-h-9` | Profile recovery link remains 44px on 640–767px phones | 0 / 0 / 0 / 0 |
+| `src/app/(authenticated)/learn/notifications/history/error.tsx` | `notification-drawer.scss:22,24; old-lms-shell-spec.md:24` | 19: `min-[768px]:min-h-9` | Notifications-history recovery link remains 44px through 767px | 0 / 0 / 0 / 0 |
+| `src/app/(authenticated)/tpo/team/everyone/page.tsx` | `notification-drawer.scss:22,24,479-490; old-lms-shell-spec.md:24` | 28: `min-h-11 min-[768px]:min-h-9` | Retry and two message pager links hit 44px on phone | 0 / 0 / 0 / 0 |
+| `src/app/(authenticated)/tpo/messages/page.tsx` | `learn-notifications.scss:9,44,67; notification-drawer.scss:24` | 222: `min-[768px]:grid-cols-2`; 267: `min-[768px]:pt-5`; 343: `min-[768px]:col-span-2` | Message search and summary grids stay stacked on 320–767px | 0 / 0 / 0 / 0 |
+| `src/components/profile/learner-profile-academic-retry.tsx` | `notification-drawer.scss:22,24; old-lms-shell-spec.md:24` | 7: `min-h-11 min-[768px]:min-h-9` | Retry action 44px on phone and 36px at desktop breakpoint | 0 / 0 / 0 / 0 |
+| `src/components/hr/recruiter-profile-details-editor.tsx` | `learn-notifications.scss:9,11,44; old-lms-shell-spec.md:24` | 74: `min-[768px]:col-span-2`; 75: `min-[768px]:grid-cols-2`; 81: `min-h-11 min-[768px]:min-h-9` | Edit form stays one column through 767px; shared fields retain touch targets | 0 / 0 / 0 / 0 |
+| `src/components/hr/recruiter-notification-bell.tsx` | `notification-drawer.scss:10-12,21-24,221-223` | 77: `focus-visible:outline-[var(--lms-neutral-500)]` | Notification row focus outline inherits legacy neutral focus token | 0 / 0 / 0 / 0 |
+
+**Scoped grep proof (source readbacks on branch):** For all fifteen whole files, patterns equivalent to `grep -nE '<(button|select|input|textarea)([ >])'`, `grep -nE '#[[:xdigit:]]{3,8}'`, `grep -nE 'fixed inset-0|role="(alert)?dialog"'`, and `grep -nE 'sm:'` returned aggregate respective counts **0 / 0 / 0 / 0**. The `sm:` result is specifically the 640px responsive prefix; `size="sm"` props are not breakpoint prefixes. Every edited file was re-fetched after its final write for this table. JSX opening/closing tag spellings and control props were not changed. No raw visible controls, user-facing hex color literals, or hand-built dialog overlays appear in the fifteen-file slice. The previous learner skill dropdown literal hover hex was replaced with `var(--lms-primary-subtle)` (source `src/components/profile/learner-skill-catalog-input.tsx:82`).
+
+**Responsive proof boundary:** Source semantics show all listed mobile layouts remain in effect at 320/360/390/640/767px and transition at 768px; where actions have `min-h-11`, phone minimum is 44px, reverting to `min-h-9` (36px) only at 768px. Real-world viewport geometry, keyboard navigation, focus/hover/disabled/loading/empty/error/sent/read presentation, `PageCanvas` dimensions, and 1280px visual pixel comparisons **were not verified**, because no dev server/browser or executed tests are permitted here. Therefore, **G2 and G3 strict acceptance remain [ ]** under the STRICT TICK RULE; these static source improvements must not be mistaken for the category's exhaustive runtime completion.
+
+**Exact next file:** `src/components/hr/hr-recruiter-bell.tsx` (inspect current dropdown notification row text/hover/active/focus against `components___notification-drawer.scss:185-224`), followed by `src/components/tpo/tpo-company-team-conversation.tsx` for G3 sender bubble geometry. Re-run full-repository grep with the real checkout and browser-width side-by-side before ticking G2/G3.
