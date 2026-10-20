@@ -36,21 +36,20 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
     }catch(reason){setError(reason instanceof Error?reason.message:"Reassignment failed.");}
     finally{setPending(false);}
   }
-  return <div className="min-w-0 space-y-[var(--lms-space-2)]">
+  return <div className="space-y-1">
     <Button variant="secondary" type="button" disabled={pending||candidates.length===0} onClick={()=>setOpen(true)}
-      className="min-h-11 w-full md:min-h-9 md:w-auto">
+      className="min-h-11 md:min-h-9">
       Reassign
     </Button>
-    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Reassign "+facultyName+" · "+role} dismissible={!pending} footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
-          <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Reassign "+facultyName+" · "+role} dismissible={!pending} footer={<>
+<Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
             className="min-h-11 md:min-h-9">Cancel</Button>
           <Button variant="primary" type="button" disabled={pending||!replacementMembershipId} onClick={submit}
             className="min-h-11 md:min-h-9" loading={pending}>
             {pending?"Reassigning…":"Confirm replacement"}
           </Button>
-        </div>}
-        <div className="min-w-0 space-y-[var(--lms-space-4)]">
-          <p className="max-w-prose text-sm text-body">Replace {facultyName}; existing teaching history will be retained.</p>
+</>}>
+        <p className="text-sm text-body">Replace {facultyName}; existing teaching history will be retained.</p>
         <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Replacement Faculty
           <Select value={replacementMembershipId} disabled={pending} onChange={e=>setReplacementMembershipId(e.target.value)}>
             <option value="">Choose Faculty</option>
@@ -59,7 +58,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
         </label>
         {replacementMembershipId?<Alert tone="info">{teachingReassignPrompt(facultyName,candidates.find(person=>person.id===replacementMembershipId)?.label??"Faculty",role)}</Alert>:null}
         {error?<Alert tone="error">{error}</Alert>:null}
-        </div>
+        
     </Dialog>
     {!open&&error?<Alert tone="error">{error}</Alert>:null}
   </div>;
