@@ -36,7 +36,7 @@ export default async function HrRoundsEditorPage({params}:{
     <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Drives</Link>
    </nav>} />
   <section className="space-y-4 border-b border-border pb-4">
-   <h2 className="font-semibold text-foreground">Add a round</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Add a round</h2>
    <form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
     <Input type="hidden" name="action" value="CREATE"/>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round name
@@ -59,7 +59,7 @@ export default async function HrRoundsEditorPage({params}:{
    </form>
   </section>
   <section className="space-y-3">
-   <h2 className="font-semibold text-foreground">Current rounds ({rounds.length})</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Current rounds ({rounds.length})</h2>
    {rounds.length===0?<EmptyState title="No hiring rounds" description="This drive has no hiring rounds. Add a round using the form above."/>:null}
    {rounds.length>0?<div className="hidden min-w-0 md:block">
     <HrRoundEditorGrid
@@ -75,10 +75,10 @@ export default async function HrRoundsEditorPage({params}:{
    {rounds.map(round=><article id={"round-edit-"+round.id} key={round.id}
     className={"min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-5 last:border-b-0 "+
      (round.editable?"":"md:hidden")}>
-    <div className="flex flex-wrap justify-between gap-2 md:hidden"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
+    <div className="flex flex-wrap justify-between gap-2 md:hidden"><h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{round.sequence}. {round.name}</h3>
      <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone={round.status==="PENDING"?"warning":round.status==="COMPLETED"?"success":"neutral"}>{round.status}</StatusBadge></span></div>
     {round.editable?<form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
-      <h3 className="hidden font-semibold text-foreground md:col-span-2 md:block">Change {round.sequence}. {round.name}</h3>
+      <h3 className="hidden font-semibold text-[var(--lms-heading)] md:col-span-2 md:block text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Change {round.sequence}. {round.name}</h3>
       <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>
       <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
