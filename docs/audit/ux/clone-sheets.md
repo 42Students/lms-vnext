@@ -843,3 +843,27 @@ grep -nE '<(button|input|select|textarea|table|details)([[:space:]>])' src/compo
 E8 remains [ ] pending native AG Grid dependency resolution, legacy renderer source, all-grid coverage, computed state matrices and phone/tablet/desktop screenshots.
 
 **Next exact file:** `src/components/tpo/tpo-companies-spreadsheet.tsx` — reconcile Companies grid columns, selection, saved layout and compact mobile display with the same legacy E8 value table.
+
+
+### 2026-10-20 chat-14 — companies sheet status and 768px row-action details
+
+| Property/state | Legacy exact/reference | Updated source | Static result |
+|---|---|---|---|
+| Status pill dimensions | components___common.scss:995-1005 — minimum width 90px, radius 6px, padding 2px/15px, 12px bold | tpo-companies-spreadsheet.tsx:60-61 now uses shared StatusBadge for both warning 'CRM name only · not linked' and success 'Linked employer' (contents unchanged); shared StatusBadge uses the legacy geometry | Both states receive common status-pill skin |
+| Header and numeric sorting | E8 only numeric/date columns sort | tpo-companies-spreadsheet.tsx:27-32 has 5 numeric sort columns (Contacts with nullable sortValue) and company name without sortKind | Sorting contract preserved; blank-last comparator in native grid |
+| Safe website action | Authorized employer sites can open only safe URLs | tpo-companies-spreadsheet.tsx:62-67 retains safeTpoCompanyWebsiteUrl validation, target blank with rel noopener noreferrer | URL behavior unchanged |
+| Mobile action height | components___antddesign.scss:1081-1100 — >=44px clickable controls on <=767px | tpo-companies-spreadsheet.tsx:66,71 website and Create drive Links `min-h-11 md:min-h-9` (44/36px) | Exact mobile control floor |
+| Responsive grid/fallback | old-lms-shell.css:23,73 — 767px phone ceiling | tpo-companies-spreadsheet.tsx:16-19 dynamic ssr:false with shared TpoGrid cards below md, desktop Quartz from 768px | Exact breakpoint in source |
+| Column scope | TPO company directory owns a local saved visibility set and only currently authorized rows | tpo-companies-spreadsheet.tsx:37-57 GridWorkspace `columnScope=local`, selection whitelist of non-action visible columns, `storageKey` per directory | No new data fetch or extra columns |
+
+Whole-file GitHub-fetched JSX grep equivalent: `tpo-companies-spreadsheet.tsx` has **2 opening/2 closing StatusBadge**, **1 TpoGrid** and **1 GridWorkspace**, **5 numeric sortKind columns / 1 nullable sortValue**, **0 native button/input/select/textarea/table/details**. Role-safe external URL guards occur on both rendering and href. These are static source facts only.
+
+Reproduce in a checkout (not executed here):
+```sh
+grep -nE 'StatusBadge|sortKind|sortValue|ssr:false|<TpoGrid|<GridWorkspace|safeTpoCompanyWebsiteUrl|md:min-h-9' src/components/tpo/tpo-companies-spreadsheet.tsx
+grep -nE '<(button|input|select|textarea|table|details)([[:space:]>])' src/components/tpo/tpo-companies-spreadsheet.tsx
+```
+
+Responsive source: <=767px same card actions with 44px website/Create-drive links, >=768px native Quartz with compact 36px links; status pill geometry is constant. Tooltip/focus/hover, colored status token computed CSS and actual rendered page not verified. No app, CI, tests or TypeScript compilation. E4 and E8 still [ ] until all strict proofs pass.
+
+**Next exact file:** `src/components/tpo/tpo-company-memory-drive-grid.tsx` — validate E8 company/drive chronological sorting, action/status pills, and phone/desktop responsive continuity.
