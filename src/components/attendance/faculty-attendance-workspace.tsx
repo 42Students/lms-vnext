@@ -951,10 +951,10 @@ export function FacultyAttendanceWorkspace({
                                   "Contact details unavailable"}
                               </p>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2" role="group" aria-label={"Attendance for "+learnerName(learner)}>
                               <Button
                                 size="md"
-                                className="min-h-11 md:min-h-[var(--lms-control-height)]"
+                                className="min-h-11 md:min-h-9"
                                 variant={
                                   !isAbsent
                                     ? "primary"
@@ -975,7 +975,7 @@ export function FacultyAttendanceWorkspace({
                               </Button>
                               <Button
                                 size="md"
-                                className="min-h-11 md:min-h-[var(--lms-control-height)]"
+                                className="min-h-11 md:min-h-9"
                                 variant={
                                   isAbsent
                                     ? "danger"
