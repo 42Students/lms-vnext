@@ -87,7 +87,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
   </div>
   <p className="text-xs text-muted-foreground print:hidden">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value}
-   className="min-h-11 min-[768px]:min-h-9 print:hidden">Save</Button>
+   className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;
