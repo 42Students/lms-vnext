@@ -355,7 +355,7 @@ export function PersonMembershipActions({
         onOpenChange={next => { if (!lifecycleRequestPending.current && !lifecyclePending) setEndOpen(next); }}
         title={`End ${displayName}'s membership?`}
         description="Ending is terminal for this college membership. It does not delete the canonical user or memberships in other colleges."
-        confirmLabel="End membership"
+        confirmLabel="End membership" confirmVariant="danger"
         pending={lifecyclePending}
         onConfirm={() => lifecycle({ action: "END" })}
       />
