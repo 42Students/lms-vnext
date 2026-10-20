@@ -160,7 +160,7 @@ export default async function LearnerAttendanceCalendarPage({
               :"Your authorized Course sessions have no registered attendance records yet. This does not mean you were absent."} />
         : <ol className="grid gap-3 md:grid-cols-2">
           {data.rows.map(row=><li key={row.id}
-            className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none md:p-6">
+            className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-none motion-reduce:transition-none md:p-6">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <h3 className="font-semibold text-foreground">{row.title}</h3>
               <StatusBadge tone={statusTone[row.status]??"neutral"}>
