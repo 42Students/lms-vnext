@@ -53,16 +53,16 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
       href:"/admin/inbound-mail?"+url.toString()};
     })}/>
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="min-w-0 flex-1 text-[13px] font-semibold text-body">Search
+   <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-w-0" placeholder="Sender, subject or message body"/></label>
-   <label className="min-w-0 flex-1 basis-48 text-[13px] font-semibold text-body">Recipient inbox
+   <label className="min-w-0 flex-1 basis-48 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recipient inbox
     <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-w-0" placeholder="inbox@example.edu"/></label>
-   <label className="text-[13px] font-semibold text-body">Status
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="status" defaultValue={parsed.data.status} className="mt-1 w-full">
      <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
     </Select></label>
    <Button type="submit">Filter</Button>
-   <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Clear</Link>
+   <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
   </form>
   <InboundMailList rows={data.items.map(x=>({
    id:x.id,receivedAt:x.receivedAt.toISOString(),fromAddress:x.fromAddress,
@@ -71,9 +71,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <nav aria-label="Inbox pages" className="flex flex-wrap justify-between gap-3 text-sm">
    <span>{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span><div className="flex flex-wrap gap-3">
    {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
-     className={n===data.page?"inline-flex min-h-11 md:min-h-9 min-w-11 md:min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-[var(--lms-primary-subtle)] px-3 py-2 text-primary-text":"inline-flex min-h-11 md:min-h-9 min-w-11 md:min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2"}>{n}</Link>)}
-   {data.page>1?<Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3" href={next(data.page-1)}>Previous</Link>:null}
-   {data.hasMore?<Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3" href={next(data.page+1)}>Next</Link>:null}
+     className={n===data.page?"inline-flex min-h-11 md:min-h-9 min-w-11 md:min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary":"inline-flex min-h-11 md:min-h-9 min-w-11 md:min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>{n}</Link>)}
+   {data.page>1?<Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={next(data.page-1)}>Previous</Link>:null}
+   {data.hasMore?<Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={next(data.page+1)}>Next</Link>:null}
    </div>
   </nav>
  </div>;
