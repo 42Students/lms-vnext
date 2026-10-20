@@ -15,12 +15,12 @@
   gap: 2px;
   min-width: 0;
   padding: 12px;
-  border: 1px solid #e5e9f0;
+  border: 1px solid var(--lms-neutral-200);
   border-radius: 12px;
-  background: #fff;
+  background: var(--lms-surface);
 }
 .statValue {
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 20px;
   font-weight: 800;
   line-height: 1.3;
@@ -28,7 +28,7 @@
   overflow-wrap: anywhere;
 }
 .statLabel {
-  color: #6b7280;
+  color: var(--lms-neutral-500);
   font-size: 12px;
   line-height: 1.4;
 }
@@ -40,12 +40,12 @@
   min-width: 0;
 }
 .distributionLabel {
-  color: #54505d;
+  color: var(--lms-neutral-700);
   font-size: 12px;
   font-weight: 600;
 }
 .distributionCount {
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 14px;
   font-weight: 800;
   text-align: right;
@@ -55,29 +55,29 @@
   min-width: 0;
   height: 8px;
   border-radius: 999px;
-  background: #f1f4f9 !important;
+  background: var(--lms-neutral-100) !important;
 }
-.distributionTrack > div { background: #6b7280 !important; }
+.distributionTrack > div { background: var(--lms-neutral-500) !important; }
 .accuracyRow {
   min-width: 0;
   padding: 8px 12px;
   border: 0;
   border-radius: 6px;
-  background: #f1f4f9;
+  background: var(--lms-neutral-100);
 }
-.accuracyRowPoor { border-left: 3px solid #ef4444; }
-.accuracyRowFair { border-left: 3px solid #d97706; }
+.accuracyRowPoor { border-left: 3px solid var(--lms-error); }
+.accuracyRowFair { border-left: 3px solid var(--lms-warning); }
 .accuracyTrack {
   min-width: 0;
   height: 6px !important;
   border-radius: 999px;
-  background: #e5e9f0 !important;
+  background: var(--lms-neutral-200) !important;
 }
 .accuracyTrack > div { border-radius: 999px; }
-.accuracyGood > div { background: #059669 !important; }
-.accuracyFair > div { background: #d97706 !important; }
-.accuracyPoor > div { background: #ef4444 !important; }
-.accuracyUnanswered > div { background: #a9a7ae !important; }
+.accuracyGood > div { background: var(--lms-success) !important; }
+.accuracyFair > div { background: var(--lms-warning) !important; }
+.accuracyPoor > div { background: var(--lms-error) !important; }
+.accuracyUnanswered > div { background: var(--lms-neutral-400) !important; }
 .timing {
   display: grid;
   grid-template-columns: repeat(3,minmax(0,1fr));
@@ -87,10 +87,10 @@
   min-width: 0;
   padding: 12px;
   border-radius: 6px;
-  background: #f1f4f9;
+  background: var(--lms-neutral-100);
 }
 .timingValue {
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 18px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
