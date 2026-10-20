@@ -60,65 +60,11 @@ export default async function MentorProjectPage({
     );
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
       <ProjectWorkspaceHeader workspace={workspace} mode="MENTOR" />
       <MentorProjectTabs projectId={projectId}/>
-      {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><Disclosure title="Additional project tools" className="min-w-0 [&>summary]:text-link"><div className="mt-3 flex flex-wrap gap-3">
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          Task board status
-        </Link>
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          At-risk &amp; readiness
-        </Link>
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          Delivery review summary
-        </Link>
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          Resource link directory
-        </Link>
-        <Link
-          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/timeline"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Release &amp; Sprint timeline
-        </Link>
-        <Link
-          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-meetings"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Team &amp; meeting log
-        </Link>
-        <Link
-          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-history"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Team membership history
-        </Link>
-        <Link
-          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/closeout"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Project closeout checklist
-        </Link>
-        <Link
-          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/review-completeness"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Delivery review completeness
-        </Link>
-        <Link
-          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/activity-history"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface min-[768px]:min-h-[var(--lms-control-height)] px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Recorded project activity →
-        </Link>
-      </div></Disclosure></section> : null}
-      {selectedTab==="board"?<div className="space-y-6">
+      {selectedTab==="board"?<div className="min-w-0 space-y-4 md:space-y-6">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}
           readOnly={access.access==="OBSERVER"||workspace.project.status==="ARCHIVED"||workspace.project.status==="COMPLETED"}/>
@@ -146,6 +92,60 @@ export default async function MentorProjectPage({
         }
         activeSection={activeSection}
       />}
+      {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><Disclosure title="Additional project tools" className="min-w-0 [&>summary]:text-link"><div className="mt-3 grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 xl:grid-cols-3">
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          Task board status
+        </Link>
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          At-risk &amp; readiness
+        </Link>
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          Delivery review summary
+        </Link>
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          Resource link directory
+        </Link>
+        <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/timeline"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Release &amp; Sprint timeline
+        </Link>
+        <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-meetings"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Team &amp; meeting log
+        </Link>
+        <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-history"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Team membership history
+        </Link>
+        <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/closeout"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Project closeout checklist
+        </Link>
+        <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/review-completeness"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Delivery review completeness
+        </Link>
+        <Link
+          href={"/mentor/projects/" + encodeURIComponent(projectId) + "/activity-history"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Recorded project activity →
+        </Link>
+      </div></Disclosure></section> : null}
     </div>
   );
 }
