@@ -209,3 +209,13 @@
 - Regressions found/fixed: 1 — prior polish described a confirmed cancellation, but the client accepted any parseable successful PATCH payload and immediately hid the Cancel action without verifying the server's returned row. Require the PATCH receipt's request id, college id and status CANCELLED before success, navigation refresh or removal of the action; a nonmatching receipt instead stays available with existing safe failure feedback. Read full component, route consumer, PATCH server route and optimistic-lock transaction, apiFetch, ConfirmDialog/Dialog, InlineNotice, Button and lane-14 proof. Kept field names, expectedUpdatedAt, role scope, confirmation and single-notice locations.
 - Extra clutter/alignment: 1 — native Manage request summary now fills the 375px touch row rather than w-fit; reverts to compact width at 768. Preserve the disclosed destructive action and exact labels.
 - Files changed: `src/components/hr/recruiter-request-cancel-button.tsx`. Static source inspection, no runtime or CI.
+
+## Verify2 — 1. `src/components/placements/super-admin-drive-duplicate.tsx`
+- Regressions fixed: 1. The success handler accepted any truthy `jobId`, which could navigate to an invalid draft and report success despite a malformed response. Read component, ConfirmDialog, Button, InlineNotice, mutation API and clone service, and the lane-4 polish evidence. Require UUID-shaped jobId and DRAFT status in successful receipt before clearing confirmation and redirecting; preserve request payload, permission boundary, labels and lock.
+- Extra clutter/alignment fixes: 0. Existing mobile full-width trigger, shared confirmation, pending/error hierarchy and desktop compact button remain aligned with the legacy surface.
+- Files changed: `src/components/placements/super-admin-drive-duplicate.tsx`. Static review only; no code executed or CI.
+
+## Verify2 — 2. `src/components/placements/tpo-round-calendar-control.tsx`
+- Regressions fixed: 1. Scheduling/cancel showed a success-like state and cleared round selection on any 2xx response without confirming the returned round. Read full control, scheduling API, round service, layout/caller, shared Select/Input/Textarea/Alert/ConfirmDialog/EmptyState and lane-4 polish proof. Require returned round id and intended SCHEDULED/CANCELLED status; leave controls and safe error visible on uncertain response. Original optimistic token, blocked-date double acknowledgement, venue/mode fields, labels and 4-state workflow preserved.
+- Extra clutter/alignment fixes: 0. Phone actions, 768px two-column date form and cancellation disclosure already meet existing hierarchy.
+- Files changed: `src/components/placements/tpo-round-calendar-control.tsx`. Static inspection; no runtime or CI.
