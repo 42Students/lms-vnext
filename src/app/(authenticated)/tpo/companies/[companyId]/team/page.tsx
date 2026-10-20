@@ -26,25 +26,24 @@ export default async function TpoCompanyTeamPage({params}:{
   throw error;
  }
  // The read model preserves history for archived relationships; only ACTIVE can post.
- return <div className="min-w-0 space-y-4 md:space-y-6">
+ return <div className="min-w-0 space-y-4">
   <PageHeader  title={result.status==="READY"?
    "Company discussion · "+result.companyName:"Company discussion"}
-   description="A college-private conversation about this company. Recruiters and students cannot read it."/>
-  <Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
-   className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to company</Link>
+   description="A college-private conversation about this company. Recruiters and students cannot read it." actions={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
+   className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to company</Link>}/>
   {result.status==="NOT_REGISTERED"?
    <Alert tone="warning">
     Company Team discussions require their registered database migration. No messages were inferred from private conversations.
    </Alert>:
    <>
     <TpoLiveRefresh intervalMs={30000}/>
-    <ol aria-label="Company Team messages" className="space-y-3">
+    <ol aria-label="Company Team messages" className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">
      {result.messages.map(message=><li key={message.id} id={"team-message-"+message.id}
-      className="border-b border-border py-4">
+      className="min-w-0 py-4">
       <p className="text-xs text-muted-foreground">{message.authorName??"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
          dateStyle:"medium",timeStyle:"short"}).format(message.createdAt)} IST</p>
-      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
+      <p className="mt-2 max-w-[72ch] whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
      </li>)}
     </ol>
     {result.truncated?<Alert tone="info">
