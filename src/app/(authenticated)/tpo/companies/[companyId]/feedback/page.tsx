@@ -92,9 +92,9 @@ export default async function TpoCompanyFeedbackPage({
               </ul>
             )}
           </section>
-          {(data.page>1||(data.totalPages!==null&&data.page<data.totalPages))?<nav aria-label="Feedback pages" className="flex items-center justify-between gap-3 text-sm">
+          {(data.page>1||(data.totalPages!==null&&data.page<data.totalPages))?<nav aria-label="Feedback pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
             <span>Page {data.page} of {data.totalPages}</span>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               {data.page > 1 ? (
                 <Link href={base + "?page=" + (data.page - 1)}
                   className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Previous</Link>
