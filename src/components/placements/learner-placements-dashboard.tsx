@@ -30,7 +30,7 @@ function Metric({
     <Link href={href} aria-label={metric.ariaLabel}
       className="group block rounded-[var(--lms-radius-card)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       <StatTile label={label} value={metric.display}
-        className="h-full p-4 sm:p-4 transition-colors group-hover:border-[var(--lms-primary)] group-hover:bg-[var(--lms-primary-subtle)]">
+        className="h-full p-4 md:p-4 transition-colors group-hover:border-[var(--lms-primary)] group-hover:bg-[var(--lms-primary-subtle)]">
         <span className="mt-2 block text-xs leading-5 text-[var(--lms-body-text)] group-hover:text-[var(--lms-primary-text)]">
           {metric.detail} →
         </span>
@@ -68,13 +68,13 @@ export function LearnerPlacementsDashboard({
   });
   return (
     <section className="space-y-5" aria-label="Placement dashboard">
-      {next ? <div className="rounded-xl border border-primary bg-primary-subtle p-5 sm:p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {next ? <div className="min-w-0 rounded-xl border border-primary bg-primary-subtle p-4 md:p-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="max-w-3xl">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
               {greeting}
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">
+            <h2 className="mt-2 text-xl font-semibold text-foreground md:text-2xl">
               {next.title}
             </h2>
             <p className="mt-2 text-sm leading-6 text-body">
@@ -89,17 +89,17 @@ export function LearnerPlacementsDashboard({
           </div>
           <Link
             href={next.href}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             {display.firstRun ? "Browse drives" : "View next step"} →
           </Link>
         </div>
       </div> : (
-        <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+        <p role="status" className="min-w-0 rounded-xl border border-border bg-surface p-4 text-sm text-body md:p-6">
           Next placement action is temporarily unavailable while key sources reload.
           Your current applications or schedule have not been treated as empty.
           {safeFallback ? <Link href={safeFallback.href}
-            className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline underline-offset-4">
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline underline-offset-4">
             {safeFallback.label} →
           </Link> : null}
         </p>
@@ -117,7 +117,7 @@ export function LearnerPlacementsDashboard({
             <p className="font-semibold text-foreground">{item.label}</p>
             <p className="text-xs text-body">{item.detail}</p>
           </div>
-          <Link href={item.href} className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Review now</Link>
+          <Link href={item.href} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Review now</Link>
         </li>)}</ul>:<p role="status" className="mt-2 text-sm text-muted-foreground">
           No recorded offers awaiting your reply or upcoming assessments/interviews need attention right now.
         </p>}
@@ -126,7 +126,7 @@ export function LearnerPlacementsDashboard({
         <section className="border-b border-border pb-5" aria-label="First placement steps">
           <h3 className="m-0 text-base font-semibold text-foreground">Get started with placements</h3>
           <p className="mt-1 text-sm text-body">These are useful starting points, not completed or verified milestones.</p>
-          <ol className="mt-4 grid gap-3 sm:grid-cols-3">
+          <ol className="mt-4 grid gap-3 md:grid-cols-3">
             {onboarding.map((step,index)=>(
               <li key={step.href} className="min-w-0 rounded-lg border border-border p-3">
                 <p className="text-xs font-bold uppercase text-primary-text">Step {index+1}</p>
@@ -138,7 +138,7 @@ export function LearnerPlacementsDashboard({
         </section>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Placement snapshot">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Placement snapshot">
         <Metric
           label="Published drives before deadline"
           value={display.openJobs}
@@ -172,7 +172,7 @@ export function LearnerPlacementsDashboard({
       <section aria-label="Application screening breakdown" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-base font-semibold text-foreground">Application stages</h3>
-          <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
+          <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
         </div>
         {applicationFunnel===null ? <p role="status" className="mt-2 text-sm text-body">Application stages are currently unavailable. They have not been counted as zero.</p>
           : <SummaryStrip className="mt-3" label="Application stages"
@@ -188,7 +188,7 @@ export function LearnerPlacementsDashboard({
             <p className="mt-1 text-xs text-body">{formatWhen(display.urgentAssessment.when)} · Scheduled time, not provider submission deadline</p>
           </div>
           <Link href={display.urgentAssessment.href}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
             Review assessment →
           </Link>
         </aside>
@@ -202,7 +202,7 @@ export function LearnerPlacementsDashboard({
             <p className="mt-1 text-xs text-body">{formatWhen(display.urgentInterview.when)} · Scheduled, not attendance-confirmed</p>
           </div>
           <Link href={display.urgentInterview.href}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
             Review interview →
           </Link>
         </aside>
@@ -217,7 +217,7 @@ export function LearnerPlacementsDashboard({
               Review the issued offer terms and expiration before responding.
             </p>
           </div>
-          <Link href="/learn/my-placements/offers?status=pending" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline sm:min-h-9">
+          <Link href="/learn/my-placements/offers?status=pending" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
             Review offers →
           </Link>
         </div>
@@ -236,13 +236,13 @@ export function LearnerPlacementsDashboard({
             </p>
           </div>
           <Link href={display.nextScheduledEvent.href}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
             View event details →
           </Link>
         </aside>
       ) : null}
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="space-y-3 rounded-xl border border-border bg-surface p-5" aria-labelledby="placement-attention-heading">
+        <section className="min-w-0 space-y-3 border-b border-border py-4 md:py-6" aria-labelledby="placement-attention-heading">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 id="placement-attention-heading" className="m-0 text-base font-semibold text-foreground">
               Needs attention
@@ -257,7 +257,7 @@ export function LearnerPlacementsDashboard({
             <ul className="divide-y divide-border">
               {display.attention.map((event) => (
                 <li key={event.applicationId + ":" + event.roundId} className="py-3 first:pt-0 last:pb-0">
-                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                     <p className="text-sm font-semibold text-foreground">{event.roundName}</p>
                     <p className="mt-1 text-xs text-body">{event.companyName} · {formatWhen(event.when)}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -280,14 +280,14 @@ export function LearnerPlacementsDashboard({
             </p>
           ) : null}
           <Link href="/learn/my-placements/calendar"
-            className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
             {display.attentionOverflow!==null&&display.attentionOverflow>0
               ? `View ${display.attentionOverflow} more in career calendar →`
               : "Open career calendar →"}
           </Link>
         </section>
 
-        <section className="space-y-3 rounded-xl border border-border bg-surface p-5" aria-labelledby="placement-week-heading">
+        <section className="min-w-0 space-y-3 border-b border-border py-4 md:py-6" aria-labelledby="placement-week-heading">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 id="placement-week-heading" className="m-0 text-base font-semibold text-foreground">
               Next 7 days
@@ -304,12 +304,12 @@ export function LearnerPlacementsDashboard({
                   {day.events.length===0 ? <p className="mt-1 text-xs text-muted-foreground">No rounds scheduled</p> :
                     <ul className="mt-2 space-y-2">{day.events.map(event=>(
                       <li key={event.applicationId+":"+event.roundId}>
-                        <Link href={event.href} className="block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+                        <Link href={event.href} className="block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                           {event.companyName} · {event.roundName}
                           <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
                         </Link>
                          <Link href={"/learn/my-placements?requestRoundId="+encodeURIComponent(event.roundId)}
-                           className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline sm:min-h-9">
+                           className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline md:min-h-9">
                            Ask to reschedule →
                          </Link>
                       </li>
@@ -326,7 +326,7 @@ export function LearnerPlacementsDashboard({
               {display.fullWeekEventCount-shownWeekEvents===1?" event":" events"} are included in the full calendar.
             </p>
           ) : null}
-          <Link href="/learn/my-placements/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline sm:min-h-9">
+          <Link href="/learn/my-placements/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
             Full schedule →
           </Link>
         </section>
