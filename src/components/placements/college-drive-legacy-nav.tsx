@@ -7,6 +7,8 @@ export function CollegeDriveLegacyNav({jobId}:{jobId:string}) {
   const pathname = usePathname();
   const tabs = collegeDriveDetailTabs(jobId);
   const active = tabs.find(tab => collegeDriveTabActive(pathname, tab.href))?.href ?? "";
-  return <Tabs ariaLabel="Drive sections" renderPanel={false} value={active}
-    items={tabs.map(tab => ({ value: tab.href, label: tab.label, href: tab.href }))} />;
+  return <nav aria-label="Drive sections" className="min-w-0 w-full pb-4 print:hidden">
+    <Tabs ariaLabel="Drive sections" renderPanel={false} value={active}
+      items={tabs.map(tab => ({ value: tab.href, label: tab.label, href: tab.href }))} />
+  </nav>;
 }
