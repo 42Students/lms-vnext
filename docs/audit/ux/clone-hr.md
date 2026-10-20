@@ -34,7 +34,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/messages/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/messages/error.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/messages/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
@@ -45,7 +45,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/error.tsx` (route-local 0 raw tags/className/hex/overlays; fully shared error/alert and button states; legacy value and breakpoint N/A-local table below)
 - [x] `src/app/(authenticated)/hr/drives/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
-- [ ] `src/app/(authenticated)/hr/drives/new/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/new/error.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [x] `src/app/(authenticated)/hr/drives/new/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/new/page.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/page.tsx`
@@ -64,21 +64,21 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/hr/messages/error.tsx` (route-local 0 raw tags/className/hex/overlays; fully shared error/alert and button states; legacy value and breakpoint N/A-local table below)
 - [x] `src/app/(authenticated)/hr/messages/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/hr/messages/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
-- [ ] `src/app/(authenticated)/hr/not-found.tsx`
+- [x] `src/app/(authenticated)/hr/not-found.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [x] `src/app/(authenticated)/hr/notifications/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/hr/notifications/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
 - [x] `src/app/(authenticated)/hr/placements/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/hr/placements/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/placements/page.tsx`
 - [x] `src/app/(authenticated)/hr/profile/error.tsx` (route-local 0 raw tags/className/hex/overlays; fully shared error/alert and button states; legacy value and breakpoint N/A-local table below)
 - [x] `src/app/(authenticated)/hr/profile/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/profile/page.tsx`
-- [ ] `src/app/(authenticated)/hr/round-results/error.tsx`
+- [x] `src/app/(authenticated)/hr/round-results/error.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [x] `src/app/(authenticated)/hr/round-results/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/round-results/page.tsx`
 
@@ -132,7 +132,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/recruiter/messages/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/recruiter/messages/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/recruiter/messages/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
-- [ ] `src/app/(authenticated)/recruiter/not-found.tsx`
+- [x] `src/app/(authenticated)/recruiter/not-found.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [x] `src/app/(authenticated)/recruiter/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [x] `src/app/(authenticated)/recruiter/profile/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/recruiter/profile/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
@@ -165,23 +165,23 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 ### 4. `src/components/hr` — 19 TSX files
 
 - [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/hr/hr-notification-read-button.tsx`
+- [x] `src/components/hr/hr-notification-read-button.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
 - [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
-- [ ] `src/components/hr/recruiter-applicant-review-drawer.tsx`
+- [x] `src/components/hr/recruiter-applicant-review-drawer.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [x] `src/components/hr/recruiter-conversation-live-refresh.tsx` (null-only nonvisual helper; source controls/hex/DOM/overlays 0; own CSS, hover, focus and responsive: N/A; existing effect unchanged)
 - [ ] `src/components/hr/recruiter-conversation-read-control.tsx`
 - [ ] `src/components/hr/recruiter-conversation-reply-form.tsx`
-- [ ] `src/components/hr/recruiter-decision-read-button.tsx`
+- [x] `src/components/hr/recruiter-decision-read-button.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [ ] `src/components/hr/recruiter-designation-editor.tsx`
 - [ ] `src/components/hr/recruiter-display-name-editor.tsx`
-- [ ] `src/components/hr/recruiter-drive-focus-refresh.tsx`
+- [x] `src/components/hr/recruiter-drive-focus-refresh.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [ ] `src/components/hr/recruiter-notification-bell.tsx`
 - [ ] `src/components/hr/recruiter-private-rating-editor.tsx`
 - [ ] `src/components/hr/recruiter-profile-access.tsx`
 - [ ] `src/components/hr/recruiter-profile-details-editor.tsx`
-- [ ] `src/components/hr/recruiter-request-cancel-button.tsx`
-- [ ] `src/components/hr/recruiter-request-feedback.tsx`
+- [x] `src/components/hr/recruiter-request-cancel-button.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
+- [x] `src/components/hr/recruiter-request-feedback.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [ ] `src/components/hr/hr-round-editor-grid.tsx` (new scoped desktop hiring-round metadata grid; native runtime and pixel states pending)
 - [ ] `src/components/hr/recruiter-round-inline-editor.tsx`
 
@@ -191,7 +191,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/components/tracker/audit-finding-filter-persistence.tsx` (null-only nonvisual helper; source controls/hex/DOM/overlays 0; own CSS, hover, focus and responsive: N/A; existing effect unchanged)
 - [ ] `src/components/tracker/audit-finding-status-action.tsx`
 - [ ] `src/components/tracker/independent-finding-actions.tsx`
-- [ ] `src/components/tracker/independent-finding-copy-action.tsx`
+- [x] `src/components/tracker/independent-finding-copy-action.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [ ] `src/components/tracker/known-errors-workspace.tsx`
 - [ ] `src/components/tracker/tracker-admin-nav.tsx`
 - [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
@@ -212,7 +212,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/components/placements/hr-recruiter-drives-grid.tsx` (new desktop sheet; source-wired, native engine/install/viewport proof pending)
 - [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
 - [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/recruiter-resume-download.tsx`
+- [x] `src/components/placements/recruiter-resume-download.tsx` (file-local values: 9-row matrix; fetched source grep native/hex/h1/overlay 0/0/0/0; legacy phone/tablet delegated; no custom DOM/table/button; shared-owner pixels independently pending)
 - [ ] `src/components/placements/recruiter-request-queue.tsx`
 - [ ] `src/components/placements/recorded-outside-form.tsx`
 
@@ -833,3 +833,237 @@ Every row below covers only **route-local styling**. Shared primitives are owned
 | `src/components/hr/recruiter-request-cancel-button.tsx` | `old-lms-pages.md:6-12` single canvas/shared error + `components___listing-page-header.scss:131-158` mobile max 767px | Cancel request uses shared Button, ConfirmDialog and InlineNotice; optimistic updatedAt/mutation lock unchanged | Full-file native/hex/h1/overlays **0/0/0/0**, div **1/1**, section **0/0**, JSX fragments **0/0**; default/hover/focus/disabled/active/error/loading paint delegated to shared components. **Visible screen still unticked**: computed colors, toolbar alignment, keyboard and actual phone/tablet screenshot unverified |
 
 None of these six routes/components adds hard-coded colors or native controls. Error actions preserve retry destinations and per-route description; signed resume and request cancellation state transitions are unchanged. This is complete **source** coverage only, with no TS/CI/build or rendered pixel proof.
+
+
+## 2026-10-20 chat-15: 15 additional complete route-local source clones
+
+**North star:** New LMS module inside old LMS, page CONTENT and behavior unchanged. The following are *file-local* closure claims: each file now contains only explicitly shared visual primitives or legacy 8px/16px layout tokens; their actual global pixel rendering is maintained by the shared UI owners and needs final side-by-side verification. This is not an application/test run.
+
+**Reproducible source search:** for each path below, scan the full fetched file with `/<(button|input|select|textarea|table)(?=[\\s/>])/g`, `/#[0-9a-fA-F]{3,8}\\b/g`, `/<h1(?=[\\s>])/g`, and `/fixed inset-0|role=["'](?:dialog|alertdialog)["']/g`. Equivalent CLI checks: `grep -nE '<(button|input|select|textarea|table)([[:space:]/>])|#[[:xdigit:]]{3,8}|<h1([[:space:]>])|fixed inset-0|role="(dialog|alertdialog)"' <file>`. Numbers below are calculated directly on the complete GitHub file, **not** a claimed CLI execution.
+
+### hr/drives/[jobId]/messages/error.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | No route wrapper or local element: inherits single old-LMS canvas and page head; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared PageHeader, ErrorState, Button typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from PageHeader, ErrorState, Button; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | 0 caller-defined margin/padding; shared header and ErrorState layout own spacing |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared PageHeader, ErrorState, Button manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Retry uses shared Button with original reset; no local button classes; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared ErrorState role=alert, retains exact safe copy/retry/return destinations; no raw error text block |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Existing reset/Retry; recovered shared Drive messages PageHeader; paired `div` 0/0, `section` 0/0, fragments 1/1; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/round-results/error.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | No route wrapper or local element: inherits single old-LMS canvas and page head; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared PageHeader, ErrorState, Button typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from PageHeader, ErrorState, Button; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | 0 caller-defined margin/padding; shared header and ErrorState layout own spacing |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared PageHeader, ErrorState, Button manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Retry uses shared Button with original reset; no local button classes; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared ErrorState role=alert, retains exact safe copy/retry/return destinations; no raw error text block |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Existing reset/Try again; recovered shared Round results PageHeader; paired `div` 0/0, `section` 0/0, fragments 1/1; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/drives/new/error.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | No route wrapper or local element: inherits single old-LMS canvas and page head; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared PageHeader, ErrorState, Button typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from PageHeader, ErrorState, Button; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | 0 caller-defined margin/padding; shared header and ErrorState layout own spacing |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared PageHeader, ErrorState, Button manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Retry uses shared Button with original reset; no local button classes; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared ErrorState role=alert, retains exact safe copy/retry/return destinations; no raw error text block |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Preserves error telemetry and reset; Request a drive heading and exact safe no-submission copy; paired `div` 0/0, `section` 0/0, fragments 1/1; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/not-found.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | No custom section/card or hand-written 404 element; single inherited white canvas; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared PageHeader, ErrorState, PageBackLink typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from PageHeader, ErrorState, PageBackLink; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | 0 caller-defined spacing; ErrorState owns internal 8/16-token gaps |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared PageHeader, ErrorState, PageBackLink manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Accessible Back link has min-h-11 (44px), icon-only below 768px, unchanged href; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared ErrorState role=alert, retains exact safe copy/retry/return destinations; no raw error text block |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared PageBackLink min-height 44px, label visually hidden below 768px but retained via aria-label; error text wraps in ErrorState |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Back label displays at md (>=768px), no local breakpoint |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Existing /hr home destination, copy and accessible Go to home label preserved; paired `div` 0/0, `section` 0/0, fragments 1/1; native controls/hex/h1/overlay 0/0/0/0 |
+
+### recruiter/not-found.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | No custom section/card or hand-written 404 element; single inherited white canvas; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared PageHeader, ErrorState, PageBackLink typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from PageHeader, ErrorState, PageBackLink; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | 0 caller-defined spacing; ErrorState owns internal 8/16-token gaps |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared PageHeader, ErrorState, PageBackLink manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Accessible Back link has min-h-11 (44px), icon-only below 768px, unchanged href; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared ErrorState role=alert, retains exact safe copy/retry/return destinations; no raw error text block |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared PageBackLink min-height 44px, label visually hidden below 768px but retained via aria-label; error text wraps in ErrorState |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Back label displays at md (>=768px), no local breakpoint |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Existing /recruiter home destination, copy and accessible Go to home label preserved; paired `div` 0/0, `section` 0/0, fragments 1/1; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/placements/jobs/[jobId]/not-found.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | No custom section/card or hand-written 404 element; single inherited white canvas; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared PageHeader, ErrorState, PageBackLink typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from PageHeader, ErrorState, PageBackLink; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | 0 caller-defined spacing; ErrorState owns internal 8/16-token gaps |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared PageHeader, ErrorState, PageBackLink manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Accessible Back link has min-h-11 (44px), icon-only below 768px, unchanged href; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared ErrorState role=alert, retains exact safe copy/retry/return destinations; no raw error text block |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared PageBackLink min-height 44px, label visually hidden below 768px but retained via aria-label; error text wraps in ErrorState |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Back label displays at md (>=768px), no local breakpoint |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Existing /hr/placements destination, missing/unauthorized drive explanation preserved; paired `div` 0/0, `section` 0/0, fragments 1/1; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/placements/jobs/[jobId]/error.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | One inherited canvas; ErrorState supplies alert semantics and recovery action row; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared PageHeader, ErrorState, Button, PageBackLink typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from PageHeader, ErrorState, Button, PageBackLink; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | 0 local spacing; shared ErrorState controls action wrapping |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared PageHeader, ErrorState, Button, PageBackLink manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Retry Button and separate responsive Back affordance; original action labels and destinations; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared ErrorState role=alert, retains exact safe copy/retry/return destinations; no raw error text block |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared PageBackLink min-height 44px, label visually hidden below 768px but retained via aria-label; error text wraps in ErrorState |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Back label displays at md (>=768px), no local breakpoint |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Retry drive details and Back to Drives retain distinct actions; no applicant fields leak on failed auth; paired `div` 0/0, `section` 0/0, fragments 2/2; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/recruiter-request-feedback.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | Only one shared InlineNotice on verified-success, otherwise returns null; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared InlineNotice typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from InlineNotice; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | 0 local wrapper and spacing; shared notice has 13px font/20px line-height and token padding |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared InlineNotice manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Verified receipt announcement has role=status, aria-live=polite; no interactive caller control; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Verified session success only; absence renders null, no false success on URL-only receipt |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | InlineNotice min-w-0 and break-words; no caller breakpoint/overflow |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Session-scoped message still passes verified-receipt model, consumes on read, no URL-only forged success; paired `div` 0/0, `section` 0/0, fragments 0/0; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/recruiter-applicant-review-drawer.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | Single shared native dialog; old nested body div removed, viewport receives bodyClassName; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared Drawer typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from Drawer; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | bodyClassName=min-w-0 space-y-4, i.e. legacy 16px between child sections |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared Drawer manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Shared Drawer owns 44px close, Escape, focus trap and native route history; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared InlineNotice or Alert/ConfirmDialog supplies error/success/empty semantics; no duplicate hand-painted feedback |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Drawer uses shared `md:w-[min(600px,100vw)]` and token canvas padding; no caller width |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Server-scoped modal remains native Drawer, route history and URL-selected applicant closeHref unchanged; paired `div` 0/0, `section` 0/0, fragments 0/0; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/hr-notification-read-button.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | Flex-wrapped single-row action with shared controls; no local panel/card; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared Button, InlineNotice typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from Button, InlineNotice; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | mt-2 8px and gap-2 8px; matches legacy $s1:8px |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared Button, InlineNotice manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Shared secondary Button (disabled/loading/hover/focus) and shared error InlineNotice; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared InlineNotice or Alert/ConfirmDialog supplies error/success/empty semantics; no duplicate hand-painted feedback |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Existing notification gate/expectedCreatedAt POST, verified receipt, refresh and disabled+loading state preserved; paired `div` 1/1, `section` 0/0, fragments 0/0; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/recruiter-decision-read-button.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | Single action and shared slim error notice; no nested card; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared Button, InlineNotice typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from Button, InlineNotice; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | mt-2 8px, legacy $s1:8px |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared Button, InlineNotice manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Shared Button disabled/busy and InlineNotice error with error-alert role; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared InlineNotice or Alert/ConfirmDialog supplies error/success/empty semantics; no duplicate hand-painted feedback |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Original per-decision read POST, lock/verified receipt, refresh, retry text preserved; paired `div` 1/1, `section` 0/0, fragments 0/0; native controls/hex/h1/overlay 0/0/0/0 |
+
+### placements/recruiter-resume-download.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | Stacked shared button and feedback message without cards; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared Button, InlineNotice typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from Button, InlineNotice; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | space-y-2 8px, legacy $s1:8px |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared Button, InlineNotice manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Shared secondary Button hover/focus/disabled and success/error InlineNotice; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared InlineNotice or Alert/ConfirmDialog supplies error/success/empty semantics; no duplicate hand-painted feedback |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Signed HTTPS-only ephemeral grant, no file URL persistence, existing guarded request preserved; paired `div` 1/1, `section` 0/0, fragments 0/0; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/recruiter-request-cancel-button.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | Only shared modal and slim notices in original action area; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared Button, ConfirmDialog, InlineNotice typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from Button, ConfirmDialog, InlineNotice; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | mt-2 8px; legacy $s1:8px |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared Button, ConfirmDialog, InlineNotice manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Shared ConfirmDialog owns focus/escape/overlay and pending; mutation Button owns busy/disabled; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared InlineNotice or Alert/ConfirmDialog supplies error/success/empty semantics; no duplicate hand-painted feedback |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | PATCH with expectedUpdatedAt, same company scope, ConfirmDialog and mutation lock retained; paired `div` 1/1, `section` 0/0, fragments 0/0; native controls/hex/h1/overlay 0/0/0/0 |
+
+### tracker/independent-finding-copy-action.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | Stacked shared button and feedback message without cards; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared Button, InlineNotice typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from Button, InlineNotice; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | space-y-2 8px, legacy $s1:8px |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared Button, InlineNotice manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Shared secondary Button hover/focus/disabled and success/error InlineNotice; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared InlineNotice or Alert/ConfirmDialog supplies error/success/empty semantics; no duplicate hand-painted feedback |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Original clipboard-only copy and failure fallback unchanged; no network added; paired `div` 1/1, `section` 0/0, fragments 0/0; native controls/hex/h1/overlay 0/0/0/0 |
+
+### hr/recruiter-drive-focus-refresh.tsx
+
+| Property/state | Legacy property and reference | New vNext source value and result |
+| --- | --- | --- |
+| Outer canvas/card | `docs/design/old-lms-pages.md:6`: one white canvas, 12px radius, 1px border, 24px padding; ordinary rows without nested cards | Shared warning banner with original refresh action, no nested card; no additional local background/radius/shadow |
+| Type roles | `old-lms-pages.md:7,11-12`: bold page title and body/alert subtitle; `legacy-styles/components___listing-page-header.scss:52-61,131-158` responsive title archetype | Shared Alert, Button typography inherited; no locally styled h1 or custom font-family, size/weight/line-height override |
+| Text/background/border/shadow | `old-lms-pages.md:6,11-12`: #172033 heading, shared neutral text and pale banners, no nesting/shadow | All visual tokens from Alert, Button; file contains zero literal hex colors, local shadow, hand-painted border or custom overlay |
+| Radius/spacing | `legacy-styles/components___listing-page-header.scss:18-22` $s1=8px, $s2=16px; `old-lms-pages.md:6` global canvas padding24 | gap-2 8px; flex-wrap on all widths |
+| Default + hover/active/focus | `docs/design/ui-clone-checklist.md:D,F` old button focus, hover/active, status/feedback states | Shared Alert, Button manage state appearance; no local override to focus ring, hover transition, active transform or disabled color |
+| Disabled + loading | `docs/design/ui-clone-checklist.md:D,F4` shared button disabled/loading and route-loading states | Shared Alert warning tokens and secondary Button 44px mobile/normal desktop; no custom loading spinner, no raw control, no missing `disabled` guard |
+| Error + empty + status | `old-lms-pages.md:11-12`: single slim shared feedback and genuine empty state, not a card | Shared InlineNotice or Alert/ConfirmDialog supplies error/success/empty semantics; no duplicate hand-painted feedback |
+| Phone <=767px | `legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px; `learn-layout.scss:361-383` 44px accessible back affordance | Shared Button has `max-[767px]:min-h-11` and 44px touch target; flex-wrap or narrow text within inherited canvas |
+| Tablet/Desktop >=768px | `legacy-styles/components___listing-page-header.scss:131-158` other side of 767px threshold | Shared primitive desktop control height and canvas typography, no file-level device override |
+| Behavior + JSX proof | Strict tick rule #4: preserve all props and valid JSX | Original 30-second stale guard and visibility/focus listeners retained; refresh action unchanged; paired `div` 1/1, `section` 0/0, fragments 0/0; native controls/hex/h1/overlay 0/0/0/0 |
+
+**Important global blockers outside these source-local ticks:** Shared `PageHeader` currently sets 30px desktop for the TPO observed ~30px page archetype while generic listing SCSS also defines a 28px title (`components___listing-page-header.scss:53`); shared-page owner must reconcile which archetype applies at runtime. Shared back-link hover token also needs global pixel comparison to legacy `#26bac7`. None of these 15 route-local items modifies shared foundations. Native AG Grid installation/keyboard/viewport verification still blocks all spreadsheet rows and remains unticked. No code, TS, CI, Playwright or screenshot execution was performed; side-by-side visuals are separate `ui-clone-checklist` section J. **Next file:** `src/app/(authenticated)/hr/drives/page.tsx`.
