@@ -33,3 +33,7 @@
 ## 6. Mentor · Courses legacy bookmark
 
 **Surface:** `src/app/(authenticated)/mentor/courses/page.tsx`; reviewed its complete page and all four candidate route states (no loading/error/not-found/template files), inherited Mentor and authenticated layouts. Server-only `redirect("/mentor")` is the **entire** implementation: no rendered DOM, page, form, overlay, hover/focus, loading, empty state or viewport-specific content exists. **Problems found: 0. Changes: none.** Kept the different `/mentor` redirect exactly as written (distinct from the course-detail redirect) to protect legacy routes/permissions. Files changed: lane-13 polish queue and this proof only; no browser/CI.
+
+## 7. Mentor · File Explorer legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/fileExplorer/page.tsx`. Fully inspected: immediate server `redirect("/mentor/projects")`, nearest Mentor role/layout and authenticated shell; route-local loading, error, not-found and template files are absent. All 375/768/1280 and interactive states are inapplicable because no page is rendered before redirect. **Problems: 0; fixes: none.** Did not invent an interim file manager UI or modify redirect/authorization behavior. Files changed: checklist and this proof only; no browser/CI.
