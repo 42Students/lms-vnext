@@ -69,8 +69,8 @@ export default async function TpoCompanyFeedbackPage({
           ) : (
             <TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} />
           )}
-          <section className="min-w-0 border-y border-border">
-            <h2 className="border-b border-border px-5 py-4 text-lg font-semibold text-foreground">
+          <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
+            <h2 className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-[var(--lms-font-lg)] font-semibold text-foreground">
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
             {data.notes.length === 0 ? (
@@ -78,7 +78,7 @@ export default async function TpoCompanyFeedbackPage({
             ) : (
               <ul className="divide-y divide-border">
                 {data.notes.map((item) => (
-                  <li key={item.id} className="space-y-2 px-5 py-4">
+                  <li key={item.id} className="space-y-2 py-[var(--lms-space-4)]">
                     <div className="flex flex-wrap justify-between gap-2">
                       <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
                         className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">

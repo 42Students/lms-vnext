@@ -1,3 +1,4 @@
+import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -25,13 +26,13 @@ export default async function MyTrackerReportsPage(){
   </div>;}
   return <section className="space-y-5">
     <PageHeader title="My reports" description="See the issues you have reported."
-      actions={<Link href="/tracker" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Report an issue</Link>}/>
+      actions={<Link href="/tracker" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Report an issue</Link>}/>
     {!reports.length?<EmptyState title="No reports yet" description="You have not reported any issues yet." />:
       <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{reports.map(item=><li key={item.publicId}
         className="py-[var(--lms-space-3)]">
         <Link href={"/tracker/mine/"+encodeURIComponent(item.publicId)}
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">{item.publicId}</Link>
-        <p className="mt-1 text-sm text-body">{item.issueType} · {item.status}</p>
+        <div className="mt-1 flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm text-body"><span>{item.issueType}</span><StatusBadge>{item.status}</StatusBadge></div>
         <p className="mt-1 break-words text-sm text-body">{item.description}</p>
       </li>)}</ul>}
   </section>;
