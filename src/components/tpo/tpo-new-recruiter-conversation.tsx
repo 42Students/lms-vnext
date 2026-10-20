@@ -25,7 +25,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
  const draftKey="tpo-new-recruiter-message:"+actorUserId;
 
  function editMessage(value:string){
-  setMessage(value);
+  setMessage(value);setError("");
   try{if(value)sessionStorage.setItem(draftKey,value);else sessionStorage.removeItem(draftKey);}
   catch{/* Private browsing may disable storage. */}
  }
@@ -89,7 +89,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
     <form id={formId} onSubmit={event=>{event.preventDefault();void create();}} className="space-y-3">
      <label className="block text-sm font-semibold text-body">Recruiter
       <Select ref={selectRef} aria-label="Recruiter" required value={id}
-       onChange={e=>{setId(e.target.value);setCreatedThreadId(null);}} disabled={busy}
+       onChange={e=>{setId(e.target.value);setCreatedThreadId(null);setError("");}} disabled={busy}
        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
        <option value="">Choose a recruiter</option>
        {recruiters.map(r=><option key={r.userId} value={r.userId}>
@@ -100,7 +100,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
      {recruiters.length===0?<InlineNotice tone="info" message="No recruiters have verified, active placement access."/>:null}
      <Disclosure title="Quick replies" className="border-t border-border" contentClassName="px-2 pb-2">
       <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
-      {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
+      {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy||(message?message.length+1+reply.length:reply.length)>4000}
        onClick={()=>editMessage(message?message+" "+reply:reply)}
        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-medium">{reply}</Button>)}
       </div>
