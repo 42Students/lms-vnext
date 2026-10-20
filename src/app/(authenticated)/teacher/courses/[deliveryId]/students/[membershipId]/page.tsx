@@ -34,12 +34,12 @@ export default async function FacultyStudentDetailPage({
         ["Recorded attendance", data.summary.percent === null
           ? "Unknown" : data.summary.percent + "%"],
       ].map(([label, value]) =>
-        <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4">
           <p className="text-xs font-semibold text-muted-foreground">{label}</p>
           <p className="mt-2 break-words font-semibold text-foreground">{value}</p>
         </div>)}
     </section>
-    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+    <section className="border-y border-[var(--lms-canvas-border)] bg-transparent py-5">
       <h2 className="text-lg font-semibold text-foreground">Course attendance</h2>
       <div className="mt-4 grid gap-3 md:grid-cols-4">
         {[

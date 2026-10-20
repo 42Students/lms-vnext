@@ -81,7 +81,7 @@ export default async function FacultyCourseAttendancePage({
       </Link>
 
       <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/session-coverage"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Review session coverage →
       </Link>
       <FacultyAttendanceScheduleEditor
