@@ -28,7 +28,7 @@ export default async function HrRoundRemovalConfirm({params}:{
    <p className="break-words font-semibold text-foreground">{round.sequence}. {round.name}</p>
    <p className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-sm leading-6 text-body">{round.kind} · <StatusBadge tone="warning">{round.status}</StatusBadge> · No recorded candidate results.</p>
   </section>
-  <div className="flex min-w-0 flex-col-reverse gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:gap-3">
+  <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center">
    <PageBackLink href={"/recruiter/drives/"+encodeURIComponent(jobId)+"/rounds/editor"} label="Keep round"
     className="min-h-11 w-full justify-center border border-border px-4 text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto [&_span]:!inline"/>
    <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"} className="min-w-0 w-full min-[768px]:w-auto">
