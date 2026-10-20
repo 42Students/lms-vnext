@@ -100,13 +100,18 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   }catch(error){setMessage(error instanceof Error?error.message:"Could not move the follow-up.");}
   finally{setSaving(false);}
  }
- async function save(){
+ async function save(confirmed=false){
   if(!slot||saving||!leadId)return;
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(slot);}catch{setMessage("Invalid IST time.");return;}
   if(new Date(dueAt).getTime()<=new Date().getTime()){setMessage("Follow-up must be in the future.");return;}
-  if(blocked.has(slot.slice(0,10))&&!window.confirm("This date is blocked in placement settings. Add the follow-up anyway?"))return;
-  if(!blockedDatesAvailable&&!window.confirm("Blocked dates are unavailable. Add the follow-up without checking?"))return;
+  if(!confirmed){
+   const prompts=[
+    ...(blocked.has(slot.slice(0,10))?["This date is blocked in placement settings. Add the follow-up anyway?"]:[]),
+    ...(!blockedDatesAvailable?["Blocked dates are unavailable. Add the follow-up without checking?"]:[]),
+   ];
+   if(prompts.length){setReview({kind:"ADD",prompts,index:0});return;}
+  }
   setSaving(true);setMessage("");
   try{
    const response=await fetch("/api/placements/tpo/calendar/follow-ups",{method:"POST",
