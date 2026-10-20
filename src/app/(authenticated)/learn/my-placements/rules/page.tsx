@@ -29,7 +29,7 @@ export default async function LearnerPlacementRulesPage({
         className="min-w-0 border-b border-border pb-5 md:pb-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 id="placement-preparation-heading" className="text-base font-semibold text-foreground">
+            <h2 id="placement-preparation-heading" className="text-base font-semibold text-[var(--lms-heading)]">
               Where you stand
             </h2>
             <p className="mt-1 text-sm leading-6 text-body">
@@ -80,13 +80,13 @@ export default async function LearnerPlacementRulesPage({
         </div>
       </section>
       <section aria-labelledby="placement-how-eligibility-works" className="border-b border-border py-5">
-        <h2 id="placement-how-eligibility-works" className="m-0 text-base font-semibold text-foreground">How eligibility works</h2>
+        <h2 id="placement-how-eligibility-works" className="m-0 text-base font-semibold text-[var(--lms-heading)]">How eligibility works</h2>
         <p className="mt-2 text-sm leading-6 text-body">Each published drive carries its own eligibility configuration. Your verified academic evidence is evaluated against that drive when you open or apply to it. A drive can therefore be available, eligible, or blocked with an explainable reason.</p>
         <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Check current drives →</Link>
       </section>
       <section aria-labelledby="rule-applicability-heading"
         className="min-w-0 border-b border-border py-4 md:py-6">
-        <h2 id="rule-applicability-heading" className="text-base font-semibold text-foreground">
+        <h2 id="rule-applicability-heading" className="text-base font-semibold text-[var(--lms-heading)]">
           {ruleApplicability.heading}
         </h2>
         <p className="mt-2 text-sm leading-6 text-body">{ruleApplicability.message}</p>
@@ -101,7 +101,7 @@ export default async function LearnerPlacementRulesPage({
       </section>
       <div className="grid gap-4 md:grid-cols-2">
         <section className="border-b border-border py-5">
-          <h2 className="m-0 text-base font-semibold text-foreground">Your academic evidence</h2>
+          <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Your academic evidence</h2>
           <dl className="mt-4 grid min-w-0 grid-cols-1 gap-3 text-sm md:grid-cols-2">
             <div><dt className="text-muted-foreground">CGPA</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.cgpa ?? "Not recorded"}</dd></div>
             <div><dt className="text-muted-foreground">Active backlogs</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.activeBacklogs ?? "Not recorded"}</dd></div>
@@ -111,16 +111,16 @@ export default async function LearnerPlacementRulesPage({
           <Link href="/learn/my-placements#placement-academic-evidence" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Open academic record →</Link>
         </section>
         <section className="border-b border-border py-5">
-          <h2 className="m-0 text-base font-semibold text-foreground">Your job preferences</h2>
+          <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Your job preferences</h2>
           <p className="mt-3 text-sm leading-6 text-body">{preferences.preferredRoleTitles.length ? preferences.preferredRoleTitles.join(", ") : "No preferred roles recorded."}</p>
           <p className="mt-2 text-sm leading-6 text-body">{preferences.preferredLocations.length ? preferences.preferredLocations.join(", ") : "No preferred locations recorded."}</p>
           <Link href="/learn/my-placements#placement-job-preferences" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Edit job preferences →</Link>
         </section>
       </div>
       <section className="min-w-0 border-b border-border py-4 md:py-6" aria-label="College-wide placement policy">
-        <h2 className="font-semibold text-foreground">College-wide placement policy</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)]">College-wide placement policy</h2>
         {policyView?<div className="mt-3 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">Where you stand:</h3>
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Where you stand:</h3>
           <p role="status" className="text-sm leading-6 text-body">{policyView.personal}</p>
           <ul className="list-disc space-y-2 pl-5 text-sm leading-6 text-body">
             {policyView.points.map(point=><li key={point}>{point}</li>)}

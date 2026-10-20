@@ -27,7 +27,7 @@ export default async function LearnerVerificationPage() {
     <PageHeader title="Profile verification"
       description="Your own Education and Identity review status. A saved detail does not mean it is verified." />
     <section aria-labelledby="own-private-receipts" className="border-t border-border pt-5">
-      <h2 id="own-private-receipts" className="text-base font-semibold text-foreground">Your saved private evidence receipts</h2>
+      <h2 id="own-private-receipts" className="text-base font-semibold text-[var(--lms-heading)]">Your saved private evidence receipts</h2>
       <p className="mt-2 text-sm text-body">These counts describe private upload receipts and scan status, not verified documents or proof that a reviewer has accepted them. Rejected, revoked and expired receipts cannot be used for approval.</p>
       <ul className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
         {status.evidence.map(item=><li key={item.purpose} className="min-h-11 min-w-0 border-b border-[var(--lms-canvas-border)] py-3 md:py-4">
@@ -39,7 +39,7 @@ export default async function LearnerVerificationPage() {
     <div className="grid min-w-0 gap-4 md:grid-cols-2">{details.map(item => {
       const row = status[item.key];
       return <section key={item.key} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4 md:pt-6">
-        <h2 className="text-lg font-semibold text-foreground">{item.heading}</h2>
+        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{item.heading}</h2>
         <div className="mt-2"><StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":row.status==="NOT_SUBMITTED"?"neutral":"info"}>{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
           "Ready to send":label[row.status]}</StatusBadge></div>
         {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
@@ -62,7 +62,7 @@ export default async function LearnerVerificationPage() {
         </p> : null}
         {row.missing.length>0?<section className="mt-4 min-w-0 border-t border-border pt-3"
           aria-label={"What is still missing for "+item.heading}>
-          <h3 className="text-sm font-semibold text-foreground">What is still missing</h3>
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">What is still missing</h3>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-body">
             {row.missing.map(message=><li key={message}>{message}</li>)}
           </ul>

@@ -24,7 +24,7 @@ export default async function HrProfilePage() {
       />
 
       <section className="border-b border-border pb-[16px]">
-        <h2 className="text-base font-semibold text-foreground">Your details</h2>
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
         <dl className="mt-[16px] grid gap-[16px] md:grid-cols-2">
           <RecruiterProfileDetailsEditor key={context.user.id} initialName={profile.displayName}
@@ -45,7 +45,7 @@ export default async function HrProfilePage() {
       </section>
 
       <section className="border-b border-border pb-[16px]">
-        <h2 className="text-base font-semibold text-foreground">Account</h2>
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Account</h2>
         <dl className="mt-[16px] grid gap-[16px] md:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
@@ -65,7 +65,7 @@ export default async function HrProfilePage() {
       >
         <h2
           id="recruiter-account-status"
-          className="text-base font-semibold text-foreground"
+          className="text-base font-semibold text-[var(--lms-heading)]"
         >
           Recruiter account status
         </h2>
@@ -99,7 +99,7 @@ export default async function HrProfilePage() {
         <div className="pb-4">
           <h2
             id="recruiter-current-grants"
-            className="text-base font-semibold text-foreground"
+            className="text-base font-semibold text-[var(--lms-heading)]"
           >
             College access
           </h2>
