@@ -31,13 +31,13 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
     finally{setBusy(false);}
   }
   return <div className="mt-3 space-y-2 print:hidden">
-    <label className="grid gap-1 text-xs font-semibold text-body">Keep company
+    <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Keep company
       <Select className="min-h-11 w-full md:min-h-9"
         value={keep} onChange={e=>setKeep(e.target.value)}>
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
       </Select>
     </label>
-    <label className="grid gap-1 text-xs font-semibold text-body">Merge duplicate
+    <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Merge duplicate
       <Select className="min-h-11 w-full md:min-h-9"
         value={source} onChange={e=>setSource(e.target.value)}>
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}

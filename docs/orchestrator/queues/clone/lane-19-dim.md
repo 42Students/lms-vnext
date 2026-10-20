@@ -63,26 +63,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-19.md: file, number of 
 - [x] `src/components/academics/college-hall-cancellation-action.tsx`
 - [x] `src/components/activity/learner-notifications-inbox.tsx`
 - [x] `src/components/admin/admin-scoped-live-search.tsx`
-- [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/college-feature-rule-editor.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/department-create-form.tsx`
-- [ ] `src/components/admin/department-directory.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/admin/managed-college-subdomain.tsx`
-- [ ] `src/components/admin/organization-actions.tsx`
-- [ ] `src/components/admin/organization-create-form.tsx`
-- [ ] `src/components/admin/person-membership-actions.tsx`
-- [ ] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
-- [ ] `src/components/admin/student-rule-editor.tsx`
-- [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
-- [ ] `src/components/admin/super-admin-company-identities.tsx`
-- [ ] `src/components/admin/super-admin-company-merge.tsx`
-- [ ] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/admin/super-admin-interview-operations.tsx`
-- [ ] `src/components/admin/super-admin-learning-filter-fields.tsx`
+- [x] `src/components/admin/college-admin-lifecycle-action.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-feature-rule-editor.tsx`
+- [x] `src/components/admin/department-actions.tsx`
+- [x] `src/components/admin/department-create-form.tsx`
+- [x] `src/components/admin/department-directory.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/admin/managed-college-subdomain.tsx`
+- [x] `src/components/admin/organization-actions.tsx`
+- [x] `src/components/admin/organization-create-form.tsx`
+- [x] `src/components/admin/person-membership-actions.tsx`
+- [x] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
+- [x] `src/components/admin/student-rule-editor.tsx`
+- [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+- [x] `src/components/admin/super-admin-company-identities.tsx`
+- [x] `src/components/admin/super-admin-company-merge.tsx`
+- [x] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/admin/super-admin-interview-operations.tsx`
+- [x] `src/components/admin/super-admin-learning-filter-fields.tsx`
 - [ ] `src/components/admin/super-admin-platform-block-action.tsx`
 - [ ] `src/components/admin/super-admin-student-bulk-access.tsx`
 - [ ] `src/components/admin/tenant-domain-manager.tsx`

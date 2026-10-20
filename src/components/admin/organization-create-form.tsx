@@ -63,7 +63,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           htmlFor="organization-name"
           className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
-          Organization name
+          Organization name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
         </label>
         <Input
           id="organization-name"
