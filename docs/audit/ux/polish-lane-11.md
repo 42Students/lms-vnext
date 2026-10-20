@@ -27,3 +27,8 @@
 - **Fixes:** compacted quiz summary hierarchy into one hairline-separated row, removed needless disclosure card, bounded quiz descriptions, wrapped long course/lesson data, stacked primary and history links at phone widths with consistent height/focus, and made error actions full-width on phones. Retained all quiz data columns, counts, labels, pagination, submitted list, filters and routes.
 - **States:** empty/unassigned/unavailable, populated, long titles, submitted/pending attempts, filters, pagination, open disclosure, error/loading and 375/768 source styles. Existing `loading.tsx` GracefulPageLoading, nearest learner/authenticated layouts and parent not-found state reviewed; no route template/layout/not-found exists. CI and browser pixel tests not run.
 - **Files:** `src/components/courses/learner-assessment-overview.tsx`, `src/app/(authenticated)/learn/allQuizzes/error.tsx`.
+
+## Surface 5 — Assignments route alias
+- **Problems fixed (0):** This route renders no page, overlays, sections, tables or responsive content: its only operation is the existing `redirect("/learn/allAssignments")`. Adding UI would create a needless transient flash and break the established behaviour; the destination surface was polished in Surface 2.
+- **Proof:** inspected page, existing GracefulPageLoading `loading.tsx`, `error.tsx` and its GracefulErrorBoundary, and nearest learner/authenticated layouts. No route-local not-found or template files. Empty/filled/focus and 375/768 states are delegated to the destination; the error/loading fallbacks already supply recovery. No runtime or CI performed.
+- **Files changed:** queue and this audit only; code deliberately unchanged.
