@@ -23,10 +23,10 @@ export default async function LearnerPlacementRulesPage({
         className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← {back.label}
       </Link>
-      <PageHeader eyebrow="My Placements" title="Placement rules"
+      <PageHeader title="Placement rules"
         description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
       <section aria-labelledby="placement-preparation-heading"
-        className="rounded-xl border border-border bg-surface p-4 md:p-6">
+        className="min-w-0 border-b border-border pb-5 md:pb-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 id="placement-preparation-heading" className="text-base font-semibold text-foreground">
@@ -42,7 +42,7 @@ export default async function LearnerPlacementRulesPage({
           </Badge>
         </div>
         {!preparation.hasAcademicEvidence ? (
-          <p role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
+          <p role="status" className="mt-4 border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3 text-sm text-body">
             No academic evidence record is stored for your membership yet.
             Your eligibility for a particular published drive remains unknown until
             that drive checks its own criteria.
@@ -55,7 +55,7 @@ export default async function LearnerPlacementRulesPage({
         )}
         <ul className="mt-4 grid gap-3 md:grid-cols-2">
           {preparation.criteria.map((criterion) => (
-            <li key={criterion.key} className="rounded-xl border border-border p-3">
+            <li key={criterion.key} className="min-w-0 border-b border-border py-3 last:border-b-0">
               <p className="text-sm font-semibold text-foreground">
                 <span aria-hidden="true">{criterion.recorded ? "✓" : "○"} </span>
                 {criterion.label}
@@ -82,10 +82,10 @@ export default async function LearnerPlacementRulesPage({
       <section className="border-b border-border py-5">
         <h2 className="m-0 text-base font-semibold text-foreground">How eligibility works</h2>
         <p className="mt-2 text-sm leading-6 text-body">Each published drive carries its own eligibility configuration. Your verified academic evidence is evaluated against that drive when you open or apply to it. A drive can therefore be available, eligible, or blocked with an explainable reason.</p>
-        <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Check current drives →</Link>
+        <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Check current drives →</Link>
       </section>
       <section aria-labelledby="rule-applicability-heading"
-        className="rounded-xl border border-border bg-surface p-4 md:p-5">
+        className="min-w-0 border-b border-border py-4 md:py-6">
         <h2 id="rule-applicability-heading" className="text-base font-semibold text-foreground">
           {ruleApplicability.heading}
         </h2>
@@ -102,22 +102,22 @@ export default async function LearnerPlacementRulesPage({
       <div className="grid gap-4 md:grid-cols-2">
         <section className="border-b border-border py-5">
           <h2 className="m-0 text-base font-semibold text-foreground">Your academic evidence</h2>
-          <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <dl className="mt-4 grid min-w-0 grid-cols-1 gap-3 text-sm md:grid-cols-2">
             <div><dt className="text-muted-foreground">CGPA</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.cgpa ?? "Not recorded"}</dd></div>
             <div><dt className="text-muted-foreground">Active backlogs</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.activeBacklogs ?? "Not recorded"}</dd></div>
             <div><dt className="text-muted-foreground">Gap years</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.gapYears ?? "Not recorded"}</dd></div>
             <div><dt className="text-muted-foreground">Source</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.source ?? "Not recorded"}</dd></div>
           </dl>
-          <Link href="/learn/my-placements#placement-academic-evidence" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Open academic record →</Link>
+          <Link href="/learn/my-placements#placement-academic-evidence" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Open academic record →</Link>
         </section>
         <section className="border-b border-border py-5">
           <h2 className="m-0 text-base font-semibold text-foreground">Your job preferences</h2>
           <p className="mt-3 text-sm leading-6 text-body">{preferences.preferredRoleTitles.length ? preferences.preferredRoleTitles.join(", ") : "No preferred roles recorded."}</p>
           <p className="mt-2 text-sm leading-6 text-body">{preferences.preferredLocations.length ? preferences.preferredLocations.join(", ") : "No preferred locations recorded."}</p>
-          <Link href="/learn/my-placements#placement-job-preferences" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Edit job preferences →</Link>
+          <Link href="/learn/my-placements#placement-job-preferences" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Edit job preferences →</Link>
         </section>
       </div>
-      <section className="rounded-xl border border-border bg-surface p-5" aria-label="College-wide placement policy">
+      <section className="min-w-0 border-b border-border py-4 md:py-6" aria-label="College-wide placement policy">
         <h2 className="font-semibold text-foreground">College-wide placement policy</h2>
         {policyView?<div className="mt-3 space-y-3">
           <h3 className="text-sm font-semibold text-foreground">Where you stand:</h3>
