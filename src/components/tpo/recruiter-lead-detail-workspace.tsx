@@ -8,6 +8,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { FilterChip } from "@/components/ui/filter-chip";
 
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useRouter} from "next/navigation";
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import {buildTpoRecruiterInviteMessage} from "@/modules/placements/tpo-recruiter-invite-message-model";
@@ -104,6 +106,8 @@ async function readResponse<T>(response: Response): Promise<T> {
 export function RecruiterLeadDetailWorkspace({
   collegeId, leadId,
 }: { collegeId: string; leadId: string }) {
+  const router=useRouter();
+  const [confirmation,setConfirmation]=useState<"LEAVE"|"CLOSE_EDIT"|"CLOSE_NOT_NOW"|"SAVE_EDIT"|"MARK_NOT_NOW"|"CREATE_INVITE"|"CLOSE_INVITE"|null>(null);
   const [lead, setLead] = useState<Lead | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [companySummary,setCompanySummary]=useState<CompanySummary|null>(null);
@@ -144,7 +148,8 @@ export function RecruiterLeadDetailWorkspace({
   },[editing,notNowOpen]);
   function confirmLeave(){
     if(!editing&&!notNowOpen)return true;
-    return window.confirm("Leave this recruiter? Unsaved changes will be lost.");
+    setConfirmation("LEAVE");
+    return false;
   }
 
   const base = "/api/placements/tpo/leads/" + encodeURIComponent(leadId);
@@ -245,19 +250,18 @@ export function RecruiterLeadDetailWorkspace({
     }
   }
 
-  function closeEdit(){
+  function closeEdit(confirmed=false){
     if(saving)return;
-    if(editing&&lead&&(
+    if(!confirmed&&editing&&lead&&(
       edit.name!==lead.name||edit.email!==(lead.emailNorm??"")||
       edit.phone!==(lead.phoneNorm??"")||edit.designation!==(lead.designation??"")||
       edit.companyName!==(lead.companyName??"")
-    )&&!window.confirm("Discard unsaved recruiter changes?"))return;
+    )){setConfirmation("CLOSE_EDIT");return;}
     setEditing(false);
   }
-  function closeNotNow(){
+  function closeNotNow(confirmed=false){
     if(saving)return;
-    if((notNowReason.trim()||revisitDate)&&
-      !window.confirm("Discard your Not now reason and revisit date?"))return;
+    if(!confirmed&&(notNowReason.trim()||revisitDate)){setConfirmation("CLOSE_NOT_NOW");return;}
     setNotNowOpen(false);
   }
   function openEdit() {
@@ -274,12 +278,9 @@ export function RecruiterLeadDetailWorkspace({
     setEditing(true);
   }
 
-  async function saveEdit(event: React.FormEvent) {
-    event.preventDefault();
-    if (!window.confirm(
-      "Save updated recruiter details? Contact identity changes may affect " +
-      "duplicate checks and outreach. The update will be recorded in the activity log.",
-    )) return;
+  async function saveEdit(event?: React.FormEvent,confirmed=false) {
+    event?.preventDefault();
+    if(!confirmed){setConfirmation("SAVE_EDIT");return;}
     const ok = await mutate(base, "PATCH", {
       collegeId,
       name: edit.name,
@@ -322,16 +323,13 @@ export function RecruiterLeadDetailWorkspace({
     if (ok) { setFollowAt(""); setFollowNote(""); }
   }
 
-  async function markNotNow(event: React.FormEvent) {
-    event.preventDefault();
+  async function markNotNow(event?: React.FormEvent,confirmed=false) {
+    event?.preventDefault();
     if (!notNowReason.trim()) {
       setActionError("Please tell us why this recruiter is not available now.");
       return;
     }
-    if (!window.confirm(
-      "Mark this recruiter Not Now? The stage and reason/revisit date will be " +
-      "saved with an auditable change record. No invitation will be sent.",
-    )) return;
+    if(!confirmed){setConfirmation("MARK_NOT_NOW");return;}
     const ok = await mutate(base + "/not-now", "POST", {
       confirmed: true,
       decision: {
@@ -343,8 +341,8 @@ export function RecruiterLeadDetailWorkspace({
     if (ok) setNotNowOpen(false);
   }
 
-  async function createInviteLink() {
-    if (!window.confirm("Create an invitation valid for 7 days? Any previous link will stop working.")) return;
+  async function createInviteLink(confirmed=false) {
+    if(!confirmed){setConfirmation("CREATE_INVITE");return;}
     if(lead?.unsubscribedAt){setActionError("Asked not to be contacted.");return;}
     if(!lead?.emailNorm||!lead.companyRelationshipId){
       setActionError("Add a work email and link a company before inviting.");
@@ -543,8 +541,7 @@ export function RecruiterLeadDetailWorkspace({
                           "&body="+encodeURIComponent(inviteMessage)}>
                         Also email it (open draft)</a>:null}
                       <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
-                        if(!window.confirm("Close invitation preview? The one-time token and message will not be shown again."))return;
-                        setInviteLink("");setInviteMessage("");setInviteNotice("");setInviteExpiresAt("");
+                        setConfirmation("CLOSE_INVITE");
                       }}>Close preview</Button>
                     </div>
                   </div>:null}
@@ -690,7 +687,7 @@ export function RecruiterLeadDetailWorkspace({
                   className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open {duplicateLead.name}</Link>
                 </p>:null}
                 <div className="flex justify-end gap-2">
-                  <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={closeEdit}>Cancel</Button>
+                  <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={()=>closeEdit()}>Cancel</Button>
                   <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving}>Save</Button>
                 </div>
               </form>
@@ -709,11 +706,46 @@ export function RecruiterLeadDetailWorkspace({
                 </label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 <div className="flex justify-end gap-2">
-                  <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={closeNotNow}>Cancel</Button>
+                  <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={()=>closeNotNow()}>Cancel</Button>
                   <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving}>Mark not now</Button>
                 </div>
               </form>
           </Dialog>
+          <ConfirmDialog open={confirmation!==null}
+            onOpenChange={next=>{if(!next&&!saving)setConfirmation(null);}}
+            title={confirmation==="LEAVE"?"Leave recruiter details?":
+              confirmation==="CLOSE_EDIT"?"Discard recruiter edits?":
+              confirmation==="CLOSE_NOT_NOW"?"Discard Not now changes?":
+              confirmation==="SAVE_EDIT"?"Save recruiter details?":
+              confirmation==="MARK_NOT_NOW"?"Mark recruiter Not now?":
+              confirmation==="CREATE_INVITE"?"Create recruiter invitation?":"Close one-time invitation preview?"}
+            description={confirmation==="LEAVE"?"Leave this recruiter? Unsaved changes will be lost.":
+              confirmation==="CLOSE_EDIT"?"Discard unsaved recruiter changes?":
+              confirmation==="CLOSE_NOT_NOW"?"Discard your Not now reason and revisit date?":
+              confirmation==="SAVE_EDIT"?"Save updated recruiter details? Contact identity changes may affect duplicate checks and outreach. The update will be recorded in the activity log.":
+              confirmation==="MARK_NOT_NOW"?"Mark this recruiter Not Now? The stage and reason/revisit date will be saved with an auditable change record. No invitation will be sent.":
+              confirmation==="CREATE_INVITE"?"Create an invitation valid for 7 days? Any previous link will stop working.":
+              "Close invitation preview? The one-time token and message will not be shown again."}
+            confirmLabel={confirmation==="SAVE_EDIT"?"Save changes":
+              confirmation==="MARK_NOT_NOW"?"Mark Not now":
+              confirmation==="CREATE_INVITE"?"Create invitation":
+              confirmation==="LEAVE"?"Leave recruiter":
+              confirmation==="CLOSE_INVITE"?"Close preview":"Discard"}
+            confirmVariant={confirmation==="SAVE_EDIT"||confirmation==="CREATE_INVITE"?"primary":"danger"}
+            pending={saving}
+            onConfirm={()=>{
+              const action=confirmation;
+              setConfirmation(null);
+              if(action==="LEAVE"){setEditing(false);setNotNowOpen(false);router.push("/tpo/recruiters");}
+              else if(action==="CLOSE_EDIT")closeEdit(true);
+              else if(action==="CLOSE_NOT_NOW")closeNotNow(true);
+              else if(action==="SAVE_EDIT")void saveEdit(undefined,true);
+              else if(action==="MARK_NOT_NOW")void markNotNow(undefined,true);
+              else if(action==="CREATE_INVITE")void createInviteLink(true);
+              else if(action==="CLOSE_INVITE"){
+                setInviteLink("");setInviteMessage("");setInviteNotice("");setInviteExpiresAt("");
+              }
+            }}/>
         </>
       )}
     </section>

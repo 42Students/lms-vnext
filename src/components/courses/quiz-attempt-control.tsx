@@ -6,6 +6,7 @@ import { Radio } from "@/components/ui/radio";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -429,12 +430,7 @@ export function QuizAttemptControl({
         </div>
 
         {error ? (
-          <p
-            role="alert"
-            className="mt-3 text-sm font-semibold text-error"
-          >
-            {error}
-          </p>
+          <Alert tone="error" className="mt-3">{error}</Alert>
         ) : null}
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -598,23 +594,15 @@ export function QuizAttemptControl({
   return (
     <div className="mt-4">
       {submitted ? (
-        <div
-          role="status"
-          className="mb-3 rounded-lg bg-[var(--lms-success-subtle)] px-3 py-2 text-sm font-semibold text-success"
-        >
+        <Alert tone="success" role="status" className="mb-3">
           Quiz attempt submitted. Results stay
           hidden until the quiz is closed and
           published.
-        </div>
+        </Alert>
       ) : null}
 
       {error ? (
-        <p
-          role="alert"
-          className="mb-3 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error" className="mb-3">{error}</Alert>
       ) : null}
 
       <div className="flex flex-wrap items-center gap-3">

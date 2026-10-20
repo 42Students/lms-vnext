@@ -54,8 +54,8 @@ export async function ProjectAdminReassignMentorPage({
   if(projectsRead.status==="rejected"||
      mentorsRead.status==="rejected"||workloadRead.status==="rejected")
     return <div className="space-y-6">
-      <ProjectAdminNav basePath={basePath} active="workspaces"/>
       <PageHeader title="Bulk mentor reassignment"/>
+      <ProjectAdminNav basePath={basePath} active="workspaces"/>
       <ErrorState title="Mentor reassignment unavailable"
         description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
         action={<Link href={projectAdminReassignMentorHref(basePath,parsed.data)}
@@ -68,15 +68,12 @@ export async function ProjectAdminReassignMentorPage({
   const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
     <div className="space-y-6">
-      <ProjectAdminNav
-        basePath={basePath}
-        active="workspaces"
-      />
       <PageHeader
         title="Bulk mentor reassignment"
         description="Move selected non-archived project workspaces to a new primary mentor."
         actions={<PageBackLink href={basePath} label="Back to workspaces" />}
       />
+      <ProjectAdminNav basePath={basePath} active="workspaces" />
       <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Mentor workload</h2>
         <div className="mt-3 grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-3">

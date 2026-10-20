@@ -17,6 +17,10 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
+import {StatusBadge} from "@/components/ui/status-badge";
 
 const uuid = z.string().uuid();
 const href = (slotId: string, offeringId: string) =>
@@ -115,27 +119,27 @@ export default async function ElectiveRoster({
     <PageHeader eyebrow="College Admin · Electives"
       title={"Offering roster · " + slot.name}
       description="Student state, source, joining date and confirmed movement between offerings."
-      actions={<Link href="/college/electives" className="font-semibold text-link">
+      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Back to Electives</Link>} />
-    <div className="flex flex-wrap gap-4 rounded-[8px] border border-border bg-surface p-4 text-sm">
+    <div className="flex min-w-0 flex-wrap gap-4 border-y border-border py-3 text-sm">
       <span>Seats: {offering.capacity ?? "Unlimited"}</span>
       <span>Enrolled: {detail.counts.active}</span>
       <span>Waitlisted: {detail.counts.waitlisted}</span>
-      <span>Status: {offering.status}</span>
+      <span className="inline-flex items-center gap-2">Status: <StatusBadge tone={offering.status==="ACTIVE"?"success":"neutral"}>{offering.status}</StatusBadge></span>
     </div>
-    {feedback.updated && <p role="status" className="text-sm">Roster updated.</p>}
-    {feedback.error && <p role="alert" className="text-sm text-error">{feedback.error}</p>}
-    {archived && <p className="text-sm text-muted-foreground">Archived offerings are read-only.</p>}
+    {feedback.updated && <Alert tone="success">Roster updated.</Alert>}
+    {feedback.error && <Alert tone="error">{feedback.error}</Alert>}
+    {archived && <Alert tone="warning">Archived offerings are read-only.</Alert>}
     <section className="space-y-3 border-t border-border pt-4">
       <h2 className="text-lg font-semibold">Faculty</h2>
       <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
-      {assignments.length === 0 && <p className="text-sm text-muted-foreground">No faculty assigned.</p>}
+      {assignments.length === 0 && <EmptyState title="No faculty assigned" description="No faculty assigned."/>}
       {assignments.map(item => <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
         <span>{item.displayName ?? item.membershipId} · {item.role}</span>
         {!archived && <form action={changeFaculty}>
           <input type="hidden" name="action" value="END" />
           <input type="hidden" name="assignmentId" value={item.id} />
-          <Button variant="danger" >Remove faculty</Button>
+          <Button type="submit" variant="danger" className="min-h-11 md:min-h-9">Remove faculty</Button>
         </form>}
       </div>)}
       {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-3">
@@ -152,8 +156,7 @@ export default async function ElectiveRoster({
             <option value="CO_TEACHER">Co-teacher</option>
           </Select>
         </label>
-        <Button disabled={faculty.length === 0}
-          >
+        <Button type="submit" disabled={faculty.length === 0} className="min-h-11 md:min-h-9">
           Assign faculty
         </Button>
       </form>}
@@ -163,12 +166,12 @@ export default async function ElectiveRoster({
         caption="Elective offering roster"
         rows={detail.members}
         getRowKey={member => member.membershipId}
-        empty={<p className="text-sm text-muted-foreground">No students allocated.</p>}
+        empty={<EmptyState title="No students allocated" description="No students allocated."/>}
         columns={[
           { key: "student", header: "Student", mobilePriority: "primary",
             cell: member => member.displayName ?? member.membershipId },
           { key: "state", header: "State", mobilePriority: "secondary",
-            cell: member => member.state + (member.waitlistPosition ? " #" + member.waitlistPosition : "") },
+            cell: member => <StatusBadge tone={member.state==="ACTIVE"?"success":member.state==="WAITLISTED"?"warning":"neutral"}>{member.state + (member.waitlistPosition ? " #" + member.waitlistPosition : "")}</StatusBadge> },
           { key: "source", header: "Source", mobilePriority: "secondary",
             cell: member => member.source },
           { key: "since", header: "Since", mobilePriority: "secondary",
@@ -187,17 +190,17 @@ export default async function ElectiveRoster({
                       {target.courseName} ({target.courseCode})</option>)}
                   </Select>
                   <label className="inline-flex min-h-11 items-center gap-2">
-                    <input type="checkbox" name="confirm" value="yes" required /> Confirm
+                    <Checkbox name="confirm" value="yes" required /> Confirm
                   </label>
-                  <Button variant="secondary" >Move</Button>
+                  <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Move</Button>
                 </form>}
                 <form action={mutate} className="flex flex-wrap items-center gap-2">
                   <input type="hidden" name="action" value="REMOVE" />
                   <input type="hidden" name="membershipId" value={member.membershipId} />
                   <label className="inline-flex min-h-11 items-center gap-2">
-                    <input type="checkbox" name="confirm" value="yes" required /> Confirm removal
+                    <Checkbox name="confirm" value="yes" required /> Confirm removal
                   </label>
-                  <Button variant="secondary" >Remove</Button>
+                  <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Remove</Button>
                 </form>
               </div> : "—" },
         ]}

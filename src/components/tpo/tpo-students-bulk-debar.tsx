@@ -9,6 +9,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {validateTpoBulkDebarDraft} from "@/modules/placements/tpo-bulk-debar-model";
 import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
@@ -102,7 +103,7 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
     <Input type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)} className="max-w-xs"/>
    </label>:null}
   </>:null}
-  {!check.ok&&picked.length>0?<p role="alert" className="text-sm text-error">{check.message}</p>:null}
+  {!check.ok&&picked.length>0?<InlineNotice tone="error" message={check.message}/>:null}
   <Button variant="secondary" type="button" disabled={!check.ok||pending} onClick={()=>setConfirm(true)}
    >Review {action==="DEBAR"?"debarment":"lifting"} for {picked.length} student(s)</Button>
   <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open);}}
@@ -116,6 +117,6 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
    <p>{results.filter(r=>r.status==="saved").length} saved · {results.filter(r=>r.status==="skipped").length} skipped · {results.filter(r=>r.status==="failed").length} failed.</p>
    <ScrollCue axis="y" label="Bulk debarment results" viewportClassName="max-h-64"><ul className="space-y-1 text-sm">{results.map(row=><li key={row.id}><strong>{row.name}</strong> — {row.detail}</li>)}</ul></ScrollCue>
   </div>:null}
-  {error?<p role="alert" className="text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
