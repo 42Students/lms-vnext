@@ -53,9 +53,13 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Label (optional)
     <Input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
      placeholder="Blocked" className="min-h-11 w-full min-[768px]:min-h-9"/></label>
-   {reason.trim().length>0&&reason.trim().length<3?<InlineNotice tone="error" message="Use at least 3 characters for a label, or leave it blank."/>:null}
+   
    <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[1280px]:w-auto self-end"
     disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</Button>
+   {reason.trim().length>0&&reason.trim().length<3?
+    <div className="min-w-0 min-[768px]:col-span-2 min-[1280px]:col-span-4">
+      <InlineNotice tone="error" message="Use at least 3 characters for a label, or leave it blank."/>
+    </div>:null}
   </form>
   <Disclosure title="Filter blocked dates" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]">
    <div className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2">
