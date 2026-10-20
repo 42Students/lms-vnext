@@ -92,3 +92,9 @@ Compared polish-lane-6.md evidence with offer detail page, selected-college offe
 
 ## 31. src/app/(authenticated)/admin/placements/offers/page.tsx
 Reviewed polish-lane-6.md entry, offers directory page, scoped offer listing service and full AdminScopedReadPage search, status, pagination, compact results, link/empty/error/loading states, inherited layout. Preserved statuses, query params, read-only offer revision values, per-college guards and 375/768 compact rows. JSX/type contracts and mobile hierarchy were source-checked, no remaining verified regression or clutter issue requiring an edit. No CI. Files: queue/proof.
+
+## 32. src/app/(authenticated)/admin/placements/page.tsx
+Read polish-lane-6.md entry and root placements route, PlacementOperationsWorkspace and its overview/season/company/recruiter disclosures, SuperAdminPlatformPlacementPolicy, SuperAdminPlacementOversightNav/Navigation tabs and Disclosure, policy service contract, root loading/error and admin layout. Checked scope/no-college/create-drive, 375/768 action grouping, global policy edit/reload states, form labels, duplicate tabs and responsive hierarchy. No broken import/JSX, permission, form, link, copy or clutter regression confirmed. No further source change; no CI. Files: queue/proof.
+
+## 33. src/app/(authenticated)/admin/placements/retention/page.tsx
+Read polish-lane-6.md evidence, retention report route and selected-college service (stage/activity cutoff, 201-row truncation), shared DataTable/Banner/StatusBadge/PageBackLink, loading/error/admin layout. Confirmed warning stays before report/table; long applicant/drive names wrap; count, cutoff and explicit not-deletion safety note remain legible at 375/768, selected-college/empty/not-found/denied states preserved. No missing JSX/props, dropped ids or copy, duplicate attrs or extra alignment defect verified. Source only, no CI. Files: queue/proof.
