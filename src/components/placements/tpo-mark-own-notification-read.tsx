@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId: string }) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [busy, setBusy] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,19 +22,21 @@ export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId:
         body: JSON.stringify({ notificationId, confirmed: true, expectedUnread: true }),
       });
       if (!response.ok) throw new Error("Notification already changed or inaccessible. Refresh before retrying.");
+      showToast({tone:"success",title:"Notification marked read"});
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not mark notification read.");
     } finally { setBusy(false); }
   }
-  return <div className="min-w-0 space-y-2">
-    <Button type="button" disabled={busy} loading={busy} onClick={() => setConfirmOpen(true)}
-      variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto">
+  return <div className="flex min-w-0 flex-col gap-2">
+    <Button type="button" disabled={busy} onClick={() => setConfirmOpen(true)}
+      variant="secondary" className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
       {busy ? "Saving..." : "Mark read"}
     </Button>
     {error ? <InlineNotice tone="error" message={error}/> : null}
-    <ConfirmDialog open={confirmOpen} onOpenChange={value => { if (!busy) setConfirmOpen(value); }}
+    <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}}
       title="Mark placement notification as read?"
+      description="Mark this placement notification as read?"
       confirmLabel="Mark read" confirmVariant="primary"
       pending={busy} onConfirm={() => void markRead()}/>
   </div>;
