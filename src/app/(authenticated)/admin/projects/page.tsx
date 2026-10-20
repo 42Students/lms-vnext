@@ -76,7 +76,7 @@ export default async function SuperAdminProjectsPage({
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}
+        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}
       />
     </div>;
   }
@@ -124,7 +124,7 @@ export default async function SuperAdminProjectsPage({
       <ErrorState title="Project workspaces unavailable"
         description="The workspace list could not be loaded. Your search and filters were not changed."
         action={<Link href={"/admin/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading workspaces</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading workspaces</Link>}
       />
     </div>;
   }
