@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/tpo-message-draft-model";
@@ -94,7 +95,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
     </Button>:null}
    </div>
   </form>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {success?<p role="status" className="text-sm text-body">{success}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {success?<InlineNotice tone="success" message={success}/>:null}
  </section>;
 }
