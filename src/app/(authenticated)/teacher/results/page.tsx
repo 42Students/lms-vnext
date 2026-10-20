@@ -1,4 +1,5 @@
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -28,21 +29,21 @@ export default async function FacultyAssessmentResultsPage({
   const context = await getCurrentRequestContext();
   const data = await getFacultyAssessmentResults(context,parsed.data);
   const emptyState = facultyResultsEmptyState(data.query,data.sections.length);
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader title="Assessment results"
       description="Section-specific recorded response counts and scores from your current teaching assignments."
-      actions={<div className="flex min-w-0 flex-wrap gap-2">
+      actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Link href="/teacher/response-followups"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
-          className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           All Assignments
         </Link>
       </div>} />
     <form method="get" action="/teacher/results"
-      className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-3 min-[1280px]:grid-cols-4">
+      className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
       <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           
@@ -55,6 +56,7 @@ export default async function FacultyAssessmentResultsPage({
           <option value="QUIZ">Quizzes</option>
         </Select>
       </label>
+      <Disclosure title="More filters" defaultOpen={Boolean(data.query.deliveryId || data.query.status !== "ALL" || data.query.due !== "ALL" || data.query.sort !== "DUE_DESC" || data.query.pageSize !== 5)} className="min-w-0 sm:col-span-2 lg:col-span-4" contentClassName="grid min-w-0 gap-3 py-3 md:grid-cols-2 lg:grid-cols-3">
       <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
         <Select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""} >
           <option value="">All teaching sections</option>
@@ -91,17 +93,18 @@ export default async function FacultyAssessmentResultsPage({
           <option value="5">5</option><option value="10">10</option>
         </Select>
       </label>
+      </Disclosure>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
         Filter
       </Button>
-      <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      <Link href="/teacher/results" className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Clear
       </Link>
     </form>
-    <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[22px]" role="status" aria-live="polite">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
        Export this page CSV (no learner names)
       </Link>
     </div>
@@ -113,12 +116,12 @@ export default async function FacultyAssessmentResultsPage({
             className="min-w-0 py-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.title}</h2>
+                <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.title}</h2>
                 <p className="mt-1 text-sm text-body leading-[22px]">{item.courseName} · {item.sectionName} · {item.kind}</p>
               </div>
               <StatusBadge tone={item.status==="PUBLISHED"?"success":"warning"}>{item.status}</StatusBadge>
             </div>
-            <dl className="mt-4 grid gap-3 md:grid-cols-2 min-[1280px]:grid-cols-5">
+            <dl className="mt-3 grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 border-y border-[var(--lms-canvas-border)] py-3 sm:grid-cols-3 xl:grid-cols-5">
               {([
                 ["Eligible", item.eligible],
                 ["Responded", item.responded],
@@ -132,17 +135,17 @@ export default async function FacultyAssessmentResultsPage({
               ] as const).map(([label,value]) =>
                 <div key={label}>
                   <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
-                  <dd className="mt-1 text-lg font-semibold text-foreground">{value}</dd>
+                  <dd className="mt-1 break-words text-lg font-semibold leading-7 tabular-nums text-foreground">{value}</dd>
                 </div>)}
             </dl>
             <Link href={item.reportHref}
-              className="mt-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Open Section report →
             </Link>
           </article>)}
       </div>}
     <Pagination label="Assessment result pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResultsHref({...data.query,page})} />
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="max-w-prose text-xs leading-5 text-muted-foreground">
       At most ten assessments are summarized per page to bound database work.
       Results use existing authorized Section report readers. Missing responses
       are not graded failures, and unknown averages are not zero.

@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -121,11 +122,14 @@ export function AcademicsCreatePanel({
   const [sectionCapacity, setSectionCapacity] =
     useState("");
 
+  const invalidPeriodDates = Boolean(periodStart && periodEnd && periodEnd < periodStart);
+
   function run(
     task: () => Promise<unknown>,
     successTitle: string,
     reset: () => void,
   ) {
+    if (pending) return;
     startTransition(async () => {
       try {
         await task();
@@ -230,10 +234,11 @@ export function AcademicsCreatePanel({
   }
 
   return (
-    <section aria-label="Create academic records" className="grid min-w-0 items-start gap-x-[var(--lms-space-6)] gap-y-[var(--lms-space-2)] xl:grid-cols-2">
-      <Disclosure id="academic-create-period" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New academic period</h2>} summaryClassName="!px-0" contentClassName="!pb-0">
+    <section aria-label="Create academic records" className="grid min-w-0 items-start gap-x-[var(--lms-space-6)] gap-y-[var(--lms-space-4)] lg:grid-cols-2">
+      <Disclosure id="academic-create-period" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New academic period</h2>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
       <form
         onSubmit={createPeriod}
+        aria-busy={pending}
         className="min-w-0 pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]"
       >
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -245,6 +250,7 @@ export function AcademicsCreatePanel({
               Name
             </FieldLabel>
             <Input
+              disabled={pending}
               id="academic-period-name"
               value={periodName}
               onChange={(event) =>
@@ -259,6 +265,7 @@ export function AcademicsCreatePanel({
               Code
             </FieldLabel>
             <Input
+              disabled={pending}
               id="academic-period-code"
               value={periodCode}
               onChange={(event) =>
@@ -273,6 +280,7 @@ export function AcademicsCreatePanel({
               Start date
             </FieldLabel>
             <Input
+              disabled={pending}
               id="academic-period-start"
               type="date"
               value={periodStart}
@@ -286,6 +294,7 @@ export function AcademicsCreatePanel({
               End date
             </FieldLabel>
             <Input
+              disabled={pending}
               id="academic-period-end"
               type="date"
               value={periodEnd}
@@ -295,11 +304,14 @@ export function AcademicsCreatePanel({
             />
           </div>
         </div>
+        {invalidPeriodDates ? <Alert tone="error">End date must be on or after start date.</Alert> : null}
         <div className="mt-4">
           <Button
             type="submit"
-            className="w-full md:w-auto"
+            loading={pending}
+            className="w-full sm:w-auto"
             disabled={
+              invalidPeriodDates ||
               pending ||
               !periodName.trim() ||
               !periodCode.trim() ||
@@ -313,9 +325,10 @@ export function AcademicsCreatePanel({
       </form>
       </Disclosure>
 
-      <Disclosure id="academic-create-program" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New program</h2>} summaryClassName="!px-0" contentClassName="!pb-0">
+      <Disclosure id="academic-create-program" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New program</h2>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
       <form
         onSubmit={createProgram}
+        aria-busy={pending}
         className="min-w-0 pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]"
       >
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -327,6 +340,7 @@ export function AcademicsCreatePanel({
               Department
             </FieldLabel>
             <Select
+              disabled={pending}
               id="program-department"
               value={programDepartmentId}
               onChange={(event) =>
@@ -347,12 +361,14 @@ export function AcademicsCreatePanel({
                 </option>
               ))}
             </Select>
+            {departments.length === 0 ? <p role="status" className="mt-2 text-xs leading-5 text-muted-foreground">Create a Department before adding a Program.</p> : null}
           </div>
           <div>
             <FieldLabel htmlFor="program-name">
               Name
             </FieldLabel>
             <Input
+              disabled={pending}
               id="program-name"
               value={programName}
               onChange={(event) =>
@@ -367,6 +383,7 @@ export function AcademicsCreatePanel({
               Code
             </FieldLabel>
             <Input
+              disabled={pending}
               id="program-code"
               value={programCode}
               onChange={(event) =>
@@ -381,6 +398,7 @@ export function AcademicsCreatePanel({
               Duration terms
             </FieldLabel>
             <Input
+              disabled={pending}
               id="program-duration"
               type="number"
               min={1}
@@ -395,7 +413,8 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
-            className="w-full md:w-auto"
+            loading={pending}
+            className="w-full sm:w-auto"
             disabled={
               pending ||
               !programDepartmentId ||
@@ -409,9 +428,10 @@ export function AcademicsCreatePanel({
       </form>
       </Disclosure>
 
-      <Disclosure id="academic-create-cohort" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New cohort / batch</h2>} summaryClassName="!px-0" contentClassName="!pb-0">
+      <Disclosure id="academic-create-cohort" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New cohort / batch</h2>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
       <form
         onSubmit={createCohort}
+        aria-busy={pending}
         className="min-w-0 pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]"
       >
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -423,6 +443,7 @@ export function AcademicsCreatePanel({
               Program
             </FieldLabel>
             <Select
+              disabled={pending}
               id="cohort-program"
               value={cohortProgramId}
               onChange={(event) =>
@@ -443,12 +464,14 @@ export function AcademicsCreatePanel({
                 </option>
               ))}
             </Select>
+            {programs.length === 0 ? <p role="status" className="mt-2 text-xs leading-5 text-muted-foreground">Create a Program before adding a Cohort.</p> : null}
           </div>
           <div>
             <FieldLabel htmlFor="cohort-name">
               Name
             </FieldLabel>
             <Input
+              disabled={pending}
               id="cohort-name"
               value={cohortName}
               onChange={(event) =>
@@ -463,6 +486,7 @@ export function AcademicsCreatePanel({
               Code
             </FieldLabel>
             <Input
+              disabled={pending}
               id="cohort-code"
               value={cohortCode}
               onChange={(event) =>
@@ -477,6 +501,7 @@ export function AcademicsCreatePanel({
               Start period
             </FieldLabel>
             <Select
+              disabled={pending}
               id="cohort-start-period"
               value={cohortStartPeriodId}
               onChange={(event) =>
@@ -500,12 +525,14 @@ export function AcademicsCreatePanel({
                 </option>
               ))}
             </Select>
+            {periods.length === 0 ? <p role="status" className="mt-2 text-xs leading-5 text-muted-foreground">Create an Academic period before selecting the start period.</p> : null}
           </div>
           <div>
             <FieldLabel htmlFor="cohort-end-period">
               Expected end · optional
             </FieldLabel>
             <Select
+              disabled={pending}
               id="cohort-end-period"
               value={cohortEndPeriodId}
               onChange={(event) =>
@@ -534,7 +561,8 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
-            className="w-full md:w-auto"
+            loading={pending}
+            className="w-full sm:w-auto"
             disabled={
               pending ||
               !cohortProgramId ||
@@ -549,9 +577,10 @@ export function AcademicsCreatePanel({
       </form>
       </Disclosure>
 
-      <Disclosure id="academic-create-section" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New section</h2>} summaryClassName="!px-0" contentClassName="!pb-0">
+      <Disclosure id="academic-create-section" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New section</h2>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
       <form
         onSubmit={createSection}
+        aria-busy={pending}
         className="min-w-0 pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]"
       >
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -563,6 +592,7 @@ export function AcademicsCreatePanel({
               Cohort
             </FieldLabel>
             <Select
+              disabled={pending}
               id="section-cohort"
               value={sectionCohortId}
               onChange={(event) =>
@@ -583,12 +613,14 @@ export function AcademicsCreatePanel({
                 </option>
               ))}
             </Select>
+            {cohorts.length === 0 ? <p role="status" className="mt-2 text-xs leading-5 text-muted-foreground">Create a Cohort before adding a Section.</p> : null}
           </div>
           <div className="md:col-span-2">
             <FieldLabel htmlFor="section-period">
               Academic period
             </FieldLabel>
             <Select
+              disabled={pending}
               id="section-period"
               value={sectionPeriodId}
               onChange={(event) =>
@@ -612,12 +644,14 @@ export function AcademicsCreatePanel({
                 </option>
               ))}
             </Select>
+            {periods.length === 0 ? <p role="status" className="mt-2 text-xs leading-5 text-muted-foreground">Create an Academic period before adding a Section.</p> : null}
           </div>
           <div>
             <FieldLabel htmlFor="section-name">
               Name
             </FieldLabel>
             <Input
+              disabled={pending}
               id="section-name"
               value={sectionName}
               onChange={(event) =>
@@ -632,6 +666,7 @@ export function AcademicsCreatePanel({
               Code
             </FieldLabel>
             <Input
+              disabled={pending}
               id="section-code"
               value={sectionCode}
               onChange={(event) =>
@@ -646,6 +681,7 @@ export function AcademicsCreatePanel({
               Capacity · optional
             </FieldLabel>
             <Input
+              disabled={pending}
               id="section-capacity"
               type="number"
               min={1}
@@ -662,7 +698,8 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
-            className="w-full md:w-auto"
+            loading={pending}
+            className="w-full sm:w-auto"
             disabled={
               pending ||
               !sectionCohortId ||
