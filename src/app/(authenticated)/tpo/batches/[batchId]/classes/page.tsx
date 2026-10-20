@@ -9,14 +9,14 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
  const {batchId}=await params;
  const data=await listTpoBatchClassesForDecisions(await getCurrentRequestContext(),batchId);
  return <div className="space-y-5">
-  <PageHeader eyebrow="TPO · Batches" title={"Classes · "+data.batch.name}
+  <PageHeader title={"Classes · "+data.batch.name}
    description="Class decisions are inherited by students without a direct eligibility override."/>
   <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← All batches</Link>
   <TpoBatchWorkspaceTabs batchId={batchId} active="classes"/>
-  {!data.ready?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm">Batch lifecycle storage is unavailable. Decisions cannot be saved.</p>:null}
-  {data.finished?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm">This batch is finished. Eligibility decisions are read-only.</p>:null}
+  {!data.ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">Batch lifecycle storage is unavailable. Decisions cannot be saved.</p>:null}
+  {data.finished?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">This batch is finished. Eligibility decisions are read-only.</p>:null}
   <p className="text-sm text-muted-foreground">{data.classes.length} active classes · Whole batch: {data.inherited.replaceAll("_"," ").toLowerCase()}</p>
-  {data.classes.length?<div className="grid gap-4 md:grid-cols-2">
+  {data.classes.length?<div className="grid min-w-0 gap-4 md:grid-cols-2">
    {data.classes.map(row=><section key={row.id} className="min-w-0 space-y-3 border-b border-border py-4">
     <div className="flex flex-wrap items-start justify-between gap-2">
       <div><h2 className="text-base font-semibold">{row.name}</h2><p className="text-xs text-muted-foreground">{row.code} · {row.students} student{row.students===1?"":"s"}</p></div>
@@ -29,7 +29,7 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
     {data.ready?<TpoBatchClassDecision batchId={batchId} classId={row.id}
       initial={row.decision} expectedVersion={row.expectedVersion} finished={data.finished}/>:null}
    </section>)}
-  </div>:<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm">No active classes exist in this batch.</p>}
+  </div>:<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">No active classes exist in this batch.</p>}
   <p className="text-xs text-muted-foreground">An Eligible class does not override an explicit Ineligible student decision. A student with two active class assignments requires review rather than an inferred choice.</p>
  </div>;
 }

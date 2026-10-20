@@ -1,0 +1,19 @@
+# Lane 12 old-LMS clone proof
+
+Source: docs/design/old-lms-shell.css, old-lms-pages.md, legacy-styles/components___form.scss:117-143 and components___listing-page-header.scss:45-60. Static checks only; screenshots/CI not run.
+
+- [x] src/components/tpo/tpo-company-memory-workspace.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/students/page.tsx (legacy values: shared controls/tokens + one canvas; 5 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/components/tpo/tpo-header-indicators.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=2; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/components/tpo/grid/grid-workspace.tsx (legacy values: shared controls/tokens + one canvas; 1 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/audit/actors/page.tsx (legacy values: shared controls/tokens + one canvas; 3 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx (legacy values: shared controls/tokens + one canvas; 3 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/page.tsx (legacy values: shared controls/tokens + one canvas; 4 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/calendar/page.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/calendar/rounds/page.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)
+- [x] src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx (legacy values: shared controls/tokens + one canvas; 2 chrome fixes; greps: raw=0, hex=0, rounded-full=0, arbitrary-px=0; 1280/768/375 CSS breakpoints checked statically; no CI)

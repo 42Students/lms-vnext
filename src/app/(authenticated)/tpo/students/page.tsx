@@ -26,6 +26,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { FilterChipLink } from "@/components/ui/filter-chip";
 import { Alert } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InlineNotice } from "@/components/ui/inline-notice";
@@ -659,14 +660,14 @@ export default async function TpoStudentsPage({
          </div>)}
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Journey attention filters">
-         {data.debarredCount!=null&&data.debarredCount>0?<Link
+         {data.debarredCount!=null&&data.debarredCount>0?<FilterChipLink
           href={scopedHref({...currentFilters,debarred:true,page:1})}
-          className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-link">
-          Debarred · {data.debarredCount}</Link>:null}
-         {tpoStudentJourneyGaps(summary).map(gap=><Link key={gap.state}
+          tone="warning" selected={query.debarred === true}>
+          Debarred · {data.debarredCount}</FilterChipLink>:null}
+         {tpoStudentJourneyGaps(summary).map(gap=><FilterChipLink key={gap.state}
           href={scopedHref({...currentFilters,journeyState:gap.state,page:1})}
-          className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-link">
-          {gap.label} · {gap.count}</Link>)}
+          tone="warning" selected={query.journeyState === gap.state}>
+          {gap.label} · {gap.count}</FilterChipLink>)}
         </div>
         <div className="mt-5 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
           {TPO_STUDENT_JOURNEY_STATES.map((state) => {
