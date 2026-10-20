@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function LearnerAssessmentsLoading() {
@@ -6,7 +6,7 @@ export default function LearnerAssessmentsLoading() {
     <div className="min-w-0 space-y-6">
       <PageHeader title="Assessments"
         description="Loading your own scheduled employer assessments." />
-      <LoadingState label="Loading assessment schedule and due buckets…" />
+      <GracefulPageLoading label="Loading assessment schedule and due buckets…" shape="directory" />
     </div>
   );
 }

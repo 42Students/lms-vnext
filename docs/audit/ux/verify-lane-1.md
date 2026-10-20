@@ -113,3 +113,31 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** reviewed authorized history service, timeline semantics, IST dates, previous/current status wording, status badge, empty history, loading/error/not-found and parent layout; no missing aria/copy, import, or TSX regression found.
 - **Extra clutter/alignment fixes (1):** updated route-only loading fallback to legacy one-canvas directory skeleton with the existing loading message and slow-load Retry rather than a static spinner.
 - **Files changed:** `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/loading.tsx`; verification proof and queue.
+
+## Surface 17 — Learner application detail
+- **Surface:** `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 17.
+- **Regressions found/fixed (0):** verified authorized ID, status and timeline, conditional withdrawal/request behavior, schema/POST/pending state in `LearnerApplicationDetailWithdraw`, Dialog/Textarea/Button props, responsive actions, loading/error/not-found and parent layout; no malformed JSX, lost element IDs, imports or modified copy detected.
+- **Extra clutter/alignment fixes (0):** single status heading, clear withdrawal priority and chronological hairline rows hold at 375/768.
+- **Files changed:** verification proof and queue only.
+
+## Surface 18 — Learner applications directory
+- **Surface:** `src/app/(authenticated)/learn/my-placements/applications/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 18.
+- **Regressions found/fixed (0):** inspected DTO mapping, `LearnerApplicationsBrowse`, `LearnerPlacementJourney`, URL-state filters, stage tabs, CSV, drawer and withdrawal Dialog controls, optional round data, internal destinations, loading/error and parent layout; no dropped IDs/aria or import/prop mismatch identified.
+- **Extra clutter/alignment fixes (1):** aligned route loading with recoverable `GracefulPageLoading` directory skeleton, retaining visible page title, existing loading label and recovery.
+- **Files changed:** `src/app/(authenticated)/learn/my-placements/applications/loading.tsx`; verification proof and queue.
+
+## Surface 19 — Placement assessments
+- **Surface:** `src/app/(authenticated)/learn/my-placements/assessments/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 19.
+- **Regressions found/fixed (0):** reviewed membership-scoped assessment service, query/deep-link guards, child `LearnerCareerRoundsWorkspace` and `LearnerCareerRounds`, dates/reminders, searchable due buckets, launch confirmation Dialog, link permissions, loading/error/not-found/parent layout; no missing props, IDs, or broken TSX found.
+- **Extra clutter/alignment fixes (1):** replaced static loading spinner with shared directory skeleton with the exact same loading wording and recovery on delayed requests.
+- **Files changed:** `src/app/(authenticated)/learn/my-placements/assessments/loading.tsx`; verification proof and queue.
+
+## Surface 20 — Official assessment results
+- **Surface:** `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 20.
+- **Regressions found/fixed (0):** validated search view/schema, Tabs/Pagination links, saved scores/result publication, IST date rendering, score/feedback privacy, loading/error/not-found, controls and aria/element imports; no source-level JSX or type issue discovered.
+- **Extra clutter/alignment fixes (1):** replaced standalone loading indicator with `GracefulPageLoading` under the existing heading, preserving wording and supplying shared slow-load recovery.
+- **Files changed:** `src/app/(authenticated)/learn/my-placements/assessments/results/loading.tsx`; verification proof and queue.
