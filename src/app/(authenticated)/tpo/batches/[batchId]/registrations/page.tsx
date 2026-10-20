@@ -84,8 +84,8 @@ export default async function BatchRegistrations({params,searchParams}:{
       </div>},
     ]}/>
    <nav aria-label="Registration pages" className="flex flex-wrap gap-2">
-    {data.filters.page>1?<Link href={url(data.filters.page-1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
-    {data.hasMore?<Link href={url(data.filters.page+1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+    {data.filters.page>1?<Link href={url(data.filters.page-1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">Previous</Link>:null}
+    {data.hasMore?<Link href={url(data.filters.page+1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">Next</Link>:null}
    </nav>
   </>}
  </div>;
