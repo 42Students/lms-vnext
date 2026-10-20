@@ -23,11 +23,13 @@ const columns: DataTableColumn<DepartmentDirectoryRow>[] = [
   {
     key: "name",
     header: "Department Name",
+    mobilePriority: "primary",
     cell: (row) => <span className="font-semibold text-foreground">{row.name}</span>,
   },
   {
     key: "usage",
     header: "Contents",
+    mobilePriority: "secondary",
     cell: (row) => (
       <span
         className="text-xs text-body"
@@ -42,6 +44,7 @@ const columns: DataTableColumn<DepartmentDirectoryRow>[] = [
   {
     key: "actions",
     header: <span className="sr-only">Actions</span>,
+    mobilePriority: "action",
     className: "text-right",
     cell: (row) => <DepartmentActions departmentId={row.id} name={row.name} usage={row.usage} />,
   },
@@ -121,7 +124,7 @@ export function DepartmentDirectory({
       <DataTable
         columns={columns.map(column => column.key === "name" ? {
           ...column,
-          header: <><span className="hidden print:inline">Department Name</span><Button type="button" aria-label="Sort Department Name"
+          header: <><span className="hidden print:inline">Department Name</span><Button type="button" variant="ghost" aria-label="Sort Department Name"
             onClick={() => { setNameOrder(nameOrder === "ASC" ? "DESC" : "ASC"); setPage(1); }}
             className="inline-flex min-h-11 items-center gap-2 md:min-h-9 print:hidden">
             Department Name {nameOrder === "ASC" ? "↑" : "↓"}
