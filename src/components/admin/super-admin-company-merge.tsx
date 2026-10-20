@@ -16,8 +16,6 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
   const [result,setResult]=useState("");
   async function merge(){
     if(busy||!keep||!source||keep===source)return;
-    const survivor=companies.find(c=>c.id===keep)?.name??keep;
-    const duplicate=companies.find(c=>c.id===source)?.name??source;
     setBusy(true);setError("");setResult("");
     try{
       const response=await fetch("/api/admin/companies/merge",{
