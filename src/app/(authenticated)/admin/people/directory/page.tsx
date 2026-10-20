@@ -33,7 +33,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  }:{invalid:true});
  if(!query.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
-   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] hover:underline">Clear filters</Link>}/>
+   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
  </div>;
  const loaded=await listSuperAdminUsers(context,query.data)
   .then(value=>({ok:true as const,value}))
@@ -46,7 +46,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     ?"Your account can no longer view these membership records."
     :"These membership records could not be loaded. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
-    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     {loaded.denied?"Back to dashboard":"Retry loading users"}
    </Link>}/>
  </div>;
@@ -61,14 +61,14 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
-   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Users without college memberships →</Link> : null}
+   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Users without college memberships →</Link> : null}
   <Tabs ariaLabel="People directory tabs" value={data.query.tab} renderPanel={false}
    items={tabs.map(tab=>({value:tab.id,label:tab.label,
     href:adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}))}/>
   <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
-   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] underline-offset-4">Student accounts</Link>
-   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] underline-offset-4">Faculty accounts</Link>
-   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] underline-offset-4">Teaching assignments</Link>
+   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Student accounts</Link>
+   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Faculty accounts</Link>
+   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Teaching assignments</Link>
   </nav>
   <p className="text-xs text-muted-foreground">
    {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab==="FACULTY"?"Faculty memberships":"All permitted memberships"} ·
@@ -126,11 +126,11 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      <span className="whitespace-nowrap text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.updatedAt)} IST</span>},
     {key:"action",header:"Actions",mobilePriority:"action",cell:row=>
      <Link href={`/admin/people/directory/${encodeURIComponent(row.membershipId)}`}
-      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View membership →</Link>},
+      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View membership →</Link>},
    ]}/>
    :<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
   <Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminUsersHref({...data.query,page})}/>
-  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] hover:underline">← Membership management</Link>
+  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Membership management</Link>
  </div>;
 }
