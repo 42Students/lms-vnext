@@ -65,7 +65,7 @@ export default async function CollegeBatchPromotionPage({
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Batch promotion preview unavailable"
       description="Program, batch, promotion or faculty-readiness data could not be verified. No promotion has been applied."
-      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] underline-offset-4">Retry promotion preview</Link>}/>
+      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Retry promotion preview</Link>}/>
   </div>;
   const {options,preview,facultySetup}=read.value;
   return <div className="min-w-0 space-y-6">
@@ -137,7 +137,7 @@ export default async function CollegeBatchPromotionPage({
                   {blocker==="NEXT_TERM_NO_MAPPED_COURSES"?<>
                     Cannot promote: Semester {preview.plan.targetTermNumber} has no mapped courses.
                     Configure the semester curriculum first.{" "}
-                    <Link href="/college/semester-courses" className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                    <Link href="/college/semester-courses" className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">
                       Map semester courses
                     </Link>
                   </>:blocker.replaceAll("_"," ")}
