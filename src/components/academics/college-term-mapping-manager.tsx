@@ -128,7 +128,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
     <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
     <form onSubmit={prepare} className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-      <label className="grid gap-1 text-sm font-semibold text-body">Program
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required value={programId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
           setProgramId(event.target.value); setTermId("");
@@ -138,7 +138,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             ([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Semester
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
         <Select required value={termId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained.");
           setTermId(event.target.value);
@@ -147,7 +147,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber})</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Courses to Add
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Courses to Add
         <Select multiple size={8} value={selectedIds}
           disabled={!termId} onChange={event => setDraftByTerm(current => ({
             ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
@@ -202,13 +202,13 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   event.preventDefault();
                   updateMapping(row.id,editing.credits,Number(editing.position));
                 }}>
-                <label className="text-xs">Credits
+                <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Credits
                   <Input type="number" min={1} max={10} step={1} required
                     value={editing.credits}
                     onChange={event=>setEditing({...editing,credits:event.target.value})}
                     className="block min-h-[var(--lms-control-height)] w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
                 </label>
-                <label className="text-xs">Order
+                <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
                   <Input type="number" min={1} max={orderedPeers(row).length} step={1}
                     value={editing.position}
                     onChange={event=>setEditing({...editing,position:event.target.value})}

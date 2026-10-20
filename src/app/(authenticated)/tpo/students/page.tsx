@@ -427,70 +427,70 @@ export default async function TpoStudentsPage({
             Preserve them through this separate advanced-filter form. */}
         <Input type="hidden" name="programId" value={query.programId??""}/>
         <Input type="hidden" name="classId" value={query.classId??""}/>
-        <label className="text-sm font-semibold">Stage
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
           <Select name="legacyStage" defaultValue={query.legacyStage??""}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">All stages</option>
             {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
               <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold">Interviewed with (company)
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interviewed with (company)
           <Input type="search" name="interviewedWith" maxLength={100}
            defaultValue={query.interviewedWith??""} placeholder="Company name"
            className="w-40"/>
         </label>
-        <label className="text-sm font-semibold">Debarred
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Debarred
           <Select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Any</option><option value="YES">Debarred</option><option value="NO">Not debarred</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold">Needs attention
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Needs attention
           <Select name="needsAttention" defaultValue={query.needsAttention===undefined?"":query.needsAttention?"YES":"NO"}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Any</option><option value="YES">Needs attention</option><option value="NO">No attention flags</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold">Furthest round reached (minimum)
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Furthest round reached (minimum)
           <Input type="number" name="minRoundReached" min={0} max={10000} step={1}
            defaultValue={query.minRoundReached??""} className="w-28"/>
         </label>
         <Disclosure title="Profile strength filters" className="w-full min-w-0 border-b border-border px-0 py-3">
          <p className="mt-2 text-xs text-muted-foreground">Projects here are self-reported profile entries, not verified Projects workspace outcomes or released grades.</p>
          <div className="mt-3 flex flex-wrap gap-3">
-          <label className="grid gap-1 text-sm">Gender
-           <Select name="gender" defaultValue={query.gender??""} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
+           <Select name="gender" defaultValue={query.gender??""} className="min-h-11 md:min-h-9 p-2">
             <option value="">Any</option>{(["Male","Female","Other"] as const).map(v=><option key={v}>{v}</option>)}
            </Select>
           </label>
-          <label className="grid gap-1 text-sm">Skill name
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Skill name
            <Input type="search" name="skillName" defaultValue={query.skillName??""} maxLength={100}
             placeholder="e.g. Java" />
           </label>
-          <label className="grid gap-1 text-sm">Birth year
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Birth year
            <Input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="w-28"/>
           </label>
           {([["minSkills","Skills"],["minProjects","Projects"],["minCertifications","Certifications"],["minExperiences","Experience entries"]] as const).map(([key,label])=>
-           <label key={key} className="grid gap-1 text-sm">Minimum {label}
+           <label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum {label}
             <Input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="w-28"/>
            </label>)}
-          <label className="grid gap-1 text-sm">Profile links
-           <Select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Profile links
+           <Select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-11 md:min-h-9 p-2">
             <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
            </Select>
           </label>
           {([["hasResume","Resume"],["hasCodingProfiles","Coding profiles"]] as const).map(([key,label])=>
-           <label key={key} className="grid gap-1 text-sm">{label}
-            <Select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+           <label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+            <Select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-11 md:min-h-9 p-2">
              <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
             </Select>
            </label>)}
          </div>
         </Disclosure>
-        <label className="text-sm font-semibold">Profile verified
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Profile verified
           <Select name="profileStatus" defaultValue={query.profileStatus??""}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">All verification states</option>
             <option value="VERIFIED">Verified</option>
             <option value="WAITING">Waiting to verify</option>
@@ -502,7 +502,7 @@ export default async function TpoStudentsPage({
           ["minCgpa","CGPA from",query.minCgpa],
           ["maxCgpa","CGPA to",query.maxCgpa],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-1 text-sm font-semibold">{label}
+         <label key={name} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
           <Input type="number" name={name} min={0} max={10} step="0.01"
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
@@ -511,7 +511,7 @@ export default async function TpoStudentsPage({
           ["maxActiveBacklogs","Max active backlogs",query.maxActiveBacklogs],
           ["maxPastBacklogs","Max past backlogs",query.maxPastBacklogs],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-1 text-sm font-semibold">{label}
+         <label key={name} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
           <Input type="number" name={name} min={0} max={100} step={1}
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
@@ -523,50 +523,50 @@ export default async function TpoStudentsPage({
               ["minTwelfthPct","12th % from",query.minTwelfthPct],
               ["minDiplomaPct","Diploma % from",query.minDiplomaPct],
               ["minUgPct","UG % from",query.minUgPct],
-            ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
+            ] as const).map(([key,label,value])=><label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
               <Input type="number" min={0} max={100} step="0.01" name={key} defaultValue={value??""}
                className="w-28"/></label>)}
-            <label className="grid gap-1 text-sm">Passing year
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Passing year
               <Input name="passingYear" type="number" min={1950} max={2100} defaultValue={query.passingYear??""}
                 className="w-28"/></label>
-            <label className="grid gap-1 text-sm">Maximum gap years
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum gap years
               <Input name="maxGapYears" type="number" min={0} max={100} defaultValue={query.maxGapYears??""}
                 className="w-28"/></label>
             {([
               ["marksVerified","Marks verified",query.marksVerified],
               ["isLateralEntry","Lateral entry",query.isLateralEntry],
-            ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
+            ] as const).map(([key,label,value])=><label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
               <Select name={key} defaultValue={value===undefined?"":value?"YES":"NO"}
-                className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+                className="min-h-11 md:min-h-9 p-2">
                 <option value="">Any</option><option value="YES">Yes</option><option value="NO">No</option>
               </Select></label>)}
           </div>
         </Disclosure>
-        <label className="text-sm font-semibold">CGPA recorded
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CGPA recorded
           <Select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Any</option><option value="YES">Recorded</option>
             <option value="NO">No recorded CGPA</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold">Offer waiting on answer
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Offer waiting on answer
           <Select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Any</option>
             <option value="YES">Yes</option><option value="NO">No</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold">After college
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">After college
           <Select name="afterCollege" defaultValue={query.afterCollege??""}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">All outcomes</option>
             {AFTER_COLLEGE_OUTCOMES.map(outcome=>
               <option key={outcome} value={outcome}>{AFTER_COLLEGE_LABELS[outcome]}</option>)}
           </Select>
         </label>
-        <label className="text-sm font-semibold">Batch
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select name="batchId" defaultValue={query.batchId??""}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Current students</option>
             {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </Select>
@@ -577,7 +577,7 @@ export default async function TpoStudentsPage({
           ["minOffers","Offers from",query.minOffers],
           ["maxOffers","Offers to",query.maxOffers],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-1 text-sm font-semibold">{label}
+         <label key={name} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
           <Input type="number" name={name} min={0} max={10000} step={1}
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
@@ -865,12 +865,12 @@ export default async function TpoStudentsPage({
           className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2 lg:grid-cols-4"
         >
           {first(raw.columns)&&<Input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Journey
             <Select
               name="journeyState"
               defaultValue={query.journeyState ?? ""}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 md:min-h-9"
             >
               <option value="">All journeys</option>
               {TPO_STUDENT_JOURNEY_STATES.map((state) => (
@@ -881,12 +881,12 @@ export default async function TpoStudentsPage({
             </Select>
           </label>
 
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Branch
             <Select
               name="branchId"
               defaultValue={query.branchId ?? ""}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 md:min-h-9"
             >
               <option value="">All branches</option>
               {data.branches.map((branch) => (
@@ -902,12 +902,12 @@ export default async function TpoStudentsPage({
             <TpoDebouncedStudentSearch initial={query.search??""} />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 md:min-h-9"
             >
               <option value="25">25 students</option>
               <option value="50">50 students</option>

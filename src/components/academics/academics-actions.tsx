@@ -206,7 +206,7 @@ export function ProgramActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          {departments.length ? <label className="grid gap-1 text-sm font-semibold">Department
+          {departments.length ? <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
             <Select value={departmentId} onChange={event=>setDepartmentId(event.target.value)}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
