@@ -31,7 +31,7 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
    <h2 className="break-words font-semibold">{row.displayName}</h2>
    <p className="text-xs text-muted-foreground">{row.branchName} · {row.cohortName} · {row.readinessSignal.replaceAll("_"," ").toLowerCase()}</p>
    <Disclosure title="Manual follow-up draft" className="mt-3 min-w-0 border-t border-border pt-2" contentClassName="pt-3">
-   <label className="block text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Manual follow-up draft<Textarea readOnly rows={3} value={tpoPreparationNudgeMessage(row)} className="mt-[6px] min-h-32 w-full resize-y"/></label>
+   <Textarea aria-label="Manual follow-up draft" readOnly rows={3} value={tpoPreparationNudgeMessage(row)} className="mt-[6px] min-h-32 w-full resize-y"/>
    </Disclosure>
    <Link href={"/tpo/students/"+row.membershipId+"/history"} className="lms-inline-link mt-2 inline-flex min-h-11 w-full items-center justify-center text-link underline sm:w-auto sm:justify-start focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review recorded placement history</Link>
   </li>)}</ul>}
