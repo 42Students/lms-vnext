@@ -22,6 +22,7 @@ import { learnerBoardTaskSelectionNotice } from "@/modules/projects/learner-boar
 import Link from "next/link";
 import {ErrorState} from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
 import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardStatusSchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
@@ -164,11 +165,11 @@ export default async function LearnerProjectPage({
           readOnly={workspace.project.status!=="ACTIVE"}/>
       ) : null}
       {selectionNotice ? (
-        <Alert tone="info" className="!flex-row flex-wrap items-center justify-between gap-3">
+        <Banner tone="info">
           <span>{selectionNotice}</span>
           <Link href={learnerBoardTaskHref(projectId, boardFilters)}
             className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Board</Link>
-        </Alert>
+        </Banner>
       ) : null}
       {selectedTask ? (
         <LearnerBoardTaskDetailDialog projectId={projectId} filters={boardFilters}
