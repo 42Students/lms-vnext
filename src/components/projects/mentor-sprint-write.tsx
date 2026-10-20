@@ -71,7 +71,7 @@ export function MentorSprintCreate({
         <label className="grid gap-1 text-sm font-semibold text-body">Ships in release
           <Select value={chosenReleaseId} disabled={busy}
             onChange={event=>setChosenReleaseId(event.target.value)}
-            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
+            className="min-h-11 w-full min-[768px]:min-h-9">
             {releases.length?releases.filter(release=>release.status!=="SHIPPED").map(release=>
               <option key={release.id} value={release.id}>{release.title}</option>):
               <option value={releaseId}>Current release</option>}
@@ -90,7 +90,7 @@ export function MentorSprintCreate({
           <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold text-body">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-2 min-[768px]:grid-cols-3">
           <label className="grid gap-1 text-sm font-semibold text-body">Start date
             <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
           <label className="grid gap-1 text-sm font-semibold text-body">End date
