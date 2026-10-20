@@ -53,7 +53,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
           className="mt-2 min-h-11 w-full border border-border px-3 text-sm font-normal md:min-h-9" />
       </label>
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Apply</Button>
-      <Link href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
+      <Link data-unskin="" href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-[var(--lms-body-text)] bg-white hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none">Clear</Link>
     </form>
     {parsed.success && pageRows.length > 0 ? (
       <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
@@ -72,8 +72,8 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p role="status" className="text-sm text-muted-foreground">{shown.length} matching events shown</p>
       {parsed.success && shown.length ? (
-        <a href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv.content)} download="learner-project-activity.csv"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+        <a data-unskin="" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv.content)} download="learner-project-activity.csv"
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-[var(--lms-body-text)] bg-white hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none">
           Download shown events CSV
         </a>
       ) : null}
@@ -95,10 +95,10 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <p className="mt-2 break-words text-xs text-muted-foreground">{event.actorDisplayName ?? "System"} · <time dateTime={event.occurredAt.toISOString()}>{formatter.format(event.occurredAt)} IST</time></p>
     </li>)}</ol>}
     {parsed.success ? <nav aria-label="Activity pages" className="flex flex-wrap gap-3">
-      {parsed.data.beforeTime ? <Link href={learnerProjectActivityPageHref(projectId, parsed.data)}
-        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Newest activity page</Link> : null}
-      {hasMore && lastEvent ? <Link href={learnerProjectActivityPageHref(projectId, parsed.data, { time: lastEvent.cursorOccurredAt, id: lastEvent.id })}
-        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Older activity page →</Link> : null}
+      {parsed.data.beforeTime ? <Link data-unskin="" href={learnerProjectActivityPageHref(projectId, parsed.data)}
+        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-[var(--lms-body-text)] bg-white hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none">Newest activity page</Link> : null}
+      {hasMore && lastEvent ? <Link data-unskin="" href={learnerProjectActivityPageHref(projectId, parsed.data, { time: lastEvent.cursorOccurredAt, id: lastEvent.id })}
+        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-[var(--lms-body-text)] bg-white hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none">Older activity page →</Link> : null}
     </nav> : null}
     <p className="text-xs leading-5 text-muted-foreground">Category and IST dates are applied to authorized Project history. Text search only filters the current page of up to 100 fetched events; Older activity pages use the original page cursor to avoid skipping history. CSV downloads include only the currently displayed matches.</p>
   </section>;
