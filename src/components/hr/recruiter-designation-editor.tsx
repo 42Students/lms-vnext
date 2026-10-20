@@ -30,14 +30,14 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
  }
  return <div className="min-[768px]:col-span-2">
   <form onSubmit={event=>void save(event)} className="space-y-2">
-   <label htmlFor="hr-recruiter-designation" className="block text-xs font-medium uppercase tracking-wide text-muted-foreground">Designation</label>
+   <label htmlFor="hr-recruiter-designation" className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation</label>
    <div className="flex flex-wrap gap-2">
     <Input id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
        maxLength={160} className="min-w-48 flex-1"/>
     <Button type="submit" disabled={saving||title.length>160} loading={saving} className="min-h-11 min-[768px]:min-h-9">
       {saving?"Saving…":"Save designation"}</Button>
    </div>
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   {error?<p role="alert" className="text-[12px] leading-5 text-[var(--lms-error)]">{error}</p>:null}
    {success?<p role="status" className="text-sm text-muted-foreground">{success}</p>:null}
   </form>
  </div>;

@@ -38,7 +38,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  }
  if(!options.length||status==="DRAFT")return null;
  return <div className="mt-2 space-y-2">
-  {options.length>1?<label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Section
+  {options.length>1?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
    <Select value={chosen.deliveryId} disabled={loading} onChange={e=>{
     setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
     className="min-h-11 md:min-h-9">
@@ -56,7 +56,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
-    <label className="mb-2 grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Search Student on this page
+    <label className="mb-2 grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search Student on this page
      <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-11 md:min-h-9" placeholder="Student name or email"/>
     </label>

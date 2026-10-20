@@ -268,7 +268,7 @@ export function LearnerCourseAttendance({
             >
               ←
             </Button>
-            <label className="text-xs font-semibold text-body">
+            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
               Month
               <Input
                 type="month"
