@@ -10,8 +10,8 @@
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-2-b with [chat-2] after every 2 surfaces.
 
 
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`
 - [ ] `src/components/tpo/tpo-batch-class-decision.tsx`
 - [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
 - [ ] `src/components/placements/tpo-round-check-in.tsx`
