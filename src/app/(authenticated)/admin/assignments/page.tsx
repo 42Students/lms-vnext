@@ -20,14 +20,14 @@ export default async function SuperAdminAssignmentsPage({
   if (!query.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
     <ErrorState title="Invalid assignment filters" description="Check search, status and page."
-      action={<Link href="/admin/assignments" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>} />
+      action={<Link href="/admin/assignments" className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
     <ErrorState title="Assignment access denied"
       description="Your account cannot access Super Admin assignments."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to dashboard</Link>} />
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline">Back to dashboard</Link>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
@@ -44,12 +44,12 @@ export default async function SuperAdminAssignmentsPage({
     <ErrorState title="Assignments unavailable"
       description="The assignment directory could not be loaded. Your filters have not changed."
       action={<Link href="/admin/assignments"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry loading assignments</Link>} />
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline">Retry loading assignments</Link>} />
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" actions={<a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">Export assignments.csv</a>} />
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)]">Export assignments.csv</a>} />
     {lessonsResult.status==="fulfilled"
       ?<CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>
       :<Alert tone="warning" role="status">
