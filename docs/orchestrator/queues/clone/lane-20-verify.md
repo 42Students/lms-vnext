@@ -9,10 +9,10 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-20.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-20-b with [chat-20] after every 2 surfaces.
 
-- [ ] `src/app/(authenticated)/college/profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/programs/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/college/profile/page.tsx`
+- [x] `src/app/(authenticated)/college/programs/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/at-risk/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/audit/page.tsx`
