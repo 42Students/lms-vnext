@@ -165,7 +165,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      <Input maxLength={2000} disabled={busy} value={option.text} placeholder={"Option "+(j+1)}
       onChange={e=>replaceQuestion(i,{...question,options:question.options.map((o,k)=>k===j?{...o,text:e.target.value}:o)})}
       className="min-h-11 min-w-0 flex-1"/>
-     {question.options.length>2?<Button variant="secondary" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
+     {question.options.length>2?<Button variant="danger" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
       ...question,options:question.options.filter((_,k)=>k!==j)})}
       className="min-h-11 text-xs font-semibold md:min-h-9">Remove</Button>:null}
     </label>)}
@@ -177,7 +177,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      <Button variant="ghost" type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
       className="min-h-11 text-sm font-semibold text-primary-text md:min-h-9">+ Add option</Button>
-     {questions.length>1?<Button variant="secondary" type="button" disabled={busy}
+     {questions.length>1?<Button variant="danger" type="button" disabled={busy}
       onClick={()=>setQuestions(rows=>rows.filter((_,k)=>k!==i))}
       className="min-h-11 text-sm font-semibold md:min-h-9">Remove question</Button>:null}
     </div>
