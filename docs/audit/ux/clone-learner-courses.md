@@ -810,3 +810,58 @@ Legacy sources: `legacy-styles/components___variables.scss:10-14` interactive `#
 **Loading-state source review with no edit warranted:** `src/app/(authenticated)/learn/attendance/calendar/loading.tsx`, `learn/calendar/loading.tsx`, `allAssignments/[assignmentId]/loading.tsx`, `allQuizzes/[quizId]/loading.tsx`, `courses/[deliveryId]/progress/loading.tsx`, `courses/[deliveryId]/attendance-summary/loading.tsx`, `courses/[deliveryId]/[...courseTab]/loading.tsx`, `courses/[deliveryId]/loading.tsx`. Six of these use shared `GracefulPageLoading` (directory/card/route variants); two drilldowns use shared `PageHeader` plus `LoadingState`. No local hand-built spinner, raw controls, or overlay. The old LMS `old-lms-pages.md:27` observed a small dotted loading spinner; exact spinner render/animation is owned by shared UI and must be compared by the orchestrator before a strict tick.
 
 **NEXT EXACT UNTICKED TSX:** `src/components/courses/college-live-classes-directory.tsx` — lesson/course live-class filters, recorded attendance section, responsive list rows and state actions; then `src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx` and its section content display. H1–H6 **remain open** for complete computed-value and full-area grep verification. This lane has not executed code, tests, typecheck or CI.
+
+## 2026-10-20 chat-7, batch 9 — exact judgement cases after upstream skin sync
+
+Rebased by fast-forward at start to `main@a7616350ee830c5e187533defabafb477a27172e` (757 commits behind, zero lane-7 commits ahead). Global element skin `src/styles/legacy-skin.css` is on main and owned by chat-17. **This turn changes page-level judgement cases only**; no shared UI or shell files touched.
+
+### 9 updated TSX file-level source proofs
+
+| File within `src/components/courses` | Changed state/layout decision | Boundary, keyboard, loading/error/empty paths |
+| --- | --- | --- |
+| `college-live-classes-directory.tsx` | 8 explicit label font roles; course offering action is >=44px on phone with hover/focus; link focus outline offset becomes 2px; list row padding flattens to canvas hairlines | `md:` 12; statuses shared `StatusBadge`, empty message and `Pagination` preserved, course/section/view/date filtering unchanged |
+| `college-learner-progress-report.tsx` | Class/Course labels inherited 13px/600 skin, two CSV/filter links use 2px focus outline offset | `md:` 6; `DataTable`, `StatTile`, `MetricBar`, empty `EmptyState`, CSV and disabled filter unchanged |
+| `college-content-aggregate.tsx` | 15 field label roles, focus offset2, phone course link >=44px; plain mobile publication text migrated to shared `StatusBadge` success/neutral/warning | `md:` 21; table/mobile cards switch at768px; `DataTable`, CSV export, `Pagination`, empty state and material flags retained |
+| `college-assessment-aggregate.tsx` | 10 form field labels, ten field controls compact at768px; manual Previous/Next replaced with shared `Pagination`, existing Page/Total/25-per-page summary retained; mobile and desktop result visibility now shared `StatusBadge` | `md:` 17, `Pagination` self closes; quiz hidden vs published, assignment review, valid filters, no-results and route URLs unchanged |
+| `college-learning-directory.tsx` | 64 labels inherit single global 13px/600 skin; 64 matching controls 44px phone/36px desktop; ordinary mobile records flattened from per-row nested cards to dividing hairlines; lesson visibility and offering status promoted to shared `StatusBadge` | `md:` 75, no `sm:`; mobile list and desktop `DataTable` switch at768px; both filtered forms, hidden input query persistence, jump-to-page, `Pagination`, empty/no-progress state retained |
+| `college-quiz-attempts.tsx` | Flattened quiz submission and question nested frames into hairline/divider rows; section/student labels inherit shared form label; Correct/Incorrect review text now shared success/error `StatusBadge` | `md:` 6; shared `Disclosure`, fetch errors, retry, pagination, student search, 320px scroll box, 44px phone actions retained |
+| `admin-course-overview.tsx` | Course list filters use global 13px/600 label role, search input 44px phone/36px tablet; offering action gains hover/focus/reduced-motion token states | `md:` 9; four summary/tables, `DataTable`, `Pagination`, Page/Filter/Empty, course actions retained |
+| `learner-course-list.tsx` | Semester/search/term/progress/sort selectors, continue-only chip, reset and load-more actions keep 44px touch until 768px, compact 36px afterwards | `md:` 16, `sm:` zero; segmented-control semantics, warning `Alert`, 3 badge types, no-course card and progress `MetricBar` intact |
+| `learner-assessment-overview.tsx` | Course/search/state/sort filter controls compact from 768px; Clear assessment filters uses same phone/desktop sizes | `md:` 27, `sm:` zero; shared `NeedsDoingChips`, `Disclosure`, 4 status pills, `EmptyState`, paging and action guards retained |
+
+**Read-only peer verification:** Global skin `src/styles/legacy-skin.css:375-391` now forces form `label` font-size **13px**, weight **600**, color `var(--lms-neutral-400)` through `main`/page canvas. Thus page-local `text-xs` labels do **not** imply rendered 12px as long as authenticated global skin wins. Shared `input/select/textarea` state owners remain chat-17; no duplicated static color hex in any of the nine page files.
+
+### Legacy value-to-source property table
+
+| Property / state | Legacy source : expected | vNext route/property | Static-source result |
+| --- | --- | --- | --- |
+| Labels default | `legacy-styles/components___form.scss:107-115` `.ln-lb2`: 13px / 600 / 16px, neutral-400 `#a9a7ae` | All edited form labels inherit `legacy-skin.css:375-391` label 13px/600/neutral-400; selectors remain shared `Select` / `Input` | MATCH inherited font-size/weight/color; rendered line height depends descendant control and remains visually unverified |
+| Input background/default | `legacy-styles/components___form.scss:117-132`: `#fbfcfd`, 10px radius, text14px/20px/0.2px | Existing shared Input/Select/DateInput, global skin form variables; removed page-level size overrides but not shared primitives | Shared token path only; actual computed padding/radius/letter-spacing require rendered comparison |
+| Input focus/error | `legacy-styles/components___form.scss:128-140`: focus `0 0 0 2px rgba(38,186,199,.15)`; error `#ef4444` | Shared controls own these states; `focus-visible:outline-2 focus-visible:outline-offset-2` added on manually styled route links | Declared focus outline/token path; interacted states not run |
+| Links default/hover/focus | `legacy-styles/components___variables.scss:10-14` accent `#26bac7`, hover `#1e9aa8`, subtle `#eff8fa` | Route links inherit `text-primary-text`, `hover:text-primary-hover`, `hover:bg-primary-subtle` and teal focus outline; checked all changed link cases | SOURCE comparison of semantic token routing only; owner CSS may use accessibility-adjusted shade |
+| Phone tappable | `legacy-styles/components___learn-layout.scss:34,361-383`: viewport <=767px and target44px | `min-h-11` (44px), `md:min-h-9` (36px at>=768px), no `sm:` remaining across these 9 touched files | Source MATCH phone/tablet breakpoint and named link/selector targets |
+| Table/list hairlines | `old-lms-pages.md:1-12`: one white canvas, 1px border `#e5e9f0`, ordinary table row separators, cards for distinct objects only | Mobile Lesson and Quiz attempts ordinary lists use `divide-y divide-border border-y`; course cards and distinct report tiles remain individual | Source layout closer to old table anatomy; computed element widths/padding/render proof outstanding |
+| Status colors | `legacy-styles/components___variables.scss:63-78` success #059669, warning #d97706, error #ef4444, info #26bac7 | Content publication, lesson visibility, quiz answer grade/correctness and results status use shared `StatusBadge` semantic tone | Semantic source match; shared Badge owner to check exact pill geometry |
+| Pagination, count, current/disabled | `legacy-styles/components___antddesign.scss:233-280` numeric active/disabled states and phone 44px | Assessments now shared `Pagination page={data.page} pageCount={data.totalPages} hrefForPage={...} showBoundaryLinks={false}`, existing record summary still shown; other pages already use shared Pagination | Source shared nav migration; visual active/focus rendering open |
+| Loading/errors/empty | `old-lms-pages.md:7-12` in-canvas states; legacy semantic colors per variables | `college-quiz-attempts` failed/empty/search-miss, learner list unavailable card, assessment `EmptyState`, report `EmptyState`, content report `StatusBadge` all retained | Code branches and shared primitives preserved; live error/no-results render not inspected |
+| Keyboard, mobile overflow, reduced-motion | `components___form.scss:23-28` keyboard teal ring; `learn-layout.scss:34` phone wrap | Manual links `focus-visible:outline`, `hover`, `motion-reduce:transition-none` where changed, list wrappers `min-w-0` and internal quiz list `overscroll-contain` | Source rules present, end-to-end keyboard and 320px/375px/768px/1024px screenshots absent |
+
+### Exact source-probe output (9 files on `chatgpt/chat-7-b`)
+
+After writes the nine files were fetched as complete UTF-8 source from the remote branch and scanned, not run as code. Order: live classes, college progress report, college content, assessments, learning directory, quiz attempts, admin overview, learner course list, learner assessments.
+
+| File | Raw native button/input/select/textarea/table | Six-digit hex | Raw overlay/dialog | `sm:` | `md:` | Structural evidence |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| live classes | 0 | 0 | 0 | 0 | 12 | form 1/1, Button 1/1, StatusBadge 1/1, Pagination self-close |
+| progress report | 0 | 0 | 0 | 0 | 6 | form 1/1, Button 1/1, shared DataTable and StatTile |
+| content aggregate | 0 | 0 | 0 | 0 | 21 | form 1/1, Button 1/1, StatusBadge 1/1, Pagination self-close |
+| assessment aggregate | 0 | 0 | 0 | 0 | 17 | form 1/1, Button 1/1, StatusBadge 4/4, Pagination self-close |
+| learning directory | 0 | 0 | 0 | 0 | 75 | form 2/2, Button 2/2, StatusBadge 4/4, Pagination self-close |
+| quiz attempts | 0 | 0 | 0 | 0 | 6 | Button 4/4, StatusBadge 1/1, shared Disclosure |
+| admin course overview | 0 | 0 | 0 | 0 | 9 | form 1/1, Button 1/1, StatusBadge 3/3, Pagination self-close |
+| learner course list | 0 | 0 | 0 | 0 | 16 | Button 3/3, Alert 1/1, StatusBadge 3/3, Disclosure 3/3 |
+| learner assessment overview | 0 | 0 | 0 | 0 | 27 | Button 5/5, nav 1/1, StatusBadge 4/4, Disclosure 1/1 |
+
+**Regex executed on fetched strings:** `/<(button|input|select|textarea|table)(?=[\\s>])/g`; `/#[A-Fa-f0-9]{6}\\b/g`; `/fixed inset-0|role=["']dialog["']/g`; `/\\bsm:/g`; `/\\bmd:/g`; JSX openings/closings with `/<Tag(?=[\\s>])/g` and `/<\\/Tag>/g`. The source-probe sum across nine paths is **0 raw controls, 0 hex, 0 raw overlays, 0 sm, 189 md**. `Pagination` is self-closing (1 opening, 0 `</Pagination>`) by design; this does not represent an unbalanced tag.
+
+**STRICT TICK RULE:** These nine TSX paths are **source-corrected and source-probed, not fully ticked**. Missing for a full [x]: rendered/computed-value comparisons for every state in each path at old and new breakpoints; full 247+ path area-wide grep/ownership inventory; keyboard/focus/disabled/hover and interaction proof. H1–H6 remain `[ ]`. Do not imply running TSX, lint, typecheck, CI or screenshots. Next source path is `src/components/courses/learner-course-discussion.tsx`, which carries the preserved composer focus contract and needs responsive/state proof.
