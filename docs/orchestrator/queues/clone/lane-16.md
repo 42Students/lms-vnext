@@ -31,14 +31,14 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
 - [x] `src/app/(authenticated)/mentor/allQuizzes/page.tsx`
 - [x] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/courses/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/fileExplorer/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/[token]/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/confirmed/page.tsx`
-- [ ] `src/app/college-join/[token]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/courses/page.tsx`
+- [x] `src/app/(authenticated)/mentor/fileExplorer/page.tsx`
+- [x] `src/app/(authenticated)/mentor/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
+- [x] `src/app/campaign-unsubscribe/[token]/page.tsx`
+- [x] `src/app/campaign-unsubscribe/confirmed/page.tsx`
+- [x] `src/app/college-join/[token]/page.tsx`
 - [ ] `src/app/company-join/[token]/page.tsx`
 - [ ] `src/app/home/page.tsx`
 - [ ] `src/app/maintenance/page.tsx`
