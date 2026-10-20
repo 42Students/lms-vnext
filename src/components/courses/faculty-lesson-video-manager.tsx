@@ -216,10 +216,10 @@ export function FacultyLessonVideoManager({
     change(video,{durationSeconds:value});
   }
 
-  return <section aria-label="Lesson video management" className="mt-4 space-y-3 border-t border-border pt-4 max-[767px]:[&_button]:min-h-11">
+  return <section aria-label="Lesson video management" className="mt-4 min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
     <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
     <p className="text-xs text-muted-foreground">{limitsSummary("lesson-video")}</p>
-    <div className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">
+    <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <label className="text-[13px] leading-4 font-semibold text-body">Title
         <Input className="mt-1" value={title} maxLength={255} onChange={event=>setTitle(event.target.value)}/>
       </label>
@@ -231,12 +231,12 @@ export function FacultyLessonVideoManager({
           value={contentPoints} onChange={event=>setContentPoints(event.target.value)}/>
       </label>
       <label className="text-[13px] leading-4 font-semibold text-body">Upload Video
-        <Input type="file" className="mt-1 block w-full text-xs"
+        <Input type="file" className="mt-1 block min-h-11 w-full min-w-0 text-xs md:min-h-9"
           accept={acceptAttributeFor("lesson-video")} disabled={busy}
           onChange={event=>{setFile(event.target.files?.[0]??null);event.currentTarget.value="";}}/>
       </label>
     </div>
-    <Button type="button" size="md" disabled={busy||loading||!title.trim()||!file} onClick={()=>upload()}>
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" size="md" loading={busy} disabled={busy||loading||!title.trim()||!file} onClick={()=>upload()}>
       Upload video
     </Button>
     {busy&&activeName?<div className="space-y-2" role="status">
@@ -246,83 +246,89 @@ export function FacultyLessonVideoManager({
     </div>:null}
     {loading?<LoadingState label="Loading videos…" />:null}
     {!loading&&videos.length===0?<EmptyState title="No videos have been added to this lesson." />:null}
-    <ol className="space-y-3">
+    {videos.length>0?<ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {videos.map((video,index)=>{
         const state=videoProcessingDescriptor(video.processingStatus);
         const canEdit=video.deliveryId===deliveryId;
-        return <li key={video.id} className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+        return <li key={video.id} className="min-w-0 space-y-3 py-4">
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <p className="min-w-0 break-words text-sm font-semibold text-foreground">{video.title} · {formatFileSize(video.sizeBytes)}</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <StatusBadge tone={state.tone}>{state.label}</StatusBadge>
               <StatusBadge tone="neutral">{videoPublishLabel(video.publishStatus,video.visibleToStudents)}</StatusBadge>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button size="md" variant="secondary" type="button" disabled={busy||!facultyVideoMayPreview(video)}
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!facultyVideoMayPreview(video)}
               onClick={()=>setPreviewId(previous=>previous===video.id?null:video.id)}>
               Preview
             </Button>
-            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||(video.publishStatus==="DRAFT"&&(!facultyVideoMayPublish(video)||!video.lessonContentId))}
-              onClick={()=>change(video,{publishStatus:facultyVideoPublishAction(video)})}>
-              {video.publishStatus==="PUBLISHED"?"Unpublish":video.publishStatus==="ARCHIVED"?"Restore draft":"Publish"}
-            </Button>
-            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||video.publishStatus==="ARCHIVED"||video.processingStatus!=="READY"}
-              onClick={()=>change(video,{visibleToStudents:!video.visibleToStudents})}>
-              {video.visibleToStudents?"Hide from learners":"Show to learners"}
-            </Button>
-            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||index===0}
-              onClick={()=>reorder(video,-1)}>
-              Move up
-            </Button>
-            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||index===videos.length-1}
-              onClick={()=>reorder(video,1)}>
-              Move down
-            </Button>
-            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||video.processingStatus!=="READY"}
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="primary" type="button" disabled={busy||!canEdit||video.processingStatus!=="READY"}
               onClick={()=>linkContent(video)}>
               {video.lessonContentId?"Publish to students":"Add to lesson & publish"}
             </Button>
-            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit}
+          </div>
+          <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
+            <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">More video actions</summary>
+            <div className="flex min-w-0 flex-wrap gap-2 pt-2">
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit||(video.publishStatus==="DRAFT"&&(!facultyVideoMayPublish(video)||!video.lessonContentId))}
+              onClick={()=>change(video,{publishStatus:facultyVideoPublishAction(video)})}>
+              {video.publishStatus==="PUBLISHED"?"Unpublish":video.publishStatus==="ARCHIVED"?"Restore draft":"Publish"}
+            </Button>
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit||video.publishStatus==="ARCHIVED"||video.processingStatus!=="READY"}
+              onClick={()=>change(video,{visibleToStudents:!video.visibleToStudents})}>
+              {video.visibleToStudents?"Hide from learners":"Show to learners"}
+            </Button>
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit||index===0}
+              onClick={()=>reorder(video,-1)}>
+              Move up
+            </Button>
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit||index===videos.length-1}
+              onClick={()=>reorder(video,1)}>
+              Move down
+            </Button>
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit}
               onClick={()=>setConfirmation({kind:"DELETE",video})}>
               Delete
             </Button>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <label className="text-[13px] leading-4 font-semibold text-body">Video title
-              <Input className="mt-1 min-w-44" maxLength={255}
+            </div>
+            <div className="grid min-w-0 items-start gap-3 pt-3 sm:grid-cols-2">
+            <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><label htmlFor={`video-title-${video.id}`}>Video title</label>
+              <Input id={`video-title-${video.id}`} className="mt-1 w-full min-w-0" maxLength={255}
                 disabled={busy||!canEdit}
                 value={titleDraft[video.id]??video.title}
                 onChange={event=>setTitleDraft(old=>({...old,[video.id]:event.target.value}))}/>
-              <Button size="md" variant="secondary" type="button"
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button"
                 disabled={busy||!canEdit}
                 onClick={()=>saveTitle(video)}>Update Video</Button>
-            </label>
+            </div>
             <label className="text-[13px] leading-4 font-semibold text-body">Replace video
-              <Input type="file" className="mt-1 block max-w-full text-xs" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
+              <Input type="file" className="mt-1 block min-h-11 w-full min-w-0 max-w-full text-xs md:min-h-9" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
                 accept={acceptAttributeFor("lesson-video")}
                 onChange={event=>{const next=event.target.files?.[0];if(next)setConfirmation({kind:"REPLACE",video,file:next});event.currentTarget.value="";}}/>
             </label>
             <label className="text-[13px] leading-4 font-semibold text-body">Thumbnail
-              <Input type="file" className="mt-1 block max-w-full text-xs" disabled={busy||!canEdit}
+              <Input type="file" className="mt-1 block min-h-11 w-full min-w-0 max-w-full text-xs md:min-h-9" disabled={busy||!canEdit}
                 accept={acceptAttributeFor("lesson-video-thumbnail")}
                 onChange={event=>{thumbnail(video,event.target.files?.[0]??null);event.currentTarget.value="";}}/>
               <span className="block text-xs text-muted-foreground">{video.thumbnailStatus==="READY"?"Thumbnail ready":video.thumbnailStatus==="UPLOADING"?"Checking thumbnail":"No thumbnail"}</span>
             </label>
-            <label className="text-[13px] leading-4 font-semibold text-body">Duration (seconds)
-              <Input type="number" className="mt-1 w-28" min={1} max={86400}
+            <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><label htmlFor={`video-duration-${video.id}`}>Duration (seconds)</label>
+              <Input disabled={busy||!canEdit} id={`video-duration-${video.id}`} type="number" className="mt-1 w-full min-w-0" min={1} max={86400}
                 value={durationDraft[video.id]??String(video.durationSeconds??"")}
                 onChange={event=>setDurationDraft(draft=>({...draft,[video.id]:event.target.value}))}/>
-              <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit} onClick={()=>saveDuration(video)}>Save duration</Button>
-            </label>
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit} onClick={()=>saveDuration(video)}>Save duration</Button>
+            </div>
           </div>
+
+          </details>
           {!canEdit?<Alert tone="info">Shared video · read only in this Section.</Alert>:null}
           {previewId===video.id&&deliveryId?<FacultyVideoPreview key={video.id} videoId={video.id} deliveryId={deliveryId}/>:null}
           {video.lessonContentId?<p className="text-xs text-muted-foreground">Linked to lesson content</p>:null}
           {video.processingStatus==="PROCESSING"?<Alert tone="warning">Checking file. Playback and publishing are not available yet.</Alert>:null}
         </li>;
       })}
-    </ol>
+    </ol>:null}
     {info?<Alert tone="success">{info}</Alert>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
     <ConfirmDialog
