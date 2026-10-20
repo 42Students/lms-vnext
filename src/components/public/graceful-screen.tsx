@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import { friendlyReference } from "@/lib/friendly-error";
 import styles from "./public-screen.module.css";
 
@@ -25,19 +27,19 @@ export function GracefulScreen({ title, message, homeHref = "/", retry, requestI
       <div className={styles.center}>
         <section className={styles.card} aria-labelledby="public-screen-title">
           <div aria-hidden="true" className={styles.icon}>!</div>
-          <h1 id="public-screen-title" className={styles.heading}>{title}</h1>
+          <PageHeader id="public-screen-title" title={title} />
           <p className={styles.message}>{message}</p>
           {reference ? (
             <div className={styles.reference}>
               <span>{reference}</span>
-              <button type="button" className={styles.copy}
+              <Button variant="secondary" size="sm" type="button" className={styles.copy}
                 onClick={() => { if (requestId) void navigator.clipboard?.writeText(requestId).catch(() => {}); }}>
                 Copy reference
-              </button>
+              </Button>
             </div>
           ) : null}
           <div className={styles.actions}>
-            {retry ? <button type="button" onClick={retry} className={styles.primary}>Try again</button> : null}
+            {retry ? <Button type="button" onClick={retry} className={styles.primary}>Try again</Button> : null}
             <Link href={homeHref} className={retry ? styles.secondary : styles.primary}>{homeLabel}</Link>
           </div>
         </section>
