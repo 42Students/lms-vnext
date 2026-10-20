@@ -5,7 +5,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Alert} from "@/components/ui/alert";
 import {LoadingState} from "@/components/ui/loading-state";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 type Faculty={id:string;name:string|null};
 type Receipt={total:number;reassigned:number;skipped:number;
@@ -19,21 +19,29 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
  [loaded,setLoaded]=useState(false),
  [error,setError]=useState(""),[receipt,setReceipt]=useState<Receipt|null>(null);
  const {ask,confirmation}=useCollegeConfirmation();
+ const inFlightRef=useRef(false);
+ const [truncated,setTruncated]=useState(false);
  const base="/api/college/faculty/"+encodeURIComponent(membershipId)+"/reassign-schedules";
  async function show(){
+  if(busy||inFlightRef.current)return;
+  inFlightRef.current=true;
   setOpen(true);setBusy(true);setError("");setReceipt(null);
-  setSelected("");setOptions([]);setUpcoming(0);setLoaded(false);
+  setSelected("");setOptions([]);setUpcoming(0);setLoaded(false);setTruncated(false);
   try{const response=await fetch(base,{cache:"no-store"});
    const body=await response.json().catch(()=>null);
    if(!response.ok)throw Error(body?.error??"Could not read faculty schedules");
    setOptions(body.faculty??[]);setUpcoming(body.upcoming??0);setLoaded(true);
-   if(body.truncated)setError("More than 200 upcoming sessions; this bulk action cannot safely move all of them.");
+   if(body.truncated){setTruncated(true);setError("More than 200 upcoming sessions; this bulk action cannot safely move all of them.");}
   }catch(e){setError(e instanceof Error?e.message:"Could not load schedules");}
-  finally{setBusy(false);}
+  finally{inFlightRef.current=false;setBusy(false);}
  }
  async function submit(){
-  if(!selected||busy)return;
-  if(!(await ask("Reassign upcoming class schedules for "+name+"? Sessions with clashes are skipped.")))return;
+  if(!selected||busy||inFlightRef.current||truncated||receipt)return;
+  inFlightRef.current=true;
+  let confirmed=false;
+  try{confirmed=await ask("Reassign upcoming class schedules for "+name+"? Sessions with clashes are skipped.");}
+  catch{inFlightRef.current=false;return;}
+  if(!confirmed){inFlightRef.current=false;return;}
   setBusy(true);setError("");
   try{const response=await fetch(base,{method:"POST",credentials:"same-origin",
     headers:{"content-type":"application/json"},
@@ -42,10 +50,10 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
    if(!response.ok)throw Error(body?.error??"Reassignment failed");
    setReceipt(body as Receipt);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Reassignment failed");}
-  finally{setBusy(false);}
+  finally{inFlightRef.current=false;setBusy(false);}
  }
  return <>{confirmation}
-  <Button variant="secondary" type="button" onClick={()=>void show()}
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>void show()}
    className="min-h-11 w-full md:min-h-9 md:w-auto">
    Reassign class schedules</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}}
@@ -53,7 +61,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
    footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:items-center md:justify-end">
      <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
       className="min-h-11 w-full md:min-h-9 md:w-auto">Close</Button>
-     <Button variant="primary" type="button" disabled={busy||!loaded||!selected||!upcoming}
+     <Button variant="primary" type="button" disabled={busy||!loaded||!selected||!upcoming||truncated||Boolean(receipt)}
       onClick={()=>void submit()} className="min-h-11 w-full md:min-h-9 md:w-auto"
       loading={busy&&loaded}>{busy&&loaded?"Reassigning…":"Reassign class schedules"}</Button>
    </div>}>
@@ -71,8 +79,8 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
       </Alert>:null}
       {loaded?<div className="min-w-0 space-y-[var(--lms-space-4)]">
         <p className="max-w-prose text-sm text-body">{upcoming} upcoming scheduled session(s) for {name}.</p>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assign to
-          <Select value={selected} disabled={busy} onChange={e=>setSelected(e.target.value)}>
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assign to
+          <Select value={selected} disabled={busy||truncated||Boolean(receipt)} onChange={e=>{setSelected(e.target.value);setError("");}}>
             <option value="">Choose a replacement faculty</option>
             {options.map(row=><option key={row.id} value={row.id}>{row.name??row.id}</option>)}
           </Select>
