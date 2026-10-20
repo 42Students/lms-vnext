@@ -174,7 +174,7 @@ export function AssignmentFileSubmissionControl({
   const hasWrittenOrLinkParts=multipartEnabled&&(Boolean(responseText.trim())||links.length>0);
   const maySubmit=staged.length>0?canSubmitStagedFiles(files):hasWrittenOrLinkParts;
 
-  return <section aria-label="Assignment file submission" className="mt-4 space-y-3">
+  return <section aria-label="Assignment file submission" className="mt-4 min-w-0 space-y-3">
     <h3 className="text-sm font-semibold text-foreground">{multipartEnabled?"Combined assignment submission":"File Upload"}</h3>
     {uploadsAllowed?<p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>:null}
     {uploadsAllowed?<label className="block text-xs font-semibold text-body">Choose a file to upload
@@ -183,8 +183,11 @@ export function AssignmentFileSubmissionControl({
         className="mt-2 min-h-11 max-w-full md:min-h-9"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
     </label>:null}
-    {uploadsAllowed?<p role="status" className="text-xs text-muted-foreground">Google Drive import is not configured. To add a file from Google Drive, download it to your device first, then use Choose a file to upload. The uploaded file must pass private-storage security checks.</p>:null}
-    {uploadsAllowed?<Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload} className="min-h-11 md:min-h-9">
+    {uploadsAllowed?<details className="min-w-0 text-xs text-muted-foreground">
+      <summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9 md:py-2">Google Drive import is not configured.</summary>
+      <p className="max-w-prose pb-2">To add a file from Google Drive, download it to your device first, then use Choose a file to upload. The uploaded file must pass private-storage security checks.</p>
+    </details>:null}
+    {uploadsAllowed && selected.length>0 ? <Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload} className="min-h-11 w-full sm:w-auto md:min-h-9">
       {busy && activeName ? "Uploading…" : staged.length > 0 ? "Add another file" : "Choose a file to upload"}
     </Button>:null}
     {busy && activeName ? <div className="space-y-2" role="status">
@@ -194,14 +197,14 @@ export function AssignmentFileSubmissionControl({
       <p className="text-xs text-muted-foreground">Your submission is being sent. Keep this window open until it finishes.</p>
     </div> : null}
     {loading ? <p role="status" className="text-sm text-muted-foreground">Loading your files…</p> : null}
-    <ul className="space-y-2" aria-label="Staged assignment files">
+    <ul className={staged.length ? "min-w-0 divide-y divide-border border-y border-border" : "min-w-0"} aria-label="Staged assignment files">
       {staged.map(file => {
         const state = fileStatusDescriptor(file.status);
-        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-3">
+        return <li key={file.id} className="flex min-w-0 flex-col items-stretch gap-2 py-3 sm:flex-row sm:flex-wrap sm:items-center">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
-          <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
-          {file.status === "VERIFYING" || file.status === "UPLOADING" ? <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy} onClick={() => retry(file.id)}>Check file</Button> : null}
-          {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={busy} onClick={() => remove(file.id)} aria-label="Remove this file">Remove</Button> : null}
+          <span title={state.detail} className="self-start sm:self-auto"><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
+          {file.status === "VERIFYING" || file.status === "UPLOADING" ? <Button type="button" size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} onClick={() => retry(file.id)}>Check file</Button> : null}
+          {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="danger" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} onClick={() => remove(file.id)} aria-label="Remove this file">Remove</Button> : null}
         </li>;
       })}
     </ul>
@@ -209,14 +212,14 @@ export function AssignmentFileSubmissionControl({
       onTextChange={value=>{setResponseText(value);setConfirmed(false);}}
       links={links} onLinksChange={value=>{setLinks(value);setConfirmed(false);}}
       disabled={busy||loading}/>:null}
-    {staged.length||hasWrittenOrLinkParts ? <div className="space-y-3 rounded-xl border border-border bg-surface p-3">
+    {staged.length||hasWrittenOrLinkParts ? <div className="min-w-0 space-y-3 border-t border-border pt-4">
       {hasPending ? <p role="status" className="text-sm text-muted-foreground">Files must pass security checks before final submission.</p> : null}
       <label className="flex min-h-11 items-start gap-2 text-sm text-body">
         <Checkbox checked={confirmed} disabled={busy || hasPending} className="mt-1"
           onChange={event => setConfirmed(event.target.checked)} />
         <span>I confirm this is my final assignment submission and cannot be replaced after it is recorded.</span>
       </label>
-      <Button type="button" loading={busy&&!activeName} disabled={busy || loading || !confirmed || !maySubmit} onClick={submit} className="min-h-11 md:min-h-9">
+      <Button type="button" loading={busy&&!activeName} disabled={busy || loading || !confirmed || !maySubmit} onClick={submit} className="min-h-11 w-full sm:w-auto md:min-h-9">
         {busy && !activeName ? "Submitting…" : "Submit Your Work"}
       </Button>
     </div> : null}

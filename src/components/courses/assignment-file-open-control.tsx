@@ -22,6 +22,7 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
   const pending = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
     void load();
     if (!enabled) queueMicrotask(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [submissionId, enabled]);
+  }, [submissionId, enabled, retryKey]);
 
   async function download(fileId: string) {
     if (busyId) return;
@@ -81,22 +82,26 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
   }
 
   if (!enabled) return <p className="text-sm text-muted-foreground">File viewing is currently unavailable. Your submitted record remains saved.</p>;
-  return <section aria-label="Submitted assignment files" className="mt-3 space-y-3">
+  return <section aria-label="Submitted assignment files" className="min-w-0 space-y-3">
     {loading ? <PageLoading label="Loading submitted files" variant="row" count={2} /> : null}
     {!loading && !error && files.length === 0 ? <EmptyState title="No submitted files" description="No submitted files are available." /> : null}
-    <ul className="divide-y divide-border border-y border-border">
+    {!loading && files.length>0 ? <ul className="min-w-0 divide-y divide-border border-y border-border">
       {files.map(file => {
         const descriptor = fileStatusDescriptor(file.status);
-        return <li key={file.id} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
+        return <li key={file.id} className="flex min-w-0 flex-col items-stretch gap-2 py-3 sm:flex-row sm:flex-wrap sm:items-center">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
-          <span title={descriptor.detail}><StatusBadge tone={descriptor.tone}>{descriptor.label}</StatusBadge></span>
-          {descriptor.usable ? <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9"
+          <span title={descriptor.detail} className="self-start sm:self-auto"><StatusBadge tone={descriptor.tone}>{descriptor.label}</StatusBadge></span>
+          {descriptor.usable ? <Button type="button" variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9"
             disabled={busyId !== null} onClick={() => void download(file.id)}>
             {busyId === file.id ? "Preparing file…" : "Download"}
           </Button> : null}
         </li>;
       })}
-    </ul>
-    {error ? <Alert tone="error">{error}</Alert> : null}
+    </ul> : null}
+    {error ? <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
+      <Alert tone="error">{error}</Alert>
+      <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+        onClick={() => { setError(null); setLoading(true); setRetryKey(key => key + 1); }}>Retry</Button>
+    </div> : null}
   </section>;
 }
