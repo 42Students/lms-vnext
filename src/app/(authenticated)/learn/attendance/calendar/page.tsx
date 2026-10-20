@@ -1,10 +1,11 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Button } from "@/components/ui/button";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
 import monthStyles from "@/components/academics/legacy-class-month-grid.module.css";
-import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -71,13 +72,13 @@ export default async function LearnerAttendanceCalendarPage({
     ...(data.query.deliveryId!=="ALL"?{deliveryId:data.query.deliveryId}:{}),
   }).toString();
 
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Attendance calendar"
       actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Attendance detail
       </Link>} />
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
-      className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
+      className="grid min-w-0 gap-3 pb-4 md:grid-cols-3">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month
         <DateInput mode="month" name="month" defaultValue={data.query.month}
           className="min-h-11 md:min-h-9" />
@@ -100,14 +101,15 @@ export default async function LearnerAttendanceCalendarPage({
             <option key={value} value={value}>{label}</option>)}
         </Select>
       </label>
-      <div className="flex flex-wrap items-center gap-3 md:col-span-3">
-        <Button type="submit" className="min-h-11 md:min-h-9">
+      <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 md:col-span-3">
+        <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
           Apply filters
         </Button>
         <Link href="/learn/attendance/calendar"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
       </div>
     </form></FilterBar>
+    <Disclosure title="Filtered attendance totals" className="border-b border-border" contentClassName="min-w-0 space-y-3 pb-4">
     <SummaryStrip label="Filtered attendance totals" steps={[
       {label:"Marked",value:data.summary.marked},
       {label:"Present",value:data.summary.present},
@@ -119,6 +121,7 @@ export default async function LearnerAttendanceCalendarPage({
       {" "}Attendance percentage: <Badge tone="neutral">{data.summary.percentage===null
         ?"Unknown (no marked classes)" : data.summary.percentage+"%"}</Badge>.
     </p>
+    </Disclosure>
     <section aria-label={monthLabel+" attendance calendar"} className={monthStyles.calendarCard}>
       <div className={monthStyles.toolbar}>
         <Link href={previous} aria-label="Previous month"
@@ -127,7 +130,7 @@ export default async function LearnerAttendanceCalendarPage({
         <Link href={next} aria-label="Next month"
           className={monthStyles.navLink+" inline-flex min-h-11 items-center md:min-h-9"}>Next →</Link>
       </div>
-      <CalendarGrid className={monthStyles.mobileGrid+" p-3 md:p-6"}>
+      <CalendarGrid className={monthStyles.mobileGrid+" p-1 sm:p-3 md:p-6"}>
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>
           <span key={day} className={monthStyles.mobileWeekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{day}</span>)}
         {days.map((day,index)=>{
@@ -150,7 +153,7 @@ export default async function LearnerAttendanceCalendarPage({
         })}
       </CalendarGrid>
     </section>
-    <section aria-label="Attendance class entries" className="space-y-3">
+    <section aria-label="Attendance class entries" className="min-w-0 space-y-3">
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Class details</h2>
       {data.rows.length===0
         ? <EmptyState title="No recorded classes match"
@@ -159,8 +162,8 @@ export default async function LearnerAttendanceCalendarPage({
               :"Your authorized Course sessions have no registered attendance records yet. This does not mean you were absent."} />
         : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {data.rows.map(row=><li key={row.id}
-            className="min-w-0 py-[var(--lms-space-4)]">
-            <div className="flex flex-wrap items-start justify-between gap-2">
+            className="min-w-0 py-[var(--lms-space-3)]">
+            <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:justify-between">
               <h3 className="font-semibold text-[var(--lms-heading)]">{row.title}</h3>
               <StatusBadge tone={statusTone[row.status]??"neutral"}>
                 {statusNames[row.status]??row.status}
@@ -175,7 +178,7 @@ export default async function LearnerAttendanceCalendarPage({
             <Link href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,
             }).toString()}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover hover:underline md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto hover:text-primary-hover hover:underline md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               View Course attendance →
             </Link>
           </li>)}
