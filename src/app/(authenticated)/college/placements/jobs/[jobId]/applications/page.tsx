@@ -12,6 +12,9 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
+import { Disclosure } from "@/components/ui/disclosure";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
   params: Promise<{jobId:string}>;
@@ -23,7 +26,8 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   const query = driveApplicationsParams(await searchParams);
   if (!query) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" />
-    <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid." />
+    <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid."
+      action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>
   </div>;
   const [data,filters] = await Promise.all([
     getCollegeApplicationPipeline(context,jobId,query),
@@ -37,17 +41,25 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     {key:"role",header:"Role",cell:row=>row.roleTitle},
     {key:"source",header:"Source",cell:row=>row.source},
     {key:"applied",header:"Applied (IST)",cell:row=>formatter.format(new Date(row.submittedAt))},
-    {key:"application",header:"Application",cell:row=>row.status},
+    {key:"application",header:"Application",cell:row=><StatusBadge tone={row.status==="SUBMITTED"?"info":"neutral"}>{row.status}</StatusBadge>},
     {key:"screening",header:"Screening",cell:row=>row.screening??"Not recorded"},
   ];
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Drive overview</Link>} />
-    <form method="get" role="search" aria-label="Application filters" className="grid min-w-0 grid-cols-1 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:grid-cols-1">
+    <form method="get" role="search" aria-label="Application filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email, roll or role
         <Input type="search" name="q" defaultValue={query.q} maxLength={100} />
       </label>
+      <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+        <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
+        {(query.q || query.status!=="ALL" || query.screening!=="ALL" || query.source!=="ALL" || query.departmentId || query.programId || query.cohortId) ?
+          <Link href={driveApplicationsHref(jobId,{...query,q:"",status:"ALL",screening:"ALL",source:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined,page:1})} className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : null}
+      </div>
+      <Disclosure title="Advanced filters" className="md:col-span-2"
+        defaultOpen={Boolean(query.status!=="ALL" || query.screening!=="ALL" || query.source!=="ALL" || query.departmentId || query.programId || query.cohortId)}>
+        <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-3">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application
         <Select name="status" defaultValue={query.status} >
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
@@ -87,7 +99,8 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
           {filters.cohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
-      <Button type="submit" className="w-full self-end min-[768px]:w-auto">Filter</Button>
+        </div>
+      </Disclosure>
     </form>
     <Tabs ariaLabel="Application pipeline stages" renderPanel={false} value={query.stage}
       items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>({
@@ -107,16 +120,16 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </p>
       <DataTable caption="College drive applicant register" columns={columns}
         rows={data.items} getRowKey={row=>row.id}
-        empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>} />
+        empty={<EmptyState title="No matching applications" description="No applications match these filters." action={<Link href={driveApplicationsHref(jobId,{...query,q:"",status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined,page:1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>} />
      </section>:
      <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query}/>}
-    <nav aria-label="Application pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
-      <span>Page {query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
+    <nav aria-label="Application pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-sm)] text-[var(--lms-body-text)] sm:flex-row sm:items-center">
+      <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&_a]:flex-1 max-[767px]:[&_a]:justify-center">
         {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}
         {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveApplicationsHref(jobId,{...query,page:query.page+1})}>Next</Link>:null}
       </div>
     </nav>
-    <p className="text-xs text-muted-foreground">
+    <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">
       CSV uses formula-neutralized cells, includes filtered rows up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")},
       and includes a truncation notice if more matching rows exist.
     </p>
