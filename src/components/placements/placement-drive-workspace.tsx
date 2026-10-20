@@ -3,6 +3,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { Banner } from "@/components/ui/banner";
 import { listCohorts } from "@/modules/academics/cohort-service";
 import { listPrograms } from "@/modules/academics/program-service";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -257,7 +259,7 @@ export async function PlacementDriveWorkspace({
     : null;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow={eyebrow}
         title={driveDay.job.company.name + " · " + driveDay.job.title}
@@ -383,11 +385,11 @@ export async function PlacementDriveWorkspace({
        </p>:null}
       <section aria-label="Drive status and details" className="border-b border-border pb-6">
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <strong className="rounded-[var(--lms-control-radius)] border border-border bg-muted px-2 py-1">{headerFacts.status}</strong>
+          <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{headerFacts.status}</StatusBadge>
           <span>{headerFacts.applicationMode}</span>
           <span>· {headerFacts.workMode}</span>
           <span>· {headerFacts.employmentType}</span>
-          <strong className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1">{headerFacts.category}</strong>
+          <StatusBadge tone="info">{headerFacts.category}</StatusBadge>
           {headerFacts.recordedOutside?<strong>Recorded: happened outside</strong>:null}
         </div>
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-body">
