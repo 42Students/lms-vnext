@@ -43,8 +43,8 @@ export default async function TpoDriveCloseoutPage({
     <section aria-label="Close-out metrics" className="grid min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 xl:grid-cols-4">
       {cells.map(([label, value]) => <div key={label}
         className="border-b border-[var(--lms-canvas-border)] p-[var(--lms-space-4)] last:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0 xl:border-b-0">
-        <p className="text-sm font-medium text-body">{label}</p>
-        <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
+        <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</p>
+        <p className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">
           {value === null ? "Unavailable" : value}
         </p>
       </div>)}
