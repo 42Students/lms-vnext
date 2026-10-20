@@ -16,6 +16,7 @@ import {
 } from "@/components/projects/project-participant-list-controls";
 import { ProjectList } from "@/components/projects/project-list";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
@@ -59,10 +60,11 @@ export default async function MentorProjectsPage({
     singleValueMentorFilters(params),
   );
   if (!parsed.success) {
-    return <section role="alert" className="space-y-3">
-      <PageHeader title={"Invalid Project filters"} />
-      <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
-    </section>;
+    return <div className="min-w-0 space-y-5">
+      <PageHeader title="Projects" />
+      <ErrorState title="Invalid Project filters" description="Review the project search, attention, status and page filters."
+        action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>
+    </div>;
   }
   const query = parsed.data;
 
