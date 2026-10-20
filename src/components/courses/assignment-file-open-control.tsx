@@ -84,10 +84,10 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
   return <section aria-label="Submitted assignment files" className="mt-3 space-y-3">
     {loading ? <PageLoading label="Loading submitted files" variant="row" count={2} /> : null}
     {!loading && !error && files.length === 0 ? <EmptyState title="No submitted files" description="No submitted files are available." /> : null}
-    <ul className="space-y-2">
+    <ul className="divide-y divide-border border-y border-border">
       {files.map(file => {
         const descriptor = fileStatusDescriptor(file.status);
-        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-3">
+        return <li key={file.id} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={descriptor.detail}><StatusBadge tone={descriptor.tone}>{descriptor.label}</StatusBadge></span>
           {descriptor.usable ? <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9"
