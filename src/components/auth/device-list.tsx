@@ -62,7 +62,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
         {devices.map((device) => (
           <li
             key={device.id}
-            className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-4"
+            className="flex min-w-0 flex-col gap-3 py-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between"
           >
             <div className="min-w-0 flex-1">
               <p className="m-0 flex flex-wrap items-center gap-2 break-words text-sm font-semibold text-foreground">
@@ -80,7 +80,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
               <Button
                 variant="secondary"
                 size="sm"
-                className="min-h-11 md:min-h-9"
+                className="min-h-11 w-full justify-center min-[768px]:min-h-9 min-[768px]:w-auto"
                 disabled={pending || busy!==null}
                 onClick={() =>
                   ask(
@@ -99,11 +99,13 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
       </ul>
 
       {others > 0 ? (
-        <div className="border-t border-border py-4">
+        <details className="border-t border-border py-4">
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Sign out everywhere else</summary>
+          <div className="mt-3 flex min-w-0 flex-col items-start gap-2">
           <Button
             variant="danger"
             size="sm"
-            className="min-h-11 md:min-h-9"
+            className="min-h-11 w-full justify-center min-[768px]:min-h-9 min-[768px]:w-auto"
             disabled={pending || busy!==null}
             onClick={() =>
               ask(
@@ -116,7 +118,8 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
           >
             {busy === "all" ? "Signing out…" : "Sign out everywhere else"}
           </Button>
-        </div>
+          </div>
+        </details>
       ) : null}
       <ConfirmDialog
         open={confirmation!==null}
