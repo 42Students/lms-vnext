@@ -40,7 +40,7 @@ export function RecruiterInlineOwner({lead,onUpdated}:{
  return <div className="min-w-28 space-y-2">
   <Button variant="ghost" type="button" aria-label={"Change owner for "+lead.name}
     aria-expanded={open} disabled={loading}
-    className="min-h-11 max-w-full justify-start rounded-[8px] px-3 text-left transition-[background-color] duration-[200ms] ease-[ease] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none"
+    className="min-h-11 max-w-full justify-start rounded-[var(--lms-control-radius)] px-3 text-left transition-[background-color] duration-[200ms] ease-[ease] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none"
     onClick={()=>open?setOpen(false):void begin()}>
    {lead.ownerName??"Unassigned"} · Edit
   </Button>
