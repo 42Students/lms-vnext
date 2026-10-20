@@ -97,7 +97,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  return <Dialog open={true} onOpenChange={open=>{if(!open)onClose();}} title="Application Details">
     <div className="flex min-w-0 items-center justify-end gap-3">
        <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
-        >Refresh</Button>
+        className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh</Button>
     </div>
     {!detail&&!loading&&!error?<Button variant="primary" type="button" onClick={()=>void reload()}
       className="mt-4">Open application details</Button>:null}
@@ -175,7 +175,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          {o.offerLetterUrl?<a href={o.offerLetterUrl}  rel="noreferrer noopener"
            className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:null}
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
-          <label className="grid gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Offer-letter HTTPS link
+          <label className="grid gap-[6px] text-[13px] text-body font-semibold leading-4">Offer-letter HTTPS link
            <Input type="url" placeholder="https://..." value={letterInput[o.id]??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
             />
@@ -201,7 +201,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           Edit Internal Notes
          </Button>
         </div>)}</div>
-       <label className="mt-3 grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
+       <label className="mt-3 grid gap-[6px] text-[13px] font-semibold text-body leading-4">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
         <Textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
          className="w-full"/></label>
        {success?<p role="status" className="text-sm text-body">{success}</p>:null}
