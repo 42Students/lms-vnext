@@ -97,7 +97,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </Select>
       </label>
-      <Button type="submit" className="self-end">Filter</Button>
+      <Button type="submit" className="w-full self-end min-[768px]:w-auto">Filter</Button>
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">
@@ -108,8 +108,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
           {data.total===0?"No drives match these filters in this college.":"No rows on this page. Choose an earlier page."}
         </p>} />
     </section>
-    <nav aria-label="Drive pages" className="flex justify-between gap-3 text-sm">
-      <span>Page {data.query.page} of {data.totalPages}</span><div className="flex gap-3">
+    <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
+      <span>Page {data.query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
         {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
         {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
       </div>

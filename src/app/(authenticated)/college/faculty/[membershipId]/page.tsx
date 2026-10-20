@@ -45,10 +45,10 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </dl>
     </section>
     <section className="border-b border-border pb-5">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Faculty teaching assignments</h2>
-      <form method="get" className="mt-3 flex flex-wrap items-end gap-3"
+      <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
+      <form method="get" className="mt-3 flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch"
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">
           Assignment history
           <Select name="status" defaultValue={data.filter.status}
             >
@@ -57,7 +57,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="ENDED">Ended only</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">
           Teaching role
           <Select name="role" defaultValue={data.filter.role}
             >
@@ -67,7 +67,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="TA">Teaching assistant</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
+        <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
       </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
