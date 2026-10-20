@@ -46,8 +46,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-1.md: surface | regres
 - [x] `src/app/(authenticated)/learn/page.tsx`
 - [x] `src/app/(authenticated)/learn/placements/page.tsx`
 - [x] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/data-access/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/data-access/page.tsx`
 - [ ] `src/app/(authenticated)/learn/profile/page.tsx`
 - [ ] `src/app/(authenticated)/learn/profile/verification/page.tsx`
 - [ ] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`

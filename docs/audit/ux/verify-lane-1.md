@@ -260,3 +260,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** inspected membership-owned summary, optional enrollment handling, read-only definition list, PageHeader and Link props, route-specific GracefulPageLoading and GracefulErrorBoundary with Profile recovery, and learner layout; source preserves all labels/fallbacks, no JSX, import, aria, or type regressions found.
 - **Extra clutter/alignment fixes (0):** short hairline-border facts, 1/2-column mobile/tablet grid, readable overflow and limited source disclaimer fit legacy rhythm; no source change.
 - **Files changed:** proof and queue only.
+
+## Surface 38 — Profile completeness checklist
+- **Surface:** `src/app/(authenticated)/learn/profile/completeness/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 38.
+- **Regressions found/fixed (0):** read membership-owned academic and profile loading, checklist/readiness data, query-validation not-found, mobile filter links, field-level completion indicator, identity-data disclosure, PageHeader and error/loading recovery with nearest learner layout. Checked IDs, title and status semantics, preserved profile section deep links, valid TSX imports and link props.
+- **Extra clutter/alignment fixes (0):** short summary and native disclosure precede a flat, stacked-on-phone checklist; retained 44px filter/action targets with no additional edits.
+- **Files changed:** proof and queue only.
+
+## Surface 39 — Learner data access
+- **Surface:** `src/app/(authenticated)/learn/profile/data-access/page.tsx`.
+- **Originating proof:** no Surface 39 entry in `docs/audit/ux/polish-lane-11.md`.
+- **Regressions found/fixed (0):** independently read data-access source and current-membership academic service, permitted-reader disclosure, scoped change history, date-only records and IST formatting, non-audit disclaimer, PageHeader and local loading/error/learner layout. No missing markup, props, aria labels, import/export mismatches or lost navigation.
+- **Extra clutter/alignment fixes (0):** existing 16px section headings, thin separators, wrapped read-only facts and bounded warning copy follow the old LMS rhythm at phone/tablet.
+- **Files changed:** proof and queue only.
