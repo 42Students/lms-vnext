@@ -77,7 +77,7 @@ export default async function SuperAdminLectureHallAvailability({
         {result?.truncated ? <p role="status" className="text-warning">
           More than 500 sessions match. Choose a shorter date range.
         </p> : null}
-        {result?.sessions.length === 0 ? <p>No persisted bookings; availability is not guaranteed.</p> : null}
+        {result?.sessions.length === 0 ? <EmptyState title="No scheduled bookings" description="No persisted bookings were found. Availability is not guaranteed."/> :
         <ul className="divide-y divide-border border-y border-border">{result?.sessions.map(row => <li key={row.id}
           className="py-4">
           <h3 className="font-semibold">{row.title}{row.hasConflict ? " · Potential conflict" : ""}</h3>
@@ -86,7 +86,7 @@ export default async function SuperAdminLectureHallAvailability({
             hall capacity: {result?.hall.capacity ?? "Unknown"}</p>
           {row.overlapsAnother ? <p className="text-sm text-error">Overlapping scheduled booking</p> : null}
           {row.overConfiguredCapacity ? <p className="text-sm text-error">Class capacity exceeds hall capacity</p> : null}
-        </li>)}</ul>
+        </li>)}</ul>}
       </section>}
   </div>;
 }
