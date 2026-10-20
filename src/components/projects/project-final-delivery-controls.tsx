@@ -283,7 +283,7 @@ export function LearnerFinalDeliveryControl({
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
       {(canCreateDraft || draft) ? (
         <Button
           size="sm"
@@ -301,6 +301,7 @@ export function LearnerFinalDeliveryControl({
       {draft ? (
         <Button
           size="sm"
+          loading={pending}
           disabled={
             pending || !canSubmitDraft
           }
@@ -324,14 +325,14 @@ export function LearnerFinalDeliveryControl({
         <p>Team submission · The final delivery is shared with your project team.</p>
         {lastEditedBy?<p>Last edited by <strong>{lastEditedBy}</strong></p>:null}
         <p>Mentor review: <strong>{review?.status?.replaceAll("_"," ")??"Waiting for review"}</strong></p>
-        {review?.feedback?<p className="whitespace-pre-wrap rounded-[var(--lms-control-radius)] border border-border p-3">
+        {review?.feedback?<p className="whitespace-pre-wrap break-words border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
           Mentor feedback: {review.feedback}
         </p>:null}
         {latest?.status==="APPROVED"?<p role="status">Accepted · Your final delivery is locked after approval.</p>:null}
       </div>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(!pending)setOpen(next);}}
         title={
           draft
             ? "Edit final draft"
@@ -339,7 +340,7 @@ export function LearnerFinalDeliveryControl({
         }
         description="Drafts can be prepared early. Final submission unlocks after Project execution is complete."
       >
-        <section aria-label="What is left before you can submit" className="mb-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+        <section aria-label="What is left before you can submit" className="mb-[var(--lms-space-4)] min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
           <h3 className="font-semibold text-foreground">What’s left before you can submit</h3>
           {canSubmitDraft?<p className="mt-1">Ready to submit after saving this draft.</p>:<ul className="mt-2 list-disc space-y-1 pl-5">
             <li>{readinessDetail?.tasksRemaining??"Some"} task(s) still need completion</li>
@@ -356,10 +357,10 @@ export function LearnerFinalDeliveryControl({
         </p>
         <form
           onSubmit={save}
-          className="grid gap-4"
+          className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Summary (short)
             </span>
             <Textarea
@@ -373,7 +374,7 @@ export function LearnerFinalDeliveryControl({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Primary link
             </span>
             <Input
@@ -388,8 +389,11 @@ export function LearnerFinalDeliveryControl({
               }
             />
           </label>
+          <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Demo URL · Notes</summary>
+          <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Demo URL
             </span>
             <Input
@@ -403,7 +407,7 @@ export function LearnerFinalDeliveryControl({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Notes
             </span>
             <Textarea
@@ -415,20 +419,25 @@ export function LearnerFinalDeliveryControl({
               }
             />
           </label>
-          <div className="grid gap-2">
+          </div>
+          </details>
+          <div className="grid min-w-0 gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
             <p className="m-0 text-sm font-semibold text-body">Additional files &amp; links</p>
             <ProjectDeliveryFileUploader projectId={projectId}
               disabled={pending||attachments.length>=10}
               onUploaded={item=>setAttachments(rows=>rows.length>=10?rows:[...rows,item])}/>
-            {attachments.map((item,index)=><div key={index} className="flex items-center gap-2 text-sm">
+            {attachments.map((item,index)=><div key={index} className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-2)] text-[var(--lms-font-base)] sm:flex-row sm:items-center">
               <span className="min-w-0 flex-1 break-words">{item.name}</span>
-              <Button type="button" size="sm" variant="secondary" disabled={pending}
+              <Button className="w-full sm:w-auto" type="button" size="sm" variant="secondary" disabled={pending}
                 onClick={()=>setAttachments(rows=>rows.filter((_,i)=>i!==index))}>Remove</Button>
             </div>)}
-            <label className="grid gap-1 text-xs font-semibold text-body">Title
+            <details className="min-w-0">
+             <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Add link</summary>
+             <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
               <Input value={linkName} maxLength={255} onChange={event=>setLinkName(event.target.value)}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">URL
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">URL
               <Input type="url" value={linkUrl} maxLength={2048}
                 onChange={event=>setLinkUrl(event.target.value)}/>
             </label>
@@ -438,6 +447,8 @@ export function LearnerFinalDeliveryControl({
                 url:linkUrl.trim(),fileId:null}]);setLinkName("");setLinkUrl("");}}>
               Add link
             </Button>
+             </div>
+            </details>
           </div>
           {error ? (
             <p
@@ -447,10 +458,11 @@ export function LearnerFinalDeliveryControl({
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
@@ -458,6 +470,8 @@ export function LearnerFinalDeliveryControl({
             </Button>
             <Button
               type="submit"
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={
                 pending || !summary.trim()
               }
@@ -586,33 +600,22 @@ export function FinalReviewControl({
             : "The learner will see your feedback and be able to edit and resubmit it.")
           : "Confirm your decision and feedback. The review will be saved in this project's history."}
         footer={
-          <>
-            <Button
-              variant="secondary"
-              disabled={pending}
-              onClick={guard.requestClose}
-            >
-              Cancel
-            </Button>
-            <Button disabled={pending||staleReview} onClick={()=>{setDecision("APPROVED");setConfirmReview(true);}}>
-              Accept submission
-            </Button>
-            <Button variant="secondary" disabled={pending||staleReview||!feedback.trim()}
-              onClick={()=>{setDecision("CHANGES_REQUESTED");setConfirmReview(true);}}>
-              Request changes
-            </Button>
-          </>
+          <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+            <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={guard.requestClose}>Cancel</Button>
+            <Button className="w-full sm:w-auto" loading={pending} disabled={pending||staleReview||(decision==="CHANGES_REQUESTED"&&!feedback.trim())}
+              onClick={()=>setConfirmReview(true)}>{decision==="APPROVED"?"Accept submission":"Request changes"}</Button>
+          </div>
         }
       >
-        <div className="grid gap-4">
-          {mode!=="MENTOR" ? <label className="grid gap-1 text-sm font-semibold text-body">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+          {mode!=="MENTOR" ? <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Decision
             <Select value={decision} onChange={event=>setDecision(event.target.value as "APPROVED"|"CHANGES_REQUESTED")}>
               <option value="APPROVED">Accept</option>
               <option value="CHANGES_REQUESTED">Request changes</option>
             </Select>
           </label> : null}
-          {staleReview?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+          {staleReview?<div role="alert" className="space-y-[var(--lms-space-2)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
             <p>This submission may have changed since you opened this review. Refresh before accepting, requesting changes, or locking.</p>
             <Button type="button" variant="secondary" disabled={pending}
               onClick={()=>{setConfirmReview(false);setOpen(false);setStaleReview(false);router.refresh();}}>
@@ -620,7 +623,7 @@ export function FinalReviewControl({
             </Button>
           </div>:null}
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Feedback
             </span>
             <Textarea
@@ -782,16 +785,16 @@ export function ProjectEvaluationControl({
       >
         <form
           onSubmit={submit}
-          className="grid gap-4"
+          className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
           {rows.map((row, index) => (
             <div
               key={index}
-              className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3"
+              className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]"
             >
-              <div className="grid gap-3 sm:grid-cols-[1fr_7rem_7rem]">
+              <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-[minmax(0,1fr)_7rem_7rem]">
                 <label>
-                  <span className="mb-1 block text-xs font-semibold text-body">
+                  <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Criterion
                   </span>
                   <Input
@@ -806,7 +809,7 @@ export function ProjectEvaluationControl({
                   />
                 </label>
                 <label>
-                  <span className="mb-1 block text-xs font-semibold text-body">
+                  <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Score
                   </span>
                   <Input
@@ -822,7 +825,7 @@ export function ProjectEvaluationControl({
                   />
                 </label>
                 <label>
-                  <span className="mb-1 block text-xs font-semibold text-body">
+                  <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Max
                   </span>
                   <Input
@@ -839,7 +842,7 @@ export function ProjectEvaluationControl({
                 </label>
               </div>
               <label className="mt-3 block">
-                <span className="mb-1 block text-xs font-semibold text-body">
+                <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Feedback
                 </span>
                 <Textarea
@@ -890,7 +893,7 @@ export function ProjectEvaluationControl({
           </Button>
 
           <label>
-            <span className="mb-1 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Overall summary
             </span>
             <Textarea
@@ -911,10 +914,11 @@ export function ProjectEvaluationControl({
             </p>
           ) : null}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={guard.requestClose}
             >
@@ -922,6 +926,8 @@ export function ProjectEvaluationControl({
             </Button>
             <Button
               type="submit"
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={pending || !valid}
             >
               {pending
