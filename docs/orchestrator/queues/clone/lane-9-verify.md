@@ -40,8 +40,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/ui/drawer.tsx`
 - [x] `src/components/ui/searchable-select.tsx`
 - [x] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
 - [ ] `src/components/auth/connection-failure-notice.tsx`
 - [ ] `src/components/courses/course-detail-anchor-tabs.tsx`
 - [ ] `src/components/placements/learner-placements-tabs.tsx`
