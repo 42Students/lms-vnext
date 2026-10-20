@@ -119,7 +119,7 @@ export default async function FacultyAssignmentSubmissionsPage({
           </li>;
         })}
       </ol>}
-    <Pagination label="Submission pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultySubmissionListHref({...query,page})} />
+    {data.totalPages > 1 ? <Pagination label="Submission pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultySubmissionListHref({...query,page})} /> : null}
     <p className="max-w-prose text-xs leading-5 text-muted-foreground">
       All rows and CSV exports are recalculated with the current persisted Faculty Section scope.
       Draft private grades are never described as learner-visible. No grading mutation occurs here.
