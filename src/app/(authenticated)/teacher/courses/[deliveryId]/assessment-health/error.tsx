@@ -1,6 +1,6 @@
+"use client";
 import {PageHeader} from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
-"use client";
 
 export default function Error({ reset }: {
   error: Error & { digest?: string };
