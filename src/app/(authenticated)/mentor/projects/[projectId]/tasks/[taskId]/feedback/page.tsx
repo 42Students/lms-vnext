@@ -35,10 +35,10 @@ export default async function Page({params}:{
     conversations are blocked pending migration and product approval.
    </p>
   </section>
-  <Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"?tab=board"}
+  {data.feedback.length>0?<Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"?tab=board"}
    className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Back to authorized task Board
-  </Link>
+  </Link>:null}
   <p className="text-xs text-muted-foreground">
    Reviewer feedback is not a chat message. Learner identities, private notes and submission URLs are excluded from this read.
   </p>
