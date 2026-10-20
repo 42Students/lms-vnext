@@ -6,5 +6,5 @@ import { safeDisplayText } from "@/lib/safe-format";
 
 export function LongText({ value }: { value: unknown }) {
   const label = safeDisplayText(value);
-  return <span data-slot="long-text" className="block min-w-0 max-w-full break-words text-inherit [overflow-wrap:anywhere] [font-variant-numeric:inherit]" title={label}>{label}</span>;
+  return <span data-slot="long-text" dir="auto" className="block min-w-0 max-w-full break-words text-inherit [overflow-wrap:anywhere] [font-variant-numeric:inherit]" title={label}>{label}</span>;
 }
