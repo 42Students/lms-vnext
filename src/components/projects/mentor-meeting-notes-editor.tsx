@@ -43,7 +43,7 @@ export function MentorMeetingNotesEditor(props:{
     }finally{setPending(false);}
   }
   return <div className={styles.legacy+" "+styles.contents}>
-    <Button variant="secondary" onClick={()=>{
+    <Button variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
       setNotes(props.initialNotes??"");setError(null);setOpen(true);
     }}>{props.initialNotes?"Edit outcome notes":"Record outcome notes"}</Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Meeting outcome notes"
@@ -58,8 +58,8 @@ export function MentorMeetingNotesEditor(props:{
         <p className="text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={guard.requestClose}>Cancel</Button>
-          <Button type="submit" disabled={!valid||pending}>Review notes</Button>
+          <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={guard.requestClose}>Cancel</Button>
+          <Button type="submit" className="min-h-11 md:min-h-9" disabled={!valid||pending}>Review notes</Button>
         </div>
       </form>
     </Dialog>

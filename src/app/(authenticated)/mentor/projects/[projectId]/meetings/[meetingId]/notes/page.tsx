@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {MentorMeetingNotesEditor} from "@/components/projects/mentor-meeting-notes-editor";
 import {getMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-service";
 import {meetingNotesEditable} from "@/modules/projects/mentor-meeting-notes-model";
@@ -21,7 +22,7 @@ export default async function MentorMeetingNotesPage({params}:{
       <h2 className="font-semibold">Persisted meeting outcome</h2>
       <p className="mt-2 text-sm text-body">
         {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-          timeZone:"Asia/Kolkata"}).format(m.startsAt)} IST · {m.status}
+          timeZone:"Asia/Kolkata"}).format(m.startsAt)} IST · <StatusBadge tone={m.status==="COMPLETED"?"success":"neutral"}>{m.status}</StatusBadge>
       </p>
       {m.outcome?.trim()?
         <p className="mt-4 whitespace-pre-wrap break-words text-sm text-body">{m.outcome}</p>:
