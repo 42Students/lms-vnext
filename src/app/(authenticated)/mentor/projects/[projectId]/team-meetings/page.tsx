@@ -29,7 +29,7 @@ export default async function MentorTeamMeetingsPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid meeting history filters"} />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Projects</Link>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);

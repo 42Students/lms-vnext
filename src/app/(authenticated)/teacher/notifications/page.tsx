@@ -95,7 +95,7 @@ export default async function FacultyNotificationsPage({
           <Alert tone="error">
             The notification filters or page link are invalid.{" "}
             <Link href={FACULTY_INBOX + "?view=" + view}
-              className="font-semibold text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="font-semibold text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
               Return to the newest notifications
             </Link>
           </Alert>

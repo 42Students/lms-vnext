@@ -22,7 +22,7 @@ export default async function FacultyAssessmentResultsPage({
   const raw = await searchParams;
   const parsed = parseFacultyResultsSearchParams(raw);
   if (!parsed.success) {
-    return <div className="space-y-3"><PageHeader title="Assessment results"/><ErrorState title="Invalid assessment filters" description="Review the assessment search and filters." action={<Link href="/teacher/results" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/></div>;
+    return <div className="space-y-3"><PageHeader title="Assessment results"/><ErrorState title="Invalid assessment filters" description="Review the assessment search and filters." action={<Link href="/teacher/results" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
   }
   const context = await getCurrentRequestContext();
   const data = await getFacultyAssessmentResults(context,parsed.data);
@@ -32,11 +32,11 @@ export default async function FacultyAssessmentResultsPage({
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex min-w-0 flex-wrap gap-2">
         <Link href="/teacher/response-followups"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
-          className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           All Assignments
         </Link>
       </div>} />
@@ -100,12 +100,12 @@ export default async function FacultyAssessmentResultsPage({
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
        Export this page CSV (no learner names)
       </Link>
     </div>
     {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
-      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear result filters</Link> : null}</div>
+      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear result filters</Link> : null}</div>
       : <div className="divide-y divide-border border-y border-border">
         {data.items.map(item =>
           <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
@@ -144,9 +144,9 @@ export default async function FacultyAssessmentResultsPage({
       <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyResultsHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
+          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Previous</Link>}
         {data.page < data.totalPages && <Link href={facultyResultsHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
+          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">

@@ -102,7 +102,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    {!query.success?<Alert tone="error">Choose a valid audience and target ID.</Alert>:null}
    {preview.failed?<Alert tone="error">
      Could not check the audience right now. Your selection is unchanged.
-     <Link href={retryPreviewHref} className="ml-2 font-semibold text-primary-text underline">Retry audience preview</Link>
+     <Link href={retryPreviewHref} className="ml-2 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)]">Retry audience preview</Link>
     </Alert>:null}
    {audience?<Alert tone="info">
      <p className="text-sm font-semibold text-foreground">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
@@ -279,9 +279,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex gap-2">
     {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
-      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-primary-text">Previous</Link>:null}
+      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-primary-text hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">Previous</Link>:null}
     {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
-      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-primary-text">Show older</Link>:null}
+      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-primary-text hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">Show older</Link>:null}
    </div>
   </nav>:null}
  </div>;

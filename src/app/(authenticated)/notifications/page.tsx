@@ -72,7 +72,7 @@ export default async function NotificationsPage({
       {parsedCursor.invalid ? (
         <Alert tone="error">
           The notification page link is invalid.{" "}
-          <Link href={view === "unread" ? "/notifications?view=unread" : "/notifications?view=all"} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <Link href={view === "unread" ? "/notifications?view=unread" : "/notifications?view=all"} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
             Return to the newest notifications
           </Link>
         </Alert>

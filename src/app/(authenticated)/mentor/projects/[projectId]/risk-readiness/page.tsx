@@ -26,7 +26,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   );
   if(!parsed.success)return <section role="alert">
     <PageHeader title={"Invalid risk/readiness filters"} />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Projects</Link>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -82,7 +82,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
           Filter
         </Button>
         <Link href={base+"/risk-readiness"}
-          className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+          className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear</Link>
       </form></FilterBar>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
         description="No matching stored signals were found. This is not a certificate of project safety or completeness."/>:
@@ -96,7 +96,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
           </div>
           <p className="mt-2 break-words text-sm text-body">{row.detail}</p>
           <Link href={row.href}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
             Open exact project workspace →
           </Link>
         </li>)}</ol>}
