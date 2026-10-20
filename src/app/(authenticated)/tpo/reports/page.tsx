@@ -1,4 +1,6 @@
 import { Select } from "@/components/ui/select";
+import { tpoReportHasAmbiguousFilters } from "@/modules/placements/tpo-report-url-guard";
+import { TpoReportInvalidFilters } from "@/components/placements/tpo-report-invalid-filters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -42,6 +44,7 @@ export default async function TpoReportsPage({
   }
 
   const query = await searchParams;
+  if (tpoReportHasAmbiguousFilters(query)) return <TpoReportInvalidFilters path="/tpo/reports" />;
   const parsedSearch=tpoReportGallerySearchSchema.safeParse(first(query.q)??"");
   const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
   if(!parsedSearch.success||!parsedGroup.success)return <section className="space-y-3">

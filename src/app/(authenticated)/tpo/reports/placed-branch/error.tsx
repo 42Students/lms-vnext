@@ -13,7 +13,7 @@ export default function ErrorPage({ reset }: {
       The report failed to load; that is not evidence of zero placed learners.
     </p>
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
+      <Button type="button" className="min-h-11 w-full sm:w-auto sm:min-h-9" onClick={reset}>Retry</Button>
     </div>
   </section>;
 }
