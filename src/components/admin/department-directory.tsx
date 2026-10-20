@@ -23,6 +23,7 @@ const columns: DataTableColumn<DepartmentDirectoryRow>[] = [
   {
     key: "name",
     header: "Department Name",
+    mobileLabel: "Department Name",
     mobilePriority: "primary",
     cell: (row) => <span className="font-semibold text-foreground">{row.name}</span>,
   },
