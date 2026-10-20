@@ -15,7 +15,7 @@ export function TpoReportRecordLinks({
   <p className="mt-2 text-sm leading-6 text-body">Links open college-scoped recorded
    drives and company history. Company pages cover all seasons, not only this report filter.
    These are read-only navigation links; no offer or joining outcome is changed.</p>
-  <div className="mt-4 grid gap-5 md:grid-cols-2">
+  <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
    <div><h3 className="text-sm font-semibold text-foreground">Drives</h3>
     {data.driveLinks.length===0?<EmptyState title="No drive records to open."/>:
      <ul className="mt-2 divide-y divide-border">{data.driveLinks.map(item=><li key={item.id} className="py-2">

@@ -1,6 +1,7 @@
 import {PageHeader} from "@/components/ui/page-header";
+import {PageBackLink} from "@/components/ui/page-back-link";
+import {ErrorState} from "@/components/ui/error-state";
 import bubbleStyles from "@/components/tpo/tpo-conversation-bubble.module.css";
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
@@ -17,21 +18,15 @@ export default async function TpoRecruiterConversationPage({params}:{
   placementTableExists("placement_tpo_message_threads"),
   placementTableExists("placement_tpo_messages"),
  ]);
- if(!threadsReady||!messagesReady)return <div className="space-y-3">
-  <PageHeader title="Recruiter conversations unavailable"/>
-  <p role="alert" className="text-sm text-body">
-   Recruiter messaging tables are not registered. No messages were loaded.
-  </p>
-  <Link href="/tpo/messages" className="text-primary-text underline">Back to messages</Link>
+ if(!threadsReady||!messagesReady)return <div className="min-w-0 space-y-4">
+  <PageHeader title="Recruiter conversations unavailable" actions={<PageBackLink href="/tpo/messages" label="Back to messages"/>}/>
+  <ErrorState title="Messages unavailable" description="Recruiter messaging tables are not registered. No messages were loaded."/>
  </div>;
  const {threadId}=await params;
  const data=await getTpoRecruiterThreadDetail(context,threadId);
  if(!data)notFound();
- return <div className="space-y-5">
-  <Link href="/tpo/messages" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text">
-   ← All conversations
-  </Link>
-  <PageHeader title="Recruiter conversation"/>
+ return <div className="min-w-0 space-y-4">
+  <PageHeader title="Recruiter conversation" actions={<PageBackLink href="/tpo/messages" label="All conversations"/>}/>
   <p className="text-sm text-body">{data.total} messages · Showing the latest 100</p>
   <section role="log" aria-live="polite" aria-busy={false} aria-label="Conversation messages" className="space-y-3">
    {data.messages.length===0?<p role="status">No messages yet.</p>:data.messages.map((item,index)=>

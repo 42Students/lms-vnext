@@ -50,7 +50,7 @@ export function TpoRecruiterGrantForm({ companies }: {
         <EmptyState title="No active linked companies are available for recruiter grants."/>
       ) : (
         <>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 md:grid-cols-3">
             <label className="grid gap-1 text-sm font-semibold text-body">Company
               <Select value={relationshipId} disabled={busy}
                 onChange={(event) => setRelationshipId(event.target.value)}
