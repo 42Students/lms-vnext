@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { studyGroupConflictMessage } from "@/modules/groups/college-group-management-model";
@@ -112,7 +113,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
 
   const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
   return <>
-    {group ? <div className="flex min-w-0 flex-wrap items-center gap-2">
+    {group ? <Disclosure title="Manage" className="min-w-0" contentClassName="flex min-w-0 flex-wrap items-center gap-2 pb-2">
       {group.status !== "ARCHIVED" ? (
         <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => {
           setDraft(draftOf(group)); setError(null); setOpen(true);
@@ -135,7 +136,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
           }}>Archive</Button>
         </details>
       ) : null}
-    </div> : (
+    </Disclosure> : (
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={() => { setDraft(EMPTY); setError(null); setOpen(true); }}>
         New study group
       </Button>
