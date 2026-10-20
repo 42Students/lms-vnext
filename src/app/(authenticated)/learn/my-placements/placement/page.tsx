@@ -44,9 +44,9 @@ export default async function LearnerPlacementCellPage({
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Read placement rules →</Link>
       </section>
       <nav aria-label="Placement cell resources" className="flex min-w-0 flex-wrap gap-2">
-        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read all college notices →</Link>
-        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Placement-cell authored notices →</Link>
-        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
+        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Read all college notices →</Link>
+        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Placement-cell authored notices →</Link>
+        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Notification preferences →</Link>
       </nav>
       {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
         <Alert tone="warning" role="alert">

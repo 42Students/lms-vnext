@@ -14,7 +14,7 @@ export default async function LearnerSupportHistory({searchParams}:{
   const choices=["ALL","PENDING","APPROVED","REJECTED","CANCELLED"] as const;
   const requestTypes=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
   const supportFilterPillClass =
-    "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[13px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] aria-[current=page]:hover:bg-[var(--lms-primary-subtle)] aria-[current=page]:hover:text-[var(--lms-primary-text)]";
+    "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[13px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] aria-[current=page]:hover:bg-[var(--lms-primary-subtle)] aria-[current=page]:hover:text-[var(--lms-primary-text)]";
   const supportFilterNavClass =
     "min-w-0 max-w-[calc(100vw_-_var(--lms-space-7))] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
   return <div className="min-w-0 space-y-6">
@@ -71,11 +71,11 @@ export default async function LearnerSupportHistory({searchParams}:{
     </ol>}
     <nav aria-label="Request history pages" className="flex flex-wrap gap-3">
       {data.hasPrevious?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page-1})}
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">
         ← Newer requests
       </Link>:null}
       {data.hasMore?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page+1})}
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">
         Older requests →
       </Link>:null}
     </nav>
