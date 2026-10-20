@@ -36,12 +36,12 @@ export default async function FacultyResponseFollowUpsPage({
       </Link>} />
     <form action="/teacher/response-followups" method="get"
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Search
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-body">Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Assessment type
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-body">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
@@ -49,7 +49,7 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="QUIZ">Quizzes</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Teaching Section
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-body">Teaching Section
         <Select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">All current Sections</option>
@@ -58,7 +58,7 @@ export default async function FacultyResponseFollowUpsPage({
           </option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Sort
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-body">Sort
         <Select name="sort" defaultValue={data.query.sort}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="RECENT_DUE">Most recently due</option>
@@ -66,7 +66,7 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="TITLE">Assessment title</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Assessments per page
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-body">Assessments per page
         <Select name="pageSize" defaultValue={data.query.pageSize}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="5">5</option><option value="10">10</option>

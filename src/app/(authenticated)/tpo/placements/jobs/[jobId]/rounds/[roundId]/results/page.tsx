@@ -29,11 +29,11 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
  const visibleRows=filterTpoRoundResultRows(data.rows,selected.data);
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-  <Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
-   description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
-  <section className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface sm:grid-cols-4" aria-label="Result counts">
-   {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border p-3 sm:border-r sm:border-b-0 sm:last:border-r-0">
+   description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}
+   actions={<Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Drive workspace</Link>} />
+  <section className="grid grid-cols-2 overflow-hidden border-y border-border bg-surface md:grid-cols-4" aria-label="Result counts">
+   {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border p-3 md:border-r md:border-b-0 md:last:border-r-0">
     <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
