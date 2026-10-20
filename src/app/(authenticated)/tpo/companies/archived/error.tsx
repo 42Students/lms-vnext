@@ -12,7 +12,7 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
       description="The database could not be read. No empty list is inferred."
       action={<>
         <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
-        <Link href="/tpo/companies" className="lms-inline-link inline-flex min-h-11 items-center px-3 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Companies directory</Link>
+        <Link href="/tpo/companies?directory=1" className="lms-inline-link inline-flex min-h-11 items-center px-3 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Companies directory</Link>
       </>}
     />
   </div>;
