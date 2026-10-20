@@ -443,9 +443,10 @@ export default async function HrCalendarPage({
                 value={view}
               />
 
-              <label className="flex min-w-0 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <label className="flex min-w-0 flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Jump to date
-                <Input
+                <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
+    <Input
                   key={anchor}
                   type="date"
                   name="date"

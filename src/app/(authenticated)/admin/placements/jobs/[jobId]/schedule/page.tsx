@@ -57,12 +57,12 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<PageBackLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} label="Drive overview" />} />
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-4 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
         <Select name="kind" defaultValue={query.kind} className="min-w-0">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
         </Select>
       </label>
-      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={query.status} className="min-w-0">
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}

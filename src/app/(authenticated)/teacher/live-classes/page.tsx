@@ -36,14 +36,14 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   />
   <form action="/teacher/live-classes" method="get"
    className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">When
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">When
     <Select name="view" defaultValue={data.query.view}
      className="text-sm">
      <option value="UPCOMING">Upcoming and in progress</option>
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
     </Select></label>
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
     <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
      className="text-sm">
      <option value="">All assigned Sections</option>

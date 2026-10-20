@@ -87,12 +87,12 @@ export default async function TpoCompanyContactLogPage({
             </Alert>
           )}
           <form method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-            <label className="text-sm font-semibold text-foreground">
+            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
               Interaction type
               <Select
                 name="type"
                 defaultValue={log.type}
-                className="mt-2 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+                className="mt-[6px] block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
               >
                 {["ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM"].map((type) => (
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
