@@ -109,7 +109,7 @@ export function CollegeEditDialog({
         title={`Edit ${college.name}`}
         description={`College code ${college.code} and organization ownership are intentionally immutable here.`}
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               className="min-h-11 md:min-h-9"
@@ -126,24 +126,16 @@ export function CollegeEditDialog({
             >
               {pending ? "Saving…" : "Save changes"}
             </Button>
-          </>
+          </div>
         }
       >
-        <div aria-busy={pending} className="grid min-w-0 gap-4 md:grid-cols-2">
-          {([
-           ["Address",addressLine1,setAddressLine1,255],
-           ["Address line 2",addressLine2,setAddressLine2,255],
-           ["Landmark",landmark,setLandmark,255],
-           ["Pin Code",postalCode,setPostalCode,32],
-          ] as const).map(([field,value,setter,maxLength])=><label key={field}
-           className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
-           <Input className="min-h-11 md:min-h-9" value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
-          </label>)}
+        <div aria-busy={pending} className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+
 
           <div className="md:col-span-2">
             <label
               htmlFor={`college-name-${college.id}`}
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               College name
             </label>
@@ -161,7 +153,7 @@ export function CollegeEditDialog({
           <div>
             <label
               htmlFor={`college-city-${college.id}`}
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               City
             </label>
@@ -179,7 +171,7 @@ export function CollegeEditDialog({
           <div>
             <label
               htmlFor={`college-state-${college.id}`}
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               State
             </label>
@@ -197,7 +189,7 @@ export function CollegeEditDialog({
           <div className="md:col-span-2">
             <label
               htmlFor={`college-country-${college.id}`}
-              className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Country
             </label>
@@ -211,6 +203,15 @@ export function CollegeEditDialog({
               maxLength={128}
             />
           </div>
+          {([
+           ["Address",addressLine1,setAddressLine1,255],
+           ["Address line 2",addressLine2,setAddressLine2,255],
+           ["Landmark",landmark,setLandmark,255],
+           ["Pin Code",postalCode,setPostalCode,32],
+          ] as const).map(([field,value,setter,maxLength])=><label key={field}
+           className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
+           <Input className="min-h-11 md:min-h-9" value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
+          </label>)}
         </div>
       </Dialog>
     </>
