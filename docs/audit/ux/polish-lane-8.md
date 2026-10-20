@@ -185,3 +185,9 @@ Eight issues: page-tools order, excessive borders, wide guidance, secondary add 
 Nine UI issues corrected: expanded editor clutter, search hierarchy, repeated borders, cramped filter widths, uneven label gaps, competing Clear action, oversized export toolbar, mobile row actions and inconsistent dialog trigger heights. Used a collapsed workflow disclosure and responsive filter drawer with always-visible search; normalized gutters. Examined empty/error/loading, edit/confirm/reassign, pagination, and 375/768 layouts. Source inspection only.
 
 Files: faculty-assignment page and reassign component; queue/proof.
+
+## Surface 30 — Faculty assignment create/end controls
+
+Eight polish fixes: duplicate nested title, unwanted border, cramped seven-field grid, 4px label gutters, hard-to-tap course choices, short overflow list, narrow submit CTA and uneven row-end control. Removed duplicate visual title within its page disclosure, normalized legacy spacing, added adaptive 375/768/desktop fields, improved scrollable choices with 44px row targets and mobile-first action sizing. Reviewed empty program/course lists, truncation notices, partial bulk results, validation, confirmation, pending, failure/success, End assignment and cancellation states. Original IDs, roles, endpoints, audit behaviour and wording retained. Static source review only; no CI.
+
+File: college-faculty-assignment-actions.tsx; proof/queue.
