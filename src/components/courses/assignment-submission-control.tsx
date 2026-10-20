@@ -14,6 +14,7 @@ import {FilterChip} from "@/components/ui/filter-chip";
 import { Input } from "@/components/ui/input";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { AssignmentFileSubmissionControl } from "./assignment-file-submission-control";
 import { courseApiError } from "./learner-course-api";
 import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
@@ -57,6 +58,19 @@ export function AssignmentSubmissionControl({
   const [success, setSuccess] =
     useState(false);
   const flight = useRef(createSubmissionFlightGuard());
+  const [finalConfirmOpen,setFinalConfirmOpen]=useState(false);
+  const finalResolver=useRef<((confirmed:boolean)=>void)|null>(null);
+  function settleFinal(confirmed:boolean){
+    setFinalConfirmOpen(false);
+    const resolver=finalResolver.current;
+    finalResolver.current=null;
+    resolver?.(confirmed);
+  }
+  function confirmFinal(){return new Promise<boolean>(resolve=>{
+    finalResolver.current?.(false);
+    finalResolver.current=resolve;
+    setFinalConfirmOpen(true);
+  });}
   const [discardHref,setDiscardHref]=useState<string|null>(null);
   const methodsKey=(methodsEnabled?"1|":"0|")+assignmentId+"|"+deliveryId;
   const [prevMethodsKey,setPrevMethodsKey]=useState(methodsKey);
@@ -146,7 +160,7 @@ export function AssignmentSubmissionControl({
       }
     }
 
-    if (!window.confirm(learnerAssignmentFinalConfirmation(submissionType))) {
+    if (!(await confirmFinal())) {
       flight.current.end();
       return;
     }
@@ -263,7 +277,7 @@ export function AssignmentSubmissionControl({
             "This assignment requires a PDF or file, but private uploads are unavailable. Ask your Faculty or college administrator to enable private file storage."}
         </Alert> : null}
         {submissionType==="LINK"&&methodsEnabled&&mayLink?
-          <label className="mt-3 grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Link type
+          <label className="mt-3 grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Link type
             <Select value={linkKind} disabled={submitting}
               className="min-h-11 md:min-h-9"
               onChange={event=>setLinkKind(event.target.value as typeof linkKind)}>
@@ -275,12 +289,12 @@ export function AssignmentSubmissionControl({
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <section className="mt-[var(--lms-space-4)] min-w-0">
-            <h3 className="mb-[6px] text-xs font-semibold text-body">Written response</h3>
+            <h3 className="mb-[var(--lms-space-2)] text-xs font-semibold text-body">Written response</h3>
             <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>
           </section>
         ) : (
           <label className="mt-[var(--lms-space-4)] block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Website / External Links<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
             </span>
             <Input
@@ -313,6 +327,9 @@ export function AssignmentSubmissionControl({
           </span>
         </div> : null}
       </fieldset>
+      <ConfirmDialog open={finalConfirmOpen} onOpenChange={next=>{if(!next)settleFinal(false);}}
+        title="Submit assignment?" description={learnerAssignmentFinalConfirmation(submissionType)}
+        confirmVariant="primary" confirmLabel="Submit" onConfirm={()=>settleFinal(true)}/>
       <Dialog open={discardHref!==null} onOpenChange={open=>{if(!open)setDiscardHref(null);}}
         title="Discard this submission?" description="Your unsent answer will be lost."
         footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">

@@ -1,5 +1,5 @@
 "use client";
-import {useCallback,useState,useSyncExternalStore} from "react";
+import {useCallback,useRef,useState,useSyncExternalStore} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {parseCompanyShareExpiry} from "@/modules/placements/company-share/remembered-settings-model";
 import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,companyShareLifecycleStatus,companyShareLifecycleLabel,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
@@ -58,12 +58,15 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
  const [shortlistBy,setShortlistBy]=useState("");
  const [newCode,setNewCode]=useState<string|null>(null);
  const [pending,setPending]=useState(false);
+ const mutating=useRef(false);
  const [revokeTarget,setRevokeTarget]=useState<string|null>(null);
  const [error,setError]=useState("");
  const [newUrl,setNewUrl]=useState<string|null>(null);
  const [copyState,setCopyState]=useState<"IDLE"|"COPIED"|"MANUAL_COPY">("IDLE");
  const root="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares";
  async function createLink(){
+  if(mutating.current||!ready||selectedColumns.length===0)return;
+  mutating.current=true;
   setPending(true);setError("");setNewUrl(null);setNewCode(null);setCopyState("IDLE");
   try{
    const res=await fetch(root,{
@@ -84,7 +87,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   }catch(error){setError(error instanceof Error&&error.message==="ACTIVE_LINK_LIMIT"?
    companyShareIssueFailureMessage("ACTIVE_LINK_LIMIT"):
    companyShareIssueFailureMessage(undefined));}
-  finally{setPending(false);}
+  finally{mutating.current=false;setPending(false);}
  }
  async function copyLink(){
   if(!newUrl)return;
@@ -92,7 +95,8 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   setCopyState(state);
  }
  async function revokeLink(id:string){
-  if(pending)return;
+  if(pending||mutating.current)return;
+  mutating.current=true;
   setPending(true);setError("");
   try{
    const res=await fetch(root+"/"+encodeURIComponent(id)+"/revoke",{
@@ -102,7 +106,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    setLinks(current=>afterCompanyShareRevocation(current,id,status,new Date().toISOString()));
    setNewUrl(null);setNewCode(null);
   }catch{setError("Could not revoke link. Refresh before trying again.");}
-  finally{setPending(false);setRevokeTarget(null);}
+  finally{mutating.current=false;setPending(false);setRevokeTarget(null);}
  }
  return <section aria-label="Company applicant sharing"
    className="min-w-0 space-y-4 border-b border-border pb-4">
@@ -113,14 +117,14 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    External sharing is unavailable until its audited database migration is registered.
   </Alert>:<>
    <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2">
-    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expires in days
-     <Select value={days} onChange={event=>changeExpiry(event.target.value)}
+    <label className="grid w-full min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expires in days
+     <Select value={days} disabled={pending} onChange={event=>changeExpiry(event.target.value)}
       className="w-full">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
      </Select>
     </label>
-    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Please shortlist by
-     <Input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
+    <label className="grid w-full min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Please shortlist by
+     <Input type="date" value={shortlistBy} disabled={pending} onChange={event=>setShortlistBy(event.target.value)}
       />
     </label>
     <details className="group min-w-0 border-t border-border pt-3 sm:col-span-2">
