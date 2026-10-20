@@ -69,7 +69,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </Link>
       </article>;
     })}</section>}
-    <Link href="/hr/profile" className="text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Your profile</Link>
+    <Link href="/hr/profile" className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Your profile</Link>
   </div>;
   }
   const grant = grants.find(item => item.collegeId === selectedId)!;
@@ -199,7 +199,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section aria-label="This week" className="border-b border-border pb-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-semibold text-foreground">This week</h2>
-        <Link href={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)} className="text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Full calendar</Link>
+        <Link href={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)} className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Full calendar</Link>
       </div>
       {weekEvents.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {weekEvents.map(item=><li key={item.id}>
@@ -218,7 +218,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-semibold text-foreground">Live hiring drives</h2>
         <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
-          className="text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all live drives</Link>
+          className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all live drives</Link>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">Applied counts here mean applicants the placement cell has explicitly shared with you; private/unshared submissions are not visible.</p>
       {liveDrives.length?<div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -273,7 +273,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold text-foreground">Replies to read</h2>
         <Link href={hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1})}
-          className="text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View unread conversations</Link>
+          className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View unread conversations</Link>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
         Only employer-owned threads from your selected college. No message bodies appear on Today.
