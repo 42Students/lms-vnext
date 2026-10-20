@@ -61,6 +61,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
   void load().catch(()=>setError("Could not load saved batch views.")).finally(()=>setBusy(false));
  }
  const selectedView=views.find(view=>view.id===selected);
+ const pinnedViews=views.filter(view=>view.pinned);
  return <section aria-label="BATCH_STUDENTS saved views" className="min-w-0 space-y-2">
   <Button variant="secondary" type="button" aria-expanded={open} onClick={toggle}
    className="min-h-11 w-full sm:w-auto md:min-h-9">Saved batch views</Button>
