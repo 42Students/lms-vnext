@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -13,6 +15,7 @@ const array=(value:string)=>value.split("\n").map(v=>v.trim()).filter(Boolean);
 export function SuperAdminTemplateOverviewEditor({templateId,title,summary,version,blueprint}:{
  templateId:string;title:string;summary:string|null;version:number;blueprint:ProjectTemplateBlueprint;
 }){
+ const {askConfirm,dialog}=useConfirmFlow();
  const router=useRouter(),[open,setOpen]=useState(false),[pending,setPending]=useState(false),
  [error,setError]=useState(""),[message,setMessage]=useState("");
  const [courseLabel,setCourseLabel]=useState(blueprint.overview.courseLabel??""),
@@ -34,7 +37,7 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
   }};
   const parsed=projectTemplateBlueprintSchema.safeParse(updated);
   if(!parsed.success){setError(parsed.error.issues[0]?.message??"Invalid overview");return;}
-  if(!window.confirm("Save template Overview as a new version?"))return;
+  if(!(await askConfirm("Save template Overview as a new version?")))return;
   setPending(true);setError("");
   try{
    await projectMutation("/api/projects/templates/"+encodeURIComponent(templateId),"PATCH",{
@@ -76,7 +79,8 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
      onClick={()=>void save()} className="">
      {pending?"Saving…":"Save as new version"}</Button></div>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm text-success">{message}</p>:null}
+  {error?<Banner tone="error">{error}</Banner>:null}
+  {message?<Banner tone="success">{message}</Banner>:null}
+  {dialog}
  </section>;
 }

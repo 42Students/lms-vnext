@@ -39,8 +39,8 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   </Button>
   {status==="ARCHIVED"?<Banner tone="warning">Archived templates cannot be rolled back.</Banner>:null}
   {selectedVersion.version===currentVersion?<p className="text-xs text-muted-foreground">This is already the current version.</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  {error?<Banner tone="error">{error}</Banner>:null}
+  {notice?<Banner tone="success">{notice}</Banner>:null}
    {dialog}
  </div>;
 }
