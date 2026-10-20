@@ -12,6 +12,6 @@ Shared UI components that every page inherits. For each file: compare EVERY stat
 - [x] `src/components/ui/otp-input.tsx`
 - [x] `src/components/ui/page-size-select.tsx`
 - [x] `src/components/ui/range-slider.tsx`
-- [ ] `src/components/ui/selection-controls.tsx`
-- [ ] `src/components/ui/step-indicator.tsx`
-- [ ] `src/components/ui/timeline.tsx`
+- [x] `src/components/ui/selection-controls.tsx`
+- [x] `src/components/ui/step-indicator.tsx`
+- [x] `src/components/ui/timeline.tsx`
