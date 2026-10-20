@@ -116,7 +116,17 @@ export function SearchableSelect({
   function keyDown(event: KeyboardEvent<HTMLInputElement>) {
     onKeyDown?.(event);
     if (event.defaultPrevented || disabled || readOnly) return;
-    if (event.key === "Escape") { event.preventDefault(); setOpen(false); setActiveIndex(-1); return; }
+    if (event.key === "Escape") {
+      // Consume the key only for our own visible listbox; a closed combobox
+      // must not swallow Escape meant for its containing native Dialog.
+      if (open) {
+        event.preventDefault();
+        event.stopPropagation();
+        setOpen(false);
+        setActiveIndex(-1);
+      }
+      return;
+    }
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
       setOpen(true);

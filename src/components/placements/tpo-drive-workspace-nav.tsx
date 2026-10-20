@@ -18,14 +18,14 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
   return (
     <nav aria-label="Drive workspace sections"
       className="min-w-0 border-b border-border pb-2">
-      <label className="grid gap-1 text-sm font-semibold sm:hidden">Workspace section
+      <label className="grid gap-1 text-sm font-semibold md:hidden">Workspace section
         <Select aria-label="Drive workspace section" value={selected}
           onChange={event=>router.push(event.target.value)}
           className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           {tabs.map(tab=><option key={tab.href} value={tab.href}>{tab.label}</option>)}
         </Select>
       </label>
-      <div className="hidden min-w-0 flex-wrap items-center gap-1 sm:flex">
+      <div className="hidden min-w-0 flex-wrap items-center gap-1 md:flex">
       <Tabs ariaLabel="Drive workspace primary sections" value={selected}
         renderPanel={false}
         items={tpoDriveTabs(jobId).map(tab=>({
@@ -36,7 +36,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
           {tpoDriveMoreTabs(jobId).map(tab=>(
             <Link key={tab.href} href={tab.href}
               aria-current={pathname===tab.href.split("#")[0]?"page":undefined}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+              className="min-h-11 rounded-[8px] px-3 py-2 text-sm font-semibold text-primary-text hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
               {tab.label}
             </Link>
           ))}
