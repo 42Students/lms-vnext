@@ -77,7 +77,7 @@ export function SuperAdminHrAccountDialog({
   ) {
     event.preventDefault();
 
-    if (pending || !eligible) {
+    if (pending || !eligible || (creating && (optionsLoading || Boolean(optionsError)))) {
       return;
     }
 
@@ -98,6 +98,7 @@ export function SuperAdminHrAccountDialog({
   return (
     <Dialog
       open
+      dismissible={!pending}
       onOpenChange={(open) => {
         if (!open && !pending) {
           onClose();
@@ -126,7 +127,7 @@ export function SuperAdminHrAccountDialog({
             loading={pending}
             type="submit"
             form={formId}
-            disabled={pending || !eligible}
+            disabled={pending || !eligible || (creating && (optionsLoading || Boolean(optionsError)))}
           >
             {pending
               ? "Saving…"
@@ -151,18 +152,18 @@ export function SuperAdminHrAccountDialog({
               Company not listed? Create a company by name
             </label>
             {createCompany?<div className="mb-[var(--lms-space-4)] space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
-              <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">Company name
+              <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">Company name
                 <Input className="min-h-11 md:min-h-9" value={newCompanyName} minLength={2} maxLength={150} required
                   onChange={event=>setNewCompanyName(event.target.value)} disabled={pending}/>
               </label>
-              <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">First college
+              <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">First college
                 <Select className="min-h-11 md:min-h-9" required value={newCompanyCollegeId} disabled={pending||optionsLoading}
                   onChange={event=>setNewCompanyCollegeId(event.target.value)}>
                   <option value="">Select a college</option>
                   {colleges.map(c=><option key={c.collegeId} value={c.collegeId}>{c.collegeName}</option>)}
                 </Select>
               </label>
-              <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">Company domain (optional)
+              <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">Company domain (optional)
                 <Input className="min-h-11 md:min-h-9" value={newCompanyDomain} placeholder="company.com" maxLength={253}
                   disabled={pending} onChange={event=>setNewCompanyDomain(event.target.value)}/>
               </label>
@@ -173,7 +174,7 @@ export function SuperAdminHrAccountDialog({
             </div>:null}
             {!createCompany?<><label
               htmlFor={`${id}-relationship`}
-              className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-body"
+              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Company and first college
             </label>
@@ -280,12 +281,12 @@ export function SuperAdminHrAccountDialog({
         )}
 
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">First Name
+          <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">First Name
             <Input className="min-h-11 md:min-h-9" id={`${id}-first-name`} autoComplete="given-name" value={firstName}
               minLength={1} maxLength={120} required disabled={pending}
               onChange={event=>setFirstName(event.target.value)}/>
           </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">Last Name
+          <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">Last Name
             <Input className="min-h-11 md:min-h-9" id={`${id}-last-name`} autoComplete="family-name" value={lastName}
               maxLength={120} disabled={pending}
               onChange={event=>setLastName(event.target.value)}/>
@@ -296,7 +297,7 @@ export function SuperAdminHrAccountDialog({
           <div>
             <label
               htmlFor={`${id}-phone`}
-              className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-body"
+              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Mobile number
             </label>
@@ -319,7 +320,7 @@ export function SuperAdminHrAccountDialog({
           <div>
             <label
               htmlFor={`${id}-email`}
-              className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-body"
+              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Email · optional
             </label>
@@ -341,7 +342,7 @@ export function SuperAdminHrAccountDialog({
         <div>
           <label
             htmlFor={`${id}-title`}
-            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-body"
+            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-body"
           >
             Designation · optional
           </label>
@@ -361,7 +362,7 @@ export function SuperAdminHrAccountDialog({
           <div>
             <label
               htmlFor={`${id}-status`}
-              className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-body"
+              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-body"
             >
               Recruiter status
             </label>
