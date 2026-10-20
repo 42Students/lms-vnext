@@ -20,8 +20,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regres
 - [x] `src/components/ui/password-input.tsx`
 - [x] `src/app/(authenticated)/loading.tsx`
 - [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-round-result-entry-form.tsx`
-- [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
+- [x] `src/components/placements/tpo-round-result-entry-form.tsx`
+- [x] `src/components/tpo/tpo-company-team-conversation.tsx`
 - [ ] `src/app/(authenticated)/admin/features/page.tsx`
 - [ ] `src/components/admin/college-logo-uploader.tsx`
 - [ ] `src/components/admin/super-admin-platform-block-action.tsx`
