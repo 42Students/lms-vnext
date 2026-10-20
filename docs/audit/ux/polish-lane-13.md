@@ -11,3 +11,7 @@
 **Files changed:** `src/app/(authenticated)/mentor/activity/page.tsx`; `src/app/(authenticated)/mentor/activity/error.tsx`; `docs/orchestrator/queues/clone/lane-13-polish.md`; `docs/audit/ux/polish-lane-13.md`.
 
 **Validation:** Source-level JSX/import/tag inspection, including empty, filtered and full result paths plus 375/768/1280 CSS semantics. No browser screenshots or CI were run.
+
+## 2. Mentor · All Quizzes legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/allQuizzes/page.tsx`. Read the complete route and nearest Mentor layout. The sole rendered operation is an immediate server `redirect("/mentor/projects")`; it renders **no JSX**, fields, overlays, loading, error, empty or not-found presentation at any viewport. No route-local `loading.tsx`, `error.tsx`, `not-found.tsx` or `template.tsx` exists; the Mentor layout owns role enforcement and shell access. **Problems found: 0. Changes: none**—adding an intermediate UI or changing the destination would break legacy bookmark behavior. The existing Projects destination uses the standard authenticated shell. Files changed: only the lane-13 polish queue and this audit proof. Source audit at 375/768/1280; browser not run.
