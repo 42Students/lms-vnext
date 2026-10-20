@@ -704,3 +704,21 @@ This inventory reads every named queued file through the connected GitHub reposi
 | `src/app/(authenticated)/teacher/allQuizzes/page.tsx` | 30 | 0 (0 hidden) | 0 | 0/0 | 17,22 |
 | `src/app/(authenticated)/teacher/calendar/page.tsx` | 133 | 0 (0 hidden) | 0 | 1/1 | 31,32,49 |
 | `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx` | 58 | 0 (0 hidden) | 0 | 0/0 | 31,34 |
+
+
+### Source inventory routes, part 2/4 (13–24 of 46)
+
+| Path | Lines | Native/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source value example lines |
+|---|---:|---:|---:|---:|---|
+| `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx` | 159 | 0 (0 hidden) | 0 | 1/1 | 53,55,76 |
+| `src/app/(authenticated)/teacher/contacts/page.tsx` | 6 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx` | 44 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx` | 118 | 0 (0 hidden) | 0 | 1/1 | 30,31,37 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 16,24 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx` | 16 | 0 (0 hidden) | 0 | 0/0 | delegated |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx` | 107 | 0 (0 hidden) | 0 | 0/0 | 78,84 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx` | 74 | 0 (0 hidden) | 0 | 1/1 | 19,20,25 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx` | 49 | 0 (0 hidden) | 0 | 0/0 | 15,18 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx` | 41 | 0 (0 hidden) | 0 | 0/0 | 24,28 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx` | 67 | 0 (0 hidden) | 0 | 0/0 | 27,30 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx` | 150 | 0 (0 hidden) | 0 | 1/1 | 33,36,48 |
