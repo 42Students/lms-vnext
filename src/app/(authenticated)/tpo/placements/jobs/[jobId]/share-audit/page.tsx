@@ -4,6 +4,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Tabs } from "@/components/ui/tabs";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -31,21 +32,21 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  </div>;
  const {kind,page:auditPage}=parsed.data;
  const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
- return <div className="min-w-0 space-y-5">
-  <Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
-   Back to company-share preview
-  </Link>
-  <PageHeader title="Company-share access history" />
+ const ist=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value))+" IST";
+ return <div className="min-w-0 space-y-4">
+
+  <PageHeader title="Company-share access history"
+   actions={<>
+    <Link href={back} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:w-auto md:min-h-9">Back to company-share preview</Link>
+    {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:w-auto md:min-h-9">Export access history CSV</a>:null}
+   </>}/>
   <Tabs ariaLabel="Company-share event filters" value={kind} renderPanel={false}
    items={tpoCompanyAuditKindSchema.options.map(option=>({
     value:option,
     label:option==="ALL"?"All events":option==="VIEW"?"Page views":option==="LOCKED"?"Locked shares":"CSV downloads",
     href:tpoCompanyAuditHref(jobId,option),
    }))}/>
-  {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
-    Export access history CSV
-  </a>:null}
+
   {!result.ready?<Alert tone="warning">
    Access history is unavailable until the share-audit migration is registered.
   </Alert>:<DataTable caption="Company-share access history"
@@ -54,13 +55,13 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
     empty={<EmptyState title="No share-page views or CSV downloads match this event filter for this drive." />}
     columns={[
       {key:"prefix",header:"Link prefix",mobilePriority:"primary",cell:entry=><span className="font-mono break-all">{entry.sharePrefix}</span>},
-      {key:"action",header:"Action",mobilePriority:"secondary",cell:entry=>entry.kind},
-      {key:"when",header:"UTC timestamp",mobilePriority:"secondary",cell:entry=>entry.at},
+      {key:"action",header:"Action",mobilePriority:"secondary",cell:entry=><StatusBadge tone={entry.kind==="LOCKED"?"warning":"info"}>{entry.kind}</StatusBadge>},
+      {key:"when",header:"Time (IST)",mobilePriority:"secondary",cell:entry=><time dateTime={entry.at}>{ist(entry.at)}</time>},
     ]}/>}
-  {result.ready?<nav aria-label="Access history pages" className="flex min-w-0 flex-wrap items-center gap-3 text-[13px]">
+  {result.ready?<nav aria-label="Access history pages" className="flex min-w-0 flex-col gap-2 border-t border-border pt-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
    <span>{result.total} events · Page {result.page} of {result.totalPages}, 25 per page</span>
    {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
-    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold sm:w-auto text-[var(--lms-teal-deep)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
    {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
   </nav>:null}
