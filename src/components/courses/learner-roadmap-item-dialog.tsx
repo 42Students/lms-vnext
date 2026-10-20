@@ -23,20 +23,21 @@ export function LearnerRoadmapItemDialog({
     <div className={highlighted ? "rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-focus-ring)]" : ""}>
       <Button type="button" variant="secondary" onClick={() => setOpen(true)}
         aria-haspopup="dialog" aria-expanded={open}
-        className="min-h-14 w-full min-w-0 justify-between gap-3 px-4 py-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        <span className="min-w-0">
+        className="min-h-14 w-full min-w-0 flex-col items-stretch gap-2 px-4 py-3 text-left sm:flex-row sm:items-center sm:justify-between focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <span className="min-w-0 break-words [overflow-wrap:anywhere]">
           <span className="block text-xs font-semibold uppercase text-muted-foreground">
             {caption ?? kind} · {progress.replaceAll("_", " ").toLowerCase()}
             {dueText ? " · Due " + dueText : ""}
           </span>
           <span className="block break-words text-sm font-semibold text-foreground">{title}</span>
         </span>
-        <span className="shrink-0 text-sm font-semibold text-primary-text">Open ›</span>
+        <span className="self-end shrink-0 text-sm font-semibold text-primary-text sm:self-auto">Open ›</span>
       </Button>
       <Dialog open={open} onOpenChange={setOpen} title={kind + ": " + title}
         description={caption ?? kind}
+        footer={<Button type="button" variant="secondary" onClick={() => setOpen(false)} className="min-h-11 w-full sm:w-auto md:min-h-9">Close</Button>}
         >
-        {open ? <div className="min-w-0">{children}</div> : null}
+        {open ? <div className="min-w-0 break-words [overflow-wrap:anywhere]">{children}</div> : null}
       </Dialog>
     </div>
   );

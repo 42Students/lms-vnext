@@ -15,12 +15,12 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/components/courses/faculty-assignment-review.tsx`
 - [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
 - [x] `src/components/courses/faculty-content-editor.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-roadmap-item-dialog.tsx`
-- [ ] `src/components/groups/college-group-actions.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx`
+- [x] `src/components/groups/college-group-actions.tsx`
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
 - [ ] `src/components/hr/recruiter-applicant-review-drawer.tsx`
 - [ ] `src/components/hr/recruiter-notification-bell.tsx`
