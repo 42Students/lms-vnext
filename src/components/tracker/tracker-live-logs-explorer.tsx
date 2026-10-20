@@ -49,6 +49,8 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   const [windowMinutes,setWindowMinutes]=useState("60");
   const [minimumSeverity,setMinimumSeverity]=useState<"ERROR"|"WARNING">("ERROR");
   const [query,setQuery]=useState(initialQuery);
+  const [appliedFilters,setAppliedFilters]=useState("60|ERROR|"+initialQuery.trim());
+  const currentFilters=windowMinutes+"|"+minimumSeverity+"|"+query.trim();
   const [items,setItems]=useState<Entry[]>([]);
   const [nextPage,setNextPage]=useState<string|null>(null);
   const [configured,setConfigured]=useState<boolean|null>(null);
@@ -66,11 +68,13 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     return apiFetch<Page>("/api/tracker/live-logs?"+params.toString(),{cache:"no-store"});
   }
   async function load(older=false){
-    if(locked.current)return;
+    if(locked.current||(older&&currentFilters!==appliedFilters))return;
+    const loadingFilters=currentFilters;
     locked.current=true;setPending(true);setNotice("");
     try{
       const result=await fetchPage(older?nextPage??undefined:undefined);
       setConfigured(result.configured);
+      setAppliedFilters(loadingFilters);
       setItems(previous=>older?mergeEntries(previous,result.items):result.items);
       setNextPage(result.nextPageToken);
       if(!result.configured)setNotice("Live Cloud Logging is not configured. Known Errors remain available below.");
@@ -87,6 +91,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         const r=await apiFetch<Page>("/api/tracker/live-logs?"+initialParams.toString(),{signal:abort.signal});
         if(abort.signal.aborted)return;
         setItems(r.items);setNextPage(r.nextPageToken);setConfigured(r.configured);
+        setAppliedFilters("60|ERROR|"+initialQuery.trim());
       }catch{
         if(!abort.signal.aborted)setNotice("Live logs could not be loaded. Try again.");
       }
@@ -216,7 +221,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         </Disclosure>
       </li>)}
     </ol>:<EmptyState title="No live errors loaded" description="Load or refresh live logs to see the latest authorized error events."/>}
-    {nextPage?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting} className="min-h-11 md:min-h-9">
+    {nextPage&&currentFilters===appliedFilters?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting} className="min-h-11 w-full sm:w-auto md:min-h-9">
       Load older
     </Button>:null}
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}

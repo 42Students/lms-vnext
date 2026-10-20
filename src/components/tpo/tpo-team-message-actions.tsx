@@ -42,7 +42,7 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
    <form id={editFormId} onSubmit={event=>{event.preventDefault();void submit("EDIT");}} className="min-w-0 space-y-2">
     <label className="block min-w-0 text-sm">Edit message
      <Textarea value={draft} maxLength={4000} required rows={3} disabled={busy}
-      onChange={event=>setDraft(event.target.value)} className="mt-1 w-full min-w-0"/>
+      onChange={event=>{setDraft(event.target.value);setError("");}} className="mt-1 w-full min-w-0"/>
     </label>
     {error?<InlineNotice tone="error" message={error}/>:null}
    </form>
@@ -55,7 +55,7 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
      <Button variant="danger" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" loading={busy} disabled={busy}
       onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</Button>
     </div>}>
-    {error?<InlineNotice tone="error" message={error}/>:null}
+    {error?<div className="min-w-0 p-[var(--lms-space-4)]"><InlineNotice tone="error" message={error}/></div>:null}
   </Dialog>
  </div>;
 }

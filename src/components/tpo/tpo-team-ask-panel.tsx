@@ -36,11 +36,11 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
  return <div className="mt-2 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
   {canDone?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}
    
-   onClick={()=>setConfirmation("DONE")}>Mark done</Button>:null}
+   onClick={()=>{setError("");setConfirmation("DONE");}}>Mark done</Button>:null}
   {canCancel?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}
    
-   onClick={()=>setConfirmation("CANCEL")}>Cancel ask</Button>:null}
-  <Dialog open={Boolean(confirmation)} onOpenChange={next=>{if(!next&&!busy)setConfirmation(null);}} dismissible={!busy} role="alertdialog"
+   onClick={()=>{setError("");setConfirmation("CANCEL");}}>Cancel ask</Button>:null}
+  <Dialog open={Boolean(confirmation)} onOpenChange={next=>{if(!next&&!busy){setConfirmation(null);setError("");}}} dismissible={!busy} role="alertdialog"
    title={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"} className="max-w-md"
    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
     <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy} onClick={()=>{setConfirmation(null);setError("");}}>
@@ -52,7 +52,7 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
    </div>}>
    {confirmation==="DONE"?<label className="grid min-w-0 gap-1 text-sm">A note goes into the conversation as your reply (optional)
     <Textarea rows={2} maxLength={2000} disabled={busy} value={note}
-     onChange={event=>setNote(event.target.value)} className="w-full min-w-0"/>
+     onChange={event=>{setNote(event.target.value);setError("");}} className="w-full min-w-0"/>
    </label>:null}
    {error?<InlineNotice tone="error" message={error}/>:null}
   </Dialog>
@@ -96,12 +96,12 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
    {recipientAwayLabel?<Alert tone="warning">{recipientName.split(" ")[0]} is away until {recipientAwayLabel}.</Alert>:null}
    <label className="grid min-w-0 gap-1 text-sm">What needs doing?
     <Input required maxLength={200} disabled={busy} value={title}
-     onChange={event=>{setTitle(event.target.value);key.current=null;}}
+     onChange={event=>{setTitle(event.target.value);key.current=null;setError("");}}
      className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
    <label className="grid min-w-0 gap-1 text-sm">By (optional, IST)
     <Input type="datetime-local" disabled={busy} value={due}
-     onChange={event=>{setDue(event.target.value);key.current=null;}}
+     onChange={event=>{setDue(event.target.value);key.current=null;setError("");}}
      className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
    {error?<InlineNotice tone="error" message={error}/>:null}
