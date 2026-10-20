@@ -31,14 +31,14 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    </p>
   </div>
   <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3 print:hidden">
-   <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Class
+   <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold text-body">Class
     <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
      className="min-h-11 md:min-h-9">
      <option value="">Select Class</option>
      {[...sections].map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
    </label>
-   <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Course
+   <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold text-body">Course
     <Select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
      name="offeringId" disabled={!sectionId}
      className="min-h-11 md:min-h-9">
@@ -54,7 +54,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     Show progress
    </Button>
    <Link href="/college/course-progress"
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
     Clear
    </Link>
   </form>
@@ -72,7 +72,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    <Link prefetch={false} download
     href={"/api/courses/college/learner-progress/export?"+
      new URLSearchParams({offeringId:report.chosen.offeringId,deliveryId:report.chosen.deliveryId}).toString()}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
     Export per-learner CSV
    </Link>
    <DataTable
