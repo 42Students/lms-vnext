@@ -81,7 +81,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
    title={confirmAction==="ARCHIVE"?"Delete assessment":confirmAction==="CLOSE"?"Close assessment":"Publish assessment"}
    description={confirmAction===null?undefined:facultyAssessmentLifecycleWarning(kind,confirmAction)}
    confirmLabel={confirmAction==="ARCHIVE"?"Delete":confirmAction==="CLOSE"?"Close":"Publish"}
-   confirmVariant={confirmAction==="ARCHIVE"?"danger":"primary"}
+   confirmVariant={confirmAction==="ARCHIVE"||confirmAction==="CLOSE"?"danger":"primary"}
    pending={pending!==null}
    onConfirm={()=>{if(confirmAction)void run(confirmAction);}}
  />

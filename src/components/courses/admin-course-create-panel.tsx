@@ -444,7 +444,7 @@ export function AdminCourseCreatePanel({
         onOpenChange={setOfferingConfirmOpen}
         title="Create this Course Offering?"
         description="This binds the selected course, cohort and academic period. Duplicate active bindings and incompatible periods are rejected by the server."
-        confirmLabel="Create Offering"
+        confirmLabel="Create Offering" confirmVariant="primary"
         pending={pending}
         onConfirm={commitOffering}
       />

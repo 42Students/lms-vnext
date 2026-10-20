@@ -47,15 +47,16 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
   {!courses.length?<EmptyState title="No assigned courses found" description={`Assign yourself to a course before creating a ${name.toLowerCase()}.`}/>:null}
   <Drawer open={open} onOpenChange={closeDrawer}
    title={kind==="QUIZ"?"Create quiz":"Create Assignment"}
-   description="Choose your assigned course and lesson before opening the assessment builder.">
+   description="Choose your assigned course and lesson before opening the assessment builder."
+   footer={!continued?<Button className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={start} disabled={!course||!lesson}>Continue</Button>:undefined}>
    <div className="space-y-4">
-    <label className="grid gap-1 text-xs leading-4 font-semibold text-body">Select course and class
+    <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Select course and class
      <Select value={course?.deliveryId??""} aria-label="Select course and class" onChange={e=>selectCourse(e.target.value)}>
       <option value="">Select course and class</option>
       {courses.map(item=><option key={item.deliveryId} value={item.deliveryId}>{item.name}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-xs leading-4 font-semibold text-body">Select lesson
+    <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Select lesson
      <Select value={lesson?.lessonId??""} aria-label="Select lesson" onChange={e=>selectLesson(e.target.value)}
       disabled={!course}>
       <option value="">Select lesson</option>
@@ -68,7 +69,6 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
       <p>This keeps faculty creation and learner attempts under the same course structure.</p>
     </div>
     {error?<Alert tone="error">{error}</Alert>:null}
-    {!continued?<Button className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={start} disabled={!course||!lesson}>Continue</Button>:null}
     {continued&&lesson&&course?<div onInputCapture={()=>setDraftDirty(true)} onChangeCapture={()=>setDraftDirty(true)}><FacultyLessonAuthoring
       key={course.deliveryId+":"+lesson.lessonId+":"+kind}
       lessonId={lesson.lessonId} deliveryId={course.deliveryId}
