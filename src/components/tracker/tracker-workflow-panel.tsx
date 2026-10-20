@@ -86,64 +86,69 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
   }
 
   return (
-    <section className="space-y-4 border-b border-border pb-5">
+    <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
       <div>
         <h2 className="m-0 text-lg font-semibold text-foreground">Engineering workflow</h2>
         <p className="mt-1 text-sm text-body">Super Admin only. Version {issue.version}; stale writes are rejected.</p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="text-sm font-semibold text-body">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
           Status
-          <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <Select className="w-full min-w-0" value={status} onChange={(e) => setStatus(e.target.value)}>
             {BUG_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
           Resolution
-          <Select value={resolution} onChange={(e) => setResolution(e.target.value)}>
+          <Select className="w-full min-w-0" value={resolution} onChange={(e) => setResolution(e.target.value)}>
             <option value="">No resolution</option>
             {BUG_RESOLUTIONS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
           Affected layer
-          <Select value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
+          <Select className="w-full min-w-0" value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
             <option value="">Not set</option>
             {BUG_AFFECTED_LAYERS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
           Regression test
-          <Select value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
+          <Select className="w-full min-w-0" value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
             {BUG_REGRESSION_TEST_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="md:col-span-2 text-sm font-semibold text-body">
+        <details className="min-w-0 sm:col-span-2">
+          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Engineering evidence</summary>
+          <div className="grid min-w-0 gap-4 pt-2 sm:grid-cols-2">
+        <label className="min-w-0 text-sm font-semibold text-body sm:col-span-2">
           Root cause
-          <Textarea className="mt-1" value={rootCause} maxLength={4000} onChange={(e) => setRootCause(e.target.value)} />
+          <Textarea className="mt-1 w-full min-w-0" value={rootCause} maxLength={4000} onChange={(e) => setRootCause(e.target.value)} />
         </label>
-        <label className="md:col-span-2 text-sm font-semibold text-body">
+        <label className="min-w-0 text-sm font-semibold text-body sm:col-span-2">
           Fix notes
-          <Textarea className="mt-1" value={fixNotes} maxLength={4000} onChange={(e) => setFixNotes(e.target.value)} />
+          <Textarea className="mt-1 w-full min-w-0" value={fixNotes} maxLength={4000} onChange={(e) => setFixNotes(e.target.value)} />
         </label>
-        <label className="text-sm font-semibold text-body">
-          Frontend commit SHA
-          <Input className="mt-1" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
+        <div className="min-w-0 text-sm font-semibold text-body">
+          <label htmlFor="tracker-workflow-frontend-sha">Frontend commit SHA</label>
+          <Input id="tracker-workflow-frontend-sha" className="mt-1 min-w-0 w-full" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
             target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View on GitHub ↗</a>:null}
-        </label>
-        <label className="text-sm font-semibold text-body">
-          Backend commit SHA
-          <Input className="mt-1" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
+        </div>
+        <div className="min-w-0 text-sm font-semibold text-body">
+          <label htmlFor="tracker-workflow-backend-sha">Backend commit SHA</label>
+          <Input id="tracker-workflow-backend-sha" className="mt-1 min-w-0 w-full" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
             target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View on GitHub ↗</a>:null}
-        </label>
-        <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body md:min-h-9">
+        </div>
+          </div>
+        </details>
+        <label className="flex min-h-11 min-w-0 items-center gap-3 text-sm font-semibold text-body md:min-h-9">
           <Checkbox checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
           Production verified
         </label>
       </div>
-      <Button disabled={pending} loading={pending} onClick={save} className="min-h-11 w-full md:min-h-9 md:w-auto">
+      <Button disabled={pending} loading={pending} onClick={save} className="min-h-11 w-full sm:w-auto md:min-h-9">
         {pending ? "Saving…" : "Save workflow"}
       </Button>
 
@@ -152,8 +157,8 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
           <h3 className="m-0 text-base font-semibold text-foreground">Ready for retest</h3>
           <p className="text-sm font-semibold text-body">Does it work now?</p>
           <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
-          <Textarea value={retestNote} maxLength={1000} placeholder="Optional retest note" onChange={(e) => setRetestNote(e.target.value)} />
-          <div className="flex flex-wrap gap-2">
+          <Textarea className="w-full min-w-0" value={retestNote} maxLength={1000} placeholder="Optional retest note" onChange={(e) => setRetestNote(e.target.value)} />
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 w-full md:min-h-9 md:w-auto">Works now</Button>
             <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 w-full md:min-h-9 md:w-auto">Still broken</Button>
           </div>

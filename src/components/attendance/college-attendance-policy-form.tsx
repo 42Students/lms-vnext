@@ -89,13 +89,13 @@ export function CollegeAttendancePolicyForm({
     <>
     <form
       onSubmit={save}
-      className="min-w-0 max-w-[920px] space-y-[var(--lms-space-4)]"
+      className="min-w-0 max-w-[920px] space-y-[var(--lms-space-4)] [overflow-wrap:anywhere]"
     >
-      <div className="min-w-0 max-w-[65ch]">
+      <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
         <h2 className="m-0 text-lg font-semibold text-foreground">
           College attendance policy
         </h2>
-        <p className="mt-2 text-sm leading-6 text-body">
+        <p className="mt-2 max-w-[65ch] text-sm leading-6 text-body">
           These values are stored for this college.
           The eligibility threshold highlights low
           attendance, while the correction window
@@ -104,8 +104,8 @@ export function CollegeAttendancePolicyForm({
         </p>
       </div>
 
-      <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-        <div>
+      <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] sm:grid-cols-2">
+        <div className="min-w-0">
           <label
             htmlFor="attendance-eligibility-threshold"
             className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
@@ -121,8 +121,9 @@ export function CollegeAttendancePolicyForm({
             max={100}
             step={1}
             required
-            disabled={saving}
+            disabled={saving || pending}
             value={threshold}
+            className="min-h-11 w-full min-w-0 md:min-h-9"
             onChange={(event) => {
               setThreshold(event.target.value);
               setMessage(null);
@@ -135,7 +136,7 @@ export function CollegeAttendancePolicyForm({
           </p>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <label
             htmlFor="attendance-correction-window"
             className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
@@ -153,6 +154,7 @@ export function CollegeAttendancePolicyForm({
             required
             disabled={saving}
             value={correctionHours}
+            className="min-h-11 w-full min-w-0 md:min-h-9"
             onChange={(event) => {
               setCorrectionHours(event.target.value);
               setMessage(null);
@@ -166,7 +168,7 @@ export function CollegeAttendancePolicyForm({
         </div>
       </div>
 
-      <Alert tone="warning">
+      <Alert tone="warning" className="min-w-0 break-words">
         Changing the correction window affects
         the permitted correction period for
         existing as well as future sessions.
@@ -205,7 +207,7 @@ export function CollegeAttendancePolicyForm({
         </Button>
         <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={saving || pending}
           onClick={()=>setResetOpen(true)}>Reset to default</Button>
-        <span className="min-w-0 text-xs leading-5 text-muted-foreground sm:ml-auto">
+        <span className="min-w-0 break-words text-xs leading-5 text-muted-foreground sm:ml-auto sm:max-w-52">
           Changes apply to this college only.
         </span>
       </div>
