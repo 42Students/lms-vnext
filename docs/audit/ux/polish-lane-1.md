@@ -191,3 +191,11 @@
 **Problems fixed (7):** actions wrapped into uneven narrow rows; both had weak mobile touch widths; completed action used danger-confirm visual even though it is not destructive; reason label duplicated within dialog; invalid confirm remained clickable; reason textarea lacked stable visible height; saved/failure messages looked identical and were duplicated inside the modal. Made phone actions full-width, selected positive primary vs destructive danger confirmation, required trimmed length before confirm, expanded note area and used semantically toned InlineNotice outside the dialog. Existing ID, expectedVersion, endpoint, status transition rules, dialog wording and restore behavior preserved.
 
 **Files:** `src/components/placements/college-interview-status-actions.tsx`, queue, proof. Shared Button/ConfirmDialog/Textarea/InlineNotice reviewed and unchanged. No CI.
+
+## Surface 35 — Learner placement requests
+
+**Reviewed:** all no-round/no-offer, form validation, reschedule and offer extension, request submission/toast, dirty-navigation guard, history, status and cancellation states, parent pages and shared form/button/status primitives. Source-only 375/768/1280 review; no runtime/CI.
+
+**Problems fixed (8):** two dense forms competed side-by-side; unused form controls overloaded canvas; deep-linked round not prioritized; primary choice unclear; phone actions cramped; nested history cards crowded; long history text and statuses awkwardly aligned; 375px cancel target not guaranteed. Introduced two native keyboard disclosures (round opens when linked), bounded form reading width, full-width phone buttons, and hairline-divided history with responsive rows. All IDs, request payloads/guards/statuses, copy and navigation preserved.
+
+**Files:** `src/components/placements/learner-placement-requests.tsx`, queue and proof. No runtime/tests/CI.
