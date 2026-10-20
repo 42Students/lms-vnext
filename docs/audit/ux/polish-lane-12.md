@@ -97,3 +97,12 @@
 
 **Files changed:** attendance-corrections `error.tsx`, `loading.tsx`, queue and proof. `page.tsx` intentionally unchanged: no rendered layout exists.
 **Verification:** static review only; no build or CI.
+
+## 11 · Teacher / Course attendance detail
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx`
+**Problems found (7):** scheduling form placed before the attendance page heading, duplicate schedule workflows competing with the workspace's existing Schedule Class drawer, visual density at the top before marking attendance, large secondary inline heading, busy shortcut navigation at 375px, generic card loading, and centered error actions.
+
+**Fix:** keep the attendance workspace and its PageHeader/primary marking flow first, move full inline scheduling tools into an accessible secondary Disclosure after the workspace, reduce its heading size and redundant top border, make Course/coverage links stack on phones, use directory loading and align retry/return actions. Reviewed shared 1,281-line attendance workspace including session/month toggles, roster mark/unmark, pending confirmation, schedule drawer, selected-day and student drawers, responsive scrolling, and empty/error states; all routes, session deep-link key, authorization checks, forms and confirmations preserved.
+
+**Files changed:** attendanceDetail `page.tsx`, `error.tsx`, `loading.tsx`, faculty-attendance-schedule-editor, queue and proof.
+**Verification:** static reading only; no app/CI run.
