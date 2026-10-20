@@ -43,7 +43,6 @@ export default async function SuperAdminHrPage({
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          eyebrow="Super Admin"
           title="Recruiter accounts"
           description="Employer recruiter administration."
         />

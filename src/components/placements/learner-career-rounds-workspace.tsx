@@ -442,7 +442,7 @@ export function LearnerCareerRoundsWorkspace({
         </aside>
       ) : null}
       {visibleRows.length === 0 && relevant.length > 0 ? (
-        <div role="status" className="flex min-h-[180px] flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
+        <div role="status" className="flex min-h-44 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
           <p className="text-sm font-semibold text-foreground">No rounds match your filters</p>
           <p className="mt-2 text-sm text-body">Try a different date range or employer.</p>
           <Button type="button"

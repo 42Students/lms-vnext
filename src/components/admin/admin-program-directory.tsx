@@ -144,9 +144,9 @@ export function AdminProgramDirectory({
             No departments in this college yet. <Link href="/admin/departments" className="font-semibold text-primary-text underline">Go to Departments</Link>
           </p>
         ) : null}
-        <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
           <div>
-            <label htmlFor="admin-program-department" className="mb-1 block text-[13px] font-semibold text-body">Department</label>
+            <label htmlFor="admin-program-department" className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">Department</label>
             <Select
               className="min-h-11 md:min-h-9" id="admin-program-department" value={departmentId}
               onChange={(event) => setDepartmentId(event.target.value)}

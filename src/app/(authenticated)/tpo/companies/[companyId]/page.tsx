@@ -7,6 +7,8 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
@@ -182,7 +184,7 @@ export default async function TpoCompanyDetailPage({
         </Alert>
       ) : null}
 
-      <section className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 xl:grid-cols-5">
+      <section className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5">
         {[
           ["Contacts", company.contacts ?? "Unavailable"],
           ["Drives", company.drives],
@@ -190,17 +192,7 @@ export default async function TpoCompanyDetailPage({
           ["Accepted offers", company.acceptedOffers],
           ["Confirmed joined learners", company.confirmedJoinedLearners],
         ].map(([label, value]) => (
-          <div
-            key={label}
-            className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0"
-          >
-            <p className="text-xs font-semibold text-muted-foreground">
-              {label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {value}
-            </p>
-          </div>
+          <StatTile key={label} label={label} value={value} className={tpoTileStyles.tile} />
         ))}
       </section>
 

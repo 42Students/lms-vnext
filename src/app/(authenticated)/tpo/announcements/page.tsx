@@ -96,7 +96,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       initialAudience={query.success?query.data.audience:"COLLEGE"}
       initialTarget={first(raw.targetId)??""}
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
-     <Button variant="secondary" type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">Preview audience</Button>
+     <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">Preview audience</Button>
    </form>
    {!query.success?<Alert tone="error">Choose a valid audience and target ID.</Alert>:null}
    {preview.failed?<Alert tone="error">
@@ -257,7 +257,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-4 flex flex-wrap gap-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
       <input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
-      <Button variant="secondary" type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">
+      <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">
        {tab.data==="deleted"?"Undo removal":"Remove notice"}
       </Button>
      </form>:null}
@@ -267,7 +267,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
       <input type="hidden" name="action" value="UNDO_SEND"/>
-      <Button variant="secondary" type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">
+      <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">
        Undo send (30 seconds)
       </Button>
      </form>:null}
