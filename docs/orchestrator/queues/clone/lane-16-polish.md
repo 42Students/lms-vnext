@@ -55,7 +55,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | probl
 - [x] `src/components/auth/portal-access-notice.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [x] `src/components/hr/recruiter-designation-editor.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [x] `src/components/projects/college-project-summary-editor.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
-- [ ] `src/components/public/graceful-error-boundary.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
+- [x] `src/components/public/graceful-error-boundary.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [ ] `src/components/tpo/tpo-header-indicators.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [ ] `src/components/ui/form-grid.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
 - [ ] `src/components/ui/otp-input.tsx` (Component not reached from any page: confirm it is used; if live, polish it in every state)
