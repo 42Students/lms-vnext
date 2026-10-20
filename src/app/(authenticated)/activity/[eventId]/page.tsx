@@ -45,22 +45,21 @@ export default async function ActivityDetailPage({
 
   const { event, actor } = detail;
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <Breadcrumbs items={[{ label: "Activity Log", href: "/activity" }, { label: event.summary }]} />
       <PageHeader
-        eyebrow="Activity Center"
         title={event.summary}
         description="Tenant-scoped event detail. Known credential and identity-secret metadata keys are redacted before rendering."
         actions={<PageBackLink href="/activity" label="Back to activity" />}
       />
 
-      <section className="space-y-4 border-b border-border pb-5">
+      <section className="min-w-0 space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap gap-2">
           <StatusBadge>{event.module}</StatusBadge>
           <StatusBadge tone={event.importance==="CRITICAL"?"error":event.importance==="HIGH"?"warning":event.importance==="MEDIUM"?"info":"neutral"}>{event.importance}</StatusBadge>
           <StatusBadge>{event.eventType}</StatusBadge>
         </div>
-        <dl className="grid gap-4 text-sm md:grid-cols-2 min-[992px]:grid-cols-3">
+        <dl className="grid min-w-0 gap-4 text-sm md:grid-cols-2">
           <div>
             <dt className="font-semibold text-muted-foreground">Actor</dt>
             <dd className="m-0 break-all text-foreground">
@@ -76,12 +75,16 @@ export default async function ActivityDetailPage({
             <dd className="m-0 break-all text-foreground">{event.subjectType}</dd>
           </div>
           <div>
-            <dt className="font-semibold text-muted-foreground">Subject ID</dt>
-            <dd className="m-0 break-all text-foreground">{event.subjectId}</dd>
-          </div>
-          <div>
             <dt className="font-semibold text-muted-foreground">Subject label</dt>
             <dd className="m-0 break-all text-foreground">{event.subjectLabel ?? "—"}</dd>
+          </div>
+        </dl>
+        <details className="min-w-0 border-t border-border pt-3">
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">More event details</summary>
+          <dl className="grid min-w-0 gap-4 pb-3 pt-3 text-sm md:grid-cols-2">
+          <div>
+            <dt className="font-semibold text-muted-foreground">Subject ID</dt>
+            <dd className="m-0 break-all text-foreground">{event.subjectId}</dd>
           </div>
           <div>
             <dt className="font-semibold text-muted-foreground">Event ID</dt>
@@ -99,7 +102,8 @@ export default async function ActivityDetailPage({
             <dt className="font-semibold text-muted-foreground">Group key</dt>
             <dd className="m-0 break-all text-foreground">{event.groupKey ?? "—"}</dd>
           </div>
-        </dl>
+          </dl>
+        </details>
       </section>
 
       <section className="space-y-3">
@@ -109,21 +113,21 @@ export default async function ActivityDetailPage({
             This event has no structured context.
           </p>
         ) : (
-          <pre className="max-h-[32rem] max-w-full overflow-auto whitespace-pre-wrap break-words border-y border-border bg-[var(--lms-neutral-50)] p-4 text-xs leading-6 text-body md:p-6">
+          <pre className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words border-y border-border bg-[var(--lms-neutral-50)] p-4 text-xs leading-6 text-body md:p-6">
             {JSON.stringify(event.metadata, null, 2)}
           </pre>
         )}
       </section>
 
-      <section className="border-t border-border pt-4">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Legacy audit gap notice</h2>
+      <details className="min-w-0 border-t border-border pt-4">
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Legacy audit gap notice</summary>
         <p className="mt-2 text-sm leading-6 text-body">
           The legacy admin audit table also persisted an actor role snapshot,
           request IP, and user agent. Those are not currently persisted by
           vNext activity events and are tracked as DB10 parity gaps rather than
           being synthesized on this page.
         </p>
-      </section>
+      </details>
     </div>
   );
 }

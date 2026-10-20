@@ -63,7 +63,7 @@ export default async function NotificationsPage({
     );
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="Notifications"
         description="Deterministic workflow updates that need your attention, separate from noisy technical events."
@@ -81,10 +81,11 @@ export default async function NotificationsPage({
           <NotificationList
             items={items}
             emptyText={view === "unread" ? "No unread notifications." : "Nothing yet."}
+            emptyAction={view === "unread" ? <Link href="/notifications?view=all" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">All</Link> : null}
           />
           {nextHref ? (
             <div className="flex justify-center">
-              <Link href={nextHref} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <Link href={nextHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Older notifications
               </Link>
             </div>

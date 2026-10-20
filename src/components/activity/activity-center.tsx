@@ -109,8 +109,8 @@ export function ActivityCenter({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3">
+    <div className="min-w-0 space-y-4">
+      <div className="min-w-0">
         {groups.map((group,index) => {
           const item = group.latest;
           const day=activityDay(group.latest.event.occurredAt);
@@ -118,7 +118,7 @@ export function ActivityCenter({
           return (
             <Fragment key={group.key+":"+item.event.id}>
             {day!==previousDay?<h3 className="mt-[var(--lms-space-6)] text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
-            <article className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
+            <article className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -144,23 +144,11 @@ export function ActivityCenter({
                       </span>
                     ) : null}
                   </div>
-                  <h2 className="mt-3 text-base font-semibold text-foreground">
+                  <h2 className="mt-2 break-words text-base font-semibold leading-6 text-foreground">
                     {activityEventSentence(item.event,item.actor)}
                   </h2>
                   <p className="mt-1 text-sm text-body">{item.event.summary}</p>
-                  <p className="mt-1 text-sm text-body">
-                    {item.event.subjectLabel ??
-                      humanize(
-                        item.event
-                          .subjectType,
-                      )}
-                  </p>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {item.actor
-                      ?.displayName ??
-                      item.actor?.email ??
-                      "System"}{" "}
-                    ·{" "}
                     {formatWhen(
                       item.event
                         .occurredAt,
@@ -181,7 +169,7 @@ export function ActivityCenter({
                   </span>
                   <Link
                     href={`/activity/${item.event.id}`}
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground min-[768px]:min-h-9 min-[768px]:w-auto motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
                   >
                     View details
                   </Link>
@@ -208,7 +196,7 @@ export function ActivityCenter({
         <div className="flex justify-center">
           <Link
             href={nextHref}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 md:w-auto text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           >
             Load more ({nextRemaining} older)
           </Link>
