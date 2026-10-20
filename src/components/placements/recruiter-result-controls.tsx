@@ -1,5 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -366,9 +367,7 @@ export function RecruiterResultControls({
         if(outcome){event.preventDefault();draftSelectedOutcome(activeRoundId,outcome);}
       }}>
       {rounds.length === 0 ? (
-        <p className="m-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 text-sm text-muted-foreground">
-          The placement team has not configured any rounds yet.
-        </p>
+        <EmptyState title="No hiring rounds" description="The placement team has not configured any rounds yet."/>
       ) : (
         rounds.map((round) => {
           const evaluative =
@@ -382,9 +381,9 @@ export function RecruiterResultControls({
           return (
             <article
               key={round.id}
-              className="rounded-[var(--lms-radius-card)] border border-border bg-surface"
+              className="min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0"
             >
-              <div className="border-b border-border px-5 py-4">
+              <div className="border-b border-border pb-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="m-0 text-base font-semibold text-foreground">
                     {round.sequence}.{" "}
@@ -458,14 +457,12 @@ export function RecruiterResultControls({
               </div>
 
               {!evaluative ? (
-                <p className="m-0 px-5 py-5 text-sm text-muted-foreground">
+                <p className="m-0 py-4 text-sm text-muted-foreground">
                   Informational rounds do not collect candidate outcomes.
                 </p>
               ) : round.participants.length ===
                 0 ? (
-                <p className="m-0 px-5 py-5 text-sm text-muted-foreground">
-                  No candidates are eligible for this round yet.
-                </p>
+                <EmptyState title="No eligible candidates" description="No candidates are eligible for this round yet."/>
               ) : (
                 <div className="divide-y divide-border">
                   {round.participants.map(
@@ -497,7 +494,7 @@ export function RecruiterResultControls({
                           key={
                             participant.applicationId
                           }
-                          className="grid gap-4 px-5 py-4 xl:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)]"
+                          className="grid min-w-0 gap-4 py-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)]"
                         >
                           <div>
                             {canStage&&!applied?<label className="mb-2 flex items-center gap-2 text-xs text-body">
@@ -550,7 +547,7 @@ export function RecruiterResultControls({
                               The placement team applied this result. It is now part of the learner&apos;s official progression.
                             </p>
                           ) : canStage ? (
-                            <div className="grid gap-3 lg:grid-cols-2">
+                            <div className="grid min-w-0 gap-3 md:grid-cols-2">
                               <label>
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Outcome
@@ -715,7 +712,7 @@ export function RecruiterResultControls({
                                 </Select>
                               </label>
 
-                              <label className="lg:col-span-2">
+                              <label className="md:col-span-2">
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Candidate message
                                 </span>
@@ -748,7 +745,7 @@ export function RecruiterResultControls({
                                 />
                               </label>
 
-                              <div className="flex items-center gap-3 lg:col-span-2">
+                              <div className="flex flex-wrap items-center gap-3 md:col-span-2">
                                 <Button
                                   size="sm"
                                   disabled={
