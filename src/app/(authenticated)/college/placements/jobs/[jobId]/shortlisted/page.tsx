@@ -43,15 +43,15 @@ export default async function CollegeDriveShortlistedPage({
       actions={<Link href={driveApplicationsHref(jobId,{...query,screening:"ALL"})}
         className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Applications</Link>} />
     <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-      <label className="grid min-w-0 flex-1 gap-1 text-sm">Student
+      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student
         <Input type="search" name="q" maxLength={100} defaultValue={query.q} className="min-h-11 min-w-0 md:min-h-9" />
       </label>
       <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
     </form>
     <p role="status" className="text-sm">{data.total} shortlisted</p>
     {query.q&&data.total===0?<Link href={collegeShortlistedHref(jobId,{q:"",page:1})}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>:null}
-    <a className="text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link" href={
+      className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>:null}
+    <a className="text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center lms-inline-link" href={
       "/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
       (driveApplicationsHref(jobId,query,true).split("/export")[1]??"")
     }>Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>

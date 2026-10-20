@@ -152,13 +152,13 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
-    <label className="text-sm text-body">Order
+    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className={"min-w-0 w-full basis-full text-sm text-body md:basis-auto md:flex-none "+inboxStyles.searchField}>Search by drive or message
-     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full"/></label>
+    <label className={"min-w-0 w-full basis-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:basis-auto md:flex-none "+inboxStyles.searchField}>Search by drive or message
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
    <Tabs renderPanel={false} ariaLabel="Conversation kind" value={parsed.data.scope}

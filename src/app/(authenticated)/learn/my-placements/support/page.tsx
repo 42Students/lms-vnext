@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerSupportRequests } from "@/modules/placements/learner-support-request-service";
 import { placementRequestTypeLabel,learnerSupportHistoryHref } from "@/modules/placements/learner-support-request-model";
 import {LearnerSupportCancel} from "@/components/placements/learner-support-cancel";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 export default async function LearnerSupportHistory({searchParams}:{
   searchParams:Promise<{status?:string|string[];type?:string|string[];page?:string|string[]}>;
 }) {
@@ -12,7 +14,7 @@ export default async function LearnerSupportHistory({searchParams}:{
   const choices=["ALL","PENDING","APPROVED","REJECTED","CANCELLED"] as const;
   const requestTypes=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
   const supportFilterPillClass =
-    "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[length:var(--lms-font-base)] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+    "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[13px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] aria-[current=page]:hover:bg-[var(--lms-primary-subtle)] aria-[current=page]:hover:text-[var(--lms-primary-text)]";
   const supportFilterNavClass =
     "min-w-0 max-w-[calc(100vw_-_var(--lms-space-7))] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
   return <div className="min-w-0 space-y-6">
@@ -44,16 +46,12 @@ export default async function LearnerSupportHistory({searchParams}:{
     <p role="status" className="text-xs text-muted-foreground">
       {data.total} matching requests · Page {data.page} of {data.totalPages}
     </p>
-    {data.items.length===0?<section role="status" className="flex min-h-[180px] min-w-0 flex-col items-center justify-center px-6 py-12 text-center">
-      <h2 className="text-base font-semibold text-foreground">No requests in this view</h2>
-      <p className="mt-2 text-sm text-body">
-        {data.status==="ALL"?"You have not submitted a placement request yet.":"No requests match this status filter."}
-      </p>
-    </section>:<ol className="grid gap-3 md:grid-cols-2">
-      {data.items.map(row=><li key={row.request.id} className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none md:p-6">
+    {data.items.length===0?<EmptyState title="No requests in this view"
+      description={data.status==="ALL"?"You have not submitted a placement request yet.":"No requests match this status filter."}/>:<ol className="divide-y divide-border border-y border-border">
+      {data.items.map(row=><li key={row.request.id} className="min-w-0 bg-transparent px-1 py-4">
         <div className="flex flex-wrap justify-between gap-2">
           <h2 className="text-sm font-semibold text-foreground">{placementRequestTypeLabel(row.request.requestType)}</h2>
-          <span className="text-xs font-semibold text-muted-foreground">{row.request.status}</span>
+          <StatusBadge tone={row.request.status==="PENDING"?"warning":row.request.status==="APPROVED"?"success":"neutral"}>{row.request.status}</StatusBadge>
         </div>
         <p className="mt-2 text-sm text-body">{row.company.name} · {row.roleOption.title}</p>
         <p className="mt-1 text-xs text-muted-foreground">

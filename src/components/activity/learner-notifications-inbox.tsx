@@ -127,7 +127,7 @@ export function LearnerNotificationsInbox({
               type="button"
               aria-pressed={active === key}
               onClick={() => selectCategory(key)}
-              className="min-h-[var(--lms-control-height)] max-md:min-h-11 shrink-0 rounded-[var(--lms-filter-radius,8px)] px-4 text-center text-sm font-medium whitespace-nowrap"
+              className="!min-h-11 shrink-0 rounded-[8px] px-4 text-center text-sm font-medium whitespace-nowrap"
             >
               {label}
             </FilterChip>
@@ -135,7 +135,7 @@ export function LearnerNotificationsInbox({
         </div>
       </nav>
       <div className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto] min-[768px]:items-end">
-        <label className="text-xs font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search notifications
           <Input type="search" value={search} maxLength={100}
             onChange={event=>setSearch(event.target.value)}

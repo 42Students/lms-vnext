@@ -120,7 +120,7 @@ export function LearnerJobsBrowse({
         <div id="learner-drive-filters"
           className={(mobileOpen?"block":"hidden")+" space-y-4 md:block"}>
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          <label className="text-xs font-semibold text-body md:col-span-2">
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
             Search drives, companies and roles
             <Input
               type="search"
@@ -131,7 +131,7 @@ export function LearnerJobsBrowse({
               className={selectClass}
             />
           </label>
-          <label className="text-xs font-semibold text-body">
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Employment type
             <Select value={filters.employmentType}
               onChange={(event) => updateQuery({ type: event.target.value })}
@@ -142,7 +142,7 @@ export function LearnerJobsBrowse({
               ))}
             </Select>
           </label>
-          <label className="text-xs font-semibold text-body">
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Location
             <Select value={filters.location}
               onChange={(event) => updateQuery({ loc: event.target.value })}
