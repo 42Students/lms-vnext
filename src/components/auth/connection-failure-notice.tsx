@@ -29,7 +29,7 @@ export function ConnectionFailureNotice(){
    document.removeEventListener("visibilitychange",schedule);
    if(timer.current)clearTimeout(timer.current);};
  },[]);
- return message?<div className="mx-4 my-2 min-w-0">
+ return message?<div className="my-[var(--lms-space-3)] w-full min-w-0">
   <InlineNotice tone="error" message={message} onDismiss={()=>{lastMessage.current=null;if(timer.current)clearTimeout(timer.current);timer.current=null;setMessage(null);}}/>
  </div>:null;
 }
