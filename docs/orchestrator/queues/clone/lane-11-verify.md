@@ -25,8 +25,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-11.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/batches/page.tsx`
 - [x] `src/app/(authenticated)/tpo/calendar/export/page.tsx`
 - [x] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx`
