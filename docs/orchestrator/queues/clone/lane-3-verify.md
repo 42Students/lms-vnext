@@ -11,7 +11,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-3.md: surface | regres
 
 - [x] `src/app/(authenticated)/mentor/activity/page.tsx`
 - [x] `src/app/(authenticated)/mentor/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/calendar/page.tsx`
+- [x] `src/app/(authenticated)/mentor/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/courses/page.tsx`
