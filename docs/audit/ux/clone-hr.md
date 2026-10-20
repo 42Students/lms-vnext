@@ -696,3 +696,85 @@ For each route listed below, complete fetched source shows exactly one shared `G
 - `src/app/(authenticated)/hr/loading.tsx`: N/A local typography/background/spacing/border/hover/active/focus/disabled/loading/error/mobile/tablet because its only JSX is shared `<GracefulPageLoading />`. Source grep equivalents native/hex/h1/custom-dialog 0/0/0/0; legacy `old-lms-pages.md:6-12`, mobile breakpoint `components___listing-page-header.scss:131-158`; props not altered.
 - `src/app/(authenticated)/recruiter/loading.tsx`: N/A local typography/background/spacing/border/hover/active/focus/disabled/loading/error/mobile/tablet because its only JSX is shared `<GracefulPageLoading />`. Source grep equivalents native/hex/h1/custom-dialog 0/0/0/0; legacy `old-lms-pages.md:6-12`, mobile breakpoint `components___listing-page-header.scss:131-158`; props not altered.
 - `src/app/(authenticated)/tracker/loading.tsx`: N/A local typography/background/spacing/border/hover/active/focus/disabled/loading/error/mobile/tablet because its only JSX is shared `<GracefulPageLoading />`. Source grep equivalents native/hex/h1/custom-dialog 0/0/0/0; legacy `old-lms-pages.md:6-12`, mobile breakpoint `components___listing-page-header.scss:131-158`; props not altered.
+
+
+## chat-15 2026-10-20 — Known Errors / recruiter results desktop review source proof
+
+| Element/property/state | Exact legacy reference | Current vNext source value | Result |
+| --- | --- | --- | --- |
+| Ordinary error signature row: canvas / border / radius | `old-lms-pages.md:6,10` white canvas, no inner nested cards; 1px hairline | `src/components/tracker/known-errors-workspace.tsx:62,269` per-error `article` with `py-5`, parent `divide-y divide-border border-y border-border`, no per-card bg/shadow/radius | Source structural match; measured outer canvas belongs to shell |
+| Status: fixed/open/expected/muted/regressed | `old-lms-pages.md:11-12` small coloured status pills, warning/error semantics | `known-errors-workspace.tsx:70-89` shared `StatusBadge` success/warning/info/neutral/error, preserving all existing status text and regression timestamp | Semantic + shared styling aligned; measured pill values delegated |
+| Fields: triage note / commit / issue ID | `old-lms-pages.md:6-12`, `legacy-styles/components___form.scss` form controls | `known-errors-workspace.tsx:91-110` shared `Input` in 1-column phone and 3 columns `md:grid-cols-3` desktop | Shared controls only; label states/keyboard runtime missing |
+| Mute confirmation default/open/focus/disabled/pending | `old-lms-pages.md:11-12`, shared dialog chrome | `known-errors-workspace.tsx:185-210` shared `Dialog`, focus/escape/backdrop delegated; shared `Button` 44px phone / 36px tablet with disabled/pending, versioned mutation unchanged | No hand-rolled modal; live modal focus proof missing |
+| No errors and update feedback | `old-lms-pages.md:11-12` empty/error states on canvas | Existing `EmptyState` and `useToast` unchanged, `Mark logs reviewed` button now exposes shared `loading={pending}` | Delegated shared appearance; runtime not exercised |
+| Results: per-round structure | `old-lms-pages.md:6,10` border-separated rows and no ordinary cards | `src/components/placements/recruiter-result-controls.tsx:385-393` flat per-round `article`; applicant form rows use `divide-y`; shared `EmptyState` when empty | Source structural match; no old-LMS results screen screenshot |
+| Results: candidate outcome states | `old-lms-pages.md:11-12` semantic coloured status pills | `recruiter-result-controls.tsx:540-567` PASS success, FAIL error, HOLD warning, ABSENT info shared `StatusBadge` | Explicit token semantic match, not computed color proof |
+| Results: mobile / tablet | `legacy-styles/components___listing-page-header.scss:131-158` mobile ends at 767px | Desktop `TpoGrid` summary `hidden md:block` 768px+; stacked editable rows work below, shared Button min-h-11 phone / min-h-9 tablet | Source breakpoint and touch target proof only |
+| Results: default, hover, active, focus, disabled/loading | Shared form/Button/TpoGrid owners and legacy form/table SCSS | Native `Input`/`Select`/`Textarea`/`Checkbox`/`Button` only; no custom button/input/table JSX; applied statuses read-only; pending actions disabled and loading | No caller overrides, underlying shared control value parity still unverified |
+
+**Coverage source evidence on latest lane ref:** both edited components and `recruiter-result-review-grid.tsx` fetched in full; native control/table tags 0 each, inline literal hex 0, custom `h1` 0, custom `role=dialog`/fixed overlay 0. Known Errors balanced `div` 9/9, `article` 1/1, `label` 4/4; Recruiter Result Controls balanced `div` 11/11, `article` 1/1, `label` 6/6; new grid declares six typed columns and a shared `TpoGrid`. At <=767px the result review grid wrapper is hidden; editable fields remain and are single-column; at >=768px read-only sheet + authorized forms are visible. No code execution, CI, network UI, emulator, tablet screenshots, or runtime focus assertions. Neither visible file may be ticked under the strict rule pending those proofs and AG Grid dependencies.
+
+**Next unfinished result form:** `src/components/placements/recruiter-result-controls.tsx` — the bulk confirmation/validation states and old-LMS pixel comparison remain, followed by `src/components/hr/hr-drive-draft-form.tsx`.
+
+
+## chat-15 HR draft form: old-LMS visual source matrix (2026-10-20)
+
+| Exact property / state | Old LMS value and source | vNext value and source | Outcome |
+| --- | --- | --- | --- |
+| Parent canvas / ordinary hiring round rows | `docs/design/old-lms-pages.md:6,10` one white canvas, hairline-separated ordinary rows (cards reserved for distinct objects) | `src/components/hr/hr-drive-draft-form.tsx:415-458` round list rows now `border-b border-border py-4 last:border-b-0`, with no local card background/shadow/radius | Structural clone; parent shell handled by page owner |
+| Role & work fields | `legacy-styles/components___form.scss` shared native field control styles, `old-lms-pages.md:6` left alignment | `hr-drive-draft-form.tsx:273-323` shared `Input`, `Select`, `Textarea`; a 1-column grid until 767px | Delegates exact shared paint; field-state pixels unverified |
+| Compensation & eligibility | Same form SCSS; `legacy-styles/components___listing-page-header.scss:131-158` phone max 767px | `hr-drive-draft-form.tsx:327-390`: three columns only on `md:grid-cols-3` >=768px, 1 column on phone; full-width content never forced into 640px tablet | Breakpoint source match |
+| Ordered round actions | `old-lms-pages.md:10` compact action strip in ordinary rows | `hr-drive-draft-form.tsx:395-456` responsive ordered rows, existing reorder/duplicate/delete Buttons unchanged and guarded | No layout card or custom raw button; keyboard/live proof missing |
+| Validation/default/focus/error | `old-lms-pages.md:11-12`, shared error banner | Existing `Alert tone="error"` with exact Zod error list; editable field components unchanged | Delegated error state only; input-focus pixels unverified |
+| Local preview & saved-state feedback | Legacy slim inline status/error banner `old-lms-pages.md:11-12` | `hr-drive-draft-form.tsx:535` shared `InlineNotice` with error/info tone; notices preserve text and storage/submit flows | Shared component adopted; color and spacing still require rendered comparison |
+| Desktop / mobile | Legacy `components___listing-page-header.scss:131-158` max-width 767px phone | All 10 original `sm:grid-cols` / `sm:col-span` declarations migrated to `md:` (768px); no remaining `sm:` rules in this file | Exact breakpoint source match, no browser viewport proof |
+
+**Fetched full-file scan** on `chatgpt/chat-15-b` after modifications: 544 lines; native controls and native tables 0; literal hex 0; authored `h1` 0; hand-rolled overlays 0; paired `div` 15/15 and `section` 5/5; `sm:` count 0, `md:` count 10. All values, pending guards, direct request semantics and preview copy preserve existing vNext behaviour. No TS/runtime/CI/e2e/visual screenshots. **Leave this visible form unticked** until computed default, hover, active, focus, disabled, pending, error and tablet/phone pixel comparison is available.
+
+**Next visible file:** `src/app/(authenticated)/hr/drives/new/page.tsx` — compare page shell, header and unsent draft form surface against legacy screenshots.
+
+
+## chat-15 2026-10-20 — New drive and outside-drive route navigation audit
+
+| Visual / interaction property | Legacy value and exact source | vNext source value | Strict outcome |
+| --- | --- | --- | --- |
+| New request back link | `docs/design/legacy-styles/learn-layout.scss:361-383` legacy 44px touch target; mobile icon-only below 768px | `src/app/(authenticated)/hr/drives/new/page.tsx:95-103` uses shared `PageBackLink` with same original href and accessible label | Mobile icon-only and 44px shared target delegated; live proof missing |
+| External drive back link | Same SCSS 44px back control | `hr/drives/recorded-outside/page.tsx:34` shared `PageBackLink`, original Request a drive destination retained | Same source-structure match |
+| Back link hover color | `learn-layout.scss:361-383` documented `#26bac7` | `src/components/ui/page-back-link.tsx:20-22` shared `hover:text-[var(--lms-primary)]` | **Unresolved shared-owner token check**; do not claim exact until resolved |
+| New-drive toolbar actions | `old-lms-pages.md:7-10`: actions on same row, short controls; phone 44px | `hr/drives/new/page.tsx:97-109` one flex-wrap nav: back link, proposal link, outside-drive action; action min-h-11 until 767px and min-h-9 from 768px | Source alignment, actual wrap/focus untested |
+| Request form body | `old-lms-pages.md:6,10`: no per-section card, hairline sections | `hr-drive-draft-form.tsx:271-535` shared inputs, no literal colors, ordered round hairline separators; 768px form grid threshold | Structural match, full visual state comparison open |
+| Permissions/mutations/error states | Existing vNext auth/validation semantics must be preserved | Both server routes still enforce active recruiter and scoped college; no service/API changes; route's `EmptyState` and `InlineNotice` unchanged | No source regression; runtime unexecuted |
+
+**Full fetched source grep-equivalent result:** `hr/drives/new/page.tsx` 125 lines: native controls/hex/h1/handrolled overlay 0/0/0/0, `div` 2/2, `nav` 1/1; `hr/drives/recorded-outside/page.tsx` 42 lines: same grep 0/0/0/0, `div` 2/2; `hr-drive-draft-form.tsx` 544 lines: same zero counts and `div` 15/15. Both route link destinations exactly preserved, except mobile visual label delegated to shared PageBackLink as defined by legacy. Neither route marked complete without pixel/interaction proof. No CI or browser execution.
+
+**Next:** `src/app/(authenticated)/hr/drives/proposals/page.tsx` after runtime visual confirmation of new-drive links and draft form.
+
+
+## chat-15 — sent discussion proposal page/table visual source pass (2026-10-20)
+
+| Property | Legacy measured rule | vNext value | Strict result |
+| --- | --- | --- | --- |
+| Page header, one canvas | `docs/design/old-lms-pages.md:6-10`: existing shared page head and one white content canvas | `src/app/(authenticated)/hr/drives/proposals/page.tsx` keeps existing `PageHeader`; no nested card widgets | Source matches shared page skeleton; live pixels missing |
+| Back action | `legacy-styles/learn-layout.scss:361-383`: 44px phone target, icon-only below 768px | Same page uses `PageBackLink` to unchanged `/hr/drives`; no hand-rolled back link | Shared implementation; hover-token mismatch remains shared-owner |
+| Sent proposal worksheet | `old-lms-pages.md:10`: compact table/row action, no cards | New `src/components/hr/hr-proposal-history-grid.tsx` has Role, Reference, Sent (date-sort), Status and Open discussion action via `TpoGrid` | Source grid shape; rendering not verified |
+| Default/error/empty | `old-lms-pages.md:11-12`: shared empty state; no silent lost permission | Same existing `EmptyState` for no access/no rows, same safe validation and authorized queries | Source unchanged |
+| CSV/sort/paging | `old-lms-pages.md:10` toolbar, sort and export | Page keeps existing `hrSentProposalExportHref`, server filters and paged navigation. New grid has date-sort only | No unauthorized client-side broad export; runtime unverified |
+| Mobile/tablet | `legacy-styles/components___listing-page-header.scss:131-158`: <=767px phone | Desktop `hidden md:block` grid at 768px; original mobile row list `md:hidden`, 44px touch/36px tablet action targets | Structural breakpoints match, not screenshots |
+
+**Complete source scan from fetched files:** route 106 lines and sheet 40 lines; each has raw-control/native table, hex, handcrafted `h1`, custom overlay counts 0/0/0/0. Route JSX pair counts `div` 2/2, `ol` 1/1 and fragments 2/2. Browser pixel/style/keyboard verification and AG Grid package install still absent, so both remain unticked.
+
+**Next unticked file:** `src/app/(authenticated)/hr/drives/page.tsx` — full drive-directory sheet row action, disabled/pending, empty/error and tablet pixel parity follow-through.
+
+
+## chat-15 drive directory phone action pass (2026-10-20)
+
+**Source-only value comparisons for `src/app/(authenticated)/hr/drives/page.tsx`:**
+
+| Property | Legacy value | New vNext source | Match |
+| --- | --- | --- | --- |
+| Phone touch targets | `legacy-styles/learn-layout.scss:361-383` 44px minimum for mobile link affordance; `components___listing-page-header.scss:131-158` mobile <=767px | All 9 custom drive directory action links now `min-h-11 md:min-h-9`, meaning 44px through 767px and 36px at >=768px | Exact tokenized responsive source height |
+| Directory header/buttons | `old-lms-pages.md:7,10` compact actions on one canvas | Existing `PageHeader` and page action labels/destinations unchanged, no custom button DOM | Shared header, runtime alignment needed |
+| Filters/state/empty | `old-lms-pages.md:9-12` table toolbar, filters, one canvas, empty/error | Existing `Input`/`Select`/`Button` and `EmptyState`/`Alert`, server validation and export retained | Source-only |
+| Desktop sheet/mobile card | `old-lms-pages.md:10` sortable compact sheet; <=767px stacked fallback | Existing `RecruiterPlacementPortfolio` uses authorized `HrRecruiterDrivesGrid` desktop and mobile cards; no data fetch added | Existing E8 proof open |
+
+The complete file was re-fetched: 242 lines; native button/input/select/textarea/table = 0; inline hex = 0; custom h1 = 0; hand-written modal = 0; 9 source action links have a 44px mobile target and 36px desktop; paired `div` 8/8 and `nav` 1/1. No changes to permission/pagination/export flows, and no CI/browser/pixel check. **Remain unticked** pending visible state and mobile/tablet screenshot comparison.
