@@ -468,3 +468,138 @@ This pass starts from the fetched current `origin/main` branch (fast-forwarded `
 
 - [ ] Runtime pixel-level, compiled type and accessibility/regression validation remains outstanding by owner instruction (no CI).
 - [ ] **Next file:** `src/components/projects/project-admin-workspace-list.tsx` (reconcile any newer main responsive fixes), then `src/app/(authenticated)/admin/projects/page.tsx` and remaining Super Admin project list route wrappers.
+
+## 2026-10-20 — Super Admin whole-file parity batch A (10 complete page sources)
+
+Source-value reference: `docs/design/legacy-styles/components___form.scss:110-142` labels 13px/600/16px/#a9a7ae, fields 14px/400/20px with radius 10px, `components___variables.scss:13,30,31,37,139` teal hover #eff8fa/border #e5e9f0/canvas shell #f1f4f9/white surface/touch 44px, `old-lms-shell.css:23,73` phone ≤767px, `src/app/globals.css:327,341-345,425-476,622-677,866` common implementation.
+
+### - [x] `src/app/(authenticated)/admin/batch-promotion/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 4 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/batch-promotion/page.tsx:54` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/batch-promotion/page.tsx:69` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 1 shared Button at `src/app/(authenticated)/admin/batch-promotion/page.tsx:75`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/batch-promotion/page.tsx:24`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared ErrorState, EmptyState, DataTable, StatusBadge, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 7 `min-h-11` targets; 5 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/batch-promotion/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 2/2; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/batches/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 4 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/batches/page.tsx:43` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/batches/page.tsx:53` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 2 shared Button at `src/app/(authenticated)/admin/batches/page.tsx:68`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/batches/page.tsx:35`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared DataTable, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 14 `min-h-11` targets; 11 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/batches/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 2/2, Select 3/3; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/classes/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 5 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/classes/page.tsx:40` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/classes/page.tsx:48` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 2 shared Button at `src/app/(authenticated)/admin/classes/page.tsx:65`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/classes/page.tsx:32`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared DataTable, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 13 `min-h-11` targets; 9 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/classes/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 2/2, Select 3/3; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/course-progress/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 2 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/course-progress/page.tsx:48` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/course-progress/page.tsx:49` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 1 shared Button at `src/app/(authenticated)/admin/course-progress/page.tsx:58`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/course-progress/page.tsx:25`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared Alert, ErrorState, EmptyState, StatusBadge, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 10 `min-h-11` targets; 10 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/course-progress/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 1/1; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/electives/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 4 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/electives/page.tsx:42` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/electives/page.tsx:43` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 2 shared Button at `src/app/(authenticated)/admin/electives/page.tsx:66`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/electives/page.tsx:24`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared ErrorState, EmptyState, StatusBadge, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 7 `min-h-11` targets; 7 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/electives/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 2/2, Select 3/3; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 5 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/lecture-halls/page.tsx:73` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/lecture-halls/page.tsx:74` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 2 shared Button at `src/app/(authenticated)/admin/lecture-halls/page.tsx:106`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/lecture-halls/page.tsx:28`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared ErrorState, EmptyState, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 7 `min-h-11` targets; 7 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/lecture-halls/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 2/2, Select 4/4; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/features/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 8 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/features/page.tsx:143` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/features/page.tsx:145` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 1 shared Button at `src/app/(authenticated)/admin/features/page.tsx:189`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/features/page.tsx:40`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared ErrorState, EmptyState, DataTable, StatusBadge, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 15 `min-h-11` targets; 8 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/features/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 7/7; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/lessons/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 2 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/lessons/page.tsx:64` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/lessons/page.tsx:65` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 1 shared Button at `src/app/(authenticated)/admin/lessons/page.tsx:74`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/lessons/page.tsx:29`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared Alert, ErrorState, EmptyState, StatusBadge, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 11 `min-h-11` targets; 11 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/lessons/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 1/1; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/module-access/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 1 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/module-access/page.tsx:53` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/module-access/page.tsx:55` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 1 shared Button at `src/app/(authenticated)/admin/module-access/page.tsx:58`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/module-access/page.tsx:30`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared ErrorState, EmptyState, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 4 `min-h-11` targets; 3 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/module-access/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 0/0; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
+### - [x] `src/app/(authenticated)/admin/organizations/page.tsx` — source complete (10/10 properties checked)
+
+| Visual property / state | Old LMS exact value (reference) | Current code and value |
+| --- | --- | --- |
+| Form labels 2 instances | 13px/600/16px, #a9a7ae (`components___form.scss:110-114`) | `src/app/(authenticated)/admin/organizations/page.tsx:110` — `text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]` |
+| Fields: default, hover, focused, disabled, invalid | 14px/400/20px, #fbfcfd fill, 10px radius, 2px teal focus, error red (`form.scss:120-142`) | `src/app/(authenticated)/admin/organizations/page.tsx:111` — shared Input/Select in `globals.css:425-476,866`; removed conflicting 9px/surface field overrides where present |
+| Buttons: primary/secondary, hover, active, disabled, loading | 36px desktop, 44px phone, 9px radius, #0a7c88 white primary, hover #086873 (`globals.css:341-343,628,638-677`) | 1 shared Button at `src/app/(authenticated)/admin/organizations/page.tsx:119`; semantic links use theme tokens and visible focus when authored |
+| Page head and flat canvas | 1 white canvas radius 12/border #e5e9f0/padding 24, shell #f1f4f9; no outer nested canvas (`old-lms-pages.md:5-9`) | Authenticated canvas + PageHeader or flat `space-y` root at `src/app/(authenticated)/admin/organizations/page.tsx:31`, hairline sections; DataTable when applicable |
+| Alert, empty, pending/error presentation | Legacy colored statuses and consistent loading/focus; no raw bespoke modal | Shared ErrorState, EmptyState, DataTable, PageHeader; original handlers and route filters untouched |
+| Phone and tablet | 44px tap through ≤767px, 36px normal from ≥768px (`variables.scss:139`; `old-lms-shell.css:23,73`) | 3 `min-h-11` targets; 3 explicit tablet controls; 0 stray `sm:` patterns; wrapping/default responsive kit |
+
+**Coverage grep:** `rg -o '<(input|button|select|textarea)\\b' 'src/app/(authenticated)/admin/organizations/page.tsx' | wc -l` = **0**; literal hex grep = **0**; inline `style=\{` grep = **0**. JSX Button 1/1, Select 1/1; self-closing Input/PageHeader not counted as paired tags. Responsive proof is from inspected CSS selectors, not a browser screenshot.
+
