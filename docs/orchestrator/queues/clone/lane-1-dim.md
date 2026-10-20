@@ -63,26 +63,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-1.md: file, number of i
 - [x] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/drives/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/retention/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/admin/programs/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/at-risk/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/retention/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/admin/programs/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/at-risk/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/submissions/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/loading.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
