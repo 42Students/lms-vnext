@@ -97,7 +97,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
    confirmLabel="Apply change" pending={pending} confirmVariant="danger"
    confirmDisabled={!canReviewStudentRule(choice,blocked,pending,noChange)}
    onConfirm={()=>{void apply();}}>
-   <div className="min-w-0 space-y-3 px-4 py-4 md:px-6">
+   <div className="min-w-0 space-y-3">
     <p className="m-0 break-words text-sm leading-5 text-body">This changes a persisted membership-level rule for one learner. Broader locked rules, role checks and other participation gates can still affect access. The server records an audit event.</p>
     <p className="m-0 break-words text-xs leading-5 text-muted-foreground">Current stored override: {observed===null?"Inherit":observed.enabled?"On":"Off"}</p>
    </div>
