@@ -31,7 +31,7 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
   <Button type="button" variant="secondary" disabled={pending} onClick={()=>{setError("");setSuccess("");setOpen(true);}}
    className="min-h-11 w-full sm:w-auto md:min-h-9">Mark graduated</Button>
   {success?<p role="status" aria-live="polite" className="max-w-prose text-sm text-success-text">{success}</p>:null}
-  {error?<p role="alert" className="max-w-prose break-words text-sm text-error">{error}</p>:null}
+  {error&&!open?<p role="alert" className="max-w-prose break-words text-sm text-error">{error}</p>:null}
   <ConfirmDialog open={open} onOpenChange={setOpen} title={"Mark "+name+" graduated?"}
    description="This completes the batch lifecycle. Historical enrollment records are retained."
    confirmLabel="Mark graduated" confirmVariant="danger" pending={pending} onConfirm={()=>void submit()}>
