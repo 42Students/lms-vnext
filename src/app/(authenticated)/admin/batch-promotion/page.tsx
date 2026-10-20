@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import { Disclosure } from "@/components/ui/disclosure";
 import { CollegePromotionPreviewError, listCollegePromotionOptions,
   previewCollegeBatchPromotion } from "@/modules/academics/college-batch-promotion-service";
 import { readAdminPromotionParams, summarizeAdminPromotion } from "@/modules/academics/admin-batch-promotion-read-model";
@@ -50,7 +51,7 @@ export default async function SuperAdminBatchPromotionPage({
   return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion"
       description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Class moves are managed separately in the batch roster." />
-    <form method="get" role="search" aria-label="Batch promotion preview filters" className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
+    <form method="get" role="search" aria-label="Batch promotion preview filters" className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 min-[1200px]:grid-cols-3">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
           className="min-h-11 min-[768px]:min-h-9">
@@ -65,6 +66,8 @@ export default async function SuperAdminBatchPromotionPage({
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
         </Select>
       </label>
+      <Disclosure title="More filters" defaultOpen={Boolean(input.data.yearStart || showCompleted)} className="min-w-0 min-[768px]:col-span-2 min-[1200px]:col-span-4"
+        contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year start override
         <Input name="yearStart" type="number" min={1900} max={9998} step={1}
           defaultValue={input.data.yearStart ?? ""} className="min-h-11 min-[768px]:min-h-9" />
@@ -72,11 +75,13 @@ export default async function SuperAdminBatchPromotionPage({
       <label className="flex min-h-11 items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
-      <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end">Preview</Button>
+      </Disclosure>
+      <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto self-end">Preview</Button>
     </form>
-    <section aria-label="Batch promotion queue" className="min-w-0 space-y-3 pt-2">
+    <section aria-label="Batch promotion queue" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
+      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Batches</h2>} defaultOpen={!input.data.cohortId} contentClassName="pb-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Batches</h2>
+
         <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
       </div>
       <DataTable<(typeof visibleCohorts)[number]>
@@ -98,6 +103,7 @@ export default async function SuperAdminBatchPromotionPage({
             className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">Preview →</Link>},
         ]}
       />
+      </Disclosure>
     </section>
     {invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
       action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">Reset selection</Link>} /> :
@@ -109,11 +115,11 @@ export default async function SuperAdminBatchPromotionPage({
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
         </div>
         <p className="text-sm text-body">{preview.batch.programName} · {preview.batch.status}</p>
-        <dl className="grid gap-0 divide-y divide-border border-y border-border min-[768px]:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid min-w-0 gap-0 divide-y divide-border border-y border-border min-[768px]:grid-cols-2 lg:grid-cols-4">
           {([
             ["Action", summary.action], ["Target term", summary.targetTerm ?? "Unavailable"],
             ["Learners checked", summary.learnersChecked], ["Learners with blockers", summary.blockedLearners],
-          ] as const).map(([label, value]) => <div key={label} className="border-r border-border py-2 pr-3 last:border-r-0">
+          ] as const).map(([label, value]) => <div key={label} className="min-w-0 border-r border-border px-[var(--lms-space-3)] py-[var(--lms-space-3)] last:border-r-0">
             <dt className="text-xs text-muted-foreground">{label}</dt>
             <dd className="mt-1 font-semibold text-foreground">{value}</dd>
           </div>)}
@@ -142,8 +148,7 @@ export default async function SuperAdminBatchPromotionPage({
           {preview.blockers.map(b => <li key={b}>{b.replaceAll("_", " ")}</li>)}
         </ul> : <p className="text-sm text-muted-foreground">No batch-level blocker was detected. Learner and runtime checks still apply.</p>}
       </section>
-      <section className="min-w-0 space-y-3">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Learner-level preview</h2>
+      <Disclosure title={<h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Learner-level preview</h2>} contentClassName="space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
         <p className="text-xs text-muted-foreground">Showing at most 100 of {preview.learners.length} examined enrollments; a shortened display is not a complete readiness decision.</p>
         {preview.learners.length ? <div className="grid gap-3 md:grid-cols-2">
           {preview.learners.slice(0, 100).map(learner => <article key={learner.membershipId} className="min-w-0 border-b border-border py-3">
@@ -152,7 +157,7 @@ export default async function SuperAdminBatchPromotionPage({
             <p className="mt-2 text-sm text-body">{learner.blockers.length ? learner.blockers.join(", ").replaceAll("_", " ") : "No detected learner blocker"}</p>
           </article>)}
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
-      </section>
+      </Disclosure>
     </>}
     <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">← Academics</Link>
   </div>;
