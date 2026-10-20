@@ -5,6 +5,8 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
 import {TpoCompanyTeamConversation} from "@/components/tpo/tpo-company-team-conversation";
 import {TpoCompanyTrustSwitch} from "@/components/placements/tpo-company-trust-switch";
@@ -162,26 +164,20 @@ export default async function TpoCompanyDetailPage({
       </nav>
 
       {!contactsAvailable ? (
-        <section
-          role="status"
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm leading-6 text-body"
-        >
+        <Alert tone="warning">
           Recruiter CRM data is unavailable in this database.
           Contact counts and interaction history cannot be
           verified; the drive and hiring sections remain sourced
           from persisted placement records.
-        </section>
+        </Alert>
       ) : null}
 
       {contactsAvailable && !activitiesAvailable ? (
-        <section
-          role="status"
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm leading-6 text-body"
-        >
+        <Alert tone="warning">
           Recruiter contact activity storage is unavailable.
           The timeline below contains only available drive,
           offer and joining events.
-        </section>
+        </Alert>
       ) : null}
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
@@ -241,9 +237,7 @@ export default async function TpoCompanyDetailPage({
               :""}
           </p>
           {hiringPulse.hiredPerYear.length===0
-            ?<p role="status" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-muted-foreground">
-              No dated, confirmed joins have been recorded for this college-company relationship.
-             </p>
+            ?<EmptyState title="No dated, confirmed joins have been recorded for this college-company relationship."/>
             :<ol className="mt-3 space-y-2" aria-label="Confirmed joined learners per year">
               {hiringPulse.hiredPerYear.map(row=><li key={row.year}
                 className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
@@ -343,7 +337,7 @@ export default async function TpoCompanyDetailPage({
               <DataTable
                 caption="Company placement drives"
                 rows={drives} getRowKey={drive=>drive.id}
-                empty={<p className="text-sm text-body">No placement drives are recorded for this company.</p>}
+                empty={<EmptyState title="No placement drives are recorded for this company."/>}
                 columns={[
                   {key:"drive",header:"Drive",mobileLabel:"Drive",mobilePriority:"primary",
                    cell:drive=><div className="min-w-0">
@@ -385,7 +379,7 @@ export default async function TpoCompanyDetailPage({
             <DataTable
               caption="Company hiring history"
               rows={hiringHistory} getRowKey={offer=>offer.id}
-              empty={<p className="text-sm text-body">No placement offers are recorded for this company.</p>}
+              empty={<EmptyState title="No placement offers are recorded for this company."/>}
               columns={[
                 {key:"role",header:"Role",mobileLabel:"Role",mobilePriority:"primary",cell:offer=>offer.roleTitle},
                 {key:"ctc",header:"Annual CTC",mobileLabel:"Annual CTC",mobilePriority:"secondary",

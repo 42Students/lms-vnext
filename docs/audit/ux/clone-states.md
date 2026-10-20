@@ -508,3 +508,121 @@ Shared primitives bound the notice width with `min-w-0`, `max-w-full` and break-
 `scripts/codemods/chat-5-alerts.cjs` uses TypeScript TSX AST to convert only simple leaf `<p role="alert">` and `<span role="alert">` notices with literal/error-string content (opening and closing tags atomically), inserts the existing shared InlineNotice import, and **skips** nested JSX, counters, spread props and risky source. Preview `node scripts/codemods/chat-5-alerts.cjs`; apply `node scripts/codemods/chat-5-alerts.cjs --apply`. This script is committed but **not executed** here (no compile/tests/CI), so no script-produced files are reported as completed.
 
 **Next exact hand-audit source:** `src/components/placements/tpo-calendar-followup-actions.tsx` already source migrated; next untouched unique state file `src/components/placements/tpo-calendar-followup-actions.tsx` search-suggestion empty wording remains an intentional plain status span. Resume instead at `src/app/(authenticated)/tpo/calendar/rounds/page.tsx` to inspect duplicated bespoke schedule/error notices.
+
+
+## Chat-5 TPO page-state consolidation — 13 additional pages (2026-10-19)
+
+After the 12-file TPO component batch above, the following 13 entire page TSX files were individually migrated and re-read in `chatgpt/chat-5-b`. All replacements preserve page content, branch conditions, link destinations, form actions, data caps, server-side authorization and result counters. These file-level edits are only F3/F5 **source passes**, not strict pixel parity completion. Every JSX `Alert` opening and closing pair was checked after migration, including in conditional expressions with nested links. No source code, app, tests, TypeScript compile, CI or browser was executed.
+
+| Path below `src/app/(authenticated)/tpo/` | Alert opens/closes | Banner | InlineNotice | EmptyState | Raw role status/alert | Bespoke styled raw | First shared JSX line | Responsive source / preservation |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
+| `calendar/export/page.tsx` | 1/1 | 0 | 0 | 1 | 0 | 0 | 60 | sm:min-h-9 export form; shared empty wraps |
+| `calendar/page.tsx` | 1/1 | 0 | 0 | 0 | 0 | 0 | 45 | sm:min-h-9 reset link; shared alert max-w-full |
+| `follow-ups/page.tsx` | 1/1 | 0 | 0 | 0 | 0 | 0 | 68 | flex-wrap pagination, min-w-0 |
+| `drive-day/[roundId]/no-shows/page.tsx` | 2/2 | 0 | 0 | 1 | 0 | 0 | 92 | table mobilePriority primary/secondary unchanged |
+| `drive-day/page.tsx` | 4/4 | 0 | 0 | 1 | 1 | 0 | 50 | sm:grid-cols-3, lg:grid-cols-6, action wrap |
+| `requests/page.tsx` | 1/1 | 0 | 0 | 1 | 0 | 0 | 56 | min-w-0, action wrap, search reset link |
+| `companies/page.tsx` | 2/2 | 0 | 0 | 0 | 1 | 0 | 64 | sm:grid-cols-3, lists retain reachability |
+| `notifications/page.tsx` | 3/3 | 0 | 0 | 0 | 1 | 0 | 51 | notification list and older-page action unchanged |
+| `verification/page.tsx` | 4/4 | 0 | 0 | 0 | 1 | 0 | 20 | queue pagination wraps; count is deliberately plain |
+| `team/page.tsx` | 2/2 | 0 | 0 | 2 | 1 | 0 | 146 | min-[768px] link target and search filters unchanged |
+| `announcements/page.tsx` | 7/7 | 0 | 2 | 1 | 2 | 0 | 40 | md:grid-cols-2; scheduled/ended metadata unstyled |
+| `batches/page.tsx` | 12/12 | 1 | 6 | 1 | 2 | 0 | 46 | sm:grid-cols-2/4, xl:grid-cols-3; mobile reset action |
+| `find/page.tsx` | 1/1 | 0 | 0 | 2 | 0 | 0 | 45 | min-w-0 finder form and per-section counts unchanged |
+| **13-file scoped total** | **41/41** | **1** | **8** | **10** | **9** | **0** | — | Source-only bounded scan |
+
+**Source grep equivalent:** `<Alert\b`=41, `</Alert>`=41, `<Banner\b`=1, `</Banner>`=1, `<InlineNotice\b`=8, `<EmptyState\b`=10; raw `role=status/alert`=9, all exempt: live counts, scheduled/ended announcement metadata, and batch eligibility details. Styled bespoke role=status/alert wrappers=**0** in these 13 page sources. These are bounded files, NOT repository-wide zero claims.
+
+Reproduce locally, commands **not executed in this turn**:
+```sh
+rg -n '<(Alert|Banner|InlineNotice|EmptyState)([ >])|</(Alert|Banner)>' 'src/app/(authenticated)/tpo' -g page.tsx
+rg -n '<(p|div|section|span)[^>]*role="(status|alert)"' 'src/app/(authenticated)/tpo' -g page.tsx
+rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g loading.tsx
+```
+
+### Exact legacy value re-check for migrated page notices
+
+| Checked property/state | Old LMS path:line exact | vNext path:line exact | Status |
+| --- | --- | --- | --- |
+| Error token/color | `docs/design/legacy-styles/components___variables.scss:71-72` `#ef4444`, `rgba(239,68,68,0.10)` | `src/app/globals.css:51-52` same; `src/components/ui/alert.tsx:13` error background token | **MATCH base fill**; border/text state OPEN |
+| Warning token/fill | `components___variables.scss:69-70` `#d97706`, `rgba(217,119,6,0.10)` | `globals.css:49-50`, shared `alert.tsx:12`/`banner.tsx:12` now `--lms-warning-subtle` | **MATCH fill** after this turn's shared primitive update |
+| Info token/fill | `components___variables.scss:73-74` `#26bac7`, `#eff8fa` | `globals.css:56-57` and shared `alert.tsx:10`, `inline-notice.tsx:11` now `--lms-info-subtle` | **MATCH fill**, border and text OPEN |
+| Success fill | `components___variables.scss:67-68` `#059669`, `rgba(5,150,105,0.10)` | `globals.css:47-48`, `inline-notice.tsx:10` | **MATCH fill** |
+| Control radius | `components___variables.scss:133`: 6px | `globals.css:343`: 9px; shared `alert.tsx:18` token | **OPEN discrepancy**. Do not override global token owned by chat-17 |
+| Spacing scale | `components___variables.scss:116-123`: 4,8,12,16,24,32,40,48px | `globals.css:350-357`: 4,8,12,16,24,32,48,64px | **MATCH** 1-6; 7/8 mismatch, owned by chat-17 |
+| Focus ring and interaction | `components___accessibility.scss:19-23` outline 2px, offset 3px | `inline-notice.tsx:36` outline 2px, offset 2px; shared Link/Button retains focus | **OPEN** focus-offset and hover exact proofs |
+| Phone/tablet breakpoint | `components___antddesign.scss:21-23`: max-width 767px | `empty-state.tsx:6-9` mobile 16px and `sm:` 640px; `alert.tsx:18` min-w-0/max-w-full | **OPEN** 640–767px pixel comparison; wrap rules source-reviewed |
+| Loading / error / empty states | `docs/design/old-lms-pages.md:6,12,26`: single white canvas, pale info strip, dev-only dotted spinner | `src/components/ui/empty-state.tsx:6-10`: no inner white card; `error-state.tsx:5-10`: transparent inside canvas; route shared `GracefulPageLoading` uses Skeleton | Structure source-reviewed, full F4/F5 STRICT tick **OPEN** |
+
+**Accessibility and functional guardrails:** error notices retain alert priority, informational banners retain polite status, no-data actions preserve authenticated links. A filter parse failure remains an actual error, not a falsified zero count. The Drive Day no-show view keeps unknown/unmarked distinct from recorded absence. Announcement scheduled/ended statuses remain local metadata, not decorative F3 panels.
+
+- [ ] F3 **OPEN** until all interactive/visual property values, repo-wide hand-rolled greps, phone/tablet comparison and no-regression checks pass.
+- [ ] F4 **OPEN** until route-specific loader inventory and legacy motion timing are verified.
+- [ ] F5 **OPEN** until 403/404/500/offline/maintenance/session and every TPO/other-portal state are fully inventoried.
+
+**Exact next source**: `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`, then remaining `src/app/(authenticated)/tpo/students/page.tsx` and other portal pages.
+
+
+## Chat-5 company and roster states — five source files (2026-10-19)
+
+The next five previously unconverted TSX files were migrated and independently re-fetched from `chatgpt/chat-5-b` after each update. Counts below are exact **source-byte grep equivalents scoped to these five source files**, not checkout-wide `rg` output, TypeScript compilation, viewport screenshots, or visual comparison. No tests, lint, code execution or CI were run.
+
+| Re-fetched path | Alert opens/closes | EmptyState | InlineNotice | Skeleton | Remaining raw role status/alert | First shared JSX line | Phone/tablet source path |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx` | 2/2 | 3 | 0 | 0 | 0 | 167 | Existing `sm:grid-cols-2`, `xl:grid-cols-5`, responsive DataTable priorities and `min-w-0` |
+| `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx` | 1/1 | 1 | 0 | 0 | 0 | 30 | Shared Alert `max-w-full` and EmptyState `min-w-0`; plain linked-contact list untouched |
+| `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx` | 3/3 | 1 | 0 | 0 | 0 | 70 | Existing `flex-wrap` controls, DataTable mobile-priority fields and shared status wrapping |
+| `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx` | 3/3 | 1 | 0 | 0 | 0 | 53 | Existing note timeline flex-wrap/list sections plus shared EmptyState wrapping |
+| `src/app/(authenticated)/tpo/students/page.tsx` | 6/6 | 0 | 1 | 1 | 0 | 264 | `sm:`/`md:` responsive layout and shared Skeleton grid fallback (five rows) |
+| **Scoped totals** | **15/15** | **6** | **1** | **1** | **0** | — | Static source only |
+
+The company detail retains its persisted drive/offer/hiring read conditions, including distinct records-unavailable vs recorded-zero evidence. Company people/contact log/feedback keep their DB09 or CRM-write gates, original links and table column priority. Student roster keeps the same saved filters and independent data-read requirements; invalid filters are Alert(error), missing registration/verification/outcome/external-offer sources are Alert(warning), timed-debarment incompleteness is InlineNotice(info), and the spreadsheet Suspense fallback is a labelled shared Skeleton rather than an unstyled live text paragraph. All source replacement pairs were re-read and balanced. No permission or server data-fetching branches were modified.
+
+### Value table carried through this batch
+
+| Property | Old LMS exact source/value | vNext actual source/value | Verdict |
+| --- | --- | --- | --- |
+| Warning background | `docs/design/legacy-styles/components___variables.scss:69-70`: `#d97706` and `rgba(217,119,6,.10)` | `src/app/globals.css:49-50` identical; shared `src/components/ui/alert.tsx:12` uses `--lms-warning-subtle` | **MATCH** base fill/hue; warning border and text metrics OPEN |
+| Info background | `components___variables.scss:73-74`: `#26bac7` and `#eff8fa` | `globals.css:56-57` identical; `inline-notice.tsx:11` uses `--lms-info-subtle` | **MATCH** base fill; outline/border OPEN |
+| Error background | `components___variables.scss:71-72`: `#ef4444` and `rgba(239,68,68,.10)` | `globals.css:51-52` identical; `alert.tsx:13` uses `--lms-error-subtle` | **MATCH** base fill; alpha border 0.25 not legacy-proven |
+| Control radius | `components___variables.scss:133`: 6px | `globals.css:343`: 9px, shared `Alert`/InlineNotice uses the same token | **OPEN mismatch**, global token owned by chat-17 |
+| Spacing scale | `components___variables.scss:116-123`: 4,8,12,16,24,32,40,48px | `globals.css:350-357`: 4,8,12,16,24,32,48,64px | MATCH first six, **OPEN mismatch** for 7/8 |
+| Focus/mouse action | `components___accessibility.scss:19-23`: 2px focus outline, 3px offset | `src/components/ui/inline-notice.tsx:35-36`: 2px outline, 2px offset; shared Alert has no dismiss button | **OPEN** full hover/focus/disabled exact parity |
+| Phone/tablet | `components___antddesign.scss:21-23`: mobile at max-width 767px | `src/components/ui/alert.tsx:18` `min-w-0 max-w-full`, `empty-state.tsx:6-9` wrap and responsive padding, `skeleton.tsx:24-30` `min-w-0` and reduced motion | Source constraints checked, **OPEN** 640–767 breakpoint and actual phone/tablet measurements |
+| Loading / empty skeleton | `docs/design/old-lms-pages.md:26`: small dotted spinner during dev compile (not UI spec) | `src/components/ui/skeleton.tsx:21-30` shimmer with `motion-reduce:animate-none`, 5-row `Skeleton` in student grid | **OPEN** exact placeholder timing, heights, viewport and network recovery proof |
+
+To reproduce on a checkout (commands **not executed** here):
+```sh
+rg -n '<(Alert|EmptyState|InlineNotice|Skeleton)([ >])|</Alert>' 'src/app/(authenticated)/tpo/companies' 'src/app/(authenticated)/tpo/students/page.tsx' -g '*.tsx'
+rg -n '<(p|div|section|span)[^>]*role="(status|alert)"[^>]*(rounded|border|bg-|p-[0-9]|px-|py-)' 'src/app/(authenticated)/tpo/companies' 'src/app/(authenticated)/tpo/students/page.tsx' -g '*.tsx'
+```
+
+- [ ] F3 **OPEN**: whole-repo zero hand-rolled coverage, exact semantic border/radius/focus/hover values, responsive/visual proof missing.
+- [ ] F4 **OPEN**: student Suspense source uses shared Skeleton; whole-route loader and motion parity still missing.
+- [ ] F5 **OPEN**: five migrated file-level states; full system-state and all-portal inventory not verified.
+
+**Next exact file:** `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx` (continue with student history and request state fallbacks). The companion `src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx` has no bespoke role-status/alert, EmptyState or error JSX from its last source read and was deliberately left unchanged.
+
+
+## Chat-5 next four student workflow states — source proof (2026-10-19)
+
+The four source files below were written only to `chatgpt/chat-5-b` and independently re-fetched after each update; shared notice JSX pairs and the original conditional branches were inspected. Values/source comparison inherits the full table above for unchanged shared components, with token fills matching old SCSS `components___variables.scss:67-74` and current `globals.css:47-57`. Radius (6px legacy vs 9px new), focus offset (3px legacy vs 2px new) and 640px vs 767px breakpoint discrepancies **remain open**; no viewport screenshots or runtime tests were performed.
+
+| Re-fetched file | Alert open/close | EmptyState | Remaining raw status/alert | First migrated line | Responsive source |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx` | 0/0 | 1 | 0 | 90 | Existing item row wrapping and linked history unchanged |
+| `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx` | 2/2 | 1 | 1 | 24 | `min-w-0` page and mobile shared feedback; numeric course count stays plain live metadata |
+| `src/app/(authenticated)/tpo/students/requests/page.tsx` | 1/1 | 0 | 0 | 122 | Existing grid/table breakpoints and `flex-wrap` links unchanged |
+| `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx` | 2/2 | 1 | 0 | 17 | Existing responsive list and pagination navigation retained |
+| **Bounded total** | **5/5** | **3** | **1** | — | **0** styled bespoke status wrappers |
+
+**Scoped source grep equivalent:** `<Alert`=5 `</Alert>`=5, `<EmptyState`=3, `<InlineNotice`=0, `<Skeleton`=0; raw status/alert=1 (unstyled evidence-count summary), styled raw=0. Every altered paired opening and closing tag was re-read. The history page retains absence of **persisted** applications, without inferring unrecorded offers, and the preparation-plan keeps the distinction between unregistered settings and an empty configured course subset. The request invalid-filter branch preserves its recovery link and never queries bad input.
+
+**Commands for checkout execution (NOT run):**
+```sh
+rg -n '<(Alert|EmptyState|InlineNotice)([ >])|</Alert>|role="(alert|status)"' 'src/app/(authenticated)/tpo/students' -g page.tsx
+rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g loading.tsx
+```
+
+- [ ] F3, F4, F5 remain unticked: source conversion does not establish all matching legacy properties, zero whole-repo raw coverage or 320px/767px/tablet rendered proof.
+- [ ] Next source: `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx` — inspect prepared readiness controls and unavailability states, then further settings pages.

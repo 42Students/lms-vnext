@@ -1298,3 +1298,52 @@ The following 14 sources were converted after the 36-source listing above. `clon
 - [ ] `src/components/placements/tpo-report-record-links.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
 
 **Next exact file:** `src/components/placements/tpo-report-saved-filters.tsx`, then other remaining `src/components/placements/tpo-*.tsx` alerts/empty states and cross-portal route-state inventory. Keep the 1,041-path original route inventory unticked until its actual counts are reverified.
+
+
+## Chat-5 next continuation source queue — 37 TSX (2026-10-19)
+
+These 37 TSX files were updated, pushed to `chatgpt/chat-5-b`, and re-fetched for bounded source comparison. They are **source-migrated** only, not Strict Tick completions. All category F3/F4/F5 and original 1,041 route-state path checkboxes remain [ ] until all legacy values, repository-wide grep counts, actual phone/tablet comparison and no-regression proof are present. Detailed per-file grep-equivalent counts and literal old SCSS/vNext value tables are in `docs/audit/ux/clone-states.md`.
+
+**3 owned shared component state primitives:** `src/components/ui/alert.tsx`, `banner.tsx`, `inline-notice.tsx` now use semantic warning/info background tokens matching old SCSS colors. Geometry, focus offsets and old responsive breakpoint remain open. Existing public API untouched.
+
+**11 placement components, 23 TPO route files:**
+- [ ] `src/components/placements/tpo-report-saved-filters.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-interview-reschedule-form.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-delete-draft-action.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-mark-own-notification-read.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-drive-refresh-control.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-week-hour-calendar.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-drive-lifecycle-controls.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/components/placements/tpo-calendar-followup-actions.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/calendar/error.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/calendar/export/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/calendar/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/follow-ups/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/drive-day/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/requests/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/companies/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/notifications/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/verification/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/team/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/announcements/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/batches/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/find/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/students/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx` — state source converted and re-read; exact visual/strict responsive proof still OPEN
+
+**Cross-portal repetitive migration codemod:** `scripts/codemods/chat-5-alerts.cjs` (TypeScript TSX AST safe leaf error notices, both tags replaced, dry-run first), committed but **not executed**. No rows may be checked from codemod output until orchestrator runs it and proves parser/TSX and responsive behavior.
+
+**Known exemptions**: plain `role="status"` live count/selection summaries, itemized results with overflow area, in-label search suggestion, and run-time progress labels are deliberate accessibility text, not bespoke decorative F3/F5 notice boxes.
+
+**Exact next file**: `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`; then the other TPO settings/state pages and the remaining global route-state inventory. Do not move to main directly or remove this pending work queue.

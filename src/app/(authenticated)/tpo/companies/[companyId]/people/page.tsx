@@ -1,4 +1,6 @@
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -25,11 +27,9 @@ export default async function TpoCompanyPeoplePage({
       <PageHeader eyebrow="TPO · Companies" title={company.name+" · Contact people"} description="Persisted linked recruiter leads only, not an independent contacts directory."/>
       {process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? (
         <TpoCompanyPersonEditor companyId={companyId} contacts={company.contacts}/>
-      ) : <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">DB09 contact writes are unavailable.</p>}
+      ) : <Alert tone="warning">DB09 contact writes are unavailable.</Alert>}
       {company.contacts.length === 0
-        ? <p role="status" className="rounded-[var(--lms-canvas-radius)] border p-4 text-sm text-body">
-            No contact people are linked to this company yet.
-          </p>
+        ? <EmptyState title="No contact people are linked to this company yet."/>
         : <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
             {company.contacts.map(contact => (
               <li key={contact.id} className="p-4 text-sm">

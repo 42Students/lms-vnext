@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
@@ -118,10 +119,7 @@ export default async function TpoStudentRequestsPage({
           title="Student Requests"
           description="College-wide placement exception and change requests."
         />
-        <section
-          role="alert"
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6"
-        >
+        <Alert tone="error">
           <h2 className="text-lg font-semibold text-foreground">
             Invalid request filters
           </h2>
@@ -135,7 +133,7 @@ export default async function TpoStudentRequestsPage({
           >
             Clear filters
           </Link>
-        </section>
+        </Alert>
       </div>
     );
   }

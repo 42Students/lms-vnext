@@ -6,6 +6,8 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { TpoCompanyInteractionForm } from "@/components/placements/tpo-company-interaction-form";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -65,10 +67,10 @@ export default async function TpoCompanyContactLogPage({
         description="Read-only CRM interaction history for contacts explicitly linked to this college-company relationship."
       />
       {!log.available ? (
-        <section role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
+        <Alert tone="warning">
           Contact-activity tables are not available in this database. No zero
           activity count is inferred.
-        </section>
+        </Alert>
       ) : (
         <>
           {log.writeEnabled && log.contacts.length > 0 ? (
@@ -78,15 +80,15 @@ export default async function TpoCompanyContactLogPage({
               contacts={log.contacts}
             />
           ) : log.contacts.length === 0 ? (
-            <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
+            <Alert tone="warning">
               No active, explicitly linked recruiter contacts are available
               for a new activity. Link a contact before recording one.
-            </p>
+            </Alert>
           ) : (
-            <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
+            <Alert tone="warning">
               The CRM write gate is unavailable for this company. Existing
               activity remains read-only.
-            </p>
+            </Alert>
           )}
           <form method="get" action={path} className="flex flex-wrap items-end gap-3">
             <label className="text-sm font-semibold text-foreground">
@@ -115,10 +117,7 @@ export default async function TpoCompanyContactLogPage({
             caption="Recorded company contact interactions"
             rows={log.rows}
             getRowKey={(row)=>row.id}
-            empty={<p role="status" className="text-sm text-body">
-              No recorded contact interactions match this filter. Calls,
-              emails and messages are not inferred from invitations or drives.
-            </p>}
+            empty={<EmptyState title="No recorded contact interactions match this filter." description="Calls, emails and messages are not inferred from invitations or drives."/>}
             columns={[
               {key:"contact",header:"Contact",mobileLabel:"Contact",mobilePriority:"primary",cell:(row)=>row.contactName},
               {key:"type",header:"Type",mobileLabel:"Type",mobilePriority:"secondary",cell:(row)=>row.type},
