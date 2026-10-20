@@ -1,4 +1,5 @@
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -24,16 +25,18 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Faculty · Courses" title="Live classes"
    description="Registered published live sessions for your active teaching Sections." />
-  <FacultyLiveClassEditor
-    choices={data.lessonChoices}
-    sessions={data.items.map(item=>({
-      id:item.id,deliveryId:item.deliveryId,title:item.title,
-      courseName:item.courseName,sectionName:item.sectionName,
-      startsAt:item.startsAt.toISOString(),endsAt:item.endsAt.toISOString(),
-      meetingUrl:item.joinUrl,
-      expectedUpdatedAt:item.updatedAt?.toISOString()??null,
-    }))}
-  />
+  <Disclosure title="Schedule or manage a live class" className="min-w-0 border-y border-border" contentClassName="min-w-0 pb-4 pt-3">
+    <FacultyLiveClassEditor
+      choices={data.lessonChoices}
+      sessions={data.items.map(item=>({
+        id:item.id,deliveryId:item.deliveryId,title:item.title,
+        courseName:item.courseName,sectionName:item.sectionName,
+        startsAt:item.startsAt.toISOString(),endsAt:item.endsAt.toISOString(),
+        meetingUrl:item.joinUrl,
+        expectedUpdatedAt:item.updatedAt?.toISOString()??null,
+      }))}
+    />
+  </Disclosure>
   <form role="search" aria-label="teacher live classes filters" action="/teacher/live-classes" method="get"
    className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,12rem)_minmax(0,1fr)_auto_auto] lg:items-end">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">When
@@ -72,7 +75,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
      className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 text-sm text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open course</Link>
    </li>)}</ul>}
-  <Pagination label="Live-class pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyLiveClassesHref({...data.query,page})}/>
+  {data.totalPages > 1 ? <Pagination label="Live-class pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyLiveClassesHref({...data.query,page})}/> : null}
   <p className="max-w-prose text-xs leading-5 text-muted-foreground">
    Times use IST for display; links are HTTPS-only and are not written to logs.
    Scheduled Section calendar events without LIVE_CLASS content are not presented as online sessions.
