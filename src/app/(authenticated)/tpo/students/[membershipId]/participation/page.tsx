@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -29,8 +30,7 @@ export default async function TpoLearnerParticipationPage({
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
-        eyebrow="TPO · Students"
-        title="Placement participation decision"
+         title="Placement participation decision"
         description={
           learner.displayName +
           " · Member-level eligibility override for the current college."
@@ -79,16 +79,10 @@ export default async function TpoLearnerParticipationPage({
         </p>
       </section>
 
-      <nav aria-label="Student placement journey" className="flex flex-wrap gap-3">
-        <Link href={journey.history} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View placement history and round outcomes →</Link>
+      <nav aria-label="Student placement journey" className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <Link href={journey.history} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">View placement history and round outcomes →</Link>
         <Link href={journey.roster} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Student roster</Link>
       </nav>
-
-      <TpoDebarControl
-        membershipId={learner.membershipId}
-        initial={learner.direct}
-      />
-      <TpoTimedDebarControl membershipId={learner.membershipId} initial={timedDebarments}/>
 
       <section className="border-b border-border py-5">
         <h2 className="text-lg font-semibold text-foreground">
@@ -104,6 +98,12 @@ export default async function TpoLearnerParticipationPage({
           initial={learner.direct}
         />
       </section>
+      <Disclosure title="Debar / remove learner restriction" className="min-w-0 border-b border-border py-3" contentClassName="pt-3">
+      <TpoDebarControl membershipId={learner.membershipId} initial={learner.direct}/>
+      </Disclosure>
+      <Disclosure title="Debar until a date or for N drives" className="min-w-0 border-b border-border py-3" contentClassName="pt-3">
+      <TpoTimedDebarControl membershipId={learner.membershipId} initial={timedDebarments}/>
+      </Disclosure>
     </div>
   );
 }
