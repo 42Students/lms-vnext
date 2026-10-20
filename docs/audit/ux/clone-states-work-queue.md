@@ -1347,3 +1347,55 @@ These 37 TSX files were updated, pushed to `chatgpt/chat-5-b`, and re-fetched fo
 **Known exemptions**: plain `role="status"` live count/selection summaries, itemized results with overflow area, in-label search suggestion, and run-time progress labels are deliberate accessibility text, not bespoke decorative F3/F5 notice boxes.
 
 **Exact next file**: `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`; then the other TPO settings/state pages and the remaining global route-state inventory. Do not move to main directly or remove this pending work queue.
+
+
+## 2026-10-20 continuation — main fast-forward and 41 TSX source passes
+
+At start: origin/main `a7616350ee830c5e187533defabafb477a27172e`; chat-5 branch was zero ahead, 1,114 behind. Non-forcibly fast-forwarded **only** `chatgpt/chat-5-b` to `main`, then pushed only `[chat-5]` commits to the lane branch. Exact source re-read/value tables/scoped grep equivalents and responsive boundaries are in the 2026-10-20 section of `docs/audit/ux/clone-states.md`. **41 distinct TSX source files** (23 TPO pages, 15 TPO controls, 3 shared primitives), both tags of every converted JSX pair checked; page copy, data, filters, retry and permissions preserved. No CI, application code run, lint, typecheck or browser rendering.
+
+**Completed source-migration set (not STRICT TICK):**
+- [ ] `src/app/(authenticated)/tpo/settings/after-college/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/branding/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/job-types/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/public-page/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/[slug]/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/after-college/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/by-company/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/page.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-batch-undo-control.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-builtin-job-types-editor.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-communication-settings-editors.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-custom-job-type-placed.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-custom-job-type-rename.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-find-shortcut.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-home-return-refresh.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-notice-acknowledge.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-notice-read-progress.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-notification-refresh.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-placement-cell-read-action.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-safe-csv-download.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-student-clipboard-actions.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-student-note-editor.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/ui/alert.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/ui/banner.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+- [ ] `src/components/ui/inline-notice.tsx` — migrated/re-read; exact all-states value + repo-wide grep + rendered phone/tablet proof still OPEN
+
+**Scoped re-read source grep equivalents:** 46 shared `<Alert` opens and 46 closes; 19 `<InlineNotice` calls; 17 `<EmptyState` occurrences across 38 page/control files; 13 raw role=status/alert for bounded metadata, listbox and disabled controls (three styled exemptions). No whole-project zero-count claim. Three shared primitives now use `--lms-radius-control:6px` matching legacy `$radius-control:6px`, and InlineNotice's focus dismiss uses a 3px offset matching legacy accessibility. F3/F4/F5 remain unticked until missing proofs are supplied, especially 640–767px/real tablet visual comparison and state timing.
+
+**Exact next file:** `src/components/tpo/tpo-prep-readiness-editor.tsx`. Next after that: `src/components/tpo/tpo-job-types-editor.tsx`, `src/components/tpo/tpo-grid-filter-panel.tsx`, then unconverted role-notice controls across other portals. Keep the north star: *new vNext module inside old LMS*, pixel-level, no page-content edits. Do not push to main.
