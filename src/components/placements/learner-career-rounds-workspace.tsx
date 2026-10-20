@@ -236,7 +236,7 @@ export function LearnerCareerRoundsWorkspace({
     const urgent = learnerRoundUrgency(round, nowMs);
     return urgent === "today" || urgent === "week";
   }).length;
-  const selectClass = "mt-1 min-h-11";
+  const selectClass = "mt-1 min-h-11 min-[768px]:min-h-9";
   const date = selected ? learnerRoundScheduledInstant(selected) : null;
   const meeting = externalLink(selected?.exception?.meetingUrl ?? selected?.meetingUrl ?? null);
   const mobileInterviewSummary=kind==="INTERVIEW"&&selected
@@ -394,7 +394,7 @@ export function LearnerCareerRoundsWorkspace({
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Button type="button" onClick={saveSearchInUrl}
-            variant="secondary" className="min-h-11">
+            variant="secondary" className="min-h-11 min-[768px]:min-h-9">
             Save {kind==="INTERVIEW"?"interview":"assessment"} search link
           </Button>
           <p className="text-xs text-muted-foreground">
@@ -436,7 +436,7 @@ export function LearnerCareerRoundsWorkspace({
           </p>
           <Button type="button" onClick={()=>{
             setFilters(defaults);setDueBucket("all");
-          }} variant="ghost" className="mt-2 min-h-11 !text-[var(--lms-primary-text)] underline">
+          }} variant="ghost" className="mt-2 min-h-11 min-[768px]:min-h-9 !text-[var(--lms-primary-text)] underline">
             Show linked interview
           </Button>
         </aside>
@@ -447,7 +447,7 @@ export function LearnerCareerRoundsWorkspace({
           <p className="mt-2 text-sm text-body">Try a different date range or employer.</p>
           <Button type="button"
             onClick={() => { setFilters(defaults); setDueBucket("all"); setMissingLinkOnly(false); }}
-            variant="ghost" className="mt-3 min-h-11 !text-[var(--lms-primary-text)] underline">
+            variant="ghost" className="mt-3 min-h-11 min-[768px]:min-h-9 !text-[var(--lms-primary-text)] underline">
             Clear filters
           </Button>
         </div>
@@ -542,7 +542,7 @@ export function LearnerCareerRoundsWorkspace({
                     <dd className="mt-1 text-foreground">{rescheduleSummary.location}</dd></div>
                 </dl>
                 <Button type="button" onClick={()=>void copyRescheduleSummary()}
-                  variant="secondary" className="min-h-11 w-full md:w-auto">
+                  variant="secondary" className="min-h-11 min-[768px]:min-h-9 w-full md:w-auto">
                   Copy schedule summary
                 </Button>
                 {copyStatus?<p role="status" className="text-xs text-body">{copyStatus}</p>:null}
@@ -555,7 +555,7 @@ export function LearnerCareerRoundsWorkspace({
             <div className="flex flex-wrap gap-3">
               {externalAssessment ? (
                 <Button type="button" onClick={()=>setConfirmExternalTest(externalAssessment.href)}
-                  variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline underline-offset-4">
+                  variant="ghost" className="min-h-11 min-[768px]:min-h-9 !text-[var(--lms-primary-text)] underline underline-offset-4">
                   Open employer assessment ↗
                 </Button>
               ) : null}
