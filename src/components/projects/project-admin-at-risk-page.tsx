@@ -109,7 +109,7 @@ export async function ProjectAdminAtRiskPage({
                       project.id +
                       "/summary"
                     }
-                    className="text-base font-semibold text-foreground hover:text-primary-text"
+                    className="text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     {project.title}
                   </Link>
@@ -134,10 +134,10 @@ export async function ProjectAdminAtRiskPage({
                   </StatusBadge>
                 </div>
               </div>
-              {project.blockerReason ? <div className="mt-3 border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
-                <p className="font-semibold">Active blocker</p>
-                <p className="mt-1 whitespace-pre-wrap break-words">{project.blockerReason}</p>
-              </div> : null}
+              {project.blockerReason ? <Banner tone="warning" className="mt-3">
+                <strong>Active blocker: </strong>
+                <span className="whitespace-pre-wrap break-words">{project.blockerReason}</span>
+              </Banner> : null}
               <dl className="mt-3 grid min-w-0 gap-3 text-sm text-body md:grid-cols-3">
                 <div><dt className="font-semibold">Severity</dt><dd>
                   {project.riskReasons.length > 1 || project.blockerReason ? "Risk" : "Watch"}
