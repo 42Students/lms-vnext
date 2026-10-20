@@ -11,3 +11,29 @@
 **Files changed:** `src/app/(authenticated)/mentor/activity/page.tsx`; `src/app/(authenticated)/mentor/activity/error.tsx`; `docs/orchestrator/queues/clone/lane-13-polish.md`; `docs/audit/ux/polish-lane-13.md`.
 
 **Validation:** Source-level JSX/import/tag inspection, including empty, filtered and full result paths plus 375/768/1280 CSS semantics. No browser screenshots or CI were run.
+
+## 3. Mentor · Meetings calendar
+
+**Surface:** `src/app/(authenticated)/mentor/calendar/page.tsx`; inspected all rendered `FilterBar`/`ResponsiveFilterDrawer`, `MentorMeetingsCalendar` and scoped stylesheet, `MentorProjectsUnavailable`, `MentorCalendarLoadFailure`, shared PageHeader/Input/Select/Button; route-local loading/error, absent not-found/template, nearest Mentor and authenticated layouts.
+
+**Problems found (9):** 8 uniformly prominent filters overwhelmed the meeting list; mobile drawer stacked a wall of controls; primary Filter was not visually aligned with inputs; count appeared below an oversized CSV button; export competed with Filter; meeting action links were right-aligned away from metadata; empty group had an unnecessarily boxed dashed notice; empty filtered results lacked a clear reset path; route error retry sat too close to the error text.
+
+**Changes:** retained all 8 selectors, search field association `form="mentor-calendar-filters"`, options, actions, query serialization, project permissions and CSV export. Kept **Action needed**, **IST dates**, and **Filter** first in a uniform 375px stacked / 768px three-column control row. The remaining 6 selectors now sit under a native accessible `Disclosure`, automatically expanded for active advanced filters inside the existing responsive drawer (one DOM subtree). Pass active filter count to the existing FilterBar button. Align meeting count and secondary CSV export in one responsive result band; provide Clear when a filtered result is empty without removing the existing calendar group empty messages. Left-align row action links with project metadata; quiet empty notices to a hairline without changing text, palette or typography family; align route error retry spacing and control height. Existing `loading.tsx` skeleton, shared failure banner and parent layouts needed no change.
+
+**Files changed:** `src/app/(authenticated)/mentor/calendar/page.tsx`; `src/components/projects/mentor-meetings-calendar.module.css`; `src/app/(authenticated)/mentor/calendar/error.tsx`; lane queue and this proof. Source-level states and 375/768/1280 rules inspected; no runtime screenshots or CI.
+
+## 4. Mentor · Contacts legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx` — read entire optional-catchall page and parent Mentor role-guard layout; checked all route-local loading/error/not-found/template candidates (none exist). This route calls `redirect("/mentor/projects")` before any DOM is rendered. **Problems: 0; visual/structural fixes: none.** There is no page surface, overlay, interactive state, focus target, or responsive layout here to clutter or realign. Preserved the exact legacy bookmark route and destination rather than introducing a duplicate screen or redirect flash. **Files changed:** queue and proof only. Source-only inspection; no browser or CI.
+
+## 5. Mentor · Course detail legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx`. Inspected the whole source, optional catchall route candidates (`loading`, `error`, `not-found`, `template`: absent), nearest course layout (absent), and the inherited Mentor role guard. The only operation is a server `redirect("/mentor/projects")`; no on-screen page, loading state, overlay, control, headings, tables or actions are rendered at 375/768/1280. **Problems found: 0; fixes: none.** Maintained exact URL capture and redirect behavior rather than adding an intermediate UI. Files changed: this proof and lane checklist only; no browser/CI.
+
+## 6. Mentor · Courses legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/courses/page.tsx`; reviewed its complete page and all four candidate route states (no loading/error/not-found/template files), inherited Mentor and authenticated layouts. Server-only `redirect("/mentor")` is the **entire** implementation: no rendered DOM, page, form, overlay, hover/focus, loading, empty state or viewport-specific content exists. **Problems found: 0. Changes: none.** Kept the different `/mentor` redirect exactly as written (distinct from the course-detail redirect) to protect legacy routes/permissions. Files changed: lane-13 polish queue and this proof only; no browser/CI.
+
+## 7. Mentor · File Explorer legacy bookmark
+
+**Surface:** `src/app/(authenticated)/mentor/fileExplorer/page.tsx`. Fully inspected: immediate server `redirect("/mentor/projects")`, nearest Mentor role/layout and authenticated shell; route-local loading, error, not-found and template files are absent. All 375/768/1280 and interactive states are inapplicable because no page is rendered before redirect. **Problems: 0; fixes: none.** Did not invent an interim file manager UI or modify redirect/authorization behavior. Files changed: checklist and this proof only; no browser/CI.
