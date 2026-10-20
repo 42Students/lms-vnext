@@ -210,10 +210,10 @@ export function AdminCourseDisplayEditor({
         </label>
       </div>
 
-      <div className="mt-5 flex justify-end">
+      <div className="mt-5 flex justify-stretch md:justify-end">
         <Button
           type="button"
-          className="min-h-11 md:min-h-9"
+          className="min-h-11 w-full justify-center md:min-h-9 md:w-auto"
           disabled={pending}
           onClick={save}
         >
