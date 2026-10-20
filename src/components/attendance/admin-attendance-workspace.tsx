@@ -555,6 +555,7 @@ export function AdminAttendanceWorkspace({
                             <td key={day} className="px-3 py-3 text-center">
                               <Button
                                 type="button"
+                                variant="ghost"
                                 disabled={!multiple && new Date(first.startsAt).getTime() > loadedAt}
                                 aria-label={multiple
                                   ? String(sessions.length) + " sessions on " + day + " for " + learnerName(learner)
@@ -564,7 +565,7 @@ export function AdminAttendanceWorkspace({
                                   else setTarget({ learner, session: first, record });
                                 }}
                                 title={!multiple && new Date(first.startsAt).getTime()>loadedAt ? "This class has not started. Attendance can be corrected after it begins." : undefined}
-                                className="disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary"
+                                className="min-h-11 border-transparent bg-transparent px-1 text-body disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                               >
                                 <StatusBadge tone={multiple ? "neutral" : state.tone}>
                                   {multiple ? String(sessions.length) + " sessions" : state.code}

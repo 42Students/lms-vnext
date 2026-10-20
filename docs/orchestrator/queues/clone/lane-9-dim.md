@@ -63,26 +63,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-9.md: file, number of i
 - [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
 - [x] `src/components/admin/tenant-domain-manager.tsx`
 - [x] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/auth/device-list.tsx`
-- [ ] `src/components/auth/login-form.tsx`
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/college/college-faculty-reassign-action.tsx`
-- [ ] `src/components/college/college-faculty-schedule-reassign.tsx`
-- [ ] `src/components/college/college-offering-metadata-action.tsx`
-- [ ] `src/components/college/college-person-audit-modal.tsx`
-- [ ] `src/components/college/college-person-edit-action.tsx`
-- [ ] `src/components/college/college-person-profile-overview-modal.tsx`
-- [ ] `src/components/college/college-student-csv-import.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/college/student-class-move-action.tsx`
-- [ ] `src/components/colleges/college-contact-profile-form.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/auth/device-list.tsx`
+- [x] `src/components/auth/login-form.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/college/college-faculty-reassign-action.tsx`
+- [x] `src/components/college/college-faculty-schedule-reassign.tsx`
+- [x] `src/components/college/college-offering-metadata-action.tsx`
+- [x] `src/components/college/college-person-audit-modal.tsx`
+- [x] `src/components/college/college-person-edit-action.tsx`
+- [x] `src/components/college/college-person-profile-overview-modal.tsx`
+- [x] `src/components/college/college-student-csv-import.tsx`
+- [x] `src/components/college/college-student-import-history.tsx`
+- [x] `src/components/college/student-class-move-action.tsx`
+- [x] `src/components/colleges/college-contact-profile-form.tsx`
 - [ ] `src/components/courses/admin-course-actions.tsx`
 - [ ] `src/components/courses/admin-course-create-panel.tsx`
 - [ ] `src/components/courses/admin-learning-structure-actions.tsx`
