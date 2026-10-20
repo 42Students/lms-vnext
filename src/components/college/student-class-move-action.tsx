@@ -72,7 +72,12 @@ export function StudentClassMoveAction({ membershipId, name }: {
       className="min-h-11 md:min-h-9">
       Move class
     </Button>
-    <Dialog open={open} onOpenChange={next=>{if(!busy)setOpen(next);}} title={"Move class for "+name} dismissible={!busy}>
+    <Dialog open={open} onOpenChange={next=>{if(!busy)setOpen(next);}} title={"Move class for "+name} dismissible={!busy} footer={<>
+<Button variant="secondary" type="button" onClick={() => setOpen(false)}
+          className="min-h-11 md:min-h-9" disabled={busy}>Cancel</Button>
+<Button variant="primary" type="button" disabled={!canMove || busy} onClick={submit}
+          className="min-h-11 md:min-h-9" loading={busy}>Confirm move</Button>
+</>}>
       <p className="mb-2 text-xs text-body">Same batch and academic period only</p>
       {loaded && loaded.options.every(item => item.id === loaded.current.sectionId) ?
         <EmptyState title="No eligible classes" description="No other eligible class is available in the current batch and period."/> : null}
@@ -84,12 +89,7 @@ export function StudentClassMoveAction({ membershipId, name }: {
       </Select> : busy?<Skeleton variant="row" label="Loading classes"/>:<EmptyState title="No classes loaded" description="No class data loaded"/>}
       {error ? <Alert tone="error" className="my-2">{error}</Alert> : null}
       {canMove?<Alert tone="info" className="mt-2">{moveConfirmation}</Alert>:null}
-      <div className="mt-3 flex flex-wrap gap-2">
-        <Button variant="primary" type="button" disabled={!canMove || busy} onClick={submit}
-          className="min-h-11 md:min-h-9" loading={busy}>Confirm move</Button>
-        <Button variant="secondary" type="button" onClick={() => setOpen(false)}
-          className="min-h-11 md:min-h-9" disabled={busy}>Cancel</Button>
-      </div>
+      
     </Dialog>
   </div>;
 }

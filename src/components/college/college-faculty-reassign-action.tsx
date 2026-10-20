@@ -41,7 +41,14 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
       className="min-h-11 md:min-h-9">
       Reassign
     </Button>
-    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Reassign "+facultyName+" · "+role} dismissible={!pending}>
+    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Reassign "+facultyName+" · "+role} dismissible={!pending} footer={<>
+<Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+            className="min-h-11 md:min-h-9">Cancel</Button>
+          <Button variant="primary" type="button" disabled={pending||!replacementMembershipId} onClick={submit}
+            className="min-h-11 md:min-h-9" loading={pending}>
+            {pending?"Reassigning…":"Confirm replacement"}
+          </Button>
+</>}>
         <p className="text-sm text-body">Replace {facultyName}; existing teaching history will be retained.</p>
         <label className="grid gap-2 text-sm font-semibold text-body">Replacement Faculty
           <Select value={replacementMembershipId} disabled={pending} onChange={e=>setReplacementMembershipId(e.target.value)}>
@@ -51,14 +58,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
         </label>
         {replacementMembershipId?<Alert tone="info">{teachingReassignPrompt(facultyName,candidates.find(person=>person.id===replacementMembershipId)?.label??"Faculty",role)}</Alert>:null}
         {error?<Alert tone="error">{error}</Alert>:null}
-        <div className="flex flex-wrap justify-end gap-2">
-          <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-            className="min-h-11 md:min-h-9">Cancel</Button>
-          <Button variant="primary" type="button" disabled={pending||!replacementMembershipId} onClick={submit}
-            className="min-h-11 md:min-h-9" loading={pending}>
-            {pending?"Reassigning…":"Confirm replacement"}
-          </Button>
-        </div>
+        
     </Dialog>
     {!open&&error?<Alert tone="error">{error}</Alert>:null}
   </div>;

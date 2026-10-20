@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -45,16 +46,16 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
     <PageHeader title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<PageBackLink href="/college/lecture-halls" label="Back to lecture halls"/>} />
-    <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
-      <label className="grid min-w-40 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">From (IST)
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">From (IST)
         <Input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
           />
       </label>
-      <label className="grid min-w-40 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">To (IST)
+      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">To (IST)
         <Input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
           />
       </label>
-      <Button type="submit">View schedule</Button>
+      <Button type="submit" className="w-full min-[768px]:w-auto">View schedule</Button>
     </form>
     {!parsed.success && hasRange ? <ErrorState title="Invalid date range"
       description="Choose valid from/to dates in IST, up to 31 consecutive calendar days. No schedule was loaded." />
@@ -70,14 +71,14 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
           classes={bookingOptions.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}
           faculty={bookingOptions.faculty} /> : null}
         <section aria-label="Hall scheduled sessions" className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">{result.conflictCount} flagged booking{result.conflictCount === 1 ? "" : "s"} in selected range</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{result.conflictCount} flagged booking{result.conflictCount === 1 ? "" : "s"} in selected range</h2>
           {result.truncated ? <p role="status" className="text-sm text-warning">More than 500 sessions match. This is a truncated read; conflict counts may be incomplete. Select a shorter range.</p> : null}
           {result.sessions.length === 0 ? <p className="border-b border-border pb-5 text-sm text-body">
             No persisted scheduled sessions overlap this date range. This is not confirmation that the hall is free for booking.
           </p> : <ul className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{result.sessions.map(item =>
             <li key={item.id} className="min-w-0 py-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
-                <h3 className="font-semibold text-foreground">{item.title}</h3>
+                <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{item.title}</h3>
                 {item.hasConflict ? <StatusBadge tone="warning">Potential conflict</StatusBadge> :
                   <StatusBadge tone="neutral">Scheduled</StatusBadge>}
               </div>

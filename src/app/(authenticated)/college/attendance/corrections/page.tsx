@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -47,11 +48,11 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
     </section>
     <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
       <label className="grid min-w-0 w-full flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-40">From (IST)
-        <Input name="from" type="date" required defaultValue={data.query.from??""}
+        <DateInput mode="date" name="from" required defaultValue={data.query.from??""}
           className="min-h-11 md:min-h-9"/>
       </label>
       <label className="grid min-w-0 w-full flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-40">To (IST)
-        <Input name="to" type="date" required defaultValue={data.query.to??""}
+        <DateInput mode="date" name="to" required defaultValue={data.query.to??""}
           className="min-h-11 md:min-h-9"/>
       </label>
       <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">View sessions</Button>

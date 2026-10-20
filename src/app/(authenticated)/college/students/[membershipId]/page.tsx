@@ -28,7 +28,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
       description="Read-only college-owned learner academic record; private identity and documents are excluded."
       actions={<PageBackLink href="/college/students" label="Back to students"/>} />
     <section className="border-b border-border pb-5">
-      <h2 className="font-semibold text-foreground">Student record</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Student record</h2>
       <dl className="mt-4 grid min-w-0 gap-3 text-sm md:grid-cols-2">
         <div><dt className="text-muted-foreground">Roll number</dt><dd>{data.person.rollNumber ?? "Not recorded"}</dd></div>
         <div><dt className="text-muted-foreground">Registration number</dt><dd>{data.person.registrationNumber ?? "Not recorded"}</dd></div>
@@ -36,7 +36,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
       </dl>
     </section>
     <section className="border-b border-border pb-5">
-      <h2 className="font-semibold text-foreground">Program and batch enrollments</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Program and batch enrollments</h2>
       <form method="get" role="search" aria-label="Enrollment lifecycle filter" className="mt-3 flex min-w-0 flex-wrap items-end gap-3"
         action={`/college/students/${encodeURIComponent(membershipId)}`}>
         <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-[220px] md:basis-auto">
@@ -57,7 +57,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
           <li key={row.id} className="py-3 text-sm text-body">
             {row.programName} ({row.programCode}) · {row.cohortName} ({row.cohortCode}) · {row.status}
           </li>)}</ul>}
-      <h3 className="mt-5 font-semibold text-foreground">Active classes</h3>
+      <h3 className="mt-5 font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">Active classes</h3>
       {data.classes.length === 0 ? <EmptyState title="No active classes" description="No active class enrollment recorded."/> :
         <ul className="mt-2 divide-y divide-border border-y border-border">{data.classes.map(row =>
           <li key={row.enrollmentId + row.sectionCode} className="py-3 text-sm text-body">
@@ -65,7 +65,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
           </li>)}</ul>}
     </section>
     <section className="border-b border-border pb-5">
-      <h2 className="font-semibold text-foreground">Recorded attendance</h2>
+      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recorded attendance</h2>
       <p className="mt-2 text-sm text-body">
         {data.attendance.recordedMarkedEvents} marked-session record(s);
         {" "}{data.attendance.presentOrLate} explicitly present/late;
