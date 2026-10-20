@@ -181,7 +181,7 @@ export function TpoGrid<Row>({
   });
   const selectedIds=new Set(selection?.selected??[]);
   const selectedVisible=visible.filter(row=>selectedIds.has(rowKey(row)));
-  const copied=selectedVisible.length?selectedVisible:visible;
+  const copied=selection?.selected.length?selectedVisible:visible;
   if(!navigator.clipboard?.writeText){setNotice("Clipboard unavailable. Use Export CSV instead.");return;}
   void navigator.clipboard.writeText(gridClipboardTsv(display,copied,true))
    .then(()=>setNotice("Copied "+copied.length+" authorized row(s) as TSV."))
