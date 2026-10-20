@@ -3,7 +3,6 @@
 import {
   type FormEvent,
   useState,
-  useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import { Menu, MenuItem } from "@/components/ui/menu";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { courseApiError } from "./learner-course-api";
 
 async function requestJson(
@@ -43,15 +43,14 @@ async function requestJson(
 function useLearningMutation() {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, startTransition] =
-    useTransition();
+  const {pending,run:guardedRun}=useGuardedAction();
 
   function run(
     task: () => Promise<unknown>,
     successTitle: string,
     onSuccess?: () => void,
   ) {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         await task();
         onSuccess?.();
@@ -129,7 +128,7 @@ export function CreateLearningPathPanel({
       </p>
       <div className="mt-4 grid gap-4">
         <label>
-          <span className="mb-[6px] block text-xs font-semibold text-body">
+          <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
             Title
           </span>
           <Input
@@ -142,7 +141,7 @@ export function CreateLearningPathPanel({
           />
         </label>
         <label>
-          <span className="mb-[6px] block text-xs font-semibold text-body">
+          <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
             Description
           </span>
           <Textarea
@@ -255,7 +254,8 @@ export function LearningPathActions({
 
       <Dialog
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={next=>{if(!pending)setEditOpen(next);}}
+        dismissible={!pending}
         title="Edit Learning Path"
         description="The Offering relationship is immutable."
         footer={
@@ -301,7 +301,7 @@ export function LearningPathActions({
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
           <label>
-            <span className="mb-[6px] block text-xs font-semibold text-body">
+            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
               Title
             </span>
             <Input
@@ -313,7 +313,7 @@ export function LearningPathActions({
             />
           </label>
           <label>
-            <span className="mb-[6px] block text-xs font-semibold text-body">
+            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
               Description
             </span>
             <Textarea
@@ -424,7 +424,7 @@ export function CreateLessonForm({
       </p>
       <div className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto]">
         <label>
-          <span className="mb-[6px] block text-xs font-semibold text-body">
+          <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
             Name
           </span>
           <Input
@@ -437,7 +437,7 @@ export function CreateLessonForm({
           />
         </label>
         <label>
-          <span className="mb-[6px] block text-xs font-semibold text-body">
+          <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
             Description
           </span>
           <Input
@@ -515,7 +515,8 @@ export function LessonActions({
 
       <Dialog
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={next=>{if(!pending)setEditOpen(next);}}
+        dismissible={!pending}
         title="Edit Lesson"
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
@@ -532,9 +533,7 @@ export function LessonActions({
               disabled={
                 pending ||
                 !name.trim() ||
-                !Number.isInteger(
-                  Number(sequence),
-                )
+                !sequence.trim() || !Number.isInteger(Number(sequence)) || Number(sequence)<0 || Number(sequence)>10000
               }
               onClick={() =>
                 run(
@@ -566,7 +565,7 @@ export function LessonActions({
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
           <label>
-            <span className="mb-[6px] block text-xs font-semibold text-body">
+            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
               Name
             </span>
             <Input
@@ -578,7 +577,7 @@ export function LessonActions({
             />
           </label>
           <label>
-            <span className="mb-[6px] block text-xs font-semibold text-body">
+            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
               Description
             </span>
             <Textarea
@@ -592,7 +591,7 @@ export function LessonActions({
             />
           </label>
           <label>
-            <span className="mb-[6px] block text-xs font-semibold text-body">
+            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
               Order
             </span>
             <Input

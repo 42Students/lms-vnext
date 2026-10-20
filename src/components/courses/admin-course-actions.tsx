@@ -7,6 +7,8 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -83,6 +85,7 @@ export function CourseActions({
     useState(false);
   const [archiveOpen, setArchiveOpen] =
     useState(false);
+  const [discardOpen,setDiscardOpen]=useState(false);
   const [name, setName] =
     useState(course.name);
   const [code, setCode] =
@@ -101,7 +104,7 @@ export function CourseActions({
       officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"")||takeaways!==(course.takeaways??"")));
   function closeEdit(next:boolean) {
     if(!next && pending)return;
-    if(!next && dirty && !window.confirm("Discard unsaved course changes?"))return;
+    if(!next && dirty){setDiscardOpen(true);return;}
     setEditOpen(next);
   }
 
@@ -120,7 +123,7 @@ export function CourseActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Duplicate</Link>:null}
         <Button
           size="sm"
@@ -130,21 +133,13 @@ export function CourseActions({
         >
           Edit
         </Button>
-        <Button
-          size="sm"
-          className="min-h-11 md:min-h-9"
-          variant="danger"
-          onClick={() =>
-            setArchiveOpen(true)
-          }
-        >
-          Archive
-        </Button>
+        <Dropdown trigger="More" label="Course actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu><MenuItem disabled={pending} onClick={()=>setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown>
       </div>
 
       <Dialog
         open={editOpen}
         onOpenChange={closeEdit}
+        dismissible={!pending}
         title="Edit Course"
         description="Department ownership is immutable after Course creation."
         footer={
@@ -248,6 +243,9 @@ export function CourseActions({
         </div>
       </Dialog>
 
+      <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+        title="Discard unsaved course changes?" confirmLabel="Discard changes"
+        onConfirm={()=>{setDiscardOpen(false);setEditOpen(false);}} />
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
@@ -323,7 +321,7 @@ export function OfferingActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="sm"
           className="min-h-11 md:min-h-9"
@@ -332,19 +330,13 @@ export function OfferingActions({
         >
           Edit
         </Button>
-        {!hideArchive ? <Button
-          size="sm"
-          className="min-h-11 md:min-h-9"
-          variant="danger"
-          onClick={() => setArchiveOpen(true)}
-        >
-          Archive
-        </Button> : null}
+        {!hideArchive ? <Dropdown trigger="More" label="Offering actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu><MenuItem disabled={pending} onClick={()=>setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown> : null}
       </div>
 
       <Dialog
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={next=>{if(!pending)setEditOpen(next);}}
+        dismissible={!pending}
         title="Edit Course Offering"
         description="Course, Cohort and Academic Period ownership are immutable."
         footer={
@@ -359,7 +351,7 @@ export function OfferingActions({
               Cancel
             </Button>
             <Button
-              disabled={pending}
+              disabled={pending||!displayOrder.trim()||!Number.isInteger(Number(displayOrder))||Number(displayOrder)<0||Number(displayOrder)>10000||Boolean(credits.trim()&&(!Number.isInteger(Number(credits))||Number(credits)<1||Number(credits)>30))}
               onClick={() =>
                 run(
                   () =>
