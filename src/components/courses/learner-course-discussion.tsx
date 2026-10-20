@@ -41,8 +41,8 @@ type DiscussionMessage = {
   isMine: boolean;
 };
 
-function formatTime(value: string) {
-  return learnerDiscussionRelativeTimeLabel(value,Date.now());
+function formatTime(value: string, asOfMs: number) {
+  return learnerDiscussionRelativeTimeLabel(value, asOfMs);
 }
 
 
@@ -56,6 +56,7 @@ export function LearnerCourseDiscussion({
   pollIntervalMs?: number;
 }) {
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
+  const [timeReference, setTimeReference] = useState(() => Date.now());
   const [highlightedPinned, setHighlightedPinned] = useState<{
     id: string;
     messageText: string;
@@ -145,6 +146,8 @@ export function LearnerCourseDiscussion({
           : null,
       );
       setCanPost(learnerDiscussionCanPost(payload.canPost));
+      // Refresh relative timestamps only when a feed response arrives, not during render.
+      setTimeReference(Date.now());
       setLoadError(false);
       loadedOnce.current = true;
     } catch {
@@ -423,7 +426,7 @@ export function LearnerCourseDiscussion({
             {pinned.messageText}
           </p>
           <p title={learnerDiscussionTimeLabel(pinned.createdAt)} className="mt-1 text-xs text-muted-foreground">
-            {pinned.senderName} · {formatTime(pinned.createdAt)}
+            {pinned.senderName} · {formatTime(pinned.createdAt, timeReference)}
           </p>
           {moderate && canPost ? (
             <Button type="button" disabled={pinningId!==null}
@@ -556,7 +559,7 @@ export function LearnerCourseDiscussion({
                           <StatusBadge tone="info">Faculty</StatusBadge>
                         ) : null}
                         <span title={learnerDiscussionTimeLabel(row.item.createdAt)} className="text-xs text-muted-foreground">
-                          {formatTime(row.item.createdAt)}
+                          {formatTime(row.item.createdAt, timeReference)}
                         </span>
                         {row.item.pinned ? (
                           <StatusBadge tone="info">Pinned</StatusBadge>
