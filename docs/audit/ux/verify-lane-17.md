@@ -128,3 +128,14 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 22. Inspected route/loading/error, template directory query/filter model, `SuperAdminTemplateArchiveControl`, `SuperAdminTemplatePageExport`, table columns/statuses/version counts, CSV, pagination, permissions and parent shell.
 - Regressions found/fixed: 0. Filter and New template actions maintain 44px mobile width, ListToolbar is sole results-count source, row actions wrap and no-result recovers with Clear filters. CSV uses existing page-only rows.
 - Extra clutter/alignment fixes: 0; no source change needed. Files changed: queue and proof. Source-only verification.
+
+## Surface 23 — `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
+- Original polish evidence: `docs/audit/ux/polish-lane-7.md`, Surface 23. Inspected complete route/loading/error and `ClassTeamWorkspaceCreator`, class/roster fetch states, template selection, team split/dragless move and swap, preflight, confirmation, status, partial result/CSV and sticky 375px footer, supporting model contracts and parent shell.
+- Regression fixed (1): in INDIVIDUAL mode, Create button remained enabled while preflight had not loaded (or failed), then silently returned with no action. Disable primary CTA until the current scoped preflight is available, matching the existing create() guard and avoiding misleading click.
+- Extra clutter/alignment fixes: 0; retain 44px full-width mobile controls, existing back link and empty template catalogue link. Files changed: `src/components/projects/class-team-workspace-creator.tsx`, queue and proof.
+
+## Surface 24 — `src/app/(authenticated)/admin/quizzes/page.tsx`
+- Original polish evidence: `docs/audit/ux/polish-lane-7.md`, Surface 24. Read route/loading/error, `CollegeQuizCreate` (question types/points/options, scheduling, validation/confirm) and `AdminAssessmentDirectory` (filter/aggregate, statuses, action and paging controls), data query and 375/768/1280 layout wrappers.
+- Regression fixed (1): suppressing duplicate widget PageHeader using `showHeader={false}` also silently removed its explanatory description. Restore the exact existing widget description on the sole route-level PageHeader; no text changed and title stays unduplicated.
+- Extra clutter/alignment fixes: 0; quiz creation remains primary; outlined export, editor control sizes, error/empty/pagination unchanged.
+- Files changed: `src/app/(authenticated)/admin/quizzes/page.tsx`, queue and proof. Source-only verification, no CI.
