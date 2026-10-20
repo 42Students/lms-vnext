@@ -88,7 +88,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>
   </form>
  );
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
   {heading(peopleFilters?"People":"Super Admin · Read-only",description,
     <>{exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}{refreshAction}</>)}
   {intro}
@@ -110,77 +110,84 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   {headingMode==="section"?refreshAction:null}
-  <form method="get" className={compactReadLayout?"grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] py-4 md:grid-cols-6 md:items-start print:hidden":"grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] py-4 md:grid-cols-2 min-[992px]:grid-cols-4 print:hidden"}>
+  <form method="get" className={compactReadLayout?"grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 print:hidden":"grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 print:hidden"}>
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
-   <label className={compactReadLayout?"grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-3":"grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"}>Search
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
    </label>
-   <label className={compactReadLayout?"grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2":"grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"}>Status
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="status" defaultValue={data.query.status}
      className="min-h-11 w-full md:min-h-9">
      {statuses.map(status=><option key={status} value={status}>{status}</option>)}
     </Select>
    </label>
-   {applicationFilters?<>
+   <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
+   {applicationFilters?<details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.source!=="ALL"||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL")}>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
+    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
     {(["jobId","departmentId","programId","cohortId"] as const).map(key=>{
       const rows=key==="jobId"?applicationFilters.jobs:key==="departmentId"?applicationFilters.departments:key==="programId"?applicationFilters.programs:applicationFilters.batches;
       const label=key==="jobId"?"Job":key==="departmentId"?"Department":key==="programId"?"Program":"Batch";
-      return <label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+      return <label key={key} className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
         <Select name={key} defaultValue={data.query[key]??""} className="w-full">
           <option value="">All {label.toLowerCase()}s</option>{rows.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>;
     })}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
       <Select name="source" defaultValue={data.query.source} className="w-full">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </Select>
     </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
       <Select name="channel" defaultValue={data.query.channel} className="w-full">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </Select>
     </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Hiring stage
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Hiring stage
      <Select name="pipelineStage" defaultValue={data.query.pipelineStage} className="w-full">
        {["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"].map(stage=><option value={stage} key={stage}>{stage==="ALL"?"All hiring stages":stage}</option>)}
      </Select>
     </label>
-   </>:null}
-   {peopleFilters ? <>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+    </div>
+   </details>:null}
+   {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
+    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
      <Select name="departmentId" defaultValue={data.query.departmentId??""} className="w-full">
       <option value="">All departments</option>{peopleFilters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
     </label>
-    {peopleFilters.kind==="FACULTY"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty type
+    {peopleFilters.kind==="FACULTY"?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty type
       <Input name="employmentType" defaultValue={data.query.employmentType??""} placeholder="Professor, Mentor…" maxLength={128}
        className="min-h-11 w-full md:min-h-9"/>
      </label>:<>
       {(["programId","cohortId","sectionId"] as const).map((key)=>{
         const values=key==="programId"?peopleFilters.programs:key==="cohortId"?peopleFilters.batches:peopleFilters.classes;
         const label=key==="programId"?"Program":key==="cohortId"?"Batch":"Class";
-        return <label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+        return <label key={key} className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
          <Select name={key} defaultValue={data.query[key]??""} className="w-full">
           <option value="">All {label.toLowerCase()}s</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
          </Select>
         </label>;
       })}
      </>}
-   </>:null}
-   {classOptions?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+    </div>
+   </details>:null}
+   {classOptions?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
      <Select name="sectionId" defaultValue={data.query.sectionId??""}
       className="min-h-11 w-full md:min-h-9">
       <option value="">All classes</option>
       {classOptions.map(cls=><option key={cls.id} value={cls.id}>{cls.name}</option>)}
      </Select></label>:null}
-   {compactReadLayout?null:<label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+   {compactReadLayout?null:<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
     <Select name="pageSize" defaultValue={data.query.pageSize}
      className="min-h-11 w-full md:min-h-9">
      {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
     </Select>
    </label>}
-   <Button type="submit" variant="primary" className={compactReadLayout?"order-3 min-h-11 w-full md:order-none md:col-span-1 md:self-center md:min-h-9":"min-h-11 w-full self-end md:min-h-9"}>Filter</Button>
+
    {compactReadLayout?<details className="order-4 min-w-0 md:col-span-6">
      <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Rows per page</summary>
      <div className="max-w-[200px] pb-1">
@@ -238,7 +245,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>}/>}
   </> : <>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
-   {data.items.map(row=><article key={row.id} className="min-w-0 space-y-2 py-4">
+   {data.items.map(row=><article key={row.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{row.title}</h2>
      <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
@@ -253,6 +260,6 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>
   </>}
-  <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>superAdminReadHref(path,{...data.query,page})}/>
+  <div className="min-w-0 border-t border-border pt-[var(--lms-space-3)]"><Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>superAdminReadHref(path,{...data.query,page})}/></div>
  </div>;
 }
