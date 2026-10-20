@@ -9,6 +9,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Dropdown } from "@/components/ui/dropdown";
 import {
   collegeStudyMemberLabel, type CollegeStudyMemberAction,
 } from "@/modules/groups/college-member-management-model";
@@ -63,7 +64,7 @@ export function CollegeStudyMemberActions({
       setError(null);
       setAction({ action: "ADD", membershipId });
     }} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-body leading-4">
         Add learner
         <Select value={selection} onChange={(event) => setSelection(event.target.value)}
           className="min-h-11 min-w-0 md:min-h-9">
@@ -71,39 +72,41 @@ export function CollegeStudyMemberActions({
           {available.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-body leading-4">
         Or learner membership ID
         <Input value={manualId} onChange={(event) => setManualId(event.target.value)}
           placeholder="UUID" className="min-h-11 min-w-0 md:min-h-9" />
       </label>
       <Button type="submit" loading={pending} className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto" disabled={pending}>Review add</Button>
     </form>
-    <p className="text-xs text-muted-foreground">
+    <details className="border-b border-border pb-3 text-xs text-muted-foreground"><summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9">Membership policy</summary><p>
       Adding to a full group follows the registered group waitlist policy. Only active same-college learners are eligible.
-    </p>
+    </p></details>
     <div className="divide-y divide-border">
       {members.every(member=>member.state==="REMOVED") ? <EmptyState title="No active group members" description="No active group members are recorded."/> : null}
       {members.filter((member) => member.state !== "REMOVED").map((member) =>
         <div key={member.membershipId}
           className="flex min-w-0 flex-col items-stretch gap-3 py-3 md:flex-row md:items-center md:justify-between">
-          <span className="text-sm text-body">
+          <span className="min-w-0 break-words text-sm text-body">
             {member.displayName ?? "Unnamed member"} · <StatusBadge tone={member.state==="ACTIVE"?"success":member.state==="WAITLISTED"?"warning":"neutral"}>{member.state}</StatusBadge>
             {member.isLocked ? " · Locked" : ""}
           </span>
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending}
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <Button size="sm" variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={pending}
               onClick={() => setAction({
                 action: "LOCK", membershipId: member.membershipId, locked: !member.isLocked,
               })}>{member.isLocked ? "Unlock" : "Lock"}</Button>
-            <Button size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={pending}
+            <Button size="sm" variant="danger" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={pending}
               onClick={() => setAction({ action: "REMOVE", membershipId: member.membershipId })}>
               Remove
             </Button>
-            <Button size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={pending}
+            <Dropdown mobileSheet align="end" label={"Additional actions for "+(member.displayName??"member")} trigger="More actions">
+            <Button size="sm" variant="danger" className="min-h-11 w-full md:min-h-9" disabled={pending}
               onClick={() => setAction({ action: "REMOVE_AND_LOCK",
                 membershipId: member.membershipId, expectedVersion: member.version, confirm: true })}>
               Remove &amp; lock
             </Button>
+            </Dropdown>
           </div>
         </div>,
       )}

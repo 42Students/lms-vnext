@@ -104,8 +104,8 @@ export function NotificationList({
     <div className={readEndpoint==="/api/learn/notifications" ? "space-y-[var(--lms-space-3)]" : variant==="tpo" ? "space-y-0" : "min-w-0 space-y-4"}>
       {groupNotificationsByDate(items, groupingNow).map((group) => (
         <section key={group.label} aria-label={group.label}
-          className={readEndpoint==="/api/learn/notifications" ? "space-y-[var(--lms-space-2)]" : "space-y-2"}>
-          <h2 className="text-sm font-semibold leading-5 text-muted-foreground">{group.label}</h2>
+          className="min-w-0 space-y-2">
+          <h2 className="border-b border-[var(--lms-canvas-border)] pb-2 text-[13px] font-semibold leading-5 text-muted-foreground">{group.label}</h2>
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
               onClick={()=>{
@@ -113,6 +113,7 @@ export function NotificationList({
                void markRead(item.id,item.actionHref??undefined);
               }}
               aria-label={"Open notification: "+item.title}
+              loading={pendingId===item.id}
               className="w-full min-h-12 justify-start rounded-none border-x-0 border-t-0 border-b border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 text-left whitespace-normal shadow-none hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:py-5">
               <div className="flex min-w-0 items-start gap-3">
                <div className="min-w-0 flex-1">
@@ -159,19 +160,20 @@ export function NotificationList({
                     {formatWhen(item.createdAt)}
                   </p>
                 </div>
-                <div className="flex w-full shrink-0 flex-wrap gap-2 min-[768px]:w-auto">
+                <div className="flex w-full shrink-0 flex-wrap gap-2 min-[768px]:w-auto min-[768px]:justify-end">
                   {item.actionHref ? (
                     item.readAt ? (
                       <Link
                         href={item.actionHref}
-                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 min-[768px]:min-h-9 min-[768px]:flex-none text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 min-[768px]:flex-none"
                       >
                         {item.actionLabel??"Open"}
                       </Link>
                     ) : (
                       <Button
                         size="sm"
-                        variant="secondary"
+                        variant="primary"
+                        loading={pendingId === item.id}
                         className="min-h-11 min-w-0 flex-1 min-[768px]:min-h-9 min-[768px]:flex-none"
                         disabled={pendingId !== null}
                         onClick={() => markRead(item.id, item.actionHref ?? undefined)}
@@ -183,7 +185,8 @@ export function NotificationList({
                   {!item.readAt && item.source !== "ANNOUNCEMENT" ? (
                     <Button
                       size="sm"
-                      variant="secondary"
+                      variant="ghost"
+                      loading={pendingId === item.id}
                       className="min-h-11 min-[768px]:min-h-9"
                       disabled={pendingId !== null}
                       onClick={() => markRead(item.id)}
