@@ -171,7 +171,7 @@ function RecruiterCalendarEventCard({
             <p className="mt-1 text-xs text-muted-foreground">College: {event.collegeName}</p>
           ) : null}
 
-          <h3 className="mt-1 text-base font-semibold text-foreground">
+          <h3 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
             {event.title}
           </h3>
 
@@ -326,7 +326,7 @@ export default async function HrCalendarPage({
       />
       {noCollegeAccess ? (
         <section className="border-b border-[var(--lms-canvas-border)] pb-6">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             Open this on your college&apos;s placement address
           </h2>
           <p className="mt-2 text-sm text-body">
@@ -355,7 +355,7 @@ export default async function HrCalendarPage({
           ]} />
 
           <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-5">
-            <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Results due in this period</h2>
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Results due in this period</h2>
             <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2">
               {calendar.resultsDue.map(item => (
@@ -372,7 +372,7 @@ export default async function HrCalendarPage({
           <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
                   Calendar controls
                 </h2>
                 <p className="mt-1 text-sm text-body">
@@ -443,7 +443,7 @@ export default async function HrCalendarPage({
                 value={view}
               />
 
-              <label className="flex min-w-0 flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <label className="flex min-w-0 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Jump to date
                 <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <Input
@@ -493,7 +493,7 @@ export default async function HrCalendarPage({
               <div className="space-y-4 min-[861px]:hidden">
                 {mobileDays.map((day) => (
                   <article key={day.day} className={styles.mobileDay}>
-                    <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
+                    <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{dateLabel(day.day)}</h3>
                     <div className={styles.mobileEvents}>
                       {day.events.map((event) => (
                         <RecruiterCalendarEventCard key={event.id} event={event} />
@@ -623,7 +623,7 @@ export default async function HrCalendarPage({
               className="space-y-5"
             >
               <div>
-                <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
                   Agenda
                 </h2>
 
@@ -645,7 +645,7 @@ export default async function HrCalendarPage({
                   key={day.day}
                   className="space-y-3"
                 >
-                  <h3 className="border-b border-[var(--lms-canvas-border)] pb-2 text-sm font-semibold text-foreground">
+                  <h3 className="border-b border-[var(--lms-canvas-border)] pb-2 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
                     {dateLabel(day.day)}
                     {day.day === today
                       ? " · Today"

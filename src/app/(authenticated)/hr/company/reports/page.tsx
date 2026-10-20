@@ -109,7 +109,7 @@ export default async function RecruiterCompanyReportsPage({
           />
         ) : (
           <section className="border-b border-border pb-5">
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               Choose a college
             </h2>
 
@@ -197,7 +197,7 @@ export default async function RecruiterCompanyReportsPage({
       ]} />
 
       <section aria-label="All your drives at this college" className="border-b border-border pb-4 md:pb-5">
-        <h2 className="font-semibold text-foreground">All your drives at this college</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">All your drives at this college</h2>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
           {buildRecruiterReportFunnel(report.funnel).map(stage=><div key={stage.label}
@@ -211,7 +211,7 @@ export default async function RecruiterCompanyReportsPage({
       </section>
 
       <section className="border-b border-border pb-4 md:pb-5">
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
           Drive report filters
         </h2>
 
@@ -272,7 +272,7 @@ export default async function RecruiterCompanyReportsPage({
       </section>
 
       <section className="border-b border-border pb-4 md:pb-5">
-        <h2 className="font-semibold text-foreground">Current page hiring totals</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Current page hiring totals</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Totals cover only the visible authorized drive rows on this page, not every company drive.
           Outstanding means currently issued offers; these counts may represent multiple offer versions.
@@ -285,7 +285,7 @@ export default async function RecruiterCompanyReportsPage({
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             Hiring activity by drive
           </h2>
 
