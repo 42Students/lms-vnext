@@ -93,12 +93,12 @@
 - [ ] `src/app/(authenticated)/college/domains/error.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/domains/loading.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/domains/page.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/loading.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/loading.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/loading.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/loading.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
 - [ ] `src/app/(authenticated)/college/electives/error.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/electives/loading.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
 - [ ] `src/app/(authenticated)/college/electives/page.tsx` — **SOURCE PASS (chat-4 source comparison, strict parity open)**
@@ -115,18 +115,18 @@
 - [ ] `src/app/(authenticated)/college/faculty/import/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/faculty/loading.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/loading.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/loading.tsx`
-- [ ] `src/app/(authenticated)/college/groups/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/error.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx` — **SOURCE PASS (chat-4 full-file scan; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/loading.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/error.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/loading.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
+- [ ] `src/app/(authenticated)/college/groups/page.tsx` — **SOURCE PASS (chat-4 full-file review; strict parity open)**
 - [ ] `src/app/(authenticated)/college/hiring-dashboard/error.tsx`
 - [ ] `src/app/(authenticated)/college/hiring-dashboard/loading.tsx`
 - [ ] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
@@ -2623,3 +2623,317 @@ Six complete files fetched after direct `[chat-4]` branch writes. Existing Super
 **Strict ticked in this set: 0.** Neither a full page-tree global zero grep nor all-state browser comparison/TSX compiler evidence is available. Known shared PageHeader mismatch remains open.
 
 **Next exact file:** `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx`, then `loading.tsx`, then `page.tsx`.
+
+
+### Replacement chat-4 — Elective allocation / roster and first group boundaries — 2026-10-20
+
+**Scope:** Nine College Admin TSX files; eight changed in this source-migration batch and the Group CSV Preview loader read/verified unchanged because it already uses the correct shared directory loader. All route data, server actions, college permissions, optimistic guards and wording intentionally retained. Changes are pushed directly to `chatgpt/chat-4-b` only with `[chat-4]`. No CI, build, runtime, screenshot or page interaction executed.
+
+**Full fetched-file source grep, not repo-wide:** `/\<(button|input|select|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`. Equivalent bounded text counts shown below; these are not claims of global `grep -rl` zero. A tag-family open/close scan (Button, Input, Select, Textarea, Checkbox, Alert, EmptyState, ErrorState, PageHeader, DataTable, div, section, form, label, p, nav) found no excess closing elements. This scan is not a TSX parser.
+
+| Route file | Native controls | Hidden transport exemptions | Literal hex | Overlay regex | Native h1 | md/sm source prefixes |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx` | 0 | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/electives/[slotId]/allocate/loading.tsx` | 0 | 0 | 0 | 0 | 0 | 0 / 0 |
+| `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx` | 0 | 0 | 0 | 0 | 0 | 6 / 0 |
+| `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx` | 0 | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/loading.tsx` | 0 | 0 | 0 | 0 | 0 | 0 / 0 |
+| `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx` | 7 | 7 | 0 | 0 | 0 | 5 / 0 |
+| `src/app/(authenticated)/college/groups/[groupId]/error.tsx` | 0 | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx` | 0 | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx` | 0 | 0 | 0 | 0 | 0 | 0 / 0 |
+
+#### `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Button reset() via React; disabled absent on retry | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | No editable user form in this file | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=1, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line n/a, ErrorState line 5, Alert line n/a, DataTable line n/a, GracefulPageLoading line n/a.
+
+#### `src/app/(authenticated)/college/electives/[slotId]/allocate/loading.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Shared skeleton busy; no premature empty state | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | No editable user form in this file | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=0, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line n/a, ErrorState line n/a, Alert line n/a, DataTable line n/a, GracefulPageLoading line 3.
+
+#### `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Allocation form now shared Select/Input/Textarea/Checkbox, DataTable and EmptyState, Alert(success/warning), 500-row cap and server mutation preserved; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Allocation form now shared Select/Input/Textarea/Checkbox, DataTable and EmptyState, Alert(success/warning), 500-row cap and server mutation preserved; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Submit disabled when zero offerings; native semantics retained through shared Checkbox | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | `Select/Input/Textarea` use shared field tokens, 1 `Checkbox`, no native visual control | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Allocation form now shared Select/Input/Textarea/Checkbox, DataTable and EmptyState, Alert(success/warning), 500-row cap and server mutation preserved; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=6, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Allocation form now shared Select/Input/Textarea/Checkbox, DataTable and EmptyState, Alert(success/warning), 500-row cap and server mutation preserved; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line 162, ErrorState line n/a, Alert line 165, DataTable line 194, GracefulPageLoading line n/a.
+
+#### `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Button reset() via React; disabled absent on retry | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | No editable user form in this file | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=1, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line n/a, ErrorState line 5, Alert line n/a, DataTable line n/a, GracefulPageLoading line n/a.
+
+#### `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/loading.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Shared skeleton busy; no premature empty state | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | No editable user form in this file | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=0, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line n/a, ErrorState line n/a, Alert line n/a, DataTable line n/a, GracefulPageLoading line 3.
+
+#### `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Roster rows retain hidden action and membershipId transport inputs (7 explicit exemptions); visible two native confirmation checkboxes switched to shared Checkbox, feedback to Alert and StatusBadge; roster DataTable EmptyState, server mutations unchanged; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Roster rows retain hidden action and membershipId transport inputs (7 explicit exemptions); visible two native confirmation checkboxes switched to shared Checkbox, feedback to Alert and StatusBadge; roster DataTable EmptyState, server mutations unchanged; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Native hidden form values unchanged; shared Confirm Checkbox checked state delegated | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | `Select/Checkbox` shared; 7 native input type=hidden retained only as form transport | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Roster rows retain hidden action and membershipId transport inputs (7 explicit exemptions); visible two native confirmation checkboxes switched to shared Checkbox, feedback to Alert and StatusBadge; roster DataTable EmptyState, server mutations unchanged; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=5, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Roster rows retain hidden action and membershipId transport inputs (7 explicit exemptions); visible two native confirmation checkboxes switched to shared Checkbox, feedback to Alert and StatusBadge; roster DataTable EmptyState, server mutations unchanged; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line 119, ErrorState line n/a, Alert line 130, DataTable line 165, GracefulPageLoading line n/a. **Explicit native-hidden exemptions:** 7 occurrences, `input type="hidden"` for server-action routing and membership IDs. No visible native input remains.
+
+#### `src/app/(authenticated)/college/groups/[groupId]/error.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Button reset() via React; disabled absent on retry | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | No editable user form in this file | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=1, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line n/a, ErrorState line 10, Alert line n/a, DataTable line n/a, GracefulPageLoading line n/a.
+
+#### `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Button reset() via React; disabled absent on retry | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | No editable user form in this file | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=1, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Shared scoped ErrorState and secondary Retry Button at 44px phone / 36px desktop; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line n/a, ErrorState line 7, Alert line n/a, DataTable line n/a, GracefulPageLoading line n/a.
+
+#### `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx`
+
+| Property/state | Old LMS reference and exact sourced value | vNext value and location | Strict result |
+| --- | --- | --- | --- |
+| Canvas/default | old-lms-shell-spec.md:18-20: shell #f1f4f9, one canvas white #fff, border 1px solid #e5e9f0, radius 12px, padding 24px | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; no extra PageCanvas | **Inherited layout source; actual computed geometry unverified** |
+| Head/title | legacy-styles/components___listing-page-header.scss:26-35 border-bottom 1px; :52-58 title 28px/600/1.3 and tracking -.02em | PageHeader/ErrorState shared; `src/components/ui/page-header.tsx` title 30px desktop /20px mobile | **Known 28px listing-title versus shared 30px mismatch; do not tick** |
+| Actions/default | old-lms-shell-spec.md:22-24: primary #0a7c88 white text, height 36px/radius 9px/14px/650; outlined secondary 36px | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; shared Button variants and styled links | **Source chrome delegated; pressed/hover exact value incomplete** |
+| Focus/active/disabled | legacy-styles/components___button.scss:13-24 150ms transitions, :49-51 disabled; components___form.scss:22-36 preserves keyboard focus-visible | Shared skeleton busy; no premature empty state | **Static states only, keyboard and hover replay absent** |
+| Form and field | legacy-styles/components___form.scss:117-143: 10px radius, 14px/400/20px, 0.2px tracking, 2px teal focus and red error halo | No editable user form in this file | **Scoped value source, no focus/browser measurements** |
+| Error/empty/loading | old-lms-pages.md:6,11-12: in-canvas states and hairline table rows, no nested cards | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; no false no-data reports on route failure | **State composition verified in source; exact legacy banner heights/icons not measured** |
+| Responsive 375/767/768 | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px column, title20; >=768px desktop row. old-lms-shell-spec.md:22-24 36px desktop controls | Source: md=0, sm=0; shared components have max-[767px]:min-h-11; touched actions min-h-11 md:min-h-9; file width min-w-0 | **Phone/tablet CSS rule compared from source; live 375/767/768 rendered proof absent** |
+| Content and accessibility | old-lms-pages.md:6: vNext page content/permissions unchanged | Shared GracefulPageLoading(directory) with scoped busy label and delayed recovery state; aria/roles from shared components, no manually scripted modal | **Permission/JSX source review; compiler and browser interactions not run** |
+
+**Source anchors:** PageHeader line n/a, ErrorState line n/a, Alert line n/a, DataTable line n/a, GracefulPageLoading line 4.
+
+**STRICT TICK RULE:** zero new checked. Full global coverage grep, full computed-state legacy CSS equality, phone/tablet rendered layout and TypeScript/JSX parser still missing. Review is **source-pass**, not a certified pixel clone.
+
+
+### Replacement chat-4 — College Groups directory, detail, rule and import preview — 2026-10-20
+
+**Work delivered:** nine routes inspected, seven source-updated in this batch and existing shared detail/root loading pages source-reviewed without unnecessary changes. No content/API/permissions changed. Repaired invalid stray `-` tokens in detail grid class strings. Read-back audit of persisted branch blobs; no CI, app execution or JSX parser/browser.
+
+**Scoped full-file regex/grep:** `/<(button|input|select|textarea|table)\b/g` visible/native form controls; `/#[a-f0-9]{3,8}\b/gi` literal colours; `/fixed inset-0|role=["']dialog["']/g` hand overlays; `/<h1\b/g` native h1. JSX paired closing families checked for local div, p, nav, section, form, label, Button, EmptyState, DataTable, PageHeader, PageBackLink and GracefulPageLoading; zero excess closing families. No global repository proof implied.
+
+| Route | Raw controls | Hex | Manual overlay | Native h1 | md/sm responsive prefixes | Broken `grid gap-4 -` |
+| --- | ---: | ---: | ---: | ---: | --- | ---: |
+| `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx` | 0 | 0 | 0 | 0 | 0 / 0 | 0 |
+| `src/app/(authenticated)/college/groups/[groupId]/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 | 0 |
+| `src/app/(authenticated)/college/groups/[groupId]/page.tsx` | 0 | 0 | 0 | 0 | 5 / 0 | 0 |
+| `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 | 0 |
+| `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 | 0 |
+| `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx` | 0 | 0 | 0 | 0 | 4 / 0 | 0 |
+| `src/app/(authenticated)/college/groups/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 | 0 |
+| `src/app/(authenticated)/college/groups/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 | 0 |
+| `src/app/(authenticated)/college/groups/page.tsx` | 0 | 0 | 0 | 0 | 6 / 0 | 0 |
+
+#### `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Shared PageBackLink with unchanged groupId href; PageHeader subtitle unchanged | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Shared PageBackLink with unchanged groupId href; PageHeader subtitle unchanged | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Existing form state/disabled guard unchanged; shared components own focus/disabled | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Shared PageBackLink with unchanged groupId href; PageHeader subtitle unchanged | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Shared PageBackLink with unchanged groupId href; PageHeader subtitle unchanged | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 0, sm count 0; Shared PageBackLink with unchanged groupId href; PageHeader subtitle unchanged | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:27, DataTable:n/a, EmptyState:n/a, ErrorState:n/a, GracefulPageLoading:n/a, PageBackLink:30. No raw user controls locally.
+
+#### `src/app/(authenticated)/college/groups/[groupId]/loading.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Skeleton busy and deferred recovery handled by shared loading component | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 0, sm count 0; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:n/a, DataTable:n/a, EmptyState:n/a, ErrorState:n/a, GracefulPageLoading:4, PageBackLink:n/a. No raw user controls locally.
+
+#### `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Broken `grid gap-4 - sm:grid-cols-2/3` class fixed to min-w-0 md:grid-cols-2/3, group status badge and EmptyState in table; 44px navigation | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Broken `grid gap-4 - sm:grid-cols-2/3` class fixed to min-w-0 md:grid-cols-2/3, group status badge and EmptyState in table; 44px navigation | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Existing form state/disabled guard unchanged; shared components own focus/disabled | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Broken `grid gap-4 - sm:grid-cols-2/3` class fixed to min-w-0 md:grid-cols-2/3, group status badge and EmptyState in table; 44px navigation | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Broken `grid gap-4 - sm:grid-cols-2/3` class fixed to min-w-0 md:grid-cols-2/3, group status badge and EmptyState in table; 44px navigation | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 5, sm count 0; Broken `grid gap-4 - sm:grid-cols-2/3` class fixed to min-w-0 md:grid-cols-2/3, group status badge and EmptyState in table; 44px navigation | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:83, DataTable:162, EmptyState:160, ErrorState:n/a, GracefulPageLoading:n/a, PageBackLink:n/a. No raw user controls locally.
+
+#### `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Secondary Retry calls reset; Button keyboard/focus delegated | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 1, sm count 0; Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:n/a, DataTable:n/a, EmptyState:n/a, ErrorState:8, GracefulPageLoading:n/a, PageBackLink:n/a. No raw user controls locally.
+
+#### `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Skeleton busy and deferred recovery handled by shared loading component | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 0, sm count 0; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:n/a, DataTable:n/a, EmptyState:n/a, ErrorState:n/a, GracefulPageLoading:4, PageBackLink:n/a. No raw user controls locally.
+
+#### `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Back links 44px phone/36px desktop; rule summary flattened to hairline-separated cells, criteria md:grid-cols-2 rather than sm | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Back links 44px phone/36px desktop; rule summary flattened to hairline-separated cells, criteria md:grid-cols-2 rather than sm | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Existing form state/disabled guard unchanged; shared components own focus/disabled | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Back links 44px phone/36px desktop; rule summary flattened to hairline-separated cells, criteria md:grid-cols-2 rather than sm | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Back links 44px phone/36px desktop; rule summary flattened to hairline-separated cells, criteria md:grid-cols-2 rather than sm | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 4, sm count 0; Back links 44px phone/36px desktop; rule summary flattened to hairline-separated cells, criteria md:grid-cols-2 rather than sm | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:35, DataTable:n/a, EmptyState:n/a, ErrorState:24, GracefulPageLoading:n/a, PageBackLink:n/a. No raw user controls locally.
+
+#### `src/app/(authenticated)/college/groups/error.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Secondary Retry calls reset; Button keyboard/focus delegated | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 1, sm count 0; Existing scoped ErrorState and a secondary Retry Button with min-h-11/md:min-h-9 | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:n/a, DataTable:n/a, EmptyState:n/a, ErrorState:10, GracefulPageLoading:n/a, PageBackLink:n/a. No raw user controls locally.
+
+#### `src/app/(authenticated)/college/groups/loading.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Skeleton busy and deferred recovery handled by shared loading component | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 0, sm count 0; Shared GracefulPageLoading with route-specific label; Group Rule Preview uses card-shape skeleton; directory/detail/import-preview use directory-shape skeleton | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:n/a, DataTable:n/a, EmptyState:n/a, ErrorState:n/a, GracefulPageLoading:4, PageBackLink:n/a. No raw user controls locally.
+
+#### `src/app/(authenticated)/college/groups/page.tsx`
+
+| Property/state | Legacy file and value | vNext source/value | Verification |
+| --- | --- | --- | --- |
+| Page canvas/default | old-lms-shell-spec.md:18-20 white #fff canvas, border #e5e9f0 1px radius12 padding24, continuous surface | No extra PageCanvas and ordinary group stats/rows separated by hairlines; Single PageHeader, group filter Select/Button, DataTable empty state, 44px mobile clear/prev/next links; pagination wraps | **Source anatomy; browser-computed px unverified** |
+| Heading baseline | legacy-styles/components___listing-page-header.scss:26-35 hairline border, 52-58 title28px weight600 line-height1.3 tracking-.02em; mobile title20px | Shared PageHeader/ErrorState; central header renders desktop30px and mobile20px | **28px vs shared 30px discrepancy blocks tick** |
+| Buttons/default | old-lms-shell-spec.md:22-24 primary #0a7c88 on white, radius9 height36 font14/650, secondary border white/36px | Shared Button/PageBackLink or keyboard-capable Link min-h-11/md:min-h-9; Single PageHeader, group filter Select/Button, DataTable empty state, 44px mobile clear/prev/next links; pagination wraps | **Component source family, exact computed colours/active not verified** |
+| Focus/hover/disabled | legacy-styles/components___button.scss:13-24 150ms transitions and hover, :49-51 disabled; form.scss:22-36 :focus-visible keyboard state | Existing form state/disabled guard unchanged; shared components own focus/disabled | **Unplayed browser states and no all-property CSS comparison** |
+| List rows/cards | old-lms-pages.md:6,11 compact hairline-bordered DataTable, not a card for each ordinary record | Single PageHeader, group filter Select/Button, DataTable empty state, 44px mobile clear/prev/next links; pagination wraps | **Source pattern matches canvas layout, measured row heights/spacing not verified** |
+| Loading/error/empty | old-lms-pages.md:6,11-12: in-canvas loading/error/empty distinct; pale yellow info strip not fake no-data | Single PageHeader, group filter Select/Button, DataTable empty state, 44px mobile clear/prev/next links; pagination wraps | **State coverage at source but no screen-specific legacy capture** |
+| Responsive @375/767/768 | legacy-styles/components___listing-page-header.scss:130-153 stacked <=767px, 20px h1, action targets44px; 768+ horizontal | md breakpoint count 6, sm count 0; Single PageHeader, group filter Select/Button, DataTable empty state, 44px mobile clear/prev/next links; pagination wraps | **Static source review only; live responsive render/screenshots not produced** |
+| Markup/data preservation | old-lms-pages.md:6: preserve vNext page contents/service records | Original membership rules, waitlist and group boundaries, IST date strings, server reads and actions unchanged; no new public fields | **No typecheck/runtime/keyboard; scope/pair scan only** |
+
+Source anchors: PageHeader:55, DataTable:138, EmptyState:128, ErrorState:56, GracefulPageLoading:n/a, PageBackLink:n/a. No raw user controls locally.
+
+**STRICT TICK RULE: 0 newly checked.** Scope and props audited by reading, but repo-wide greps, computed CSS for every hover/active/focus/disabled/loading state, actual 375/767/768 responsive render and TSX parser proof are outstanding. Do not conflate scoped source review with finished pixel-level parity.
+
+**Exact next route:** `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx` source-review complete; proceed to `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx` child component `src/components/groups/college-group-import-preview.tsx`, then the next College Admin unticked component.
