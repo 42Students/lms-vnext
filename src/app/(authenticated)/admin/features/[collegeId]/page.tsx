@@ -227,7 +227,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
         <DataTable<(typeof OPTIONAL_MODULE_KEYS)[number]> caption="College module inheritance"
           rows={OPTIONAL_MODULE_KEYS} getRowKey={module=>module}
-          empty={<p role="status">No lower-level overrides</p>}
+          empty={<EmptyState title="No lower-level overrides" description="No lower-level module overrides are available in this inheritance view."/>}
           columns={[
             {key:"module",header:"Module",mobilePriority:"primary",cell:module=><strong>{ADMIN_MODULE_LABELS[module]}</strong>},
             ...ancestorLevels.map(level=>({

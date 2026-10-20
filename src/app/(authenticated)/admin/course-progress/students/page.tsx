@@ -6,6 +6,7 @@ import {parseSuperAdminStudentProgressParams} from "@/modules/courses/super-admi
 import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
+import {EmptyState} from "@/components/ui/empty-state";
 import {DataTable} from "@/components/ui/data-table";
 import {Alert} from "@/components/ui/alert";
 
@@ -64,7 +65,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
         return completed===null?"Not measured":completed+"%";
       }},
     ]}
-    empty={<p role="status" className="text-sm text-body">No students are enrolled in this course offering.</p>}
+    empty={<EmptyState title="No enrolled students" description="No students are enrolled in this course offering."/>}
   />
  </div>;
 }
