@@ -29,7 +29,7 @@ export default async function FacultyDiscussionHistoryPage({
         Discussions
       </Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Recorded action
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded action
         <Select name="action" defaultValue={data.query.action}
           className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="ALL">All moderation and reply actions</option>

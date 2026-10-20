@@ -50,7 +50,7 @@ export default async function FacultyCourseAssessmentHealthPage({
     </section>
     <form action={facultyCourseHealthHref({...data.query,page:1}).split("?")[0]}
       method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Assessment type
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
           className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="ALL">All published assessments</option>

@@ -42,8 +42,8 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  <Link href={root+"/gradebook"} className="mt-3 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open gradebook →</Link>
  </section></div>
  <form method="get" className="flex flex-wrap items-end gap-3">
- <label className="grid gap-1 text-[13px] font-semibold leading-4">Assessment type
- <Select name="kind" defaultValue={data.query.kind} className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+ <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
+ <Select name="kind" defaultValue={data.query.kind} >
  <option value="ALL">All</option><option value="ASSIGNMENT">Assignments</option><option value="QUIZ">Quizzes</option>
  </Select></label>
  <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>

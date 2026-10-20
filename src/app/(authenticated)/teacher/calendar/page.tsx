@@ -69,12 +69,13 @@ export default async function FacultyCalendarPage({
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className={monthStyles.toolbarForm}>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Month (IST)
-          <Input type="month" name="month" required defaultValue={grid.query.month}
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month (IST)
+          <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
+    <Input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
              />
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Teaching Section
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
           <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>

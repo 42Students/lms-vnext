@@ -43,7 +43,7 @@ export default async function CollegeDriveShortlistedPage({
       actions={<Link href={driveApplicationsHref(jobId,{...query,screening:"ALL"})}
         className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-9 inline-flex items-center">Applications</Link>} />
     <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student
+      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student
         <Input type="search" name="q" maxLength={100} defaultValue={query.q} className="min-h-11 min-w-0 md:min-h-9" />
       </label>
       <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>

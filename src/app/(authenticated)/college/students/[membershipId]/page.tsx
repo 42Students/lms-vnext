@@ -39,7 +39,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
       <h2 className="font-semibold text-foreground">Program and batch enrollments</h2>
       <form method="get" role="search" aria-label="Enrollment lifecycle filter" className="mt-3 flex min-w-0 flex-wrap items-end gap-3"
         action={`/college/students/${encodeURIComponent(membershipId)}`}>
-        <label className="grid w-full min-w-0 basis-full gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-[220px] md:basis-auto">
+        <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-[220px] md:basis-auto">
           Enrollment lifecycle
           <Select name="status" defaultValue={data.filter.status}
             >

@@ -50,7 +50,7 @@ export default async function FacultyTeachingProfilePage({
     </section>
     <form method="get" action="/teacher/profile/teaching"
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-      <label className="grid min-w-0 w-full gap-1 text-sm font-semibold leading-5 text-body">Search current teaching
+      <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-5 text-[var(--lms-neutral-400)] leading-4">Search current teaching
         <Input name="search" type="search" defaultValue={data.query.search}
           placeholder="Course, Section or academic period" maxLength={120}
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>

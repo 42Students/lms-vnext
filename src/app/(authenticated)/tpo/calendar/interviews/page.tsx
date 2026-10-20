@@ -25,12 +25,12 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
   <Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">← Calendar</Link>
   <form action="/tpo/calendar/interviews" method="get"
     className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-   <label className="text-sm font-semibold text-body">Search company, drive or round
+   <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Search company, drive or round
     <Input name="q" type="search" maxLength={100} defaultValue={data.q}
-     className="mt-2 block min-h-11 md:min-h-9 w-full" />
+     className="mt-[6px] block min-h-11 md:min-h-9 w-full" />
    </label>
-   <label className="text-sm font-semibold text-body">Lookahead
-    <Select name="days" defaultValue={String(data.days)} className="mt-2 block min-h-11 md:min-h-9 w-full">
+   <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Lookahead
+    <Select name="days" defaultValue={String(data.days)} className="mt-[6px] block min-h-11 md:min-h-9 w-full">
       {[7,14,30,60,90].map(n=><option key={n} value={n}>{n} days</option>)}
     </Select></label>
    <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
