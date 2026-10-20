@@ -45,7 +45,7 @@ export default async function MentorProjectActivityHistoryPage({
       </section> : <>
       <form method="get"
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
-        className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0"}>
+        className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
         <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Event importance
           <Select name="importance" defaultValue={data.query.importance}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">

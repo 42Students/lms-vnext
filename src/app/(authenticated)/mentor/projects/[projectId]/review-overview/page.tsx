@@ -33,7 +33,7 @@ export default async function MentorReviewOverviewPage({
   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
   Delivery workspace</Link>}/>
  <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
- className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+ className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
   <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Delivery status
    <Select name="status" defaultValue={data.query.status}
     className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
