@@ -57,7 +57,9 @@ export function TpoDriveRequestActions({requestId,status}:{
         <div className="flex min-w-48 flex-col gap-1">
           {actions.slice(1).map(option=><Button variant="ghost" key={option.value} type="button" disabled={busy||guardedPending}
             className="w-full justify-start text-left"
-            onClick={()=>{
+            onClick={event=>{
+              const menu=event.currentTarget.closest("details");
+              if (menu) { menu.open=false; menu.querySelector("summary")?.focus(); }
               setAction(option.value);setError("");setMessage("");setReason("");
             }}>
             {option.label}
