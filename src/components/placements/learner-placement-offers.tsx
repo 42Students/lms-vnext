@@ -265,7 +265,7 @@ export function LearnerPlacementOffers({
         </p>
       </div>
 
-      <Button className="max-md:min-h-11" type="button" onClick={downloadOwnOffers}
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={downloadOwnOffers}
         >
         Export displayed offers CSV
       </Button>
@@ -274,12 +274,12 @@ export function LearnerPlacementOffers({
           CSV includes the first {LEARNER_OFFER_CSV_LIMIT} of {sortedOffers.length} offers in this view. Narrow your offer filters to export others.
         </p>
       ) : null}
-      <div className="grid gap-4">
+      <div className="min-w-0 divide-y divide-border">
         {sortedOffers.map((item) => (
           <article
             key={item.offerId}
             id={learnerOfferAnchor(item.offerId) ?? undefined}
-            className="scroll-mt-24 min-w-0 border-b border-border py-4 md:py-6"
+            className="scroll-mt-24 min-w-0 py-4 first:pt-0 last:pb-0 md:py-5"
           >
             <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
@@ -431,7 +431,7 @@ export function LearnerPlacementOffers({
 
             {learnerOfferResponseTiming(item,snapshotNowIso).canRespond ? (
               <div className="mt-4 flex flex-wrap gap-2">
-                <Button className="max-md:min-h-11"
+                <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                   size="sm"
                   disabled={
                     pendingId !== null
@@ -443,7 +443,7 @@ export function LearnerPlacementOffers({
                     ? "Saving…"
                     : "Accept offer"}
                 </Button>
-                <Button className="max-md:min-h-11"
+                <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                   size="sm"
                   variant="secondary"
                   disabled={
@@ -454,7 +454,7 @@ export function LearnerPlacementOffers({
                   Decline offer
                 </Button>
                 {extensionsAvailable && item.expiresAt && !pendingExtensions.has(item.offerId) ? (
-                  <Button className="max-md:min-h-11" size="sm" variant="secondary" disabled={pendingId!==null}
+                  <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="sm" variant="secondary" disabled={pendingId!==null}
                     onClick={()=>{
                       setExtensionOffer(item);
                       setExtensionAt(learnerOfferExtensionLocalDefault(item.expiresAt!));
@@ -469,7 +469,7 @@ export function LearnerPlacementOffers({
             {item.joining &&
             item.joining.status !==
               "PENDING" ? (
-              <div className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-4 py-3 text-sm text-body">
+              <div className="mt-4 border-t border-border pt-3 text-sm text-body">
                 <p className="m-0 font-semibold text-foreground">
                   Joining outcome
                 </p>
@@ -500,10 +500,10 @@ export function LearnerPlacementOffers({
         title="Request an offer deadline extension"
         description="This sends an in-app request to your placement team; it does not change or accept the offer."
         footer={<>
-          <Button className="max-md:min-h-11" variant="secondary" disabled={pendingId!==null} onClick={()=>setExtensionOffer(null)}>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId!==null} onClick={()=>setExtensionOffer(null)}>
             Keep current deadline
           </Button>
-          <Button className="max-md:min-h-11" disabled={pendingId!==null} onClick={()=>void requestExtension()}>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pendingId!==null} onClick={()=>void requestExtension()}>
             {pendingId!==null?"Submitting…":"Confirm extension request"}
           </Button>
         </>}>
@@ -538,10 +538,10 @@ export function LearnerPlacementOffers({
         title={declineOffer?"Decline "+declineOffer.companyName+"\u0027s offer?":"Decline offer?"}
         description="Declining is recorded as an official response and cannot be undone from the Learner workspace."
         footer={<>
-          <Button className="max-md:min-h-11" variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
             Keep offer pending
           </Button>
-          <Button className="max-md:min-h-11" disabled={pendingId !== null || declineReason.length > 2000}
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pendingId !== null || declineReason.length > 2000}
             onClick={() => { if (declineOffer) void respond(declineOffer.offerId, "DECLINE"); }}>
             {pendingId !== null ? "Saving…" : "Decline offer"}
           </Button>
@@ -570,9 +570,9 @@ export function LearnerPlacementOffers({
         description="Review the recorded offer terms. Acceptance is only submitted after you confirm."
         footer={
           <>
-            <Button className="max-md:min-h-11" variant="secondary" disabled={pendingId !== null}
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId !== null}
               onClick={dismissAccept}>Keep offer pending</Button>
-            <Button className="max-md:min-h-11" disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
               onClick={() => { if (preview?.canConfirm) void respond(preview.offerId, "ACCEPT"); }}>
               {pendingId !== null ? "Saving…" : "Yes, accept"}
             </Button>
@@ -588,7 +588,7 @@ export function LearnerPlacementOffers({
             <p>Response deadline: {formatWhen(preview.expiresAt) ?? "No expiry specified"}</p>
             {acceptImpactBusy?<p role="status" className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>:null}
             {acceptImpactError?<p role="alert" className="text-sm text-error">{acceptImpactError}
-              <Button className="max-md:min-h-11" type="button" variant="link" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}}>Retry impact preview</Button>
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" variant="link" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}}>Retry impact preview</Button>
             </p>:null}
             {acceptImpact?<div className="space-y-2 border-b border-border py-3">
               <h3 className="font-semibold text-foreground">What accepting this offer changes</h3>

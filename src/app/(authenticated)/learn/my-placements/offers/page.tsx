@@ -105,7 +105,7 @@ export default async function LearnerOffersPage({
   })), Date.parse(snapshotNowIso));
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <Link
         href="/learn/my-placements/applications"
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
@@ -128,7 +128,7 @@ export default async function LearnerOffersPage({
           </Link>
         </p>
       ) : null}
-      <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer search" className="flex min-w-0 flex-wrap items-end gap-3">
+      <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer search" className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:gap-3">
         {view !== "all" ? <Input type="hidden" name="status" value={view} /> : null}
         {dueOnly ? <Input type="hidden" name="due" value="1" /> : null}
         {order !== "priority" ? <Input type="hidden" name="sort" value={order} /> : null}
@@ -140,10 +140,20 @@ export default async function LearnerOffersPage({
           <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
             placeholder="Employer or role" className="min-h-11 min-w-0" />
         </label>
-        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Search</Button>
+        <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:w-auto md:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
+
+      {hasActiveFacets ? (
+        <Link href={learnerOfferClearFiltersHref(view)}
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline">
+          Clear offer filters (keep selected status)
+        </Link>
+      ) : null}
+      <details className="border-t border-border pt-2" open={order!=="priority" || kind!=="all" || joiningFilter!=="all" || dueOnly || expiry!=="all" || undefined}>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">More offer filters {hasActiveFacets ? "(active)" : ""}</summary>
+        <div className="space-y-3 pt-3">
       <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer sorting" className="flex flex-wrap items-end gap-3">
         {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}
         {searchTerm?<Input type="hidden" name="q" value={searchTerm}/>:null}
@@ -161,12 +171,6 @@ export default async function LearnerOffersPage({
         </label>
         <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Apply sort</Button>
       </form>
-      {hasActiveFacets ? (
-        <Link href={learnerOfferClearFiltersHref(view)}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline">
-          Clear offer filters (keep selected status)
-        </Link>
-      ) : null}
       <nav aria-label="Recorded joining outcome" className={placementFilterNavClass}>
         {joiningTabs.map(tab => (
           <Link key={tab.id}
@@ -202,6 +206,8 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+        </div>
+      </details>
       {pageClamped ? (
         <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           The requested offer page no longer exists in your filtered results. Showing page {paginated.page} of {paginated.pages}.
@@ -227,7 +233,7 @@ export default async function LearnerOffersPage({
       ) : null}
       {!requestRead.available ? <p role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
-        <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
+        <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-y border-border px-4 py-8 text-center text-sm leading-[1.5] text-body">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (

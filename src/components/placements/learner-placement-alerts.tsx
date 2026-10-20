@@ -9,7 +9,7 @@ type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
 export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=false }: { alerts: Alerts; filtered?: boolean; unreadOnly?:boolean }) {
   return (
     <section aria-labelledby="learner-placement-alerts"
-      className="min-w-0 border-t border-border pt-5">
+      className="min-w-0 border-t border-border pt-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <h2 id="learner-placement-alerts" className="min-w-0 break-words text-base font-semibold text-foreground">
           Your placement alerts
@@ -24,7 +24,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
         These are not a substitute for official college-wide placement notices or dispute decisions.
       </p>
       {alerts.length === 0 ? (
-        <div role="status" className="mt-4 flex min-h-[180px] flex-col items-center justify-center gap-4 px-6 py-12 text-center text-sm leading-[1.5] text-body">
+        <div role="status" className="mt-4 flex min-h-40 flex-col items-center justify-center gap-3 px-3 py-6 text-center text-sm leading-6 text-body">
           {filtered ? "No loaded personal placement alerts match this search." : "No personal placement alerts have been delivered to you yet."}{" "}
           This does not establish that your college has published no notices.
         </div>
