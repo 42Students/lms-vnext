@@ -136,7 +136,9 @@ export default async function MentorCalendarPage({searchParams}:{
       </Link>
       {displayed.length>200?<span role="status">Export omits {displayed.length-200} meetings.</span>:null}
     </div>
-    <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">    <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
+      {displayed.length===0 && activeCount>0 ? <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear</Link> : null}
+    </div>
     <MentorMeetingsCalendar meetings={displayed}
       // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
       initialNow={now.toISOString()}/>
