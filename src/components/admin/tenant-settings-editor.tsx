@@ -53,7 +53,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   {groups.map(group=><fieldset disabled={!ready||saving} key={group} className="space-y-3">
    <legend className="mb-2 text-base font-semibold text-foreground">{group}</legend>
    <div className="grid gap-3 md:grid-cols-2">
-    {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-1 border-b border-border py-3 text-sm text-body">
+    {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="warning">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
