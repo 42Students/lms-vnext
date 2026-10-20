@@ -21,8 +21,8 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
  const data=q.length>=3?await lookupCollegeStudentPlacement(await getCurrentRequestContext(),q):null;
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Student placement lookup"
-   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Analytics</Link>}/>
-  <form action="/college/placements/student-lookup" role="search" className="border-b border-border pb-4">
+   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">Analytics</Link>}/>
+  <form action="/college/placements/student-lookup" role="search" aria-label="Student placement search" className="border-b border-border pb-4">
    <label className="grid min-w-0 w-full max-w-xl gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
       placeholder="Find one student in this college"
@@ -37,7 +37,7 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
      <p className="text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>
     <StatusBadge tone={person.placed?"success":"neutral"}>{person.placed?"Joined (confirmed)":"No confirmed joining recorded"}</StatusBadge>
    </div>
-   <DataTable caption="Student placement applications" columns={columns}
+   <DataTable caption={`${person.name??person.roll??"Student"} placement applications`} columns={columns}
     rows={person.applications.map((row,i)=>({...row,uiKey:row.jobId+":"+i}))}
     getRowKey={row=>row.uiKey}
     empty={<EmptyState title="No applications" description="No applications found."/>}/>

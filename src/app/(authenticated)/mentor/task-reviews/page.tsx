@@ -40,7 +40,7 @@ export default async function MentorTaskReviewsPage({
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid task review filters"} />
-    <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">
+    <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">
       Clear filters
     </Link>
   </section>;
@@ -51,11 +51,11 @@ export default async function MentorTaskReviewsPage({
       description="Submitted project tasks waiting for review across your assigned projects."
       actions={<div className="flex flex-wrap items-center gap-3">
         <Link href="/mentor/task-review-history"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Reviewed task history
         </Link>
         <Link href="/mentor/projects"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Projects
         </Link>
       </div>}
@@ -63,7 +63,7 @@ export default async function MentorTaskReviewsPage({
     {!data.enabled ? <section role="status" className="border-b border-border pb-4">
       Projects access is disabled for this membership. No task data was loaded.
     </section> : <>
-      <form method="get" action="/mentor/task-reviews"
+      <form role="search" aria-label="mentor task reviews filters" method="get" action="/mentor/task-reviews"
         className={mentorTaskReviewMobileFilters}>
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Task or project
@@ -119,13 +119,13 @@ export default async function MentorTaskReviewsPage({
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
-        <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">
+        <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">
           Clear
         </Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={mentorTaskReviewExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Export pending task review metadata CSV (max 200)
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching task reviews.</span>:null}
@@ -153,21 +153,21 @@ export default async function MentorTaskReviewsPage({
               }).format(item.submittedAt)} IST
             </p>
             <Link href={mentorTaskReviewTargetHref(item.projectId,item.taskId)}
-              className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Open exact task review →
             </Link>
           </article>)}</div>}
       {data.total>0&&data.items.length===0?
         <Link href={mentorTaskReviewHref({...data.query,page:1})}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           Return to first matching page
         </Link>:null}
       <nav aria-label="Task review pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-body">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
-          {data.page > 1 && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]"
+          {data.page > 1 && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]"
             href={mentorTaskReviewHref({...data.query, page: data.page - 1})}>Previous</Link>}
-          {data.page < data.totalPages && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]"
+          {data.page < data.totalPages && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]"
             href={mentorTaskReviewHref({...data.query, page: data.page + 1})}>Next</Link>}
         </div>
       </nav>

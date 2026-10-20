@@ -49,7 +49,7 @@ export default async function MentorSprintProgressPage({
     {!data.enabled ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Sprint progress was not loaded.
     </section> : <>
-      <FilterBar title="Filters"><form action="/mentor/sprint-progress" method="get"
+      <FilterBar title="Filters"><form role="search" aria-label="mentor sprint progress filters" action="/mentor/sprint-progress" method="get"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}

@@ -35,7 +35,7 @@ export default async function MentorReviewHistoryPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid review history filters"} />
-    <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
@@ -44,7 +44,7 @@ export default async function MentorReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Delivery" title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
       actions={<Link data-unskin="" href="/mentor/reviews"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Pending reviews
       </Link>} />
     {!data.enabled ?
@@ -52,7 +52,7 @@ export default async function MentorReviewHistoryPage({
         Projects access is disabled for this membership. No review history was loaded.
       </section>
     : <>
-      <FilterBar title="Filters"><form method="get" action="/mentor/review-history"
+      <FilterBar title="Filters"><form role="search" aria-label="mentor review history filters" method="get" action="/mentor/review-history"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-[var(--lms-canvas-border)] pb-4">
         <Input type="hidden" name="decision" value={data.query.decision}/>
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
@@ -86,7 +86,7 @@ export default async function MentorReviewHistoryPage({
           </Select>
         </label>
         <Button type="submit" variant="primary" className="min-h-11 min-[768px]:min-h-9">Search</Button>
-        <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
+        <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
       </form></FilterBar>
       <Tabs ariaLabel="Review decision filter" renderPanel={false} value={data.query.decision} items={([["ALL","All decisions"],["APPROVED","Approved"],["CHANGES_REQUESTED","Changes requested"]] as const).map(([decision,label])=>({value:decision,label,href:mentorReviewHistoryHref({...data.query,decision,page:1})}))}/>
       <p className="text-sm text-body">
@@ -95,7 +95,7 @@ export default async function MentorReviewHistoryPage({
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"
             description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." />
-        : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+        : <ol aria-label="mentor review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
           <li key={item.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.projectTitle}</h2>
@@ -110,7 +110,7 @@ export default async function MentorReviewHistoryPage({
               }).format(item.reviewedAt)} IST
             </p>
             <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=delivery"}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Open authorized delivery history →
             </Link>
           </li>)}</ol>}

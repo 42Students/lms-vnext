@@ -43,46 +43,46 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-16.md: file, number of 
 - [x] `src/app/(authenticated)/college/page.tsx`
 - [x] `src/app/(authenticated)/college/people/manage/page.tsx`
 - [x] `src/app/(authenticated)/college/placements/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/retention/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/loading.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/activity/page.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/announcements/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/preparation/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/error.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/verification/error.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/verification/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/error.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/activity/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/retention/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/loading.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/activity/page.tsx`
+- [x] `src/app/(authenticated)/hr/calendar/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/hr/notifications/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/projects/error.tsx`
+- [x] `src/app/(authenticated)/learn/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/error.tsx`
+- [x] `src/app/(authenticated)/mentor/calendar/error.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/error.tsx`
