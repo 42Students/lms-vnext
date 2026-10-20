@@ -34,22 +34,22 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-16.md: surface | regre
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/[offerId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/[offerId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/retention/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
-- [ ] `src/components/admin/admin-revoke-sessions.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/college-signin-method-form.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/joining/[offerId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/joining/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/[offerId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/retention/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/screenings/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/seasons/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
+- [x] `src/components/admin/admin-revoke-sessions.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-signin-method-form.tsx`
 - [ ] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
 - [ ] `src/components/admin/super-admin-batch-graduate-action.tsx`
 - [ ] `src/components/admin/super-admin-company-merge.tsx`

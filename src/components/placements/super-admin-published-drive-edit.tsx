@@ -60,9 +60,9 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
      defaultValue={job.title} className={cls}/></label>
     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application deadline (IST)<Input type="datetime-local" required
      name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description<Textarea name="description"
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Description<Textarea name="description"
      maxLength={15000} defaultValue={job.description} rows={4} className={cls}/></label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Locations (comma-separated)<Input name="locations"
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Locations (comma-separated)<Input name="locations"
      defaultValue={job.locations.join(", ")} className={cls}/></label>
     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Openings<Input name="openings" type="number" min={1}
      defaultValue={job.openings??""} className={cls}/></label>
@@ -70,9 +70,9 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
      type="number" min={0} defaultValue={job.minCtc??""} className={cls}/></label>
     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
      type="number" min={0} defaultValue={job.maxCtc??""} className={cls}/></label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Reason for edit
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Reason for edit
      <Textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></label>
-    {error?<p role="alert" className="text-sm text-error md:col-span-2">{error}</p>:null}
+    {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center sm:col-span-2">
      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending}>
       {pending?"Saving…":"Review and save published changes"}</Button>
