@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -39,12 +39,14 @@ function formatWhen(value: string) {
 export function NotificationList({
   items,
   emptyText = "You are all caught up.",
+  emptyAction,
   onSelect,
   readEndpoint = "/api/notifications",
   variant = "default",
 }: {
   items: readonly NotificationListItem[];
   emptyText?: string;
+  emptyAction?: ReactNode;
   onSelect?: (item: NotificationListItem) => void;
   variant?: "default" | "tpo";
   readEndpoint?: "/api/notifications" | "/api/learn/notifications" | "/api/mentor/notifications" | "/api/tpo/notifications" | "/api/notifications/faculty";
@@ -93,12 +95,13 @@ export function NotificationList({
           : "mt-2 text-sm text-muted-foreground"}>
           Workflow notifications and announcements appear when their producers publish them.
         </p>
+        {emptyAction}
       </div>
     );
   }
 
   return (
-    <div className={readEndpoint==="/api/learn/notifications" ? "space-y-4 min-[768px]:space-y-6" : "space-y-5"}>
+    <div className={readEndpoint==="/api/learn/notifications" ? "space-y-4 min-[768px]:space-y-6" : variant==="tpo" ? "space-y-0" : "space-y-5"}>
       {groupNotificationsByDate(items, groupingNow).map((group) => (
         <section key={group.label} aria-label={group.label}
           className={readEndpoint==="/api/learn/notifications" ? "space-y-4" : "space-y-2"}>
@@ -111,8 +114,7 @@ export function NotificationList({
               }}
               aria-label={"Open notification: "+item.title}
               className="w-full min-h-12 justify-start rounded-none border-x-0 border-t-0 border-b border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 text-left whitespace-normal shadow-none hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:py-5">
-              <div className="flex items-start gap-3">
-               {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block size-2 shrink-0 rounded-full bg-primary"/>:null}
+              <div className="flex min-w-0 items-start gap-3">
                <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                  <strong className="break-words">{item.title}</strong>
@@ -120,7 +122,7 @@ export function NotificationList({
                 </div>
                 <p className="mt-1 break-words text-sm text-body">{item.body}</p>
                 <time className="mt-2 block text-xs text-muted-foreground" dateTime={item.createdAt}>{formatWhen(item.createdAt)}</time>
-               </div><span aria-hidden="true" className="text-primary-text">→</span>
+               </div>{item.actionHref ? <span aria-hidden="true" className="shrink-0 text-primary-text">→</span> : null}
               </div>
              </Button>:<article
               key={item.id}

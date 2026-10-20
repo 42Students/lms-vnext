@@ -74,7 +74,6 @@ export default async function TpoNotificationsPage({
   const firstPage=!inbox.query.beforeCreatedAt&&!inbox.query.beforeId;
   return (
     <div className="space-y-6">
-      <TpoNotificationRefresh/>
       <PageHeader
         title="Notifications"
         description="A clean history of what happened across placements. Actionable work stays on Home under Needs you."
@@ -86,6 +85,7 @@ export default async function TpoNotificationsPage({
         baseHref={TPO_NOTIFICATIONS_PATH}
         markAllEndpoint="/api/tpo/notifications/read-all"
       />
+      <TpoNotificationRefresh/>
       {inbox.cursor.invalid ? (
         <Alert tone="error">
           The notification page link is invalid.{" "}
@@ -99,6 +99,7 @@ export default async function TpoNotificationsPage({
           <NotificationList
             variant="tpo"
             items={items}
+            emptyAction={emptyNavigation ? <p role="status" className="mt-4 text-sm text-body">Your unread inbox is clear.{" "} <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link></p> : null}
             readEndpoint="/api/tpo/notifications"
             emptyText={inbox.query.view === "unread" ? "No unread notifications" : "Nothing yet"}
           />
@@ -106,12 +107,11 @@ export default async function TpoNotificationsPage({
           {firstPage&&olderUnread>0?<Alert tone="info">
             {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
           </Alert>:null}
-          {emptyNavigation?<Alert tone="info">Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link></Alert>:null}
           {nextHref ? (
-            <div className="flex justify-center">
+            <div className="flex justify-stretch min-[768px]:justify-center">
               <Link
                 href={nextHref}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9 min-[768px]:w-auto"
               >
                 Older notifications
               </Link>

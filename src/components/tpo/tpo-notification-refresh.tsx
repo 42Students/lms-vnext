@@ -34,7 +34,7 @@ export function TpoNotificationRefresh(){
  if(state==="refreshing")return <p role="status" className="text-sm text-muted-foreground">Refreshing notifications…</p>;
  if(state==="failed")return <Alert tone="error">
   This refresh failed. Showing the last successful load.
-  <Button variant="ghost" type="button" className="ml-3 min-h-11 min-[768px]:min-h-9 underline"
+  <Button variant="ghost" type="button" className="min-h-11 self-start min-[768px]:min-h-9 underline"
    onClick={()=>router.refresh()}>Retry</Button>
  </Alert>;
  return null;
