@@ -37,12 +37,12 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     {key:"application",header:"Application",cell:row=>row.status},
     {key:"screening",header:"Screening",cell:row=>row.screening??"Not recorded"},
   ];
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</Link>} />
-    <form method="get" role="search" aria-label="Application filters" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
-      <label className="grid gap-1 text-sm">Name, email, roll or role
+    <form method="get" role="search" aria-label="Application filters" className="grid min-w-0 grid-cols-1 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} />
       </label>
       <label className="grid gap-1 text-sm">Application
@@ -93,7 +93,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
         href:driveApplicationsHref(jobId,{...query,stage,page:1}),
       }))}/>
-    <div className="flex flex-wrap justify-between gap-3 text-sm">
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[13px] text-[var(--lms-body-text)]">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
         className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
@@ -107,7 +107,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>} />
      </section>:
      <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query}/>}
-    <nav aria-label="Application pagination" className="flex flex-wrap justify-between gap-3 text-sm">
+    <nav aria-label="Application pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[13px] text-[var(--lms-body-text)]">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex gap-3">
         {query.page>1?<Link href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}
         {query.page<data.totalPages?<Link href={driveApplicationsHref(jobId,{...query,page:query.page+1})}>Next</Link>:null}
