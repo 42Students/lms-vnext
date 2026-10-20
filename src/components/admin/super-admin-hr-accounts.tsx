@@ -663,10 +663,10 @@ export function SuperAdminHrAccounts({
       <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
       <section aria-label="Recruiter account lifecycle" className="space-y-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">Industry access</p>
-        <h2 className="text-base font-semibold">Recruiter account lifecycle</h2>
+        <h2 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h2>
         <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
       </section>
-      <h2 className="text-base font-semibold">Recruiter accounts</h2>
+      <h2 className="text-base font-semibold text-foreground">Recruiter accounts</h2>
       {!statusSummary&&<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
         Account totals are temporarily unavailable. The directory is still usable.
         <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Retry totals</Button>
@@ -684,7 +684,7 @@ export function SuperAdminHrAccounts({
         action="/admin/recruiters"
         className="flex flex-wrap items-end gap-3 print:hidden"
       >
-        <label className="grid min-w-52 flex-1 gap-1 text-xs font-semibold text-body">
+        <label className="grid min-w-52 flex-1 gap-1 text-[13px] font-semibold text-body">
           Search
           <Input
             className="min-h-11 md:min-h-9" name="q"
@@ -695,7 +695,7 @@ export function SuperAdminHrAccounts({
           />
         </label>
 
-        <label className="grid gap-1 text-xs font-semibold text-body">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Status
           <Select
             className="min-h-11 md:min-h-9" name="status"
@@ -708,7 +708,7 @@ export function SuperAdminHrAccounts({
           </Select>
         </label>
 
-        <label className="grid gap-1 text-xs font-semibold text-body">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Rows per page
           <Select
             className="min-h-11 md:min-h-9" name="pageSize"
@@ -724,7 +724,7 @@ export function SuperAdminHrAccounts({
 
         <Link
           href="/admin/recruiters"
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Clear
         </Link>
@@ -769,7 +769,7 @@ export function SuperAdminHrAccounts({
                 filters.q || filters.status ? (
                   <Link
                     href="/admin/recruiters"
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                   >
                     Clear filters
                   </Link>
@@ -833,7 +833,7 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page - 1,
                     )}
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                   >
                     Previous
                   </Link>
@@ -849,7 +849,7 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page + 1,
                     )}
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                   >
                     Next
                   </Link>

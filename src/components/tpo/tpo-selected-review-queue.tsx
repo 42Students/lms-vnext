@@ -10,7 +10,7 @@ export function TpoSelectedReviewQueue({jobId,rows}:{jobId:string;rows:readonly 
   <Button variant="secondary" type="button" disabled={rows.length===0} onClick={()=>{setIndex(0);setOpen(true);}}
    >Review one by one</Button>
   {open&&current?<section aria-label="Selected applicant review queue"
-    className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    className="min-w-0 space-y-3 border-t border-border py-4">
    <div className="flex flex-wrap justify-between gap-2">
     <h4 className="font-semibold">Review one by one · {index+1} of {rows.length}</h4>
     <Button variant="secondary" type="button" onClick={()=>setOpen(false)} >Close</Button>
@@ -18,10 +18,10 @@ export function TpoSelectedReviewQueue({jobId,rows}:{jobId:string;rows:readonly 
    <p className="break-words text-sm">{current.label}</p>
    <p className="text-xs text-muted-foreground">Open the applicant&apos;s authorized detail to make a decision. Return to this tab to continue through the selected queue.</p>
    <Link href={tpoReviewOneByOneHref(jobId,current.id)} target="_blank" rel="noopener noreferrer"
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     Open selected applicant
    </Link>
-   <div className="flex gap-3">
+   <div className="flex flex-wrap gap-3">
     <Button variant="secondary" type="button" disabled={index===0} onClick={()=>setIndex(index-1)}
      >Previous</Button>
     <Button variant="secondary" type="button" disabled={index>=rows.length-1} onClick={()=>setIndex(index+1)}

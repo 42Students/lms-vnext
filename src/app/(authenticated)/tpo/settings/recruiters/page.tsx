@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
+import { Alert } from "@/components/ui/alert";
 import {TpoRecruiterDurationEditor} from "@/components/tpo/tpo-communication-settings-editors";
 import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 import { redirect } from "next/navigation";
@@ -134,7 +135,7 @@ export default async function TpoRecruiterAccessPage({
       />
 
       {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
-       <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
+       <Alert tone="warning">Recruiter access duration settings are not available yet.</Alert>}
       <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
 
       <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({

@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
 import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
 import {getCollegeAssignmentAuthoringOptions} from "@/modules/courses/college-assignment-authoring-options";
+import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeAssessmentListQuerySchema, parseCollegeAssessmentQuery } from "@/modules/courses/college-assessment-aggregate-model";
@@ -28,7 +29,8 @@ export default async function CollegeAssignmentsPage({
       <div className="min-w-0 overflow-x-clip space-y-4">
         <PageHeader title="Assignments" />
         <ErrorState title="Invalid assessment filters"
-          description="The requested search, status or page is invalid. No records were loaded." />
+          description="The requested search, status or page is invalid. No records were loaded."
+          action={<Link href="/college/assignments" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>}/>
       </div>
     );
   }
