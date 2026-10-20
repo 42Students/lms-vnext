@@ -30,7 +30,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/tpo/tpo-team-ask-panel.tsx`
 - [x] `src/components/tpo/tpo-team-message-actions.tsx`
 - [x] `src/components/tpo/tpo-timed-debar-control.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
 - [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
 - [ ] `src/components/tracker/tracker-quick-report-launcher.tsx`
 - [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
