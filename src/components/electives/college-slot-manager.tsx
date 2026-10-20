@@ -26,7 +26,7 @@ type Options = {
 
 const fieldClass = "min-h-10 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground";
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">{label}{children}</label>;
+  return <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}{children}</label>;
 }
 
 export function CollegeSlotManager({ options, row }: {
@@ -94,8 +94,8 @@ export function CollegeSlotManager({ options, row }: {
       className="text-primary-text">
       {row ? "Edit slot" : "New elective slot"}
     </Button>
-    {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:grid-cols-2">
-      {row?<p role="note" className="sm:col-span-2 text-xs text-muted-foreground">Academic identity is locked after creation. Changing existing learner picks, credits or choice limits is checked by the server before saving.</p>:null}
+    {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 border-y border-border bg-surface py-4 md:grid-cols-2">
+      {row?<p role="note" className="md:col-span-2 text-xs text-muted-foreground">Academic identity is locked after creation. Changing existing learner picks, credits or choice limits is checked by the server before saving.</p>:null}
       {!row ? <>
         <Field label="Program"><Select required className={fieldClass} value={programId}
           onChange={event => setProgramId(event.target.value)}>
@@ -122,8 +122,8 @@ export function CollegeSlotManager({ options, row }: {
         className={fieldClass} value={minPick} onChange={event => setMinPick(event.target.value)} /></Field>
       <Field label="Maximum choices"><Input type="number" required min={1} max={100}
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
-      {error ? <p role="alert" className="sm:col-span-2 text-sm text-red-700">{error}</p> : null}
-      <div className="flex gap-3 sm:col-span-2">
+      {error ? <p role="alert" className="md:col-span-2 text-sm text-error">{error}</p> : null}
+      <div className="flex gap-3 md:col-span-2">
         <Button variant="primary" type="submit" disabled={pending}
           >
           {pending ? "Saving…" : editing ? "Confirm update" : "Confirm create"}

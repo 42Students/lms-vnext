@@ -14,10 +14,9 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
  const result=await listCollegeFeatureHistory(await getCurrentRequestContext(),collegeId,cursor.data);
  if(!result)notFound();
  return <div className="min-w-0 space-y-6">
-  <Link href={"/admin/features/"+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← College module access</Link>
-  <PageHeader eyebrow="Super Admin · Feature Controls" title="Recent module-access changes" description={"Recent changes to Projects, Placements and Electives at college, academic and learner scope for "+result.college.name+"."}/>
+  <PageHeader eyebrow="Super Admin · Feature Controls" title="Recent module-access changes" description={"Recent changes to Projects, Placements and Electives at college, academic and learner scope for "+result.college.name+"."} actions={<Link href={"/admin/features/"+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← College module access</Link>}/>
   <Link href={collegePolicyHistoryHref(collegeId,cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null).replace("/history","/history/export")}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     Export this audited page (CSV)
   </Link>
   {result.items.length===0?<p role="status" className="border-b border-border py-4 text-sm text-body">No module-access changes recorded for this college yet.</p>:
@@ -25,6 +24,6 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
     <p className="font-semibold text-foreground">{item.category} · {item.module}</p><p className="mt-1 text-sm text-body">{item.change}</p><p className="mt-1 break-all text-xs text-body">Scope: {item.scope}{item.studentCount===undefined?"":" · "+item.studentCount+" students"}</p>
     <p className="mt-2 text-xs text-muted-foreground">{item.actorName} · {item.at.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={collegePolicyHistoryHref(collegeId,result.nextCursor)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Load more changes →</Link>:null}
+  {result.nextCursor?<Link href={collegePolicyHistoryHref(collegeId,result.nextCursor)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Load more changes →</Link>:null}
  </div>;
 }

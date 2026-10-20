@@ -22,7 +22,7 @@ export default async function SuperAdminElectivesPage({
   const parsed = adminElectiveQuerySchema.safeParse({ q: params.q, status: params.status,
     programId: params.programId || undefined, semesterNumber: params.semesterNumber || undefined });
   if (!parsed.success) return <div className="min-w-0 space-y-4">
-    <PageHeader  title="Electives" />
+    <PageHeader title="Electives" />
     <ErrorState title="Invalid elective filters" description="Search and status must use supported values."
       action={<Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>} />
   </div>;
@@ -32,13 +32,13 @@ export default async function SuperAdminElectivesPage({
     context.adminScope?.collegeId ? listCollegeElectiveSlotOptions(context) : Promise.resolve(null),
   ]);
   return <div className="min-w-0 space-y-5">
-    <PageHeader  title="Electives"
+    <PageHeader title="Electives"
       description="Manage elective slots and their offerings for this college." />
     {data.state === "CHOOSE_COLLEGE" ? <EmptyState title="Select a college to continue"
       description="Choose a college in the header above to see its electives." /> :
     <>
       {options ? <CollegeSlotManager options={options} /> : null}
-      <form className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5">
+      <form method="get" className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-5">
         <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input name="q" defaultValue={data.query.q} placeholder="Slot or program"
             className="min-h-11 min-[768px]:min-h-9" />
@@ -73,8 +73,8 @@ export default async function SuperAdminElectivesPage({
         <Button variant="secondary" type="submit" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center px-4">Refresh</Button>
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
-      {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 border-b border-border py-4">
+      {data.items.length ? <div className="grid gap-0 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-y-0">
+        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 border-b border-border px-2 py-4 last:border-b-0 md:p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.name}</h2>
             <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge>
