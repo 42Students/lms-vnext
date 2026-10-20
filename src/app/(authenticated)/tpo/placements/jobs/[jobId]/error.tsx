@@ -5,8 +5,8 @@ import { ErrorState } from "@/components/ui/error-state";
 
 export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return <ErrorState
-    title="\n        Couldn't load Placements · Jobs\n      "
-    description="The requested records could not be retrieved. A load failure does not\n        mean there are no records or that a reported total is zero."
+    title="Couldn't load Placements · Jobs"
+    description="The requested records could not be retrieved. A load failure does not mean there are no records or that a reported total is zero."
     action={<Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>}
   />;
 }
