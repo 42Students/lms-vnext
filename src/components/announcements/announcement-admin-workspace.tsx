@@ -242,10 +242,10 @@ export function AnnouncementAdminWorkspace({
                         <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
                         <Dropdown trigger="More" label="Announcement actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
                           <div className="grid min-w-0 gap-2">
-                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => mutate(item, "PIN")}>
+                        <Button role="menuitem" size="sm" variant="secondary" disabled={pending} onClick={() => mutate(item, "PIN")}>
                           {item.isPinned ? "Unpin" : "Pin"}
                         </Button>
-                        <Button size="sm" variant="danger" disabled={pending} onClick={() => mutate(item, "DELETE")}>Delete</Button>
+                        <Button role="menuitem" size="sm" variant="danger" disabled={pending} onClick={() => mutate(item, "DELETE")}>Delete</Button>
                           </div>
                         </Dropdown>
                       </>
