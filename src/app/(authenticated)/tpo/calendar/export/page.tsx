@@ -66,10 +66,10 @@ export default async function TpoCalendarExportPage({
           : ""}
       </p>
       {result.rows.length === 0 ? <EmptyState title="No future scheduled rounds were found in this college for the chosen dates." description="Unscheduled, cancelled, completed and non-published drives are not inferred." action={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline">← TPO calendar</Link>}/> : null}
-      <a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
+      {result.rows.length>0?<a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
         className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 sm:w-auto">
         Download rounds CSV
-      </a>
+      </a>:null}
     </section> : null}
   </div>;
 }
