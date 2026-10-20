@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -193,32 +194,13 @@ export default async function CollegeGroupsPage({
             getRowKey={(row) => row.id}
           />
 
-          <nav
-            aria-label="Pagination"
-            className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"
-          >
-            <span>
-              Showing {offset + 1}–{Math.min(offset + limit, total)} of {total}
-            </span>
-            <span className="flex flex-wrap gap-3">
-              {offset > 0 ? (
-                <Link
-                  className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
-                  href={query(Math.max(0, offset - limit))}
-                >
-                  Previous
-                </Link>
-              ) : null}
-              {offset + limit < total ? (
-                <Link
-                  className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
-                  href={query(offset + limit)}
-                >
-                  Next
-                </Link>
-              ) : null}
-            </span>
-          </nav>
+          <div className="space-y-3">
+            <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">
+              Showing {(offset+1).toLocaleString("en-IN")}–{Math.min(offset+limit,total).toLocaleString("en-IN")} of {total.toLocaleString("en-IN")}
+            </p>
+            <Pagination label="Group pages" page={Math.floor(offset/limit)+1}
+              pageCount={Math.ceil(total/limit)} hrefForPage={page=>query((page-1)*limit)} />
+          </div>
         </>
       )}
     </div>

@@ -108,7 +108,7 @@ export default async function CollegeLectureHallsPage({
             Room name
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
               placeholder="Search halls"
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="w-full" />
           </label>
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status

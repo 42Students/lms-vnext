@@ -248,7 +248,7 @@ export default async function CollegeOverviewPage() {
               <div>
                 <p className="font-semibold">{item.courseName} ({item.courseCode})</p>
                 <p className="text-muted-foreground">
-                  {item.pending} submission(s) · Oldest: {item.oldest?.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) ?? "—"}
+                  {item.pending} submission(s) · Oldest: {item.oldest?.toLocaleDateString("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }) ?? "—"}
                 </p>
               </div>
               <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">Review</Link>
