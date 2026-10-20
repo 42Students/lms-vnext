@@ -5,8 +5,8 @@ Generated from the code by the orchestrator's deviation audit. Work each section
 ## Section 1: files that still deviate from the shared look (2)
 Fix every listed deviation using the shared components in src/components/ui and the values in docs/design/ (shell spec, legacy-styles, ui-clone-checklist).
 
-- [ ] `src/components/placements/learner-placement-alerts.tsx` (score 5: arbitrary px size x5)
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/placements/learner-placement-alerts.tsx` (score 5: arbitrary px size x5)
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx` (score 1: arbitrary px size x1)
 
 ## Section 2: page routes, full fidelity pass (20)
 For each page: page head via PageHeader (title, subtitle, actions exactly as the old LMS), canvas card (white, radius 12, border #e5e9f0, padding 24), tabs, filter row, tables/grids/cards, chips and badges, banners and inline notices, every modal and drawer the page opens, buttons and forms, empty/loading/error states, toasts, spacing and typography values, and responsive at 1280, 768 and 375 widths. Read the page and the components it renders, fix every deviation you find, not only the listed ones.
