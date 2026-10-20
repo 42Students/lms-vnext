@@ -413,7 +413,7 @@ export function HrDriveDraftForm({
         <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
         <div className="mt-4 space-y-3">
           {draft.rounds.map((round, index) => (
-            <div key={index} className="grid min-w-0 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 md:grid-cols-[10rem_minmax(0,1fr)_auto]">
+            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 md:grid-cols-[10rem_minmax(0,1fr)_auto]">
               <label className="grid gap-1 text-sm text-body">
                 Kind
                 <Select className="w-full" value={round.kind}
