@@ -39,8 +39,8 @@ export function MembershipRecovery({
   }
 
   return (
-    <main className="mx-auto flex min-w-0 max-w-3xl items-start">
-      <section className="w-full border-b border-border pb-6">
+    <main className="mx-auto flex min-h-dvh min-w-0 max-w-3xl items-start bg-background px-4 py-6 sm:px-6 sm:py-8">
+      <section className="w-full min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-[var(--lms-canvas-padding)]">
         <p className="m-0 text-sm font-semibold text-primary-text">
           College access changed
         </p>
@@ -52,7 +52,7 @@ export function MembershipRecovery({
           Your canonical account remains signed in.
         </p>
         <div className="mt-6">
-          <Button type="button" className="min-h-11 md:min-h-9" disabled={pending} onClick={recover}>
+          <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={recover}>
             {pending
               ? "Clearing selection…"
               : "Continue to college selection"}
