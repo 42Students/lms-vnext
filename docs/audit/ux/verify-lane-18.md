@@ -72,3 +72,12 @@
 ## Verify2 surface 2 — `src/components/tpo/grid/grid-workspace.tsx`
 - Regressions fixed: 1. Export/copy used `selection.selected.length` even when every selected id was on another page, producing empty CSV/TSV despite visible authorized rows and a “visible rows” action. Switched to `selectedPage.length` so off-page selection doesn't blank an otherwise visible export. Checked GridWorkspace's TpoGridFilterPanel, column chooser, FilterChip, export serializer, query state, selected ids and toolbar controls against TPO grid legacy rules.
 - Clutter/alignment: verified, no additional visual changes; narrow toolbar tools remain in disclosure and phone controls are 44px. Files changed: `src/components/tpo/grid/grid-workspace.tsx`, queue, proof. Static-only, no CI.
+
+
+## Verify2 surface 3 — `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- Regressions fixed: 1. Standalone desktop keyboard/Copy visible TSV incorrectly copied an empty selection when selected IDs existed only on another page. Scope selected-copy semantics to selected **current** ordered rows; otherwise copy authorized visible page. Reviewed TpoGrid fallback consumer, row selection helpers, sorting, memory restore, Table/ScrollCue, Dropdown mobile actions, mobile cards and column controls; prior grid clone evidence in docs/audit/ux/clone-sheets.md and polish reference.
+- Clutter/alignment: verified, no change; native table and mobile list retain their single page canvas semantics, focus/caption and 44px controls. Files: grid, queue, proof. Source only; no CI.
+
+## Verify2 surface 4 — `src/components/placements/tpo-joining-update-form.tsx`
+- Regressions fixed: 2. Correcting a DEFERRED/DID_NOT_JOIN result reopened with JOINED silently selected, potentially submitting an unintended outcome; initialize the selection from existing recorded status. Prevent confirmation onOpenChange changing the dialog while a save is pending. Reviewed useGuardedAction/apiFetch, ConfirmationDialog, Disclosure, form fields, joining tracker page/loading/error and parent TPO layout; original lane-1 polish proof.
+- Clutter/alignment: verified, no extra changes; two-column corrected form, full-width 44px mobile CTA and optional notes are preserved. Files: joining form, queue and proof; source only, no CI.
