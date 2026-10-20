@@ -184,3 +184,23 @@
 - Regressions found/fixed: 0. Read saved-draft warning, cross-tab/focus storage refresh, scoped local and session lookup, discard action/confirmation, InlineNotice, Button, Alert and Link; checked lane-14 proof, preserved 44px controls, exact wording and draft persistence contract. No broken TSX, props or state transitions found.
 - Extra clutter/alignment: 0. Primary Continue and tertiary discard already form a touch-safe grouped row.
 - Files changed: verified, no change. Static only; no runtime/CI.
+
+## 38. `src/components/hr/recruiter-conversation-live-refresh.tsx`
+- Regressions found/fixed: 1 — the prior polish proof promised not to refresh while text is selected or a keyboard-expanded overlay is active, but the actual interval skipped neither selection nor general aria-expanded menus/alert dialogs. Restored those guards while keeping visible-and-online checks, editor focus guard, four-second polling, focus refresh and cleanup. Inspected source, dialog contract, recruiter inbox/thread/job usage and lane-14 evidence; no extra packages, rendered DOM or routing changes.
+- Extra clutter/alignment: 0. This utility renders no markup.
+- Files changed: `src/components/hr/recruiter-conversation-live-refresh.tsx`. Static only, no runtime/CI.
+
+## 39. `src/components/hr/recruiter-conversation-reply-form.tsx`
+- Regressions found/fixed: 0. Read whole scoped thread composer, route consumers, lane-14 polish evidence, useGuardedAction, receipt verification, shared Textarea/Button/InlineNotice and ConfirmActionDialog; field names, 4000-character guard, Ctrl/Cmd+Enter, draft-leave interception, verified POST receipts, pending lock and in-thread refresh remain consistent. No TSX/import/prop or aria regression identified.
+- Extra clutter/alignment: 0. Message label and character helper remain one column, Send reply is touch-safe at 375 and compact at 768.
+- Files changed: verified, no change. Static only; no runtime or CI.
+
+## 40. `src/components/hr/recruiter-profile-access.tsx`
+- Regressions found/fixed: 0. Read complete own-college grants list, college link model and UUID guard, DELETE receipt model, recruiter Profile route integration, ConfirmActionDialog, shared Button/InlineNotice/EmptyState, and lane-14 proof. Scoped collegeId link targets, grant-specific confirmation, pending/ref lock, receipt check, error, empty grants and navigation retain existing contracts. No new TSX/import/prop errors observed.
+- Extra clutter/alignment: 0. Destructive action remains behind keyboard-reachable Manage access and navigation links wrap at 375 without taking focus priority.
+- Files changed: verified, no change. Static only; no runtime/CI.
+
+## 41. `src/components/hr/recruiter-profile-details-editor.tsx`
+- Regressions found/fixed: 0. Read controlled editor/dirty-leave handling, source route props, name parser and profile PATCH receipt schema, protected update route, useGuardedAction and shared Input/Button/ConfirmActionDialog. Optimistic user/profile tokens, validation fields, exact same-URL navigation guard, disabled phone, focus/touch states, busy/feedback behavior and reset confirmation remain intact.
+- Extra clutter/alignment: 0. Save and Unsaved changes stay grouped beneath a hairline; 375 stacks while 768 runs inline without losing labels.
+- Files changed: verified, no change. No runtime or CI.

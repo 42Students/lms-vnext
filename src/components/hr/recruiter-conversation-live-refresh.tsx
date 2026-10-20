@@ -10,9 +10,11 @@ export function RecruiterConversationLiveRefresh(){
    if(document.visibilityState!=="visible" || !navigator.onLine)return;
    const current=document.activeElement;
    if(current instanceof HTMLElement&&current.closest("input,textarea,select,[contenteditable=true]"))return;
+   // Preserve text selection during reading; a refresh would clear it.
+   if(window.getSelection()?.toString().trim())return;
    // A polling refresh must not collapse a menu, dialog, or message details
    // disclosure while a recruiter is navigating it with keyboard or touch.
-   if(document.querySelector('dialog[open], [role="dialog"][aria-modal="false"], [data-slot="dropdown-root"][open], [data-slot="info-popover"][open], details[open]'))return;
+   if(document.querySelector('dialog[open], [role="dialog"][aria-modal="false"], [role="dialog"][aria-modal="true"], [role="alertdialog"], [aria-haspopup][aria-expanded="true"], [data-slot="dropdown-root"][open], [data-slot="info-popover"][open], details[open]'))return;
    router.refresh();
   };
   const id=window.setInterval(update,4000);
