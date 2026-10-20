@@ -10,7 +10,7 @@ export default function SuperAdminModuleTraceError({
   reset: () => void;
 }) {
   return (
-    <ErrorState
+    <section className="min-w-0"><ErrorState
       title="Could not resolve learner access"
       description="The college-scoped learner or module-rule data could not be loaded. No access decision has been inferred from this failure."
       action={
@@ -21,6 +21,6 @@ export default function SuperAdminModuleTraceError({
           Retry
         </Button>
       }
-    />
+    /></section>
   );
 }
