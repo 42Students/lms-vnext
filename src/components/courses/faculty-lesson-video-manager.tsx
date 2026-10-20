@@ -8,6 +8,7 @@ import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingState } from "@/components/ui/loading-state";
 import { MetricBar } from "@/components/ui/metric-bar";
+import uploadStyles from "./legacy-upload-meter.module.css";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -240,7 +241,7 @@ export function FacultyLessonVideoManager({
     </Button>
     {busy&&activeName?<div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
-      <MetricBar label="Video upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className="w-full" />
+      <MetricBar label="Video upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className={uploadStyles.upload} />
       <Button size="md" type="button" variant="secondary" onClick={()=>controllerRef.current?.abort()}>Cancel upload</Button>
     </div>:null}
     {loading?<LoadingState label="Loading videos…" />:null}
