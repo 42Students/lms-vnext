@@ -38,18 +38,18 @@ export default async function TpoCalendarExportPage({
     ? await getTpoCalendarRoundExport(context, parsed.data)
     : null;
   const params = parsed.success ? new URLSearchParams(parsed.data) : null;
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
       description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." />
-    <Link href="/tpo/calendar" className="font-semibold text-link hover:underline">
+    <Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline min-[768px]:min-h-9">
       ← TPO calendar
     </Link>
-    <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-      <label className="text-sm font-semibold text-foreground">From (IST)
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 max-[767px]:[&_label]:w-full>
+      <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From (IST)
         <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
           className="mt-2 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
-      <label className="text-sm font-semibold text-foreground">Through (IST)
+      <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Through (IST)
         <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
           className="mt-2 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
