@@ -50,7 +50,7 @@ export default async function LearnerSupportHistory({searchParams}:{
         {data.status==="ALL"?"You have not submitted a placement request yet.":"No requests match this status filter."}
       </p>
     </section>:<ol className="grid gap-3 md:grid-cols-2">
-      {data.items.map(row=><li key={row.request.id} className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
+      {data.items.map(row=><li key={row.request.id} className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none md:p-6">
         <div className="flex flex-wrap justify-between gap-2">
           <h2 className="text-sm font-semibold text-foreground">{placementRequestTypeLabel(row.request.requestType)}</h2>
           <span className="text-xs font-semibold text-muted-foreground">{row.request.status}</span>
