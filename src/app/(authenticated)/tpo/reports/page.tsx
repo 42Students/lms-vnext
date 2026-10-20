@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import {legacyTpoReportCard,TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} from "@/modules/placements/tpo-legacy-report-copy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   ReportFilters,
@@ -42,13 +43,14 @@ export default async function TpoReportsPage({
   const query = await searchParams;
   const parsedSearch=tpoReportGallerySearchSchema.safeParse(first(query.q)??"");
   const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
-  if(!parsedSearch.success||!parsedGroup.success)return <section role="alert"
-    className="border-t border-border py-6">
+  if(!parsedSearch.success||!parsedGroup.success)return <section className="space-y-3">
+    <Alert tone="error">
     <PageHeader title="Invalid report search" />
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
     <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">
       Clear search
     </Link>
+    </Alert>
   </section>;
   // TPO-calendar-reports-55: do not mistake a failed snapshot for zero placements.
   let workspace: Awaited<ReturnType<typeof getPlacementReportWorkspace>>;
@@ -62,11 +64,11 @@ export default async function TpoReportsPage({
     return <div className="min-w-0 space-y-6">
       <PageHeader eyebrow="TPO · Reports" title="Reports"
         description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
-      <section role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3">
+      <Alert tone="error">
         <h2 className="text-base font-semibold text-foreground">The headline numbers could not be loaded.</h2>
         <p className="mt-2 text-sm text-body">The report is temporarily unavailable. No placement totals are being inferred from missing data.</p>
         <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link">Retry</Link>
-      </section>
+      </Alert>
     </div>;
   }
 
