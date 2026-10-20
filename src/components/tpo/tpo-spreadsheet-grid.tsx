@@ -79,14 +79,14 @@ export function TpoSpreadsheetGrid<Row>({
  }
  function changeRowSelection(id:string,checked:boolean,shift=false){
   if(!selection)return;
-  const result=gridSelectionCheckbox(visibleRowIds,selection.selected,id,checked,anchor.current,shift);
-  selection.onChange(result.selected);
+  const result=gridSelectionCheckbox(visibleRowIds,selection.selected,id,checked,anchor.current,shift,allowedIds);
+  selection.onChange(selectedGridIdsWithin(result.selected,allowedIds));
   anchor.current=result.anchor;
  }
  function changeRowClick(id:string,keys:{shiftKey:boolean;ctrlKey:boolean;metaKey:boolean}){
   if(!selection)return;
-  const result=gridSelectionClick(visibleRowIds,selection.selected,id,anchor.current,keys);
-  selection.onChange(result.selected);
+  const result=gridSelectionClick(visibleRowIds,selection.selected,id,anchor.current,keys,allowedIds);
+  selection.onChange(selectedGridIdsWithin(result.selected,allowedIds));
   anchor.current=result.anchor;
  }
  const allowedIds=selection?.allIds??visibleRowIds;
