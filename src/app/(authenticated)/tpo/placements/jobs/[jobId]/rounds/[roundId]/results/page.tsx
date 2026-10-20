@@ -23,17 +23,17 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
  const {jobId,roundId}=await params;
  const raw=await searchParams;
  const selected=tpoRoundResultViewSchema.safeParse({q:first(raw.q),status:first(raw.status)});
- if(!selected.success)return <Alert tone="error"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="text-link underline">Clear filters</Link></Alert>;
+ if(!selected.success)return <Alert tone="error"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Clear filters</Link></Alert>;
  let data:Awaited<ReturnType<typeof getTpoRoundResultTable>>;
  try{data=await getTpoRoundResultTable(context,{jobId,roundId});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
  const visibleRows=filterTpoRoundResultRows(data.rows,selected.data);
- return <div className="min-w-0 space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9">← Drive workspace</Link>
+ return <div className="min-w-0 space-y-[var(--lms-space-6)]">
+  <Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
-  <section className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface sm:grid-cols-4" aria-label="Result counts">
-   {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border p-3 sm:border-r sm:border-b-0 sm:last:border-r-0">
+  <section className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-4" aria-label="Result counts">
+   {Object.entries(data.counts).map(([label,n])=><div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] p-[var(--lms-space-3)] min-[768px]:border-r min-[768px]:border-b-0 min-[768px]:last:border-r-0">
     <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
@@ -47,12 +47,12 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <TpoRoundApplyControl jobId={jobId} roundId={roundId}/>
   <p className="text-sm text-body">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
   {data.truncated?<Alert tone="warning">Source capped at 500 application records; counts may be incomplete.</Alert>:null}
-  <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-   <label className="min-w-0 flex-1 text-sm font-semibold text-body">Student or role
-    <Input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"/>
+  <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+   <label className="min-w-0 flex-1 text-sm">Student or role
+    <Input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full max-[767px]:min-h-11 md:min-h-9"/>
    </label>
-   <label className="min-w-0 text-sm font-semibold text-body">Result state
-    <Select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9">
+   <label className="text-sm">Result state
+    <Select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 w-full max-[767px]:min-h-11 md:min-h-9">
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
     </Select>
    </label>
@@ -60,8 +60,8 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   </form>
   <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
   {visibleRows.length===0?<EmptyState title="No eligible shortlisted submitted applicants match this round result filter."/>:
-   <section className="grid gap-3" aria-label="Round result entries">
-    {visibleRows.map(row=><article key={row.applicationId} className="border-b border-border py-4">
+   <section className="grid min-w-0 gap-[var(--lms-space-3)]" aria-label="Round result entries">
+    {visibleRows.map(row=><article key={row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
      <div className="mb-3">
       <h2 className="font-semibold text-foreground">{row.student??"Name unavailable"}</h2>
       <p className="text-sm text-body">{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>
