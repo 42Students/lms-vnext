@@ -27,7 +27,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid activity filters"} />
-    <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
+    <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
@@ -89,7 +89,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         </label>
         <PageSizeSelect label="Page size" name="pageSize" defaultValue={String(data.pageSize)} options={[20,50]} />
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply</Button>
-        <Link href="/mentor/activity" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
+        <Link href="/mentor/activity" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>

@@ -27,7 +27,7 @@ export default async function MentorProjectActivityHistoryPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title="Invalid activity filters" />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
       Return to projects
     </Link>
   </section>;
@@ -94,7 +94,7 @@ export default async function MentorProjectActivityHistoryPage({
           Filter
         </Button>
         <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
-          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>
       </form></FilterBar>
       <p className="text-sm text-body">
         {data.total} matching persisted event{data.total===1?"":"s"}

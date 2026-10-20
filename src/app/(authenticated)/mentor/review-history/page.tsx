@@ -35,7 +35,7 @@ export default async function MentorReviewHistoryPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid review history filters"} />
-    <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
+    <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
@@ -86,7 +86,7 @@ export default async function MentorReviewHistoryPage({
           </Select>
         </label>
         <Button type="submit" variant="primary" className="min-h-11 min-[768px]:min-h-9">Search</Button>
-        <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
+        <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
       </form></FilterBar>
       <Tabs ariaLabel="Review decision filter" renderPanel={false} value={data.query.decision} items={([["ALL","All decisions"],["APPROVED","Approved"],["CHANGES_REQUESTED","Changes requested"]] as const).map(([decision,label])=>({value:decision,label,href:mentorReviewHistoryHref({...data.query,decision,page:1})}))}/>
       <p className="text-sm text-body">
