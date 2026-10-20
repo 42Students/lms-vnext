@@ -1,4 +1,3 @@
-import { DateInput } from "@/components/ui/date-input";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Button } from "@/components/ui/button";
@@ -80,7 +79,7 @@ export default async function LearnerAttendanceCalendarPage({
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
       className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
       <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month
-        <DateInput mode="month" name="month" defaultValue={data.query.month}
+        <Input name="month" type="month" defaultValue={data.query.month}
           className="min-h-11 md:min-h-9" />
       </label>
       <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
@@ -152,7 +151,7 @@ export default async function LearnerAttendanceCalendarPage({
       </CalendarGrid>
     </section>
     <section aria-label="Attendance class entries" className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">Class details</h2>
+      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Class details</h2>
       {data.rows.length===0
         ? <EmptyState title="No recorded classes match"
             description={data.hasAnyRecords
@@ -162,7 +161,7 @@ export default async function LearnerAttendanceCalendarPage({
           {data.rows.map(row=><li key={row.id}
             className="min-w-0 py-[var(--lms-space-4)]">
             <div className="flex flex-wrap items-start justify-between gap-2">
-              <h3 className="font-semibold text-foreground">{row.title}</h3>
+              <h3 className="font-semibold text-[var(--lms-heading)]">{row.title}</h3>
               <StatusBadge tone={statusTone[row.status]??"neutral"}>
                 {statusNames[row.status]??row.status}
               </StatusBadge>

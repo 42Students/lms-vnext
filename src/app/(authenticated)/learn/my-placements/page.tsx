@@ -246,7 +246,7 @@ export default async function LearnerPlacementsPage({
       </div>
 
       {debarRead.status==="fulfilled"&&debarRead.value?<section role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-3 py-2">
-        <h2 className="font-semibold text-foreground">You are barred from drives for now</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)]">You are barred from drives for now</h2>
         <p className="mt-2 text-sm text-body">
           The placement cell has recorded a temporary participation restriction.
           {debarRead.value.untilDate?" Until "+debarRead.value.untilDate+" (college local date).":""}
@@ -258,7 +258,7 @@ export default async function LearnerPlacementsPage({
       </section>:null}
       {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
         <section role="alert" aria-label="Placement registration" className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
-          <h2 className="font-semibold text-foreground">Registration</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)]">Registration</h2>
           <p className="mt-2 text-sm text-body">Your batch registration status is temporarily unavailable. No registration choice has been assumed.</p>
           <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">Retry registration</Link>
         </section>
@@ -266,7 +266,7 @@ export default async function LearnerPlacementsPage({
       <section aria-labelledby="learner-placement-verification"
         className="min-w-0 border-b border-border py-4 md:py-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="learner-placement-verification" className="text-base font-semibold text-foreground">Profile verification</h2>
+          <h2 id="learner-placement-verification" className="text-base font-semibold text-[var(--lms-heading)]">Profile verification</h2>
           <Link href="/learn/profile/verification" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
             Review education and identity verification →
           </Link>
@@ -292,7 +292,7 @@ export default async function LearnerPlacementsPage({
       </section>
       <section aria-labelledby="learner-college-notice-preview" className="min-w-0 border-b border-border py-4 md:py-6">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <h2 id="learner-college-notice-preview" className="text-base font-semibold text-foreground">Latest from the placement cell</h2>
+          <h2 id="learner-college-notice-preview" className="text-base font-semibold text-[var(--lms-heading)]">Latest from the placement cell</h2>
           <div className="flex flex-wrap gap-3">
             <Link href="/learn/my-placements/announcements"
               className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
@@ -314,7 +314,7 @@ export default async function LearnerPlacementsPage({
               <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{learnerNoticeRelativeDay(notice.createdAt,new Date())}</time>
             </li>)}</ul>}
         <div className="mt-4 border-t border-border pt-4">
-          <h3 className="text-sm font-semibold text-foreground">Latest personal updates</h3>
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Latest personal updates</h3>
           {!personalNoticeRead.available ? (
             <Alert tone="info" className="mt-2">Personal placement updates are temporarily unavailable. College notices above remain visible.</Alert>
           ) : personalNoticeRead.value.length===0 ? (
@@ -531,7 +531,7 @@ export default async function LearnerPlacementsPage({
 
       {rows ? <section aria-label="Live placement opportunities" className="space-y-3">
         <div>
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
             Live opportunities
           </h2>
           <p className="mt-1 text-sm text-body">

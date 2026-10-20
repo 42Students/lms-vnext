@@ -36,7 +36,7 @@ export default async function LearnerApplicationCompanyPage({
         </div>}
       />
       <section aria-label="What the company sees" className="border-b border-border py-4 md:py-6">
-        <h2 className="text-base font-semibold text-foreground">What the company sees</h2>
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">What the company sees</h2>
         <p className="mt-2 text-sm text-body">
           {company.companySharePreview.currentlyShared
             ?"Your submitted, shortlisted application is currently included in an active employer share."
@@ -54,7 +54,7 @@ export default async function LearnerApplicationCompanyPage({
         </p>
       </section>
       <section className="border-b border-border py-4 md:py-6">
-        <h2 className="text-base font-semibold text-foreground">Company and drive</h2>
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Company and drive</h2>
         <dl className="mt-4 grid gap-4 text-sm md:grid-cols-2">
           <div>
             <dt className="font-semibold text-muted-foreground">Employer</dt>

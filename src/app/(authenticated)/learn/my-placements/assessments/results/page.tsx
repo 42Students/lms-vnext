@@ -78,7 +78,7 @@ export default async function LearnerAssessmentResultsPage({
       </p>
       {paged.items.length === 0 ? (
         <section role="status" className="flex min-h-44 flex-col items-start justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12">
-          <h2 className="text-base font-semibold text-foreground">
+          <h2 className="text-base font-semibold text-[var(--lms-heading)]">
             {results.counts.all === 0 ? "No official assessment results yet" : "No results in this category"}
           </h2>
           <p className="mt-2 text-sm text-body">
@@ -102,7 +102,7 @@ export default async function LearnerAssessmentResultsPage({
                   <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
                     {item.companyName}
                   </p>
-                  <h2 className="mt-1 text-base font-semibold text-foreground">{item.roundName}</h2>
+                  <h2 className="mt-1 text-base font-semibold text-[var(--lms-heading)]">{item.roundName}</h2>
                   <p className="mt-1 text-sm text-body">
                     {item.roleTitle} · Round {item.roundSequence}
                   </p>
@@ -128,7 +128,7 @@ export default async function LearnerAssessmentResultsPage({
               </dl>
               {item.candidateMessage ? (
                 <section className="mt-4 min-w-0 border-t border-border pt-3">
-                  <h3 className="text-xs font-semibold text-foreground">Shared feedback</h3>
+                  <h3 className="text-xs font-semibold text-[var(--lms-heading)]">Shared feedback</h3>
                   <p className="mt-2 whitespace-pre-wrap text-sm text-body">{item.candidateMessage}</p>
                 </section>
               ) : null}

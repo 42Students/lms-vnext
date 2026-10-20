@@ -227,7 +227,7 @@ export default async function LearnerOffersPage({
       {!requestRead.available ? <p role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
         <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
-          <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
+          <h2 className="text-base font-semibold text-[var(--lms-heading)]">{emptyState.title}</h2>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (
             <Link href="/learn/my-placements/offers"
@@ -280,7 +280,7 @@ export default async function LearnerOffersPage({
         {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)]">Next</Link> : null}
       </nav> : null}
       <section aria-label="How offers work at your college" className="min-w-0 border-b border-border py-4 md:py-6">
-        <h2 className="font-semibold text-foreground">How offers work at your college</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)]">How offers work at your college</h2>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
         <div className="mt-3 flex flex-wrap gap-4">
           <Link href="/learn/my-placements/rules?from=offers"
