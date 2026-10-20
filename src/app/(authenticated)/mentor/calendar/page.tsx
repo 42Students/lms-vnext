@@ -7,6 +7,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {FilterBar} from "@/components/ui/filter-bar";
+import {Disclosure} from "@/components/ui/disclosure";
 import {MentorMeetingsCalendar} from "@/components/projects/mentor-meetings-calendar";
 import {MentorCalendarLoadFailure} from "@/components/projects/mentor-calendar-load-failure";
 import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
@@ -39,16 +40,22 @@ export default async function MentorCalendarPage({searchParams}:{
   // eslint-disable-next-line react-hooks/purity -- Server snapshot drives IST period filters and initial client clock.
   const now=new Date();
   const displayed=filterMentorCalendar(meetings,parsed.data,now);
+  const activeCount=Number(Boolean(parsed.data.search))+Number(parsed.data.attention!=="ALL")+Number(parsed.data.period!=="ALL")+
+    Number(Boolean(parsed.data.projectId))+Number(parsed.data.sprint!=="ALL")+Number(parsed.data.join!=="ALL")+
+    Number(parsed.data.status!=="ALL")+Number(parsed.data.type!=="ALL")+Number(parsed.data.projectState!=="ALL");
+  const advancedCount=Number(Boolean(parsed.data.projectId))+Number(parsed.data.sprint!=="ALL")+Number(parsed.data.join!=="ALL")+
+    Number(parsed.data.status!=="ALL")+Number(parsed.data.type!=="ALL")+Number(parsed.data.projectState!=="ALL");
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Meetings"
       description="Every scheduled meeting across your assigned projects, in one place."/>
-    <FilterBar title="Meeting filters"
+    <FilterBar title="Meeting filters" activeCount={activeCount}
       search={<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input type="search" name="search" form="mentor-calendar-filters" maxLength={100}
           defaultValue={parsed.data.search} placeholder="Meeting or project"/>
       </label>}>
     <form id="mentor-calendar-filters" method="get" role="search" aria-label="Mentor meeting filters" action="/mentor/calendar"
-       className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
+      className="min-w-0 space-y-3 border-b border-border pb-4">
+      <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <label className="grid min-w-0 max-w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action needed
         <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 md:min-h-9 w-full max-w-full">
           <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
@@ -56,6 +63,18 @@ export default async function MentorCalendarPage({searchParams}:{
           <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
         </Select>
       </label>
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">IST dates
+        <Select name="period" defaultValue={parsed.data.period}
+          className="min-h-11 md:min-h-9">
+          <option value="ALL">All dates</option><option value="TODAY">Today</option>
+          <option value="NEXT_7_DAYS">Next 7 IST days</option>
+          <option value="PAST_7_DAYS">Previous 7 IST days</option>
+        </Select>
+      </label>
+        <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 lg:w-auto">Filter</Button>
+      </div>
+      <Disclosure title="More filters" defaultOpen={advancedCount>0} contentClassName="pt-3" className="min-w-0">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
         <Select name="projectId" defaultValue={parsed.data.projectId??""}
           className="min-h-11 md:min-h-9 max-w-full">
@@ -102,16 +121,9 @@ export default async function MentorCalendarPage({searchParams}:{
           <option value="COMPLETED">Completed</option><option value="ARCHIVED">Archived</option>
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">IST dates
-        <Select name="period" defaultValue={parsed.data.period}
-          className="min-h-11 md:min-h-9">
-          <option value="ALL">All dates</option><option value="TODAY">Today</option>
-          <option value="NEXT_7_DAYS">Next 7 IST days</option>
-          <option value="PAST_7_DAYS">Previous 7 IST days</option>
-        </Select>
-      </label>
-      <Button type="submit" variant="primary">Filter</Button>
-      <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>
+        </div>
+      </Disclosure>
+      {activeCount>0?<Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>:null}
     </form>
     </FilterBar>
      <div className="flex flex-wrap items-center gap-3 text-sm">
