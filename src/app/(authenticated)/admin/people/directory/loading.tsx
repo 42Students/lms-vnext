@@ -1,1 +1,4 @@
-export default function Loading(){return <div role="status" aria-busy="true" aria-label="Loading user directory" className="animate-pulse motion-reduce:animate-none space-y-4 py-4"><div className="h-10 rounded-[var(--lms-control-radius)] bg-surface-subtle"/><div className="h-48 rounded-[var(--lms-control-radius)] bg-surface-subtle"/></div>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+export default function Loading() {
+ return <GracefulPageLoading label="Loading user directory" shape="directory" />;
+}
