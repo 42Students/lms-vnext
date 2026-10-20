@@ -1,9 +1,9 @@
 "use client";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-import {Alert} from "@/components/ui/alert";
-import {Card} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -71,9 +71,9 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:"Upload failed.");}
   finally{setBusy(false);}
  }
- return <section aria-label="College logo upload" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)]">
-  <h3 className="font-semibold text-foreground">College logo</h3>
-  <p className="text-sm text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
+ return <section aria-label="College logo upload" className="min-w-0 space-y-[var(--lms-space-3)]">
+  <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">College logo</h2>
+  <p className="max-w-[75ch] text-sm leading-5 text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
   {(savedUrl||currentUrl)?<Card as="div" className="w-fit p-3">
    <img src={savedUrl||currentUrl!} alt="Current college logo" className="aspect-square w-24 max-w-full object-contain"/>
   </Card>:null}
@@ -82,22 +82,26 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
      onChange={e=>select(e.target.files?.[0]??null)}
      className="mt-2 min-h-11 md:min-h-9 w-full"/>
    </label>
-   {file&&preview?<div className="space-y-3 print:hidden">
-    <div className="relative aspect-square w-full max-w-52 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
-      <img src={preview} alt="Selected logo crop preview" className="h-full w-full object-cover"
-       style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
+   {file&&preview?<div className="min-w-0 space-y-[var(--lms-space-4)] print:hidden">
+    <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-[208px_minmax(0,1fr)]">
+      <div className="relative aspect-square w-full max-w-52 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
+        <img src={preview} alt="Selected logo crop preview" className="h-full w-full object-cover"
+          style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
+      </div>
+      <div className="grid min-w-0 max-w-[480px] gap-[var(--lms-space-3)]">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Horizontal crop position ({positionX}%)
+          <Input aria-label="Horizontal crop position" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
+        </label>
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Vertical crop position ({positionY}%)
+          <Input aria-label="Vertical crop position" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
+        </label>
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Zoom ({Math.round(zoom*100)}%)
+          <Input aria-label="Crop zoom" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
+        </label>
+      </div>
     </div>
-    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Horizontal crop position ({positionX}%)
-     <Input aria-label="Horizontal crop position" className="block !h-auto !min-h-0 !w-full !max-w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
-    </label>
-    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Vertical crop position ({positionY}%)
-     <Input aria-label="Vertical crop position" className="block !h-auto !min-h-0 !w-full !max-w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
-    </label>
-    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Zoom ({Math.round(zoom*100)}%)
-     <Input aria-label="Crop zoom" className="block !h-auto !min-h-0 !w-full !max-w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
-    </label>
     <Button type="button" disabled={busy} onClick={()=>void upload()}
-     className="min-h-11 w-full md:min-h-9 md:w-auto">
+      className="min-h-11 w-full sm:w-auto md:min-h-9">
       {busy?"Uploading…":"Crop and upload logo"}
     </Button>
    </div>:null}</>:<Alert tone="info">You can view the logo, but cannot change it.</Alert>}

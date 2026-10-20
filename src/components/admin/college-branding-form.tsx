@@ -4,11 +4,12 @@ import { useMemo, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Card } from "@/components/ui/card";
-import {LMS_BRANDING_DEFAULT_HEX,LMS_BRANDING_PLACEHOLDER_HEX} from "@/components/ui/branding-color-tokens";
+import { LMS_BRANDING_DEFAULT_HEX, LMS_BRANDING_PLACEHOLDER_HEX } from "@/components/ui/branding-color-tokens";
 import { useToast } from "@/components/ui/toast";
 import { brandStyleVariables } from "@/modules/colleges/branding";
-import {safeTpoBrandLogoUrl} from "@/modules/placements/tpo-branding-model";
+import { safeTpoBrandLogoUrl } from "@/modules/placements/tpo-branding-model";
 
 export type BrandingFormValues = {
   logoUrl: string | null;
@@ -139,12 +140,13 @@ export function CollegeBrandingForm({
   }
 
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-6 min-[992px]:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] min-[992px]:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={save}
-        className="min-w-0 space-y-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] print:hidden"
+        className="order-last min-w-0 space-y-[var(--lms-space-4)] print:hidden min-[992px]:order-first"
       >
-        <div className="grid min-w-0 gap-4 md:grid-cols-2">
+        <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Colours</h2>
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
             <label key={key} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -180,32 +182,31 @@ export function CollegeBrandingForm({
           chosen automatically so it always stays readable.
         </p>
 
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-        {FIELDS.map((field) => (
-          <label key={field.key} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              {field.label}
-            </span>
-            <Input
-              type={field.type ?? "url"}
-              value={values[field.key] ?? ""}
-              onChange={(event) => set(field.key, event.target.value)}
-              placeholder={field.placeholder}
-              disabled={!canEdit}
-              aria-invalid={Boolean(errors[field.key])}
-              className="min-h-11 md:min-h-9"
-            />
-            {field.hint ? (
-              <span className="mt-1 block text-xs text-muted-foreground">
-                {field.hint}
-              </span>
-            ) : null}
-            {errors[field.key] ? (
-              <Alert tone="error" className="mt-2">{errors[field.key]}</Alert>
-            ) : null}
-          </label>
+        {[
+          { title: "Sign-in images", fields: FIELDS.slice(0, 4) },
+          { title: "Support details and policies", fields: FIELDS.slice(4) },
+        ].map(group => (
+          <Disclosure key={group.title} title={group.title} defaultOpen={canEdit}
+            contentClassName="pt-[var(--lms-space-3)]">
+            <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+              {group.fields.map(field => (
+                <label key={field.key} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                  <span className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                    {field.label}
+                  </span>
+                  <Input type={field.type ?? "url"}
+                    value={values[field.key] ?? ""}
+                    onChange={(event) => set(field.key, event.target.value)}
+                    placeholder={field.placeholder} disabled={!canEdit}
+                    aria-invalid={Boolean(errors[field.key])}
+                    className="min-h-11 md:min-h-9" />
+                  {field.hint ? <span className="mt-[var(--lms-space-2)] block text-xs leading-5 text-muted-foreground">{field.hint}</span> : null}
+                  {errors[field.key] ? <Alert tone="error" className="mt-[var(--lms-space-2)]">{errors[field.key]}</Alert> : null}
+                </label>
+              ))}
+            </div>
+          </Disclosure>
         ))}
-        </div>
 
         {canEdit ? (
           <Button type="submit" loading={saving} disabled={saving} className="min-h-11 w-full md:min-h-9 md:w-auto">
@@ -219,7 +220,7 @@ export function CollegeBrandingForm({
       <aside
         aria-label="Sign-in preview"
         style={previewStyle}
-        className="min-w-0 h-fit space-y-3 border-t border-border pt-4 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0"
+        className="order-first min-w-0 h-fit space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[992px]:order-last min-[992px]:border-b-0 min-[992px]:border-l min-[992px]:pl-[var(--lms-space-4)] min-[992px]:pb-0"
       >
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sign-in preview
