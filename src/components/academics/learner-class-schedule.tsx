@@ -183,8 +183,7 @@ function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
   const columns=days.map(day=>({day,rows:eventsForDay(day)}));
   const hours=learnerHourlySlots(columns.flatMap(col=>col.rows));
   return <div className={styles.hourFrame} aria-label="Hourly class schedule">
-    <div className={styles.hourGrid}
-      style={{gridTemplateColumns:`5rem repeat(${days.length}, minmax(${days.length===1?280:150}px,1fr))`}}>
+    <div className={styles.hourGrid+" "+(days.length===1?"grid-cols-[5rem_minmax(280px,1fr)]":"grid-cols-[5rem_repeat(7,minmax(150px,1fr))]")}>
       <div className={styles.hourHeader}>ALL DAY</div>
       {columns.map(col=><div key={localDayKey(col.day)}
         className={styles.hourDayHeader}>
@@ -641,15 +640,15 @@ export function LearnerClassSchedule({
                       aria-label={day+", "+dayItems.length+" classes"}
                       aria-pressed={selected}
                       onClick={()=>setChosenDay(day)}
-                      className={styles.monthDay+" !block !w-full !min-h-[96px] !justify-start"}>
+                      className={styles.monthDay+" !block !w-full !min-h-24 !justify-start"}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
                       {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
-                        {dayItems.slice(0,3).map(event=><span key={event.id} className={"size-1.5 rounded-full bg-primary " +
+                        {dayItems.slice(0,3).map(event=><span key={event.id} className={"size-1.5 rounded-[50%] bg-primary " +
                           (learnerCourseTint(event)==="border-l-success"?"bg-success":
                             learnerCourseTint(event)==="border-l-warning"?"bg-warning":
                             learnerCourseTint(event)==="border-l-info"?"bg-info":"bg-primary")}/>)}
                       </span>:null}
-                      {dayItems.length ? <span className="mt-1 block break-words text-[10px] font-semibold text-primary-text sm:text-xs">
+                      {dayItems.length ? <span className="mt-1 block break-words text-xs font-semibold text-primary-text">
                         {dayItems.length} {dayItems.length===1?"class":"classes"}
                       </span> : null}
                     </Button>;
@@ -728,7 +727,7 @@ export function LearnerClassSchedule({
                             <span
                               className={
                                 isToday
-                                  ? "flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-on-primary"
+                                  ? "flex h-7 w-7 items-center justify-center rounded-[50%] bg-primary text-xs font-semibold text-on-primary"
                                   : inMonth
                                     ? "text-xs font-semibold text-foreground"
                                     : "text-xs font-semibold text-muted-foreground/60"
