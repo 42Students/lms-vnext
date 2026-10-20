@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
 import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-filter-panel";
 import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
@@ -171,9 +172,9 @@ export function GridWorkspace<Row>({
    (unmatched.length?" Unmatched or ambiguous: "+unmatched.slice(0,12).join(", "):""));
  };
  return <section className="min-w-0 space-y-3" aria-label="TPO grid workspace" data-tpo-grid-workspace>
-  <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="TPO table tools">
+  <div className="flex min-w-0 flex-wrap items-center gap-2" role="toolbar" aria-label="TPO table tools">
    {searchMode!=="hidden"?<div className="flex w-full min-w-0 max-w-lg flex-1 items-center gap-2 sm:min-w-48">
-    <Input aria-label={searchPlaceholder} value={searchMode==="controlled"?querySearch:typed} maxLength={searchMaxLength}
+    <Input className="min-h-11 min-w-0 flex-1 md:min-h-9" aria-label={searchPlaceholder} value={searchMode==="controlled"?querySearch:typed} maxLength={searchMaxLength}
      placeholder={searchPlaceholder} onChange={event=>{
      if(searchMode==="controlled")onSearchChange?.(event.target.value);
      else setTyped(event.target.value);
@@ -182,25 +183,30 @@ export function GridWorkspace<Row>({
      if(searchMode==="controlled"){onSearchChange?.(querySearch.trim());return;}
      const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[searchParam]:typed.trim()});
      router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
-    }}><Image src="/assets/images/common/search.svg" alt="" aria-hidden="true" width={19} height={19}/>Search</Button>
+    }} className="min-h-11 shrink-0 md:min-h-9"><Image src="/assets/images/common/search.svg" alt="" aria-hidden="true" width={19} height={19}/>Search</Button>
    </div>:null}
-   {filters.length||externalFilters?<Button variant="secondary" type="button"
+   {filters.length||externalFilters?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
     aria-expanded={externalFilters?.open??filterOpen}
     aria-controls={externalFilters?.controlsId??id+"-filters"}
     onClick={externalFilters?externalFilters.onToggle:()=>setFilterOpen(value=>!value)}>
     Filters{(externalFilters?.count??activeFilters.length)>0?" ("+(externalFilters?.count??activeFilters.length)+")":""}
    </Button>:null}
-   {savedViews?<Button variant="secondary" type="button" aria-expanded={viewsOpen}
+   <details className="min-w-0 w-full border-b border-border pb-2 sm:w-auto sm:border-0 sm:pb-0">
+    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link md:min-h-9">Table tools</summary>
+    <div className="flex min-w-0 flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
+   {savedViews?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" aria-expanded={viewsOpen}
     aria-controls={id+"-views"} onClick={()=>setViewsOpen(value=>!value)}>Views</Button>:null}
-   <Button variant="secondary" type="button" aria-expanded={columnsOpen}
+   <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" aria-expanded={columnsOpen}
     aria-controls={id+"-columns"} onClick={()=>setColumnsOpen(value=>!value)}>Columns</Button>
-   <Button variant="secondary" type="button" aria-expanded={exportOpen}
+   <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" aria-expanded={exportOpen}
     aria-controls={id+"-export"} onClick={()=>setExportOpen(value=>!value)}>Export</Button>
-   <Button variant="secondary" type="button" disabled={!rows.length}
+   <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={!rows.length}
     onClick={()=>void copyRows()}><Image src="/assets/images/common/file-black.svg" alt="" aria-hidden="true" width={16} height={16}/>Copy {selectedPage.length?"selected":"visible"} rows</Button>
-   {selection&&rollOf?<Button variant="secondary" type="button" aria-expanded={pasteOpen}
+   {selection&&rollOf?<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" aria-expanded={pasteOpen}
     aria-controls={id+"-paste"} onClick={()=>setPasteOpen(value=>!value)}>Paste roll numbers</Button>:null}
    {extraActions}
+    </div>
+   </details>
   </div>
   {activeFilters.length?<div className="flex flex-wrap gap-2" aria-label="Active grid filters">
    {activeFilters.map(field=><FilterChip key={field.key} type="button" aria-pressed={true}
@@ -220,12 +226,12 @@ export function GridWorkspace<Row>({
   {columnsOpen?<div id={id+"-columns"}>
    <TpoGridColumnChooser columns={columns} selected={activeKeys.length?activeKeys:permitted} onChange={changeColumns}/>
   </div>:null}
-  {exportOpen?<div id={id+"-export"} className="flex flex-wrap items-center gap-2">
+  {exportOpen?<div id={id+"-export"} className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 sm:flex-row sm:flex-wrap sm:items-center">
    <Button variant="secondary" type="button" onClick={()=>{
     if(onExportCsv)onExportCsv(selectedPage.length>0);
     else downloadCsv();
-   }} disabled={!rows.length}>Export {selectedPage.length?"selected":"visible"} CSV</Button>
-   {onExportXlsx?<Button variant="secondary" type="button" disabled={!rows.length}
+   }} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!rows.length}>Export {selectedPage.length?"selected":"visible"} CSV</Button>
+   {onExportXlsx?<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={!rows.length}
     onClick={()=>onExportXlsx(selectedPage.length>0)}>
     Export {selectedPage.length?"selected":"visible"} Excel
    </Button>:null}
@@ -234,16 +240,16 @@ export function GridWorkspace<Row>({
   </div>:null}
   {pasteOpen&&selection&&rollOf?<div id={id+"-paste"} className="space-y-2">
    <label className="block text-sm font-semibold">Roll numbers (one per line, space or comma separated)
-    <Textarea className="mt-1" value={pasteText} maxLength={15000} rows={3}
+    <Textarea className="mt-1 w-full min-w-0" value={pasteText} maxLength={15000} rows={3}
      onChange={event=>setPasteText(event.target.value)}/>
    </label>
-   <Button variant="secondary" type="button" disabled={!pasteText.trim()} onClick={selectRolls}>
+   <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={!pasteText.trim()} onClick={selectRolls}>
     Select matching students on this page
    </Button>
   </div>:null}
   <div className="flex flex-wrap items-center justify-between gap-2 border-y border-border py-2 text-sm">
    <span role="status">{rows.length} items in this view{selection?" · "+selectedPage.length+" selected":""}</span>
-   {selection&&rows.length?<Button variant="secondary" type="button"
+   {selection&&rows.length?<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button"
     disabled={selectedPage.length===rows.length}
     onClick={()=>selection.onChange([...new Set([...selection.selected,...rows.map(rowKey)])])}>
     Act on all {rows.length}
@@ -251,16 +257,16 @@ export function GridWorkspace<Row>({
   </div>
   {rows.length===0&&hasNarrowing?<div role="status" className="flex flex-wrap items-center gap-2 text-sm">
    <span>{querySearch.trim()?"No rows match the search and active filters.":"No rows match the active filters."}</span>
-   <Button variant="secondary" type="button" onClick={clearNarrowing}>Clear search and filters</Button>
+   <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={clearNarrowing}>Clear search and filters</Button>
   </div>:null}
   {selection&&selectedPage.length?<div role="region" aria-label="Act on these"
-    className="flex flex-wrap items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle px-3 py-2 text-sm">
+    className="flex min-w-0 flex-col items-stretch gap-2 border-y border-border bg-primary-subtle py-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
     <strong>{selectedPage.length} selected</strong>
     {act?.(rows,selectedPage,clearPageSelection)}
-    <Button variant="secondary" type="button" onClick={()=>void copyRows()}>Copy selected</Button>
-    <Button variant="ghost" type="button" onClick={clearPageSelection}>Clear page selection</Button>
+    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>void copyRows()}>Copy selected</Button>
+    <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={clearPageSelection}>Clear page selection</Button>
    </div>:null}
-  {notice?<p role="status" className="text-xs text-muted-foreground">{notice}</p>:null}
+  {notice?<InlineNotice tone="info" message={notice}/>:null}
   {typeof children==="function"?children(activeKeys):children}
  </section>;
 }
