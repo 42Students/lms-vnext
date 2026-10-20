@@ -128,14 +128,14 @@ export function TpoAuditSavedViews({filters}:{filters:{
     loading?"Loading your saved audit views…":
     "Saved audit view storage is unavailable. Your current audit filters still work."}
   </p>
-  <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
-   <label className="grid min-w-0 flex-[1_1_180px] gap-1 text-xs">View name
+  <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+   <label className="grid min-w-0 gap-1 text-xs">View name
     <Input value={name} maxLength={50} className="min-h-11 w-full md:min-h-9" disabled={!ready||busy}
      onChange={event=>setName(event.target.value)}
      />
    </label>
    <Button variant="secondary" type="button" onClick={()=>void save()} disabled={!ready||busy||!name.trim()}
-    className="min-h-11 md:min-h-9">Save current</Button>
+    className="min-h-11 w-full sm:w-auto md:min-h-9">Save current</Button>
   </div>
   {views.length?<div className="mt-3 flex min-w-0 flex-wrap gap-2">
    <label className="grid min-w-0 flex-[1_1_160px] gap-1 text-xs">Saved view
