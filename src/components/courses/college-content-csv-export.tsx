@@ -18,6 +18,6 @@ export function CollegeContentCsvExport({rows,filename}:{rows:readonly CollegeCo
    if(!deferred)URL.revokeObjectURL(url);
   }
  }
- return <Button type="button" variant="secondary" disabled={!rows.length} onClick={download} aria-label="Export college course content as CSV"
+ return <Button type="button" variant="secondary" disabled={!rows.length} onClick={download} aria-label={rows.length?"Export college course content as CSV":"No course content to export as CSV"}
   className="min-h-11 md:min-h-9 print:hidden">Export CSV</Button>;
 }

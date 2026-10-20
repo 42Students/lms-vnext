@@ -49,10 +49,10 @@ export default async function SuperAdminAssignmentsPage({
   return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
     <a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Export assignments.csv</a>
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">Export assignments.csv</a>
     {lessonsResult.status==="fulfilled"
       ?<CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>
-      :<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+      :<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
         Assignment creation options are temporarily unavailable. Existing assignments remain visible.
       </p>}
     <AdminAssessmentDirectory data={data} />

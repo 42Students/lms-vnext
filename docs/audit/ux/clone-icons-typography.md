@@ -185,3 +185,14 @@ Scoped grep equivalent applied to all edited TPO files (full fetched content): /
 | src/components/tpo/tpo-find-shortcut.tsx | old-lms-shell.css:23,73 phone <768px; old-lms-shell-spec.md:24-25 36px tablet toolbar; common.scss:68-75 teal link | 79: className="min-h-11 gap-2 md:min-h-9">; 89: maxLength={100} className="mt-2 min-h-11 w-full md:min-h-9"/>; 94: id={"tpo-find-result-"+index} role="option" aria-selected={active===index}; 96: className={"flex min-h-11 w-full items-center justify-between rounded-[var(--lms-control-radius)] px-3 py-2 text-left te | raw 0; svg 0; hex 0; Button 2/2; Link 1/1; braces 55/55; sm 0; md 4 |
 
 Both files were scanned for raw native controls, inline SVG, six-digit hex, button/link pair counts, bracket counts and `sm:` vs `md:` breakpoint tokens. No runtime DOM or browser focus screenshots. **Global A5, A6, A7 remain [ ]** because the complete asset/icon/avatar/tab/visited/external link inventory is unverified.
+
+## chat-12 2026-10-20 — source-scoped TPO mobile icons and links
+
+| Property | Exact old LMS value/source | VNext source/value | State |
+|---|---|---|---|
+| Five distinct phone footer icons | Legacy MobileFooter.jsx:175-191, 24 × 24px icons; old-lms-shell.css:23,73 phone ends at 767px | src/components/tpo/tpo-mobile-footer.tsx:43-58, five separate Image src, width={24}, height={24}, md:hidden | Scoped source match; raster open |
+| More-menu radius, links and focus | old-lms-shell-spec.md:23-24 9px action radius; components___common.scss:68-75 teal hover underline | src/components/tpo/tpo-mobile-footer.tsx:63-67 rounded-[var(--lms-control-radius)], min-h-11, text-link underline and focus-visible ring | Scoped source match |
+| Recruiter one-time invite | old-lms-pages.md:7 slim warning, components___common.scss:68-75 links | src/components/tpo/recruiter-leads-workspace.tsx:723,878 border-l-2 warning, teal inline action | Scoped source match |
+| CSV action states | old-lms-shell-spec.md:23-24 36px desktop / 44px phone target from shell.css:31-32 | src/components/tpo/tpo-safe-csv-download.tsx:38-42 shared Button min-h-11/md:min-h-9, pending and InlineNotice | Scoped source match |
+
+Source regex equivalent of grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE: all three modified TPO caller files yielded raw forms 0, inline SVG 0 and six-digit hex 0; JSX Link pairs: mobile footer 2/2, recruiter leads 8/8, CSV 0/0; breakpoint sm=0 in each. **Global A5 [ ], A6 [ ], A7 [ ] remain unchecked** pending complete icon/wordmark/avatar/tab/visited/external states and browser mobile/tablet comparison. No CI, app or screenshot executed.

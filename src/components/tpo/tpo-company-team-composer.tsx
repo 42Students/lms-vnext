@@ -1,6 +1,7 @@
 "use client";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -56,7 +57,7 @@ export function TpoCompanyTeamComposer({companyId,actorUserId}:{
     onChange={event=>update(event.target.value)}
     />
   </label>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
   <p className="text-xs text-muted-foreground">Only active placement-team members in this college can read and reply.</p>
   <Button type="submit" className="min-h-11 md:min-h-9" disabled={busy||!body.trim()}
    >

@@ -22,7 +22,7 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
   return <section aria-label="Bulk action preview" className="min-w-0 space-y-3 border-y border-border py-3 md:py-4">
     <h2 className="font-semibold">Review bulk action: {actionLabel}</h2>
     <p role="status" className="text-sm">{ready} ready; {rows.length - ready} skipped.</p>
-    <ul className="max-h-72 min-w-0 divide-y divide-border overflow-y-auto overscroll-contain break-words text-sm">
+    <ul className="max-h-72 min-w-0 divide-y divide-border overflow-y-auto overscroll-contain break-words text-sm print:max-h-none print:overflow-visible">
       {rows.map((row, i) => <li key={row.id + ":" + i} className="py-2">
         <strong>{row.label}</strong> — {row.status}{row.reason ? ": " + row.reason : ""}
       </li>)}
@@ -34,7 +34,7 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
       </div>)}
     </Disclosure>:null}
     <Button type="button" disabled={busy || ready === 0} onClick={onConfirm}
-      className="min-h-11 w-full md:min-h-9 md:w-auto">
+      className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden">
       {busy ? "Applying…" : "Confirm " + actionLabel}
     </Button>
     {outcomes.length > 0 ? <div aria-live="polite" className="text-sm">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { ErrorState } from "@/components/ui/error-state";
@@ -53,8 +54,8 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     
     <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
-      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-4 border-b border-border pb-4">
+      actions={<PageBackLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} label="Drive overview" />} />
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-4 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <label className="grid gap-1 text-sm">Round kind
         <Select name="kind" defaultValue={query.kind} className="min-w-0">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>

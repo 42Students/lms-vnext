@@ -233,9 +233,9 @@ export function FacultyCourseHomeSignals({
               <Disclosure
                 key={bucket.label}
                 className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [&>summary]:px-0"
-                title={<span className="grid w-full min-w-0 grid-cols-[minmax(0,6rem)_minmax(0,1fr)_2rem] items-center gap-3">
-                  <span className="text-body">{bucket.label}</span>
-                  <MetricBar label={bucket.label+" grade distribution"}
+                title={<span className={styles.distribution+" w-full"}>
+                  <span className={styles.distributionLabel}>{bucket.label}</span>
+                  <MetricBar className={styles.gradeTrack} label={bucket.label+" grade distribution"}
                     value={width} maximum={100} unit="percent" />
                   <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
