@@ -215,7 +215,7 @@ export default async function CollegeElectiveAllocatePage({
         <Textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
-      <Button type="submit" disabled={!offerings.length} className="min-h-11 md:min-h-9">
+      <Button type="submit" disabled={!offerings.length} className="min-h-11 w-full md:min-h-9 md:w-auto">
         Allocate selected to…
       </Button>
     </form>

@@ -88,7 +88,7 @@ export default async function CollegeBatchStudentsPage({
             {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
         </Select>
       </label>
-      <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
     </form></FilterBar>
     <section aria-label="Students in this batch" className="min-w-0 space-y-3">
       <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>

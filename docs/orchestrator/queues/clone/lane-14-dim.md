@@ -23,26 +23,26 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-14.md: file, number of 
 - [x] `src/app/(authenticated)/admin/placements/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/programs/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/admin/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
-- [ ] `src/app/(authenticated)/college/academics/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/error.tsx`
-- [ ] `src/app/(authenticated)/college/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/admin/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [x] `src/app/(authenticated)/college/academics/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
+- [x] `src/app/(authenticated)/college/assignments/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/departments/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/page.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/page.tsx`
+- [x] `src/app/(authenticated)/college/classes/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/error.tsx`
+- [x] `src/app/(authenticated)/college/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
