@@ -125,12 +125,12 @@ export default async function SuperAdminFeaturesPage({
       />
 
       <section aria-label="Feature Controls overview" className="border-t border-border pt-6">
-        <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
-        <h2 className="mt-1 text-base font-semibold text-foreground">Optional modules by college</h2>
+        <p className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
+        <h2 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Optional modules by college</h2>
         <dl className="mt-3 grid gap-0 divide-y divide-border border-y border-border text-sm md:grid-cols-3 md:divide-x md:divide-y-0">
-          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges in scope</dt><dd className="mt-2 font-semibold">{result.total} matching current filters</dd></div>
-          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
-          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges in scope</dt><dd className="mt-2 font-semibold">{result.total} matching current filters</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
         </dl>
       </section>
       <section className="border-t border-border pt-6">
@@ -202,7 +202,7 @@ export default async function SuperAdminFeaturesPage({
 
       <section className="min-w-0 space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             College module matrix
           </h2>
           <Link href={adminFeatureExportHref({

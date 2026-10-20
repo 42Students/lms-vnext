@@ -39,7 +39,7 @@ export default async function SuperAdminCourseProgressPage({
     <PageHeader title="Course Progress"
       description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners."
       actions={<div className="flex flex-wrap items-center gap-2"><PageBackLink href="/admin/courses" label="Courses" /><a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export course-progress.csv</a></div>}
+     className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export course-progress.csv</a></div>}
     />
     <Alert tone="info">
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
@@ -69,7 +69,7 @@ export default async function SuperAdminCourseProgressPage({
     {data.items.length ? <div className="divide-y divide-border border-y border-border">
       {data.items.map(item => <article key={item.offeringId} className="min-w-0 py-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 break-words font-semibold text-foreground">{item.courseName} ({item.courseCode})</h2>
+          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.courseName} ({item.courseCode})</h2>
           <StatusBadge tone={item.offeringStatus === "ACTIVE" ? "success" : "neutral"}>{item.offeringStatus}</StatusBadge>
         </div>
         <p className="mt-1 text-sm text-body">{item.cohortName} · {item.periodName}</p>
