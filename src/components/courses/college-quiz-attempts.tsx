@@ -44,7 +44,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     className="min-h-11 md:min-h-9">
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
    </Select></label>:null}
-  <Button variant="secondary" type="button" disabled={loading} onClick={()=>opened?setOpened(false):void open()}
+  <Button variant="secondary" type="button" loading={loading} disabled={loading} onClick={()=>opened?setOpened(false):void open()}
    aria-expanded={opened} className="min-h-11 md:min-h-9">
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
   </Button>
