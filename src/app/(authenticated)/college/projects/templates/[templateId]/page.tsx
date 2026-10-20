@@ -25,7 +25,7 @@ export default async function CollegeProjectTemplateDetailPage({
     );
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-[16px]">
       <ProjectAdminNav
         basePath="/college/projects"
         active="templates"

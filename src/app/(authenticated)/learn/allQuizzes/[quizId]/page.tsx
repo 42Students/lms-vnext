@@ -26,10 +26,10 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const overview=await getLearnerAssessmentOverview(context);
   const resolution=resolveLearnerOfferingDelivery(overview.quizzes,path.quizId,query.deliveryId);
   if(resolution.kind==="none") notFound();
-  if(resolution.kind==="choose") return <div className="min-w-0 space-y-6">
-    <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." actions={<Link href="/learn/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>} />
+  if(resolution.kind==="choose") return <div className="min-w-0 space-y-[16px]">
+    <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." actions={<PageBackLink href="/learn/allQuizzes" label="All Quizzes"/>} />
     <ul className="divide-y divide-border border-y border-border">
-      {resolution.options.map(option=><li key={option.deliveryId} className="p-4">
+      {resolution.options.map(option=><li key={option.deliveryId} className="py-[16px]">
         <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9"
           href={"/learn/allQuizzes/"+encodeURIComponent(path.quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}>
           {option.courseName}
@@ -46,9 +46,9 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const selected=attemptId ? attempts.find(attempt=>attempt.id===attemptId) : null;
   if(attemptId && !selected) notFound();
   const historyUrl="/learn/allQuizzes/"+encodeURIComponent(quiz.id)+"?deliveryId="+encodeURIComponent(quiz.deliveryId);
-  return <div className="space-y-6">
-    <PageHeader title={quiz.title} actions={<Link href="/learn/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>} />
-    <section className="border-b border-border py-4 md:py-6">
+  return <div className="min-w-0 space-y-[16px]">
+    <PageHeader title={quiz.title} actions={<PageBackLink href="/learn/allQuizzes" label="All Quizzes"/>} />
+    <section className="border-b border-border py-[16px]">
       <h2 className="text-base font-semibold text-foreground">Attempt history</h2>
       <p className="mt-2 text-sm text-body">
         Attempts are recorded against your current college membership. Results appear only after Faculty publishes them.
@@ -68,7 +68,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
         </li>)}
       </ol>}
     </section>
-    {selected ? <section className="border-b border-border py-4 md:py-6">
+    {selected ? <section className="border-b border-border py-[16px]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-semibold text-foreground">Attempt {selected.attemptNumber} result</h2>
         <Link href={historyUrl} className="inline-flex min-h-11 items-center text-sm text-primary-text underline hover:text-primary-hover md:min-h-9">Close detail</Link>
