@@ -50,7 +50,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       <PageHeader title="College availability" />
       <ErrorState title="College availability unavailable"
         description="Template assignments could not be loaded. No availability is shown until the read succeeds."
-        action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Retry loading colleges</Link>} />
+        action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading colleges</Link>} />
     </div>;
   }
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;
