@@ -71,7 +71,7 @@ export default async function TpoRecruiterAccessPage({
 
   if (!parsed) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-4">
         <TpoSettingsNav active="recruiters" />
 
         <PageHeader
@@ -85,7 +85,7 @@ export default async function TpoRecruiterAccessPage({
           action={
             <Link
               href="/tpo/settings/recruiters"
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link"
             >
               Clear filters
             </Link>
@@ -126,7 +126,7 @@ export default async function TpoRecruiterAccessPage({
       : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       <TpoSettingsNav active="recruiters" />
 
       <PageHeader
@@ -144,7 +144,7 @@ export default async function TpoRecruiterAccessPage({
       }))} />
 
       <section className="border-t border-border pt-4">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
           College recruiter grants
         </h2>
 
@@ -159,14 +159,14 @@ export default async function TpoRecruiterAccessPage({
         <form
           action="/tpo/settings/recruiters"
           method="get"
-          className="mt-4 flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4"
+          className="mt-4 flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-4"
         >
-          <label className="grid min-w-[180px] flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 md:min-w-55 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Grant status
             <Select
               name="status"
               defaultValue={query.status}
-              className="min-h-11 min-[768px]:min-h-9"
+              className="min-h-11 md:min-h-9"
             >
               {TPO_RECRUITER_ACCESS_FILTERS.map(
                 (status) => (
@@ -185,22 +185,22 @@ export default async function TpoRecruiterAccessPage({
             </Select>
           </label>
 
-          <label className="grid min-w-[180px] flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 md:min-w-55 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search name, designation or company
             <Input type="search" name="q" defaultValue={query.q} maxLength={80}
               placeholder="Recruiter, role or company"
-              className="min-h-11 min-[768px]:min-h-9" />
+              className="min-h-11 md:min-h-9" />
           </label>
           <Button
             type="submit"
-            className="min-h-11 min-[768px]:min-h-9"
+            className="min-h-11 md:min-h-9"
           >
             Apply
           </Button>
 
           <Link
             href="/tpo/settings/recruiters"
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Clear
           </Link>
@@ -209,16 +209,16 @@ export default async function TpoRecruiterAccessPage({
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
             Grant records
           </h2>
           <div className="flex flex-wrap gap-2">
             <a href={tpoRecruiterGrantExportHref(query)}
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
               Export filtered grants CSV
             </a>
             <a href={tpoRecruiterGrantExportHref(query,"xlsx")}
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
               Export filtered grants Excel
             </a>
           </div>
@@ -298,7 +298,7 @@ export default async function TpoRecruiterAccessPage({
                   q:query.q,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
               >
                 ← Previous
               </Link>
@@ -307,7 +307,7 @@ export default async function TpoRecruiterAccessPage({
             {page < totalPages ? (
               <Link
                 href={nextTpoRecruiterGrantPage(query,page)}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
               >
                 Next →
               </Link>

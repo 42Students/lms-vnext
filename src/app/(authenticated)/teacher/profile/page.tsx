@@ -17,24 +17,24 @@ export default async function FacultyProfilePage() {
   ];
 
   return (
-    <div className="min-w-0 max-w-full space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 max-w-full space-y-4">
       <PageHeader
         title="Profile"
       />
-      <nav aria-label="Profile shortcuts" className="flex flex-wrap items-center gap-3">
-        <Link href="/teacher/profile/details" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Edit About &amp; profile sections →</Link>
+      <nav aria-label="Profile shortcuts" className="flex flex-wrap items-center gap-2">
+        <Link href="/teacher/profile/details" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Edit About &amp; profile sections →</Link>
         <Link href="/teacher/profile/teaching"
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Current teaching assignments →
         </Link>
         <Link href="/teacher/profile/contacts"
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Contact details and editing availability
         </Link>
       </nav>
-      <section aria-label="Faculty profile details" className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-5)]">
+      <section aria-label="Faculty profile details" className="border-b border-[var(--lms-canvas-border)] py-4">
         <h2 className="text-base font-semibold text-foreground">About</h2>
-        <dl className="mt-[var(--lms-space-5)] grid min-w-0 gap-[var(--lms-space-5)] md:grid-cols-2">
+        <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
           {fields.map(({ label, value }) => (
             <div key={label}>
               <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -46,7 +46,7 @@ export default async function FacultyProfilePage() {
             </div>
           ))}
         </dl>
-        <p className="mt-6 text-xs text-muted-foreground">
+        <p className="mt-4 text-xs text-muted-foreground">
           Identity and college-managed employment records are maintained by your college administrator.
         </p>
       </section>
