@@ -86,14 +86,14 @@ export default async function CollegeGroupDetailPage({
         actions={
           <Link
             href="/college/groups"
-            className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-link"
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
           >
             All groups
           </Link>
         }
       />
 
-      <section className="grid gap-4 - sm:grid-cols-2 lg:grid-cols-5 border-t border-border pt-5">
+      <section className="grid min-w-0 gap-4 border-t border-border pt-5 md:grid-cols-2 lg:grid-cols-5">
         <Stat title="Type" value={label(group.kind)} />
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -118,7 +118,7 @@ export default async function CollegeGroupDetailPage({
       </section>
 
       {group.selfJoinOpenFrom || rule ? (
-        <section className="grid gap-4 - sm:grid-cols-3 border-t border-border pt-5">
+        <section className="grid min-w-0 gap-4 border-t border-border pt-5 md:grid-cols-3">
           <Stat
             title="Self-join window"
             value={
@@ -145,7 +145,7 @@ export default async function CollegeGroupDetailPage({
       {rule ? (
         <section className="border-t border-border pt-4">
           <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
-            className="font-semibold text-link hover:underline">
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
             Preview persisted membership rule (read-only)
           </Link>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -159,7 +159,7 @@ export default async function CollegeGroupDetailPage({
         {members.length === 0 ? (
           <EmptyState title="No members yet" description="Nobody has joined this group." />
         ) : (
-          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+          <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
             columns={[
               { key: "name", header: "Name", cell: (row) => row.displayName ?? "—" },
               { key: "type", header: "Role", cell: (row) => label(row.memberType) },
@@ -188,7 +188,7 @@ export default async function CollegeGroupDetailPage({
       {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Manage members</h2>
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
-          className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
           Validate member CSV (dry run)
         </Link>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}
@@ -214,7 +214,7 @@ export default async function CollegeGroupDetailPage({
         {events.length === 0 ? (
           <EmptyState title="No activity yet" description="Membership changes appear here." />
         ) : (
-          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+          <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
             columns={[
               { key: "when", header: "When", cell: (row) => when(row.createdAt) },
               { key: "who", header: "Member", cell: (row) => row.displayName ?? "—" },

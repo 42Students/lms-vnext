@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeGroupImportPreview } from "@/components/groups/college-group-import-preview";
 import { PageHeader } from "@/components/ui/page-header";
@@ -27,10 +27,7 @@ export default async function CollegeGroupImportPreviewPage({
     <PageHeader eyebrow="College Admin · Student groups"
       title={"CSV validation · " + group.name}
       description="Preview learner membership import eligibility without creating or changing group members."
-      actions={<Link href={"/college/groups/" + encodeURIComponent(group.id)}
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
-        Back to group
-      </Link>} />
+      actions={<PageBackLink href={"/college/groups/" + encodeURIComponent(group.id)} label="Back to group"/>} />
     <CollegeGroupImportPreview groupId={group.id} />
   </div>;
 }
