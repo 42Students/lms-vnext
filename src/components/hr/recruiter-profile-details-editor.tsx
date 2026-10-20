@@ -35,7 +35,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
    if(!(anchor instanceof HTMLAnchorElement))return;
    if(event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
    const url=new URL(anchor.href,window.location.href);
-   if(url.origin!==window.location.origin||url.pathname===window.location.pathname)return;
+   if(url.origin!==window.location.origin||(url.pathname===window.location.pathname&&url.search===window.location.search&&url.hash===window.location.hash))return;
    event.preventDefault();event.stopPropagation();
    setLeaveHref(url.pathname+url.search+url.hash);
   };
@@ -82,10 +82,12 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
     </label>)}
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
-  {dirty?<p role="status" className="text-sm font-semibold">Unsaved changes</p>:null}
-  <Button type="submit" loading={busy} disabled={busy||!dirty}
-    className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
-   {busy?"Saving…":"Save changes"}</Button>
+  <div className="flex min-w-0 flex-col gap-2 border-t border-border pt-4 min-[768px]:flex-row min-[768px]:items-center">
+    <Button type="submit" loading={busy} disabled={busy||!dirty}
+      className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
+      {busy?"Saving…":"Save changes"}</Button>
+    {dirty?<p role="status" className="text-sm font-semibold text-warning-text">Unsaved changes</p>:null}
+  </div>
   {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className={feedback==="Profile saved"?"text-sm text-success":"text-sm text-error"}>{feedback}</p>:null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"

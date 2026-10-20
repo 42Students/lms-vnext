@@ -230,12 +230,12 @@ export function HrDriveDraftForm({
     }
   }
 
-  if(savedRequestId) return <section role="status" className="min-w-0 max-w-3xl space-y-4 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 md:p-6">
+  if(savedRequestId) return <section role="status" className="min-w-0 max-w-3xl space-y-4 border-y border-border bg-transparent py-4 md:py-6">
     <h2 className="text-lg font-semibold text-foreground">Sent to the placement cell for review</h2>
     <p className="text-sm text-body">Your request was saved. The placement cell will review and set the dates before it can open to students.</p>
-    <div className="flex flex-wrap gap-3">
+    <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open the request</a>
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open the request</a>
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
         className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Go to Drives</a>
       <a href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
@@ -414,7 +414,7 @@ export function HrDriveDraftForm({
         <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
         <div className="mt-4 min-w-0 space-y-3">
           {draft.rounds.map((round, index) => (
-            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 md:grid-cols-[10rem_minmax(0,1fr)_auto]">
+            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[10rem_minmax(0,1fr)_auto]">
               <label className="grid min-w-0 gap-1 text-sm text-body">
                 Kind
                 <Select className="w-full" value={round.kind}
@@ -461,7 +461,7 @@ export function HrDriveDraftForm({
         <p className="mt-1 text-sm text-body">
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
-        <div className="mt-4 flex min-w-0 flex-wrap items-center gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+        <div className="mt-4 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center">
           <Button type="button" variant="secondary"
             onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</Button>
           <Button type="button" disabled={!result.success||submitting}
@@ -469,6 +469,9 @@ export function HrDriveDraftForm({
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </Button>
+          <details className="min-w-0 min-[768px]:basis-full">
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Draft tools</summary>
+            <div className="flex min-w-0 flex-col gap-2 pb-2 min-[768px]:flex-row min-[768px]:flex-wrap">
           <Button type="button" disabled={!result.success}
             variant="secondary"
             onClick={() => void copyPreview()}>Copy validated draft</Button>
@@ -483,6 +486,8 @@ export function HrDriveDraftForm({
               try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
               setDraft(emptyHrDriveDraft());setBranchInput("");setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
             }}>Start over</Button>
+            </div>
+          </details>
         </div>
         {showPreview && !result.success ? (
           <Alert tone="error" title="Review the draft:" className="mt-4">
@@ -494,7 +499,7 @@ export function HrDriveDraftForm({
           </Alert>
         ) : null}
         {/* Live locally held student-facing draft preview; never imply publication. */}
-          <div className="mt-4 min-w-0 space-y-2 break-words rounded-[var(--lms-control-radius)] bg-surface-secondary p-4 text-sm text-body">
+          {showPreview ? <div className="mt-4 min-w-0 space-y-2 break-words border-y border-border bg-transparent py-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
             <p>{draft.location} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
@@ -532,7 +537,7 @@ export function HrDriveDraftForm({
             <p className="text-xs text-muted-foreground">
               Live preview of your unsent request. The college decides what students see after approval.
             </p>
-          </div>
+          </div> : null}
         {notice ? <InlineNotice tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"} message={notice}/> : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.

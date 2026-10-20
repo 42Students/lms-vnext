@@ -31,13 +31,15 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
  return <Alert tone="warning">
    <p className="font-semibold text-foreground">You have a drive request you haven&apos;t sent yet</p>
    <p className="mt-1 text-sm text-body">It is saved on this device.</p>
+   <div className="mt-3 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center">
    <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-    className="mt-2 inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Continue
    </Link>
    <Button variant="ghost" type="button"
-    className="ml-3 underline"
+    className="min-h-11 w-full text-primary-text underline underline-offset-4 min-[768px]:min-h-9 min-[768px]:w-auto"
     onClick={()=>{setError("");setConfirmDiscard(true);}}>Discard saved draft</Button>
+   </div>
    <ConfirmActionDialog open={confirmDiscard}
     title="Discard the unsent drive request saved on this device?"
     consequence="This removes your saved draft from this browser. It has not been submitted."
