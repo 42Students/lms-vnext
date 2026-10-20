@@ -166,7 +166,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
      <Input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
       className="min-h-11 md:min-h-9"/></label>
    </>:null}
-   <Button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 md:min-h-9">
+   <Button type="button" loading={busy} disabled={busy} onClick={()=>void save()} className="min-h-11 md:min-h-9">
     {busy?"Saving…":"Save"}</Button>
   </fieldset>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
