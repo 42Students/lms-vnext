@@ -1,4 +1,5 @@
 import { Disclosure } from "@/components/ui/disclosure";
+import type { ReactNode } from "react";
 import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,sections,cohorts,programs as programsTable,departments} from "@/db/schema";
@@ -19,12 +20,14 @@ export async function PlacementJobCreateWorkspace({
   eyebrow,
   basePath,
   initialCompanyName = "",
+  preFormActions,
 }: {
   context: RequestContext;
   collegeId: string;
   eyebrow?: string;
   basePath: string;
   initialCompanyName?: string;
+  preFormActions?: ReactNode;
 }) {
   const [companies, programs, seasons] =
     await Promise.all([
@@ -99,6 +102,7 @@ export async function PlacementJobCreateWorkspace({
         description="Build the opportunity students will see"
         actions={<PageBackLink href={basePath} label="Back to drives" />}
       />
+      {preFormActions ? <div className="min-w-0">{preFormActions}</div> : null}
       {pastDrives.length>0?<Disclosure title="Clone a past drive" className="border-y border-[var(--lms-canvas-border)] py-4">
         <p className="my-2 text-xs text-body">Shows up to 20 recent completed drives. Cloning makes a new draft; dates, learners, rounds, outcomes, offers and external links are never carried over.</p>
         <ul className="grid gap-2 min-[768px]:grid-cols-2">
