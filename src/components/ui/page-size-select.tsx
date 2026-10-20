@@ -12,7 +12,7 @@ export type PageSizeSelectProps = Omit<ComponentPropsWithRef<"select">, "childre
 export function PageSizeSelect({
   options, label = "Rows per page", wrapperClassName, className, ...props
 }: PageSizeSelectProps) {
-  return <label className={cx("grid gap-1 text-sm font-semibold text-body", wrapperClassName)}>
+  return <label className={cx("grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]", wrapperClassName)}>
     {label}
     <Select {...props} className={cx("min-h-11 md:min-h-9", className)}>
       {options.map(size => <option key={size} value={size}>{size}</option>)}
