@@ -144,7 +144,7 @@ export function CreateProjectTemplateControl() {
           className="grid gap-4"
         >
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Template title
             </span>
             <Input
@@ -157,7 +157,7 @@ export function CreateProjectTemplateControl() {
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Slug
             </span>
             <Input
@@ -174,7 +174,7 @@ export function CreateProjectTemplateControl() {
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Summary
             </span>
             <Textarea
@@ -186,7 +186,7 @@ export function CreateProjectTemplateControl() {
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold text-body">
               Goal
             </span>
             <Textarea
@@ -199,7 +199,7 @@ export function CreateProjectTemplateControl() {
           </label>
           <div className="grid min-w-0 gap-3 min-[992px]:grid-cols-3">
             <label>
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-1.5 block text-[13px] font-semibold text-body">
                 Release
               </span>
               <Input
@@ -214,7 +214,7 @@ export function CreateProjectTemplateControl() {
               />
             </label>
             <label>
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-1.5 block text-[13px] font-semibold text-body">
                 Sprint
               </span>
               <Input
@@ -229,7 +229,7 @@ export function CreateProjectTemplateControl() {
               />
             </label>
             <label>
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-1.5 block text-[13px] font-semibold text-body">
                 First task
               </span>
               <Input
