@@ -6,6 +6,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -180,12 +181,11 @@ export function DepartmentActions({
       >
         <label
           htmlFor={`department-name-${departmentId}`}
-          className="mb-1.5 block text-[13px] font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           {DEPARTMENT_COPY.nameLabel}
         </label>
         <Input
-          className="min-h-11 md:min-h-9"
           id={`department-name-${departmentId}`}
           value={nextName}
           onChange={(event) =>
@@ -226,7 +226,13 @@ export function DepartmentActions({
           </>
         }
       >
-        {archiveError ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-error">{archiveError} <Button variant="ghost" type="button" className="min-h-11 md:min-h-9" disabled={pending} onClick={archive} >Retry delete</Button></p> : null}
+        {archiveError ? (
+          <Alert tone="error">
+            <span>{archiveError}</span>
+            <div><Button variant="ghost" type="button" disabled={pending}
+              onClick={archive}>Retry delete</Button></div>
+          </Alert>
+        ) : null}
         <p className="m-0 text-sm text-body">
           Existing dependencies are checked
           server-side immediately before the
