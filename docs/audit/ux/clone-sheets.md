@@ -692,3 +692,19 @@ No app execution or CI/browser/screenshot verification. Global A5–A7/E8 remain
 **Post-write source scans** for `recruiter-result-controls.tsx` (829 lines), `recruiter-result-review-grid.tsx` (46 lines), `known-errors-workspace.tsx` (274 lines): native control/table, inline 3–8-digit hex, authored `h1`, custom overlay counts **0/0/0/0 for each**. Result editor tag pairs: `div` 11/11, `article` 1/1, `label` 6/6. New grid has no intrinsic JSX row/control element (one shared TpoGrid and row-action Link only). Source proves `md:` starts at 768px, with single-column candidates and form controls below 768px. **No CI, TypeScript compile, Playwright, screenshots, or old-LMS measured states were run. E8 stays unticked.**
 
 **Remaining dependency:** `src/components/tpo/grid/tpo-grid.tsx` imports ag-grid 36.x, while `package.json` has no declared `ag-grid-react` or `ag-grid-community` dependency as read on this lane. This is an upstream integration blocker; no package manifest or shared UI file was modified.
+
+
+## chat-15 — employer discussion proposals sheet, 2026-10-20
+
+- [ ] `src/components/hr/hr-proposal-history-grid.tsx`: read-only `TpoGrid` with Role, Proposal reference, Sent for discussion (date-sort), Status; one Open discussion action per scoped row. It receives only the pre-authorized server page; no client fetch/export or mutating selection.
+- [ ] `src/app/(authenticated)/hr/drives/proposals/page.tsx`: desktop `hidden md:block` grid of current page; original mobile `ol` remains `md:hidden`. The existing URL filters, college guard, server cursor/pagination, CSV export and conversation links remain unchanged.
+
+| Old LMS value/property | Exact reference | Current vNext value | Gap |
+| --- | --- | --- | --- |
+| One white canvas and compact hairline rows | `docs/design/old-lms-pages.md:6,10` | `hr/drives/proposals/page.tsx` uses one white parent canvas; separate cards absent, `TpoGrid` shared bordered grid on desktop | Runtime row heights unknown |
+| External filters, paging and safe CSV | `old-lms-pages.md:10` search, sort, export, row actions | Existing server-side search/sort/page/CSV URLs unchanged, shared `TpoGrid` gets only visible approved rows | No off-page or unauthorized export |
+| Numeric/date sorts only | `docs/design/ui-clone-checklist.md:66` | `hr-proposal-history-grid.tsx`: only Sent date has `sortKind:"date"` and timestamp `sortValue` | Source match; runtime sort untested |
+| Status / action | `old-lms-pages.md:10-12` status column and row link | Status says "Discussion only — not an approval request"; row action opens existing authenticated conversation | Specific HR text preserved elsewhere; new sheet label reviewed |
+| Phone<=767px vs desktop>=768px | `components___listing-page-header.scss:131-158` | `hidden md:block` sheet desktop and `md:hidden` original touch list mobile. Mobile action hit areas 44px via `min-h-11` | Source threshold matches; screenshots outstanding |
+
+Post-edit complete source scans: `hr/drives/proposals/page.tsx` (106 lines), `hr-proposal-history-grid.tsx` (40 lines) have 0 raw input/select/button/textarea/table, 0 hex, 0 custom `h1`, 0 handmade overlays each. JSX pair counts route: `div` 2/2, `ol` 1/1, fragments 2/2. No changes to shared UI, no CI/build/test/Playwright. **Sheet E8 and this visible page are unticked** pending full pixel interaction-state and AG Grid install proof.
