@@ -11,7 +11,7 @@ export default function Error({reset}:{
     <p className="mt-2 text-sm text-body">
       The read failed; an error is not evidence that no records exist.
     </p>
-    <Button type="button" variant="secondary" onClick={reset}>
+    <Button type="button" variant="secondary" className="mt-3 min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>
       Retry
     </Button>
   </section>;
