@@ -88,7 +88,6 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       return;
     }
     inFlightRef.current=true;
-    inFlightRef.current=true;
     setPending(true); setError(""); setSuccess("");
     try {
       await post("/api/placements/tpo/follow-up-queue", {
@@ -109,6 +108,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       setError("Record a brief outcome note before completing the follow-up.");
       return;
     }
+    inFlightRef.current=true;
     setPending(true); setError(""); setSuccess("");
     try {
       await post(
