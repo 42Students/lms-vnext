@@ -4,7 +4,8 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {useEffect,useState} from "react";
+import {useEffect,useId,useState} from "react";
+import {Disclosure} from "@/components/ui/disclosure";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
@@ -15,6 +16,7 @@ type LeadChoice={id:string;name:string;companyName:string|null};
 const field="min-h-11 w-full md:min-h-9";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const router=useRouter();
+ const formId=useId();
  const {showToast}=useToast();
  const [open,setOpen]=useState(false);
  const [confirmLeave,setConfirmLeave]=useState(false);
@@ -94,12 +96,18 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
     if(menu){menu.open=false;menu.querySelector("summary")?.focus();}
     void show();
    }}
-   className="lms-inline-link block min-h-11 w-full rounded-[8px] px-2 py-2 text-left text-sm text-link hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+   className="lms-inline-link block min-h-11 w-full rounded-[var(--lms-control-radius)] px-2 py-2 text-left text-sm text-link hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
    Follow-up
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)dismiss();}} title="New follow-up"
-   description="Choose a recruiter and when to follow up (IST).">
-    <form className="space-y-3" onSubmit={event=>{event.preventDefault();void save();}}>
+   description="Choose a recruiter and when to follow up (IST)."
+   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+    <Button variant="secondary" type="button" disabled={saving} onClick={dismiss} className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel</Button>
+    <Button variant="primary" type="submit" form={formId} disabled={saving||loading} loading={saving} className="min-h-11 w-full sm:w-auto md:min-h-9">
+      {saving?"Adding…":"Add"}
+    </Button>
+   </div>}>
+    <form id={formId} className="space-y-3" onSubmit={event=>{event.preventDefault();void save();}}>
      <label className="grid gap-1 text-sm font-semibold text-body">Recruiter
       <Select value={leadId} onChange={event=>{setLeadId(event.target.value);setError("");}}
        disabled={saving||loading} className={field} required>
@@ -113,18 +121,13 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
       <Input type="datetime-local" required value={when} onChange={event=>{setWhen(event.target.value);setError("");}}
        disabled={saving} className={field}/>
      </label>
-     <label className="grid gap-1 text-sm font-semibold text-body">Note (optional)
-      <Textarea rows={3} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
+     <Disclosure title="Note (optional)" className="border-t border-border" contentClassName="px-2 pb-2">
+      <Textarea aria-label="Note (optional)" rows={3} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
        disabled={saving} className={field}/>
-     </label>
+     </Disclosure>
+     {!loading&&!error&&leads.length===0?<p role="status" className="text-sm text-body">No recruiters available. Add a recruiter before scheduling a follow-up.</p>:null}
      {error?<InlineNotice tone="error" message={error}/>:null}
-     <div className="flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
-      <Button variant="secondary" type="button" disabled={saving} onClick={dismiss}
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm md:min-h-9">Cancel</Button>
-      <Button variant="primary" type="submit" disabled={saving||loading} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 md:min-h-9">
-       {saving?"Adding…":"Add"}
-      </Button>
-     </div>
+     {!loading&&leads.length===0&&error?<Button variant="secondary" type="button" disabled={saving} onClick={()=>void show()} className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh recruiters</Button>:null}
     </form>
   </Dialog>
   <ConfirmDialog open={confirmLeave} onOpenChange={setConfirmLeave}
