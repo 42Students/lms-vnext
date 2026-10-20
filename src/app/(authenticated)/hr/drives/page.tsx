@@ -98,22 +98,13 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id)),
     countRecruiterAnswerableDriveRequests(selectedCollege,pageResult.rows.map(row=>row.job.id)),
   ]);
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Request a drive
       </Link>} />
-    <nav aria-label="Recruiter proposal history">
-      <Link href={hrSentProposalsHref(selectedCollege)}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-       Sent discussion proposals
-      </Link>
-      <span className="self-center text-xs text-muted-foreground">
-       Proposals are private messages, not approved or published drives.
-      </span>
-    </nav>
     <RecruiterRequestFeedback storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)+":feedback"}/>
     <HrUnsentDriveAlert collegeId={selectedCollege}
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
@@ -122,28 +113,29 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         key:grant.collegeId,label:grant.collegeName,
         href:recruiterDrivesHref({...query.data,collegeId:grant.collegeId}),
       }))}/> : null}
-    {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
-      className="border-b border-border pb-4 md:pb-6">
-      <h2 className="font-semibold text-[var(--lms-heading)]">Deadline attention</h2>
-      <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
-      <div className="mt-3 grid gap-3 md:grid-cols-2">
-        {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-          className="min-h-11 md:min-h-9 inline-flex items-center rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-          <span className="block font-semibold">{item.job.title}</span>
-          <span className="mt-1 block text-xs text-body">Due within 7 days · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
-        </Link>)}
-        {attention.past.map(item=><Link key={"past:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-          className="min-h-11 md:min-h-9 inline-flex items-center rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-          <span className="block font-semibold">{item.job.title}</span>
-          <span className="mt-1 block text-xs text-body">Recorded deadline passed · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
-        </Link>)}
-      </div>
-    </section>:null}
     <Tabs ariaLabel="Drive lifecycle" renderPanel={false} value={query.data.view}
       items={viewOptions.map(option=>({
         value:option.view, label:option.label, count:option.count,
         href:recruiterDrivesHref({...query.data,collegeId:selectedCollege,view:option.view,page:1}),
       }))} />
+    {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
+      className="border-b border-border pb-4">
+      <details className="min-w-0"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] min-[768px]:min-h-9">Deadline attention</summary><div className="mt-3">
+      <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
+      <div className="mt-3 grid min-w-0 gap-2 min-[768px]:grid-cols-2">
+        {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
+          className="inline-flex min-h-11 min-w-0 flex-col items-start justify-center gap-1 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          <span className="block font-semibold">{item.job.title}</span>
+          <span className="mt-1 block text-xs text-body">Due within 7 days · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
+        </Link>)}
+        {attention.past.map(item=><Link key={"past:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
+          className="inline-flex min-h-11 min-w-0 flex-col items-start justify-center gap-1 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          <span className="block font-semibold">{item.job.title}</span>
+          <span className="mt-1 block text-xs text-body">Recorded deadline passed · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
+        </Link>)}
+      </div>
+      </div></details>
+    </section>:null}
     {query.data.view!=="WAITING"?<div className="flex justify-end">
       <Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:1})
         .replace("/recruiter/drives","/api/placements/recruiter/drives/export")}
@@ -151,13 +143,13 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         Export matching drives CSV
       </Link>
     </div>:null}
-    <form method="get" action="/recruiter/drives" role="search" aria-label="Filter recruiter drives" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
+    <form method="get" action="/recruiter/drives" role="search" aria-label="Filter recruiter drives" className="flex min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-end">
       <Input type="hidden" name="collegeId" value={selectedCollege} />
       <Input type="hidden" name="view" value={query.data.view} />
       <Input type="hidden" name="page" value="1" />
       <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-[180px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role
         <Input type="search" name="q" defaultValue={query.data.q} maxLength={100} placeholder="Search by role" className="min-h-11 w-full md:min-h-9" /></label>
-      <label className="grid min-w-0 w-full md:w-auto md:min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
+      <details className="w-full min-w-0"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text min-[768px]:min-h-9">Employment</summary><div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1100px]:grid-cols-4">      <label className="grid min-w-0 w-full md:w-auto md:min-w-[144px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
         <Select name="employment" defaultValue={query.data.employment} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
         </Select></label>
@@ -176,17 +168,18 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           <option value="TITLE">Title A–Z</option>
         </Select>
       </label>
+      </div></details>
       <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Search</Button>
       <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="inline-flex min-h-11 items-center py-2 text-sm text-primary-text hover:text-primary-hover active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
       <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Your drive requests</h2>
-      <ul className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2">{requestView.map(req=>{
+      <ul className="grid min-w-0 grid-cols-1 gap-2 min-[768px]:grid-cols-2">{requestView.map(req=>{
         const draft=req.draft&&typeof req.draft==="object"?req.draft:{};
         const title=typeof draft.title==="string"?draft.title:"Drive request";
         const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
-        return <li key={req.id} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
-          <p className="font-semibold text-foreground">{title}</p>
+        return <li key={req.id} className="min-w-0 border-b border-border py-3">
+          <p className="min-w-0 break-words font-semibold text-foreground">{title}</p>
           <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":req.status==="DRAFT"?"info":"info"}>{requestStageLabel(req.status)}</StatusBadge></p>
           {req.status==="SENT_BACK"?<Alert tone="warning" className="mt-2">
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
@@ -232,10 +225,20 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio now={now} jobs={pageResult.rows} counts={visibleCounts} unansweredRequests={unansweredRequests}
         sheetScopeKey={context.user.id+":"+selectedCollege}
         returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
-    {query.data.view !== "WAITING" ? <div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><p className="text-sm text-body">{pageResult.total===0?"No matching drives":
+    {query.data.view !== "WAITING" ? <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between"><p className="text-sm text-body">{pageResult.total===0?"No matching drives":
         "Showing "+(Math.min(pageResult.total,(pageResult.page-1)*pageResult.pageSize+1))+"–"+
         Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total}</p><Pagination label="Drive pages" page={pageResult.page} pageCount={pageResult.pages} hrefForPage={page=>recruiterDrivesHref({...query.data,collegeId:selectedCollege,page})}/></div>:null}
     <Link href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review round results →</Link>
+    <details className="min-w-0 border-t border-border pt-3"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text min-[768px]:min-h-9">Sent discussion proposals</summary><div className="mt-2">    <nav aria-label="Recruiter proposal history" className="flex min-w-0 flex-wrap items-center gap-2">
+      <Link href={hrSentProposalsHref(selectedCollege)}
+       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       Sent discussion proposals
+      </Link>
+      <span className="self-center text-xs text-muted-foreground">
+       Proposals are private messages, not approved or published drives.
+      </span>
+    </nav>
+    </div></details>
     <p className="text-xs text-muted-foreground">Request history is saved. Placement-cell approval and external sending remain unavailable until the registered employer-request workflow is ready.</p>
   </div>;
 }
