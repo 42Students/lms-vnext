@@ -92,7 +92,7 @@ export default async function TpoMessagesPage({
           action={
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto"
             >
               Clear filters
             </Link>
@@ -160,32 +160,27 @@ export default async function TpoMessagesPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <TpoLiveRefresh intervalMs={4000}/>
       <PageHeader
         title="Messages"
         description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         actions={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex w-full flex-col items-stretch gap-2 min-[768px]:w-auto min-[768px]:flex-row min-[768px]:items-center">
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
-            <Link
-              href="/tpo/messages/notifications"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary hover:bg-primary-hover px-4 text-sm font-[650] text-on-primary"
-            >
-              My placement notifications
-            </Link>
-            <Link
-              href="/tpo/more"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
-            >
-              More TPO tools
-            </Link>
+            <details className="group relative min-w-0">
+              <summary className="inline-flex min-h-11 w-full cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 [&::-webkit-details-marker]:hidden">More TPO tools</summary>
+              <nav aria-label="More TPO tools" className="mt-2 flex min-w-0 flex-col gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 min-[768px]:absolute min-[768px]:right-0 min-[768px]:z-20 min-[768px]:w-64">
+                <Link href="/tpo/messages/notifications" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">My placement notifications</Link>
+                <Link href="/tpo/more" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">More TPO tools</Link>
+              </nav>
+            </details>
           </div>
         }
       />
+      <TpoLiveRefresh intervalMs={4000}/>
 
       <section
         role="status"
-        className="border-t border-border pt-5"
+        className="border-b border-border pb-4"
       >
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
@@ -221,7 +216,7 @@ export default async function TpoMessagesPage({
 
       <section
         aria-label="Communication summary"
-        className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4"
+        className="grid min-w-0 grid-cols-2 gap-3 border-b border-border pb-4 min-[992px]:grid-cols-4"
       >
         {[
           {
@@ -247,7 +242,7 @@ export default async function TpoMessagesPage({
               : "Not applicable",
           },
         ].map((metric) => (
-          <StatTile key={metric.label} label={metric.label} value={metric.value} className={tpoTileStyles.tile} />
+          <StatTile key={metric.label} label={metric.label} value={metric.value} className={tpoTileStyles.tile+" !rounded-none !border-0 !bg-transparent !px-1 !py-2 !shadow-none"} />
         ))}
       </section>
 
@@ -266,15 +261,14 @@ export default async function TpoMessagesPage({
             {label} ({count})
           </Link>)}
       </nav> : null}
-      <section className="border-t border-border pt-4 min-[768px]:pt-5">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
-          Communication filters
-        </h2>
+      <section className="border-b border-border pb-4">
+        <details open={Boolean(query.from || query.to || query.q || pageSize !== 25)} className="group">
+          <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[16px] font-semibold leading-[26px] text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] [&::-webkit-details-marker]:hidden">Communication filters <span aria-hidden="true" className="ml-2 text-primary-text group-open:rotate-180">⌄</span></summary>
 
         <form
           action="/tpo/messages"
           method="get"
-          className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5"
+          className="mt-3 grid min-w-0 items-end gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5"
         >
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
@@ -340,22 +334,23 @@ export default async function TpoMessagesPage({
             </Select>
           </label>
 
-          <div className="flex flex-wrap gap-3 min-[768px]:col-span-2 xl:col-span-5">
+          <div className="flex flex-col gap-3 min-[768px]:col-span-2 min-[768px]:flex-row min-[992px]:col-span-5">
             <Button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover min-[768px]:min-h-9 min-[768px]:w-auto"
             >
               Apply filters
             </Button>
 
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto"
             >
               Clear filters
             </Link>
           </div>
         </form>
+        </details>
       </section>
 
       <section className="space-y-3">
@@ -379,6 +374,7 @@ export default async function TpoMessagesPage({
 
         {items.length === 0 ? (
           <EmptyState
+            action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}
             title="No matching communication records"
             description={
               isRecruiterInbox
@@ -430,20 +426,20 @@ export default async function TpoMessagesPage({
 
         <nav
           aria-label="Messages pagination"
-          className="flex flex-wrap items-center justify-between gap-3"
+          className="flex flex-col items-stretch gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between"
         >
           <p className="text-sm text-body">
             Page {page} of {Math.max(1, totalPages)}
           </p>
 
-          <div className="flex gap-2">
+          <div className="flex w-full gap-2 min-[768px]:w-auto">
             {page > 1 ? (
               <Link
                 href={tpoMessagesHref({
                   ...commonFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 min-[768px]:flex-none"
               >
                 Previous
               </Link>
@@ -455,7 +451,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 min-[768px]:flex-none"
               >
                 Next
               </Link>
