@@ -148,7 +148,8 @@ export function RecruiterLeadDetailWorkspace({
   },[editing,notNowOpen]);
   function confirmLeave(){
     if(!editing&&!notNowOpen)return true;
-    return window.confirm("Leave this recruiter? Unsaved changes will be lost.");
+    setConfirmation("LEAVE");
+    return false;
   }
 
   const base = "/api/placements/tpo/leads/" + encodeURIComponent(leadId);
@@ -249,19 +250,18 @@ export function RecruiterLeadDetailWorkspace({
     }
   }
 
-  function closeEdit(){
+  function closeEdit(confirmed=false){
     if(saving)return;
-    if(editing&&lead&&(
+    if(!confirmed&&editing&&lead&&(
       edit.name!==lead.name||edit.email!==(lead.emailNorm??"")||
       edit.phone!==(lead.phoneNorm??"")||edit.designation!==(lead.designation??"")||
       edit.companyName!==(lead.companyName??"")
-    )&&!window.confirm("Discard unsaved recruiter changes?"))return;
+    )){setConfirmation("CLOSE_EDIT");return;}
     setEditing(false);
   }
-  function closeNotNow(){
+  function closeNotNow(confirmed=false){
     if(saving)return;
-    if((notNowReason.trim()||revisitDate)&&
-      !window.confirm("Discard your Not now reason and revisit date?"))return;
+    if(!confirmed&&(notNowReason.trim()||revisitDate)){setConfirmation("CLOSE_NOT_NOW");return;}
     setNotNowOpen(false);
   }
   function openEdit() {
