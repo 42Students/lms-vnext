@@ -27,12 +27,12 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(item=>item.job.archivedAt===null);
    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Round Results"
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
-    {jobs.length?<section className="grid gap-3 md:grid-cols-2">{jobs.map(item=>
+    {jobs.length?<section className="min-w-0 divide-y divide-border border-t border-border">{jobs.map(item=>
      <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
-       className="block min-h-11 border-b border-border py-4 hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-       <span className="block font-semibold text-foreground">{item.job.title}</span>
-       <span className="mt-1 block text-sm text-body">{item.collegeName} · {item.job.status}</span>
-     </Link>)}</section>:<EmptyState title="No hiring drives" description="There are no authorized drives available for round review."/>}
+       className="block min-h-11 min-w-0 px-2 py-4 hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       <span className="block break-words font-semibold text-foreground">{item.job.title}</span>
+       <span className="mt-1 block break-words text-sm text-body">{item.collegeName} · {item.job.status}</span>
+     </Link>)}</section>:<EmptyState title="No hiring drives" description="There are no authorized drives available for round review." action={<Link href="/hr/drives" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Drives</Link>}/>}
    </div>;
  }
  let workspace:Awaited<ReturnType<typeof getRecruiterPlacementWorkspace>>;
@@ -56,21 +56,21 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
    <PageHeader title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
-   <nav aria-label="Round review navigation" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-4 text-sm">
-     <Link href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose another drive</Link>
+   <nav aria-label="Round review navigation" className="flex min-w-0 flex-col gap-x-5 gap-y-1 border-b border-border pb-3 text-sm min-[768px]:flex-row min-[768px]:items-center">
+     <Link href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center font-medium text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose another drive</Link>
      <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open hiring rounds & staging</Link>
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="border-b border-border pb-4 md:pb-5">
-      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Choose round</h2>
-      <Tabs renderPanel={false} ariaLabel="Hiring rounds" value={selectedRound?.id??""}
+      <h2 className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">Choose round</h2>
+      <Tabs className="mt-3" renderPanel={false} ariaLabel="Hiring rounds" value={selectedRound?.id??""}
         items={rounds.map(round=>({value:round.id,label:round.sequence+". "+round.name,
           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}))}/>
     </section>
     {results?<section className="space-y-4 border-b border-border pb-4 md:pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{results.round.name}</h2>
-        <p className="mt-1 text-sm text-body">{results.round.kind} · {results.round.status} · {counts?.all??0} eligible, shared candidates</p></div>
+        <div className="min-w-0"><h2 className="break-words font-semibold text-lg leading-7 text-[var(--lms-heading)]">{results.round.name}</h2>
+        <p className="mt-1 text-sm text-body">{results.round.kind} · {counts?.all??0} eligible, shared candidates</p></div>
         <StatusBadge tone={results.round.status==="APPLIED"?"success":results.round.status==="STAGED"?"warning":"neutral"}>{results.round.status}</StatusBadge>
       </div>
       {results.round.kind==="TALK"?<p className="text-sm text-muted-foreground">Informational rounds do not collect outcomes.</p>:<>
@@ -83,7 +83,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
            key:row.key,name:row.name,outcome:row.outcome,status:row.status,
            scorePercent:row.scorePercent,waitlistRank:row.waitlistRank,
          }))}
-       />:<EmptyState title="No matching candidates" description="No shared candidates match this outcome."/>}
+       />:<EmptyState title="No matching candidates" description="No shared candidates match this outcome." action={<Link href={recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:"ALL"})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">ALL</Link>}/>}
        <p className="text-xs text-muted-foreground">STAGED results are awaiting placement-cell review; APPLIED results are recorded decisions. This read-only table does not submit or notify applicants.</p>
       </>}
     </section>:null}
