@@ -84,7 +84,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             columns={[
               { key: "course", header: "Course", mobilePriority: "primary",
                 cell: item => <Link href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-                  className="font-semibold text-link hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                  className="font-semibold text-link hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] underline-offset-4">
                   {item.courseName} ({item.courseCode})
                 </Link> },
               { key: "class", header: "Class / cohort", mobilePriority: "secondary",
