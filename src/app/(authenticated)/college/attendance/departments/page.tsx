@@ -28,7 +28,7 @@ export default async function CollegeDepartmentAttendancePage({
     <PageHeader title="Attendance by Department" />
     <ErrorState title="Invalid department filters"
       description="The search or page value is invalid. No attendance evidence was loaded."
-      action={<Link href="/college/attendance/departments" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+      action={<Link href="/college/attendance/departments" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>} />
   </div>;
   const [data, policy] = await Promise.all([
     listCollegeDepartmentInsights(context, "ATTENDANCE", parsed.data),
