@@ -108,7 +108,7 @@ export function CollegeAttendancePolicyForm({
         <div className="min-w-0">
           <label
             htmlFor="attendance-eligibility-threshold"
-            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
           >
             Eligibility threshold (%)<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
           </label>
@@ -139,7 +139,7 @@ export function CollegeAttendancePolicyForm({
         <div className="min-w-0">
           <label
             htmlFor="attendance-correction-window"
-            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
           >
             Correction window (hours)<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
           </label>
@@ -152,7 +152,7 @@ export function CollegeAttendancePolicyForm({
             max={168}
             step={1}
             required
-            disabled={saving}
+            disabled={saving || pending}
             value={correctionHours}
             className="min-h-11 w-full min-w-0 md:min-h-9"
             onChange={(event) => {
@@ -212,7 +212,7 @@ export function CollegeAttendancePolicyForm({
         </span>
       </div>
     </form>
-    <ConfirmDialog open={resetOpen} onOpenChange={setResetOpen}
+    <ConfirmDialog open={resetOpen} onOpenChange={open=>{if(!saving&&!pending)setResetOpen(open);}}
       title="Reset attendance policy to default?"
       description="The threshold will return to 75% and the correction window to 24 hours. This also affects which past sessions may be corrected; existing attendance records are not changed."
       confirmLabel="Reset to default" pending={saving||pending}
