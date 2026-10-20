@@ -36,11 +36,11 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </div>} />
     <section className="min-w-0 border-b border-border pb-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Faculty record</h2>
+        <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Faculty record</h2>
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Lifecycle audit</Link>
       </div>
-      <dl className="mt-4 grid min-w-0 gap-4 text-sm md:grid-cols-2">
+      <dl className="mt-4 grid min-w-0 gap-x-6 gap-y-3 text-sm md:grid-cols-2 [&_dd]:min-w-0 [&_dd]:break-words [&_dd]:font-medium [&_dd]:text-foreground">
         <div><dt className="text-muted-foreground">Title</dt><dd>{data.person.academicTitle ?? "Not recorded"}</dd></div>
         <div><dt className="text-muted-foreground">Department</dt><dd>{data.person.departmentName ?? "Not recorded"}</dd></div>
         <div><dt className="text-muted-foreground">Employment type</dt><dd>{data.person.employmentType ?? "Not recorded"}</dd></div>

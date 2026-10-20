@@ -80,7 +80,7 @@ export function CollegeFacultyCsvImport(){
           <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">CSV contents
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
-          setCsv(event.target.value);setReport(null);setConfirmed(false);
+          setCsv(event.target.value);setReport(null);setConfirmed(false);setError("");
         }} className="font-mono text-xs"/>
           </label>
         </div>
