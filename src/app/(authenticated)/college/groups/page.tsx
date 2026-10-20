@@ -75,7 +75,7 @@ export default async function CollegeGroupsPage({
   });
 
   return (
-    <div className="min-w-0 overflow-x-clip space-y-5">
+    <div className="min-w-0 max-w-full space-y-4">
       <PageHeader
         title="Student Groups"
         description={`Study groups, project teams and elective groups in ${result.collegeName}.`}
@@ -84,9 +84,9 @@ export default async function CollegeGroupsPage({
 
       <form
         method="get"
-        className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch"
+        className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]"
       >
-        <label className="block min-w-0 w-full md:w-auto md:min-w-44 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
+        <label className="block min-w-0 w-full text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
           <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Type
           </span>
@@ -99,7 +99,7 @@ export default async function CollegeGroupsPage({
             ))}
           </Select>
         </label>
-        <label className="block min-w-0 w-full md:w-auto md:min-w-40 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
+        <label className="block min-w-0 w-full text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
           <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
           </span>
@@ -112,7 +112,7 @@ export default async function CollegeGroupsPage({
             ))}
           </Select>
         </label>
-        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">
+        <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
           Apply
         </Button>
         {kind || status ? (
@@ -128,6 +128,7 @@ export default async function CollegeGroupsPage({
       {result.items.length === 0 ? (
         <EmptyState
           title="No groups found"
+          action={kind || status ? <Link href="/college/groups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : undefined}
           description={
             kind || status
               ? "No groups match these filters."
@@ -194,7 +195,7 @@ export default async function CollegeGroupsPage({
             getRowKey={(row) => row.id}
           />
 
-          <div className="space-y-3">
+          <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
             <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">
               Showing {(offset+1).toLocaleString("en-IN")}–{Math.min(offset+limit,total).toLocaleString("en-IN")} of {total.toLocaleString("en-IN")}
             </p>
